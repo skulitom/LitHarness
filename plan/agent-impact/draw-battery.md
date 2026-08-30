@@ -10,6 +10,11 @@ and **NOT-AN-INSTRUMENT** and say so in every row they touch.
 **No model read anything.** Regex and arithmetic over text, end to end. No corpus was opened, so
 RS1 is untouched.
 
+**Two instruments are now read at two versions and both are reported.** §2 and §3 are v0
+throughout; **§6** carries the v2 re-run that answers §3.1 and §3.2. The v0 numbers were
+reproduced byte for byte by that re-run and nothing pools the two — see §6.3 before placing any
+v2 number beside a market one.
+
 **There is no conclusions section, deliberately.** This document reports what moved and what did
 not; the coordinator synthesises.
 
@@ -189,6 +194,11 @@ post-§160 draw has two furniture lines on the page; the market-derived detector
 `furniture_detected_by_market_instruments` field records `0` against `actually_present: 2` on
 every such row so the zero can never be read as an absence.
 
+> **Answered in §6, and this section's numbers stand.** `progression_cadence.v2` recognises the
+> shape and locates **2 events on each of the seven post-redesign draws**. It is a second
+> registered instrument, not an edit of this one: every zero above is still what v0 returns, and
+> v0 is still the only version any market number may be read against.
+
 ### 3.2 `number_context`'s system families fire **once in ten chapters**, for the same reason
 
 `number_context.measure(text)` takes a bare string and runs cleanly. But it copied
@@ -203,6 +213,12 @@ the raw file, the sheet's own values fall through to the ordinary prose families
 nine-column sheet printed twice was inflating `object_count` from 12 to 28. **The system/mundane
 split in §2 is therefore measured on prose only, and the system half of this instrument should
 be read as unavailable on our shelf rather than as zero.**
+
+> **Answered in §6, and this section's numbers stand.** `number_context.v2` assigns a sheet's
+> cells by location, so `system_any` on the seven post-redesign draws is **10 to 18** rather
+> than 0 — and, measured rather than hoped for, the mundane half is **identical on every one of
+> the ten** to v0-on-prose above, so the contamination is gone without the subtraction. Same
+> boundary as §3.1: a second instrument, and v0 still owns every market comparison.
 
 ### 3.3 `register_census`'s friction half cannot run per chapter; the gloss half can
 
@@ -222,6 +238,16 @@ on terminal punctuation, and per sentence a count of coordinated joins (commas p
 free-standing *and*)"* — with §180.3's fourth-action bound, splitting via `voice.sentences` so
 only the per-sentence join count is new. **The absolute levels are therefore not comparable with
 §180.1's published distribution**; only the columns of this table are comparable with each other.
+
+> **It stays in `scripts/draw_battery.py` and was deliberately not promoted into
+> `research/quality-measurement/`.** The §6 work considered it and refused: moving it would mint
+> a craft counter, and `CONTRIBUTING.md`'s "Before proposing a quality or craft metric" plus
+> `BRIEF.md` §5 require a registration, a named confound and a control computed in the same pass
+> — none of which a transcription of a lost script can supply. The two instruments §6 does touch
+> are different: they already carry frozen registrations, and v2 corrects a **measured
+> blindness** in one of them rather than proposing a new quantity. So the chain rows keep both
+> flags they were published with: REIMPLEMENTED, and comparable only across this table's own
+> columns.
 
 ### 3.5 There is no named-character counter — the proper-noun row is a superset
 
@@ -315,7 +341,10 @@ cast are all fresh between these two columns, and three entries landed together.
 | em dashes | `voice.exhibition_census` |
 | gloss tiers A1/A2/B | `register_census.gloss_counts` |
 | mentions, families, `mundane_core`, `system_any` | `number_context.measure` |
-| progression events | `progression_cadence.measure` (returns 0 on all ten — §3.1) |
+| progression events | `progression_cadence.measure` (v0 returns 0 on all ten — §3.1) |
+| progression events, v2 | `progression_cadence.measure(..., version="v2")` — §6, a second instrument |
+| system numbers, v2 | `number_context.measure(..., version="v2")` on the whole file — §6 |
+| the v2 prose mask | `progression_cadence.prose_only(..., version="v2")`, checked against `draft._SYSTEM_LINE` per draw |
 | `[STATUS]` lines, subjects, moves | `application.statusline.parse_status_line` |
 | machinery words as names | `domain.schema_words.named_in` |
 | proper nouns | `register_census.proper_nouns` (NOT cast size — §3.5) |
@@ -329,12 +358,128 @@ rows, so the comparison across columns is unaffected.
 
 ---
 
-## 6. Anti-scope
+## 6. The v2 re-run — what the true progression-event counts are, and what they are not
+
+**Both versions stand and both are labelled.** §2's table and §3.1/§3.2's zeros are
+`progression_cadence.v0` (`5d42f2065efb7e09`) and `number_context.v0` (`8e10ac598828d404`), and
+nothing about them has moved: the re-run reproduced **every v0 field in `battery.json` byte for
+byte**, and the only new keys are `cadence_v2`, `numbers_v2` and `v2_mask_matches_pipeline`. The
+counts below are a different instrument — `progression_cadence.v2` (`f1a205af2cd3d718`) and
+`number_context.v2` (`6c007094f6159474`) — reading the same ten files. Stage-0 §189 is the entry;
+the two v2 frozen blocks are in the modules beside their v0s.
+
+**One shape was added and nothing else.** `furniture_tagged_columns`: a short bracketed or angled
+tag, a subject, an em/en/ASCII dash, then **two or more** pipe-delimited columns of which at least
+one carries a digit. Family list, priority order, both unit rules, the reject list and every
+inline pattern are v0's, byte for byte — pinned by a selftest that fails if any v0 answer in this
+table moves.
+
+### 6.1 The v2 column
+
+| instrument | p12 | p13 | p14 | p15-d1 | p15-d2 | p15-d3 | p15-d4 | p16 | p18-d2 | p18-d3 |
+| --- | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: |
+| furniture lines seen, **v0** | 0 | 0 | 0 | **0** | **0** | **0** | **0** | **0** | **0** | **0** |
+| furniture lines seen, **v2** | 0 | 0 | 0 | **2** | **2** | **2** | **2** | **2** | **2** | **2** |
+| `[STATUS]` lines actually present | 0 | 0 | 0 | 2 | 2 | 2 | 2 | 2 | 2 | 2 |
+| *progression cadence* | | | | | | | | | | |
+| events, **v0** | 0 | 0 | 0 | **0** | **0** | **0** | **0** | **0** | **0** | **0** |
+| events, **v2** | 0 | 0 | 0 | **2** | **2** | **2** | **2** | **2** | **2** | **2** |
+| events / 1k file words (v2) | — | — | — | 0.99 | 1.02 | 1.01 | 1.05 | 0.99 | 1.02 | 1.02 |
+| first event, word offset (v2) | — | — | — | 841 | 631 | 966 | 920 | **340** | 404 | 936 |
+| first event, fraction of chapter (v2) | — | — | — | 0.41 | 0.32 | 0.49 | 0.48 | **0.17** | 0.21 | 0.48 |
+| gap between the two, words (v2) | — | — | — | 1171 | 569 | 1001 | 897 | 1131 | 871 | 811 |
+| family `system_block` (v2) | 0 | 0 | 0 | **2** | **2** | **2** | **2** | **2** | **2** | **2** |
+| family `level_up` (v2) | 0 | 0 | 0 | **0** | **0** | **0** | **0** | **0** | **0** | **0** |
+| family `capability_gain` (v2) | 0 | 0 | 0 | **0** | **0** | **0** | **0** | **0** | **0** | **0** |
+| family `stat_delta` (v2) | 0 | 0 | 0 | **0** | **0** | **0** | **0** | **0** | **0** | **0** |
+| *number context* | | | | | | | | | | |
+| `system_any`, **v0** on prose | 1 | 0 | 0 | **0** | **0** | **0** | **0** | **0** | **0** | **0** |
+| `system_any`, **v2** on the whole file | 1 | 0 | 0 | **10** | **12** | **10** | **14** | **18** | **18** | **12** |
+| of which `system_magnitude` (v2) | 1 | 0 | 0 | 10 | 12 | 10 | 14 | 18 | 18 | 12 |
+| of which `system_ordinal` (v2) | 0 | 0 | 0 | **0** | **0** | **0** | **0** | **0** | **0** | **0** |
+| `system_share_of_anchored` (v2) | 0.06 | 0.00 | 0.00 | 0.38 | 0.50 | 0.43 | **0.67** | 0.53 | 0.56 | 0.50 |
+| `mundane_core`, v0 on prose | 2 | 12 | 11 | 7 | 3 | 8 | 0 | 5 | 2 | 1 |
+| `mundane_core`, **v2 on the whole file** | 2 | 12 | 11 | 7 | 3 | 8 | 0 | 5 | 2 | 1 |
+| `object_count`, v0 on prose → **v2 whole file** | 14→14 | 13→13 | 7→7 | 9→9 | 9→9 | 5→5 | 7→7 | 11→11 | 12→12 | 11→11 |
+| v2 mask == `draft._SYSTEM_LINE` + `* * *` | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+
+`gap_cv` is `None` on every column: it needs three events and there are two. That is the
+instrument declining, exactly as §3.1 described it declining before.
+
+### 6.2 The headline: the true count is **2**, and three quarters of what the zero was hiding is still absent
+
+**Two events per chapter on every post-redesign draw, and both of them are the sheet.**
+`system_block` is 2 and the other three families are **0 on all ten chapters, under both
+versions**. So the recognition bought back exactly the two `[STATUS]` prints and nothing else:
+the inline lexicons — levelling, ranking up, breaking through, acquiring a named skill, a signed
+delta, an arrow between two numbers — fire **nowhere in ten accepted chapter 1s**. §3.1's zero was
+three-quarters a real absence and one-quarter blindness, and only the blindness is fixed here.
+That is the finding, and it points the other way from a repaired number.
+
+**p12, p13 and p14 stay at 0 and that zero is now load-bearing rather than empty.** All three
+predate the page contract and carry no `[STATUS]` line at all (`actually_present: 0`), so v0 and
+v2 agree on them by construction. The instrument's zero and the page's zero coincide for the
+first time.
+
+**The contamination §3.2 measured is gone without the subtraction, and this is the check to
+believe.** `mundane_core`, `object_count` and `unanchored` are **identical** between v0-run-on-
+prose and v2-run-on-the-whole-file on every one of the ten rows. So v2 is exactly *v0-on-prose
+plus the sheet's cells filed as system*, which is what the added shape claims to do, and it is
+demonstrated rather than asserted. p18-d2's nine-column sheet printed twice no longer inflates
+`object_count` from 12 to 28; it reads 12 with the file intact.
+
+**Our own system column is all magnitude and no ordinal, which is the reverse of what §162
+found.** Every located system number under v2 is a `system_magnitude` and `system_ordinal` is 0
+across the shelf — where §162's shelf half was *entirely* ordinals on ladder words and not one
+magnitude. **This is not a trend and must not be read as one.** Two things changed at once: the
+books (§162 measured eight pre-redesign books; these are seven post-redesign chapter 1s) and the
+detector (v0 to v2). Nothing here separates them, and §0's standing boundary applies to every
+column of this table.
+
+**The v2 mask reproduces the pipeline's own definition on all ten files.** `progression_cadence.
+prose_only(text, version="v2")` is byte-equal to this runner's `draft._SYSTEM_LINE`-and-`* * *`
+subtraction on every draw. That matters because the research modules cannot import the package —
+they run under an interpreter where it is absent — so the shape had to be transcribed, and this
+row is the check that the transcription did not drift. It is a check and not a guarantee: the two
+are free to stop agreeing, and a failing row here is how that would surface.
+
+### 6.3 Comparability: v2 numbers may not be placed beside any market number, and none is
+
+**Every market figure this project has published for either instrument is v0's.** Stage-0 §155.1's
+cadence census — 13,364 LitRPG chapters, median 0.00 events/1k, 51.0% carrying none, 22.5% with an
+event inside the first 500 words, median first-event offset 585, gap CV 0.96, and the 6.50x
+validity arm — was computed under `5d42f2065efb7e09`. Stage-0 §162's number census — the 10.7x
+`system_magnitude` separation, `magnitude_share_of_anchored` at 0.0029 for our shelf against
+0.2002 for the genre — was computed under `8e10ac598828d404`.
+
+**Neither market half has been re-run under v2 and this document does not propose re-running it.**
+So none of the v2 rows above is compared to a market percentile anywhere in this file, and the
+tempting sentences are named here so nobody writes them later: *"our first event lands at 0.17 to
+0.49 of the chapter against the market's 22.5% inside 500 words"* and *"our system share of
+anchored is 0.38–0.67 against the genre's 0.2002"* are **both invalid**, because the two sides of
+each were counted by different instruments.
+
+**The direction of the invalidity is the one that flatters us, which is why it is refused rather
+than caveated.** v2 can only ever find *more* furniture than v0 — it adds an accepted shape and
+removes none — so a v2 house count against a v0 market distribution overstates our position by an
+amount nobody has measured. Restoring comparability costs a full market pass under v2 on both
+instruments. The code path exists (`progression_cadence.py census --version v2`, which refuses to
+write over v0's results file) and was **deliberately left unrun**: it is a registered market act,
+it is not what this fix was for, and one sustained job at a time on this box.
+
+**What the v2 rows may be read against is each other**, and that is all §2's table ever claimed
+for its own columns.
+
+## 7. Anti-scope
 
 No bar is declared, and the four attainability checks were not run because nothing here is a
-bar. No threshold is proposed over any quantity. Nothing admits an axis or promotes a research
-claim under `EPISTEMIC_GOVERNANCE.md`; agent prose is not evidence. **No stage-0 number is
-claimed** — nothing shipped because of this document. No model ranked, selected or judged
-anything, and no corpus was read, so RS1 is untouched. Nothing in this file is read by any
-generation surface, and nothing under `src/litharness/` imports the runner. Nothing the operator
-said about any of these books became prompt text (§97.1).
+bar — including for anything in §6, where recognising our own furniture buys a count and no
+target. No threshold is proposed over any quantity. Nothing admits an axis or promotes a research
+claim under `EPISTEMIC_GOVERNANCE.md`; agent prose is not evidence. ~~**No stage-0 number is
+claimed** — nothing shipped because of this document.~~ **Corrected: §6 shipped as stage-0 §189**
+— two second-version detectors and one published mask, all measurement-side. Nothing else in this
+document claims a number. No model ranked, selected or judged anything, and **no corpus was read
+by any version** — the v2 re-run touched these ten house files and nothing else, so RS1 is
+untouched. Nothing in this file is read by any generation surface, and nothing under
+`src/litharness/` imports the runner or either research module. Nothing the operator said about
+any of these books became prompt text (§97.1).

@@ -209,14 +209,152 @@ PRE_REGISTRATION: dict[str, Any] = {
 }
 
 
-def registration_digest() -> str:
-    material = json.dumps(PRE_REGISTRATION, sort_keys=True, ensure_ascii=False)
+def _digest(block: dict[str, Any]) -> str:
+    material = json.dumps(block, sort_keys=True, ensure_ascii=False)
     return sha256(material.encode("utf-8")).hexdigest()[:16]
+
+
+def registration_digest() -> str:
+    return _digest(PRE_REGISTRATION)
 
 
 #: Pinned. `--selftest` fails if the frozen block moves, and `census` refuses to write a
 #: results file under any other digest.
 REGISTRATION_DIGEST = registration_digest()
+
+
+# ----------------------------------------------------------------------- the frozen block, v2
+
+#: **A SECOND INSTRUMENT, NOT AN EDIT OF THE FIRST.** `PRE_REGISTRATION` above is untouched,
+#: `locate` and `measure` still answer as v0 unless asked otherwise, and every number already
+#: published under `5d42f2065efb7e09` still validates against the bytes that produced it. A
+#: pre-registered counter is not silently improved; it is superseded in the open, with both
+#: versions callable and both labelled at every call site.
+PRE_REGISTRATION_V2: dict[str, Any] = {
+    "instrument": "progression_cadence.v2",
+    "supersedes": "progression_cadence.v0",
+    #: Literal on purpose. If v0's frozen block ever moves, this string stops naming its
+    #: parent and `selftest` says so, rather than v2 quietly inheriting a different ancestor.
+    "inherits_registration_digest": "5d42f2065efb7e09",
+    "question": PRE_REGISTRATION["question"],
+    "why_a_new_version_exists": (
+        "**MEASURED BLINDNESS, not a preference.** `plan/agent-impact/draw-battery.md` ran v0 "
+        "over ten of this project's own accepted chapter 1s and got `events=0` on every one, "
+        "including three drawn after a gate that refuses a scene whose number did not move. "
+        "The battery recorded `0` detected against `2` actually present on each post-redesign "
+        "row rather than letting the zero read as an absence. The cause is in v0's three "
+        "accepted line shapes: a whole-line bracketed span, a whole-line angled span, or a "
+        "colon-separated stat line. This project's own furniture is "
+        "`[STATUS] Subject — Label N | Label N | …`, which is none of the three — the bracket "
+        "closes after the tag and text follows, and the columns carry no colon. v0's zero is "
+        "therefore a property of its calibration and not of the chapters, and v2 exists to say "
+        "so in code rather than only in a footnote."
+    ),
+    "the_one_addition": (
+        "ONE new furniture shape, `furniture_tagged_columns`, and nothing else about what a "
+        "progression event IS has changed: the family list, the priority order, the two unit "
+        "rules, the reject list and all four inline patterns are v0's, byte for byte. A line is "
+        "the new shape when it opens with a SHORT BRACKETED OR ANGLED TAG, carries a subject, "
+        "is separated from its columns by an em, en or ASCII dash, and then runs TWO OR MORE "
+        "pipe-delimited columns of which at least one carries a digit. Every clause is a "
+        "narrowing and each is here to be argued with: the leading tag keeps ordinary prose "
+        "out, the dash is the separator both this genre and the house renderer write, two "
+        "columns rather than one is what makes the line a panel rather than a sentence with a "
+        "pipe in it, and the digit requirement keeps a tagged list of words from scoring."
+    ),
+    "written_from_the_shape_not_the_parser": (
+        "The pattern is transcribed from the shape `application/statusline._STATUS_LINE` "
+        "recognises, and is deliberately NOT an import of it. Research modules under this "
+        "directory run under an interpreter where the package is not installed, and "
+        "`statusline`'s own docstring argues the renderer's choice and a counter's definition "
+        "should be free to stop agreeing without one silently changing the other's meaning. "
+        "`number_context.v0`'s `line_shapes_copied_deliberately` is the precedent for recording "
+        "a copy as a decision. `tests/test_progression_cadence.py` pins that the two agree on "
+        "the house lines they were both written for, so a divergence is a failing test rather "
+        "than a discovery three months later."
+    ),
+    "the_mask_is_part_of_the_instrument": (
+        "v2 publishes `furniture_mask` and `prose_only`, because a detector that recognises "
+        "furniture and does not let a caller SUBTRACT it moves the error rather than fixing "
+        "it. The battery measured what the subtraction is worth on this shelf and it is large: "
+        "the `[STATUS]` line's own subject separator is U+2014, so three chapters with no em "
+        "dash anywhere in their prose scored 2 on the raw file, and capitalised sheet labels "
+        "are read as proper nouns (31 distinct falling to 25 on one chapter). A frame line — a "
+        "bare rule or a `* * *` separator — is masked as not-prose too, and is still NOT an "
+        "event, which is v0's own `frame_alone_is_a_scene_divider` correction unchanged."
+    ),
+    "not_comparable_with_the_market_census": (
+        "**STATED AS A LIMIT OF THIS VERSION, not as a to-do.** Every published market number "
+        "for this instrument — stage-0 §155.1's densities, coverage, earliness, gaps and the "
+        "6.50x validity arm — was computed by v0 over 67,436 chapters under digest "
+        "`5d42f2065efb7e09`. v2 has NOT been run over the market and this entry does not "
+        "propose running it. So a v2 count on a house chapter may not be placed beside a v0 "
+        "market percentile, and no such placement appears anywhere this version is reported. "
+        "The direction of the incomparability is the one that flatters us and that is exactly "
+        "why it is refused: v2 can only find MORE furniture than v0, on both halves, so "
+        "comparing a v2 house count to a v0 market distribution would overstate our position "
+        "by an amount nobody has measured. What restoring comparability would cost is a full "
+        "re-materialise-and-census pass under v2; the code path exists (`census --version v2`, "
+        "writing its own results file so v0's is never overwritten) and was deliberately left "
+        "unrun."
+    ),
+    "families": PRE_REGISTRATION["families"],
+    "unit_rules": PRE_REGISTRATION["unit_rules"],
+    "normalisation": PRE_REGISTRATION["normalisation"],
+    "patterns_added": {
+        "furniture_tagged_columns": (
+            r"^\**(?:\[[^\[\]|\n]{1,24}\]|<[^<>|\n]{1,24}>)\**[^\S\n]*"
+            # The separator written three ways on purpose: the em dash the renderer emits, the
+            # en dash a model reaches for beside it, and the ASCII hyphen `normalise` folds
+            # both to — because `_is_furniture` is also called on RAW lines by callers that do
+            # their own line splitting, and it must not depend on which side of the fold it is.
+            # The `noqa` is the intent, not an exemption: the lint flags the en dash as
+            # confusable with a hyphen, and telling the three apart is this clause's whole job.
+            r"[^\n|]{1,80}?[^\S\n]*[–—-][^\S\n]*"  # noqa: RUF001
+            r"(?=[^\n]*\d)"
+            r"[^\n|]{1,80}(?:\|[^\n|]{1,80})+$"
+        ),
+    },
+    "patterns_inherited_unchanged": PRE_REGISTRATION["patterns"],
+    "reported": PRE_REGISTRATION["reported"],
+    "declares_no_bar": (
+        "No target cadence is declared here either, and recognising our own furniture is not a "
+        "licence to. A bar needs §81/§85/§87/§89's four attainability checks — range at the "
+        "real n, direction, independent unit, non-empty subgroup — and this version runs none "
+        "of them. It names a count and stops. In particular, a chapter's v2 event count going "
+        "from 0 to some number is a detector change and NOT an improvement in any book."
+    ),
+    "residuals": [
+        *PRE_REGISTRATION["residuals"],
+        "PRECISION ON THE NEW SHAPE IS HAND-CHECKED ON TEN CHAPTERS AND NOWHERE ELSE. Those "
+        "ten are this project's own, which is the population the shape was written for, so the "
+        "detector is exact on the half that motivated it and untested on every other — "
+        "`BRIEF.md` §5's named failure mode. It is survivable only because no cross-half "
+        "comparison is made under v2; the moment one is proposed, this residual becomes the "
+        "reason to refuse it.",
+        "THE NEW SHAPE CANNOT SEE A SHEET THE HOUSE STOPS RENDERING. It is keyed on the "
+        "current renderer's line, so a future page contract that drops the tag, the dash or "
+        "the pipes returns the instrument to zero — silently, and in the same direction as the "
+        "defect it was built to fix. The mask is where that would show first.",
+        "A `[STATUS]` RUN IS STILL ONE EVENT. v0's block-run rule is unchanged, so a chapter "
+        "printing the same sheet twice with prose between them scores 2 and printing it twice "
+        "adjacently scores 1. Whether either is progression is not asked here.",
+    ],
+}
+
+
+def registration_digest_v2() -> str:
+    return _digest(PRE_REGISTRATION_V2)
+
+
+#: Pinned like v0's, and checked in the same `selftest`.
+REGISTRATION_DIGEST_V2 = registration_digest_v2()
+
+#: Every version this module can be asked for, and the one it answers as when nobody asks.
+#: The default is v0 forever: a caller that predates v2 must keep getting the numbers it was
+#: written against.
+VERSIONS = ("v0", "v2")
+DEFAULT_VERSION = "v0"
 
 
 # --------------------------------------------------------------------------- the counters
@@ -231,6 +369,11 @@ _RE_REJECT = re.compile(_P["furniture_reject"], _FLAGS)
 _RE_LEVEL_UP = re.compile(_P["level_up"], _FLAGS)
 _RE_CAPABILITY = re.compile(_P["capability_gain"], _FLAGS)
 _RE_STAT_DELTA = re.compile(_P["stat_delta"], _FLAGS)
+#: v2's one addition. Compiled beside v0's so a reader sees the whole accepted set in one
+#: place; it is reachable only through `version="v2"`.
+_RE_TAGGED_COLUMNS = re.compile(
+    PRE_REGISTRATION_V2["patterns_added"]["furniture_tagged_columns"], _FLAGS
+)
 
 INLINE_FAMILIES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("level_up", _RE_LEVEL_UP),
@@ -266,14 +409,26 @@ def normalise(text: str) -> str:
 _EDGE = "|*=-_~+ ─-╿│┃"
 
 
-def _classify(line: str) -> str:
+def _check_version(version: str) -> str:
+    """A typo must be a refusal, never a silent fall back to v0's answers."""
+    if version not in VERSIONS:
+        raise ValueError(f"unknown instrument version {version!r}; expected one of {VERSIONS}")
+    return version
+
+
+def _classify(line: str, *, version: str = DEFAULT_VERSION) -> str:
     """`""` for ordinary prose, `"frame"` for a bare rule, `"furniture"` for a real line.
 
     Frame is kept separate from furniture rather than folded into it because the two are the
     same typography doing opposite jobs: `***` between two paragraphs is a scene divider that
     every fiction on the platform uses, and the same characters around a status line are its
     box. Only the second is an event, and telling them apart needs the run, not the line.
+
+    `version="v2"` adds one accepted shape and changes nothing else, including the order the
+    checks run in: the reject list still fires first, so `[A/N] late — sorry | 3 | again` is an
+    author's note under both versions however well it fits v2's column pattern.
     """
+    _check_version(version)
     if not line or _RE_REJECT.match(line):
         return ""
     if _RE_FRAME.match(line):
@@ -284,11 +439,39 @@ def _classify(line: str) -> str:
         return ""
     if _RE_BRACKETED.match(inner) or _RE_ANGLED.match(inner) or _RE_STATLINE.match(inner):
         return "furniture"
+    if version == "v2" and _RE_TAGGED_COLUMNS.match(inner):
+        return "furniture"
     return ""
 
 
-def _is_furniture(line: str) -> bool:
-    return _classify(line) == "furniture"
+def _is_furniture(line: str, *, version: str = DEFAULT_VERSION) -> bool:
+    return _classify(line, version=version) == "furniture"
+
+
+def furniture_mask(text: str, *, version: str = DEFAULT_VERSION) -> list[bool]:
+    """One flag per line of `text`: True where the line is not prose.
+
+    **Furniture AND frame, deliberately.** A caller subtracting the sheet also wants the `* * *`
+    separator gone, and both are typography rather than narration. The two stay distinguishable
+    through `_classify` for anything that needs the difference; a prose-side counter does not.
+
+    Each line is normalised on its own rather than the whole text at once, so the returned list
+    indexes the caller's OWN `splitlines()` exactly. `normalise` folds the em dash to a hyphen,
+    which would silently destroy an em-dash count taken on the masked text, so the mask is
+    computed on normalised lines and applied to raw ones.
+    """
+    return [_classify(normalise(line), version=version) != "" for line in text.splitlines()]
+
+
+def prose_only(text: str, *, version: str = DEFAULT_VERSION) -> str:
+    """`text` with every furniture and frame line dropped and nothing else changed.
+
+    Raw lines, not normalised ones: the point of the subtraction is to let a counter that cares
+    about exact characters — em dashes, capitalisation — run on what is left.
+    """
+    lines = text.splitlines()
+    mask = furniture_mask(text, version=version)
+    return "\n".join(line for line, hidden in zip(lines, mask, strict=True) if not hidden)
 
 
 @dataclass(frozen=True, slots=True)
@@ -299,13 +482,17 @@ class Event:
     family: str
 
 
-def locate(text: str) -> list[Event]:
+def locate(text: str, *, version: str = DEFAULT_VERSION) -> list[Event]:
     """Every progression event in one chapter, in text order.
 
     The two unit rules do all the work of not double-counting. A furniture RUN is one event
     however many lines it holds, and a sentence outside a run yields at most one event whatever
     else matches inside it.
+
+    `version` selects the frozen block. It defaults to `v0` so nothing written before v2 existed
+    changes its answer, and the caller that wants our own page contract recognised has to say so.
     """
+    _check_version(version)
     events: list[Event] = []
     lines = normalise(text).split("\n")
 
@@ -318,7 +505,7 @@ def locate(text: str) -> list[Event]:
     # Pass 1: furniture runs. A run survives one blank line so a status sheet with spacing
     # stays one notification, and it is an event only if it holds at least one real furniture
     # line — a run of nothing but rule characters is a scene divider.
-    kinds = [_classify(line) for line in lines]
+    kinds = [_classify(line, version=version) for line in lines]
     furniture_line = [kind != "" for kind in kinds]
     start: int | None = None
     has_furniture = False
@@ -380,6 +567,10 @@ class ChapterCadence:
     median_gap: float | None
     gap_cv: float | None
     by_family: dict[str, int]
+    #: Which frozen block produced this row. Defaulted so no existing construction changes, and
+    #: carried on the row rather than only in the manifest so a v0 count and a v2 count can
+    #: never be pooled by accident once they are in the same list.
+    version: str = DEFAULT_VERSION
 
     @property
     def first_event_fraction(self) -> float | None:
@@ -396,9 +587,10 @@ def measure(
     litrpg: bool,
     quarantined: bool,
     cohort: str | None,
+    version: str = DEFAULT_VERSION,
 ) -> ChapterCadence:
     words = len(text.split())
-    events = locate(text)
+    events = locate(text, version=version)
     offsets = [event.word_offset for event in events]
     gaps = [b - a for a, b in pairwise(offsets)]
     by_family = {family: sum(1 for e in events if e.family == family) for family in FAMILIES}
@@ -420,6 +612,7 @@ def measure(
         median_gap=median_gap,
         gap_cv=gap_cv,
         by_family=by_family,
+        version=version,
     )
 
 
@@ -554,10 +747,13 @@ def materialise(
     return manifest
 
 
-def read_intermediate(out_dir: Path, *, batch_size: int = 400) -> Iterator[ChapterCadence]:
+def read_intermediate(
+    out_dir: Path, *, batch_size: int = 400, version: str = DEFAULT_VERSION
+) -> Iterator[ChapterCadence]:
     """Stream the intermediate and measure each chapter. Text is never yielded."""
     import pyarrow.parquet as pq
 
+    _check_version(version)
     handle = pq.ParquetFile(out_dir / "chapters.parquet")
     columns = ["fiction_id", "chapter_id", "litrpg", "quarantined", "cohort", "text"]
     for batch in handle.iter_batches(batch_size=batch_size, columns=columns):
@@ -569,6 +765,7 @@ def read_intermediate(out_dir: Path, *, batch_size: int = 400) -> Iterator[Chapt
                 litrpg=bool(row["litrpg"]),
                 quarantined=bool(row["quarantined"]),
                 cohort=row["cohort"],
+                version=version,
             )
 
 
@@ -679,9 +876,16 @@ def summarise(rows: Sequence[ChapterCadence], *, label: str) -> dict[str, Any]:
     }
 
 
-def census(out_dir: Path) -> dict[str, Any]:
-    """Read the intermediate once and produce every declared population's numbers."""
-    rows = list(read_intermediate(out_dir))
+def census(out_dir: Path, *, version: str = DEFAULT_VERSION) -> dict[str, Any]:
+    """Read the intermediate once and produce every declared population's numbers.
+
+    **`version="v2"` has never been run over the market and stage-0's decision says so.** The
+    path exists so restoring comparability is a command rather than a reimplementation, and it
+    writes its own results file: a v2 pass may not land on v0's artifact, because every market
+    number this project has published for this instrument is v0's.
+    """
+    _check_version(version)
+    rows = list(read_intermediate(out_dir, version=version))
     market = [row for row in rows if not row.quarantined]
     litrpg = [row for row in market if row.litrpg]
     not_litrpg = [row for row in market if not row.litrpg]
@@ -706,9 +910,10 @@ def census(out_dir: Path) -> dict[str, Any]:
 
     def ratio(top: float | None, bottom: float | None) -> float | None:
         return round(top / bottom, 3) if top and bottom else None
+    block = PRE_REGISTRATION if version == "v0" else PRE_REGISTRATION_V2
     return {
-        "instrument": PRE_REGISTRATION["instrument"],
-        "registration_digest": REGISTRATION_DIGEST,
+        "instrument": block["instrument"],
+        "registration_digest": REGISTRATION_DIGEST if version == "v0" else REGISTRATION_DIGEST_V2,
         "computed_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "manifest": json.loads((out_dir / "manifest.json").read_text(encoding="utf-8")),
         "chapters_measured": len(rows),
@@ -738,8 +943,8 @@ def census(out_dir: Path) -> dict[str, Any]:
             ),
             "control_family_share": control.get("family_share"),
         },
-        "declares_no_bar": PRE_REGISTRATION["declares_no_bar"],
-        "residuals": PRE_REGISTRATION["residuals"],
+        "declares_no_bar": block["declares_no_bar"],
+        "residuals": block["residuals"],
     }
 
 
@@ -760,9 +965,109 @@ _SELFTEST_PROSE = (
     "feel real. Later he learned a new skill from the old smith. Nothing else happened."
 )
 
+#: The house page contract, transcribed from an accepted chapter on the shelf. Detector
+#: material and nothing else: no line here reaches a prompt (§97.1). Two prints with prose
+#: between them, which is what the shelf actually publishes, so the block-run rule is exercised
+#: rather than assumed.
+_SELFTEST_HOUSE = (
+    "The board did not argue with her.\n"
+    "\n"
+    "[STATUS] Ines — Rating 3 | Graded 9 | Written 1/12 | Warmth 6/6\n"
+    "\n"
+    "She read it twice and put the slate down.\n"
+    "\n"
+    "[STATUS] Ines — Rating 3 | Graded 9 | Written 2/12 | Warmth 6/6\n"
+    "\n"
+    "Outside, the rain had stopped.\n"
+)
+
+
+def _selftest_v2() -> list[str]:
+    """v2's own pins, including the one that keeps v0 blind on purpose.
+
+    **The v0 assertions here are not a bug being tolerated.** A superseded instrument whose
+    answers quietly changed would invalidate every number published under its digest, so "v0
+    still returns zero on the house sheet" is a property this file defends rather than a
+    defect it has yet to fix.
+    """
+    failures: list[str] = []
+
+    if registration_digest_v2() != REGISTRATION_DIGEST_V2:
+        failures.append("v2's frozen block moved; this is a third instrument")
+    if PRE_REGISTRATION_V2["inherits_registration_digest"] != REGISTRATION_DIGEST:
+        failures.append(
+            "v2 names a parent digest that v0 no longer has — either v0's block moved or v2 "
+            "was written against a different ancestor, and both make the pair unauditable"
+        )
+
+    house = locate(_SELFTEST_HOUSE, version="v2")
+    if len(house) != 2:
+        failures.append(
+            f"the house page contract located {len(house)} events under v2, not 2 — the "
+            "tagged-column shape is the whole reason this version exists"
+        )
+    elif {event.family for event in house} != {"system_block"}:
+        failures.append(f"a house sheet was located as {[e.family for e in house]}")
+    if locate(_SELFTEST_HOUSE):
+        failures.append(
+            "v0 located an event on the house sheet — v0's published market numbers were "
+            "computed by a detector that could not see it, and it must keep not seeing it"
+        )
+
+    # Every v0 case answers identically under v2: the addition is one shape, not a rewrite.
+    for name, sample in (
+        ("furniture", _SELFTEST_FURNITURE),
+        ("prose", _SELFTEST_PROSE),
+        ("divider", "He stopped.\n\n***\n\nShe did not."),
+        ("aside", "[A/N: sorry for the late chapter, exams!]\n\nHe walked on."),
+        ("box", "=====\n| Strength: 14 |\n| Level: 3 |\n=====\n\nHe closed it."),
+    ):
+        if locate(sample) != locate(sample, version="v2"):
+            failures.append(f"v2 changed a v0 answer on the {name} case; it must add only")
+
+    # The reject list runs before the shape check, so an author's note wearing columns is
+    # still an author's note.
+    if _is_furniture("[A/N] late again — sorry 1 | exams 2 | soon 3", version="v2"):
+        failures.append("v2 counted an author's note as a status panel")
+    for shape in (
+        "[STATUS] Ines — Rating 3",  # one column is a sentence with a bracket on it
+        "[STATUS] Ines — Rating | Graded | Written",  # no digit anywhere
+        "The plan — hers, not his — needed three more days.",  # dashes, no tag, no columns
+    ):
+        if _is_furniture(shape, version="v2"):
+            failures.append(f"v2 accepted a shape its narrowings refuse: {shape!r}")
+
+    # The mask, and the em dash that motivated it: the separator is U+2014, so a chapter with
+    # no em dash in its prose scores two on the raw file.
+    mask = furniture_mask(_SELFTEST_HOUSE, version="v2")
+    if sum(mask) != 2:
+        failures.append(f"the v2 mask hid {sum(mask)} lines of the house sample, not 2")
+    if "—" in prose_only(_SELFTEST_HOUSE, version="v2"):
+        failures.append("the v2 mask left the sheet's own em dash in the prose")
+    if "—" not in _SELFTEST_HOUSE:
+        failures.append("the house sample lost its em dash; the mask test proves nothing")
+    if sum(furniture_mask(_SELFTEST_HOUSE)) != 0:
+        failures.append("the v0 mask hid a line it cannot recognise")
+    if sum(furniture_mask("One.\n\n* * *\n\nTwo.", version="v2")) != 1:
+        failures.append("the v2 mask kept the scene separator in the prose")
+
+    for version in VERSIONS:
+        if len(furniture_mask(_SELFTEST_HOUSE, version=version)) != len(
+            _SELFTEST_HOUSE.splitlines()
+        ):
+            failures.append(f"the {version} mask does not index the caller's own lines")
+    try:
+        locate("x", version="v1")
+    except ValueError:
+        pass
+    else:
+        failures.append("an unknown version fell back to v0 instead of refusing")
+
+    return failures
+
 
 def selftest() -> int:
-    """Fails if the frozen block moves or either unit rule stops holding."""
+    """Fails if either frozen block moves or any unit rule stops holding."""
     failures: list[str] = []
 
     if registration_digest() != REGISTRATION_DIGEST:
@@ -811,11 +1116,16 @@ def selftest() -> int:
         if locate("" if name == "empty" else "   \n\n  "):
             failures.append(f"{name} text located an event")
 
+    failures += _selftest_v2()
+
     for failure in failures:
         print(f"FAIL: {failure}", file=sys.stderr)
     if failures:
         return 1
-    print(f"selftest OK — registration_digest {REGISTRATION_DIGEST}")
+    print(
+        f"selftest OK — v0 {REGISTRATION_DIGEST}, v2 {REGISTRATION_DIGEST_V2} "
+        f"(default {DEFAULT_VERSION})"
+    )
     return 0
 
 
@@ -834,8 +1144,19 @@ def main(argv: Sequence[str] | None = None) -> int:
         default=str(DERIVED / "rr-chapters"),
         help="the gitignored intermediate directory",
     )
-    parser.add_argument("--results", default=str(RESULTS / "progression-cadence.json"))
+    parser.add_argument("--results", default="")
     parser.add_argument("--min-words", type=int, default=MIN_WORDS)
+    parser.add_argument(
+        "--version",
+        choices=VERSIONS,
+        default=DEFAULT_VERSION,
+        help=(
+            "which frozen block to count with. v0 is every published market number for this "
+            "instrument; v2 additionally recognises this project's own page contract and has "
+            "NEVER been run over the market — see stage-0's entry before reading one beside "
+            "the other"
+        ),
+    )
     args = parser.parse_args(argv)
 
     if args.command == "selftest":
@@ -849,8 +1170,23 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(json.dumps(manifest, indent=2, ensure_ascii=False))
         return 0
 
-    payload = census(out_dir)
-    target = Path(args.results)
+    default_results = RESULTS / (
+        "progression-cadence.json" if args.version == "v0" else "progression-cadence.v2.json"
+    )
+    target = Path(args.results) if args.results else default_results
+    # A v2 pass may not overwrite the file every §155 number was read off. The guard is on the
+    # path rather than on a digest inside the file, because by the time a digest could be
+    # checked the bytes are already gone.
+    v0_artifact = (RESULTS / "progression-cadence.json").resolve()
+    if args.version != "v0" and target.resolve() == v0_artifact:
+        print(
+            "refusing: progression-cadence.json is v0's artifact and stage-0 §155 reads its "
+            "numbers off it. Write a v2 census somewhere else.",
+            file=sys.stderr,
+        )
+        return 1
+
+    payload = census(out_dir, version=args.version)
     target.parent.mkdir(parents=True, exist_ok=True)
     # `newline=""` because this file is committed and the repository is LF: Python's default
     # text mode would translate every "\n" to CRLF on this box and the diff would be the whole
