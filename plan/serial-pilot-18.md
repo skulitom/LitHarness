@@ -168,3 +168,33 @@ controlled columns, and the thirteen reads' defect families mapped against which
 was live when. Existing instruments only; no new metric is minted (BRIEF.md governs);
 descriptions carry §0's boundary — same-listing redraws are still two draws, never a
 treatment effect.
+
+## 7. Draw 4 — the first chapter through the post-audit pipeline, and the gate's first demoted read
+
+**The run** (serial18d.db, settled listing, draw 3 archived): the first draw with clause-free
+writer prompts (§187), gates-before-reviser and the persisted draft (§188, confirmed live in
+the dossier — 5,169-char draft, sha recorded), and the armed reviser. Every scene accepted on
+its FIRST attempt — zero refusals anywhere, $7.31, zero exceptions. Chapter 1: two scenes,
+2,078 words, at `book-library/the-station-keeps-score--fa09c89c/`.
+
+**PASS/FAIL (structure, mechanics, enumerated items) — PASS on all.** Standalone (bare-hand
+rule, rate/rung mapping, and the listing's unearned-line mystery all taught in-scene);
+diegetic (panels light uninvited, both prints at her palm, and the interface itself is the
+cliffhanger — three words on a panel the reader is not shown, Sabas seizing her wrist);
+progression on-page (Rate 2→3 spoken in dialogue, the grade-on-reach exception dramatized —
+a rung for a patch that TORE while Rooker's held patch earns nothing; Warmth 54→51 ticking
+between prints); cast 3 named; no institutional register; no schema words; §166 clean; §168
+clean — first contact, the patch-war reframe ("it thinks we're the ones breaking things"),
+and the rung-up all land in 2,078 words.
+
+**Residuals for the operator (no verdict — the demoted gate's protocol):** one dialogue
+interruption dash ("Master—", the cut-off form §180 deliberately does not rewrite); one
+comma splice at "flat on the deck, nobody had ever taught her to ask a deck anything, and" —
+plausibly the em-dash strip converting a parenthetical pair, a §180 artifact worth watching;
+"because it was worth his face" (voice-y repetition, a judgment call); the withheld three
+words on the panel is a bold tease — dramatically strong, but the operator may prefer to be
+shown. All comparisons decode at speed; connective tissue present and varied; the elliptical
+characterizations ("because of the ear"; "instead of the other thing") are the iceberg style
+working.
+
+**Read 14 is the operator's.** Covers follow.
