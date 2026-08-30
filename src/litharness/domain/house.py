@@ -426,6 +426,82 @@ CLARITY = (
 #: audience it follows from is a targeting decision and stays in `PLAN.md` and the ledger, never
 #: in a prompt. Nothing is added here, and the floor gets back the one demand of headroom §171
 #: spent.
+#:
+#: **The implication clause landed 2026-08-30 (§179), and it is one sentence for two families
+#: read 11 named separately.** The first is a construction: a narrator asserting an absence or a
+#: universal access that the surrounding words already make obvious. The second is a principle
+#: about the whole register — what a passage implies is not restated, because a reader who is
+#: handed what they already had is being treated as somebody who could not have got there. Two
+#: flagged instances of the first are in a **listing**, and §174 had just established that the
+#: listing does not stand on this floor, so no register clause here had ever reached them.
+#:
+#: **Every demand on the floor was read against all three instances first, which is §154's audit
+#: order, and each missed by its object.** `CLARITY`'s unmet-term clause fails a *name* the reader
+#: has not met, and a restatement introduces none — it is made of words the reader already has.
+#: The two-ways clause fails a sentence with two readings; these have one reading and it is the
+#: right one, which is the difficulty. The object clause fails an object *acting*, the figure
+#: clause a *comparison*, the pronoun clause a referent in doubt: none is present. On this
+#: constant, §168's clause has the unit wrong — its object is a **passage** that settles nothing,
+#: and the defect here is five words hung on the end of a sentence, which no writer can answer by
+#: cutting a passage. §171's clause has the object wrong — it fails a *generalisation used as
+#: explanation*, and an absence asserted about one moment generalises about nobody. So this is
+#: §168's own shape at a third address, an object and a unit leaving a sentence that breaks no
+#: rule, which is the one thing §168.2 licenses a new clause for.
+#:
+#: **Why the floor rather than `CLARITY`, and it is §171's reason unchanged.** All three instances
+#: are followable, and the restatement is what makes their moment *more* followable while it does
+#: the damage. A clarity floor is the one rule that cannot catch a sentence whose defect is being
+#: too explicit, so this belongs beside the economy and register clauses above it and stays in the
+#: provisional tier §129 puts them in.
+#:
+#: **One clause and not two, and the sentence carries the decision.** The negative-space
+#: construction is the special case of the principle where the thing already given is an absence,
+#: so the second arm reads *anything else* its own sentence implies — which says the first arm is
+#: an instance of the second rather than a second rule wearing one terminator (§171's refusal).
+#: Two clauses would have cost two demands at six house numbers and the listing's, and §127's
+#: brake is that a second rule against one complaint is the shape this project has measured
+#: failing four times.
+#:
+#: **The two arms are bounded differently on purpose, and the asymmetry is the whole of what
+#: keeps §163 out.** A restatement needs a source, so that arm is keyed to the sentence it sits
+#: in: a window of one, which cannot reach a callback a chapter later and cannot delete a
+#: deliberate echo across a scene. An absence needs no source to be empty, so that arm is keyed
+#: instead to nothing having put the thing in question — it reaches a bare assertion standing as
+#: its own sentence, where a window-keyed rule would miss it. Neither arm is keyed to what a
+#: passage would be equally true without, which is the truth test §163 removed from this constant
+#: for deleting presence by construction.
+#:
+#: **The boundary the operator drew is carried by the concession, inside the sentence.** An
+#: absence that is genuinely news — a thing that has not happened *since* something, where the
+#: `since` is the information — is the shape a filter keyed one notch wider would delete, and it
+#: is exactly the shape this genre's suspense is built from. The delimiter hangs off a semicolon
+#: rather than standing as its own permission (§161.5's pattern), and it names what the reader
+#: could not have supplied, which is a different test from the head's rather than its negation.
+#:
+#: **No word list, and the refusal is load-bearing rather than stylistic.** The construction has
+#: two surface forms and both are built from ordinary quantifiers. Naming those words in a
+#: prohibition would suppress the words instead of the construction — the failure mode the
+#: clarity constitution deleted every word list for, and §163's lesson about a filter keyed wide
+#: enough to delete presence. The clause names a configuration and contains no quantifier of its
+#: own. No instance list either, for §168's reason unchanged.
+#:
+#: **The price is one demand and no raise, because §174 left exactly that much.** The floor stood
+#: at one demand under `HOUSE_BUDGET` after the readership clause departed, and §176 raised six
+#: ceilings the same day; this clause spends that headroom at all six and moves no number. The
+#: listing pays separately and does move one, in `tests/test_prompt_budget.py`. **The next clause
+#: added here raises six numbers again** — the headroom is now gone, and saying so before the
+#: fact is cheaper than the next track discovering it.
+#:
+#: **Its residual, stated before a census can find it.** An implication whose source is further
+#: back than the sentence the restatement sits in is not reached, and that is the deliberate half
+#: of the bound above; §168's passage clause is what stands against the paragraph-scale version of
+#: the same waste. A later read should expect to find the long-range form still standing.
+#:
+#: Nothing from the chapter or the listing under read is in the clause and none of the operator's
+#: words are (§97.1); the instances are fixtures in `tests/test_implication_register.py` and go
+#: nowhere else. Shipped unmeasured, and the counter that could read it is a separate registered
+#: act: §156's census counts a gloss only behind one of its trigger phrases, so it does not count
+#: this construction today and no number of its is claimed here.
 READER = (
     "Detail that only establishes "
     "who somebody is — the steps of a job, the order of a routine — is not why the reader "
@@ -447,7 +523,10 @@ READER = (
     "the numbers that do.\n"
     "What fails is a narrator explaining what one person did or said with a rule about what "
     "people in general do or mean, however true the rule is; what somebody in the scene makes "
-    "of it is not that."
+    "of it is not that.\n"
+    "What fails is a clause naming an absence or a permission nothing had put in question, or "
+    "stating anything else its own sentence already implies; one carrying what the reader could "
+    "not have supplied is not that."
 )
 
 #: **What the reader is accumulating, and it is the genre's own economics.** The operator,

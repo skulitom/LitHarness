@@ -18836,3 +18836,176 @@ Pinned by `tests/test_statusline.py`, and at the two artifacts by
 `test_the_reading_copy_uses_a_long_form_measure`, and — for the half that must not move —
 `test_the_markdown_copy_keeps_the_status_line_as_written` and
 `test_the_plain_text_chapter_keeps_the_status_line_exactly`.
+
+## 179. A narrator asserting what the sentence already gave had no rule anywhere, and the two instances that named it were in the one artifact standing on no floor
+
+**Defect harvest, not data (§95).** Read 11 (`plan/serial-pilot-16.md` §7) named two items that
+turned out to be one. The first is a construction, and the operator's own definition of it is that
+describing what is *not* there adds complexity without information: a narrator asserting an absence,
+or a universal access, that the words already on the page make obvious. The second is a principle
+about the whole register — what a passage implies is not restated, because a reader handed what they
+already had is being treated as somebody who could not have got there. Three instances were flagged.
+Stated as shapes rather than as text, because §97.1 forbids the text: a trailing clause asserting
+that nobody had done a thing nothing had suggested anybody would; a relative clause naming an access
+nothing had suggested was restricted; and a second half spelling out the consequence its own first
+half already carried.
+
+**Two of the three are in a listing, and that is half the finding.** §174, one day old, had just
+established that the listing is the one production role standing on no house floor — a decision made
+so that fifteen scene-prose demands would stop cramming a hundred-word artifact. The consequence
+nobody had drawn is the one this read drew for us: **no register clause has ever reached the
+listing**, so a family whose named instances live there could not have been caught by any rule this
+project has written, however well aimed.
+
+### 179.1 Measured first: three shapes against every demand at both addresses
+
+`house.demands` was read over `house.CLARITY`, `house.READER`, `house.ACCUMULATION` and
+`application/overview._TASK`, and every demand was read against all three shapes before anything was
+drafted — §154's audit order, which exists because a rule that covers a defect by topic can be
+causing it by form.
+
+Every one missed, and the interesting ones missed by their **object** or their **unit**:
+
+- the unmet-term clause fails a *name* the reader has not met, and a restatement introduces none —
+  it is built from words the reader already holds;
+- the two-ways clause fails a sentence with two readings *available*; these have one reading each and
+  it is the right one, which is precisely the difficulty;
+- the object clause fails an object *acting*, the figure clause a *comparison*, the pronoun clause a
+  referent in doubt: none of the three is present;
+- **§168's clause has the unit wrong.** Its object is a *passage* that settles nothing, and the
+  defect here is five words hung on the end of a sentence. No writer answers that by cutting a
+  passage;
+- **§171's clause has the object wrong, and it is the closest neighbour on the constant.** It fails a
+  *generalisation used as explanation*; an absence asserted about one moment states no rule and
+  generalises about nobody. §156's own counter agrees by construction — it counts a gloss only behind
+  one of five trigger phrases, so it does not count this construction at all;
+- the listing's fifteen were read too. Its nearest is a prohibition on asserting what nobody in the
+  story could know yet, whose object is knowledge the story has not reached, where this is knowledge
+  the story has already delivered — the same axis from the far end.
+
+### 179.2 The ruling: a gap, and an address
+
+An enforcement failure is a live clause that did not land, and its repair is surgery on that clause.
+This is §168.2's shape instead: **nothing in either assembled prompt was violated by any of the three
+sentences.** A sentence that breaks no rule is a gap between what a rule is about and what it can
+fail, and that is the one condition a new clause is licensed for.
+
+The address is the second half of the ruling and does not follow from the first. §174 moved a demand
+*to* the listing because a decision about the person could not be reached from the floor; this entry
+adds one to the listing because a *defect in a listing* could not be. Same finding, opposite
+direction, one day apart.
+
+### 179.3 What shipped: one sentence, at two addresses, byte-identical
+
+Appended to `house.READER` in `src/litharness/domain/house.py` and to `_TASK` in
+`src/litharness/application/overview.py`:
+
+> "What fails is a clause naming an absence or a permission nothing had put in question, or stating
+> anything else its own sentence already implies; one carrying what the reader could not have
+> supplied is not that."
+
+**On the floor rather than on the clarity floor, and §171's reason is unchanged.** All three
+instances are followable; the restatement is what makes their moment *more* followable while it does
+the damage. A clarity floor is the one rule that cannot catch a sentence whose defect is being too
+explicit, so this sits with the economy and register clauses in the provisional tier §129 puts them
+in, and `house.CLARITY` is untouched.
+
+**The identity between the two copies is asserted rather than noted.** `overview` already carries two
+`house.CLARITY` clauses as a recorded second statement; what is new is that
+`test_the_floor_and_the_listing_carry_the_same_sentence` now fails if they drift by a byte. The
+2026-08-26 restoration that put those two back had to establish the same thing by reading both files.
+
+### 179.4 One clause and not two, and the sentence carries the decision
+
+The construction is the special case of the principle where the thing already given is an absence, so
+the second arm reads *anything else* its own sentence implies. That word is a subsumption marker: it
+says the first arm is an instance of the second, which is what distinguishes one rule with two
+fillers from §171's refused second rule wearing one terminator. Two clauses would have cost two
+demands at six house numbers and at the listing's, and §127's brake is that a second rule against one
+complaint is the shape this project has measured failing four times.
+`test_the_second_arm_names_the_first_as_its_general_case` holds it.
+
+**The two arms are bounded differently on purpose, and the asymmetry is the whole of what keeps §163
+out.** A restatement needs a source, so that arm is keyed to the sentence it sits in — a window of
+one, which cannot reach a callback a chapter later and cannot delete a deliberate echo across a
+scene. An absence needs no source to be empty, so that arm carries no window and is keyed instead to
+nothing having put the thing in question, which is what lets it reach a bare assertion standing as
+its own sentence. Keyed the other way round, each arm would miss the shape the other was written for.
+Neither is keyed to what a passage would be equally true without: that is the truth test §163 removed
+from this very constant for deleting presence by construction.
+`test_the_two_arms_are_bounded_differently_and_neither_reaches_a_passage` is the guard.
+
+**The boundary the operator drew is inside the sentence.** An absence that is genuinely news — a
+thing that has not happened *since* something, where the *since* is the information — is what this
+genre's suspense is built from, and a filter one notch wider deletes it. The delimiter hangs off a
+semicolon rather than standing as its own permission (§161.5's pattern, and §138's measurement that a
+permission-only clause returns more than six times what a prohibition-only one does). It names a
+different test from the head's — what the reader could not have supplied — rather than the head's
+negation, which would carry no boundary at all.
+
+### 179.5 The price: the last free clause on the floor, and one ceiling at the listing
+
+**No house ceiling moved, and the reason is arithmetic somebody should have written down a week
+ago.** §176 raised six ceilings for one clause and §174 removed a demand from the floor the same day,
+so every row standing on `house` has been carrying exactly one demand of slack. This clause spends it
+at all six — the floor at 26, `architect seed` at 47, `architect grow` at 43, the two scene rows at 29
+and 33, and the maximal assembled scene prompt at 45, each now level with its ceiling. **The next
+clause added to the floor raises six numbers**, and `tests/test_prompt_budget.py` now says so before
+the fact rather than after somebody rediscovers it.
+
+**The listing pays one ceiling, 16 -> 17**, because it is the role with no floor under it and the
+copy is a real demand. A subtraction was looked for first, which is the order that file asks for, and
+refused: its format facts are measured against this market, its two clarity clauses are a restoration
+of text lost by accident, and §174's demand is a day old.
+
+### 179.6 What was refused
+
+**A word list, and this refusal is load-bearing rather than stylistic.** Both surface forms are built
+from ordinary quantifiers standing as the subject, and the obvious clause names them. That clause
+would suppress the words instead of the construction — every word list this project has deleted was
+deleted for that, and §163 is the standing record of what a filter keyed wide enough to delete
+presence costs. The shipped clause holds no quantifier in that position, and
+`test_the_clause_names_none_of_the_words_the_construction_is_built_from` keeps it that way at both
+addresses.
+
+**An instance list**, for §168's reason unchanged: three clauses in that module were cut for being
+recited back and each was an instance list. The invented fixtures live in
+`tests/test_implication_register.py`, where a later counter can read them and no prompt can.
+
+**An affirmative form.** *Leave things unsaid* is the direction stated as a virtue, and §138 measured
+the permission form of one clause at 47.2 against a prohibition's 7.0, worse than silence at 29.4. It
+ships as what fails or not at all.
+
+**A fourth clause for the collision the third one makes.** The word *implies* now appears twice in
+the listing task with opposite signs: the genre-noun clause says to name the magic and the monsters
+*rather than implying them*. The two do not meet — one governs the book's subject matter, which a
+listing must put in plain words, the other a clause whose content its own sentence already gave — and
+a clause written to pre-empt a model splitting the difference would be §127's fourth rule against a
+complaint nobody has made yet. It is written down here to be looked for in the next draw instead.
+
+### 179.7 The residual, named before a census can find it
+
+An implication whose source is further back than the sentence the restatement sits in is **not
+reached**, and that is the deliberate half of the bound in §179.4. §168's passage clause is what
+stands against the paragraph-scale version of the same waste, one unit up. A later read should expect
+to find the long-range form still standing, and predicting that now is cheaper than explaining it
+afterwards.
+
+### 179.8 Anti-scope
+
+No bar is declared and nothing here is measured: one clause against three instances from one read,
+with no draw behind it, **shipped unmeasured**. No model ranked, selected or judged anything. §156's
+census is not edited and none of its numbers is restated — its counter does not reach this
+construction, and whether an instrument should is a separate registered act. Nothing from the chapter
+or the listing under read reached either prompt and none of the operator's words did (§97.1), checked
+by `test_no_word_of_the_read_11_items_became_prompt_text`. The other four families read 11 named —
+the schema-vocabulary leak, plain diction, the comma-chain sentence, the em dash, the iceberg
+principle — are other tracks' and nothing here addresses them.
+
+Pinned by `tests/test_implication_register.py`, and in particular by
+`test_the_floor_and_the_listing_carry_the_same_sentence`,
+`test_the_second_arm_names_the_first_as_its_general_case`,
+`test_the_two_arms_are_bounded_differently_and_neither_reaches_a_passage`,
+`test_the_boundary_is_a_concession_inside_the_sentence`,
+`test_the_new_clause_is_not_the_narrating_the_inference_prohibition_again` and
+`test_the_clause_rides_the_listing_call_which_carries_no_floor_under_it`.
