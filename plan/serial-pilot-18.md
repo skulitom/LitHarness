@@ -109,3 +109,38 @@ facts, status lines and extracted state preserved mechanically — the §184 gat
 the revision), no ranking anywhere (§61(5): one draft in, one revision out). One track,
 commissioned now. Draw 3's seed proceeds (register-independent); its ticks HOLD until the
 reviser lands so the chapter ships through the full pipeline.
+
+## 5. Draw 3 — the first chapter through the full pipeline, and the gate passes at the operator's bar
+
+**The run** (serial18c.db, the settled listing byte-for-byte): scene 1 was REFUSED three
+times by §184's gate (`progression_unmoved`) before §186 existed — the frozen prompt handed
+the entering line as "the state as it stands" while the plan named a move, and the job
+poisoned on its attempt budget. `resolve` + `replan` (its first production use) reissued the
+beat under epoch 1 with §186's moved-line render, and the scene accepted on the next
+attempt. Chapter 1: two scenes, 1,967 words, $8.10 on the store including the three refused
+attempts and every reviser call; zero open exceptions. Published to
+`book-library/the-station-keeps-score--435c41f9/` — §172's suffixed slug doing its job
+beside draw 2's archived shelf.
+
+**What the reviser changed, read line by line at the operator's bar.** The and-chain
+register is gone: subordinate connectives throughout (before/when/since/until/by then),
+varied openings, zero verbless fragments, zero em dashes, one-topic paragraphs.
+Observations are voiced — the draught read aloud by a character, the sheet read out in
+dialogue, the fittings rule arriving as an argument ("You're graded now, Ines." / "I'm a
+welder with a warm wall." / "You're a fitting."). The read-12 defect families are absent
+from the page. One draw under many simultaneous changes is a description, never a
+treatment effect.
+
+**The progression contract, working end to end for the first time:** the rung-up prints on
+the page (hand → mate, Rating 3, earned by a mend that costs her an arm), the station
+responds (the lights open a road), and the SECOND sheet print teaches the grading rule by
+not moving ("None of that had been worth a mark"). §184 refused until it was real; §186
+made it printable; the reviser carried it byte-identically.
+
+**Residuals below the line:** "trunking" (one niche word); one generic-you gloss ("the way
+you hold a thing you have been given…"); `Warmth 6/6` undecoded in chapter 1 — read as a
+deliberate hook, watched. The Office/escort material runs entirely as dramatized threat in
+dialogue and is judged inside the licence.
+
+**Verdict: pass, on the full reads-4-through-12 checklist.** Covers next; read 13 is the
+operator's.
