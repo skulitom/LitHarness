@@ -222,7 +222,20 @@ BUDGET: dict[str, int] = {
     # which is this table's own trade made in the order it asks for — take something out, then
     # raise what is left on purpose. No ceiling below was lowered to match, because every number
     # here is a maximum and §154's precedent is that counts moving down argue for nothing.
-    "listing writer": 16,
+    #
+    # **Raised 16 -> 17 on 2026-08-30 for one sentence, and this row is the one the read named**
+    # (§179). Read 11 flagged a construction — a narrator asserting an absence or a universal
+    # access the surrounding words already give — and both of its instances are in a **listing**,
+    # which is the one production role that does not stand on the house floor. So the clause
+    # `house.READER` gained the same day could not reach the artifact the defect was found in,
+    # and the same sentence ships at both addresses, byte-identical and asserted so by
+    # `tests/test_implication_register.py`. **A subtraction was looked for first**, which is the
+    # order this file asks for, and there is none available that §138 has not already priced: the
+    # format line and the number clause are measured against this market, the two `house.CLARITY`
+    # clauses are a 2026-08-26 restoration of text lost by accident, and §174's demand is one day
+    # old. So it pays here and says why. The floor's own six rows do **not** move for this clause
+    # — see `HOUSE_BUDGET`.
+    "listing writer": 17,
     # **Raised 42 -> 44 on 2026-08-29, for three sentences that replace an absence** (§163).
     # The seed ask named a ladder and named nothing that hands out its rungs, so the model
     # supplied the nearest issuer it knows and the book got an institution: pilot 14's
@@ -320,6 +333,17 @@ BUDGET: dict[str, int] = {
 #: one *person* to one person or object is a scope word on a rule whose object, remedy and
 #: concession are untouched, so `house.demands` reads the same count — §161.5's in-place pattern,
 #: widened rather than narrowed. Only the figure half needed a sentence.
+#:
+#: **Unmoved on 2026-08-30 by the implication clause, and the standing headroom is now spent**
+#: (§179). §174 took a demand off this floor the same day §176 raised six ceilings for one, so
+#: every row standing on `house` has been carrying exactly one demand of slack: the floor at 25
+#: against this 26, `architect seed` at 46 against 47, `architect grow` at 42 against 43, the two
+#: scene rows at 28 and 32 against 29 and 33, and `SCENE_MAXIMAL_BUDGET` at 44 against 45. One
+#: sentence added to `house.READER` lands once in each and moves no number here. **That is the
+#: last free clause**: the next one added to the floor raises all six, which §171.4 and §176.4
+#: each had to discover by arithmetic — writing it down before the fact is what this table is
+#: for. The listing pays separately and does move, because it is the one role with no floor
+#: under it.
 HOUSE_BUDGET = 26
 
 

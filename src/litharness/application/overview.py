@@ -285,6 +285,41 @@ def chains_too_hard(listing: str, *, ceiling: float) -> bool:
 #: This is not the exception lever named two paragraphs up, which is still structural and still
 #: open. Ceiling 15 -> 16, raised on purpose in `tests/test_prompt_budget.py`. Shipped
 #: unmeasured: no draw stands behind it, and the next listing draw is what reads it.
+#:
+#: **The implication clause arrives here the same day as the floor's, and this is the address the
+#: read actually named** (§179). Read 11 flagged two instances of a construction — a narrator
+#: asserting an absence or a universal access the surrounding words already give — and **both are
+#: in a listing**, not in a chapter. The finding is §174's one paragraph down, running the other
+#: way: that entry moved a clause here because a listing decision could not be reached from the
+#: floor, and this one adds a clause here because a listing *defect* could not be. A register rule
+#: that lives only in `house` reaches every role except the one whose output the operator was
+#: reading.
+#:
+#: **The sentence is byte-identical to `house.READER`'s, and that is a decision rather than a
+#: copy-paste.** This file already carries two clauses of `house.CLARITY` as a recorded second
+#: statement, and the reason given there — one home, pointers elsewhere, and if the canonical text
+#: is ever edited this is the second place to look — applies unchanged. What is new is that the
+#: identity is now *asserted*: `tests/test_implication_register.py` fails if the two texts drift by
+#: a byte, which is the half the 2026-08-26 restoration had to do by hand. Extracting it into a
+#: named constant would reorder a constant whose rendered bytes the budget file counts, and that
+#: is still true.
+#:
+#: **The word `implies` now appears twice in this task with opposite signs, and the collision was
+#: read before it shipped.** The genre-noun clause says to name the magic, the system and the
+#: monsters *rather than implying them*; this one fails a clause that states what its own sentence
+#: already implies. They do not meet: the first governs the book's subject matter, which a listing
+#: must put in plain words, and the second governs a clause whose content the sentence carrying it
+#: has already given. A listing that names its genre plainly and then spells out what that naming
+#: implies fails the second while satisfying the first, which is the intended reading. The next
+#: draw is what would show a model splitting the difference instead, and that is worth watching
+#: rather than pre-empting with a fourth clause (§127).
+#:
+#: Ceiling 16 -> 17, raised on purpose and for one sentence, with the reason in
+#: `tests/test_prompt_budget.py`. **A subtraction was looked for first, in the order that file
+#: asks for, and refused**: every candidate here is either a format fact this market's listings
+#: are measured on or a clause whose removal §138 has already measured the cost of. Shipped
+#: unmeasured; the two instances that named the family are fixtures in a test and reach no prompt
+#: (§97.1).
 _TASK = (
     "You are writing the listing for a new serial: the few lines a reader meets on the front "
     "page of a serial-fiction site, and the only thing that decides whether they open chapter "
@@ -304,6 +339,9 @@ _TASK = (
     "does to somebody.\n"
     "A paragraph holds together or it is not a paragraph: a sentence that could be lifted out "
     "and dropped anywhere in the listing has failed.\n"
+    "What fails is a clause naming an absence or a permission nothing had put in question, or "
+    "stating anything else its own sentence already implies; one carrying what the reader could "
+    "not have supplied is not that.\n"
     "No title, no headings, no tags, no word about the author, and no dashes: this market's "
     "listings punctuate with full stops and commas. The person this happens to is he or she or "
     "I, and never you. About a hundred words."
