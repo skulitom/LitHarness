@@ -320,6 +320,20 @@ BUDGET: dict[str, int] = {
 #: one *person* to one person or object is a scope word on a rule whose object, remedy and
 #: concession are untouched, so `house.demands` reads the same count — §161.5's in-place pattern,
 #: widened rather than narrowed. Only the figure half needed a sentence.
+#:
+#: **Unmoved on 2026-08-30 by the clause read 11 asked for, and the reason this note exists is
+#: that nothing moved** (§180). The chained-sentence prohibition went onto `house.CLARITY` and
+#: `CLARITY`'s closing line came off in the same edit, so the floor reads the count it read
+#: before and none of the five rows standing on it changed. That is the subtraction §176.5 looked
+#: for and refused: it refused the rule's *opening* sentence, which carries a twice-made
+#: correction §127's brake protects, and the closing one — *"a thing the reader cannot follow is
+#: a thing that did not happen"* — restates a standard the opening already sets, encodes no
+#: measurement, and by §154 is the half a writer cannot act on.
+#:
+#: **The headroom is one demand and is left where it was found.** `uv run litharness prompts`
+#: reports the floor under this ceiling, not at it, because §174 gave a demand back the same
+#: week §176 spent one. The next clause added here still costs nothing; the one after it costs
+#: six numbers, which is the residual §171.4 recorded and §176.4 corrected upward.
 HOUSE_BUDGET = 26
 
 

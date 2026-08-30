@@ -18836,3 +18836,177 @@ Pinned by `tests/test_statusline.py`, and at the two artifacts by
 `test_the_reading_copy_uses_a_long_form_measure`, and — for the half that must not move —
 `test_the_markdown_copy_keeps_the_status_line_as_written` and
 `test_the_plain_text_chapter_keeps_the_status_line_exactly`.
+
+## 180. A fourth read named sentence structure and a second named the em dash, and one of them is a shape a writer makes while the other is a character a machine can take out
+
+**Defect harvest, not data (§95).** Read 11 (`plan/serial-pilot-16.md` §7) failed pilot 16 and
+named seven families. This entry owns two of them, and the finding that decides how each is
+answered is that they are not the same kind of thing. One is a shape only a writer can decline to
+produce. The other is a character, and a character does not have to be asked for.
+
+### 180.1 Measured first, on this project's own prose and on nothing else
+
+Ten drafted books on the shelf, 3,810 sentences of prose paragraphs, counted with a crude script
+that is not kept: sentences split on terminal punctuation, and per sentence a count of coordinated
+joins (commas plus free-standing *and*). No corpus was read and no market comparison was made
+(RS1); every number below is ours about ours, and none of them is in a prompt.
+
+- The median sentence is **6 words**; p90 is 29, p99 is 54, and the longest is 86.
+- **9.2% of sentences run past thirty words.** The standing register direction this project has
+  carried since pilot 1 — popcorn reading, cut a growing sentence in two rather than joining
+  clauses — puts one past thirty at *roughly one in twenty*. We are at about one in eleven, which
+  is the first time that direction has been checked against what it produced.
+- The join distribution has a thin tail: **53% of sentences carry no join at all** and 74% carry
+  at most one, while 12.4% reach four or more and 4.4% reach six or more.
+- Em dashes pool at **1.79 per thousand prose words** and are not a house constant. One book of
+  ten has none, and **pilot 16's own chapter is the highest on the shelf at 7.12** — the axis read
+  1 named has not thinned across ten books, which is what "returning at read 11" means measured.
+- Of 78 em dashes in prose, **83% are the spaced habit** (`word — word`) and **17% sit immediately
+  before a closing quote or at a line's end**, which is speech being cut off. There is no third
+  form on the shelf.
+
+### 180.2 The audit came first, and every demand on the floor missed by its object
+
+§154's order. The sentence read 11 named chains six separate actions across two subjects, and
+`house.CLARITY`'s demands were read against it one at a time:
+
+- the unmet-term pair fails a **name** the reader has not met, and it carries none;
+- the two-ways pair fails a sentence with two readings **available** — this one has a single
+  reading, and every clause in it is followable, which is exactly why a floor about following
+  cannot see it;
+- the object pair fails an object **acting**, and each action here has a person doing it;
+- the comparison clause (§176) has no comparison to reach;
+- the paragraph trio's object is a pronoun's referent inside a paragraph, not a sentence's load.
+
+What was left were the two sentences §176.1 had already ruled the half a writer cannot act on.
+**So this is §168.2's shape at a third address** — a gap between what the rule is about and what
+it can fail — and not an enforcement failure.
+
+### 180.3 What shipped for the sentence: one prohibition, and the bound is on actions rather than on length
+
+Appended to `house.CLARITY`:
+
+> "What fails is a sentence in which a fourth thing happens after three already have; length spent
+> on one thing happening is not that."
+
+**The hazard on this axis runs both ways, and that is the whole design.** A cap on sentence length
+would delete the elaborated sentence a genre opening lives on — 9.2% of our sentences are past
+thirty words and most of them are one thing described, not a queue of events — and §163 is the
+standing record of a filter keyed one notch wider than its defect deleting presence by
+construction. So the object is a count of **things that happen**, which is a page surface a writer
+can count as they write it (§154), and the concession names length as **not** the test. The
+concession hangs off a semicolon inside the sentence it bounds rather than standing as its own
+permission: §161.5's pattern at its fourth use, and §138 measured a permission-only clause
+returning more than six times what a prohibition-only one did, worse than silence.
+
+**The bound sits at the fourth action because that is where our own tail begins.** A chain of
+three is ordinary English and is deliberately not reached. No number from 180.1 is in the clause;
+the census decided where to put a word, and the word is *fourth*.
+
+### 180.4 What shipped for the em dash: a rewrite, and deliberately not a clause
+
+`domain/draft.strip_em_dash`, called from `application/handlers.py` on the drafted string before
+`gate_draft` sees it. An em dash in prose becomes a comma; the count is returned and rides on the
+acceptance event as `em_dashes_removed`.
+
+**Why not a clause, and this is the substantive refusal.** A sentence in `house` would cost a
+demand at every role standing on the floor and land inert at the ones that write no prose. Worse,
+it would be this project **instructing about a registered prose axis in the one text that reaches
+every prose call** — the act `directors.legal_brief` and `writers.legal_dossier` refuse a brief
+and a dossier for, whose pattern fires on the word *punctuation* alone, and whose stated reason is
+that `em_dash`'s own hypothesis is VOID (§78.3). The listing role's existing *"no dashes"* line was
+scoped to the listing on exactly that ground, with the scene path left untouched. A rewrite
+asserts nothing in any prompt about what good prose is. It also cannot drift, which matters here
+more than usual: this axis was named at read 1 and no drafting rule was ever written against it,
+and 180.1 shows the rate did not fall on its own in ten books.
+
+**Three details are load-bearing and each was a way to get this wrong.**
+
+1. **A line the book prints as a machine is passed through untouched.** `extraction`'s canon parser
+   keys on a bare U+2014 as the `[STATUS]` line's own separator, with no alternation. Rewriting it
+   would have produced a scene that renders a status panel and extracts no state — which that
+   module's docstring says is indistinguishable from a scene that established nothing. The failure
+   would have been silent. `test_a_status_line_still_parses_after_the_strip` is the assertion.
+2. **A comma, and only a comma.** A full stop makes a fragment of whatever followed a dash that was
+   not joining two clauses, and a mechanical rewrite that can produce ungrammatical prose is worse
+   than the mark. Comma substitution is also the operation this project's own research side
+   certified as the em-dash repair (§85), so production and the instrument do one thing rather than
+   two. Where the text already ends on a stop, no second comma is added.
+3. **It runs before the gate.** Three sites downstream still read the provider string — the
+   duplicate-scene detector's `candidate` and two `content_hash` calls — so a rewrite inside
+   `gate_draft` would have left them describing a string nobody stored. It is also why this could
+   not be a migration over prose already committed: every open finding's span is measured against
+   the text as it stands.
+
+**The mark has one home.** `strip_em_dash` reads `voice.EXHIBITION_MARKERS["em_dash"]` rather than
+spelling the character again, so the one a dossier is refused for carrying and the one a draft has
+removed cannot diverge.
+
+### 180.5 The price: nothing, and the subtraction §176.5 could not make
+
+**No ceiling moved.** `house.CLARITY`'s closing sentence — *"A thing the reader cannot follow is a
+thing that did not happen"* — came off in the same edit the clause went on, so `house.demands`
+reads the count it read before (13 on `CLARITY`, 25 on the floor, measured both ways against
+`HEAD`) and the five rows standing on the floor are untouched. §176.5 looked for this subtraction
+and refused the candidate it found: the rule's **opening** sentence carries the
+following-rather-than-explaining correction the constant was corrected twice in one day to get,
+and §127's brake protects a rule that encodes a measurement. The **closing** one encodes none, has
+no entry anywhere in this ledger, restates a standard the opening already sets, and by §154 is the
+half a writer cannot act on — §176.1 said so itself. §168 paid for its clause by removing a
+sentence of exactly this shape. The floor now closes on a prohibition instead of on a restatement,
+and the one demand of headroom under `HOUSE_BUDGET` is left where it was found.
+
+### 180.6 What was refused
+
+**A numeric cap on sentence length**, for 180.3's reason: it is the formula hazard in the other
+direction and would buy staccato monotony at the price of every elaborated sentence.
+
+**A per-passage density form.** Its object is an aggregate a writer cannot see while writing a
+sentence, which by §154 is a demand landing with its sign multiplied by zero.
+
+**An em-dash clause in `house`**, per 180.4 — and the operator's preference is not softened by
+that refusal. It is enforced more completely by machine than any sentence could enforce it.
+
+**Rewriting the cut-off-speech form**, which is 17% of the mark on our shelf. A comma turns an
+interruption into a clause and an ellipsis turns it into a trailing-off, which is a different
+thing happening to a different character. It is a device rather than a habit; 180.7 names it as a
+residual rather than leaving a later read to find it.
+
+**Any gate, counter or repair over drafted prose.** Nothing here refuses a draft, scores one, or
+asks a model to check one. The strip is a rewrite and the clause is a sentence in a prompt.
+
+**Any use of the operator's words or the chapter's** (§97.1). The clause names neither punctuation
+nor commas — which is also what keeps it clear of `directors._CRAFT_INSTRUCTION` — and
+`test_no_word_of_the_read_11_chapter_became_prompt_text` is the mechanical check.
+
+### 180.7 Residuals, named before the fact
+
+- **A chain of three actions is not reached**, and neither is a chain of *states* rather than acts.
+  A later read should expect to find one standing.
+- **The house floor exhibits the mark it now strips.** `house.CLARITY`, `house.READER` and
+  `application/planner.py`'s scene instruction are all written with em dashes, and
+  `voice.axes_exhibited` exists precisely because a text carrying a mark demonstrates it in every
+  prompt it reaches — which is why a dossier written with one is refused. No rail has ever been
+  pointed at the floor. The strip makes that harmless rather than absent, and de-marking the
+  prompt is a separate edit this track did not make.
+  `test_the_floor_still_carries_the_mark_it_now_strips` keeps it visible.
+- **The repair path is not covered.** `application/repair.py` writes prose through `apply_patch`,
+  which this rewrite does not touch; only the drafting seam is covered.
+- **The en dash is untouched.** `statusline` accepts U+2013 where `extraction` does not, so a draft
+  using one renders a panel and extracts nothing today. That divergence predates this track and is
+  not settled here.
+
+### 180.8 Anti-scope
+
+**Shipped unmeasured, and that is the whole claim.** One prohibition and one rewrite against two
+families, with no draw behind either: no chapter has been written under them, no before-and-after
+exists, and nothing here says either family will thin. The census in 180.1 describes ten books this
+project wrote and supports no claim about quality, about readers, or about the market — no market
+was read. No bar is declared and none could be; the four attainability checks have nothing to run
+on. No research claim is promoted, no mechanism qualified, no axis admitted, and no model read,
+ranked or judged anything for this entry. `em_dash`'s registered hypothesis stays VOID and is
+neither pre-empted nor answered by a rewrite that makes no assertion. Read 11's other five
+families are their own tracks'.
+
+Pinned by `tests/test_sentence_structure.py`, with the ceilings that did not move recorded at
+`HOUSE_BUDGET` in `tests/test_prompt_budget.py`.

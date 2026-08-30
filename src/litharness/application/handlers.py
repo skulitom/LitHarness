@@ -41,7 +41,7 @@ from litharness.application.ports import DraftStore, TextGenerator
 from litharness.application.repair import evaluation_job_for, summary_job_for
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
-from litharness.domain.draft import DraftPolicy, gate_draft
+from litharness.domain.draft import DraftPolicy, gate_draft, strip_em_dash
 from litharness.domain.editorial import (
     InterventionRealization,
     ReaderMechanism,
@@ -362,6 +362,17 @@ def make_scene_draft_handler(
 
         result, resolution = registry.complete(request)
 
+        # **The one punctuation rewrite this system performs, and it happens here rather than
+        # anywhere later for a reason that is about hashes and not about prose** (§180). Three
+        # sites below still read `result.text` — the duplicate-scene detector's `candidate`, and
+        # two `content_hash` calls — so a rewrite applied inside `gate_draft` would leave them
+        # describing a string that was never stored. Rebinding the result before the gate keeps
+        # one text, one hash and one offset space, which is also why it cannot be done as a
+        # migration over prose already in the store: every open finding's span is measured
+        # against the text as committed.
+        drafted, marks_removed = strip_em_dash(result.text)
+        result = replace(result, text=drafted)
+
         outcome = gate_draft(
             revision,
             logical_id,
@@ -569,6 +580,11 @@ def make_scene_draft_handler(
                 "logical_id": logical_id,
                 "accepted": True,
                 "chars": outcome.chars,
+                # **Removing the mark from the prose would otherwise remove the only way to
+                # see how often the model reached for it** (§180). The rate is the quantity
+                # read 1 and read 11 both named, and a census over published books after this
+                # ships would read zero and mean nothing; this is where it stays visible.
+                "em_dashes_removed": marks_removed,
                 "parent_revision_id": revision_id,
             },
         )
