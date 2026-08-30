@@ -34,3 +34,22 @@ One redraw on a fresh store (serial17b.db), same writer, empty brief unchanged. 
 returns another institution-engined premise, that is evidence about the dossier (brannigan's
 own recruit text is title-and-ruling-shaped) and the decision moves to the next recruit with
 the dossier finding recorded — not to a third draw.
+
+## 3. Draw 2 confirms the dossier, and the slate moves on
+
+*Coroner of Monsters* (serial17b.db, book=31aaef92): a failed geology student on a returns
+counter (§174 holding in both draws) made goblin-coroner by a Crown clerk's copy error; the
+system is named **the Ledger** and pays skills for clerical duties; register, statute and
+fee line carry the engine. The same browsing reader passed for the same stated reason
+("literally a paperwork job"). Two independent draws under an empty brief, one engine:
+**the institution-engined premise is brannigan's dossier speaking** — the recruit text is
+built of titles, rulings and rules-lawyering — not a draw accident. Per §2's pre-registered
+rule, no third draw; the slate moves to the next uncast recruit (sandoval), and the finding
+is recorded for a later voiced re-mint of brannigan rather than as a judgment of the writer.
+Both refused listings stay on disk as the evidence (runs/pilots/pilot17/).
+
+Notable in passing: draw 2's engine ("pays him a skill for every duty") is mechanically a
+§160 system — the failure is the register it wears, which is the operator's recorded
+refusal (§116, reads 7/8), not a structural one. And §174 held twice at the premise's
+person while the engine failed elsewhere, which is what single-clause fixes look like from
+one draw away.
