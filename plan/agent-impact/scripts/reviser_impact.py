@@ -35,6 +35,7 @@ import sys
 import tempfile
 from dataclasses import dataclass, field
 from hashlib import sha256
+from itertools import pairwise
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -61,7 +62,9 @@ MACHINE_LINE = re.compile(r"^\[[A-Z][A-Z ]*\]")
 CHAPTER_HEADING = re.compile(r"^## Chapter (\d+)\s*$")
 
 #: §180.1's split, quoted from that entry: "sentences split on terminal punctuation".
-SENTENCE_SPLIT = re.compile(r"(?<=[.!?])[\"'”’]?\s+")
+#: The character class deliberately holds the closing curly quotes (U+201D, U+2019) beside
+#: the straight ones — the exports contain both.
+SENTENCE_SPLIT = re.compile(r"(?<=[.!?])[\"'”’]?\s+")  # noqa: RUF001
 
 #: §180.1's join, quoted from that entry: "a count of coordinated joins (commas plus
 #: free-standing *and*)". Re-derived because that entry records its script "is not kept".
@@ -77,10 +80,15 @@ SUBORDINATORS = ("while", "when", "before", "after", "since", "until", "because"
 #: candidates for the verbless-fragment count, never to produce the count itself — the
 #: flagged set is small enough to be read, and the report carries the confirmed lines.
 VERB_SIGNALS = frozenset(
-    """is was were are am be been being has have had do does did will would can could
-    shall should may might must said says say went came got made took gave saw knew
-    stood sat lay held put let ran came kept left felt found told thought became meant
-    brought sent set read hit shut spread cost cut let bet burst""".split()
+    {
+        "is", "was", "were", "are", "am", "be", "been", "being", "has", "have",
+        "had", "do", "does", "did", "will", "would", "can", "could", "shall",
+        "should", "may", "might", "must", "said", "says", "say", "went", "came",
+        "got", "made", "took", "gave", "saw", "knew", "stood", "sat", "lay",
+        "held", "put", "let", "ran", "kept", "left", "felt", "found", "told",
+        "thought", "became", "meant", "brought", "sent", "set", "read", "hit",
+        "shut", "spread", "cost", "cut", "bet", "burst",
+    }
 )
 VERB_SUFFIX = re.compile(r"(ed|ing|s)$")
 WORD = re.compile(r"[A-Za-z']+")
@@ -137,7 +145,7 @@ def join_profile(sents: list[str]) -> dict[str, object]:
         "max_joins": max(counts) if counts else 0,
         "worst": [
             {"joins": c, "words": len(words(s)), "text": s}
-            for c, s in sorted(zip(counts, sents), key=lambda pair: -pair[0])[:5]
+            for c, s in sorted(zip(counts, sents, strict=True), key=lambda pair: -pair[0])[:5]
         ],
     }
 
@@ -178,7 +186,7 @@ def repeated_openings(sents: list[str]) -> dict[str, object]:
     reading of "beginning the same way" and deliberately not a shape model.
     """
     firsts = [(words(s) or [""])[0].lower() for s in sents]
-    runs = sum(1 for a, b in zip(firsts, firsts[1:]) if a and a == b)
+    runs = sum(1 for a, b in pairwise(firsts) if a and a == b)
     return {
         "adjacent_same_opening": runs,
         "rate_per_100_sentences": 100.0 * runs / len(firsts) if firsts else 0.0,
@@ -324,13 +332,13 @@ def all_decisions(database: Path) -> list[dict[str, object]]:
             ).fetchall()
         finally:
             con.close()
-    keys = (
-        "decision_id outcome job_id logical_id attempt provider model profile invocations "
-        "total_tokens cost_usd reason gates decided_at"
-    ).split()
+    keys = [
+        "decision_id", "outcome", "job_id", "logical_id", "attempt", "provider", "model",
+        "profile", "invocations", "total_tokens", "cost_usd", "reason", "gates", "decided_at",
+    ]
     out = []
     for row in rows:
-        record = dict(zip(keys, row))
+        record = dict(zip(keys, row, strict=True))
         record["gates"] = json.loads(str(record["gates"])) if record["gates"] else []
         out.append(record)
     return out

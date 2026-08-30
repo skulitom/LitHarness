@@ -110,7 +110,13 @@ as §185.7 intended, with no join needed.
 ## 4. The page: plain counts, draw 2 (writer) beside draw 3 (reviser)
 
 Measured by `plan/agent-impact/scripts/reviser_impact.py`
-(`script_sha256 919fc07c55a79b0dc18a7f8c76b41bf12ea4e7ecf887921e4dba5c645f2c06da`) over
+(`script_sha256` ~~`919fc07c55a79b0dc18a7f8c76b41bf12ea4e7ecf887921e4dba5c645f2c06da`~~ — the
+run used those bytes; the file now hashes to
+**`f7309e4e1185af44c17d9743bfc8324a877eef02b9dcc44050fb4925914bb802`** after a lint-only pass
+on 2026-08-30 (ruff RUF001/SIM905/B905/RUF007: a `noqa` on the quoted §180.1 split, two word
+lists spelled as literals, `strict=`/`pairwise` on three equal-length `zip`s) with every
+counter verified identical old-vs-new before this digest was restated, so the table stands as
+measured) over
 `litharness export` text. Unit text digests: draw 2 `3374e5ac73cfbe25` / `1496777913d7ac66`;
 draw 3 `9fb25ab7d4506a39` / `eecc812468f71848`.
 
