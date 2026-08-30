@@ -64,3 +64,48 @@ item — the numbers must go up — surviving at the last unenforced link: sched
 change across the scene's extracted snapshots; deterministic, code-only, the gate family
 §138 licenses) with the design decided from the artifacts, not here. Draw 3 follows the
 merge on the settled listing. No other defect is carried into the redraw.
+
+## 4. Read 12 (draw 2's chapter and the listing), and the operator commissions the reviser
+
+**Defect harvest, not data (§95). Verbatim, the verdict first:**
+
+> *"Something we are doing is really wrong, we are getting worse and worse results"*
+
+And the directive inside the read:
+
+> *"The story should have more flow. I feel like after we have the finished draft write. We
+> should ask a smarter model to rewrite the chapter with the correct sentece and paragraph
+> structure, to make it actually coherent"*
+
+The items: *"A distress call comes from a station the charts stopped carrying"* — bad prose,
+"the charts stopped carrying" an AI tell (the LISTING, which §179 rode and did not land on —
+an enforcement question recorded against that clause). *"and the sheet says she can now"* and
+*"The station is keeping a sheet on them too"* — spoon-feeding, stated twice as the standing
+implication principle ("any reader would already know this from the Litrpg tag... baby
+feeding information to our readers making them angry"). Sentence construction: *"we are
+still missing 'while', 'whilst' connective tissue... This happend and then this happend, and
+then also this was the canse, and this was true too"* — Maria's read-5 item, fourth
+recurrence, now named as the house's paratactic register. The opening should have voiced its
+observation as dialogue (his sketch moves the perception into the character's mouth).
+*"a hull the yard had given up on"* — compressed jargon, nonsensical to the reader. *"The
+running lights had been plain from the bridge"* — "running lights" is trade vocabulary
+(§181's family, on the page despite the clause) AND the paragraph jumps topics mid-stream.
+*", a long soft line of them along a spine, on"* — the appositive fragment style.
+
+**The coordinator's own accounting, owed here:** the gate called draw 2's prose the best on
+the shelf and the operator's read disagrees at the sentence level — the second consecutive
+register miscalibration. The gate's sentence-register bar is hereby the operator's, not the
+coordinator's: paratactic and-chains, appositive fragments, dangling modifiers, unvoiced
+observations and paragraph topic-jumps are defects on sight. And the honest structural
+reading: reads 10–12 item-classes have narrowed from architecture (system, economy, cast,
+iceberg — none recurred) to sentences, which is the surface prompt clauses reach worst
+(§138's whole record). The register was never getting worse; it was never getting better,
+and it is what remains.
+
+**Routing: the reviser stage** — the operator's own directive, matching the admissible
+drafter/reviser shape recorded 2026-08-28 (generative, never judging): a stronger model
+rewrites each accepted draft for sentence and paragraph structure under containment (story
+facts, status lines and extracted state preserved mechanically — the §184 gate re-runs on
+the revision), no ranking anywhere (§61(5): one draft in, one revision out). One track,
+commissioned now. Draw 3's seed proceeds (register-independent); its ticks HOLD until the
+reviser lands so the chapter ships through the full pipeline.
