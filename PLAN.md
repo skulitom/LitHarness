@@ -165,9 +165,12 @@ Line-level craft is a floor under that and never the thing itself — a chapter 
 clear, correct and abandoned, and §1a.3's list is ordered on exactly that principle.
 
 **The audience is defined, and inside the loop it is simulated — only simulated.** The
-readership this project writes for is stated in `domain/house.py`'s `READER` doctrine, in the
+readership this project writes for is stated here and in the ledger, in the
 operator's words: readers in their twenties, for whom the life a protagonist came from is one
-they could have lived. What that audience *does* with a chapter — continue, abandon, return —
+they could have lived. **A targeting decision is not prompt text**, and until 2026-08-30 this one
+was: what reaches a call now is the structural consequence alone, one prohibition in
+`application/overview._TASK` at the call that decides who a book's person is
+([§174](plan/stage-0-decisions.md)). What that audience *does* with a chapter — continue, abandon, return —
 is measured on a **simulated** readership ([stage-0 §97](plan/stage-0-decisions.md)),
 under declared budgets, in behavioural vocabulary and never a verdict
 ([§89](plan/stage-0-decisions.md)).

@@ -245,6 +245,46 @@ def chains_too_hard(listing: str, *, ceiling: float) -> bool:
 #: whoever the book is about. That gap is structural (a protagonist object, a brief), not a
 #: clause: this role is at its ceiling and a clause is what §127 measured failing four times.
 #: Shipped unmeasured; pilot 14 is what reads it.
+#:
+#: **The readership's structural half arrives here on 2026-08-30, and the finding is that it had
+#: been written down for a week at roles that cannot act on it, in the form this file measured
+#: worst** (§174). Read 10 failed pilot 15 on a protagonist who is neither relatable nor
+#: aspirational, and the standing readership direction it converges with (2026-08-23) turned out
+#: to be live prompt text in `house.READER`: *"If the person this happens to came from somewhere
+#: like our own world, the life they came from is one a reader in their twenties has lived: a
+#: degree they are not using, a job that covers the rent, a thing they know far too much about
+#: for no professional reason."* Three things were wrong with it and none of them was the
+#: direction:
+#:
+#: 1. **This call does not carry the house floor** — the decision three paragraphs up — so the
+#:    one call that decides who the person is never saw the clause. Every role that did see it
+#:    receives the person already named by this listing, and by §154 an artifact fixed upstream
+#:    of a call lands with whatever force its sign would give it multiplied by zero.
+#: 2. **Its conditional is false in exactly the case the direction was written against.** A
+#:    village mender native to her own valley never *"came from somewhere like our own world"*,
+#:    so the clause was silent on the premise read 10 rejected.
+#: 3. **It is a permission enumerating three instances of what succeeds**, in the module whose
+#:    own standing constraint forbids that and which has cut three clauses for being recited
+#:    back. §138 measured the permission form of the numbers clause at 47.2 against a
+#:    prohibition's 7.0, and §154 cut two reader-state permissions out of the same constant.
+#:
+#: So the clause changes altitude and sign, and **the demographic does not travel**: what a
+#: prompt gets is the structural consequence — the person is not already good at what the book
+#: will ask of them — and the audience that consequence follows from stays in `PLAN.md` and the
+#: ledger, where a targeting decision belongs and where §97.1 keeps the operator's words. The
+#: positive half of the direction (a degree, a job, an obsession) is deliberately not written:
+#: its permission form is the one this file already measured producing five mundane-job openings
+#: out of eight, and the demand two lines above it exists to keep that biography off the page.
+#:
+#: **Placed on the person clause rather than beside the prior-life ban, and the reason is
+#: addressability.** The ban keeps the years before the book off the page, so nothing about them
+#: can be shown there; what a listing does say is who the person is now and what they are after,
+#: and *already good at the book's own subject* is visible right there. Beside the ban it would
+#: read as a third thing not to write, which is how a demand goes inert.
+#:
+#: This is not the exception lever named two paragraphs up, which is still structural and still
+#: open. Ceiling 15 -> 16, raised on purpose in `tests/test_prompt_budget.py`. Shipped
+#: unmeasured: no draw stands behind it, and the next listing draw is what reads it.
 _TASK = (
     "You are writing the listing for a new serial: the few lines a reader meets on the front "
     "page of a serial-fiction site, and the only thing that decides whether they open chapter "
@@ -257,6 +297,8 @@ _TASK = (
     "A reader scanning a list has to see what kind of book this is and what the person is "
     "after: name the magic, the system, the monsters, the dungeon in plain words rather than "
     "implying them, and say what the person is trying to get.\n"
+    "Whoever this happens to did not spend the years before the book mastering one trade: a "
+    "person who arrives already good at what the book will ask of them has nowhere to go.\n"
     "A term the reader has not met needs a reason to be there before it needs anything else, "
     "and then a consequence rather than a definition: the sentence carrying it says what it "
     "does to somebody.\n"

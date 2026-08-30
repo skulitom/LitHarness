@@ -118,15 +118,19 @@ def test_the_new_demand_was_paid_for_and_not_added() -> None:
     arrived free, and the sentence it removed has not come back. The counts are updated rather
     than loosened, because a `<=` here would stop the file noticing the next silent growth.
 
-    **The floor moved 25 -> 26 on 2026-08-30 for §176**, a figure-clarity prohibition added to
-    `house.CLARITY` and paid for at six ceilings. `house.READER` is untouched by it, which is
-    why only the second count moves: this file's subject is the economy block, and a clause on
-    the clarity floor lands beside it rather than in it.
+**The floor moved 25 -> 26 on 2026-08-30 for §176**, a figure-clarity prohibition added to
+    `house.CLARITY` and paid for at six ceilings, **and back to 25 the same day for §174**, a
+    subtraction and the first movement down this pair has recorded. The readership clause left
+    for `application/overview._TASK`: its subject is who somebody was before the book, every
+    role standing on this floor receives that already fixed by the listing, and the listing is
+    the one role that does not stand on the floor. So READER reads 11 and the floor reads 25:
+    §176's clause lands on the clarity side, §174's departure on the reader side, and what this
+    test asserts is still §168's and is still unchanged.
     """
     assert _THE_SUBTRACTED_AFFIRMATIVE not in house.READER
     assert "Spend the words on" not in house.READER
-    assert len(house.demands(house.READER)) == 12
-    assert len(house.demands(house.HOUSE_RULES)) == 26
+    assert len(house.demands(house.READER)) == 11
+    assert len(house.demands(house.HOUSE_RULES)) == 25
 
 
 def test_the_new_demand_carries_no_instance_list() -> None:

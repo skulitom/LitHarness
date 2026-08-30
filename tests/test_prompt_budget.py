@@ -213,7 +213,16 @@ BUDGET: dict[str, int] = {
     "recruiter, single image": 25,
     "recruiter, several with beat": 25,
     "recruiter, several no beat": 25,
-    "listing writer": 15,
+    # **Raised 15 -> 16 on 2026-08-30, and the demand it pays for arrived from another row**
+    # (§174). The standing readership direction — the protagonist's pre-story life is one the
+    # audience has lived — was live prompt text in `house.READER`, and this is the one role that
+    # does not stand on the floor, so the call that decides who a book's person is was the single
+    # call the direction never reached. Moving it here costs a demand that the floor gives back:
+    # `house-floor` goes 25 -> 24 in the same commit and every row standing on it drops by one,
+    # which is this table's own trade made in the order it asks for — take something out, then
+    # raise what is left on purpose. No ceiling below was lowered to match, because every number
+    # here is a maximum and §154's precedent is that counts moving down argue for nothing.
+    "listing writer": 16,
     # **Raised 42 -> 44 on 2026-08-29, for three sentences that replace an absence** (§163).
     # The seed ask named a ladder and named nothing that hands out its rungs, so the model
     # supplied the nearest issuer it knows and the book got an institution: pilot 14's
