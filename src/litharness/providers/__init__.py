@@ -65,7 +65,12 @@ def build_default_registry() -> ProviderRegistry:
     """
     pad = int(os.environ.get("LITHARNESS_FAKE_PAD_CHARS", "0") or 0)
     if pad:
-        return ProviderRegistry(FakeProvider(pad_to_chars=pad))
+        # `carry_status` rides the same statement for the same reason one gate further on
+        # (§184): a scheduled scene is refused where the state it writes down leaves the
+        # quantity its plan named standing, and echo-and-filler writes no state down at all.
+        # Set here and nowhere else, because this is the road that drafts a book the loop
+        # created rather than one it imported — see the field's own note.
+        return ProviderRegistry(FakeProvider(pad_to_chars=pad, carry_status=True))
     return ProviderRegistry(ClaudeCodeProvider())
 
 

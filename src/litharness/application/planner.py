@@ -67,7 +67,7 @@ from litharness.application.outline import (
     outline_job_id,
 )
 from litharness.application.ports import ApplicationStore, PlanningStore
-from litharness.domain import genre, house, staging, worlds
+from litharness.domain import genre, house, progression, staging, worlds
 from litharness.domain import state as state_mod
 from litharness.domain.beats import (
     SIX_BEAT,
@@ -1130,6 +1130,22 @@ def make_plan_selector(
                         else None
                     )
                 )
+                # **What the beat asked for, recorded where it was asked** (§184). Both
+                # branches above carry the beat — a stored statement had it folded in by
+                # `outline_proposal`, a statement-less scene gets it derived here — so the
+                # composed text is the one place they agree, and reading the ask out of it is
+                # the only answer that does not re-derive one. `movables` supplies the column
+                # the named quantity moves, off the same records the vocabulary came from and
+                # at the position being drafted. Read from `base_plan` rather than from the
+                # wrapped `scene_plan` below because §173's interaction beat only ever appends
+                # after this one, so the answer is identical and the smaller read is the
+                # honest one.
+                beat_target = progression.named_target(
+                    base_plan or "",
+                    records,
+                    character=pov_id,
+                    at=beat.story_order_key,
+                )
                 system, prompt = render_prompt(
                     beat,
                     book_title=_book_title(head),
@@ -1228,6 +1244,22 @@ genre.with_interaction(
                         # under is the one the plan held when the work was selected — a later
                         # template edit cannot retroactively move a scene already written.
                         "story_order_key": beat.story_order_key,
+                        # The scheduled beat's ask, for the gate that checks it landed
+                        # (§184). Two keys rather than one because the name is the book's
+                        # word and the column is the number it moves, and the gate needs
+                        # both without re-deriving either. Absent — rather than null — on
+                        # every scene whose plan named no quantity, which is every
+                        # unscheduled scene, every book with no sheet, and every job
+                        # enqueued before this existed; the gate reads an absence as
+                        # nothing to check.
+                        **(
+                            {
+                                "progression_beat": beat_target.name,
+                                "progression_column": beat_target.key,
+                            }
+                            if beat_target is not None
+                            else {}
+                        ),
                         **(
                             {
                                 "chapter_index": position.chapter_index,

@@ -19785,3 +19785,227 @@ No corpus was read, so RS1 is untouched. No research claim is promoted, no axis 
 mechanism qualified, and no bar declared. One sentence in one prompt: whether a listing drawn under
 it promises what the operator's constraint asks for is the next draw's to find, and the pilot that
 found the gap is the one that reads it.
+
+## 184. Four entries aimed the progression beat and none of them ever asked whether it landed
+
+The beat rides the prompt, `extraction.extract_state` reads a snapshot off the drafted prose, and
+until now the two never met. §155.3 put a progression beat on a schedule, §157 made the schedule
+reach every book length, §161.4 made it name the book's own quantity instead of a category, and
+§170 made it name the protagonist's. Every one of those aims the ask. **Nothing anywhere compared
+the ask against the state the scene wrote down** — the gate ladder in `application/handlers.py`
+holds the extracted records and the job payload in the same function and put them beside each
+other for the integrity detector and not for this — so a scene told *cold seal moves here* could
+come back with cold seal at the value it started on and clear the whole ladder. Read 6 §4.6's
+enforcement shape (the rule existed, the book did not do it, the question is why the clause did
+not land) on §157's own schedule, and read 4's oldest item — the numbers must go up — surviving at
+the last unenforced link.
+
+### 184.1 Measured first, over every scheduled beat the shelf has ever drafted
+
+Twenty-five pilot databases were opened read-only from scratchpad copies and every accepted scene
+was read for the beat in its own frozen prompt, then for what its extraction did to the named
+column. **Seven scheduled progression beats exist on the whole shelf** — beats are a chapter-1
+feature of books drafted since §155.3, and most pilots stop at chapter 1. Six of the seven name a
+quantity; the seventh is pilot 14b's, drawn before §161.4 gave the beat a named form, and it names
+the category `BEAT`.
+
+| store | scene | named | column | before → after | verdict |
+| --- | --- | --- | --- | --- | --- |
+| serial14b | 1 of 8 | *(the categorical form)* | — | — | nothing to check |
+| serial15 | 1 of 6 | Seamwork | `rung` | 2 → 5 | moved |
+| serial15b | 1 of 6 | Holds | `holds` | 1 → 2 | moved |
+| serial15c | 1 of 6 | Keeping | `keeping` | 3 → *(no state written)* | **did not move** |
+| serial15d | 1 of 6 | Hold | `hold` | 2 → 3 | moved |
+| serial16 | 1 of 6 | Depth | `depth` | 0 → 0 | **did not move** |
+| serial18b | 1 of 6 | cold seal | `cold_seal` | 2 → 2 | **did not move** |
+
+**Half of the beats that named a quantity left it standing, and two of the three had already been
+named by a human read.** `plan/serial-pilot-16.md` §4 filed its own as a residual the chapter owed
+(*"the protagonist's own sheet does not move a number this chapter — both prints are identical"*)
+and `plan/serial-pilot-18.md` §3 filed the third as the failure that commissioned this track. The
+arithmetic agrees with both readings and finds one more that nobody had: serial15c is the §170
+book, where the tie between two un-keyed openings sent the whole chapter's interface to a
+thirteen-year-old apprentice and the protagonist's line never reached the page at all. That one is
+a machinery defect §170 has since closed; the other two are a writer told to move a number and not
+moving it.
+
+**Pilot 18b's own rows, since it is the located case.** Canon entering scene 1 holds
+`the_board status_snapshot cold_seal=2, read_the_grain=2, rank=1`, un-keyed, which is the opening
+state; the writer was handed exactly that line. `extraction.movables` offered
+`('cold seal', 'read the grain', 'fitter')` — the **system** arm, `legal_moves` returning two
+`DEEPEN`s and a `RISE` — and `genre.beat_text(1, 6)` composed *"cold seal moves here, and the
+person it belongs to is there when it does"*, byte-identical to the stored prompt. The scene then
+**did** mint a canon snapshot at `s1`, identical in every field, and scene 2 minted another at
+`s2`, identical again. The gate ladder that ran on it: `shape.draft.v0` pass (964 words against a
+target of 900), `integrity.standing.v0` pass, `integrity.findings.v0` pass (*4 detector(s) ran,
+nothing found*). Three gates, all deterministic, all blocking, none of them about the schedule.
+
+### 184.2 What shipped
+
+**One deterministic comparison, and the ask recorded where it is composed.**
+
+`domain/progression.py` is new and holds both halves. `named_target` answers *what did this
+scene's plan name, and which column does that quantity move* — `genre.beat_name_in` reads the name
+out of the composed plan text and `extraction.movables` supplies the column — and
+`application/planner.py` calls it beside the fold and puts both halves on the job payload's
+`selected_by`, next to `story_order_key`, which travels there for the identical recorded reason:
+*"the position a scene was extracted under is the one the plan held when the work was selected"*.
+`gate_progression` then compares two integers out of `stored_records` and `extracted`, the same
+two values the integrity gate is handed one line above, and **re-derives nothing**.
+
+**Reading the plan rather than recomputing one is the decision this entry would defend first.**
+Two paths fold a beat in — `outline_proposal` writes it into a stored statement, the drafting
+selector derives one for a scene with no statement — and they use different records at different
+times. Asking either what it *would* name now is a reading of today; asking the text what it *did*
+name is a reading of the ask. `genre.BEAT_TAIL` already existed as the one string that answers
+"did the schedule fire here", so the inverse had a place to live and no new house text was
+written.
+
+**`extraction.movable_names` is now a projection of `extraction.movables`**, which returns
+`(name, column)` pairs. The word the plan carries and the number a later check reads come from one
+function, so they cannot come apart — the mapping from a label to a column is never invented at
+check time. `counted_names` is the same projection of the legacy arm. In the system arm a gain or
+a deepen takes the ability's own column and a rise takes `gamesystem.RANK_KEY`, which is the one
+place the halves differ and it differs because a rank has a name of its own while the column
+carrying it does not.
+
+**Any change, and never a direction.** The beat's sentence is *moves here*. A gate requiring the
+number to rise would enforce something the writer was never told; one requiring a magnitude would
+be a bar. Recorded as a refusal below rather than as a limitation.
+
+`tests/test_progression_gate.py` is the file, eighteen assertions in five groups named in its
+docstring.
+
+### 184.3 Blocking, and the precedent it follows
+
+**Born blocking, at `VerdictSource.DETERMINISTIC`, with no advisory stage.** The precedent was
+read off the ladder rather than argued: every deterministic gate on the drafting path blocks
+(`shape.draft.v0`, `integrity.standing.v0`, `integrity.findings.v0`, and every `budget.*`), and
+every gate in this repository that only annotates does so because its verdict comes from a model
+or from a mechanism nothing has qualified — `readers.CONTINUE_PROFILE` and
+`overview.OVERVIEW_PROFILE` are sim-reader outputs, and `PolicyDecision.__post_init__` enforces
+the one promotion rule there is: a blocking **craft** gate without a `calibration_id` raises.
+There is no advisory-first ladder for arithmetic here, and §158's floor is the precedent for a
+mechanical predicate shipping enforced on its first day.
+
+The one argument for advisory-first was an unknown fire rate, and §184.1 answered it: three fires
+in six named beats, two of them already named independently by a human read, and **no fire among
+the three that moved**. A gate that refused those would have refused the shelf.
+
+**`Veto.PROGRESSION_UNMOVED` is `RETRYABLE`, beside `LENGTH_MOVEMENT`, and deliberately not
+`PARKABLE`.** That set exists because retrying against a *calibrated craft proxy* is rejection
+sampling — the calibration was measured on the passive distribution and three attempts select the
+half of the generator it favours rather than observing it three times. None of that argument
+reaches a comparison of two stored integers: a second attempt is not optimisation against a
+threshold, it is asking again for a thing the prompt already asked for in words. So the unit earns
+its bounded attempts and then parks on the budget, which is `SHAPE_NOT_CONFORMING`'s own path.
+
+**The refusal reaches an operator and never the writer, and that is enforced by where it is
+written rather than promised.** The prompt is frozen at enqueue and the retry re-sends it
+unchanged; the detail lands on the policy decision and in the refusal event. §97.1's rule is that
+a rejection carries no explanation back into generation, and a gate that wrote its complaint into
+the next attempt would be exactly the channel the `debug-book` rule exists to keep shut. The
+sentence therefore names the missing fact and nothing else — pilot 18b's own reads *"cold seal was
+named as moving here; cold_seal reads 2 at s1 before and after"* — with no adjective, no
+instruction, and no word of `house.MACHINERY_WORDS`, which
+`test_no_refusal_of_this_gate_reaches_the_next_attempts_prompt` asserts over the text rather than
+about it.
+
+### 184.4 The abstention that keeps this a gate rather than an outage, and running the suite is what found it
+
+**A position the book already wrote down is not one this scene moves anything at.** An imported
+book arrives holding a snapshot for *every* story position at once — both golden fixtures do — and
+`application/planner.py` records what such a record means where it selects it: *"a status snapshot
+is the value entering its keyed scene"*. So the numbers such a scene is shown at `s1` are the
+numbers its own author stated for `s1`, and writing different ones mints a second canon snapshot
+at one key, which is precisely the shape `integrity.detect_contradictions` groups on and refuses.
+Without the abstention the golden litrpg fixture could pass neither gate: move the number and it
+contradicts, leave it and it stalls. Eleven suite failures are how that was found, and the first
+draft of this gate was wrong in exactly that way.
+
+A book being written rather than imported has no record at its own position until it drafts one —
+it carries the un-keyed opening state, and the `stands_at`-space records an Architect scheduled
+are in another key space and unreachable from here (§165). Which is every serial pilot, and every
+book this gate was commissioned for. `test_a_position_the_book_already_wrote_down_is_not_one_this_scene_moves`
+holds both sides.
+
+**Three further abstentions, each saying which it is in `detail`**: a scene with no story position
+to place a state at, a book whose standing line prints no such column, and a name this book's
+vocabulary no longer offers here. The last is an abstention rather than a guess for `Movable`'s own
+reason — a fall-back mapping invented at check time would be the second answer the pair exists to
+prevent.
+
+**And the model-free run.** `LITHARNESS_FAKE_PAD_CHARS` is the one road to running this loop
+without a provider, and echo-and-filler output writes no state down, so every scheduled scene of
+every such run would refuse. `FakeProvider.pad_to_chars` already records the ruling for this exact
+dilemma one gate earlier — *"the alternative was lowering `min_chars`, and `domain/draft.py`
+forbids exactly that class of convenience relaxation: a gate loosened to make a test pass is not a
+gate"* — so the same answer was taken: `FakeProvider.carry_status` echoes the book's own line with
+its unpaired numbers moved, and `build_default_registry` is the one caller that sets it. **A
+separate field rather than a widening of `pad_to_chars`**, because padding an imported book is
+ordinary and moving its numbers is the contradiction above; the switch belongs to the road that
+drafts a book the loop created. No gate was loosened and no policy flag was added: there is no way
+to turn this gate off.
+
+### 184.5 What was refused
+
+- **A direction or a magnitude.** Covered above; the beat says *moves*, and a floor under the size
+  of a move would be a bar with no distribution to place it in.
+- **A second parse surface.** A rise can reach canon through the graph line as a `stands_at` edge
+  without the printed line moving, and this gate would read that as unmoved. Widening it to read
+  that edge was refused on §160.3's rule and §173.7's precedent — the one parsed surface is the
+  digits-only status line, and a second reader of one predicate is a second answer to "what did
+  this chapter establish". **Named as a live residual** rather than fixed: a chapter that raises a
+  ticket on the graph line and prints a stale status line is refused by this gate.
+- **A finding.** Routing the refusal through `integrity.gate_integrity` as a detector would make it
+  *standing* against the node, and a standing finding parks the next attempt pre-flight before any
+  generation — so the unit would get one attempt rather than the bounded three its veto class
+  earns. A `GateOutcome` of its own keeps the retry the classification licenses.
+- **A gate row on a scene that carries no named beat.** `gate_standing` returns a passing gate so
+  an audit can tell "ran and found nothing" from "never wired", and that argument does not bind
+  here: whether a beat was scheduled at this position is already derivable from the dossier, since
+  `beat_ordinals` is a pure function of the ordinal and the total and both sit in `selected_by`. A
+  row saying *no beat fired* would restate a fact the record already carries. Where a beat did name
+  a quantity the row is written whether it passed or failed.
+- **Firing on a beat that asked for no move.** §173's interaction and offer forms end in their own
+  words rather than in `BEAT_TAIL`, and `extraction._named_moves` drops a `CHOOSE` because taking a
+  fork moves no number. A gate reading either as a request to move something would be §161.4's own
+  defect — a beat satisfied by the wrong thing — arriving through a third door.
+  `test_the_gate_cannot_fire_on_a_scene_whose_beat_asked_for_no_move` and
+  `test_a_fork_is_never_a_named_quantity_even_beside_a_beat_that_did_fire` hold it from both ends.
+- **Any prompt text.** `litharness prompts` is byte-identical before and after: every role at the
+  same characters and the same demand count, and no clause was added to `house.py` or anywhere
+  else. This is §110/§157's shape — aim the machinery, add no adjective — and §173.4's arithmetic
+  is why it had to be: the floor and three of the roles standing on it sit at their ceilings.
+- **Touching whose line it is.** §170.3's fall-through stands: pilot 18b's printed line belongs to
+  `the_board`, the system entity, because its declared protagonist holds no snapshot of her own.
+  The gate reads whatever `extraction.snapshot_at` selects and takes no view — a book whose
+  sheet-holder is somebody the world did not name as its own is that entry's residual, not this
+  one's.
+
+### 184.6 No bar, and one observation left where it was found
+
+**No bar is declared and §61's four attainability checks have nothing to run on.** The gate's
+verdict is an inequality between two integers read out of stored records — there is no quantity
+with a range, a direction or a distribution, and the seven rows of §184.1 are a census of stored
+prompts and stored records rather than a threshold anything must clear. No model ranked, selected
+or judged anything: `movables` returns declaration order, `beat_text` rotates by schedule position,
+and the gate compares. No model was called, no book was drawn, and no paid call was made. The pilot
+databases were opened read-only and copied to a scratchpad before any read, so no `runs/` store was
+written to. No corpus was read, so RS1 is untouched, and no research claim is promoted.
+
+**One observation, recorded and not acted on**: `policy.policy_digest` does not fold
+`DraftPolicy.require_starting_sheet` into its material, although that field's own docstring says it
+lives in the policy so the decision record cites it. Found while looking for the precedent for a
+policy-gated floor; not fixed here, because adding a key to that digest moves every decision
+written after it for a reason unrelated to this track.
+
+### 184.7 Anti-scope
+
+**Shipped unmeasured on the page, and that is the whole claim.** The gate is verified against the
+records of draws that already happened and against its own suite, with no claim that a later
+chapter reads better — only that a scene whose plan named a quantity and whose state does not move
+it no longer passes. Nothing here reaches the writer, the roster, the listing task, the editorial
+control plane, the reader loop, or any dossier. Whether the writers this refuses can write their
+way past it in the attempts they earn is pilot 18's redraw to find, and this entry claims it in
+advance nowhere.

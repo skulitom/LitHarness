@@ -1207,8 +1207,11 @@ def test_a_book_with_no_snapshot_could_not_extract_a_single_fact_it_wrote(
     ordinal scheme `test_the_obvious_order_key_scheme_is_wrong` refutes.
     """
     book_id, branch_id = _book_zero(store)
+    # Level rises off the seed's 3 because scene 1 carries a scheduled progression beat and
+    # §184 refuses a scene that leaves the quantity its plan named standing. Gold is what this
+    # test is about and is deliberately unchanged.
     loop = _writing(
-        store, _scene({"level": 3, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10, "gold": 45})
+        store, _scene({"level": 4, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10, "gold": 45})
     )
 
     loop.tick(START)
@@ -1244,11 +1247,26 @@ def test_every_scene_of_a_book_zero_run_is_placed_not_just_the_first(
     """
     book_id, branch_id = _book_zero(store)
     balances = [45, 40, 38, 33, 30, 20]
+    # **The canned book progresses, and it has to** (§184). Scenes 1, 3 and 5 carry a scheduled
+    # progression beat naming Level, HP and MP in turn — `beat_text` rotates by schedule
+    # position — and a scene that leaves its named quantity standing is refused, so a run whose
+    # every scene printed the seed's own numbers would draft nothing and this test would be
+    # asserting about a book that does not exist. Gold is the column this test reads and its
+    # balances are untouched; the three the schedule names move under their own maxima.
     registry = ProviderRegistry(
         FakeProvider(
             responses=[
-                _scene({"level": 3, "hp": 24, "hp_max": 30, "mp": 8, "mp_max": 10, "gold": gold})
-                for gold in balances
+                _scene(
+                    {
+                        "level": 4 + index,
+                        "hp": 25 + index,
+                        "hp_max": 30,
+                        "mp": 9 + index % 2,
+                        "mp_max": 10,
+                        "gold": gold,
+                    }
+                )
+                for index, gold in enumerate(balances)
             ]
         )
     )

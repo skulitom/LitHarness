@@ -398,6 +398,49 @@ def beat_text(
     return NAMED_BEAT.format(name=counts[position % len(counts)])
 
 
+#: `BEAT` with its tail taken off: what the categorical form puts where a name would go.
+_BEAT_HEAD = BEAT[: -len(BEAT_TAIL)].strip()
+
+
+def beat_name_in(statement: str) -> str | None:
+    """The quantity a composed scene plan names as moving, or `None` where it names none.
+
+    **The inverse of `beat_text`'s naming half, and it reads the composed plan rather than
+    recomputing one.** Two paths fold a beat into a plan — `outline_proposal` writes it into a
+    stored statement, and the drafting selector derives one for a scene that has no statement —
+    and the two use different records at different times. Asking either what it *would* name
+    now is a re-derivation; asking the text what it *did* name is a reading. §170's rule that
+    two readers of one sheet must not pick different ones applies here through the other door:
+    this is the only reader, and its subject is the string that went to the writer.
+
+    `None` covers three cases with one right answer — nothing to verify:
+
+    - no beat fired here (an unscheduled scene, whose plan is untouched by this schedule);
+    - the categorical `BEAT` fired, which names a category and not a quantity, and is what
+      every book with no sheet gets (§161.4's control);
+    - the interaction and offer beats, which end in their own words rather than in `BEAT_TAIL`
+      — an offer says a fork *stands open* and a `CHOOSE` moves no number at all, which is why
+      `extraction._named_moves` drops it. A beat that asked for no move cannot be read as
+      having asked for one.
+
+    Both fold sites append after the beat (`with_bound`, `with_interaction`), so what precedes
+    `BEAT_TAIL` is the name whatever else the plan went on to say.
+    """
+    at = statement.find(BEAT_TAIL)
+    if at < 0:
+        return None
+    head = statement[:at].rstrip()
+    start = 0
+    for terminator in (". ", "! ", "? ", "\n"):
+        found = head.rfind(terminator)
+        if found >= 0:
+            start = max(start, found + len(terminator))
+    name = head[start:].strip()
+    if not name or name == _BEAT_HEAD:
+        return None
+    return name
+
+
 # --------------------------------------------------------------------------- the reading half
 
 #: **The operator, read 10 on serial pilot 15b draw 4, 2026-08-30** — recorded in
@@ -570,6 +613,7 @@ __all__ = [
     "NAMED_BEAT",
     "NO_SHEET",
     "OFFER_BEAT",
+    "beat_name_in",
     "beat_ordinals",
     "beat_text",
     "genre_block",
