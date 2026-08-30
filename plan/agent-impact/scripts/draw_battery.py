@@ -1,0 +1,370 @@
+"""Run the existing code-only instruments over one chapter-1 text per draw.
+
+**Operator diagnostics, not research** (§95's sanctioned channel; `BRIEF.md` governs what may
+become evidence and nothing here asks to). **No new metric is minted.** Every counter below is
+imported from where it already lives; the two exceptions are marked `REIMPLEMENTED` and
+`NOT-AN-INSTRUMENT` in the output and in `plan/agent-impact/draw-battery.md`, and both say why.
+
+**No model reads anything here.** Regex and arithmetic over text, end to end. No corpus is
+opened, so RS1 is untouched, and nothing under `src/litharness/` imports this file.
+
+What is reused, and from where:
+
+| quantity | reused from |
+| --- | --- |
+| words | `len(text.split())`, the pipeline's own idiom (`application/export.py:57`) |
+| inference-gloss tiers | `register_census.gloss_counts` |
+| proper nouns | `register_census.proper_nouns` |
+| progression events | `progression_cadence.measure` |
+| number families | `number_context.measure` |
+| em dashes | `voice.exhibition_census` |
+| sentences | `voice.sentences` |
+| `[STATUS]` lines | `statusline.parse_status_line` |
+| machinery names in prose | `schema_words.named_in` |
+
+Two quantities have no instrument in the repo and are computed here under a flag:
+
+- **`chain_*` (REIMPLEMENTED).** §180.1 ran its census with "a crude script that is not kept",
+  so there is no §180 counter to reuse. The definition below is transcribed from §180.1's own
+  sentence -- sentences split on terminal punctuation, and per sentence a count of coordinated
+  joins (commas plus free-standing *and*) -- and the bound is §180.3's fourth action. Because the
+  original script is gone, **these levels are not comparable with §180.1's published
+  distribution**; only the columns of this table are comparable with each other.
+- **`proper_nouns` (NOT-AN-INSTRUMENT for cast size).** §175 shipped a prompt bound and
+  `domain/staging.py` says in its own docstring that no count of drafted prose was built. The
+  proper-noun counter reused here is a strict superset of named characters -- it also catches
+  places, institutions and system names -- so it is reported as proper nouns and never as cast.
+
+    uv run python plan/agent-impact/scripts/draw_battery.py --artifact-root C:/DEV/LitHarness
+
+Re-runnable: it reads text files and writes JSON to stdout. It writes nothing else and needs no
+database, no corpus and no network.
+"""
+
+from __future__ import annotations
+
+import argparse
+import importlib.util
+import json
+import re
+import statistics
+import sys
+from collections.abc import Sequence
+from itertools import pairwise
+from pathlib import Path
+from typing import Any
+
+REPO = Path(__file__).resolve().parents[3]
+RESEARCH = REPO / "research" / "quality-measurement"
+
+
+def _load(name: str) -> Any:
+    """Import a `research/quality-measurement` module by path.
+
+    That directory is not a package and its modules import each other by bare name, so the
+    directory goes on `sys.path` once and the modules are then ordinary imports.
+    """
+    if str(RESEARCH) not in sys.path:
+        sys.path.insert(0, str(RESEARCH))
+    spec = importlib.util.spec_from_file_location(name, RESEARCH / f"{name}.py")
+    if spec is None or spec.loader is None:  # pragma: no cover - path is fixed
+        raise RuntimeError(f"cannot load {name}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+register_census = _load("register_census")
+progression_cadence = _load("progression_cadence")
+number_context = _load("number_context")
+
+from litharness.application import statusline  # noqa: E402
+from litharness.domain import draft as draft_mod  # noqa: E402
+from litharness.domain import schema_words, voice  # noqa: E402
+
+# --------------------------------------------------------------------------- prose vs system
+
+#: The published chapter file interleaves prose with the book's own `[STATUS]` furniture and a
+#: `* * *` scene separator. Three of the counters below are contaminated by that if it is left
+#: in, each in a way that was measured rather than assumed:
+#:
+#: - **em dashes (large).** The `[STATUS]` line's subject separator IS U+2014, so a chapter with
+#:   two prints scores 2 before a single dash appears in a sentence -- and three draws whose
+#:   prose carries none scored 2 on the raw file. `draft.strip_em_dash` protects exactly these
+#:   lines in production, so the production boundary is the right one here.
+#: - **proper nouns (large).** Sheet labels are capitalised mid-line, so
+#:   `register_census.proper_nouns` reads `Carried`, `Hearing`, `Piecing` as names: p15-d4 falls
+#:   from 31 distinct to 25 once the furniture is dropped, p16 from 21 to 18.
+#: - **sentence length (small, and measured rather than assumed).** A status line carries no
+#:   terminal punctuation, so `voice.sentences` folds it into its neighbour. On this shelf that
+#:   moves the sentence COUNT by at most one (p15-d1 140 -> 139, p15-d3 141 -> 140) and changes
+#:   **no** chapter's longest sentence. p15-d2's 98-word maximum is a real prose sentence and
+#:   not an artifact of the furniture, which is the check that corrected this note.
+#:
+#: The boundary is `draft._SYSTEM_LINE`, the pipeline's own definition of a system line, so no
+#: second rule is invented here.
+_SEPARATOR = "* * *"
+
+
+def prose_only(text: str) -> str:
+    """The chapter with its system lines and scene separator dropped, nothing else changed."""
+    return "\n".join(
+        line
+        for line in text.splitlines()
+        if not draft_mod._SYSTEM_LINE.match(line.strip()) and line.strip() != _SEPARATOR
+    )
+
+# --------------------------------------------------------------------------- the draws
+
+#: `(draw id, shelf-or-archive path relative to the artifact root)`, in draw order. Every path
+#: is the chapter 1 the coordinating record names; the archives are the redraw families' earlier
+#: copies, kept because two draws of one title share a slug (pilot 15b §7, stage-0 §172).
+DRAWS: tuple[tuple[str, str], ...] = (
+    ("p14", "book-library/unlicensed-weather/chapters/Chapter1.txt"),
+    ("p15-d1", "runs/pilots/pilot15/shelf-draw-1/chapters/Chapter1.txt"),
+    ("p15-d2", "runs/pilots/pilot15/shelf-draw-2/chapters/Chapter1.txt"),
+    ("p15-d3", "runs/pilots/pilot15/shelf-draw-3/chapters/Chapter1.txt"),
+    ("p15-d4", "book-library/what-the-kettle-remembers/chapters/Chapter1.txt"),
+    ("p16", "book-library/reading-the-ladder-wrong/chapters/Chapter1.txt"),
+    ("p18-d2", "runs/pilots/pilot18/shelf-draw-2/chapters/Chapter1.txt"),
+    ("p18-d3", "book-library/the-station-keeps-score--435c41f9/chapters/Chapter1.txt"),
+)
+
+#: Optional context columns, pre-redesign. Cheap because they are the same two file reads.
+CONTEXT: tuple[tuple[str, str], ...] = (
+    ("p12", "book-library/patch-notes-for-the-apocalypse/chapters/Chapter1.txt"),
+    ("p13", "book-library/the-rainwright-s-apprentice-has-no-licence/chapters/Chapter1.txt"),
+)
+
+# --------------------------------------------------------------------------- the two flagged
+
+#: §180.1's stated object: "commas plus free-standing *and*". Free-standing means the word, not
+#: the substring, so `\band\b` and never `handle`.
+_JOIN = re.compile(r",|\band\b", re.IGNORECASE)
+#: §180.3's bound: "a fourth thing happens after three already have".
+_CHAIN_BOUND = 4
+#: The task's own second sentence bound, kept separate from the chain bound.
+_LONG_SENTENCE = 30
+
+
+def chain_profile(text: str) -> dict[str, Any]:
+    """§180.1's census definition, REIMPLEMENTED because its script was not kept.
+
+    Splitting is `voice.sentences`, which is the repo's one shipped splitter, rather than a
+    second one written here -- so only the per-sentence join count is new.
+    """
+    sents = voice.sentences(text)
+    joins = [len(_JOIN.findall(s)) for s in sents]
+    n = len(joins)
+    return {
+        "sentences": n,
+        "joins_mean": round(statistics.fmean(joins), 3) if joins else None,
+        "joins_max": max(joins) if joins else None,
+        "chained_4plus": sum(1 for j in joins if j >= _CHAIN_BOUND),
+        "chained_4plus_share": round(sum(1 for j in joins if j >= _CHAIN_BOUND) / n, 4)
+        if n
+        else None,
+        "chained_6plus": sum(1 for j in joins if j >= 6),
+    }
+
+
+def sentence_profile(text: str) -> dict[str, Any]:
+    """Mean, median and the over-30 share, over `voice.sentences` and `voice._WORD`."""
+    sents = voice.sentences(text)
+    lengths = [len(voice._WORD.findall(s)) for s in sents]
+    lengths = [n for n in lengths if n]
+    if not lengths:
+        return {"sentences": 0}
+    over = sum(1 for n in lengths if n > _LONG_SENTENCE)
+    return {
+        "sentences": len(lengths),
+        "words_mean": round(statistics.fmean(lengths), 2),
+        "words_median": round(statistics.median(lengths), 1),
+        "words_max": max(lengths),
+        "over_30": over,
+        "over_30_share": round(over / len(lengths), 4),
+    }
+
+
+# --------------------------------------------------------------------------- status lines
+
+
+def status_profile(text: str) -> dict[str, Any]:
+    """Every `[STATUS]` line, and whether any subject's own number changes across them.
+
+    `statusline.parse_status_line` is the renderer's shape-only parser -- it does not require
+    the book's declared labels or numeric values, which is what makes it the one that runs on
+    bare prose. A cell is "moved" when the same subject's same-labelled cell differs between
+    two consecutive prints. Comparison is on the raw cell string, so `2/4` -> `3/4` counts and
+    no arithmetic is attempted on a paired cell.
+    """
+    lines = [
+        parsed
+        for raw in text.splitlines()
+        if (parsed := statusline.parse_status_line(raw.strip())) is not None
+    ]
+    subjects = sorted({line.subject for line in lines})
+    moved: list[str] = []
+    for subject in subjects:
+        prints = [dict(line.cells) for line in lines if line.subject == subject]
+        for before, after in pairwise(prints):
+            for label, value in after.items():
+                if label in before and before[label] != value:
+                    moved.append(f"{subject}:{label} {before[label]}->{value}")
+    return {
+        "status_lines": len(lines),
+        "subjects": subjects,
+        # §169's defect is a subject rendered as the records hold it rather than as the book
+        # displays it. Snake_case is the instance §169 was written on (`tam_cawl`); an
+        # all-lowercase bare id is the same defect without an underscore (`mira`), so the test
+        # is "carries no capital", not "contains an underscore".
+        "raw_id_subject": [s for s in subjects if s == s.lower()],
+        "cells_moved": moved,
+        "any_number_moved": bool(moved),
+        "lines": [f"[STATUS] {line.subject} — " + " | ".join(
+            f"{label} {value}" for label, value in line.cells
+        ) for line in lines],
+    }
+
+
+# --------------------------------------------------------------------------- the battery
+
+
+def battery(text: str) -> dict[str, Any]:
+    prose = prose_only(text)
+    words = len(text.split())
+    prose_words = len(prose.split())
+
+    def per_1k(n: int) -> float | None:
+        return round(n * 1000 / prose_words, 3) if prose_words else None
+
+    gloss = register_census.gloss_counts(prose)
+    cadence = progression_cadence.measure(
+        text,
+        fiction_id=0,
+        chapter_id=0,
+        litrpg=True,
+        quarantined=False,
+        cohort=None,
+    )
+    numbers = number_context.measure(prose)
+    em_file = voice.exhibition_census(text)["em_dash"]
+    em = voice.exhibition_census(prose)["em_dash"]
+    nouns = register_census.proper_nouns(prose)
+
+    return {
+        "words": words,
+        "prose_words": prose_words,
+        "separator_and_furniture_words": words - prose_words,
+        # register_census -- the gloss tiers. The friction half is NOT here: it needs a corpus
+        # frequency table (`friction(text, table, total=...)`) and there is no per-chapter form.
+        "gloss": {
+            "a1": gloss["a1"],
+            "a2": gloss["a2"],
+            "tier_a": gloss["tier_a"],
+            "tier_b": gloss["tier_b"],
+            "tier_a_per_1k": per_1k(gloss["tier_a"]),
+            "tier_b_per_1k": per_1k(gloss["tier_b"]),
+        },
+        # progression_cadence -- runs on one chapter; the gap statistics need >=2 and >=3 events
+        # respectively and return None below that, which is the instrument declining, not a zero.
+        "cadence": {
+            "events": cadence.events,
+            "per_1k": round(cadence.per_1k, 3),
+            "first_event_words": cadence.first_event_words,
+            "first_event_fraction": round(cadence.first_event_fraction, 4)
+            if cadence.first_event_fraction is not None
+            else None,
+            "median_gap": cadence.median_gap,
+            "gap_cv": round(cadence.gap_cv, 3) if cadence.gap_cv is not None else None,
+            "by_family": cadence.by_family,
+        },
+        # number_context -- the system/mundane split, per 1k.
+        "numbers": {
+            "mentions": numbers.mentions,
+            "mentions_per_1k": per_1k(numbers.mentions),
+            "system_any": numbers.system_any,
+            "system_per_1k": per_1k(numbers.system_any),
+            "system_magnitude": numbers.by_family["system_magnitude"],
+            "system_ordinal": numbers.by_family["system_ordinal"],
+            "mundane_core": numbers.mundane_core,
+            "mundane_per_1k": per_1k(numbers.mundane_core),
+            "anchored": numbers.anchored,
+            "system_share_of_anchored": round(numbers.system_share_of_anchored, 4)
+            if numbers.system_share_of_anchored is not None
+            else None,
+            "furniture_lines": numbers.furniture_lines,
+            "english_share": round(numbers.english_share, 3),
+            "by_family": numbers.by_family,
+        },
+        "em_dash": {
+            "in_file": em_file,
+            "in_prose": em,
+            "on_status_lines": em_file - em,
+            "prose_per_1k": per_1k(em),
+        },
+        "sentences": sentence_profile(prose),
+        "chains_REIMPLEMENTED": chain_profile(prose),
+        "proper_nouns_NOT_CAST": {
+            "distinct": len(nouns),
+            "per_1k": per_1k(len(nouns)),
+            "names": sorted(nouns),
+        },
+        "status": status_profile(text),
+        "machinery_names_in_prose": list(schema_words.named_in(prose)),
+        # Recorded per row so the zero is never read as "no furniture in this chapter". Both
+        # market-derived detectors require a whole-line bracketed span (`_RE_BRACKETED`), an
+        # angled span, or a COLON-separated stat line (`_RE_STATLINE`). The house format is
+        # `[STATUS] Subject — Label N | Label N`, which is none of the three: the bracket
+        # closes after STATUS and the columns carry no colon. So `is_furniture_line` is False
+        # on every line of every draw, and the sheet's own values fall through to the ordinary
+        # prose families -- which is why the numbers above are measured on `prose` instead.
+        "furniture_detected_by_market_instruments": {
+            "number_context": numbers.furniture_lines,
+            "progression_cadence": sum(
+                1 for line in text.splitlines() if progression_cadence._is_furniture(line)
+            ),
+            "actually_present": len(status_profile(text)["lines"]),
+        },
+    }
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--artifact-root",
+        default="C:/DEV/LitHarness",
+        help="checkout holding the untracked shelf and pilot archives",
+    )
+    parser.add_argument(
+        "--context", action="store_true", help="also measure the pre-redesign context columns"
+    )
+    parser.add_argument(
+        "--out",
+        default="",
+        help="write JSON here as UTF-8; a shell redirect of stdout uses the console codepage "
+        "on this box and mangles the em dash in the recorded status lines",
+    )
+    args = parser.parse_args(argv)
+
+    root = Path(args.artifact_root)
+    rows = list(DRAWS) + (list(CONTEXT) if args.context else [])
+    out: dict[str, Any] = {}
+    for draw, relative in rows:
+        path = root / relative
+        if not path.is_file():
+            out[draw] = {"error": f"missing: {path}"}
+            continue
+        text = path.read_text(encoding="utf-8")
+        out[draw] = {"path": relative} | battery(text)
+    rendered = json.dumps(out, indent=2, ensure_ascii=False)
+    if args.out:
+        Path(args.out).write_text(rendered + "\n", encoding="utf-8", newline="\n")
+    else:
+        sys.stdout.write(rendered + "\n")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
