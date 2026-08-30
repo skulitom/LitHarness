@@ -341,9 +341,16 @@ BUDGET: dict[str, int] = {
 #: prohibition on the clarity side is the clause after the last free one, and it raises all
 #: six: the floor to 27, `architect seed` to 48, `architect grow` to 44, the two scene rows to
 #: 30 and 34, `SCENE_MAXIMAL_BUDGET` to 46. That is §176.4's prediction arriving two entries
-#: later than it said, and each track discovered the slack's history independently — writing
-#: the crossing down here is what this table is for. The listing pays separately (17 since
-#: §179), because it is the one role with no floor under it.
+#: later than it said. The listing pays separately (17 since §179), the one role with no floor
+#: under it.
+#:
+#: **And unmoved again by §180 the same day, by subtraction**: the chained-sentence prohibition
+#: went onto `house.CLARITY` and `CLARITY`'s closing line came off in the same edit — the
+#: subtraction §176.5 looked for and half-refused (it protects the rule's *opening* sentence,
+#: which carries a twice-made correction under §127's brake; the closing one restates a
+#: standard, encodes no measurement, and by §154 is the half a writer cannot act on). Four
+#: house edits in one day: the ceilings moved once, for §181, and this note is the crossing
+#: written down.
 HOUSE_BUDGET = 27
 
 

@@ -185,6 +185,51 @@ from __future__ import annotations
 #: No instance list (§168's refusal unchanged), and nothing from the chapter under read or from
 #: the read itself is in either clause (§97.1) — the three sentences are fixtures in
 #: `tests/test_figure_clarity.py` and go nowhere else. Shipped unmeasured.
+#:
+#: **A fourth read named punctuation and sentence structure, and this rule's last sentence paid
+#: for the clause that answers it (§180).** Read 11's words are the family's name — *"punctuation
+#: and sentence structure have been a problem over and over"* — over Maria's grammar items and
+#: reads 5 and 10's not-what-humans-say. The instance is one sentence chaining six separate
+#: actions across two subjects.
+#:
+#: **§154's audit order first, and every demand here missed by its object.** The unmet-term pair
+#: fails a *name* and the sentence carries none. The two-ways pair fails a sentence with two
+#: readings available; this one has a single reading and every clause in it is followable, which
+#: is exactly why a floor about following cannot see it. The object pair fails an object *acting*,
+#: and each of these actions has a person doing it. The comparison clause has no comparison to
+#: reach, and the paragraph trio's object is a pronoun's referent inside a paragraph, not a
+#: sentence's load. What was left were the two sentences §176.1 had already ruled unaddressable.
+#: **So this is §168.2's shape at a third address**: a gap between what the rule is about and what
+#: it can fail, which is the one condition a new clause is licensed for.
+#:
+#: **Its object is a count of actions rather than a length, and that is the whole design.** The
+#: hazard on this axis runs both ways: a cap on sentence length would delete the elaborated
+#: sentence this genre's opening lives on, and §163 is the standing record of a filter keyed one
+#: notch wider than its defect deleting presence by construction. What the operator named is a
+#: queue of separate events inside one sentence, and a writer can count events. The concession is
+#: the other half of the same guard — it names length spent on a single happening as not the
+#: failure, so the clause reaches chaining and never reaches elaboration — and it hangs off a
+#: semicolon inside the sentence it bounds rather than standing as its own permission (§161.5's
+#: pattern; §138 measured a permission-only clause worse than silence).
+#:
+#: **The bound is set where our own prose leaves ordinary English alone.** A census of the ten
+#: drafted books on the shelf is at §180; what it decides is only where the tail begins, and no
+#: number of its is in this clause or in any prompt. A chain of three is not reached and is
+#: expected to survive — §180's stated residual, along with a chain of *states* rather than acts.
+#:
+#: **Paid by subtraction rather than by six raises, which is the order `tests/test_prompt_budget.py`
+#: asks for.** The sentence removed is this rule's own closing line, *"A thing the reader cannot
+#: follow is a thing that did not happen"* — §176.1 classified it, with the opening, as the half a
+#: writer cannot act on, and it restates a standard the opening sentence already sets. §176 refused
+#: to cut the *opening* for a reason that does not reach here: that one carries the
+#: following-rather-than-explaining correction this constant was corrected twice in one day to get,
+#: and §127's brake is about removing a rule that encodes a measurement. This one encodes none, has
+#: no entry in the ledger, and by §154 lands with its sign multiplied by zero. §168 paid for its
+#: clause by removing a sentence of exactly this shape. `house.demands` reads the same count, so no
+#: ceiling moves, and the floor now closes on a prohibition instead of on a restatement.
+#:
+#: No instance list, and nothing from the chapter under read is in the clause (§97.1) — the
+#: fixtures are in `tests/test_sentence_structure.py`. Shipped unmeasured.
 CLARITY = (
     "Clarity is the floor, and it is about following rather than about explaining. Every "
     "sentence can be followed the first time it is read.\n"
@@ -207,7 +252,8 @@ CLARITY = (
     "person or object only — where two are in play, use their names, however plain that reads. "
     "A reader who has to reread a paragraph to find out whose brother died has been thrown out "
     "of the book, and the sentences were all fine.\n"
-    "A thing the reader cannot follow is a thing that did not happen."
+    "What fails is a sentence in which a fourth thing happens after three already have; length "
+    "spent on one thing happening is not that."
 )
 
 #: **The second read, 2026-08-24, and every clause below is one line the operator quoted back.**

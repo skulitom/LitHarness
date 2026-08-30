@@ -24,6 +24,7 @@ satisfy it, which is a retryable shape failure and never an exception.
 
 from __future__ import annotations
 
+import re
 from contextlib import suppress
 from dataclasses import dataclass
 
@@ -31,6 +32,7 @@ from litharness.domain.nodes import Node
 from litharness.domain.patch import Veto, VetoRecord
 from litharness.domain.revision import Revision
 from litharness.domain.text import canonicalize
+from litharness.domain.voice import EXHIBITION_MARKERS
 
 
 @dataclass(frozen=True, slots=True)
@@ -101,6 +103,99 @@ class DraftOutcome:
     @property
     def veto_kinds(self) -> tuple[Veto, ...]:
         return tuple(record.veto for record in self.vetoes)
+
+
+#: The registered mark, read from its one home rather than spelled again here. See
+#: `strip_em_dash` for why that matters more than it looks.
+_EM_DASH = EXHIBITION_MARKERS["em_dash"]
+
+#: Characters that close a quotation, and the ones that open one. Both carry the straight forms
+#: and the curly ones, because a draft arrives in whichever the model reached for and NFC does
+#: not fold them together. Written as escapes rather than as themselves: a table of quotation
+#: marks is the one place where a reader cannot tell two characters apart by looking.
+_CLOSING_QUOTES = "\"'\u2019\u201d"
+_OPENING_QUOTES = "\"'\u2018\u201c"
+
+#: A line the book prints as a machine rather than as prose. Same shape as `integrity`'s system
+#: block and `library`'s system line, and it is here for one specific reason recorded at
+#: `strip_em_dash`: the canon parser's own separator is an em dash.
+_SYSTEM_LINE = re.compile(r"^\[[A-Z][A-Z ]*\]")
+
+#: The mark and any whitespace hugging it, without crossing a line.
+_AROUND_MARK = re.compile(rf"[^\S\n]*{re.escape(_EM_DASH)}[^\S\n]*")
+
+#: Punctuation that already ends a clause, so a comma after it would be a second one.
+_ALREADY_STOPPED = ",;:.!?"
+
+
+def strip_em_dash(text: str) -> tuple[str, int]:
+    """`text` with the em dash rewritten out of its prose, and how many were rewritten.
+
+    **Why this is mechanical and not a sentence in `house`.** The em dash is the one prose
+    defect on this project's list that is a *character*, and it is the one the operator has
+    now named twice with no drafting rule ever written against it in between — read 1's own
+    axis, returning at read 11. A clause in `house.CLARITY` would cost a demand at every role
+    that stands on the floor, would land inert at the ones that write no prose, and would be
+    the project instructing about a **registered prose axis** in the one text that reaches
+    every prose call — which is the act `directors._CRAFT_INSTRUCTION` and
+    `writers.legal_dossier` refuse a brief and a dossier for, done at a larger address. This
+    function asserts nothing in any prompt about what good prose is. It removes a character
+    after the model has finished, and it cannot drift.
+
+    **The mark has one home and this is not it.** `voice.EXHIBITION_MARKERS["em_dash"]` is the
+    registered mark, and this reads it rather than spelling it again, so the character a
+    dossier is refused for carrying and the character a draft has removed can never diverge.
+
+    **What is kept, and it is a device rather than a habit.** An em dash immediately before a
+    closing quote or at the end of a line, or immediately after an opening quote, is speech
+    being cut off. Measured over the ten drafted books on the shelf, that is a sixth of every
+    em dash in the prose and no substitution preserves it: a comma there makes an interruption
+    into a clause, and an ellipsis makes it into a trailing-off, which is a different thing
+    happening to a different character. The other five sixths are the spaced habit and all of
+    them go. *Immediately* is load-bearing — a space between the quote and the mark makes it
+    the habit again.
+
+    **What it must not touch, and the failure would have been silent.** `extraction`'s canon
+    parser keys on a bare U+2014 as the `[STATUS]` line's own separator, with no alternation;
+    rewriting that one would leave a scene that renders a status panel and extracts no state,
+    which is exactly the shape that module's docstring warns is indistinguishable from a scene
+    that established nothing. So a line the book prints as a machine is passed through
+    untouched, and `tests/test_sentence_structure.py` is what holds that.
+
+    **A comma, because a comma is the one replacement that is always grammatical.** A full stop
+    would make a fragment of whatever followed a dash that was not joining two clauses, and a
+    rewrite that can produce ungrammatical prose is worse than the mark. It is also the
+    operation this project's own research side already certified as the em-dash repair, so
+    production and the instrument do the same thing rather than two things. Where the text
+    before the mark already ends on a stop, the mark leaves a space and no second comma.
+
+    Returns the count as well as the text so a caller can put it on the record: the point of
+    recording it is that removing the mark from the prose would otherwise remove the only way
+    anybody could later see how often the model reached for it.
+    """
+    if _EM_DASH not in text:
+        return text, 0
+
+    removed = 0
+
+    def rewrite(line: str) -> str:
+        if _SYSTEM_LINE.match(line) or _EM_DASH not in line:
+            return line
+
+        def replace(match: re.Match[str]) -> str:
+            nonlocal removed
+            index = match.start() + match.group().index(_EM_DASH)
+            before = line[index - 1] if index > 0 else ""
+            after = line[index + 1] if index + 1 < len(line) else ""
+            if after == "" or after in _CLOSING_QUOTES or before in _OPENING_QUOTES:
+                return match.group()
+            removed += 1
+            stopped = line[:index].rstrip()[-1:]
+            return " " if stopped in _ALREADY_STOPPED else ", "
+
+        return _AROUND_MARK.sub(replace, line)
+
+    return "\n".join(rewrite(line) for line in text.split("\n")), removed
 
 
 def draft_block(
@@ -239,4 +334,5 @@ __all__ = [
     "draft_block",
     "gate_draft",
     "is_draftable",
+    "strip_em_dash",
 ]
