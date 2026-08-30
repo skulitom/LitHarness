@@ -28,14 +28,28 @@ have to be run for, over a distribution that does not exist. Moved is the whole 
 
 **Nothing this gate says reaches the writer.** A refusal is recorded on the policy decision
 and read by an operator; the prompt is frozen at enqueue and the retry re-sends it unchanged.
-That is §97.1's rule, not an omission: a rejection carries no explanation back into
-generation, and a gate that wrote its complaint into the next attempt would be the feedback
-channel the `debug-book` rule exists to keep shut.
+A rejection carries no explanation back into generation, and a gate that wrote its complaint
+into the next attempt would be a channel from a check to a prompt that nothing licenses.
+**§97.1 is the wrong citation for that and this module used to make it** (§186): that rule
+governs the operator's own diagnostics and the reader channel — a *human* read, and the
+`debug-book` verbs — and a deterministic comparison of two stored integers is neither. What
+holds the door is the retry's own classification: `RETRYABLE` earns bounded attempts because
+asking again is asking for the thing the prompt already asked for, and a retry told what the
+check found is no longer that. The correction is recorded rather than acted on, because the
+question the retry existed to answer is now asked in the first prompt.
+
+**Which is the other half of this module** (§186). `moved_example` composes what the furniture
+ask hands a writer on a scheduled scene: the line the book prints *after* the named quantity
+has moved, rather than the line it printed entering. The two halves are here together on
+purpose — every abstention in the composer is an abstention in the gate, read off the same
+records in the same order, so the scene that is shown a moved line is exactly the scene whose
+state gets checked, and neither can drift into asking for what the other does not check.
 """
 
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 
 import litharness_contracts as lc
 
@@ -47,6 +61,24 @@ from litharness.domain.policy import GateKind, GateOutcome, VerdictSource
 
 #: The gate's own id, in the ladder's `<kind>.<what>.v0` form.
 PROGRESSION_GATE = "integrity.progression.v0"
+
+
+@dataclass(frozen=True, slots=True)
+class MovedLine:
+    """The status line a scene leaves once the quantity its beat named has moved.
+
+    `line` is the exact string to print — §154's addressable token, rendered by
+    `extraction.render_status_line` from the book's own sheet, its own spelling of the name and
+    its own numbers, with one column changed and every other column the one the writer was
+    already being shown. `name` is the book's word for what moved and `was` is what that column
+    read entering the scene, both of which the ask states in words so the line is legible as a
+    move rather than as a restatement.
+    """
+
+    line: str
+    name: str
+    was: int
+    now: int
 
 
 def named_target(
@@ -78,6 +110,87 @@ def named_target(
         return None
     offered = extraction_mod.movables(records, character=character, at=at)
     return next((item for item in offered if item.name == name), None)
+
+
+def moved_example(
+    records: Sequence[lc.StateRecord],
+    target: extraction_mod.Movable | None,
+    *,
+    character: str | None = None,
+    at: str | None = None,
+) -> MovedLine | None:
+    """The line to show a writer whose beat names a move — or `None`, meaning show the old one.
+
+    **This is the defect §184 measured, closed at the surface that caused it.** The furniture
+    ask hands the writer one concrete artifact and calls it *the state as it stands*, and §169
+    measured what a model does with a filled example: it copies it character for character —
+    that is why the example is filled rather than a template, and it is the behaviour the whole
+    ask depends on. So on a scheduled scene the prompt asked for a move in the plan and handed
+    over a line proving the numbers had not moved, and the one thing in the prompt that could
+    be copied carried the entering values. Pilot 18 draw 3 spent two attempts on it: the beat
+    read *Rating moves here*, the example read `Rating 2`, both drafts printed `Rating 2`, and
+    the gate refused both. The ask and the check disagreed and the writer obeyed the concrete
+    half.
+
+    **What the writer is handed is the line after the move, and nothing else changes.** One
+    number differs from the line an unscheduled scene would have been shown; the subject, the
+    sheet, the labels and every other column are the same string. Two lines in one prompt was
+    the alternative and it was refused: §161.3's cardinality is load-bearing — `extract_state`
+    mints one canon record per match at one order key, so a scene printing two lines writes the
+    exact shape `integrity.detect_contradictions` groups on — and a prompt holding two
+    printable lines, shown to a model measured to copy them verbatim, is how that gets printed.
+    One artifact in, one line out.
+
+    **Every abstention here is the gate's own, and that is the point rather than a coincidence.**
+    Where this returns `None` the writer sees the entering line exactly as before, byte for
+    byte:
+
+    - no position to place a state at (`at is None`);
+    - no line standing at that position to read a number off;
+    - **canon already states this subject's state at `at`** — §184.4's abstention, and the one
+      that would otherwise turn this into an outage. An imported book holds a snapshot at every
+      position, so the numbers such a scene is shown are the ones its own author stated for it;
+      asking that scene to print different ones would mint a second snapshot at one key and be
+      refused by the contradiction detector. Both golden fixtures are that book;
+    - the named column reads no integer on the line standing there;
+    - the column has no room to move (`extraction.moved_to`'s ceiling).
+
+    The first four are `gate_progression`'s list read in the same order against the same
+    records, and `test_the_prompt_abstains_wherever_the_gate_abstains` holds the pairing on the
+    one that matters. The fifth is this function's alone and is a **named residual**: the gate
+    still fires on a beat naming a column at its own ceiling, so such a scene is asked for a
+    move, shown the unmoved line, and refused. Closing it means the beat vocabulary declining
+    to name a maxed column, which re-rotates `beat_text` for every scheduled scene on the shelf
+    — a second finding, and not this one's to land.
+    """
+    if target is None or at is None:
+        return None
+    standing = extraction_mod.snapshot_at(records, at=at)
+    if standing is None or not isinstance(standing.value, Mapping):
+        return None
+    if state_mod.order_key_of(standing) == at:
+        return None
+    folded = extraction_mod.state_as_it_stands(records, at=at)
+    if folded is None:
+        return None
+    subject, values = folded
+    was = values.get(target.key)
+    if not isinstance(was, int) or isinstance(was, bool):
+        return None
+    now = extraction_mod.moved_to(records, target, character=character, at=at)
+    if now is None or now == was:
+        return None
+    return MovedLine(
+        line=extraction_mod.render_status_line(
+            subject,
+            {**values, target.key: now},
+            sheet=extraction_mod.sheet_for(records),
+            records=records,
+        ),
+        name=target.name,
+        was=was,
+        now=now,
+    )
 
 
 def gate_progression(
@@ -218,4 +331,10 @@ def _outcome(passed: bool, detail: str) -> GateOutcome:
     )
 
 
-__all__ = ["PROGRESSION_GATE", "gate_progression", "named_target"]
+__all__ = [
+    "PROGRESSION_GATE",
+    "MovedLine",
+    "gate_progression",
+    "moved_example",
+    "named_target",
+]

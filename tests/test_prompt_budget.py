@@ -45,6 +45,7 @@ from litharness.domain import beats as beats_domain
 from litharness.domain import context as context_domain
 from litharness.domain import extraction as extraction_domain
 from litharness.domain import house
+from litharness.domain import progression as progression_domain
 from litharness.domain import voice as voice_domain
 from litharness.domain import writers as writers_domain
 from litharness.domain.generation import CompletionRequest
@@ -565,6 +566,47 @@ def test_a_scene_conditional_block_stays_inside_its_declared_budget(block: str) 
         "why. Every demand in this block rides every scene call of every book that declares "
         "the state it describes."
     )
+
+
+#: **The one branch that swaps rather than appends, and its budget is zero** (§186). On a scene
+#: whose plan named a quantity as moving, the furniture ask shows the line the scene *leaves*
+#: instead of the line it entered: one sentence is replaced by one sentence and one payload line
+#: by one payload line, so the demand count cannot move and the row is a floor of nothing rather
+#: than a ceiling on something. It is deliberately not an arm of `_CONDITIONAL_ARMS` — that
+#: parametrisation asserts `block_text.startswith(base_text)` and `added >= 1`, both of which are
+#: properties of a branch that *adds*, and neither of which this branch has or should acquire.
+SCENE_MOVED_DEMANDS = 0
+
+_STATUS_MOVED = progression_domain.MovedLine(
+    line=extraction_domain.render_status_line(
+        "Kestrel", {"level": 4, "hp": 18, "hp_max": 20, "mp": 6, "mp_max": 10, "gold": 12}
+    ),
+    name="Level",
+    was=3,
+    now=4,
+)
+
+
+def test_showing_the_line_a_scene_leaves_costs_no_demand() -> None:
+    """§186's whole cost, measured over the live assembly rather than argued.
+
+    The scheduled arm and the unscheduled one make the same number of demands because the
+    scheduled one adds nothing: the two sentences after the payload line are the same string on
+    both, and what differs is one clause and one set of numbers. A later edit that appends to
+    this branch instead of swapping inside it lands here as a non-zero difference.
+    """
+    entering = _scene_system(status_example=_STATUS_EXAMPLE)
+    leaving = _scene_system(status_example=_STATUS_EXAMPLE, status_moved=_STATUS_MOVED)
+
+    assert leaving != entering
+    added = len(house.demands(leaving)) - len(house.demands(entering))
+    assert added == SCENE_MOVED_DEMANDS, (
+        f"the moved status example now adds {added} demands where it is meant to add none. It "
+        "swaps one sentence and one line; if it has started appending, say why here."
+    )
+    # And one printable line reaches the writer either way — §161.3's cardinality is the reason
+    # the entering line is replaced rather than joined by the moved one.
+    assert leaving.count("[STATUS]") == entering.count("[STATUS]") == 1
 
 
 def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -> None:

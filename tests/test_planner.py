@@ -1295,14 +1295,25 @@ def test_the_seeded_book_asks_for_the_line_it_will_later_read(store: SqliteStore
     """The other half of the same circle: a book with no status record at all is not asked for
     system voice, so it writes none, so there is nothing to place. One seeded sheet — the
     starting condition a LitRPG book has anyway — closes it, and it is authored input rather
-    than a genre this system guessed."""
+    than a genre this system guessed.
+
+    **The line moved from `Level 3` to `Level 4` on 2026-08-30 and the claim did not** (§186).
+    Scene 1 is always a scheduled progression beat, the beat's rotation names `Level`, and the
+    example a scheduled scene is shown is the line it leaves rather than the line it entered —
+    the seeded sheet's own numbers with the named one moved. What this test is about is that a
+    seeded book is asked for system voice at all, which is unchanged; the string it pins is the
+    ask, and the ask now says what the scene is for.
+    """
     _book_zero(store)
     make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START, 300.0)
 
     [job] = [
         unit for unit in store.jobs_by_status(JobStatus.QUEUED) if unit.job_kind == SCENE_DRAFT
     ]
-    assert "[STATUS] Rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45" in str(job.payload["system"])
+    system = str(job.payload["system"])
+    assert "[STATUS] Rook — Level 4 | HP 24/30 | MP 8/10 | Gold 45" in system
+    assert "once Level has moved from the 3 it stood at" in system
+    assert system.count("[STATUS]") == 1
     assert job.payload["selected_by"]["story_order_key"] == "s1"
 
 

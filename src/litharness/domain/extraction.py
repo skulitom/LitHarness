@@ -1431,6 +1431,7 @@ __all__ = [
     "label_for",
     "movable_names",
     "movables",
+    "moved_to",
     "normalise_subject",
     "offered_choice",
     "parse_graph_line",
@@ -1791,14 +1792,100 @@ def movables(
     as one function for the reason that docstring gives for having one source of beat
     vocabulary at all: a second reader of "what may move here" is a second answer to it.
     """
-    if character is not None:
-        canon = [record for record in records if state_mod.is_canon(record)]
-        systems = gamesystem_mod.systems_of(canon)
-        if len(systems) == 1 and _system_prints_the_line(systems[0], records):
-            sheet = gamesystem_mod.sheet_of(canon, character, system=systems[0], at=at)
-            if sheet is not None:
-                return _named_moves(systems[0], gamesystem_mod.legal_moves(sheet))
+    standing = _standing_sheet(records, character=character, at=at)
+    if standing is not None:
+        system, sheet = standing
+        return _named_moves(system, gamesystem_mod.legal_moves(sheet))
     return _counted(records, at=at)
+
+
+def _standing_sheet(
+    records: Sequence[lc.StateRecord], *, character: str | None = None, at: str | None = None
+) -> tuple[gamesystem_mod.SystemDef, gamesystem_mod.CharacterSheet] | None:
+    """The one system this book declares and this character's position in it — or `None`.
+
+    **The arm selection, factored, so two readers of it cannot become two answers.** This is
+    the condition `movables` documents in full: exactly one declared system, its columns the
+    columns this book actually prints, and a canon position for this character in it. `None` is
+    the fall-through to the legacy arm and is the ordinary case for every book whose world
+    declared no system.
+
+    Extracted when `moved_to` needed the same three facts to say what a move would leave. A
+    second copy of the condition would have let the vocabulary a beat is composed from and the
+    number that beat's example prints come from different arms of the same question — which is
+    the pairing `Movable` exists to hold together, one step further along.
+    """
+    if character is None:
+        return None
+    canon = [record for record in records if state_mod.is_canon(record)]
+    systems = gamesystem_mod.systems_of(canon)
+    if len(systems) != 1 or not _system_prints_the_line(systems[0], records):
+        return None
+    sheet = gamesystem_mod.sheet_of(canon, character, system=systems[0], at=at)
+    return None if sheet is None else (systems[0], sheet)
+
+
+def moved_to(
+    records: Sequence[lc.StateRecord],
+    movable: Movable,
+    *,
+    character: str | None = None,
+    at: str | None = None,
+) -> int | None:
+    """What `movable`'s column reads once the move that offered it has been made — or `None`.
+
+    **The third projection of one question**, beside `movables` and `movable_names`: which
+    quantities may move here, which column each one occupies, and what that column reads
+    afterwards. All three read the same arm, so the word a beat carries, the number a gate
+    checks and the number an example prints cannot come apart.
+
+    *The system arm* answers by taking the move. `gamesystem.advance` is called on the sheet
+    this character stands at and the value is read off `Advancement.after` — **the same
+    arithmetic that would record the advancement if the book took it**, rather than an
+    increment reproduced here. A system that ever declares a different step is therefore
+    authoritative for free, and there is no second place to update.
+
+    *The legacy arm* has no system to ask, so the answer is one step: a sheet declares columns
+    and, where it pairs them, a ceiling, and it declares no step size. One is the smallest
+    change an integer column can make, and the smallest change is the honest reading of a beat
+    whose whole sentence is *moves here*. **It is not a magnitude anything is held to**: the
+    gate this feeds refuses only a column that did not move at all (§184), so a scene whose
+    events warrant more is refused by nothing.
+
+    **`None` where the column has no room**, and that is the one case this refuses to answer
+    rather than guessing at. A paired column standing at its own ceiling — `Warmth 6/6` — has
+    no next value that is not `impossible_fields`' own defect, and rendering `Warmth 7/6` into
+    a prompt as the state a scene leaves would ask the writer for a line the book may not
+    print. The system arm needs no such guard because `legal_moves` already withholds a deepen
+    at the scale's maximum and a rise at the top rung: there, having been offered is the proof
+    that there is room.
+    """
+    standing = _standing_sheet(records, character=character, at=at)
+    if standing is not None and at is not None:
+        system, sheet = standing
+        for move in gamesystem_mod.legal_moves(sheet):
+            if _named_moves(system, (move,)) != (movable,):
+                continue
+            try:
+                advanced = gamesystem_mod.advance(sheet, move, at=at)
+            except gamesystem_mod.IllegalAdvance:
+                # `legal_moves` offered it, so this is unreachable rather than tolerated —
+                # caught because composing a prompt is not the place to discover that the two
+                # disagree, and a book that hits it draws the entering line it drew before.
+                return None
+            after = advanced.after.get(movable.key)
+            return after if isinstance(after, int) and not isinstance(after, bool) else None
+        return None
+    folded = state_as_it_stands(records, at=at)
+    if folded is None:
+        return None
+    was = folded[1].get(movable.key)
+    if not isinstance(was, int) or isinstance(was, bool):
+        return None
+    ceiling = folded[1].get(f"{movable.key}{MAX_SUFFIX}")
+    if isinstance(ceiling, int) and not isinstance(ceiling, bool) and was + 1 > ceiling:
+        return None
+    return was + 1
 
 
 def _system_prints_the_line(
