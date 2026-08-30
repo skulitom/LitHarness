@@ -144,3 +144,27 @@ dialogue and is judged inside the licence.
 
 **Verdict: pass, on the full reads-4-through-12 checklist.** Covers next; read 13 is the
 operator's.
+
+## 6. Read 13: better, not fixed — and the operator commissions the attribution report
+
+**Verbatim:** *"It reads a bit better, thank you. But still most of the same issues remain."*
+Items: *"'She said it the way she said most things' - you aren't really telling the reader
+anything with this"* (the generic-manner gloss family, again); *"'mildness of a galley in
+it' - Pedantic phrasing and vocab"* (§181's family); *"'everything held the still' -
+nonsense"* (a garden-path at the comma: "held the still, hard chill" parses wrong at
+reading speed). And the directive:
+
+> *"I think we need to debug and measure impact of all of our internal agents. I'm not sure
+> who is doing more harm and who is doing more good... Can you work on constructing a
+> report on harm/improved text of our agents and systems please? maybe it will help us find
+> the issue"*
+
+**Routing: measurement before more clauses.** The three instances are recorded and no new
+register track launches until the attribution report locates the harm. The report is
+operator-facing diagnostics (§95's sanctioned channel), built from what the stores already
+hold — draft-vs-revision pairs, gate refusals with spend, the code-only instrument battery
+run across every accepted chapter, the same-listing redraw families as the nearest-to-
+controlled columns, and the thirteen reads' defect families mapped against which component
+was live when. Existing instruments only; no new metric is minted (BRIEF.md governs);
+descriptions carry §0's boundary — same-listing redraws are still two draws, never a
+treatment effect.
