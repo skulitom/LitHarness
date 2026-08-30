@@ -119,9 +119,14 @@ def test_the_scope_word_cost_no_demand_and_the_figure_clause_cost_exactly_one() 
     from, and the claim being made is that one sentence was added and one word was widened.
     Counts are asserted exactly rather than with `<=`, because a bound here would stop this
     file noticing the next silent growth — `tests/test_scene_economy.py`'s reason unchanged.
+
+    **The floor reads 25, not §176's 26, since §174 landed the same day**: the readership
+    clause left `house.READER` for the listing task, so CLARITY's 13 stands beside READER's 11.
+    This file's own claim — one sentence added, one word widened, on the clarity side — is
+    untouched by that departure.
     """
     assert len(house.demands(house.CLARITY)) == 13
-    assert len(house.demands(house.HOUSE_RULES)) == 26
+    assert len(house.demands(house.HOUSE_RULES)) == 25
 
 
 def test_the_third_instance_is_not_reached_and_the_clause_does_not_forbid_anaphora() -> None:
