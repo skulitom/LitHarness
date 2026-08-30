@@ -115,11 +115,17 @@ def test_the_second_arm_names_the_first_as_its_general_case() -> None:
     # One demand at each address, not two. Asserted exactly rather than with `<=`, because a
     # bound here would stop this file noticing the next silent growth — `test_scene_economy`'s
     # reason unchanged, and `tests/test_prompt_budget.py` owns the ceilings themselves. The task
-    # text is counted rather than the assembled role: the budget file's 17 is this 13 plus the
+    # text is counted rather than the assembled role: the budget file's 18 is this 14 plus the
     # four demands of a cast dossier, and a ceiling that moved when a writer's dossier grew
     # would be a ceiling on dossiers.
+    #
+    # **13 -> 14 on 2026-08-30, and the growth is not this clause's** (§183). The house genre
+    # gained its first surface at the listing, one sentence, and the budget row moved 17 -> 18
+    # with it. The exact assertion is what made that visible in this file rather than silently,
+    # which is what an exact assertion is for; §179's own clause is unchanged and still one
+    # demand at both addresses.
     assert len(house.demands(house.READER)) == 12
-    assert len(house.demands(overview._TASK)) == 13
+    assert len(house.demands(overview._TASK)) == 14
 
 
 def test_the_two_arms_are_bounded_differently_and_neither_reaches_a_passage() -> None:

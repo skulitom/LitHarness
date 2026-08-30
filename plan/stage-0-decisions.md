@@ -19589,3 +19589,199 @@ the same prompt and are untouched, as is the house floor. No model was called, n
 no paid call was made, and no `runs/` database was written to — the pilot store was copied to
 scratch and read there. No corpus was read, so RS1 is untouched. No research claim is promoted and
 no axis is admitted.
+
+## 183. The house genre was mandatory at every surface except the one that sells the book
+
+`plan/house-genre-constraint.md` recorded the constraint on 2026-08-29 and deliberately left its
+home open for a fresh session, naming three candidates with a hazard against each. This is that
+session, and the evidence that document asked for arrived on 2026-08-30. The operator's words live
+in that document and in `plan/serial-pilot-13.md`; **no word of any of them is in any prompt**
+(§97.1), asserted by `test_no_word_of_the_operator_s_genre_direction_became_prompt_text`. Defect
+harvest and never data (§95).
+
+### 183.1 Measured first: three listings refused in one day, at one call
+
+Three books were refused at the coordinator's gate before a chapter was drafted, all under an
+**empty brief**, all by a writer the Recruiter drew:
+
+| pilot | writer | what the listing promised | the record |
+| --- | --- | --- | --- |
+| 13 | larkin | light fantasy: three resolving ladders, ranks, no interface anybody reads | `plan/serial-pilot-13.md` |
+| 17 | brannigan | a Guild badge, a registry and bylaws, twice over two draws | `plan/serial-pilot-17.md` |
+| 18 | sandoval | sci-fi horror on a dead station, no system furniture at all | `plan/serial-pilot-18.md` |
+
+Pilot 18 is the cleanest instance and the listing is on disk (`runs/pilots/pilot18/listing.txt`,
+serial18.db, book=c9aef7d8): a good listing that 3 of 4 browsing readers would open, and one of
+them praised the very absence — no system named at them anywhere in it. Pilot 17 is a **different
+defect on the same surface** (an institution-engined premise, refused on §116's and §160's ground)
+and is counted here only as evidence that this call had no genre-shaped rail of any kind.
+
+**The distribution of the defect names its cause.** ferreira's listings carry the furniture and
+always have — that dossier is system-apocalypse — and the four compiled cast writers all carry it
+by accident of who they are. So the house genre had been living **in the dossiers**, writer by
+writer, which is what §183's title says and what pilot 13 proved the night it was written. Nine
+accepted recruits hold genre-free dossiers, and the first three cast from them each sold their
+shelf's flavour.
+
+**The floor that exists did not and could not catch this.** `domain/genre.genre_block` refuses a
+book whose canon cannot speak system voice, and §173 gave the system a fork and the opening scene
+an interaction beat. Every one of those sits at or after the **seed**, which runs once a premise
+exists. The listing is the promise a reader buys and the call that invents who the book is about
+(§174's own finding at this same address), so a book can clear every downstream gate and still
+have been sold as something else.
+
+### 183.2 The clause that looks like it covers this is genre-agnostic by construction
+
+§154's audit order — when a read names a defect a standing rule already covers, read the rule's
+own wording first — points at the genre-noun clause: *"A reader scanning a list has to see what
+kind of book this is and what the person is after: name the magic, the system, the monsters, the
+dungeon in plain words rather than implying them."* It cannot do this job and never could. Its
+operative demand is that a listing be **plain about whatever furniture it has**; *what kind of
+book this is* is satisfied by any kind of book, and the four nouns read as instances of what to
+say plainly rather than as things a book must contain. Pilot 18's listing named none of the four
+and broke no rule in the prompt. **The gap is presence, not plainness**, which is why the fix is
+an addition rather than a re-signing, and why the two clauses ship in that order.
+
+### 183.3 What shipped
+
+**One demand, in `application/overview._TASK`**, placed immediately before the clause above:
+
+> *"The book this promises is one where the person opens something and reads their own
+> capabilities in it, and the promise names one of them they did not have before; a promise
+> missing either half is for a book this house does not publish."*
+
+**Both halves of the floor in one sentence, and the accounting is reported twice.**
+`plan/house-genre-constraint.md` names two — the furniture exists, and a gain on it is on the page
+rather than deferred — and a listing failing either is refused at the same gate for the same
+reason, so the terminator is one clause (§179.4's shape, conjunction rather than subsumption).
+`house.demands` prices it at one; the assembled system message grows **2,120 to 2,356 characters**,
+and both numbers are written down because §171 records that a demand bought by evading this
+counter is not a demand saved.
+
+**Affirmative on purpose, which §138 is usually the argument against.** That measurement is about
+*suppressing* an overproduced feature — a permission returned 47.2 number tokens per thousand
+against a prohibition's 7.0 — and nothing can be forbidden into existence. The precedent sits in
+this same constant: the genre-noun clause is affirmative, and removing it took four writers from
+0, 2, 3, 4 of the genre's own nouns to **0, 0, 0, 0**. This defect is that shape, an absence
+measured at zero, so the clause is signed the way the one measured against the same defect is.
+
+**Addressable at this role, checked before it shipped rather than after a read** (§154). Both
+halves name page facts — a thing that is opened and read, and a gain the promise states — so
+there is something for a listing writer to do about them. *The reader should feel progress* is the
+same direction with no addressee, and the timing half reaches a prompt as `domain/genre.py`'s
+schedule instead, which is the altitude `plan/house-genre-constraint.md` named before anybody
+drafted a clause.
+
+**Ceiling `listing writer` 17 -> 18** in `tests/test_prompt_budget.py`, raised on purpose with the
+reason written there, and **no other row moves** — the house floor is byte-identical, so every
+role standing on it is too. A subtraction was looked for first, in the order that file asks for,
+and refused at every candidate: the number clause and the format line are measured against this
+market, the two `house.CLARITY` clauses are a 2026-08-26 restoration of text lost by accident,
+§174's demand is a day old, and the genre-noun clause — the nearest neighbour — encodes a
+measurement, which §127's brake says is removed against another measurement and not against a
+mood.
+
+**Tests: `tests/test_house_genre_promise.py`.** Each refusal below is pinned, because a clause
+that comes back wearing any one of them is the same failure again:
+`test_the_house_genre_is_one_demand_of_the_listing_task`,
+`test_the_clause_carries_both_halves_of_the_floor`,
+`test_the_house_genre_reaches_a_prompt_as_its_floor_and_never_as_its_name`,
+`test_the_brief_field_is_untouched_and_an_empty_brief_is_still_empty`,
+`test_the_clause_names_no_reader_and_no_state_a_reader_is_in`,
+`test_the_clause_asks_for_no_quantity_and_the_prohibition_that_says_so_still_stands`,
+`test_the_clause_supplies_no_word_of_this_system_s_own_vocabulary`,
+`test_the_floor_stands_before_the_clause_that_says_how_to_name_it`, and
+`test_the_seed_s_refusal_sentence_is_not_restated_in_the_listing`.
+
+### 183.4 The empty-brief control, rewritten deliberately rather than silently
+
+This is the hazard `plan/house-genre-constraint.md` recorded against this option before the option
+was chosen, and it is the reason that document refused to pick a home in the first place. §136
+measured two words of shelf label under *"What this book is to be about"* outweighing every rule
+in this prompt — thirteen rank words across four listings, this system's own vocabulary coined in
+three of four, and one 59-word listing carrying twenty-two terms four readers could not cash — and
+recorded it as a **warning**. Making the genre a floor turns that warning into policy, so the
+control story is restated here in full and is what a later reader should hold this entry to.
+
+**What is unchanged.** Nothing is put in the brief field. `render_overview_request` renders the
+same default it always did, an empty brief is still empty, and the constraint is a standing
+property of the job in the system message, so it applies identically in both arms (§174's move at
+this same address). Briefed against unbriefed is still a comparison of **what somebody asked for**,
+which is the comparison the control exists to make, and the operator's content channel is
+untouched. §136's finding itself is untouched and still stands: it is a finding about the brief
+field, and this entry put nothing in it.
+
+**What is no longer controlled: genre presence.** From this clause forward every listing promises
+this house's book in both arms, so §136's arm B is **no longer a genre-free arm**. The comparisons
+this invalidates, named rather than left to be discovered:
+
+1. Any genre-noun or rank-vocabulary count that puts a post-clause listing beside §136's arm B, or
+   beside the four-writer draws behind the genre-noun clause's own defence (0, 2, 3, 4 against a
+   market median of 2, `research/quality-measurement/rival_pool.py`). The clause's own
+   pre-commitment — it goes if the count comes back high by recitation — now has a second cause to
+   separate before it can be read.
+2. §174's, §178's and §179's *shipped unmeasured, the next draw reads it* baselines, insofar as any
+   of them is a count of the genre's furniture. Their own subjects (a prior life, a coined name, a
+   restatement) are unaffected.
+3. Any before-and-after on premise variety across writers under an empty brief. The empty brief no
+   longer means an unconstrained draw; it means an unconstrained draw inside one genre.
+
+**The genre reaches the prompt as its floor and never as its name**, which is what bounds the dose.
+The clause names no shelf label — `application/recruiter.py` reached the identical conclusion at
+its own address on 2026-08-29 for §136's identical reason — no quantity, and no noun for the thing
+that is opened. So the two rails that would catch a §136 recurrence are already standing and
+neither was weakened: the numbers prohibition three clauses above governs the gain (§138's 7.0
+condition), and §178's return-side check refuses a listing that coins this repository's vocabulary,
+which stays meaningful precisely because this prompt hands over no name for the model to reach for.
+
+### 183.5 What was refused
+
+- **Naming the genre.** §136, and the Recruiter's precedent one day old. What a prompt carries is
+  the mechanical property every book this house drafts has; the shelf's name is a fact about the
+  house and lives here and in `domain/genre.HOUSE_GENRE`.
+- **A return-side check on the listing, the shape §178 shipped for schema words.** There is no
+  code-only predicate for *this promises a system* — a word list is what this project has deleted
+  repeatedly and what §179.6 records as suppressing the words instead of the construction — and
+  the only other reader is a model judging a candidate, which §61(5) forbids without containment
+  the log does not have. The gate that refused all three listings is the coordinator's read, and
+  it stays that until something qualified exists.
+- **A second sentence for the timing half.** It would have cost 17 -> 19 at the one role with no
+  floor under it, and the half is already structural: §157's schedule, §161.4's named quantity and
+  §173's interaction beat move behaviour with no adjective in them, which is the hazard
+  `plan/house-genre-constraint.md` named. *"Show progress immediately"* as prompt text is the §138
+  formula that document predicted, and it is not written anywhere.
+- **Any cadence claim at the listing.** §155.1's census (13,364 chapters, 584 fictions) is about
+  chapters and places nothing about a hundred-word promise; the clause asks for one gain and says
+  nothing about rhythm.
+- **Editing the genre-noun clause, the recruit prompt, any dossier, `house.py`, the seed floor, the
+  Architect or the scene path.** Option 1 of `plan/house-genre-constraint.md` landed at the
+  Recruiter on 2026-08-29 and covers new hires only; option 3, successor mints for the accepted
+  nine, is still open and still the operator's to sign.
+- **Any bar, and any quality claim.** Nothing here says a listing carrying the furniture is a
+  better listing. The demand counts and character counts are sizes, and no model was consulted at
+  any point.
+
+### 183.6 What this settles about dossiers, in one sentence and no more
+
+A floor at the listing is what makes a genre-free dossier usable — every book gets the promise
+whatever the writer reads, which is the argument `plan/house-genre-constraint.md` made for this
+option — so the condition that document's binding named (*production casting is cast-only until
+the floor exists*) is met at this surface. Whether a recruit's listing drawn under the clause
+actually clears the gate is pilot 18's redraw to show, and nothing here claims it in advance.
+
+### 183.7 Corrections in place
+
+`tests/test_implication_register.py::test_the_second_arm_names_the_first_as_its_general_case`
+asserted the listing task at exactly thirteen demands; it now asserts fourteen, with the reason
+beside the assertion. The exact form is what made this entry's growth visible in that file rather
+than silently, which is what an exact assertion is for, and §179's own clause is unchanged and
+still one demand at both addresses.
+
+### 183.8 Anti-scope
+
+**Shipped unmeasured, and that is the whole claim.** No model was called, no book was drawn, no
+paid call was made, and no `runs/` database was written — pilot 18's listing was read from disk.
+No corpus was read, so RS1 is untouched. No research claim is promoted, no axis admitted, no
+mechanism qualified, and no bar declared. One sentence in one prompt: whether a listing drawn under
+it promises what the operator's constraint asks for is the next draw's to find, and the pilot that
+found the gap is the one that reads it.

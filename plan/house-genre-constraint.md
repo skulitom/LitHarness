@@ -1,8 +1,19 @@
 # The house genre is LitRPG, mandatory, and tonight it turned out to live nowhere
 
 **Status: standing operator constraint, 2026-08-29 (just past midnight). Recorded verbatim;
-the fix's home is deliberately left open for a fresh session.** The operator, on first sight
-of pilot 13's book (*The Rainwright's Apprentice Has No Licence*, larkin, light fantasy):
+the fix's home is deliberately left open for a fresh session.**
+
+**The home is decided, 2026-08-30: option 2 landed as stage-0 §183** (one demand in
+`application/overview._TASK`, the listing writer's ceiling 17 -> 18), after three listings were
+refused at the coordinator's gate in one day — pilots 13, 17 and 18. **Option 1 landed the day
+before**, on 2026-08-29, as the house-genre sentence in `application/recruiter._RECRUIT` (that
+role's ceiling 24 -> 25). **Option 3 is still open** and still the operator's to sign. The
+empty-brief control the §136 hazard turns on is rewritten in §183.4 rather than in this note, and
+the timing half's structural home is `domain/genre.py`'s schedule (§157, §161, §173) rather than
+any clause. Nothing below is edited; what follows is the record as it was written.
+
+The operator, on first sight of pilot 13's book (*The Rainwright's Apprentice Has No Licence*,
+larkin, light fantasy):
 
 > *"One big problem i noticed right away with the book. It's not litrpg... we shouldn't be
 > writing any books that don't have litrpg as the genre"*
