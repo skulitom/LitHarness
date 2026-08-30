@@ -20009,3 +20009,286 @@ it no longer passes. Nothing here reaches the writer, the roster, the listing ta
 control plane, the reader loop, or any dossier. Whether the writers this refuses can write their
 way past it in the attempts they earn is pilot 18's redraw to find, and this entry claims it in
 advance nowhere.
+
+## 185. The operator asked for a second pass, and where it could go was settled by the one gate that would have abstained anywhere else
+
+The directive is verbatim in `plan/serial-pilot-18.md` §4 and is one sentence: after the finished
+draft, a smarter model rewrites the chapter with the correct sentence and paragraph structure. The
+question it does not answer is *where*, and three of the four available seams answer it for you —
+each closed by something already written down, and closed by the same argument. **The revision has
+to be judged by the ladder the draft would have been judged by, and only one seam leaves that
+ladder able to run.**
+
+### 185.1 Measured first, and the measurement is the record rather than a new count
+
+The register families are named in `plan/serial-pilot-16.md` §7 (read 11) and
+`plan/serial-pilot-18.md` §4 (read 12); those documents own them, and no item, instance or word of
+either is restated here or reaches the code, which is §97.1 and is checked by
+`test_no_word_of_the_reads_that_commissioned_this_is_in_the_prompt`. What matters for this entry is
+the shape read 12 recorded *about* them: the item classes have narrowed from architecture to
+sentences, and sentences are the surface a prompt clause reaches worst — §138's whole record, with
+§180's census of ten drafted books as the standing evidence that a register axis named at read 1 did
+not thin across ten books on its own.
+
+**Two gate misses in the same routing, and they decide the seam.** §184 shipped the day before this
+and is the first check that reads what a scene *wrote down* against what its plan *asked for*.
+§184.4's abstention is the load-bearing clause: **a position the book already wrote down is not one
+this scene moves anything at.** An accepted scene has minted its own snapshot at its own story
+position, so `gate_progression` handed a follow-on revision of accepted prose would read its own
+predecessor's record as the *before* and abstain — on every scheduled scene, silently. The
+directive's requirement that the §184 gate pass on the revision is therefore **unsatisfiable through
+any seam behind acceptance**. That is not a preference between designs; it is one of them being
+unable to do the thing it was commissioned for.
+
+**Three further readings of the code, each closing a seam.**
+
+1. **`domain/patch.py` would need a licence that does not exist.** `apply_patch` refuses an
+   unlicensed rewrite (`Veto.UNLICENSED_DELETION`) and the licence is a *located complaint* — a
+   finding with a span. A register complaint located nowhere would have to be manufactured to open
+   that door, which is the class of licence this project has refused to invent since §10.4.
+2. **§180.7 already records that the repair path is the one seam the em-dash strip does not reach.**
+   A reviser routed through `apply_patch` would put the book's final prose on that path, so the mark
+   read 1 and read 11 both named would ship unstripped.
+3. **A second accepted revision per scene mints the contradiction the integrity gate exists to
+   refuse.** The head would move twice, two `MANUSCRIPT_REVISION_ACCEPTED` events would name one
+   scene, and a re-printed status line at an already-written position is precisely the second canon
+   snapshot at one key that `integrity.detect_contradictions` groups on.
+
+**And the seam that is left does not make `draft.py`'s rule false, which was checked rather than
+assumed.** That module's docstring says *a draft may only fill emptiness; rewriting existing prose
+must route through `apply_patch`*, and names the failure it prevents: *have it improve the scene it
+just wrote*, the open-ended loop RevisionBench's ~80% preference for human originals is the evidence
+against. The rule is about prose **the store holds**. The reviser runs on the provider's string,
+before anything is committed: `allow_overwrite` stays `False`, `gate_draft` still fills an empty node
+exactly once, and there is no second pass and no way to ask for one. What that docstring forbids is a
+loop that re-reads its own committed output. This is one bounded transformation of a string nothing
+has accepted, gated identically.
+
+### 185.2 What shipped
+
+**One draft in, one revision out, in front of the ladder.** `application/handlers.py::revise_draft`
+runs between `registry.complete` and `strip_em_dash`, so the shape gate, the integrity detectors,
+§184's beat comparison and the em-dash rewrite all read the adopted text. `domain/reviser.py` holds
+the containment predicates, `application/reviser.py` holds the role and its instruction, and
+`tests/test_reviser.py` is the file, twenty-nine assertions in five groups named in its docstring.
+
+**No candidate is ever chosen.** No second draw, no score, and no model asked which of two texts is
+better — §61(5) and §105.1, with §105's own measurement as the prior: the one collaboration-shaped
+loop this project built and measured returned the same commits for 2.25x the calls and shipped off.
+What ships is a **transformation**, the family `blurb_rewrite` and `revoice` already occupy, where
+the return is checked against its input by code rather than ranked against an alternative by a
+model. `test_the_containment_module_offers_nothing_that_could_order_two_texts` pins that in §105.1's
+own manner — cheaper to forbid the shape than to review every future edit for the call that would
+enable it: the module's exported surface and `Containment`'s three fields are asserted, so there is
+nowhere to put a score and adding one has to change a test.
+
+**The strip stays last.** Placing the reviser *after* `strip_em_dash` is the obvious ordering and is
+wrong: the strip would then be the last thing that touched the draft while nothing touched the
+revision, so a mark the second call reached for would ship. Before it, §180.4's third load-bearing
+detail — one text, one hash, one offset space, all of it before the gate — is unchanged.
+`test_the_em_dash_strip_runs_on_the_revision` holds it, including the machine line keeping its own
+U+2014 separator.
+
+### 185.3 Containment is arithmetic, and a refusal costs the book nothing
+
+Five predicates in `domain/reviser.contain`, each reading two strings and re-deriving nothing:
+
+- **Every machine line character for character, in order and in number.** A tuple comparison, so
+  bytes, order and count are one check. A moved number would write a second snapshot at one
+  position; an added space would leave a scene that renders a panel and extracts nothing, the silent
+  failure `extraction`'s own docstring names.
+- **No name or number the draft did not carry.** A name is a capitalised word that is *not* opening
+  its sentence, found by walking back to the first alphanumeric or terminal — structural, because the
+  alternative is a list of words allowed to be capitalised and `house` has cut three clauses for
+  being a list somebody recited. One-directional on purpose: a dropped name cannot be told from a
+  pronoun replacing it, and a predicate that guessed would be the second answer §184.4 refuses to
+  invent.
+- **A bounded length ratio**, `[0.85, 1.20]`. The floor is where a summary starts and the ceiling is
+  where new material does; the ceiling sits further from 1.0 because voicing an observation costs
+  attribution words.
+- **Empty**, and **unchanged** — the second is not a breach of anything and is handled the same way,
+  because a reviser that returned its input bought no movement and there is nothing to adopt.
+
+**Every refusal path returns the draft, and the scene is accepted exactly as it would have been.**
+Four separate failures are asserted end to end — a broken status line, an invented name, a dead
+transport, an exhausted ceiling — and in none of them does the unit park. That is the property that
+makes the stage safe to leave on: **the book is never hostage to the reviser.** The transport case is
+not a courtesy; `claude -p` fails under box load, the drafting call is already paid for, and letting
+the second call's weather spend the unit's attempt budget would poison units whose first call
+succeeded.
+
+**By construction the status-line gates cannot change their verdict.** Containment forces the machine
+lines byte-identical, so `extract_state` reads the same values off the revision that it would have
+read off the draft, and §184's comparison — which genuinely re-runs, on the revised prose — returns
+what it would have returned. The gate that *can* change its verdict is the shape gate, and
+`test_the_gate_ladder_refuses_the_revision_and_not_the_draft` is the assertion that would fail if
+this stage were ever moved behind acceptance.
+
+### 185.4 The instruction, and every craft clause in it says what fails
+
+§138 measured a permission-only clause returning more than six times what a prohibition-only one did,
+and worse than silence. A role whose entire job is a register is the last place to spend that, so the
+flow this stage exists to produce — subordination, varied openings, an observation in somebody's
+mouth — enters **as a prohibition on the shape standing in its way** and never as an adjective. Six
+craft clauses, every one beginning *what fails is*, asserted over the text by
+`test_every_craft_clause_the_reviser_carries_says_what_fails` rather than about it. There is no
+sentence anywhere in the module about what good prose is.
+
+**The conjunction is named as a part of speech and not as a word.** A prohibition against chaining
+that cannot say what the chaining is made of is unaddressable (§154), and quoting the function words
+an operator used to describe the defect would be the read becoming prompt text. *A conjunction* is a
+thing on the page and belongs to nobody's read. No instance list, for §168's reason unchanged.
+
+**Two containment sentences ride the instruction as well as the check, and the check is the
+authority.** The sentence exists so a model does not spend a call discovering a rule; the comparison
+is what makes the rule true, and the prompt says so — what fails the check is discarded. That is
+`revoice._REWRITE`'s own move at a second address.
+
+**The packet reaches it without the drafting call's closing imperative.** The assembled scene prompt
+ends on *Now write ...*, an instruction to produce a scene that does not yet exist, and handing that
+to a call whose whole containment rests on producing the scene that does is the one sentence in the
+input most likely to be obeyed. So `application/planner.py` records the packet as its own payload
+slot and the reviser reads that — a second copy rather than an offset into the first, because a
+stored length to slice at is a derived answer that goes stale, which is §184's own rule about reading
+an ask instead of recomputing one.
+
+### 185.5 The floor: `CLARITY`, and neither rule below it
+
+§129's tier order read literally, and this is the first role to take the floor alone.
+`house.with_clarity_floor` is a second function rather than a boolean on the first, so a role's tier
+is a thing visible at the call site. Every demand `CLARITY` makes has a sentence or a paragraph for
+its object — an unmet term, a sentence with two readings, an object acting, a comparison, a pronoun
+inside a paragraph, a fourth thing happening after three — which is exactly this role's object.
+`READER` and `ACCUMULATION` make demands about **what the story contains**, and containment refuses
+every compliant response to them one function later: a demand whose only compliant answer is
+discarded lands with its sign multiplied by zero (§154). So they are not sent.
+
+**28 demands, measured and set at what is there** (`tests/test_prompt_budget.py`), of which fourteen
+are `CLARITY` entire. **A later floor clause therefore moves seven numbers rather than six**, and
+saying so before the fact is cheaper than the next track discovering it. The role is in
+`READER_FACING` and is the least optional member of that tuple: it rewrites the book's own sentences,
+so a machinery word in it reaches the page directly rather than at one remove — §120's instance is
+what that rail exists for.
+
+### 185.6 The model, and why *smarter* ships as a seam rather than as a name
+
+`CompletionRequest.model` is new: `None` means the adapter's own, which is `Sampler`'s rule at a
+second address, so every call that existed before this carries no opinion and sends byte-identical
+argv. It names a **model on the resolved provider** and not a provider, so §5's pinned registry is
+untouched and the call-class routing it deleted does not come back — there is no way for a book to
+fall back silently to a weaker generator. `_resolved_model` now resolves against what the call asked
+for rather than against the adapter's default, because attributing a request that named its own model
+to the adapter's would be §56.2's defect with the sign flipped.
+
+`reviser.REVISION_MODEL` is `None`, which resolves to `providers/cli.py`'s own `claude-opus-5` — the
+strongest model this installation configures. **The directive's word is *smarter* and what ships is
+the seam**, because this repository pins one frontier generator for every call class on §1a's grounds
+and naming a model the registry does not have would be a claim the code could not keep. An operator
+naming one changes the reviser's model and nothing else.
+
+### 185.7 A defect the tests found: the ceiling was under-counting by one call per scene
+
+`spend_on` is a view over `policy_decisions`, and the drafting call's decision is not written until
+the end of the handler — inside `commit_revision` on the accepting path. **A second call in the same
+tick therefore reads a day that does not yet contain the first**, and a ceiling of one invocation
+would have admitted two. Found by writing the assertion, not by reading the code. The fix is
+`Spend.plus`, which exists for exactly this: the writer's result is added by hand to what the
+governor is shown, so the money is visible before the row is. §105.3's rule — *every provider call
+reaches `policy_decisions`, because nothing else is visible to the budget gate* — needed this to be
+true rather than nearly true.
+
+**Both ceilings reach the reviser, and the invocations ceiling binds first.** §15's per-call harness
+tax scales with call count, so a stage adding one call per scene doubles the ceiling that exists for
+it. The reviser's own decision row carries its provider, model, profile, invocations, tokens and
+cost, so a chapter's spend splits between the call that wrote it and the call that rewrote it without
+anybody joining back — and the accepted scene's event carries `revised_by`, so the prose on the page
+names the model that produced it.
+
+**The reviser's decision is `ACCEPT` on every path, and that is a safety property rather than a
+verdict about prose.** The Conductor settles the *job* against `latest_decision_for`'s `attempt
+DESC, rowid DESC`; a row that could carry `PARK` would poison a unit that drafted perfectly well if
+it ever came last. Its containment gate is non-blocking, which is literally correct here —
+`blocking` means *`decide` refuses the candidate*, and `decide` is never called on this decision —
+and it is `GateKind.SHAPE` rather than `CRAFT` because nothing in it judges prose; it compares two
+strings. `test_the_job_settles_against_the_writers_decision_and_never_the_revisers` asserts the
+property rather than trusting the write order, which is a thing a later edit can move.
+
+### 185.8 The §54 control, restated in full, and what the stage invalidates
+
+**The flag.** `--no-revise` on `litharness run`, `LITHARNESS_NO_REVISE` in the environment, and
+`revise=False` on the handler factory — where it is also the default, beside `schedule_evaluation`
+and `schedule_summary`, for the reason those two have it. A floor defaults on so a path that forgets
+it fails closed (`require_starting_sheet` says so in as many words); a **spend** defaults off,
+because a call site that forgot to think about a second model call per scene should get the book it
+already had rather than a bill it did not ask for. The composition root turns it on, which is where
+the operator commissioned it.
+
+**Held back, the arm is byte-identical *and* hash-identical.** No second request is built, no call is
+made, no decision is written — and `policy_config_digest` omits the reviser key **entirely** rather
+than writing it as null, so a control run hashes the same as every scene drafted before this existed.
+That answers §184.6's own recorded worry about this digest in the affirmative direction: a key added
+unconditionally moves every decision written after it, so this one is present only when the thing it
+describes is doing something. `test_the_control_arm_makes_no_second_call_and_hashes_as_it_always_did`
+holds all three halves.
+
+**What the stage invalidates when it is on, named rather than left to be discovered.**
+
+1. **Every register census over accepted prose stops being a census of what a writer produced.**
+   §180.1's sentence-length, join and em-dash counts; §156's inference-gloss rate; any
+   before-and-after on §180's fourth-action clause, §179's implication clause, §181's diction clause
+   or §171's. All of them read the page, and the page is now the second call's. **A clause's effect at
+   the drafting call can no longer be read off an accepted scene**, which is the largest single cost
+   of this entry and is what the flag exists to buy back: a clause-effect census has to draw its arm
+   under `--no-revise`.
+2. **`em_dashes_removed` changes subject.** It counts marks in the revision, so the read-1/read-11
+   rate is now a fact about the reviser and not about the writer.
+3. **§184's beat verdict is no longer separable by author.** The gate re-runs on the revision and its
+   verdict cannot change (185.3), but a chapter's beat record now describes a two-call product.
+4. **Dossier work loses accepted prose as evidence.** §150's ours-vs-market descriptor half and
+   `writer_distinctness` both read drafted scenes; two writers' accepted prose now passes through one
+   reviser instruction, so accepted prose is no longer evidence about a dossier's effect on register.
+   The draw side is unaffected — `revoice` is upstream of this and untouched.
+5. **§183's and §136's empty-brief comparisons are not affected**, because nothing here reaches the
+   listing, the seed or any brief field.
+
+### 185.9 What was refused
+
+- **The tournament shape**, in every costume: K candidates, best-of-N, a model shown two texts, a
+  score column, a re-draw when containment refuses. §61(5), §105.1 and §105's measured null. A
+  refused revision is reported and the draft stands; there is no second attempt, which is
+  `revoice.accept_rewrite`'s recorded ruling and §146.8's, reused rather than re-argued.
+- **A second drafting pass.** The reviser may not add or cut events, and the mechanical checks are
+  what say so rather than the sentence that also says so.
+- **Any judge role.** Nothing here scores prose, nothing carries a `calibration_id`, and the one gate
+  the stage adds is `GateKind.SHAPE` at `VerdictSource.DETERMINISTIC`. §10.4's promotion rule is not
+  approached, let alone met, and no craft gate was created.
+- **A follow-on job through the repair path**, for 185.1's three reasons. The residual that comes
+  with refusing it: `application/repair.py` still writes prose through `apply_patch`, so prose
+  repaired after acceptance is not revised by this stage. §180.7 named the same seam for the same
+  reason and it is unclosed still.
+- **A magnitude or a direction on the length band.** `[0.85, 1.20]` bounds a rewrite the way
+  `PatchPolicy.min_length_ratio` bounds a patch. **No bar is declared** and §61's four attainability
+  checks have nothing to run on: neither number judges prose, neither has a distribution behind it,
+  and neither is a threshold anything must clear to be called good.
+- **A second parsed surface.** Containment protects every bracketed machine line, which is wider than
+  what `extraction` reads; it does not *parse* a second one. §160.3's rule is about what is read, and
+  one predicate keeps one answer.
+- **Widening `_digest` in the fake to include the model.** It would have changed every canned digest
+  in the suite for a property the reviser's own profile already separates. Recorded as a limitation:
+  two fake calls differing only in model return the same text.
+
+### 185.10 Anti-scope
+
+**Shipped unmeasured, and no paid call was made.** The whole stage is proved by the fake provider: no
+model was called, no book was drawn, no chapter was revised, and nothing here says a revised chapter
+reads better than the draft it came from. It cannot say so — this project is not entitled to order
+prose by quality, and `research/quality-measurement/BRIEF.md` is the ledger of that. The claim is
+exactly three things: a second call happens, what it returns is measured against the draft before
+anything reads it, and the ladder judges what was adopted. Whether the register families reads 10 to
+12 named thin under it is the first paid draw's to find.
+
+Nothing here reaches the listing, the seed, the Architect, the roster, a dossier, the editorial
+control plane, the reader loop, or any research arm. No corpus was read, so RS1 is untouched. No
+research claim is promoted, no mechanism qualified, no axis admitted, and `em_dash`'s registered
+hypothesis stays VOID — neither pre-empted nor answered by a stage that makes no assertion about the
+mark.

@@ -1224,6 +1224,15 @@ genre.with_interaction(
                     "logical_id": beat.logical_id,
                     "prompt": prompt,
                     "system": system,
+                    # **The packet on its own, for the reviser** (§185). The assembled
+                    # `prompt` above already contains it, and this is deliberately a second
+                    # copy rather than an offset into the first: the reviser must be shown
+                    # the facts the scene may not contradict *without* the closing "Now
+                    # write ..." that follows them, and a stored length to slice at is a
+                    # derived answer that goes stale the first time the tail changes —
+                    # §184's own rule about reading an ask instead of recomputing one. A job
+                    # enqueued before this key existed revises on the scene alone.
+                    "packet": packet.render(include_constraints=False),
                     "profile": "default",
                     "plan_revision_id": plan_revision.plan_revision_id,
                     # Why this beat, recorded durably. There is no WorkSelected event type

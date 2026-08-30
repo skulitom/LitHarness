@@ -164,6 +164,14 @@ class ClaudeCodeProvider:
     runner: Runner = subprocess_runner
     extra_args: tuple[str, ...] = ()
 
+    def _model_for(self, request: CompletionRequest) -> str:
+        """The model this call asks for: the request's, or this adapter's own.
+
+        A request naming none is byte-identical to what it always sent, which is what makes
+        the field additive rather than a change to every existing call site.
+        """
+        return request.model or self.model
+
     def _argv(self, request: CompletionRequest) -> list[str]:
         argv = [
             self.binary,
@@ -173,7 +181,7 @@ class ClaudeCodeProvider:
             "--output-format",
             "json",
             "--model",
-            self.model,
+            self._model_for(request),
             "--allowed-tools",
             # Empty for every call that asks for nothing, which is every drafting call and
             # every reader call — byte-identical to what this always sent. A role that
@@ -276,7 +284,11 @@ class ClaudeCodeProvider:
         text = strip_fences(str(envelope.get("result", "")))
         usage_block = envelope.get("usage") or {}
         model_usage = envelope.get("modelUsage") or {}
-        resolved = _resolved_model(model_usage, self.model)
+        # Against what this call *asked for*, not against the adapter's default: a request
+        # naming its own model and attributed to the adapter's would be §56.2's defect with
+        # the sign flipped — a provenance record confidently naming a model that did not
+        # write the prose.
+        resolved = _resolved_model(model_usage, self._model_for(request))
         return CompletionResult(
             text=text,
             provider=self.name,

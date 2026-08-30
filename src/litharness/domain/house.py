@@ -717,3 +717,27 @@ def with_house_rules(system: str) -> str:
     """
     body = system.strip()
     return f"{body}\n\n{HOUSE_RULES}" if body else HOUSE_RULES
+
+
+def with_clarity_floor(system: str) -> str:
+    """`system` with the floor alone appended — `CLARITY`, and neither rule below it.
+
+    **The tier order in §129 read literally, for the one role whose object is a sentence.**
+    `CLARITY` is the floor; `READER` and `ACCUMULATION` rank under it and are provisional. Every
+    demand `CLARITY` makes has a sentence or a paragraph for its object, which is what a rewrite
+    is allowed to touch. Both rules below it make demands about **what the story contains** — a
+    scene that moves the book, an opening that shows an offer, a power somebody keeps — and a
+    role forbidden by a mechanical check from changing any of those would receive them as
+    demands it cannot answer, which by §154 is a demand landing with its sign multiplied by
+    zero.
+
+    **A second function rather than a parameter on the one above**, so that a role's tier is a
+    thing somebody chose at the call site and a reader can see by which function was called;
+    a boolean would put the same decision inside an argument nobody reads. Same spacing as
+    `with_house_rules` for that function's own recorded reason.
+
+    `application/reviser.py` is the only caller. `revoice` and `recruiter` run floorless with
+    reasons of their own and are deliberately not moved onto this.
+    """
+    body = system.strip()
+    return f"{body}\n\n{CLARITY}" if body else CLARITY

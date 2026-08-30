@@ -30,6 +30,7 @@ ran" is the question an audit actually asks first.
 from __future__ import annotations
 
 import enum
+from collections.abc import Mapping
 from dataclasses import dataclass
 from hashlib import sha256
 
@@ -352,7 +353,11 @@ class PolicyDecision:
         )
 
 
-def policy_digest(policy: DraftPolicy, sampler: Sampler | None = None) -> str:
+def policy_digest(
+    policy: DraftPolicy,
+    sampler: Sampler | None = None,
+    reviser: Mapping[str, object] | None = None,
+) -> str:
     """Content address of the frozen policy the decision was made under.
 
     **`sampler` is here for the same reason `target_words` is, one layer down.** The decision
@@ -365,9 +370,20 @@ def policy_digest(policy: DraftPolicy, sampler: Sampler | None = None) -> str:
     `None` records the absence honestly rather than substituting a default: a decision made
     before this existed, or on a path that expresses no sampler, is not a decision made at
     the current default and must not hash as one.
+
+    **`reviser` is the same argument for a second stage, and the key is absent rather than
+    null when the stage is off.** A scene whose prose was rewritten by a second model before
+    the gate saw it was not written under the same configuration as one that reached the gate
+    from the drafting call, and a digest that could not tell those apart would be exactly the
+    invisible input this function exists to catch — `target_words` one layer down is the
+    recorded instance. It is left **out** of the material when the stage is disabled, rather
+    than written as `None`, because that is what makes the control arm a control: a run with
+    the reviser held back hashes identically to every scene drafted before the stage existed,
+    so `--no-revise` reproduces the old configuration rather than merely resembling it.
     """
     return payload_digest(
         {
+            **({} if reviser is None else {"reviser": dict(reviser)}),
             "min_chars": policy.min_chars,
             "max_chars": policy.max_chars,
             "allow_overwrite": policy.allow_overwrite,

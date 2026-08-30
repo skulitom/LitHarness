@@ -35,6 +35,7 @@ from litharness.application import (
     planner,
     readers,
     recruiter,
+    reviser,
     revoice,
     titles,
     world_agent,
@@ -124,6 +125,12 @@ def _roles() -> dict[str, str]:
             ).system
             or ""
         ),
+        # **The one row that stands on `CLARITY` and on neither rule below it** (§185, §129's
+        # tier order read literally). It is not the floorless case the two rows above are and
+        # it is not the whole-floor case the scene writer is: a role whose object is a sentence
+        # gets the rule whose every demand has a sentence for its object, and the two rules
+        # about what a story contains are refused by a mechanical check one function later.
+        "reviser": reviser.revision_system(),
     }
 
 
@@ -323,6 +330,19 @@ BUDGET: dict[str, int] = {
     # are five things the prompt says will refuse it.
     "revoice draw": 9,
     "revoice rewrite": 14,
+    # **The Reviser joined at 28 on 2026-08-30, measured and set at what is there** (§185), so
+    # it starts as a ratchet like every row above it. Fourteen of the twenty-eight are
+    # `house.CLARITY` entire and move only when the floor does — this row therefore rises with
+    # a floor clause exactly as the two Architect rows and the two scene rows do, and a later
+    # track adding one should expect **seven** numbers to move rather than six.
+    #
+    # The other fourteen are the role's own: three of containment stated as instruction, six
+    # prohibitions against the structures reads 10 to 12 named, and the rest the frame and the
+    # return contract. Every one of the six is prohibition-signed, which
+    # `tests/test_reviser.py` asserts over the text rather than about it — §138 measured the
+    # permission form of one clause at more than six times the prohibition form and worse than
+    # silence, and a role whose whole job is a register is the last place to spend that.
+    "reviser": 28,
 }
 
 #: The floor everything else inherits. Broken out because a clause added here is added to every
@@ -584,11 +604,17 @@ def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -
 #: writes is rendered into the system message of every scene call — so
 #: `test_the_recruiter_prompt_is_a_tool_essay_and_would_pass_the_leak_rail_anyway` measures the
 #: rail it is exempt from, and it passes. An exemption nobody checks is an exemption that grows.
+#: **The Reviser is here and it is the least optional of the five** (§185). Every other row
+#: shapes text a reader meets at one remove; this one rewrites the book's own sentences, so a
+#: machinery word in it reaches the page directly. §120's instance — `standing` arriving in a
+#: chapter as a thing a girl could be hot at — is the failure this rail exists for, and a role
+#: whose output *replaces* drafted prose is where it would cost the most.
 READER_FACING = (
     "listing writer",
     "title writer",
     "measurement reader",
     "steering reader",
+    "reviser",
 )
 
 
@@ -657,6 +683,7 @@ def test_prompt_inspector_covers_every_production_communication_role(
         "reader-measurement",
         "reader-steering",
         "repair",
+        "reviser",
     } <= set(rows)
     assert all(row["input_chars"] >= row["prompt_chars"] for row in rows.values())
     assert rows["summarizer"]["schema_chars"] > 0

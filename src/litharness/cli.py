@@ -98,6 +98,7 @@ from litharness.application.repair import (
     make_repair_handler,
     render_repair_request,
 )
+from litharness.application.reviser import render_revision_request
 from litharness.application.summarize import (
     SUMMARY_SCHEMA,
     make_summary_handler,
@@ -626,6 +627,7 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
                 schedule_summary=True,
                 reader_mechanism=reader_mechanism,
                 reader_shape=SerialShape(args.chapter_scenes, args.arc_chapters),
+                revise=not getattr(args, "no_revise", False),
             ),
             READER_OBSERVE: make_reader_observation_handler(
                 registry, store, args.project, budget=_budget(args)
@@ -3155,6 +3157,9 @@ def cmd_prompts(args: argparse.Namespace) -> int:
             scene_plan="Rook pays the first toll.",
             facts=("rook debt unpaid",),
         ),
+        # The reviser sees a drafted scene and the material behind it, so the inspector shows
+        # it the same fixture the repair row uses rather than a second invented one.
+        "reviser": render_revision_request(scene_text, material="Rook owes the first toll."),
         "house-floor": CompletionRequest(prompt="", system=house.HOUSE_RULES),
     }
 
@@ -5442,6 +5447,15 @@ def build_parser() -> argparse.ArgumentParser:
         "LITHARNESS_NO_OUTLINE. The right flag for a book somebody outlines by hand — a "
         "scene with no statement drafts exactly as it did before outlines existed. "
         "(Formerly §54's control arm; that measurement concluded, §57/§65)",
+    )
+    parser.add_argument(
+        "--no-revise",
+        action="store_true",
+        default=_env_flag("LITHARNESS_NO_REVISE"),
+        help="do not rewrite the drafted scene for sentence and paragraph structure before "
+        "gating it; also read from LITHARNESS_NO_REVISE. This is the control arm (§185): with "
+        "it set no second call is made, no second decision is written, and the frozen policy "
+        "digest is the one every scene drafted before the reviser existed already carries",
     )
     parser.add_argument(
         "--chapter-scenes",

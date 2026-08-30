@@ -134,6 +134,18 @@ class CompletionRequest:
     #: Call class, used by the registry to route mechanical work to cheap providers even in
     #: production (see plan/provider-adapters.md §3).
     call_class: str = "generation"
+    #: Which model to ask the resolved provider for. **`None` means the adapter's own**, which
+    #: is `Sampler`'s rule at a second address and for the same reason: a request that has no
+    #: opinion must not assert one, and every call that existed before this field carries none.
+    #:
+    #: **It is a model and not a provider, and that is the whole of what it can do.** §5's
+    #: pinned registry serves one provider for every call class on §1a's grounds — a silent
+    #: mid-book fallback to a weaker generator is a quality defect, not resilience — and this
+    #: does not reopen that: it names a model *on* the resolved provider, so a role wanting a
+    #: stronger one gets it without the call-class routing the registry deleted coming back.
+    #: `CompletionResult.model` still reports what actually wrote the text, which is
+    #: `_resolved_model`'s job and is not this field's word for it.
+    model: str | None = None
     #: How to decode. `None` leaves it to the adapter, which is what every call site that
     #: has no opinion should do — including every existing one, so this field is additive.
     sampler: Sampler | None = None
