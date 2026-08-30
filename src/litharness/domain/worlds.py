@@ -165,6 +165,45 @@ COSTS = "costs"
 #: facts about different objects, which stopped having to share one ladder.
 GOVERNED_BY = "governed_by"
 
+# --- what the system offers, and what one person took ----------------------------------------
+
+#: A fork offers one of its ways. An edge: the **fork is the subject and the option is the
+#: object**, so a fork is found by its own edges and needs no `entity_role` of its own — the way
+#: a criterion is found by its comparator rather than by a tag.
+#:
+#: **This is the moment §160 had no object for.** That entry gave a book an ability graph, a named
+#: ladder and one magnitude scale, and nothing anywhere modelled the system *offering* and somebody
+#: *taking*. `plan/house-genre-constraint.md` queued the gap in its own words — a class concept is
+#: a schema extension, not that night's edit — and read 10 is where it stopped being queued: the
+#: operator's original awe direction ("i wonder what I would get and pick") is a
+#: choosing-among-options effect, and there was nothing in the model for it to be an effect of.
+#:
+#: A fork takes no `--order-key`. Which rung it opens at is a `REQUIRES` edge, because that
+#: predicate already means "this cannot be had before that" and a second one saying it would be a
+#: second answer; *when somebody reached it* is the `CHOSE` record's business and nobody else's.
+OFFERS = "offers"
+
+#: What taking one way gets you. An edge from the option to the capability it opens.
+#:
+#: **The gate is what makes a fork a fork.** `gamesystem.legal_moves` will not offer a capability
+#: named here until the sheet holds the pick that opens it, so the fork changes what is
+#: arithmetically possible rather than merely labelling a preference — which is the only definition
+#: of a build fork this repository can check. A capability named by two options has two answers to
+#: "is it locked", and `gamesystem.check_draw` refuses that draw.
+GRANTS = "grants"
+
+#: Which way one person took, and when. `STANDS_AT_PREDICATE`'s shape on purpose: `--object` the
+#: thing reached, `--value` the fork it was reached *on*, `--order-key` where in the book.
+#:
+#: The value slot carries the fork for `PRECEDES_PREDICATE`'s recorded reason — a world may run
+#: several forks at once, and an unscoped pick would splice two of them into one decision nobody
+#: declared.
+#:
+#: **Irrevocable, and that is the whole of why the deliberation matters.** `gamesystem.choose`
+#: raises on a fork already taken. There is no un-choosing for the same reason there is no
+#: `world retract` (§160.5, still owed from serial pilot 14 §10).
+CHOSE = "chose"
+
 
 # --- rules and their consequences ----------------------------------------------------------
 
@@ -521,6 +560,40 @@ def governed(records: Sequence[lc.StateRecord], system: str) -> tuple[str, ...]:
             subject
             for subject, owner in governed_by(records).items()
             if owner == system
+        )
+    )
+
+
+def offered_by(records: Sequence[lc.StateRecord], fork: str) -> tuple[str, ...]:
+    """The options this fork offers, sorted. Empty for a subject that offers none.
+
+    Sorted rather than declaration-ordered, and that is `SystemDef.__post_init__`'s rule reaching
+    one object further: records can only return in the order a store gives them, so a reader that
+    preserved "declaration order" would be preserving row order, and a round trip through canon
+    would not close.
+    """
+    return tuple(
+        sorted(
+            {
+                record.object_ref
+                for record in records
+                if record.predicate == OFFERS and record.object_ref
+                and record.subject == fork
+            }
+        )
+    )
+
+
+def granted_by(records: Sequence[lc.StateRecord], option: str) -> tuple[str, ...]:
+    """The capabilities this option opens, sorted. Empty for an option that opens none."""
+    return tuple(
+        sorted(
+            {
+                record.object_ref
+                for record in records
+                if record.predicate == GRANTS and record.object_ref
+                and record.subject == option
+            }
         )
     )
 
@@ -1766,6 +1839,20 @@ def _record_sentence(
         return f"{record.subject} needs {record.object_ref} first"
     if record.predicate == GOVERNED_BY and record.object_ref:
         return f"{record.subject} is governed by {record.object_ref}"
+    # **The fork, its ways and one person's pick, as three facts and no instruction.** The
+    # register is the one the branches above use — what is so, never what to do about it — and
+    # §114.4's live defect is why they exist at all: a predicate with no sentence reaches the
+    # writer through `state.describe` as machine notation. Nothing here says weigh it, dramatise
+    # it, or make the reader want one; that is the scene plan's altitude and it is deliberately
+    # not this one (§95's scope axiom).
+    if record.predicate == OFFERS and record.object_ref:
+        return f"{record.subject} offers {record.object_ref} as one way to take it"
+    if record.predicate == GRANTS and record.object_ref:
+        return f"{record.subject} opens {record.object_ref} to whoever takes it"
+    if record.predicate == CHOSE and record.object_ref:
+        fork = str(record.value or "").strip()
+        of = f" of {fork}" if fork else ""
+        return f"{record.subject} took {record.object_ref}{of}, and cannot take another"
     if record.predicate == TAUGHT_BY and record.object_ref:
         return f"{record.subject} is taught by {record.object_ref}"
     if record.predicate == PRICE_PREDICATE and value:
@@ -1827,6 +1914,7 @@ __all__ = [
     "CARDINALITY_CONSTRAINT",
     "CHANGE",
     "CHANGE_ROLES",
+    "CHOSE",
     "CLAIM_CONTENT",
     "CLAIM_FALSE",
     "COMPARATORS",
@@ -1847,6 +1935,7 @@ __all__ = [
     "EXCEPTION_PREDICATE",
     "EXCEPTS_PREDICATE",
     "GOVERNED_BY",
+    "GRANTS",
     "GRAPH_LINE_PREDICATE",
     "GROUP_KEYS",
     "GROUP_KEY_PREDICATE",
@@ -1854,6 +1943,7 @@ __all__ = [
     "MAXIMUM_PREDICATE",
     "MEMBER",
     "NODE_TYPES",
+    "OFFERS",
     "PERMITS",
     "PRECEDES_PREDICATE",
     "PREDICATE_PREDICATE",
@@ -1892,6 +1982,7 @@ __all__ = [
     "features",
     "governed",
     "governed_by",
+    "granted_by",
     "group_of",
     "hidden_record_ids",
     "in_scope",
@@ -1900,6 +1991,7 @@ __all__ = [
     "manifestation_coverage",
     "nodes_of_type",
     "normalise_id",
+    "offered_by",
     "project",
     "protagonist_brief",
     "questions",

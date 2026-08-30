@@ -398,6 +398,132 @@ def beat_text(
     return NAMED_BEAT.format(name=counts[position % len(counts)])
 
 
+# --------------------------------------------------------------------------- the reading half
+
+#: **The operator, read 10 on serial pilot 15b draw 4, 2026-08-30** — recorded in
+#: `plan/serial-pilot-15b.md`, which owns the quote, and never rendered into any call (§97.1):
+#: a status line arriving at a number-move reads as *noise*, because the system is not a thing
+#: anybody in the book opens, reads or deals with. Their direction is that it has to be part of
+#: the world the characters are interacting with, and that weighing what to take next is a large
+#: part of the story.
+#:
+#: **Why this is a scheduled beat and not a clause.** `plan/house-genre-constraint.md` named the
+#: hazard before anybody drafted one: an instruction to make the system feel present is a §138
+#: formula waiting to happen, and the altitude that avoids it is the plan. §157 proved that a
+#: schedule moves behaviour with no adjective in it, and §161.4 sharpened it from a category to a
+#: named quantity. There is a second reason and it is arithmetic: a scene plan rides in the user
+#: prompt as book material, so it costs no demand in any row of `tests/test_prompt_budget.py`,
+#: while the house floor and three of the roles standing on it sit exactly at their ceilings
+#: (§171.4). The beat is free where a clause is not.
+#:
+#: Held to `BEAT`'s two constraints, both already paid for: **pronoun-free** (§155.3's first draft
+#: would have written a male protagonist into every scheduled scene of every book) and **no
+#: quality word anywhere** — it says a thing is opened and read and that what it says is dealt
+#: with in the scene, which is a fact a scene either contains or does not.
+INTERACTION_BEAT = (
+    "The state this book prints is opened and read here by the person it belongs to, and what "
+    "it says is business in the scene."
+)
+
+#: The same beat where a fork stands open, naming it and the ways on offer in the book's own
+#: words. **`{options}` is book data and this module invents none of it**:
+#: `extraction.offered_choice` reads the names off the system the world declared and drops any
+#: colliding with `house.MACHINERY_WORDS`, which is `counted_names`' rule for `counted_names`'
+#: reason — a declared name is book data that no ceiling test can reach, so the filter is where
+#: the guarantee has to live.
+#:
+#: **It says weighs and not picks, and the difference is the operator's direction.** What they
+#: asked to read is the deliberation — *"as a reader i want to deliberate class options and what i
+#: would have chosen"* — and the pick is a separate act with its own record
+#: (`gamesystem.choose`). A beat that told the scene to settle the fork would spend the fork on
+#: the scene that introduces it.
+OFFER_BEAT = (
+    "{name} stands open here, and the person it belongs to weighs {options} against each other "
+    "on the page."
+)
+
+
+def interaction_ordinals(total: int, *, every: int = EVERY) -> frozenset[int]:
+    """The scene ordinals whose plan may carry an interaction beat.
+
+    **The progression schedule, deliberately, rather than a second cadence of its own.** Two
+    schedules over one book would be two rhythms nobody had measured against each other, and
+    §155.1's census supports one placement claim only — that the opening is where the market
+    fails. Sharing `beat_ordinals` also means a book that changes `every` changes both together.
+    """
+    return beat_ordinals(total, every=every)
+
+
+def interaction_text(
+    ordinal: int,
+    total: int,
+    *,
+    reads: bool = False,
+    offer: tuple[str, Sequence[str]] | None = None,
+    every: int = EVERY,
+) -> str | None:
+    """The interaction beat this scene carries, or `None` for a scene that carries none.
+
+    `reads` is whether this book prints a line the character could open at this position — the
+    caller passes the same value it computes for the furniture ask, so the beat cannot ask
+    somebody to read an interface the writer was never handed. `offer` is `(fork name, way
+    names)` where one stands open, from `extraction.offered_choice`.
+
+    **The rule, and the small book is the point.** A book with no fork gains exactly one
+    interaction beat, in its opening, which is the smallest thing that answers read 10's
+    standalone-comprehension item: a character who opens their own state teaches its labels and
+    its numbers by using them. A book with forks deliberates for as long as a fork stands open,
+    on the cadence the progression beat already runs at — so *how much* deliberation a book
+    carries is a fact its own world declares, and not a number this module picked.
+
+    The offer form wins at the opening where both could fire: it names the fork and its ways,
+    which teaches the interface by using more of it.
+    """
+    if not reads:
+        return None
+    if ordinal not in interaction_ordinals(total, every=every):
+        return None
+    if offer is not None:
+        name, options = offer
+        return OFFER_BEAT.format(name=name, options=_and_list(options))
+    return INTERACTION_BEAT if ordinal == 1 else None
+
+
+def _and_list(names: Sequence[str]) -> str:
+    """`a`, `a and b`, `a, b and c`. Book data joined by grammar and nothing else."""
+    items = [name for name in names if name]
+    if len(items) <= 1:
+        return items[0] if items else ""
+    return f"{', '.join(items[:-1])} and {items[-1]}"
+
+
+def with_interaction(
+    statement: str,
+    ordinal: int,
+    total: int,
+    *,
+    reads: bool = False,
+    offer: tuple[str, Sequence[str]] | None = None,
+    every: int = EVERY,
+) -> str:
+    """One scene's plan text, with the interaction beat appended where it is scheduled.
+
+    Appended for `with_beat`'s reason and after it, so a scheduled scene reads: what this scene
+    is about, what moves in it, and that the interface is opened in it. **`reads=False` and
+    `offer=None` render nothing at all**, which is every book that speaks no system voice and
+    every scene of every book written before this existed — the control this whole slice is
+    measured against, byte-identical.
+    """
+    beat = interaction_text(ordinal, total, reads=reads, offer=offer, every=every)
+    if beat is None:
+        return statement
+    stripped = statement.strip()
+    if not stripped:
+        return beat
+    joiner = " " if stripped.endswith((".", "!", "?")) else ". "
+    return f"{stripped}{joiner}{beat}"
+
+
 def with_beat(
     statement: str,
     ordinal: int,
@@ -440,12 +566,17 @@ __all__ = [
     "BEAT_TAIL",
     "EVERY",
     "HOUSE_GENRE",
+    "INTERACTION_BEAT",
     "NAMED_BEAT",
     "NO_SHEET",
+    "OFFER_BEAT",
     "beat_ordinals",
     "beat_text",
     "genre_block",
     "has_starting_sheet",
+    "interaction_ordinals",
+    "interaction_text",
     "system_gap",
     "with_beat",
+    "with_interaction",
 ]

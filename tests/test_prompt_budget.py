@@ -249,7 +249,7 @@ BUDGET: dict[str, int] = {
     # that is the honest price: a demand the seed cannot use, against a rule the roles that write
     # prose need in the one place that does not drift.
     #
-    # **Raised 45 -> 46 on 2026-08-30 for one `house.CLARITY` clause** (§176), and this is the
+# **Raised 45 -> 46 on 2026-08-30 for one `house.CLARITY` clause** (§176), and this is the
     # first raise since §171 predicted its own successor's cost. It predicted four numbers; the
     # true count is six, corrected in place at §171.4 — the floor plus **five** rows carry the
     # whole of `HOUSE_RULES` and every one of them sat at zero headroom. The occupant is a
@@ -258,13 +258,29 @@ BUDGET: dict[str, int] = {
     # it. **At this role it lands inert** — the Architect declares a world through tools and
     # writes no comparisons, so by §154 the referent is empty — which is §171's honest price
     # paid again at the same address and for the same reason.
-    "architect seed": 46,
-    # **42 -> 43 on 2026-08-30, the same clause** (§176). §163's note above says this row "stays
+    #
+    # **And 46 -> 47 the same day for one sentence that is not inert** (§173). Read 10's
+    # central item is that a rendered status line arriving at a number-move reads as noise
+    # because the system is not a thing anybody in the book opens or weighs, and that the
+    # deliberation over what to take next is a large part of what a reader of this genre is
+    # here for. `gamesystem.SystemDef` had a graph, a ladder and a scale and **no fork**;
+    # `plan/house-genre-constraint.md` had queued exactly that gap. `_SYSTEM`'s fourth
+    # sentence is the ask for one, and it lands at the only role whose act is a `world
+    # declare`, which is what makes it addressable here (§154) where the §176 clause above is
+    # not. **The alternative was measured and refused**: the three predicates are also written
+    # into `world vocabulary`, which costs nothing because that command's output is a tool
+    # result and not a counted prompt — and §163's own finding is that an omission from *that*
+    # surface is indistinguishable from a prohibition. Documenting alone would have shipped a
+    # schema no world ever declares, which is §160's history exactly. The two raises crossed
+    # in flight on separate tracks; each names its own occupant, and this row carries both.
+    "architect seed": 47,
+    # **42 -> 43 on 2026-08-30, the §176 clause.** §163's note above says this row "stays
     # on 42", which was true of §163's seed-only raise and is not a rule: this row stands on the
     # whole house floor, so a floor clause lands here as surely as it lands on the scene writer.
-    # Inert at this role for the seed's reason.
+    # Inert at this role for the seed's reason. §173 adds nothing here — its sentence is
+    # seed-only.
     "architect grow": 43,
-    # **28 -> 29 and 32 -> 33 on 2026-08-30, the same clause** (§176). These two rows are the
+    # **28 -> 29 and 32 -> 33 on 2026-08-30, the §176 clause.** These two rows are the
     # ones the raise is actually for: the drafting call is where comparisons are written, so
     # this is the one place the demand is neither inert nor a delimiter. The four-demand gap
     # between the rows is the cast dossier and is unchanged.

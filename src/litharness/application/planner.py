@@ -90,6 +90,7 @@ from litharness.domain.events import payload_digest
 from litharness.domain.extraction import (
     graph_line_for,
     movable_names,
+    offered_choice,
     progression_target,
     standing_example,
     standing_target,
@@ -387,13 +388,24 @@ def render_prompt(
         # scene keeps the read-back single-valued, and the placement rule decides where the
         # one goes: at the change if there is one, at the end if there is not, so the
         # guaranteed emission the footer form bought is not given up to get the placement.
+        # **The anchor moved from the number to the person, 2026-08-30 (§173).** Read 10, on
+        # the draw the gate passed: a status line arriving at a number-move is *noise*, and if
+        # the book has one it has to be part of the world the characters are interacting with.
+        # Both halves of the old placement were correct against the defect §161 wrote them for
+        # and both anchored on an **event in the machinery** — a line that appears because a
+        # number moved is a line the narrator emits. So the first placement is now a person
+        # reading it, and the two the contract already had are kept behind it: the cardinality
+        # is untouched, the guaranteed emission is untouched, and what moved is which of the
+        # three placements comes first. The rewrite adds no demand — `house.demands` reads one
+        # sentence either way, which `tests/test_prompt_budget.py`'s `status_example` row is
+        # what proves rather than an arithmetic performed here.
         system += (
-            " This book states its game state on the page, in this form, which is the state "
-            f"as it stands:\n{status_example}\n"
-            "Print that line exactly once: where one of its numbers changes, or at the "
-            "scene's end if none of them does. Write the character's name as your prose "
-            "spells it, carry these values forward unchanged unless this scene changes "
-            "them, and write the numbers the scene leaves true."
+            " The people in this book can read their own state, in this form, which is the "
+            f"state as it stands:\n{status_example}\n"
+            "Print that line exactly once, where somebody in the scene reads it; failing that, "
+            "where one of its numbers changes, or at the scene's end. Write the character's "
+            "name as your prose spells it, carry these values forward unchanged unless this "
+            "scene changes them, and write the numbers the scene leaves true."
         )
         if progression:
             # **The instruction above defaults to stasis, and a model with no reason to
@@ -1076,6 +1088,48 @@ def make_plan_selector(
                 # fetched again once per scene.
                 records = book_records
                 position = positions.get(beat.logical_id)
+                status_line = system_voice_example(records, at=beat.story_order_key)
+                # **The interaction beat, wrapped around whatever plan text this scene already
+                # had** (§173). Read 10's central item is that the furniture arrives as a
+                # narrator's overlay because nothing in the book ever opens it, and
+                # `plan/house-genre-constraint.md` named the altitude that answers that without a
+                # §138 formula: the plan, not a clause. It wraps **both** branches rather than
+                # riding inside the `with_beat` one, because a fork is read out of canon at the
+                # position being drafted — a stored outline statement was composed before the
+                # book reached this rung, and folding a fork into it would state a schedule
+                # (§110.3's measurement, one object along).
+                #
+                # `reads` is the same value the furniture ask is given, so the beat cannot ask
+                # somebody to open an interface the writer was never handed; a second reader of
+                # that question would be a second answer to it.
+                #
+                # **`None` in, `None` out.** A book with no plan text and no outline passes
+                # `None` and keeps the §54 control arm's byte-identical prompt.
+                # §175's staging bound composes here, inside the statement-less branch only —
+                # a stored statement already carries it, folded by `outline_proposal` in the
+                # same order — and §173's interaction wrap goes around whichever branch stood,
+                # at the `scene_plan=` below. Bound first, wrap second: the bound says what
+                # the scene may not also contain, the wrap says what somebody in it does.
+                base_plan = (
+                    plan_item.text
+                    if plan_item is not None
+                    else (
+                        staging.with_bound(
+                            genre.with_beat(
+                                "",
+                                beat.ordinal,
+                                beat.of_total,
+                                counts=movable_names(
+                                    records, character=pov_id, at=beat.story_order_key
+                                ),
+                            ),
+                            beat.ordinal,
+                            arc_index=arc_index or None,
+                        )
+                        if outline
+                        else None
+                    )
+                )
                 system, prompt = render_prompt(
                     beat,
                     book_title=_book_title(head),
@@ -1084,7 +1138,7 @@ def make_plan_selector(
                     # s1 snapshot is the seed), unlike an extracted assertion whose evidence
                     # establishes it during that scene.  Keep the exact snapshot here; the
                     # ordinary character/world records still use StateMoment.ENTERING.
-                    status_example=system_voice_example(records, at=beat.story_order_key),
+                    status_example=status_line,
                     target_words=(policy or DraftPolicy()).target_words,
                     # A stored statement already carries the beat where the cadence schedules
                     # one — `outline_proposal` folded it in — so it is passed verbatim. A
@@ -1116,24 +1170,17 @@ def make_plan_selector(
                     # A stored statement already carries both — `outline_proposal` folds them
                     # in the same order — so only the statement-less branch composes here.
                     scene_plan=(
-                        plan_item.text
-                        if plan_item is not None
-                        else (
-                            staging.with_bound(
-                                genre.with_beat(
-                                    "",
-                                    beat.ordinal,
-                                    beat.of_total,
-                                    counts=movable_names(
-                                        records, character=pov_id, at=beat.story_order_key
-                                    ),
-                                ),
-                                beat.ordinal,
-                                arc_index=arc_index or None,
-                            )
-                            if outline
-                            else None
+genre.with_interaction(
+                            base_plan,
+                            beat.ordinal,
+                            beat.of_total,
+                            reads=status_line is not None,
+                            offer=offered_choice(
+                                records, character=pov_id, at=beat.story_order_key
+                            ),
                         )
+                        if base_plan is not None
+                        else None
                     ),
                     progression=progression_target(records, at=beat.story_order_key),
                     criteria=worlds.criterion_brief(records),

@@ -315,13 +315,14 @@ def test_a_book_seeded_by_world_declare_is_actually_asked_for_a_status_line(
         job = select(store, "worker-a", START, 300.0)
         assert job is not None
         system = str(job.payload["system"])
-        # **The wording moved in §161 and the assertion is deliberately not on wording.**
-        # This read "End the scene with a status line", which was the footer form; the
-        # furniture contract moved the line onto the moment a number changes, so the sentence
-        # that carries the ask now names the placement instead of the scene's end. What this
-        # test is for is unchanged and is the thing asserted: a book that clears the floor is
-        # asked, and shown its own numbers.
-        assert "states its game state on the page" in system
+        # **The wording moved in §161 and again in §173, and the assertion is deliberately not
+        # on wording.** It first read "End the scene with a status line", which was the footer
+        # form; §161 moved the line onto the moment a number changes; §173 put a person in front
+        # of that, because read 10's finding is that a line arriving at a number-move reads as a
+        # narrator's overlay. What this test is for is unchanged across all three and is the
+        # thing asserted: a book that clears the floor is asked, and shown its own numbers.
+        assert "can read their own state" in system
+        assert "where somebody in the scene reads it" in system
         assert "where one of its numbers changes" in system
         # The seeded numbers, rendered — not a template with braces in it.
         assert "Level 1" in system and "Gold 11" in system

@@ -854,9 +854,18 @@ def test_the_drafting_lane_reads_the_statement_the_outline_wrote(store: SqliteSt
     # Still rendered LAST, which is the property this line has always been about. What ends
     # the prompt is the scene's stored plan — its own statement, plus the house progression
     # beat where the cadence schedules one.
+    #
+    # **§173 wraps the stored text rather than replacing it, and the wrapping is deliberately
+    # not stored.** The interaction beat is read out of canon at the position being drafted; a
+    # statement written when the outline ran was written before the book reached the rung a fork
+    # opens at, so folding one into it would state a schedule (§110.3's measurement). So the
+    # stored text still ends the prompt, or ends it followed by a beat this scene earned.
     stored = scene_plan_for(store.plan_items(BOOK_ID, BRANCH_ID), f"scene-{ordinal}")
     assert stored is not None
-    assert prompt.rstrip().endswith(stored.text.strip())
+    tail = prompt.rstrip()
+    assert stored.text.strip() in tail
+    after = tail[tail.index(stored.text.strip()) + len(stored.text.strip()) :].strip()
+    assert after in ("", genre.INTERACTION_BEAT), after
 
 
 def test_the_control_arm_is_reachable_through_the_operator_surface(
@@ -893,8 +902,15 @@ def test_the_beat_fires_at_six_scenes_where_no_outline_ever_runs(
     unreachable at exactly the standard pilot length. Pilot 14 measured it live and redrew
     at eight scenes; this walks all six selections on a fresh store each and pins that the
     prompt carries the beat exactly on `beat_ordinals(6)` — scheduled scenes gain it,
-    rendered last where a stored plan renders, and unscheduled scenes keep the bare prompt,
+    inside the scene plan, which renders last, and unscheduled scenes keep the bare prompt,
     which is the byte-identical control §155.3 says the schedule is read against.
+
+    **Corrected in place on 2026-08-30 (§173), name kept.** This asserted the prompt *ended* with
+    `BEAT_TAIL`, which was true while the progression beat was the only thing appended to a scene
+    plan. §173 appends a second scheduled item after it — the interaction beat — on `with_beat`'s
+    own stated rule that each is one more thing that happens in the scene and that leading with
+    one would make every scheduled scene read as that kind of scene first. What this test is for
+    is that the schedule fires where it should and nowhere else; that is what is asserted below.
     """
     from litharness.application.planner import make_plan_selector
 
@@ -921,9 +937,12 @@ def test_the_beat_fires_at_six_scenes_where_no_outline_ever_runs(
     assert (staging.bound_text() in prompt) is bounded
     if ordinal in genre.beat_ordinals(6):
         assert genre.BEAT_TAIL in prompt
+        tail = prompt.rstrip()[prompt.rstrip().index(genre.BEAT_TAIL) :]
         last = staging.bound_text() if bounded else genre.BEAT_TAIL
-        assert prompt.rstrip().endswith(last), (
-            "the scheduled folds render last, exactly where a stored scene plan renders"
+        assert tail.endswith(genre.INTERACTION_BEAT) or tail.endswith(last), (
+            "the scheduled folds render last and in composition order - beat, then the "
+            "opening's bound, then the interaction beat where one fires - and nothing "
+            "off either schedule follows them"
         )
     else:
         assert genre.BEAT_TAIL not in prompt
