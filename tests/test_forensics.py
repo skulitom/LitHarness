@@ -33,6 +33,7 @@ from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.conductor import Conductor
 from litharness.application.handlers import SCENE_DRAFT, make_scene_draft_handler
 from litharness.application.planner import make_plan_selector
+from litharness.application.reviser import REVISION_PROFILE
 from litharness.cli import EXIT_ATTENTION, EXIT_OK, main
 from litharness.domain.draft import DraftPolicy
 from litharness.domain.generation import CompletionRequest, CompletionResult, Usage
@@ -221,6 +222,65 @@ def stubbed(db, capsys, stub: str, fixture: str = "mystery") -> tuple[str, str]:
     return book_id, branch_id
 
 
+#: What the scripted reviser adds. A new line rather than a suffix, so every bracketed line the
+#: book prints as a machine keeps its own bytes; sentence-initial and lowercase, so containment's
+#: introduced-token check sees no name and no number the draft did not carry.
+REVISER_TOUCH = "\nIt held."
+
+
+def revised(db, capsys, fixture: str = "mystery") -> tuple[str, str]:
+    """A drafted book with §185's reviser on, so every accepted scene has a kept draft (§187).
+
+    The second call returns a **contained** rewrite of what the first produced — same names,
+    same numbers, same length band — because a revision containment refuses is discarded and
+    then there is no superseded draft to keep. Nothing here says the second text is better;
+    the fixture exists to produce a pair, and a pair is two texts, not a ranking.
+    """
+    assert run(db, "init") == EXIT_OK
+    assert run(db, "import", "--fixture", fixture) == EXIT_OK
+    capsys.readouterr()
+
+    provider = FakeProvider(pad_to_chars=PAD)
+    drafting = provider.complete
+    last: dict[str, str] = {}
+
+    def complete(request: CompletionRequest) -> CompletionResult:
+        if request.profile == REVISION_PROFILE:
+            return CompletionResult(
+                text=last["text"] + REVISER_TOUCH,
+                provider="fake",
+                model="fake-reviser-v1",
+                usage=Usage(10, 20),
+            )
+        result = drafting(request)
+        last["text"] = result.text
+        return result
+
+    provider.complete = complete  # type: ignore[method-assign]
+    registry = ProviderRegistry(provider)
+
+    store = SqliteStore.open(db)
+    try:
+        book_id, branch_id, _ = store.branches()[0]
+        loop = Conductor(
+            store=store,
+            holder="worker-a",
+            project_id=PROJECT_ID,
+            registry=registry,
+            select=make_plan_selector(policy=NOT_A_HOUSE_BOOK),
+            handlers={
+                SCENE_DRAFT: make_scene_draft_handler(
+                    registry, store, PROJECT_ID, policy=NOT_A_HOUSE_BOOK, revise=True
+                )
+            },
+        )
+        for index in range(8):
+            loop.tick(START + index * TICK)
+    finally:
+        store.close()
+    return book_id, branch_id
+
+
 def unattributed_scene(db, logical_id: str = "scene-1") -> str:
     """Commit new prose for one scene with no policy decision behind it, and return its id.
 
@@ -344,8 +404,14 @@ def test_the_dossier_json_names_every_absence_in_a_list(db, capsys) -> None:
         "context_omitted",
         "plan_item",
         "findings",
+        "draft_before_revision",
         "absent",
     }
+    # Drafted with the stage held back, so the accepted prose is the writer's own and there is
+    # no superseded text. Null rather than a missing key, and deliberately **not** on `absent`:
+    # a scene nothing rewrote has no gap (§187).
+    assert dossier["draft_before_revision"] is None
+    assert "draft_before_revision" not in dossier["absent"]
     assert dossier["prompt"]["prompt"].startswith("Premise:")
     assert dossier["decision"]["outcome"] == "accept"
     assert dossier["decision"]["gates"], "the ladder rides in the object, not just the text"
@@ -357,6 +423,55 @@ def test_the_dossier_json_names_every_absence_in_a_list(db, capsys) -> None:
     unattributed = json.loads(capsys.readouterr().out)
     assert unattributed["decision"] is None, "no row is null, never an empty object"
     assert "decision" in unattributed["absent"]
+
+
+def test_the_dossier_names_the_draft_the_reviser_replaced_and_carries_it_for_a_diff(
+    db, capsys
+) -> None:
+    """**The verb the attribution report could not use** (§187).
+
+    `plan/agent-impact/reviser-impact.md` §6: the drafting call's own prompt is frozen at
+    enqueue and readable forever (§103), while the reviser's input was built inside the
+    handler, sent and dropped — so the one text that would answer *what did this stage change*
+    was the one text nothing kept, and the report's script had to open a copy of the store for
+    what no verb could answer. It is a column now, and `why` prints it.
+
+    **Named in the rendered form and carried whole in `--json`**, which is this renderer's own
+    rule for prose: `scene` prints a length and a hash and sends the reader to `export`. So the
+    diff is two verbs and neither of them opens the database. Nothing here compares the two
+    strings — the dossier reports rows, and §97.1 keeps this verb on the operator's side.
+    """
+    revised(db, capsys)
+
+    assert run(db, "why", "--scene", "3", "--json") == EXIT_OK
+    dossier = json.loads(capsys.readouterr().out)
+    kept = dossier["draft_before_revision"]
+    assert kept is not None
+
+    assert run(db, "why", "--scene", "3") == EXIT_OK
+    out = capsys.readouterr().out
+    assert "written by fake-deterministic-v1, replaced by fake-reviser-v1" in out
+    assert "the text is in `--json`" in out
+    # **The renderer names prose and does not print it**, which is what `scene` above does with
+    # the accepted text. The prompt at the bottom is printed whole because a prompt is not
+    # prose — and it carries the *earlier* scenes, never this one's own draft.
+    assert kept["content"] not in out
+    assert kept["drafted_by"] == "fake-deterministic-v1"
+    assert kept["revised_by"] == "fake-reviser-v1"
+    assert kept["chars"] == len(kept["content"])
+    assert kept["attempt"] == 1
+
+    # The pair, and the diff the report could not compute: the accepted prose is the kept
+    # draft plus exactly what the second call added.
+    store = SqliteStore.open(db)
+    try:
+        book_id, branch_id, _ = store.branches()[0]
+        head = store.head(book_id, branch_id)
+        assert head is not None
+        assert head.node("scene-3").content == kept["content"] + REVISER_TOUCH
+    finally:
+        store.close()
+    assert kept["content_sha256"] != dossier["scene"]["content_sha256"]
 
 
 def test_a_scene_can_be_named_by_reading_order_as_well_as_by_id(db, capsys) -> None:

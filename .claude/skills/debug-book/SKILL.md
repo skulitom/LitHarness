@@ -285,6 +285,7 @@ is `null` and is named in `absent`, while an empty list is a recorded emptiness.
 | `plan_item` | the per-scene statement and whether a director locked it |
 | `craft_metrics` | advisory numbers measured against this revision |
 | `findings` | what detectors said about this scene, open and closed |
+| `draft_before_revision` | the writer's own text, when the §185 reviser replaced it: both models, the mark count §180 took out of it, and `content` — the prose `--no-revise` would have committed. `null` means the accepted prose *is* the writer's, which is not a gap and is not in `absent` |
 | `span_candidates` | every tournament draft for this span, winner and losers |
 | `absent` | every piece the store does not hold for this scene |
 

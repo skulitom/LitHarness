@@ -42,6 +42,7 @@ from litharness.domain.jobs import Job
 from litharness.domain.plan_refinement import PlanApplication, PlanRevision
 from litharness.domain.policy import PolicyDecision
 from litharness.domain.promises import Promise
+from litharness.domain.reviser import PreRevisionDraft
 from litharness.domain.revision import Revision
 
 
@@ -56,6 +57,16 @@ class ManuscriptReader(BranchReader, Protocol):
 
 
 class ManuscriptWriter(Protocol):
+    """The write side of the manuscript, and **there is no matching reader for every slot.**
+
+    `pre_revision_drafts` is a write-only capability at this boundary on purpose (§187): the
+    handler hands the store the text the reviser was given, and no protocol here offers a way
+    to read it back. A workflow that coordinates through `ports.py` therefore cannot route a
+    kept draft into a packet, a summary, a detector input or a prompt — which is §97.1's rule
+    made a property of the layer rather than a sentence in a docstring. The read lives on the
+    concrete store, where the operator's dossier is its one caller.
+    """
+
     def commit_revision(
         self,
         revision: Revision,
@@ -67,6 +78,7 @@ class ManuscriptWriter(Protocol):
         retract_state_for_nodes: Collection[str] = ...,
         jobs: Sequence[Job] = ...,
         intervention_realizations: Sequence[InterventionRealization] = ...,
+        pre_revision_drafts: Sequence[PreRevisionDraft] = ...,
         decision: PolicyDecision | None = ...,
     ) -> None: ...
 

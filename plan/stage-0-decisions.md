@@ -20066,9 +20066,14 @@ has accepted, gated identically.
 
 ### 185.2 What shipped
 
-**One draft in, one revision out, in front of the ladder.** `application/handlers.py::revise_draft`
+**One draft in, one revision out, in front of the ladder.** ~~`application/handlers.py::revise_draft`
 runs between `registry.complete` and `strip_em_dash`, so the shape gate, the integrity detectors,
-§184's beat comparison and the em-dash rewrite all read the adopted text. `domain/reviser.py` holds
+§184's beat comparison and the em-dash rewrite all read the adopted text.~~ **Corrected by §188: the
+ladder now runs on the draft *first* and the call is made only if the draft cleared it, so
+`revise_draft` runs between two ladder passes rather than in front of one, and `drafted` is the
+gated text rather than the provider's raw string. What this sentence asserted — that the shape gate,
+the integrity detectors, §184's beat comparison and the em-dash rewrite all read the adopted text —
+is unchanged and is what §188 was built to preserve.** `domain/reviser.py` holds
 the containment predicates, `application/reviser.py` holds the role and its instruction, and
 `tests/test_reviser.py` is the file, twenty-nine assertions in five groups named in its docstring.
 
@@ -20087,7 +20092,10 @@ wrong: the strip would then be the last thing that touched the draft while nothi
 revision, so a mark the second call reached for would ship. Before it, §180.4's third load-bearing
 detail — one text, one hash, one offset space, all of it before the gate — is unchanged.
 `test_the_em_dash_strip_runs_on_the_revision` holds it, including the machine line keeping its own
-U+2014 separator.
+U+2014 separator. ~~One strip per handler call.~~ **Corrected by §188: the strip runs once per
+ladder pass, so both the draft and the revision are stripped before the gate that reads them. It is
+still the last rewrite before the gate on whichever text is adopted, which is all this paragraph's
+argument ever required — and §180.4's detail is now true of both passes rather than of one.**
 
 ### 185.3 Containment is arithmetic, and a refusal costs the book nothing
 
@@ -20236,12 +20244,21 @@ holds all three halves.
 1. **Every register census over accepted prose stops being a census of what a writer produced.**
    §180.1's sentence-length, join and em-dash counts; §156's inference-gloss rate; any
    before-and-after on §180's fourth-action clause, §179's implication clause, §181's diction clause
-   or §171's. All of them read the page, and the page is now the second call's. **A clause's effect at
-   the drafting call can no longer be read off an accepted scene**, which is the largest single cost
-   of this entry and is what the flag exists to buy back: a clause-effect census has to draw its arm
-   under `--no-revise`.
+   or §171's. All of them read the page, and the page is now the second call's. ~~**A clause's effect
+   at the drafting call can no longer be read off an accepted scene**, which is the largest single
+   cost of this entry and is what the flag exists to buy back: a clause-effect census has to draw its
+   arm under `--no-revise`.~~ **Corrected by §188.** The writer's text is now kept beside the prose
+   that replaced it, so a clause-effect census over a revised chapter reads
+   `pre_revision_drafts.content` rather than the node — the very text `--no-revise` would have
+   committed, for scenes drafted after §188 with the stage on. The flag is still the control arm
+   (§54) and still the only way to draw a chapter the reviser never touched; what is no longer true
+   is that the writer's page is gone.
 2. **`em_dashes_removed` changes subject.** It counts marks in the revision, so the read-1/read-11
-   rate is now a fact about the reviser and not about the writer.
+   rate is now a fact about the reviser and not about the writer. **Partly repaired by §188**: the
+   strip runs once per ladder pass, so the draft's own count is taken before the second call and is
+   stored on the row that keeps the draft. The acceptance event's field still describes the
+   revision; the writer's rate lives per scene in `pre_revision_drafts.em_dashes_removed`, and only
+   for scenes drafted after §188 with the stage on.
 3. **§184's beat verdict is no longer separable by author.** The gate re-runs on the revision and its
    verdict cannot change (185.3), but a chapter's beat record now describes a two-call product.
 4. **Dossier work loses accepted prose as evidence.** §150's ours-vs-market descriptor half and
@@ -20522,3 +20539,217 @@ read off a stored record or a count of demands. Nothing here reaches the roster,
 the editorial control plane, the reader loop, or any dossier, and nothing either pilot store said
 became prompt text, a directive or a plan item — what the stores located was a contradiction between
 two halves of one prompt, and the fix is engineering.
+
+## 188. The stage that now writes every sentence the book ships was paid before the gates ran, and the one text it replaced was the one text nothing kept
+
+The operator commissioned an attribution report at read 13 (*"debug and measure impact of all of
+our internal agents"*), and `plan/agent-impact/REPORT.md` returned an ownership boundary rather
+than a missing rule: the reviser is the only lever that has moved the sentence axis in ten
+chapters, and it carries three measured defects of its own. This entry takes the first and the
+second — the ordering, and the destroyed draft. The third (the gloss prohibition and the
+subordination move, both instruction text) is not touched here and belongs to a different track.
+
+### 188.1 Measured first, and the measurement is the audit rather than a new count
+
+`plan/agent-impact/reviser-impact.md` is the canonical home for every number below and none of
+them is restated here. Three readings of it are load-bearing:
+
+1. **§1 established, by three independent reads of the code, that no draft/revision pair exists
+   anywhere and none can be built later.** `revise_draft` returned one string, `commit_revision`
+   stored that one, the reviser's decision row carries provider, model, invocations, tokens, cost
+   and a containment verdict and **no text**, `ManuscriptCandidateCreated` and
+   `ManuscriptRevisionAccepted` carry vetoes, `chars`, `em_dashes_removed` and `revised_by` and
+   **no text**, and `providers/cli.py` passes `--no-session-persistence` so no provider-side
+   transcript survives either — verified empirically against the run window. §6 states the
+   consequence: no amount of later measurement recovers a scene already written.
+2. **§2 and §3 own the share of reviser spend that bought text the gate ladder then refused** on
+   the audited chapter. §2 also says why those calls were structurally incapable of changing the
+   outcome they were paid for, and says it out of §185.3's own argument rather than a new one:
+   containment forces the machine lines byte-identical **so that gate's verdict cannot change**.
+   A rewrite that cannot move a verdict cannot rescue a draft that verdict refused.
+3. **§184.1's census is the other half and it is already in this ledger.** Of the beats on the
+   whole shelf that named a quantity, half left it standing. So the refusal this reorders around
+   is not a rare event on this pipeline; it is the modal outcome of a scheduled beat.
+
+**No new measurement was taken for this entry and none is claimed.** Nothing below says a chapter
+reads better, costs less on any future draw, or that the reviser helps or harms.
+
+### 188.2 What shipped, and the stage order verbatim
+
+`application/handlers.py` now runs, per attempt:
+
+```
+  registry.complete                        the writer's call
+  ladder(draft)                            strip -> shape -> integrity -> beat
+    refused -> record findings, record decision, emit refusal, return  [no second call]
+    passed  -> continue
+  revise_draft(drafted = the gated draft)  containment; every refusal returns the draft
+    not adopted -> the draft's ladder run stands           [no second ladder run]
+    adopted     -> ladder(revision)        strip -> shape -> integrity -> beat
+  decide / commit
+```
+
+**One function runs the ladder and the caller decides which run is the verdict of record.**
+`_Ladder` is a value rather than a sequence of rebindings, because two runs in one scope could not
+otherwise say which one the decision cites. Everything inside it is a pure function or a store
+*read* — `gate_draft` returns a revision without persisting it, `extract_state` returns records,
+`gate_integrity` returns findings — which is what makes running it twice safe. **The draft-side
+run mints nothing**: no finding, no state record, no decision row, no revision. When that run
+*refuses*, it becomes the verdict of record and the attempt proceeds exactly as it always did,
+findings included — which is the point, because a finding a refused candidate produced becomes
+standing against the beat and parks the next attempt pre-flight and free (§19.1, slice 9's trade).
+That path is now reached one model call earlier.
+
+**The em-dash strip moved from once per handler call to once per ladder pass**, and the ordering
+question §180.4 and §185.2 settled is answered the same way: the strip is the last rewrite before
+the gate that reads the text. That was one text; it is two. §180.4's *one text, one hash, one
+offset space* is now true of both passes rather than of one, and the count each pass yields is a
+fact about that pass's author — the draft's marks are the writer's, the revision's are the
+reviser's. `test_the_em_dash_strip_runs_on_the_revision` is unchanged and still holds.
+
+**The reviser is handed the gated draft rather than the provider's raw string**, which follows
+from the reorder rather than being a separate choice: what passed the ladder is the canonicalized,
+stripped text, and handing the second call a different string would mean the ladder approved one
+text and another was rewritten. It also makes the kept draft comparable — §188.4.
+
+### 188.3 What happens on each failure path, and which of two semantics was kept
+
+| what fails | the second call | what the book gets | the unit |
+| --- | --- | --- | --- |
+| the draft's shape / integrity / beat gate | **never made** | nothing; the node stays empty | refused; the veto's own class decides retry or park |
+| the reviser's budget ceiling | refused in front of the spend | the draft, accepted | succeeds |
+| the reviser's transport | made and failed | the draft, accepted | succeeds |
+| containment (any of five predicates) | made and discarded | the draft, accepted | succeeds |
+| the revision's shape / integrity / beat gate | made and adopted | nothing; the node stays empty | refused; the veto's own class decides |
+
+**The last row is the one that had two possible answers, and it kept the one §185 already had.**
+`test_the_gate_ladder_refuses_the_revision_and_not_the_draft` is §185.3's own assertion that the
+ladder judges the adopted text, and this entry did not reopen it: a revision containment admitted
+and the ladder refused takes the unit's attempt, and the draft it superseded is discarded with it.
+The alternative — adopt the draft, which cleared the ladder one call earlier — is refused below and
+named as this entry's residual.
+`test_a_revision_the_ladder_refuses_costs_the_unit_its_attempt_and_the_draft_does_not_stand` is
+where that semantics is written down as an assertion rather than as a paragraph.
+
+`test_a_draft_the_beat_gate_refuses_is_never_sent_to_the_reviser` is the headline, on the case the
+audit measured, driven end to end through the handler with serial pilot 18b's own system and
+sheet: a scene that prints no panel where its plan named a quantity, and a scripted second answer
+the provider is still holding when the tick ends.
+`test_a_draft_the_shape_gate_refuses_is_never_sent_to_the_reviser` is the same ordering through a
+different gate, on the lever §185's mirror test already uses — one lever, two directions.
+`test_a_draft_that_clears_the_ladder_is_revised_and_the_ladder_runs_again` is the other half: both
+calls made, the beat gate on the accepted decision, one attempt and two decision rows.
+
+### 188.4 The draft is kept, and where
+
+**A new table (`migrations/038_pre_revision_drafts.sql`), written inside the transaction that
+commits the prose that replaced it.** `domain/reviser.PreRevisionDraft` is the type,
+`pre_revision_draft_id` its content address, and `commit_revision`'s new `pre_revision_drafts`
+keyword the way in. A row exists exactly when a revision was adopted over a draft: where
+containment refused, or where `--no-revise` held the stage back, the draft *is* the accepted prose
+and a second copy would be a row saying nothing
+(`test_no_draft_is_kept_when_the_accepted_prose_is_the_writers_own`). The id is derived from the
+accepted revision, the node and the draft's own hash, so a replayed tick converges on one row
+(`test_the_kept_draft_is_addressed_by_its_own_text_so_a_replay_converges`).
+
+**What is stored is the gated draft**: canonicalized, after §180's strip — exactly the prose
+`--no-revise` would have committed for that attempt. Storing the raw provider string would make a
+diff against the accepted node attribute NFC normalisation, line-ending unification and every
+stripped mark to the reviser, which is the second answer §184.5 refuses to invent, arriving as a
+column. `test_the_draft_the_reviser_replaced_is_kept_beside_the_prose_that_replaced_it` and
+`test_the_kept_draft_counts_the_writers_own_marks_and_the_acceptance_counts_the_revisers` hold
+both halves.
+
+**The record is write-only at the application boundary, and that is a property of the layer rather
+than a promise.** `ManuscriptWriter.commit_revision` gained a keyword; no protocol in
+`application/ports.py` offers a way to read a kept draft back. So no workflow that coordinates
+through those protocols can name this text at all — it cannot reach a context packet, a scene
+summary, a detector input or a prompt. The reader is on the concrete `SqliteStore`, and `cli.py`'s
+scene dossier is its one caller. That is §97.1 and the `debug-book` rule enforced by where the
+method is rather than by a sentence saying so.
+`test_the_kept_draft_is_write_only_at_the_application_boundary` holds it.
+
+**`litharness why` prints it**, named and not printed whole: length, hash, both models, the
+attempt, and the count of marks §180 took out of it — with the text itself in `--json`. That is
+this renderer's existing rule for prose (`scene` prints a length and a hash and sends the reader
+to `export`); the prompt at the bottom is printed whole because a prompt is not prose. The diff
+`reviser-impact.md` §5 could not compute for any scene is now two verbs and neither opens the
+database — which matters, because that report's own script had to open a read-only copy of a store
+for the one thing no verb could answer.
+`test_the_dossier_names_the_draft_the_reviser_replaced_and_carries_it_for_a_diff` drives it
+through the real drafting loop with the stage on.
+
+**The row carries no verdict and there is nowhere in it to put one.** Its field set is asserted
+whole beside `Containment`'s, in the test that already existed for exactly that reason
+(`test_the_containment_module_offers_nothing_that_could_order_two_texts`): a kept draft with a
+score on it would be §61(5)'s ordering arriving as a column instead of as a call. What is recorded
+is that a stage was handed a text, and what the text was. Any comparison is a reader's, later,
+outside the loop.
+
+### 188.5 What was refused
+
+- **Adopting the draft when the ladder refuses the revision.** The obviously attractive saving,
+  and it is a *selection rule between two texts* — by code rather than by a model, which is the
+  class containment already occupies, but a new one, shipped with no measurement, on a path
+  §185.9 licensed nothing for. It would also make the accepted text one the stage was paid to
+  replace. **Named as this entry's residual**: a draft that cleared the ladder is discarded when
+  the revision it paid for does not, and the unit re-drafts from the frozen prompt.
+- **Persisting the draft on the refusal path.** There is no revision commit there, so the row
+  would be written outside the transaction that describes it — which `CONTRIBUTING.md`'s
+  persistence rule forbids at exactly this address. A refused pair is diagnostic and it is not
+  kept. Residual, stated rather than smoothed.
+- **`span_candidates` (migration 024) as the surface.** It already holds loser drafts and was the
+  obvious place. Its whole vocabulary is `alternative_index` and
+  `status IN ('candidate','selected','discarded')` — the tournament shape §185.9 refuses in every
+  costume. A pre-revision draft was never ranked against anything and nothing chose between the
+  two texts; writing it into columns that say it was selected against would make the record assert
+  the one thing the stage may not do.
+- **A column on `node_versions` or on `policy_decisions`, or an event payload.** A node version is
+  the book's prose and a draft the book did not keep is not; the reviser's decision row is
+  deliberately textless (§185.7 lists what it carries); an event payload would push a kilobyte of
+  prose per scene through the append-only log every consumer reads whole.
+- **Any change to any prompt.** `litharness prompts` is byte-identical before and after: no clause
+  was added, removed or moved, at any role. Recommendation 1's other two halves — the gloss
+  prohibition and the subordination move — are not in this entry, and §173.4's ceiling arithmetic
+  is untouched.
+- **Reading the kept draft from anywhere inside generation.** Covered above, and enforced by the
+  protocol method that does not exist rather than by an argument.
+- **A second parsed surface, a second strip, or a second answer to any predicate.** The ladder
+  runs the same functions on both texts. Nothing was widened, loosened, or given a fallback.
+
+### 188.6 No bar, and one thing said in advance
+
+**No bar is declared and §61's four attainability checks have nothing to run on.** Nothing here
+introduces a quantity, a threshold or a distribution. The reorder is a control-flow change whose
+verdicts are the same functions' verdicts on the same texts; the column stores a string, an
+integer count of a character, and two model names.
+
+**Said before the fact, because it is cheaper than the next track discovering it:** the saving this
+reorder produces is a function of the *refusal rate*, and the refusal rate is a property of the
+writers and the gates, not of this change. A chapter whose drafts all clear the ladder costs
+exactly what it cost before, call for call and token for token. `reviser-impact.md` §3 owns the
+share on the one chapter measured; no projection from it to a later chapter is made here, and a
+later draw that saves nothing would refute no claim this entry makes.
+
+### 188.7 Corrections to §185, made in place
+
+Four, at their own addresses rather than here: §185.2's placement sentence, §185.2's *the strip
+stays last* paragraph, §185.8 item 1 (the census loss, now largely repaired — the writer's page is
+kept) and §185.8 item 2 (`em_dashes_removed`'s subject, partly repaired — the writer's rate lives
+on the kept draft's row). Each carries the strikethrough, the correction and the pointer.
+
+### 188.8 Anti-scope
+
+**Shipped unmeasured on the page, and proved entirely by the fake provider.** No model was called,
+no book was drawn, no chapter was revised, and no paid call was made. Nothing here says a revised
+chapter reads better than the draft it came from, that the reorder will save money on any future
+draw, or that the kept draft will show anything when somebody diffs it — it says the diff is now
+possible, which it was not. `--no-revise` remains §54's control arm and remains the only way to
+draw a chapter this stage never touched.
+
+Nothing here reaches the writer's instruction, the reviser's instruction, the listing, the seed,
+the Architect, the roster, a dossier, the editorial control plane, the reader loop, or any research
+arm. No corpus was read, so RS1 is untouched. No research claim is promoted, no mechanism
+qualified, no axis admitted, and the kept draft is operator diagnostics under §95 — a record on the
+operator's side of the loop, with no path back into generation and no protocol through which one
+could be added by accident.

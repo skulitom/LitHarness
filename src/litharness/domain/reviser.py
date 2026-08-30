@@ -31,6 +31,10 @@ from __future__ import annotations
 import enum
 import re
 from dataclasses import dataclass
+from hashlib import sha256
+
+from litharness.domain.events import payload_digest
+from litharness.domain.text import content_hash
 
 #: A line the book prints as a machine rather than as prose. Read from the same shape
 #: `domain/draft.py` uses for the em-dash strip's exemption, and deliberately the same
@@ -112,6 +116,68 @@ class Containment:
     held: bool
     breach: Breach | None = None
     detail: str | None = None
+
+
+def pre_revision_draft_id(revision_id: str, logical_id: str, content: str) -> str:
+    """The content address of one kept draft. Derived, so a replayed tick converges.
+
+    Over the revision the *accepted* prose landed in, the node, and the draft's own text —
+    which is `CONTRIBUTING.md`'s replay rule at this address: re-running a tick that already
+    committed produces the same id and `INSERT OR IGNORE` makes the second write a no-op.
+    """
+    digest = payload_digest(
+        {
+            "revision_id": revision_id,
+            "logical_id": logical_id,
+            "content_sha256": content_hash(content),
+        }
+    )
+    return f"predraft-{sha256(digest.encode()).hexdigest()[:24]}"
+
+
+@dataclass(frozen=True, slots=True)
+class PreRevisionDraft:
+    """The prose a scene would have shipped had the reviser been held back.
+
+    **This type carries no verdict and there is nowhere in it to put one**, which is the same
+    move `Containment`'s three fields make one class up (§185.2): a record that could say the
+    draft was better or worse than the revision would be the ordering §61(5) and §105.1 forbid,
+    arriving as a column instead of as a call. What is recorded is *what a stage was handed*.
+    Any comparison between this text and the accepted prose is a reader's, later, outside the
+    loop — and `plan/agent-impact/reviser-impact.md` §1 is the record of what its absence cost.
+
+    `content` is the **gated** draft: canonicalized, after §180's em-dash strip, exactly as
+    `gate_draft` would have committed it under `--no-revise`. Storing the provider's raw string
+    instead would make a diff attribute NFC normalisation and every stripped mark to the
+    reviser. `em_dashes_removed` is the count §180 took out of *this* text, which is where
+    §185.8 item 2's lost writer-side rate goes on living.
+    """
+
+    draft_id: str
+    book_id: str
+    branch_id: str
+    logical_id: str
+    revision_id: str
+    job_id: str
+    attempt: int
+    drafted_by: str
+    revised_by: str
+    content: str
+    em_dashes_removed: int
+    recorded_at: str
+
+    def __post_init__(self) -> None:
+        expected = pre_revision_draft_id(self.revision_id, self.logical_id, self.content)
+        if self.draft_id != expected:
+            raise ValueError("pre-revision draft does not address its own text")
+        if not self.content.strip():
+            raise ValueError("a pre-revision draft with no text is not a record of one")
+        if self.em_dashes_removed < 0:
+            raise ValueError("em_dashes_removed counts marks and cannot be negative")
+
+    @property
+    def content_sha256(self) -> str:
+        return content_hash(self.content)
 
 
 def machine_lines(text: str) -> tuple[str, ...]:
@@ -237,8 +303,10 @@ def contain(
 __all__ = [
     "Breach",
     "Containment",
+    "PreRevisionDraft",
     "ReviserPolicy",
     "contain",
     "introduced",
     "machine_lines",
+    "pre_revision_draft_id",
 ]
