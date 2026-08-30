@@ -522,11 +522,20 @@ def run_paid(args: argparse.Namespace) -> int:
     import elicit
     from force_remote import SingleRun
 
+    fictions_path = Path(args.fictions)
+    if not fictions_path.is_file():
+        print(
+            f"the excerpt-pass artifact is absent: {fictions_path}. Regenerate it per "
+            "RUNBOOK.md free leg 3 (excerpt_pass.py, MirrorBench venv) before any paid "
+            "stage; nothing was spent.",
+            file=sys.stderr,
+        )
+        return 1
     pairs_path = Path(args.pairs)
     pool = confirmatory(load_pairs(pairs_path))
     stage_plan = plan(args.stage, len(pool))
     stage_pairs = pool[: stage_plan["pairs_this_stage"]]
-    fictions = load_fictions(Path(args.fictions))
+    fictions = load_fictions(fictions_path)
     out_path = Path(args.out) if args.out else HERE / f"result-{args.stage}.json"
 
     with SingleRun(HERE / "backtest.pid", label=f"backtest {args.stage}"):

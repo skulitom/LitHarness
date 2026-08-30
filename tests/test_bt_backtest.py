@@ -115,12 +115,26 @@ def test_the_dry_stage_builds_the_plan_without_an_elicitor(tmp_path: Path, capsy
 def test_paid_stages_refuse_without_yes_and_stand_on_the_operator_gate(
     tmp_path: Path, capsys
 ) -> None:
+    """Name kept alive (cited in the ledger); the gate it stands on changed hands.
+
+    The blanket operator-gate refusal was removed on 2026-08-30 in the commit citing the
+    operator's go (plan/serial-pilot-18.md §8). What stands in its place: --yes is still
+    required for any spend, and a paid stage with no excerpt-pass artifact refuses by name
+    before constructing an elicitor — which is also what keeps this test spend-free on any
+    machine, artifact present or not.
+    """
     pairs_path = tmp_path / "pairs.json"
     pairs_path.write_text(json.dumps({"pairs": []}), encoding="utf-8")
     assert backtest.main(["--stage", "pilot", "--pairs", str(pairs_path)]) == 1
     assert "pass --yes" in capsys.readouterr().err
-    assert backtest.main(["--stage", "pilot", "--pairs", str(pairs_path), "--yes"]) == 1
-    assert "operator" in capsys.readouterr().err
+    missing = tmp_path / "no-such-fictions.json"
+    assert backtest.main([
+        "--stage", "pilot", "--pairs", str(pairs_path),
+        "--fictions", str(missing), "--yes",
+    ]) == 1
+    err = capsys.readouterr().err
+    assert "excerpt-pass artifact is absent" in err
+    assert "nothing was spent" in err
 
 
 def test_run_sessions_stops_at_the_ceiling_and_says_so() -> None:
