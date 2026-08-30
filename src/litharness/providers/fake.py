@@ -215,7 +215,12 @@ class FakeProvider:
         return CompletionResult(
             text=text,
             provider=self.name,
-            model=self.model,
+            # The model this call asked for, falling back to this adapter's own. The real
+            # adapter reports what actually wrote the text and a fake has no second model to
+            # report, but a role that names a model must be able to see its own name on the
+            # decision row without a paid call, or the attribution is untested until it costs
+            # money.
+            model=request.model or self.model,
             usage=Usage(
                 input_tokens=request.input_chars // 4,
                 output_tokens=len(text) // 4,

@@ -39,6 +39,11 @@ from litharness.application.editorial import reader_jobs_for_checkpoint
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import DraftStore, TextGenerator
 from litharness.application.repair import evaluation_job_for, summary_job_for
+from litharness.application.reviser import (
+    REVISION_MODEL,
+    REVISION_PROFILE,
+    render_revision_request,
+)
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
 from litharness.domain.draft import DraftPolicy, gate_draft, strip_em_dash
@@ -49,9 +54,15 @@ from litharness.domain.editorial import (
 )
 from litharness.domain.events import Event, EventType
 from litharness.domain.extraction import extract_state
+from litharness.domain.failures import OperationalFailure
 from litharness.domain.findings import DetectorInput
 from litharness.domain.findings import Finding as DomainFinding
-from litharness.domain.generation import PROFILES, CompletionRequest, Sampler
+from litharness.domain.generation import (
+    PROFILES,
+    CompletionRequest,
+    CompletionResult,
+    Sampler,
+)
 from litharness.domain.integrity import gate_integrity, gate_standing
 from litharness.domain.jobs import Job
 from litharness.domain.nodes import NodeKind
@@ -61,12 +72,14 @@ from litharness.domain.policy import (
     GateOutcome,
     Outcome,
     PolicyDecision,
+    VerdictSource,
     decide,
     decision_id_for,
     gates_for_draft,
     policy_digest,
 )
 from litharness.domain.progression import gate_progression
+from litharness.domain.reviser import Breach, ReviserPolicy, contain
 from litharness.domain.revision import Revision, node_version_id
 from litharness.domain.serials import SerialShape
 from litharness.domain.text import content_hash
@@ -200,6 +213,188 @@ def draft_sampler(job: Job, profile: str) -> Sampler:
     )
 
 
+#: The reviser's own gate id, in the family every deterministic gate on this ladder belongs to.
+REVISION_GATE = "revision.containment.v0"
+
+
+def _revision_gate(passed: bool, detail: str | None) -> GateOutcome:
+    """The reviser call's own recorded verdict. **Deliberately non-blocking, and it is not a
+    craft gate.**
+
+    `blocking` in this repository means *`decide` refuses the candidate when this fails*, and
+    `decide` is never called on the reviser's decision: the consequence of a failed containment
+    check is that one string is discarded before any ladder exists, which the handler does and
+    the detail records. Marking it blocking would put a failed blocking gate on an `ACCEPT`
+    decision, which is a decision record contradicting itself.
+
+    `GateKind.SHAPE` rather than `CRAFT` for the reason `PolicyDecision.__post_init__` enforces
+    one line away: a craft gate is a calibrated judgment about how good prose is, and nothing
+    here judges prose. It compares two strings.
+    """
+    return GateOutcome(
+        gate=GateKind.SHAPE,
+        rule_or_critic_id=REVISION_GATE,
+        passed=passed,
+        verdict_source=VerdictSource.DETERMINISTIC,
+        blocking=False,
+        detail=detail,
+    )
+
+
+def revise_draft(
+    registry: TextGenerator,
+    store: DraftStore,
+    job: Job,
+    *,
+    drafted: str,
+    already_spent: CompletionResult,
+    material: str | None,
+    project_id: str,
+    logical_id: str,
+    revision_id: str,
+    revision: Revision,
+    budget_policy: BudgetPolicy,
+    call_class: str,
+    policy: ReviserPolicy,
+    model: str | None,
+    now: float,
+) -> tuple[str, str | None, Sequence[Event]]:
+    """One rewrite of one drafted scene: the text to carry forward, and what it cost.
+
+    Returns `(text, reviser_model, events)`. `text` is the revision when containment held and
+    the **draft unchanged** when it did not — every refusal path returns the draft, because the
+    book must never be hostage to this stage. `reviser_model` is `None` when nothing was
+    adopted, so the caller can attribute the accepted prose without inferring it from a
+    comparison.
+
+    **Where this sits is the whole design and it was read off the code rather than chosen.**
+    It runs on the provider's string, before `strip_em_dash` and before `gate_draft`, so the
+    revision goes down the identical ladder the draft would have — shape, integrity and §184's
+    beat comparison all read the revised prose. The three alternatives were each refused by
+    something already written down:
+
+    * **A follow-on job rewriting accepted prose through `apply_patch`.** §184's gate could not
+      re-run there. §184.4 abstains on *a position the book already wrote down*, and a scene
+      that has committed has written its own snapshot at its own position — so the gate the
+      directive requires to pass on the revision would abstain on every one of them. `patch`
+      would also need a *located complaint* to license the rewrite (`Veto.UNLICENSED_DELETION`),
+      and a register complaint located nowhere is exactly the licence this project refuses to
+      manufacture. §180.7 records that the repair path is the one seam the em-dash strip does
+      not reach, so the book's final prose would ship down it unstripped.
+    * **A second accepted revision per scene.** The head would move twice, two
+      `MANUSCRIPT_REVISION_ACCEPTED` events would name one scene, and a re-printed status line
+      at an already-written position is the second canon snapshot at one key that
+      `integrity.detect_contradictions` groups on and refuses.
+    * **After the em-dash strip instead of before it.** The strip would then be the last thing
+      that touched the *draft* and nothing would touch the revision, so the mark read 1 and
+      read 11 both named would come back through a door §180 had closed. The strip stays the
+      last rewrite before the gate, which is §180.4's third load-bearing detail unchanged.
+
+    None of this makes `draft.py`'s rule false. *A draft may only fill emptiness; rewriting
+    existing prose must route through `apply_patch`* is about prose the store holds, and
+    `allow_overwrite` stays `False`: the node is empty when `gate_draft` runs and is filled
+    exactly once. What that docstring warns against — *have it improve the scene it just
+    wrote*, the open-ended loop RevisionBench's ~80% is the evidence against — is a loop that
+    re-reads its own committed output. This is one bounded transformation of a string nothing
+    has accepted, gated identically, with no second pass and no way to ask for one.
+    """
+    request = render_revision_request(drafted, material=material, model=model)
+    stamp = _timestamp(now)
+
+    def settle(gate: GateOutcome, result: object | None) -> Sequence[Event]:
+        """Record the reviser's own decision, whatever became of its text.
+
+        **Every provider call reaches `policy_decisions`, because nothing else is visible to
+        the budget gate** (§105.3). A stage making one call per scene whose calls never landed
+        there would spend them while the day's governor reported the day untouched — so this
+        runs on the refusal paths too, where it meters zero and says why.
+
+        The outcome is `ACCEPT` on every path, and that is a safety property rather than a
+        verdict about the prose. `latest_decision_for` settles the *job* against `ORDER BY
+        attempt DESC, rowid DESC`, and this row is written before the scene's own; a row that
+        could carry `PARK` would poison a unit that drafted perfectly well if it ever came
+        last. What this decision says is *a revision call was settled here and schedules
+        nothing*; whether its text was adopted is on the gate and in the event's details.
+        """
+        spent = result if isinstance(result, CompletionResult) else None
+        decision = PolicyDecision(
+            decision_id=decision_id_for(job.job_id, job.attempts, (gate,)),
+            outcome=Outcome.ACCEPT,
+            gates=(gate,),
+            job_id=job.job_id,
+            logical_id=logical_id,
+            base_revision_id=revision_id,
+            attempt=job.attempts,
+            provider=spent.provider if spent else None,
+            model=spent.model if spent else None,
+            profile=REVISION_PROFILE,
+            invocations=spent.invocations if spent else 0,
+            total_tokens=spent.usage.total if spent else 0,
+            cost_usd=spent.cost_usd if spent else None,
+            reason=gate.detail,
+        )
+        store.record_decision(decision, decided_at=stamp)
+        return [
+            policy_decision_event(
+                decision,
+                project_id=project_id,
+                created_at=stamp,
+                book_id=revision.book_id,
+                branch_id=revision.branch_id,
+                revision_id=revision_id,
+                details={"adopted": gate.passed, "stage": "revision"},
+            )
+        ]
+
+    # **In front of the spend, exactly as the drafting call's own check is.** A ceiling reached
+    # here refuses the *revision* and never the scene: the draft is already paid for and
+    # already good, and parking it because a second call could not be afforded would throw away
+    # the thing the budget was spent on.
+    #
+    # **The drafting call this one follows is added by hand, and without that the ceiling is
+    # under-counted by exactly one call per scene.** `spend_on` is a view over
+    # `policy_decisions`, and the drafting call's decision is not written until the end of this
+    # handler — inside `commit_revision` on the accepting path — so a second call *within the
+    # same tick* reads a day that does not yet contain the first. A ceiling of one invocation
+    # would admit two. `Spend.plus` exists for exactly this and is what §105.3's rule needs
+    # here: the governor has to see the money before the row does.
+    day = stamp[:10]
+    provider, _ = registry.resolve(call_class)
+    verdict = budget_check(
+        budget_policy,
+        store.spend_on(day).plus(
+            invocations=already_spent.invocations,
+            tokens=already_spent.usage.total,
+            cost_usd=already_spent.cost_usd or 0.0,
+        ),
+        provider=provider.name,
+        prompt_chars=request.input_chars,
+        max_output_tokens=request.max_output_tokens,
+    )
+    if not verdict.allowed:
+        return drafted, None, settle(budget_gate(verdict), None)
+
+    try:
+        result, _ = registry.complete(request)
+    except OperationalFailure as error:
+        # **A transport failure here leaves the draft standing rather than failing the job.**
+        # `claude -p` fails under box load and the drafting call has already been paid for, so
+        # letting this propagate would spend the scene's attempt budget on the second call's
+        # weather and eventually poison a unit whose first call succeeded. The domain failure
+        # vocabulary is what is caught, so nothing about a provider is imported here.
+        gate = _revision_gate(False, f"the revision call failed: {error}")
+        return drafted, None, settle(gate, None)
+
+    held = contain(drafted, result.text, policy=policy)
+    if not held.held:
+        detail = held.detail
+        if held.breach is not Breach.UNCHANGED:
+            detail = f"{held.breach}: {detail}"
+        return drafted, None, settle(_revision_gate(False, detail), result)
+
+    return result.text, result.model, settle(_revision_gate(True, None), result)
+
+
 def make_scene_draft_handler(
     registry: TextGenerator,
     store: DraftStore,
@@ -212,14 +407,45 @@ def make_scene_draft_handler(
     schedule_summary: bool = False,
     reader_mechanism: ReaderMechanism | None = None,
     reader_shape: SerialShape | None = None,
+    revise: bool = False,
+    reviser_policy: ReviserPolicy | None = None,
+    reviser_model: str | None = REVISION_MODEL,
 ) -> JobHandler:
     """Build a `JobHandler` that drafts one node's prose and gates the result.
 
     A closure rather than a class because `JobHandler` is a bare callable protocol and the
     Conductor needs no more than that — `handlers[SCENE_DRAFT] = make_scene_draft_handler(...)`
     is the whole wiring story, with no changes to the Conductor itself.
+
+    **`revise` turns on the reviser (§185), and it is a flag because §54's control arm has to
+    stay reachable without editing code.** With it off, every line below is byte-identical to
+    what it was: no second request is built, no second call is made, no second decision is
+    written, and `policy_config_digest` omits the reviser key entirely — so a held-back run
+    hashes the same as every scene drafted before the stage existed, which is what makes it a
+    control rather than something that resembles one. §155.3's precedent at this address: a
+    feature no flag can hold back is a control arm that needs a code edit.
+
+    **It defaults off here and is turned on by `cli.py`, which is where the operator
+    commissioned it.** `schedule_evaluation` and `schedule_summary` sit two arguments up with
+    the same default for the same reason, and the reason is about which direction fails safe.
+    A floor defaults on so a path that forgets it fails closed (`require_starting_sheet` says
+    so in as many words); a **spend** defaults off, because a call site that forgot to think
+    about a second model call per scene should get the book it already had rather than a bill
+    it did not ask for. `litharness run` passes `revise=not args.no_revise`, so production has
+    the stage and `--no-revise` is the control.
     """
     budget_policy = budget or BudgetPolicy()
+    revision_policy = reviser_policy or ReviserPolicy()
+    #: Absent rather than null when the stage is off; see `policy_digest`.
+    reviser_config = (
+        {
+            "model": reviser_model,
+            "profile": REVISION_PROFILE,
+            **revision_policy.digest_material(),
+        }
+        if revise
+        else None
+    )
 
     def handle(job: Job, now: float) -> Sequence[Event]:
         payload = job.payload
@@ -238,7 +464,7 @@ def make_scene_draft_handler(
         # a digest that omits the sampler is a record of a different run.
         profile = str(payload.get("profile", "default"))
         sampler = draft_sampler(job, profile)
-        config_digest = policy_digest(policy or DraftPolicy(), sampler)
+        config_digest = policy_digest(policy or DraftPolicy(), sampler, reviser_config)
 
         revision = store.load_revision(revision_id)
 
@@ -372,6 +598,35 @@ def make_scene_draft_handler(
             ]
 
         result, resolution = registry.complete(request)
+
+        # **The reviser, and it runs on the provider's string rather than on an accepted
+        # scene** (§185; the operator's read-12 directive). One draft in, one revision out: no
+        # second candidate, no scoring, nothing choosing between two texts. `revise_draft`
+        # returns the draft untouched on every refusal path, so a failed containment check, an
+        # exhausted ceiling and a dead transport all leave the scene exactly where it was — and
+        # what comes back goes down the identical ladder below, which is the whole reason the
+        # call sits here and not after acceptance.
+        revised_by: str | None = None
+        revision_events: Sequence[Event] = ()
+        if revise:
+            revised, revised_by, revision_events = revise_draft(
+                registry,
+                store,
+                job,
+                drafted=result.text,
+                already_spent=result,
+                material=_text(payload.get("packet")),
+                project_id=project_id,
+                logical_id=logical_id,
+                revision_id=revision_id,
+                revision=revision,
+                budget_policy=budget_policy,
+                call_class=call_class,
+                policy=revision_policy,
+                model=reviser_model,
+                now=now,
+            )
+            result = replace(result, text=revised)
 
         # **The one punctuation rewrite this system performs, and it happens here rather than
         # anywhere later for a reason that is about hashes and not about prose** (§180). Three
@@ -575,6 +830,9 @@ def make_scene_draft_handler(
             store.record_decision(decision, decided_at=_timestamp(now))
             failed = [gate for gate in gates if gate.blocking and not gate.passed]
             return [
+                # The reviser's own decision event first, because its call happened first and
+                # because a refused candidate is still a candidate somebody paid twice for.
+                *revision_events,
                 Event(
                     event_type=EventType.MANUSCRIPT_CANDIDATE_CREATED,
                     project_id=project_id,
@@ -619,6 +877,15 @@ def make_scene_draft_handler(
                 # read 1 and read 11 both named, and a census over published books after this
                 # ships would read zero and mean nothing; this is where it stays visible.
                 "em_dashes_removed": marks_removed,
+                # **Which model's sentences these are, when they are not the writer's** (§185).
+                # The decision this event names attributes the *candidate* to the drafting
+                # call, and that stays true — but the accepted prose came out of a second call
+                # when this field is set, and a provenance record that named only the writer
+                # would be §56.2's defect at a second address: confidently naming a model that
+                # did not write what is on the page. `None` when nothing was adopted, so the
+                # absence is the fact rather than a value to be interpreted, and the reviser's
+                # own decision row carries the spend that goes with it.
+                "revised_by": revised_by,
                 "parent_revision_id": revision_id,
             },
         )
@@ -751,7 +1018,7 @@ def make_scene_draft_handler(
         # content-derived and collapse on insert, but it would misreport the tick's event
         # count. The decision event retains the established Conductor-owned write path and
         # is returned here; only the decision record itself must share the revision commit.
-        return [decision_event]
+        return [*revision_events, decision_event]
 
     return handle
 
