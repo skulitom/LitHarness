@@ -110,7 +110,13 @@ as §185.7 intended, with no join needed.
 ## 4. The page: plain counts, draw 2 (writer) beside draw 3 (reviser)
 
 Measured by `plan/agent-impact/scripts/reviser_impact.py`
-(`script_sha256 919fc07c55a79b0dc18a7f8c76b41bf12ea4e7ecf887921e4dba5c645f2c06da`) over
+(`script_sha256` ~~`919fc07c55a79b0dc18a7f8c76b41bf12ea4e7ecf887921e4dba5c645f2c06da`~~
+**`d244748120504167b229007de70deb6c77bbf2bcaf2def0eb7abff1aa4f2c4a7`** — corrected
+2026-08-30: the script was brought under the repository's ruff gate the way
+`research/quality-measurement/` already is (two `# noqa` annotations, `strict=` on two
+equal-by-construction `zip`s, `itertools.pairwise` for the adjacent-openings pair walk, and
+two word-list literals re-wrapped, splitting to the same lists). No counter definition
+changed; the numbers in this file are the struck version's output) over
 `litharness export` text. Unit text digests: draw 2 `3374e5ac73cfbe25` / `1496777913d7ac66`;
 draw 3 `9fb25ab7d4506a39` / `eecc812468f71848`.
 
