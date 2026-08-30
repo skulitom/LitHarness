@@ -117,11 +117,18 @@ def test_the_new_demand_was_paid_for_and_not_added() -> None:
     ceiling on purpose. What this test asserts is unchanged and is about §168: its own demand
     arrived free, and the sentence it removed has not come back. The counts are updated rather
     than loosened, because a `<=` here would stop the file noticing the next silent growth.
+
+    **They moved back 12 -> 11 and 25 -> 24 on 2026-08-30 for §174**, which is a subtraction and
+    the first movement down this pair has recorded. The readership clause left for
+    `application/overview._TASK`: its subject is who somebody was before the book, every role
+    standing on this floor receives that already fixed by the listing, and the listing is the one
+    role that does not stand on the floor. What this test asserts is still §168's and is still
+    unchanged; the headroom §171 spent is back.
     """
     assert _THE_SUBTRACTED_AFFIRMATIVE not in house.READER
     assert "Spend the words on" not in house.READER
-    assert len(house.demands(house.READER)) == 12
-    assert len(house.demands(house.HOUSE_RULES)) == 25
+    assert len(house.demands(house.READER)) == 11
+    assert len(house.demands(house.HOUSE_RULES)) == 24
 
 
 def test_the_new_demand_carries_no_instance_list() -> None:

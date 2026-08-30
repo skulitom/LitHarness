@@ -18142,3 +18142,130 @@ books may share one, and the library's only job is to keep both readable.
 **Anti-scope.** The root-level index `README.md` and `.state.json` remain last-store-wins when two
 databases publish into one root — visible, pre-existing, and not this entry's defect. No bar is
 declared; nothing here measures anything; the only numbers above are name lengths.
+
+## 174. The readership direction was already in a prompt, at every role that could not act on it and never at the one that could
+
+Read 10 (2026-08-30, `plan/serial-pilot-15b.md`) failed pilot 15 on its protagonist: *"We should
+make character relatble and later aspirational, i don't think we really accomplish either ones
+currently."* The item was routed as a premise/protagonist gap converging with the standing
+readership direction the operator gave on 2026-08-23 — the audience is young, and a protagonist's
+pre-story life has to be one that audience has lived rather than a lifetime at a trade. The brief
+for this track recorded that the direction *"has never been wired into any prompt surface"*.
+
+**That premise was wrong, and finding out how it was wrong is the entry.** The direction has been
+live prompt text since 2026-08-23. It is `house.READER`'s fourth clause:
+
+> *"If the person this happens to came from somewhere like our own world, the life they came from
+> is one a reader in their twenties has lived: a degree they are not using, a job that covers the
+> rent, a thing they know far too much about for no professional reason."*
+
+It reaches the scene writer, the Architect's seed and grow calls, and the outline — every role
+that stands on the house floor. Pilot 15's premise was drawn under it and read 10 rejected the
+result. This is §154's audit order at its second instance: **when a read names a defect a standing
+rule already covers, read the rule's own wording before drafting anything.** Nothing was drawn
+from a model here either; the instrument is §135's `house.demands` over the assembled prompts,
+and the behavioural evidence is prior (§138's four measured conditions).
+
+### 174.1 Three failures in one clause, and none of them is the direction
+
+1. **It is at every altitude except the one that decides the thing.** The protagonist's prior life
+   is fixed by the **listing** — `application/overview.render_overview_request`, the call that
+   invents who a book is about — and pilot 15's listing fixed it as *"Mira Kell mends things"*
+   before any other call existed. `overview._system` deliberately does not go through
+   `house.with_house_rules` (recorded in that module since 2026-08-25: the floor governs the
+   book's prose and a listing is not the book's prose), so **the one call the direction had to
+   reach is the one call it did not**. Every role it did reach receives the person already named,
+   which by §154 is an artifact fixed upstream of the call and lands with whatever force its sign
+   would give it multiplied by zero.
+2. **Its conditional is false in exactly the case it was written against.** A village mender
+   native to her own valley never *"came from somewhere like our own world"*. The clause was
+   written after two forged premises whose protagonists were a 51-year-old optician and a veteran
+   veterinary nurse, and its guard admits only the isekai case — so the fantasy-native lifer,
+   which is the same defect from the other side and is what read 10 got, is outside it by
+   construction.
+3. **It is a permission enumerating three instances of what succeeds**, in the module whose own
+   standing constraint is *a rule here may say what fails, it may not enumerate what succeeds* and
+   which has now cut four clauses for being recited back. §138 measured the permission form of the
+   numbers clause at 47.2 number tokens per thousand against a prohibition's 7.0 and silence's
+   29.4; §154 cut two reader-state permissions out of this same constant.
+
+**Measured, and it is a demand census rather than a draw.** `uv run litharness prompts`, before
+and after:
+
+| role | demands before | demands after |
+| --- | --- | --- |
+| `listing writer` | 15 | **16** |
+| `house-floor` | 25 | **24** |
+| `architect seed` | 45 | 44 |
+| `architect grow` | 42 | 41 |
+| `outline` | 28 | 27 |
+| `scene`, assembled | 38 | 37 |
+
+The listing's system message grows 1,737 to 1,909 characters; the floor falls 3,140 to 2,879 and
+that fall lands in every role standing on it.
+
+### 174.2 What shipped
+
+**One demand, in `application/overview._TASK`**, prohibition-signed and answerable on the page:
+
+> *"Whoever this happens to did not spend the years before the book mastering one trade: a person
+> who arrives already good at what the book will ask of them has nowhere to go."*
+
+It carries no conditional, so it holds for a protagonist from our world and for one born in the
+book's own; it names no instance of a life that succeeds; and it is not scoped to the fantasy
+trade, so the 51-year-old optician it was originally written against fails it too.
+
+**Placed on the person clause and not beside the prior-life ban, which is an addressability
+choice.** Two demands earlier the listing is forbidden the biography (§154 narrowed that ban to
+the prior life after five listings of eight opened on a mundane job), so nothing about the years
+before the book can be shown on the page at all. What a listing does say is who the person is now
+and what they are after, and *already good at the book's own subject* is visible exactly there.
+Beside the ban it would read as a third thing not to write, which is how a demand goes inert.
+
+**The clause is removed from `house.READER`, and the demographic does not travel.** An audience is
+a targeting decision; it belongs in `PLAN.md` and here, where §126 says it moves by operator
+direction and nothing else, and a prompt gets only the structural consequence. `PLAN.md`'s
+audience paragraph pointed at the deleted text and is repointed in place. Ceiling `listing writer`
+15 -> 16 in `tests/test_prompt_budget.py`, raised on purpose with the trade written down: the
+floor gives back the one demand of headroom §171 spent, and no ceiling was lowered to match
+because every number in that table is a maximum.
+
+**Tests: `tests/test_readership_prior_life.py`.** Each of the three failures above is pinned so a
+later edit cannot bring one back — one demand not two, prohibition-signed with no enumeration, no
+conditional, one home and it is the listing, the biography ban still standing beside it — plus
+`test_no_prompt_this_system_sends_names_the_readership_by_demographic`, a four-word rail over the
+reader-facing prompts and the floor.
+
+### 174.3 What was refused
+
+**The positive half of the direction is not written anywhere a model reads.** A degree they are
+not using, a job that covers the rent, an obsession — that is the operator's own worked shape and
+it stays in this entry. Its permission form is what was just removed, §138 puts silence above a
+permission, and the sibling permission in this very file (*"open on the person it happens to"*)
+is what produced five mundane-job openings out of eight.
+
+**Nothing was put in the brief field, and the empty-brief control survives untouched.** §136
+measured two words under *"What this book is to be about"* outweighing every rule in the prompt,
+and the no-brief arm is the control a directed book is read against. The constraint is a standing
+property of the job and goes in the system message, so it applies identically in both arms and an
+empty brief is still empty; `render_overview_request` renders the same default it always did.
+
+**Not added to the Recruiter's genre floor, and not to any second surface.** A dossier rides in
+the system message of every scene call that writer ever drafts, which is why that role carries no
+house floor at all (§155); a readership constraint there would be one rule with two homes, and the
+one it already had in two places is what this entry is about.
+
+**No bar, no axis, no research claim, no model call.** Nothing here ranks, judges or reads
+anything, no draft was drawn paid or free, and RS1 is untouched. The demand counts above are
+sizes, not thresholds.
+
+**Shipped unmeasured, and that is the honest half.** What is demonstrated is a property of
+instruction text — where a demand sits, what it is signed, and which role can act on it — and
+**not** any effect on a listing or a book. The next listing draw is what reads it, and it lands
+beside the other read-10 fix tracks, so that draw cannot attribute a change to this one alone.
+
+**Anti-scope.** One demand added, one removed, in two modules. This is not the exception lever
+`overview.py` and §154 both name as still open — nothing here decides or records what is singular
+about whoever a book is about, and this entry supplies no protagonist object. The aspirational
+half of read 10's item belongs to the system and progression tracks and is not touched. Nothing
+here reaches the planner, the Architect's own ask, the recruiter, or any research surface.

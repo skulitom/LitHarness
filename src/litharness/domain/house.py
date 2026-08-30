@@ -355,6 +355,22 @@ CLARITY = (
 #: chapter under read is in it and none of the operator's words are (§97.1) — naming the class
 #: needs the words the counter itself is built from, and those are the instrument's, not a read's.
 #: Shipped unmeasured, and the census that would read it is a separate registered act.
+#:
+#: **The readership clause left this constant on 2026-08-30, for the one call that decides who
+#: the person is** (§174). It read *"If the person this happens to came from somewhere like our
+#: own world, the life they came from is one a reader in their twenties has lived: a degree they
+#: are not using, a job that covers the rent, a thing they know far too much about for no
+#: professional reason"*, and it was three failures at once. It is a **permission enumerating
+#: three instances of what succeeds**, in the file whose standing constraint forbids exactly that
+#: and which has cut three clauses for being recited back. Its **conditional is false for a
+#: protagonist native to the book's own world**, which is the shape the operator's direction was
+#: written against and the shape read 10 rejected. And its subject — who somebody was before the
+#: book began — reaches every role standing on this floor **already fixed by the listing**, so by
+#: §154 it landed with its sign multiplied by zero at all of them. The constraint now sits in
+#: `application/overview._TASK`, prohibition-signed, at the call that chooses the person; the
+#: audience it follows from is a targeting decision and stays in `PLAN.md` and the ledger, never
+#: in a prompt. Nothing is added here, and the floor gets back the one demand of headroom §171
+#: spent.
 READER = (
     "Detail that only establishes "
     "who somebody is — the steps of a job, the order of a routine — is not why the reader "
@@ -368,9 +384,6 @@ READER = (
     "are here. A power with one use invites nobody in, and neither does one the reader meets "
     "as a summary of what it could be rather than on the page. A story that names its own "
     "ceiling has told the reader where to stop.\n"
-    "If the person this happens to came from somewhere like our own world, the life they came "
-    "from is one a reader in their twenties has lived: a degree they are not using, a job "
-    "that covers the rent, a thing they know far too much about for no professional reason.\n"
     "An exact number belongs to what this world's own system counts in a person and to "
     "nothing else; the line the book itself prints is not prose. A "
     "puzzle box does not have thirty-one moves, a crate does "
