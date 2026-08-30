@@ -939,7 +939,7 @@ def test_the_beat_fires_at_six_scenes_where_no_outline_ever_runs(
         assert genre.BEAT_TAIL in prompt
         tail = prompt.rstrip()[prompt.rstrip().index(genre.BEAT_TAIL) :]
         last = staging.bound_text() if bounded else genre.BEAT_TAIL
-        assert tail.endswith(genre.INTERACTION_BEAT) or tail.endswith(last), (
+        assert tail.endswith((genre.INTERACTION_BEAT, last)), (
             "the scheduled folds render last and in composition order - beat, then the "
             "opening's bound, then the interaction beat where one fires - and nothing "
             "off either schedule follows them"
