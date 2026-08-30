@@ -239,10 +239,28 @@ BUDGET: dict[str, int] = {
     # declares a world through tools and narrates nothing, so by §154 the referent is empty — and
     # that is the honest price: a demand the seed cannot use, against a rule the roles that write
     # prose need in the one place that does not drift.
-    "architect seed": 45,
-    "architect grow": 42,
-    "scene writer floor": 28,
-    "scene writer, cast": 32,
+    #
+    # **Raised 45 -> 46 on 2026-08-30 for one `house.CLARITY` clause** (§176), and this is the
+    # first raise since §171 predicted its own successor's cost. It predicted four numbers; the
+    # true count is six, corrected in place at §171.4 — the floor plus **five** rows carry the
+    # whole of `HOUSE_RULES` and every one of them sat at zero headroom. The occupant is a
+    # prohibition against a comparison to a thing lacking the quality compared for, at the
+    # fourth read to name the figure-clarity family and the first clause of any kind against
+    # it. **At this role it lands inert** — the Architect declares a world through tools and
+    # writes no comparisons, so by §154 the referent is empty — which is §171's honest price
+    # paid again at the same address and for the same reason.
+    "architect seed": 46,
+    # **42 -> 43 on 2026-08-30, the same clause** (§176). §163's note above says this row "stays
+    # on 42", which was true of §163's seed-only raise and is not a rule: this row stands on the
+    # whole house floor, so a floor clause lands here as surely as it lands on the scene writer.
+    # Inert at this role for the seed's reason.
+    "architect grow": 43,
+    # **28 -> 29 and 32 -> 33 on 2026-08-30, the same clause** (§176). These two rows are the
+    # ones the raise is actually for: the drafting call is where comparisons are written, so
+    # this is the one place the demand is neither inert nor a delimiter. The four-demand gap
+    # between the rows is the cast dossier and is unchanged.
+    "scene writer floor": 29,
+    "scene writer, cast": 33,
     "measurement reader": 4,
     "steering reader": 4,
     # Measured 2026-08-28 and set at what was there, the ratchet this file exists to be. Both
@@ -255,7 +273,29 @@ BUDGET: dict[str, int] = {
 
 #: The floor everything else inherits. Broken out because a clause added here is added to every
 #: role at once, which is exactly how the scene writer reached twenty-seven without a decision.
-HOUSE_BUDGET = 25
+#:
+#: **25 -> 26 on 2026-08-30, and this row is where the reason for all six raises belongs** (§176).
+#: Read 10 named three sentences nobody would say, and every demand on the floor was read against
+#: them first (§154's audit order): the unmet-term clause fails a *name*, and none of the three
+#: carries one; the two-ways clause fails a sentence with two readings available, and these have
+#: one reading each and it is the wrong one; the object clause fails an object *acting*, and a
+#: quality is not an act. What was left were the two sentences that open and close the rule, and
+#: those name the standard rather than a page surface — the half a writer cannot act on. So the
+#: gap was structural, which is the only thing §168.2 licenses a new clause for.
+#:
+#: **The subtraction was looked for first and refused, which is the order this file asks for.**
+#: The candidate was `CLARITY`'s own opening sentence: affirmative, its object an abstraction,
+#: unaddressable, and §168 removed one of exactly that shape to pay for its clause. It stays,
+#: because its second half carries the following-rather-than-explaining correction this constant
+#: was corrected twice in one day to get, and §127 is explicit that removing a rule which encodes
+#: a measured correction is a decision to be made against a measurement rather than against a
+#: mood. This track has no measurement, so it pays at the ceiling instead and says so.
+#:
+#: **The pronoun half of the same read cost nothing.** Widening the paragraph clause's scope from
+#: one *person* to one person or object is a scope word on a rule whose object, remedy and
+#: concession are untouched, so `house.demands` reads the same count — §161.5's in-place pattern,
+#: widened rather than narrowed. Only the figure half needed a sentence.
+HOUSE_BUDGET = 26
 
 
 @pytest.mark.parametrize("role", sorted(BUDGET))
@@ -389,7 +429,12 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
 #: built to show: the drafting call is the role the narrating-the-inference prohibition is
 #: actually for, and it is the one row here where the demand is not inert. The off-by-one against
 #: the summed rows above is unchanged and still the length ask's leading space.
-SCENE_MAXIMAL_BUDGET = 44
+#:
+#: **44 -> 45 on 2026-08-30 for one `house.CLARITY` clause** (§176), by the same arithmetic: one
+#: demand on the floor, once in this total, and the off-by-one against the summed rows is still
+#: the length ask's leading space. This is the sixth of the six numbers that clause moved, and
+#: the reason for all of them is written at `HOUSE_BUDGET`.
+SCENE_MAXIMAL_BUDGET = 45
 
 
 def test_the_scene_floor_row_is_what_the_planner_actually_assembles() -> None:

@@ -84,6 +84,59 @@ from __future__ import annotations
 #: terms they quoted were always the same shape: a word used as if the reader already knew it —
 #: `frost rooms`, `keeper`, `the lists`, `nine deep`. The fix that worked on premises is the
 #: sentence below, and it is what the prose never got.
+#:
+#: **A figure clause and a scope word, added 2026-08-30 (§176), and the ruling that licensed
+#: them is that nothing here was violated.** Read 10 named three sentences as ones nobody says:
+#: a pronoun whose nearest noun is not the thing it stands for, a comparison to something that
+#: does not have the quality it is made for, and a line of dialogue naming an object by a
+#: description last met a passage earlier. The family is house-level rather than one writer's —
+#: reads 5, 7, 9 and 10 each carry a member, across writers sharing no dossier.
+#:
+#: **Every demand here was read against them first, which is §154's audit order.** The
+#: unmet-term clause fails a *name* the reader has not met, and none of the three carries one.
+#: The two-ways clause fails a sentence with two readings available; these have one reading
+#: each and it is the wrong one, which is a different failure and not a smaller one. The object
+#: clause fails an object *acting*, and a quality is not an act. What is left is the pair that
+#: opens and closes this rule — every sentence can be followed, a thing the reader cannot follow
+#: did not happen — and those name the standard rather than a page surface, so by §154 they are
+#: the half a writer cannot act on. **So this is a gap and not an enforcement failure**: §168's
+#: shape at a second address, where an object and a unit between them leave a sentence that
+#: breaks no rule. That is the one thing §168.2 licenses a new clause for.
+#:
+#: **The pronoun half cost nothing, because the rule was already here and its scope was all
+#: that was wrong with it.** The paragraph clause has said since read 2 that inside a paragraph
+#: a pronoun points at one *person* only; read 10's instance is the identical mechanism with a
+#: thing in the slot. The scope word is what changed and the object, the remedy and the
+#: concession are untouched, so `demands` reads the same count — §161.5's in-place pattern,
+#: widened rather than narrowed, and not §171's refused second rule wearing one terminator.
+#:
+#: **The figure half is one prohibition, and its object is a comparison rather than a figure.**
+#: Scoping it to comparisons is what keeps it off ordinary metaphor by construction instead of
+#: by exemption: a room going cold is not a comparison and is never reached. The concession
+#: carries the rest, because a stock likeness whose second thing lacks the quality on a literal
+#: read is completed at speed anyway, and §163 is the standing warning about a filter keyed wide
+#: enough to delete presence.
+#:
+#: **The third instance is refused, and that is stated before the fact.** A description standing
+#: in for a thing that has a plain name is a third shape: not a comparison, and not a pronoun, so
+#: neither edit reaches it. Every wording found that reaches it and the comparison together keys
+#: on the reader having to go outside the sentence for what a phrase means — which forbids
+#: ordinary anaphora, a thing named in one sentence and *it* in the next, and that is §163's
+#: failure mode exactly. A clause of its own would be §127's fourth rule. It is a residual, and a
+#: later read should expect to find it still standing.
+#:
+#: **Paid by raising six ceilings rather than by cutting, and the subtraction was refused on
+#: §127's brake.** The candidate was this rule's own opening sentence — affirmative, its object
+#: an abstraction, unaddressable, and §168 removed one of exactly that shape to pay for its own
+#: clause. It stays: its second half carries the following-rather-than-explaining correction this
+#: constant was corrected twice in one day to get, and §127 is explicit that removing a rule which
+#: encodes a measured correction is a decision to be made against a measurement rather than
+#: against a mood. This track has no measurement. `tests/test_prompt_budget.py` carries the six
+#: raises with their reasons, and corrects §171.4's prediction of four in place.
+#:
+#: No instance list (§168's refusal unchanged), and nothing from the chapter under read or from
+#: the read itself is in either clause (§97.1) — the three sentences are fixtures in
+#: `tests/test_figure_clarity.py` and go nowhere else. Shipped unmeasured.
 CLARITY = (
     "Clarity is the floor, and it is about following rather than about explaining. Every "
     "sentence can be followed the first time it is read.\n"
@@ -98,10 +151,12 @@ CLARITY = (
     "trip on.\n"
     "Objects do not act, speak, want, refuse or know. A box does not tell anybody anything; "
     "somebody works it out, or does not.\n"
+    "What fails is a comparison to a thing that does not have the quality it is being compared "
+    "for; one a reader completes without stopping is not that.\n"
     "A paragraph holds together or it is not a paragraph. Inside one, a pronoun points at one "
-    "person only — where two are in play, use their names, however plain that reads. A reader "
-    "who has to reread a paragraph to find out whose brother died has been thrown out of the "
-    "book, and the sentences were all fine.\n"
+    "person or object only — where two are in play, use their names, however plain that reads. "
+    "A reader who has to reread a paragraph to find out whose brother died has been thrown out "
+    "of the book, and the sentences were all fine.\n"
     "A thing the reader cannot follow is a thing that did not happen."
 )
 

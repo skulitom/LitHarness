@@ -117,11 +117,16 @@ def test_the_new_demand_was_paid_for_and_not_added() -> None:
     ceiling on purpose. What this test asserts is unchanged and is about §168: its own demand
     arrived free, and the sentence it removed has not come back. The counts are updated rather
     than loosened, because a `<=` here would stop the file noticing the next silent growth.
+
+    **The floor moved 25 -> 26 on 2026-08-30 for §176**, a figure-clarity prohibition added to
+    `house.CLARITY` and paid for at six ceilings. `house.READER` is untouched by it, which is
+    why only the second count moves: this file's subject is the economy block, and a clause on
+    the clarity floor lands beside it rather than in it.
     """
     assert _THE_SUBTRACTED_AFFIRMATIVE not in house.READER
     assert "Spend the words on" not in house.READER
     assert len(house.demands(house.READER)) == 12
-    assert len(house.demands(house.HOUSE_RULES)) == 25
+    assert len(house.demands(house.HOUSE_RULES)) == 26
 
 
 def test_the_new_demand_carries_no_instance_list() -> None:

@@ -18077,9 +18077,12 @@ drift.
 
 **The residual is a ceiling inconsistency this made visible.** The house floor had one demand of
 headroom against `HOUSE_BUDGET` while `architect seed` had none; after this clause the floor and
-three of the rows standing on it sit exactly at their ceilings. **The next clause added to `house`
-raises four numbers, not one**, and whoever adds it should know that before they write it rather
-than when the suite tells them.
+~~three~~ **five** of the rows standing on it sit exactly at their ceilings. ~~**The next clause
+added to `house` raises four numbers, not one**~~ — **corrected in place by §176, which added one
+clause and moved six numbers: the floor, both scene rows, both Architect rows and the maximal
+scene total. The count here counted the rows that had zero headroom before this entry's own raise
+and did not count the two that raise had just left at zero.** Whoever adds the next one should
+know that before they write it rather than when the suite tells them.
 
 ### 171.5 Anti-scope
 
@@ -18142,3 +18145,141 @@ books may share one, and the library's only job is to keep both readable.
 **Anti-scope.** The root-level index `README.md` and `.state.json` remain last-store-wins when two
 databases publish into one root — visible, pre-existing, and not this entry's defect. No bar is
 declared; nothing here measures anything; the only numbers above are name lengths.
+
+## 176. Four reads have named figures that fail a literal read, and every prohibition on the clarity floor missed them by its object
+
+**Defect harvest, not data (§95).** Read 10 (`plan/serial-pilot-15b.md`) named three sentences in
+one chapter as ones nobody would say. Stated as shapes rather than as text, because §97.1 forbids
+the text: a pronoun whose nearest candidate noun is not the thing it stands for; a comparison to
+something that does not have the quality it is made for; and a line of dialogue naming an object by
+a description the reader last met a passage earlier. The family is not one writer's — reads 5, 7, 9
+and 10 each carry a member, across writers who share no dossier, which is what makes it house-level
+rather than a casting problem.
+
+### 176.1 Measured first: the three shapes read against the floor's own demands
+
+`house.demands(house.CLARITY)` returned twelve before this entry, and every one was read against
+all three shapes — §154's audit order, which says to read a rule's own wording before drafting
+anything, because a rule that covers a defect by topic can be causing it by form.
+
+Every one missed, and each missed by its **object**:
+
+- the unmet-term pair fails a *name* the reader has not met, and none of the three carries one;
+- the two-ways pair fails a sentence with two readings *available*, and these have one reading each
+  and it is the wrong one — a different failure, and not a smaller one;
+- the object pair fails an object *acting*, and a quality a thing does not have is not an act;
+- the paragraph trio was the near miss, and its scope is a *person*.
+
+What was left were the two sentences that open and close the rule — every sentence can be followed,
+a thing the reader cannot follow did not happen. Those name the standard rather than a page surface,
+so by §154 they are the half a writer cannot act on, and they are why this family kept arriving
+under a floor whose stated object is exactly it.
+
+### 176.2 The ruling: a gap, not an enforcement failure
+
+The distinction was this track's question and it decides what may be built. An enforcement failure
+is read 6 §4.6's shape — a live clause that did not land — and its repair is surgery on that clause.
+This is §168.2's shape instead: nothing in the assembled prompt was violated by any of the three
+sentences. `CLARITY`'s stated object covers them and its addressable prohibitions do not, which is a
+gap between what a rule is about and what it can fail, and that is the one condition §168.2
+licenses a new clause for.
+
+### 176.3 What shipped: one prohibition and one scope word
+
+Both in `src/litharness/domain/house.py`, on the floor rather than in a role file, for that module's
+founding reason — five rule changes once edited a single role and the writer never saw any of them.
+
+**The scope word first, because it cost nothing.** The paragraph clause has said since read 2 that
+inside a paragraph a pronoun points at one *person* only, and read 10's first shape is that
+mechanism with a thing in the slot. It now reads *one person or object only*. The object, the remedy
+(*use their names*) and the concession (*however plain that reads*) are untouched, so
+`house.demands` returns the same count — §161.5's in-place pattern, widened rather than narrowed.
+This is not §171's refused second rule wearing one terminator: no rule was added, one scope word
+moved.
+
+**The prohibition**, appended to `house.CLARITY`:
+
+> "What fails is a comparison to a thing that does not have the quality it is being compared for;
+> one a reader completes without stopping is not that."
+
+**Its object is a comparison rather than a figure, and that is the whole design.** A rule against
+figures whose literal reading is false deletes presence by construction: a room going cold, a
+stomach dropping and a voice being warm are all literally false and all decode instantly. Scoping
+the object to a comparison excludes every one of them without an exemption having to be written —
+§163's lesson about a filter keyed one notch wider, which has already cost this module a clause. The
+concession carries what is left, because a stock likeness whose second thing lacks the quality on a
+literal read is completed at speed anyway, and it hangs off a semicolon inside the sentence it
+bounds rather than standing as its own permission (§161.5's pattern; §138 measured a
+permission-only clause returning more than six times what a prohibition-only one did, worse than
+silence).
+
+Addressable per §154: a comparison is a thing a writer emits and can emit differently. The demand's
+object sits on the page and the reader appears only in the delimiter, which
+`tests/test_figure_clarity.py` asserts rather than assumes.
+
+### 176.4 The price: six ceilings, and §171.4's prediction of four is corrected in place
+
+The floor moved 25 → 26 demands and five rows standing on it moved with it: `architect seed`
+45 → 46, `architect grow` 42 → 43, `scene writer floor` 28 → 29, `scene writer, cast` 32 → 33, and
+the maximal assembled scene prompt 44 → 45. Each carries its reason in
+`tests/test_prompt_budget.py`, with the substantive one at `HOUSE_BUDGET`.
+
+**§171.4 predicted four and the true number is six**, corrected in place at that entry. It counted
+the rows that had zero headroom before its own raise and did not count the two its own raise had
+just left at zero. The residual it recorded is real and larger than it said: after this entry the
+floor and all five rows sit exactly at their ceilings again, so the next clause added to `house`
+also raises six numbers.
+
+**Where the demand is live and where it is inert.** The two scene rows are what the raise is for —
+the drafting call is where comparisons are written, and it is the one role where neither edit is
+inert. At the Architect it lands inert, because that role declares a world through tools and writes
+no comparisons, so by §154 the referent is empty; that is §171's honest price paid again at the same
+address. The listing writer is untouched at 15, and that was checked rather than assumed: it carries
+hand-copied listing-scoped paraphrases of two clarity clauses rather than the floor itself, so a
+floor clause does not reach it.
+
+### 176.5 What was refused
+
+**A subtraction to pay for it, and this is the refusal that matters.** The budget file's order is
+cut-then-raise and the candidate was found: `CLARITY`'s own opening sentence is affirmative, its
+object is an abstraction, it is unaddressable by §154, and §168 paid for its clause by removing one
+of exactly that shape. It stays. Its second half carries the following-rather-than-explaining
+correction that this constant was corrected twice in one day to get, and §127 is explicit that
+removing a rule which encodes a measured correction is a decision to be made against a measurement
+rather than against a mood. This track has no measurement. Paying at the ceiling in the open is the
+worse-looking option and the honest one.
+
+**A second clause for the third shape** — refused, and 176.6 states it before the fact rather than
+after a later read finds it.
+
+**An instance list**, for this module's reason unchanged: three clauses here were cut for being
+recited back as verbal formulas, and each of the three was an instance list.
+
+**Any gate, counter or repair over drafted prose.** No instrument is proposed, no axis admitted, and
+nothing here becomes a check a model runs on a chapter.
+
+**Any use of the operator's words or the chapter's** (§97.1). The three sentences are fixtures in
+`tests/test_figure_clarity.py` and appear nowhere else; the clause carries no noun of theirs, and
+`test_no_word_of_the_read_10_chapter_became_prompt_text` is the mechanical check.
+
+### 176.6 The residual: the third shape, refused and named before the fact
+
+A description standing in for a thing that has a plain name is not a comparison and not a pronoun,
+so neither edit reaches it. Every wording found that reaches it and the comparison together keys on
+the reader having to go outside the sentence for what a phrase means — and that forbids a thing
+named in one sentence and *it* in the next, which is ordinary anaphora and §163's failure mode
+exactly. A clause of its own would be §127's fourth rule against one complaint. It stands, a later
+read should expect to find it standing, and
+`test_the_third_instance_is_not_reached_and_the_clause_does_not_forbid_anaphora` is what keeps a
+later widening from reaching it by accident.
+
+### 176.7 Anti-scope
+
+**Shipped unmeasured, and that is the whole claim.** One prohibition and one scope word against one
+family, with no draw behind either: no chapter was written under them, no before-and-after exists,
+and nothing here says the family will thin. §138's direction is the only evidence that a
+correctly-signed prohibition is the form worth shipping, and it was measured on a different clause
+at a different role. No bar is declared and none could be — the four attainability checks have
+nothing to run on. No research claim is promoted, no mechanism qualified, no axis admitted, and no
+model read, ranked or judged anything for this entry. Read 10's other items are their own tracks'
+and the gate-calibration lesson is the coordinator's.
