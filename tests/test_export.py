@@ -353,3 +353,62 @@ def test_stdout_carries_the_book_and_nothing_else(db, capsys) -> None:
     assert out.startswith("# The Hollow Ledger")
     assert "chapter(s) complete ·" in out, "the front matter still says how far along it is"
     assert "from revision" not in out
+
+
+# --- the page a person actually reads -------------------------------------------------
+
+
+STATUS_LINE = "[STATUS] Mira Kell — Hold 3 | Carried 2/3"
+
+
+def a_book_with_a_status_line():
+    keys = initial_keys(1)
+    return build_revision(
+        BOOK_ID,
+        BRANCH_ID,
+        [
+            Node(logical_id="book", kind=NodeKind.BOOK, position_key="010", title="The Kettle"),
+            Node.text_node(
+                "scene-1",
+                NodeKind.SCENE,
+                keys[0],
+                f"She read it twice.\n\n{STATUS_LINE}\n\nThen she closed it.",
+                parent_logical_id="book",
+                title="Scene the 1",
+            ),
+        ],
+    )
+
+
+def test_the_reading_copy_draws_the_status_line_as_a_panel(db) -> None:
+    """A `[STATUS]` line is a display in the fiction and was rendered as an indented paragraph
+    with pipes in it — the one place in a chapter meant to look like a machine talking, looking
+    like prose. Operator read 10 named it."""
+    commit(db, a_book_with_a_status_line())
+    rendered = collect(db).as_html()
+
+    assert '<table class="status">' in rendered
+    assert '<th colspan="2" scope="colgroup">Mira Kell</th>' in rendered
+    assert '<tr><th scope="row">Carried</th><td>2/3</td></tr>' in rendered
+    assert f"<p>{STATUS_LINE}</p>" not in rendered
+    assert rendered.count("<p>") == 2, "the prose around it is still prose"
+
+
+def test_the_markdown_copy_keeps_the_status_line_as_written(db) -> None:
+    """The panel is an HTML rendering choice and nothing else. The line's format is
+    load-bearing — `domain/extraction.py` parses it — so the plain-text routes carry it as
+    written."""
+    commit(db, a_book_with_a_status_line())
+
+    assert STATUS_LINE in collect(db).as_markdown()
+
+
+def test_the_reading_copy_uses_a_long_form_measure(db) -> None:
+    """It was 34em, a 530px measure: a page of poetry for a serial novel. The operator's second
+    note from read 10 was that the column is too narrow to read a book in."""
+    commit(db, book())
+    rendered = collect(db).as_html()
+
+    assert "max-width: 768px" in rendered
+    assert "34em" not in rendered
+    assert "width=device-width" in rendered, "and it still fits a phone"

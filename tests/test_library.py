@@ -137,9 +137,13 @@ def test_the_pastable_chapter_carries_no_scaffolding(tmp_path) -> None:
 
 
 def test_only_the_conservative_tag_subset_is_emitted(tmp_path) -> None:
-    """No classes, ids or styles, and only tags every rich-text editor preserves. The claim
-    "this pastes correctly" is not one this repository can verify against a particular
-    editor, so the artifact stays inside the subset where it does not need to."""
+    """Prose carries no classes, ids or styles, and only tags every rich-text editor
+    preserves. The claim "this pastes correctly" is not one this repository can verify against
+    a particular editor, so the artifact stays inside the subset where it does not need to.
+
+    The status panel is the one element outside this subset, and it pays for its `<table>` by
+    carrying its styling inline; the fixture line here is unparseable on purpose, so what this
+    test pins is the prose."""
     store = SqliteStore.open(tmp_path / "l.db")
     try:
         document = a_document(store, drafted=2, total=2)
@@ -171,6 +175,42 @@ def test_system_voice_lines_are_set_apart() -> None:
     )
     assert "<blockquote>[STATUS] Rook - Level 2, HP 19/22</blockquote>" in fragment
     assert fragment.count("<p>") == 2, "the prose paragraphs stay paragraphs"
+
+
+PANEL_LINE = "[STATUS] Mira Kell — Hold 3 | Carried 2/3"
+
+
+def a_scene_with_a_status_line() -> Node:
+    return Node.text_node(
+        "scene-1",
+        NodeKind.SCENE,
+        "010",
+        f"She read it twice.\n\n{PANEL_LINE}\n\nThen she closed it.",
+        title="S",
+    )
+
+
+def test_a_status_line_becomes_a_panel_in_the_pastable_chapter() -> None:
+    """Setting a sheet apart is not the same as drawing it: a blockquote is still a sentence
+    with pipes in it. The `<table>` is the one widening of the paste subset, and it buys the
+    widening with inline styles, which is the half of CSS a rich-text editor keeps."""
+    fragment = paste_fragment([a_scene_with_a_status_line()])
+
+    assert "<table style=" in fragment
+    assert '<th colspan="2" scope="colgroup" style=' in fragment
+    assert "Mira Kell" in fragment and "<blockquote>" not in fragment
+    assert "class=" not in fragment and " id=" not in fragment
+    assert fragment.count("<p>") == 2, "the prose around it is still classless prose"
+
+
+def test_the_plain_text_chapter_keeps_the_status_line_exactly() -> None:
+    """The panel is an HTML rendering choice and touches nothing else. The line's format is
+    load-bearing — `domain/extraction.py` parses it — so the `.txt` route carries it as
+    written, and stays the fallback if the HTML route ever mangles."""
+    plain = paste_plain([a_scene_with_a_status_line()])
+
+    assert PANEL_LINE in plain
+    assert "<" not in plain
 
 
 # -- grouping is an operator act ------------------------------------------------------------

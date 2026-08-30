@@ -42,6 +42,7 @@ import re
 from dataclasses import dataclass
 
 from litharness.application.ports import ExportStore
+from litharness.application.statusline import status_block
 from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.plans import premise_of
 
@@ -191,15 +192,7 @@ class BookExport:
 
     def as_html(self, scenes_per_chapter: int = 1) -> str:
         parts = [
-            "<!DOCTYPE html>",
-            '<html lang="en">',
-            "<head>",
-            '<meta charset="utf-8">',
-            '<meta name="viewport" content="width=device-width, initial-scale=1">',
-            f"<title>{html.escape(self.title)}</title>",
-            _FONTS,
-            f"<style>{_READING_CSS}</style>",
-            "</head>",
+            *reading_head(self.title),
             "<body>",
             '<header class="front">',
             f"<h1>{html.escape(self.title)}</h1>",
@@ -361,9 +354,19 @@ def _paragraphs(content: str) -> str:
     Escaped rather than passed through: HTML has no equivalent of the structural-only
     compromise Markdown gets, because a stray `<` in prose swallows everything up to the
     next `>` and the loss is silent.
+
+    A block that is nothing but system voice becomes a panel instead — see `statusline`. It
+    is the one exception, and it is a rendering choice about a display the fiction already
+    calls a display, not a claim about the prose. The Markdown copy keeps the line as written:
+    a pipe-separated line is legible as a status line in a plain-text reader, and a Markdown
+    table there would have to be escaped back out by anyone quoting it.
     """
     blocks = [block.strip() for block in re.split(r"\n\s*\n", content) if block.strip()]
-    return "\n".join(f"<p>{html.escape(block)}</p>" for block in blocks)
+    rendered = []
+    for block in blocks:
+        panel = status_block(block, inline=False)
+        rendered.append(panel if panel is not None else f"<p>{html.escape(block)}</p>")
+    return "\n".join(rendered)
 
 
 _READING_CSS = """
@@ -382,16 +385,28 @@ _READING_CSS = """
   --rule:#333B36; --rule-soft:#262D29; --gap:#D98078;
 }
 * { box-sizing: border-box; }
-body { max-width: 34em; margin: 0 auto; padding: 3.5rem 1.5rem 6rem;
+/* 768px of box less 1.5rem of padding a side is a ~720px measure: the long-form reading
+   width, and about what a serial platform gives a chapter. It replaces a 530px measure,
+   which set a novel at the column width of a poem. */
+body { max-width: 768px; margin: 0 auto; padding: 3.5rem 1.5rem 6rem;
   background: var(--paper); color: var(--ink);
-  font-family: Literata, Georgia, "Times New Roman", serif; font-size: 17px; line-height: 1.62;
+  font-family: Literata, Georgia, "Times New Roman", serif; font-size: 17px; line-height: 1.65;
   -webkit-font-smoothing: antialiased; }
+@media (max-width: 34rem) {
+  /* The measure is the screen now, so the margins stop being decoration and start being
+     the thing between the text and the bezel. */
+  body { padding: 2.25rem 1.15rem 4rem; font-size: 16.5px; }
+}
 h1 { font-size: clamp(2rem, 5vw, 2.9rem); line-height: 1.1; font-weight: 600;
   margin: 0 0 .75rem; letter-spacing: -.015em; text-wrap: balance; }
 h2, h3, h4, h5, h6 { line-height: 1.25; margin: 2.75rem 0 .9rem; font-weight: 600;
   letter-spacing: -.01em; }
 p { margin: 0; text-indent: 1.4em; }
+/* A first line is indented only when it continues something. `:first-of-type` covers the
+   copy that wraps each scene in a section; the sibling selectors cover the release volume,
+   which lays chapter fragments straight into the body. */
 p:first-of-type, .gap { text-indent: 0; }
+h1 + p, h2 + p, h3 + p, h4 + p, hr + p, table + p, blockquote + p { text-indent: 0; }
 .front { border-bottom: 1px solid var(--rule); padding-bottom: 2rem; margin-bottom: 1.5rem; }
 .summary, .provenance, .progress { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; }
 .summary { font-weight: 500; font-size: .82rem; letter-spacing: .02em; text-indent: 0;
@@ -410,6 +425,17 @@ p:first-of-type, .gap { text-indent: 0; }
 .progress td:first-child, .progress td:nth-child(3) { text-align: right; }
 .progress tr.pending { color: var(--gap); }
 .gap { color: var(--gap); font-style: italic; }
+/* The system line, as the sheet the character is reading rather than as a sentence with
+   pipes in it. Narrow on purpose: a two-column panel stretched across the whole measure puts
+   a hand's width of nothing between a label and its number. */
+.status { border-collapse: collapse; width: 100%; max-width: 23rem; margin: 1.9rem 0;
+  background: var(--raised); font-variant-numeric: tabular-nums; line-height: 1.45;
+  font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: .76rem; }
+.status th, .status td { border: 1px solid var(--rule-soft); padding: .4rem .75rem; }
+.status thead th { text-align: left; font-weight: 600; letter-spacing: .05em; color: var(--ink);
+  border-color: var(--rule); }
+.status tbody th { text-align: left; font-weight: 400; color: var(--ink-2); }
+.status tbody td { text-align: right; font-weight: 600; color: var(--ink); }
 aside.block { border: 1px solid var(--rule-soft); background: var(--raised); border-radius: 2px;
   padding: .8rem 1.1rem; margin: 1.75rem 0;
   font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: .8rem; }
@@ -427,6 +453,7 @@ code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .85em;
   h1, h2, h3, h4, h5, h6 { break-after: avoid; }
   p { orphans: 2; widows: 2; }
   aside.block { background: none; }
+  .status { background: none; break-inside: avoid; }
 }
 @page { margin: 2cm; }
 """.strip()
@@ -441,6 +468,27 @@ _FONTS = (
     "family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&"
     'family=IBM+Plex+Mono:wght@400;500;600&display=swap">'
 )
+
+
+def reading_head(title: str) -> list[str]:
+    """Everything above `<body>` in a reading copy: the doctype, the head, the stylesheet.
+
+    Public, and a function rather than two constants, because there is more than one reading
+    copy. `library._volume_html` renders the same book in fifty-chapter windows and had a bare
+    head — so a release volume opened full-browser-width in an unstyled serif, which is the
+    complaint the measure above answers, only worse. One head means the two cannot drift.
+    """
+    return [
+        "<!DOCTYPE html>",
+        '<html lang="en">',
+        "<head>",
+        '<meta charset="utf-8">',
+        '<meta name="viewport" content="width=device-width, initial-scale=1">',
+        f"<title>{html.escape(title)}</title>",
+        _FONTS,
+        f"<style>{_READING_CSS}</style>",
+        "</head>",
+    ]
 
 
 # -- collection ---------------------------------------------------------------------
@@ -548,4 +596,11 @@ def resolve_branch(
     )
 
 
-__all__ = ["NOT_DRAFTED", "BookExport", "SceneProgress", "collect", "resolve_branch"]
+__all__ = [
+    "NOT_DRAFTED",
+    "BookExport",
+    "SceneProgress",
+    "collect",
+    "reading_head",
+    "resolve_branch",
+]

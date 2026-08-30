@@ -6988,8 +6988,11 @@ than a new opinion.** Production books hold no chapter nodes and no assembly sch
 `--chapter-scenes N` exists because a real serial wants grouping, and it makes the assembly
 scheme an operator act.
 
-**The HTML is a fragment and the claim about it is bounded.** Only `<p>`, `<blockquote>` and
-`<hr>`, no classes, ids or styles — the conservative subset every rich-text editor preserves —
+**The HTML is a fragment and the claim about it is bounded.** ~~Only `<p>`, `<blockquote>` and
+`<hr>`, no classes, ids or styles — the conservative subset every rich-text editor preserves —~~
+*(§177: **prose** is still only those three and still carries no classes and no ids; a `[STATUS]`
+line is now a `<table>` with inline styles, which is the widening a paste can afford, and the
+unverifiability below is unchanged by it.)*
 and a fragment rather than a document, so a browser renders it for select-all-and-copy while an
 HTML source view gets no `<head>` to strip. **What this repository cannot do is verify how any
 particular platform's editor treats a paste**, so a `.txt` sits beside every fragment: plain text
@@ -6998,7 +7001,9 @@ response to an unverifiable claim; asserting the HTML works would not have been.
 
 System-voice lines become `<blockquote>`, and that is labelled as a rendering choice rather than
 a fact about the prose: a stat block set as an ordinary paragraph reads as a sentence, and the
-genre sets it apart.
+genre sets it apart. *(§177: setting a sheet apart turned out not to be the same as drawing it. A
+block that is nothing but `[STATUS]` lines is a table now; the blockquote is what an unparseable
+system line still falls back to.)*
 
 **What this is not, stated because the name would otherwise claim it.** §62 cut the
 serial-publication pillar after measuring it at two inert enum values, and enumerated seven
@@ -18142,3 +18147,62 @@ books may share one, and the library's only job is to keep both readable.
 **Anti-scope.** The root-level index `README.md` and `.state.json` remain last-store-wins when two
 databases publish into one root — visible, pre-existing, and not this entry's defect. No bar is
 declared; nothing here measures anything; the only numbers above are name lengths.
+
+## 177. The one line in a chapter meant to look like a machine looked like a paragraph with pipes in it
+
+Operator read 10 named two things about the *reading copy's presentation*, neither of them about
+the prose: the `[STATUS]` line renders as plain text, and the text column is too narrow. Both are
+`application/library.py` and `application/export.py`, and nothing below reaches generation.
+
+**Measured first: what the three HTML surfaces actually did with a status line.** The whole-serial
+reading copy (`<slug>.html`) put it in a `<p>` — which carries a 1.4em first-line indent, so
+`[STATUS] Mira Kell — Hold 3 | Carried 2/3 | …` was not merely undistinguished from the prose
+around it but *indented like a continuing paragraph*. The pastable chapter set it apart as a
+`<blockquote>`, which §92 argued for and which is still a sentence with pipes in it. The release
+volume (`volumes/VolumeN/VolumeN.html`) was worse than either: it was the one reading copy
+published with a bare `<head>`, so it carried no stylesheet, no measure and no fonts and opened at
+whatever width the window happened to be. Nobody had noticed because the whole-serial copy is what
+gets opened.
+
+**And the measure was 34em at 17px.** That is a 578px box and, less 1.5rem of padding a side, a
+530px column — a page of poetry, on a document whose whole purpose is reading a novel through.
+
+**What shipped.** `application/statusline.py`: one parser for the line's *shape*, and two
+renderings of it, because the two artifacts have opposite constraints. A reading copy carries a
+stylesheet, so its panel is `<table class="status">` and nothing else. A pastable chapter has no
+`<head>` by construction, so its panel carries inline styles. Both are the same markup otherwise —
+the subject as a spanning header cell, then one label/value row per column, values right-aligned
+and tabular. The reading measure is now a 768px box and a 720px column, with a step down below
+34rem; the release volume takes the same head as the whole-serial copy through a shared
+`export.reading_head`, so the two cannot drift again. `LIBRARY_FORMAT_VERSION` is bumped, which is
+what makes the next republish rewrite shelves whose manuscript head has not moved.
+
+**What was refused.** The `.txt` and Markdown routes are untouched, deliberately and by test: the
+line's format is load-bearing — `domain/extraction.py` parses it into canon — and a Markdown table
+in the plain copy would have to be escaped back out by anyone quoting it. Nothing about what a
+writer is asked to produce changed. And the renderer does **not** import the canon parser or
+enforce it: `STATUS_PATTERN` knows a book's declared field labels and wants numbers, this knows
+only the shape, and it draws a panel for a line canon would refuse — because a reader looking at
+raw text has no way to tell that a refusal is why. The two regular expressions are deliberately
+not one, for the reason `library._SYSTEM_LINE` is deliberately not `axes._SYSTEM_LINE`.
+
+**The widening of §92's subset, argued rather than assumed.** A `<table>` with inline styles is
+outside the tag set §92 bounded, and the argument for it is three-part: inline styles are the half
+of CSS a rich-text editor keeps when it drops a class, a status table is genre-standard on the
+platform these files are pasted into, and the `.txt` beside every fragment is unchanged and still
+the fallback. **What §92 said it could not verify is still not verified** — no claim about any
+particular editor is upgraded here, and the correction is made in place above.
+
+**Anti-scope.** No prose, plan or generation path is touched; this is three rendering functions and
+a stylesheet. Other bracket tags (`[SKILL]`, `[QUEST]`) keep the blockquote or paragraph they had,
+because only `[STATUS]` has a declared shape to draw a panel from. A block mixing a status line
+with a sentence stays prose. The fragment still renders full-browser-width when opened directly:
+it is a paste artifact, not a reading copy, and giving it a measure would mean giving it a
+`<head>`. No bar is declared and nothing here measures anything; the numbers above are pixels.
+
+Pinned by `tests/test_statusline.py`, and at the two artifacts by
+`test_the_reading_copy_draws_the_status_line_as_a_panel`,
+`test_a_status_line_becomes_a_panel_in_the_pastable_chapter`,
+`test_the_reading_copy_uses_a_long_form_measure`, and — for the half that must not move —
+`test_the_markdown_copy_keeps_the_status_line_as_written` and
+`test_the_plain_text_chapter_keeps_the_status_line_exactly`.
