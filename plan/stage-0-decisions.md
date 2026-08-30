@@ -18278,6 +18278,116 @@ about whoever a book is about, and this entry supplies no protagonist object. Th
 half of read 10's item belongs to the system and progression tracks and is not touched. Nothing
 here reaches the planner, the Architect's own ask, the recruiter, or any research surface.
 
+## 175. Every person a world declares reached every scene, because the cast section is the one part of the packet with no scene scoping
+
+Read 10, on the draw the coordinator's gate had passed: *"There are too many people, too many
+conversation about mundane things which don't progress the story."* A defect harvest and not
+data (§95); the quote informs the design through the designed channel and no word of it is
+prompt text (§97.1, and the `debug-book` rule). What is rendered is composed in code.
+
+### 175.1 Measured first, from the stored packet
+
+`why --scene 1` on `serial15d.db`, the draw read 10 read:
+
+| what | value |
+| --- | --- |
+| packet items | 179 |
+| packet tokens / budget | 4,953 / 200,000 (2.5%) |
+| sections | premise 1, **cast 9**, facts 160, hidden 9 |
+| cast omissions in `context_omitted` | 0 |
+| `plan_item` | `null` |
+
+The world declares nine people and **all nine reached the packet**; the chapter put five on
+stage and named the other four offstage in 1,903 words. The writer used every person it was
+handed. `context.assemble` packs cast by budget alone — it walks `characters.cast(visible)` and
+keeps whatever fits — so at 2.5% of the ceiling that is a pass-through, and cast is the only
+section with no scene scoping at all: facts are cut by story time and point-of-view visibility,
+hidden claims by disclosure, prose nearest-scene-first.
+
+**The plan side could not have carried it either, and that is a second measured fact.**
+`make_plan_selector` outlines a book only when `len(set(functions)) < len(functions)`. At six
+scenes every dramatic function is distinct, so the standard pilot length is outlined never: this
+book holds one plan item, its premise, and no per-scene statement. A participant list written by
+an outline would not have reached the page it was needed on.
+
+### 175.2 Two candidate selection rules were checked and both failed
+
+Cutting the cast section needs an order to cut by. Both orders available in canon were checked
+against the book that produced the complaint before anything was written:
+
+| order | what it selects on that book |
+| --- | --- |
+| adjacency to the protagonist | **1 of 9** — the world declares no person-to-person edge from its protagonist |
+| gloss only the people the packet's other sections name | **9 of 9** — a measured no-op; every declared person is named in the facts |
+
+The remaining order the code has is protagonist-first-then-by-id, and cutting alphabetically
+would withhold whichever person the scene actually needed — §112's four-of-five cast members who
+never reached either chapter, re-created deliberately. **A selection rule with no honest order is
+worse than no selection rule**, so the packet is unchanged and the bound is on the page instead.
+
+### 175.3 What shipped
+
+`domain/staging.py`, the opening's cast bound, folded into the scene's own plan line at both of
+the fold's call sites — `planner.make_plan_selector` for a book that never takes an outline, and
+`outline.outline_proposal` for one that does — in the order statement, progression beat, bound.
+`outline_proposal` gains an `arc_index` argument for the reason `bounds_opening` names: beats are
+arc-scoped on an open-ended serial, so every arc has an ordinal 1 and only arc 1 opens the book.
+
+    No more than three people are named on the page in this scene; everyone else in it goes
+    unnamed.
+
+96 characters, **one demand** (`house.demands` reads the semicolon-joined pair as one), on
+ordinals 1 and 2 only. `litharness prompts` is byte-identical before and after: that surface
+prices rule text in the system message, and this rides in the user prompt exactly where §155.3's
+progression beat rides.
+
+**Both constants are placed numbers and are recorded as ones**, on `SUMMARY_SHARE`'s and
+`DEFAULT_TOKEN_BUDGET`'s precedent. `OPENING = 2` because the complaint was about a chapter and
+the pilots draft chapters of two scenes, counted in scenes rather than chapters because
+`positions` is empty at `--chapter-scenes 1` and a bound that silently stopped firing on a
+default run would be a slot with no filler. `NAMED = 3` against one counterexample rather than a
+distribution — the chapter named nine — and it is not a claim that four would be wrong.
+
+**Why a count is the right shape here.** §154: a demand whose object is a reader's state names
+nothing a writer can emit and lands with its sign multiplied by zero. A count of names is the
+opposite — the writer's only output is words on a page, and names on a page are countable by
+whoever put them there. §138: a rule is signed, and a ceiling forbids, so the thing it names is
+the thing that stops. The second clause is not decoration: a prohibition handed over alone is
+answered by emptying the room, which is the two-clause shape the packet's hidden section already
+carries for the same failure.
+
+### 175.4 What was refused
+
+- **Cutting the packet's cast section.** Refused on the measurement in §175.2, not on principle.
+  `test_the_packet_still_carries_every_person_the_world_declares` is that refusal made
+  executable, and it is what goes red if a later track cuts the section quietly.
+- **Forbidding a large world cast.** The town is not the defect and the operator's own framing
+  says so. Unnamed people are not bounded at all, which is what the second clause protects.
+- **A seed-side declaration of who the opening is about.** It would need Architect prompt text
+  and a paid seed to prove anything fills it; a slot nothing fills is §19.1's defect shape.
+- **Any census, counter or gate over drafted prose.** BRIEF.md governs what may become evidence
+  and nothing here is offered as any. Nothing measures a draft, before or after.
+- **Reaching the plan surface by changing `needs_outline`.** That would make every six-scene
+  pilot pay for an outline call, which is a spend decision and not this defect's.
+
+### 175.5 No bar, and the corrections this entry does make
+
+No bar is declared and the four attainability checks were not run, because nothing here is a bar:
+`NAMED` is a ceiling in an instruction, not a quantity anything is measured against. Two existing
+assertions were restated in place rather than deleted —
+`test_the_outline_becomes_readable_plan_items_through_the_handler` and
+`test_the_beat_fires_at_six_scenes_where_no_outline_ever_runs` both read "nothing is appended off
+the schedule" against the beat alone, and now read it against both schedules; the property they
+protect is unchanged and the reason is written beside each.
+
+### 175.6 Anti-scope
+
+One item from one read of one chapter, and the fix is a bound on an opening rather than a claim
+about crowding. Nothing here says three is a good number of people, that fewer names make better
+prose, or that the packet's cast section is well built — it is not, it has no relevance ordering
+at all, and §132 already names that as the open piece of the core loop. This bounds one page; it
+does not improve the packet.
+
 ## 176. Four reads have named figures that fail a literal read, and every prohibition on the clarity floor missed them by its object
 
 **Defect harvest, not data (§95).** Read 10 (`plan/serial-pilot-15b.md`) named three sentences in

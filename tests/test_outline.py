@@ -34,7 +34,7 @@ from litharness.application.outline import (
     render_outline_request,
     standing_milestone_records,
 )
-from litharness.domain import genre, world_brief, worlds
+from litharness.domain import genre, staging, world_brief, worlds
 from litharness.domain import state as state_mod
 from litharness.domain.beats import TemplateMismatch, arc_template, beats_for
 from litharness.domain.extraction import standing_target
@@ -551,7 +551,15 @@ def test_the_outline_becomes_readable_plan_items_through_the_handler(
         assert (genre.BEAT_TAIL in item.text) is scheduled, (
             f"scene {index} {'should' if scheduled else 'should not'} carry the beat"
         )
-        if not scheduled:
+        # **The second scheduled fold, added 2026-08-30 (§175).** This assertion used to read
+        # `item.text == DISTINCT[index - 1]` and meant "nothing is appended off-schedule"; the
+        # opening's cast bound is a second thing that is appended *on* one, so the property it
+        # was protecting is restated against both schedules rather than against the beat alone.
+        bounded = staging.bounds_opening(index)
+        assert (staging.bound_text() in item.text) is bounded, (
+            f"scene {index} {'should' if bounded else 'should not'} carry the cast bound"
+        )
+        if not scheduled and not bounded:
             assert item.text == DISTINCT[index - 1]
 
 
@@ -904,14 +912,23 @@ def test_the_beat_fires_at_six_scenes_where_no_outline_ever_runs(
     ordinal = drafted + 1
     assert job.payload["logical_id"] == f"scene-{ordinal}"
     prompt = str(job.payload["prompt"])
+    # **A second schedule folds into the same line, added 2026-08-30 (§175).** The opening's
+    # cast bound rides after the beat, so on scenes 1 and 2 the last thing in the prompt is
+    # the bound and not the beat's tail. Both halves below are restated against the pair
+    # rather than against the beat alone; what they still pin is that nothing is appended off
+    # either schedule, which is the byte-identical control §155.3 is read against.
+    bounded = staging.bounds_opening(ordinal)
+    assert (staging.bound_text() in prompt) is bounded
     if ordinal in genre.beat_ordinals(6):
         assert genre.BEAT_TAIL in prompt
-        assert prompt.rstrip().endswith(genre.BEAT_TAIL), (
-            "the beat renders last, exactly where a stored scene plan renders"
+        last = staging.bound_text() if bounded else genre.BEAT_TAIL
+        assert prompt.rstrip().endswith(last), (
+            "the scheduled folds render last, exactly where a stored scene plan renders"
         )
     else:
         assert genre.BEAT_TAIL not in prompt
-        assert "This scene:" not in prompt, "an unscheduled scene keeps the bare prompt"
+        if not bounded:
+            assert "This scene:" not in prompt, "an unscheduled scene keeps the bare prompt"
 
 
 @pytest.mark.parametrize("scenes", range(4, 25))

@@ -59,7 +59,7 @@ from litharness.application.model_context import StoryStateView, at_scene, plann
 from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import OutlineStore, TextGenerator
-from litharness.domain import genre, house, world_brief
+from litharness.domain import genre, house, staging, world_brief
 from litharness.domain import serials as serials_mod
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_mod
@@ -862,6 +862,7 @@ def outline_proposal(
     branch_id: str,
     result: CompletionResult,
     counts: Sequence[str] = (),
+    arc_index: int | None = None,
 ) -> PlanProposal:
     """The model's outline as plan edits, one `SCENE_PLAN` item per beat.
 
@@ -871,6 +872,10 @@ def outline_proposal(
     the sentence this fold composed before — the selector and this function are two call sites
     for one schedule, and a default that changed behaviour would let them disagree about what
     a scheduled scene says while both looked correct.
+
+    **`arc_index` says whether these beats open the book** (§175). It reaches the opening's
+    cast bound and nothing else here, and `None` — a book with no arcs — is the case where the
+    beats' own ordinals are the book's, which is why it is the default rather than an error.
 
     `scope` names the scene the statement is about, which is what makes the item reachable by
     `scene_plan_for` and keeps it out of every *other* scene's packet. `constraints_of` selects
@@ -915,7 +920,18 @@ def outline_proposal(
                 # distinct functions never takes an outline at all, and the selector derives
                 # the bare beat at render time for its statement-less scenes (pilot 14 §3
                 # found the six-scene dead spot when this was the sole call site).
-                text=genre.with_beat(statement, beat.ordinal, len(beats), counts=counts),
+                #
+                # **The opening's cast bound is folded here too, outside the beat** (§175).
+                # Same two-call-site discipline: the selector composes the identical pair for
+                # a book that never takes an outline, and the order is statement, then what
+                # else happens in the scene, then what the scene may not also contain. The arc
+                # index comes off the job payload for the reason `bounds_opening` names — on a
+                # serial every arc's beats start at ordinal 1, and only arc 1 opens the book.
+                text=staging.with_bound(
+                    genre.with_beat(statement, beat.ordinal, len(beats), counts=counts),
+                    beat.ordinal,
+                    arc_index=arc_index,
+                ),
                 authority=lc.PlanAuthority.INTENDED,
                 locked=False,
                 scope=lc.ResourceRef(
@@ -1242,6 +1258,10 @@ def make_outline_handler(
                     character=protagonist.subject if protagonist is not None else None,
                     at=beats[0].story_order_key,
                 ),
+                # Whether these beats open the book, for the opening's cast bound (§175).
+                # The job's own `arc_index`, already validated above, so a serial's later
+                # arcs are not each handed a fresh opening.
+                arc_index=arc_index,
             )
             # Validated with the outline, so a schedule that plans stasis refuses the whole
             # answer rather than landing beside a good outline. One call, one verdict.
