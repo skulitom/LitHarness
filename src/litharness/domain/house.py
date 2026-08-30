@@ -125,6 +125,54 @@ from __future__ import annotations
 #: failure mode exactly. A clause of its own would be §127's fourth rule. It is a residual, and a
 #: later read should expect to find it still standing.
 #:
+#: **A diction clause, added 2026-08-30 (§181), and its object is where a word came from rather
+#: than how rare it is.** Read 11 named a third sighting of a family reads 7 and 8 already
+#: carried: a thing given the word its occupation uses where everyday speech has one for the
+#: same thing, in prose and in a name this world calls its own. **Every demand here was read
+#: against it first** (§154's audit order) and each missed by its object: the unmet-term pair
+#: fails a name *invented because the world wanted one*, and a word borrowed out of a real
+#: occupation is not invented; the two-ways clause fails a sentence with two readings
+#: *available*, and one of these has a single reading that a reader either holds or does not;
+#: the object clause fails an object *acting*; the comparison clause fails a *comparison*; the
+#: paragraph clause's scope is a pronoun. What was left is the pair that opens and closes this
+#: rule, and those name the standard rather than a page surface. A gap, and §168.2's one
+#: condition.
+#:
+#: **Keyed on provenance and not on rarity, and that is the whole design.** §156.3 counted rare
+#: words in our chapters against the market's own and found ours *inside the genre's range* —
+#: which is why no clause here may fail a word for being uncommon: that would legislate against
+#: the texture the genre itself has, on the wrong side of a measurement this project already
+#: made. What the read's instances share is not frequency but where the word was got from, and
+#: provenance is a thing the writer holds and the market never measured. §176's move at a second
+#: address: scope the prohibition to something the addressee can check on the page instead of to
+#: the fuzzy referent — *a word the reader would have to look up* is a reader state, and §154 is
+#: the record of what a reader state costs.
+#:
+#: **One clause reaches two surfaces, and this is the first floor demand since §171 that is not
+#: inert at the Architect.** The drafting call chooses nouns; the Architect's every act is a
+#: `world declare` whose subject is a name it chose, so one prohibition governs the token each
+#: role emits. The verb is *calling* rather than *writing* so that a name is reached as plainly
+#: as a sentence is. A second copy in `world_agent._SYSTEM` was refused: two homes for one rule
+#: is §152's defect pre-made, the natural form there is an affirmative naming recipe of the kind
+#: §138 measured overproducing, and it would have cost the seed a raise that this does not.
+#:
+#: **No concession, because the object excludes by construction.** Where everyday speech has no
+#: word for the same thing the clause never fires, so the precise noun a scene is *about* is
+#: never reached and no exemption had to be written — §176's form, and §163's standing warning
+#: about a filter keyed one notch wider. No instance list and no word list: boundary 3 as the
+#: operator amended it, that a list of forbidden words is a hack over the underlying problem,
+#: and three clauses here were cut for being recited. **Two residuals are named before the
+#: fact.** The elliptical idiom of the same read is not reached — every wording found that
+#: reaches it also forbids ordinary ellipsis, which is how people speak. And an uncommon word
+#: that belongs to nobody's occupation is not reached either; that is the rarity axis, and
+#: §156.3 closed it.
+#:
+#: **It costs no ceiling.** The floor has carried one demand of headroom since §174 moved the
+#: readership clause out, which §176.4 predicted away because the two tracks crossed in flight;
+#: this occupies it, `tests/test_prompt_budget.py` moves no number, and that prediction is true
+#: again. Nothing from the chapter under read or from the read itself is in the clause (§97.1).
+#: Shipped unmeasured, and no counter, bar or axis is proposed anywhere near it.
+#:
 #: **Paid by raising six ceilings rather than by cutting, and the subtraction was refused on
 #: §127's brake.** The candidate was this rule's own opening sentence — affirmative, its object
 #: an abstraction, unaddressable, and §168 removed one of exactly that shape to pay for its own
@@ -145,6 +193,8 @@ CLARITY = (
     "what it does to somebody. What fails is a name invented because the world wanted one "
     "and handed over to be carried while it buys the reader nothing, and the test is "
     "whether they could say what it changes for the person it happens to.\n"
+    "What fails is calling a thing by a specialist's word where ordinary speech has one for the "
+    "same thing.\n"
     "A sentence a reader can take two ways has failed, and the writer is the last person who "
     "can see it: `a sheet of directions in his brother's small hand` is handwriting to whoever "
     "wrote it and a hand inside the box to whoever reads it. Prefer the reading nobody can "

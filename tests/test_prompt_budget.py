@@ -286,19 +286,19 @@ BUDGET: dict[str, int] = {
     # surface is indistinguishable from a prohibition. Documenting alone would have shipped a
     # schema no world ever declares, which is §160's history exactly. The two raises crossed
     # in flight on separate tracks; each names its own occupant, and this row carries both.
-    "architect seed": 47,
+    "architect seed": 48,
     # **42 -> 43 on 2026-08-30, the §176 clause.** §163's note above says this row "stays
     # on 42", which was true of §163's seed-only raise and is not a rule: this row stands on the
     # whole house floor, so a floor clause lands here as surely as it lands on the scene writer.
     # Inert at this role for the seed's reason. §173 adds nothing here — its sentence is
     # seed-only.
-    "architect grow": 43,
+    "architect grow": 44,
     # **28 -> 29 and 32 -> 33 on 2026-08-30, the §176 clause.** These two rows are the
     # ones the raise is actually for: the drafting call is where comparisons are written, so
     # this is the one place the demand is neither inert nor a delimiter. The four-demand gap
     # between the rows is the cast dossier and is unchanged.
-    "scene writer floor": 29,
-    "scene writer, cast": 33,
+    "scene writer floor": 30,
+    "scene writer, cast": 34,
     "measurement reader": 4,
     "steering reader": 4,
     # Measured 2026-08-28 and set at what was there, the ratchet this file exists to be. Both
@@ -334,17 +334,17 @@ BUDGET: dict[str, int] = {
 #: concession are untouched, so `house.demands` reads the same count — §161.5's in-place pattern,
 #: widened rather than narrowed. Only the figure half needed a sentence.
 #:
-#: **Unmoved on 2026-08-30 by the implication clause, and the standing headroom is now spent**
-#: (§179). §174 took a demand off this floor the same day §176 raised six ceilings for one, so
-#: every row standing on `house` has been carrying exactly one demand of slack: the floor at 25
-#: against this 26, `architect seed` at 46 against 47, `architect grow` at 42 against 43, the two
-#: scene rows at 28 and 32 against 29 and 33, and `SCENE_MAXIMAL_BUDGET` at 44 against 45. One
-#: sentence added to `house.READER` lands once in each and moves no number here. **That is the
-#: last free clause**: the next one added to the floor raises all six, which §171.4 and §176.4
-#: each had to discover by arithmetic — writing it down before the fact is what this table is
-#: for. The listing pays separately and does move, because it is the one role with no floor
-#: under it.
-HOUSE_BUDGET = 26
+#: **Unmoved on 2026-08-30 by the implication clause (§179), then moved by the diction clause
+#: (§181) — the same day, two tracks crossing.** §174 took a demand off this floor the day §176
+#: raised six ceilings for one, so every row standing on `house` carried exactly one demand of
+#: slack; §179 spent it (one sentence to `house.READER`, no number moved). §181's diction
+#: prohibition on the clarity side is the clause after the last free one, and it raises all
+#: six: the floor to 27, `architect seed` to 48, `architect grow` to 44, the two scene rows to
+#: 30 and 34, `SCENE_MAXIMAL_BUDGET` to 46. That is §176.4's prediction arriving two entries
+#: later than it said, and each track discovered the slack's history independently — writing
+#: the crossing down here is what this table is for. The listing pays separately (17 since
+#: §179), because it is the one role with no floor under it.
+HOUSE_BUDGET = 27
 
 
 @pytest.mark.parametrize("role", sorted(BUDGET))
@@ -483,7 +483,7 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
 #: demand on the floor, once in this total, and the off-by-one against the summed rows is still
 #: the length ask's leading space. This is the sixth of the six numbers that clause moved, and
 #: the reason for all of them is written at `HOUSE_BUDGET`.
-SCENE_MAXIMAL_BUDGET = 45
+SCENE_MAXIMAL_BUDGET = 46
 
 
 def test_the_scene_floor_row_is_what_the_planner_actually_assembles() -> None:

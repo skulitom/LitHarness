@@ -18720,8 +18720,12 @@ the maximal assembled scene prompt 44 → 45. Each carries its reason in
 
 **§171.4 predicted four and the true number is six**, corrected in place at that entry. It counted
 the rows that had zero headroom before its own raise and did not count the two its own raise had
-just left at zero. The residual it recorded is real and larger than it said: after this entry the
-floor and all five rows sit exactly at their ceilings again, so the next clause added to `house`
+just left at zero. The residual it recorded is real and larger than it said: ~~after this entry the
+floor and all five rows sit exactly at their ceilings again~~ — **false from the hour it was
+written, and §181.5 is where it is corrected**: §174 merged the same day and took the readership
+clause out of `house.READER`, leaving the floor at 25 against this ceiling of 26 and every row
+standing on it one demand short of its own. §181's diction clause occupies that slot, so from
+there the sentence holds — and the next clause added to `house`
 also raises six numbers.
 
 **Where the demand is live and where it is inert.** The two scene rows are what the raise is for —
@@ -19009,6 +19013,161 @@ Pinned by `tests/test_implication_register.py`, and in particular by
 `test_the_boundary_is_a_concession_inside_the_sentence`,
 `test_the_new_clause_is_not_the_narrating_the_inference_prohibition_again` and
 `test_the_clause_rides_the_listing_call_which_carries_no_floor_under_it`.
+
+## 181. Three reads have named words a reader is expected to already know, and the only measurement we have says the fault is not that they are rare
+
+Read 11 (`plan/serial-pilot-16.md` §7) named a plain-diction family at its third read-confirmed
+sighting: reads 7 and 8 each carry a member, and read 11 names it as a direction. Stated as
+shapes rather than as text, because §97.1 forbids the text: a hand tool given the word its
+occupation uses rather than the one everybody uses; a place in the world named with a technical
+process noun where an everyday one names the same place; and a line whose verb is simply left
+out. The first two are the same failure at two surfaces — prose diction at the drafting call, and
+the Architect's own world nouns — and the third is not, which is stated below before a later read
+finds it standing.
+
+**Defect harvest, not data (§95).** No model read anything for this entry, no book was drafted
+under the clause it ships, and no claim is made about what either will do.
+
+### 181.1 Measured first, and the measurement is one this project already had
+
+**§156.3 is the entry that governs this track, and it went the other way.** It counted rare
+unigrams over our shelf against the market's own chapters and put our median *inside the genre's
+range* — the class is real, it does not separate us, and **a vocabulary floor is not supported by
+that measurement**. It also checked two of the operator's words individually and found them
+genuinely rare in the genre, which is the honest split: the instinct about those words was right
+and the rate was still not ours. That entry and its artifact own every number; none is restated
+here.
+
+**So the fuzzy referent had to be replaced rather than measured harder.** The natural wording for
+this family — *a word the target reader has to look up when a common one carries the same
+meaning* — fails twice over. Its subject is a **reader state**, which §154 measured landing with
+its sign multiplied by zero when the awe clause named one; and its test is **rarity**, which is
+the axis §156.3 closed. §176 is the precedent for what to do instead: scope the prohibition to
+something the addressee can check on the page. There the object was a *comparison* rather than a
+figure; here it is **where the word was got from**. Provenance is a property the writer holds at
+the moment of choosing, it is not what the market census counted, and it separates the read's
+instances from the genre's ordinary concreteness without a list of any kind.
+
+**The audit order was run before anything was drafted** (§154), and the ruling is §176.2's at a
+second address. Every demand on `house.CLARITY` was read against the read's items, and each
+missed by its **object**: the unmet-term pair fails a name *invented because the world wanted
+one*, and a word borrowed out of a real occupation is not invented; the two-ways clause fails a
+sentence with two readings *available*, and one of these carries a single reading a reader either
+holds or does not; the object clause fails an object *acting*; §176's own clause fails a
+*comparison*; the paragraph clause's scope is a pronoun. What was left were the two sentences
+that open and close the rule — every sentence can be followed, a thing the reader cannot follow
+did not happen — which name the standard rather than a page surface and are by §154 the half a
+writer cannot act on. **Nothing in the assembled prompt was violated by any of the instances**,
+so this is a gap rather than an enforcement failure, and that is the one condition §168.2
+licenses a new clause for.
+
+### 181.2 What shipped: one prohibition, on the floor, reaching two roles
+
+In `src/litharness/domain/house.py`, appended to `CLARITY` beside the unmet-term pair it
+contrasts with:
+
+> "What fails is calling a thing by a specialist's word where ordinary speech has one for the
+> same thing."
+
+**Its object is a word's provenance and its verb is *calling*, and both are load-bearing.**
+Provenance keeps it off §156.3's refused axis. The verb is what makes one sentence reach two
+surfaces: *calling* covers a noun written into prose and a name given to a thing, so the same
+prohibition governs the token the drafting call emits and the token the Architect emits.
+
+**This is the first floor demand since §171 that is not inert at the Architect**, and that is the
+finding worth carrying forward. §171's and §176's both landed there as honest dead weight — that
+role narrates nothing and writes no comparisons — while every act it *does* take is a `world
+declare` whose subject is a name it chose. Confirmed mechanically rather than assumed: the world
+this read was taken from holds the noun the operator objected to in ten `state_records.subject`
+rows, so the name was minted at that role and not in the prose.
+
+**No concession, and the reason is that the object excludes by construction.** Where ordinary
+speech has no word for the same thing the clause never fires, so the exact noun a scene is
+*about* is never reached and no exemption had to be written for it — §176's form, and §163's
+standing warning about a filter keyed one notch wider, which has already cost this module a
+clause. Because the exclusion is structural the clause carries no delimiter at all, which is one
+surface fewer than §176 needed.
+
+**It costs no ceiling, and the headroom it spends was an accident.** §176 raised `HOUSE_BUDGET`
+to 26 and predicted the floor would sit at it; §174 landed the same day and took the readership
+clause out of `house.READER`, leaving the floor at 25. This occupies that slot: the floor is 26,
+`architect seed` 47, `architect grow` 43, `scene writer floor` 29 and `scene writer, cast` 33 —
+every one at the number already written down, and `tests/test_prompt_budget.py` moves nothing.
+
+Tests: `tests/test_plain_diction.py`, one assertion per reason the clause could be wrong rather
+than one per line of it. `test_the_new_demand_fails_a_words_provenance_and_never_its_rarity` is
+the one that keeps this on the right side of §156.3;
+`test_the_clause_rides_both_live_assembled_prompts` is the two-surface claim, asserted on
+`planner.render_prompt` and `world_agent.render_seed_request` rather than on the constant.
+`tests/test_figure_clarity.py`'s exact counts move 13 → 14 and 25 → 26, which is the growth those
+assertions exist to make somebody decide on.
+
+### 181.3 What was refused
+
+**A second home at the Architect**, which the commissioning brief thought might be the cheaper
+win. It is the more expensive one: a naming rule in `world_agent._SYSTEM` beside the same rule on
+the floor is two texts that can come to disagree, which is §152's defect made in advance; its
+natural form there is an affirmative naming recipe, and §138 measured a permission overproducing
+exactly what it names; and it would have cost the seed a raise the floor clause does not.
+`test_the_architect_seed_keeps_one_home_for_the_naming_rule` is the guard, and §163's
+grant-naming words are left exactly as that entry shipped them.
+
+**Any word list, in a prompt or after it.** Boundary 3 as the operator amended it — a list of
+forbidden words is a hack over the underlying problem — and this module's own history, where
+three clauses were cut for being recited back as verbal formulas and each was a list. **Any
+instance list** for the same reason: a clause naming a provenance has nothing an instance would
+add except something to recite.
+
+**Any counter, census or bar.** No quantity is thresholded, nothing is ranked, no axis is
+admitted, and no model reads a chapter for this. The four attainability checks have nothing to
+run on and no bar is declared. Proposing a vocabulary instrument here would also be arguing with
+§156.3 rather than building on it.
+
+**Any use of the operator's words or the book's** (§97.1). The items are fixtures in the test
+file's parametrisation and appear nowhere else;
+`test_no_word_of_the_read_11_items_became_prompt_text` is the mechanical check, on loaded words
+only — the clause and the read share ordinary English like *thing* and *word*, and a test failing
+on those would be asserting the clause could not be written in English.
+
+### 181.4 The residuals, named before the fact
+
+**The elliptical line is not reached.** Its verb is missing, not borrowed, so nothing in a
+provenance clause touches it. Every wording found that reaches it and the diction family together
+keys on a sentence leaving something out, and that forbids ordinary ellipsis — how people
+actually speak, and §163's failure mode exactly. A clause of its own would be §127's fourth rule
+against one read.
+`test_the_elliptical_idiom_is_not_reached_and_ordinary_ellipsis_is_not_forbidden` keeps a later
+widening from reaching it by accident.
+
+**An uncommon word that belongs to nobody's occupation is not reached either.** That is the
+rarity axis, and §156.3 closed it with a number. A later read should expect to find this arm
+standing, and predicting it now is cheaper than explaining it afterwards.
+
+**The clause reaches dialogue.** A character whose occupation owns the word would say it, and
+nothing here exempts them. An exemption was refused on §176's rule that exclusion belongs in the
+object rather than in a permission, and the complaint was made about narration and would be made
+about the line either way. If that turns out to cost a voice, this is the sentence a later entry
+should reopen.
+
+### 181.5 Corrections in place
+
+§176.4 predicted that after it *"the floor and all five rows sit exactly at their ceilings
+again"*. **That was false from the moment §174 merged**, hours later on the same day: the
+readership clause left `house.READER`, the floor dropped to 25 against a ceiling of 26, and the
+five rows inherited the same demand of headroom. Nobody granted it; two tracks crossed. §181
+occupies it, so the prediction is true from here — and the next clause added to `house` raises
+six numbers, as that entry said it would.
+
+### 181.6 Anti-scope
+
+**Shipped unmeasured, and that is the whole claim.** One prohibition against one family, with no
+draw behind it: no chapter was written under it, no before-and-after exists, and nothing here
+says the family will thin. §138's direction is the only evidence that a correctly-signed
+prohibition is the form worth shipping, and it was measured on a different clause at a different
+role. No research claim is promoted, no mechanism qualified, no axis admitted, and no model read,
+ranked or judged anything for this entry. The read's other six families are their own tracks';
+`world_agent.py`, `worlds.py` and every research module are untouched, and no artifact under
+`runs/` was written to.
 
 ## 182. The packet spent a third of its words telling the writer what to put on the page, in the one field three docstrings call a fact
 

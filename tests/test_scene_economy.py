@@ -127,19 +127,19 @@ def test_the_new_demand_was_paid_for_and_not_added() -> None:
     §176's clause lands on the clarity side, §174's departure on the reader side, and what this
     test asserts is still §168's and is still unchanged.
 
-    **11 -> 12 and 25 -> 26 on 2026-08-30 for §179**, an implication prohibition added to
-    `house.READER` beside §171's and paid for by spending the one demand of headroom §174's
-    departure had left under every ceiling — so it moved no number in
-    `tests/test_prompt_budget.py`, and the next clause added to this constant will move six.
-    §179 is the closest neighbour §168 has yet acquired and the boundary is deliberate: §168's
-    unit is a passage that settles nothing, §179's is a clause whose own sentence already gave
-    it, and `tests/test_implication_register.py` asserts the two stay separate demands. What
-    this test asserts is still §168's and is still unchanged.
+**11 -> 12 and 25 -> 26 on 2026-08-30 for §179**, an implication prohibition added to
+    `house.READER` beside §171's, spending the one demand of headroom §174's departure had
+    left. §179 is the closest neighbour §168 has yet acquired and the boundary is deliberate:
+    §168's unit is a passage that settles nothing, §179's is a clause whose own sentence
+    already gave it, and `tests/test_implication_register.py` asserts the two stay separate
+    demands. **And 26 -> 27 the same day for §181** on the clarity side, the raise that moved
+    six ceilings (`tests/test_prompt_budget.py` owns them). What this test asserts is still
+    §168's and is still unchanged.
     """
     assert _THE_SUBTRACTED_AFFIRMATIVE not in house.READER
     assert "Spend the words on" not in house.READER
     assert len(house.demands(house.READER)) == 12
-    assert len(house.demands(house.HOUSE_RULES)) == 26
+    assert len(house.demands(house.HOUSE_RULES)) == 27
 
 
 def test_the_new_demand_carries_no_instance_list() -> None:
