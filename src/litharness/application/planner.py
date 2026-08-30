@@ -248,6 +248,7 @@ def render_prompt(
     book_title: str | None,
     packet: ContextPacket,
     status_example: str | None = None,
+    status_moved: progression.MovedLine | None = None,
     target_words: int = 0,
     progression: str | None = None,
     scene_plan: str | None = None,
@@ -285,6 +286,14 @@ def render_prompt(
     It is **omitted unless the book already speaks system voice**, since the example is built
     from canon and there is none to build from otherwise. A stat block in a locked-room
     mystery is not a smaller error than a missing one.
+
+    **`status_moved` replaces that example with the line the scene leaves** (§186), on the
+    scenes whose plan named a quantity as moving and only those. `None` — every unscheduled
+    scene, every book with no sheet, every case `progression.moved_example` abstains on — keeps
+    the entering line byte for byte, and the two are the arms of one measurement. It is a
+    `MovedLine` rather than a string because the ask states in words what the column read
+    entering the scene: a filled example is copied verbatim (§169), and a number a writer
+    cannot tell has changed is one they may quietly change back.
 
     **`target_words` was a parameter this function accepted and never read**, and the defect
     is worth stating because of what was recorded on top of it. It arrived in `8f7075c` as
@@ -399,9 +408,35 @@ def render_prompt(
         # three placements comes first. The rewrite adds no demand — `house.demands` reads one
         # sentence either way, which `tests/test_prompt_budget.py`'s `status_example` row is
         # what proves rather than an arithmetic performed here.
+        #
+        # **The example is the state the scene LEAVES where a beat named a move, 2026-08-30
+        # (§186).** Pilot 18 draw 3 is the located case and it cost two paid attempts: the plan
+        # read *Rating moves here*, this block handed over `Rating 2` and called it the state as
+        # it stands, and both drafts printed `Rating 2`. §169 measured why — a model copies a
+        # filled example character for character, which is the whole reason the example is
+        # filled rather than a template — so the one concrete artifact in the prompt was proof
+        # that the numbers had not moved, while the plan asked for a move; §184's gate now
+        # refuses that contradiction instead of publishing it, and refusing it was costing two
+        # attempts a scene.
+        #
+        # **One sentence swapped for one sentence, one line for one line.** The count cannot
+        # move because nothing is added: the two sentences below are the same string on both
+        # arms, and `tests/test_prompt_budget.py`'s `status_moved` row is the marginal zero.
+        # A scene whose plan named no move renders the identical bytes it rendered before —
+        # that is what `status_moved is None` means, and it is the control every measurement
+        # in §186 is against.
+        stands, example = (
+            (
+                f"which is the state this scene leaves once {status_moved.name} has moved "
+                f"from the {status_moved.was} it stood at",
+                status_moved.line,
+            )
+            if status_moved is not None
+            else ("which is the state as it stands", status_example)
+        )
         system += (
-            " The people in this book can read their own state, in this form, which is the "
-            f"state as it stands:\n{status_example}\n"
+            f" The people in this book can read their own state, in this form, {stands}:\n"
+            f"{example}\n"
             "Print that line exactly once, where somebody in the scene reads it; failing that, "
             "where one of its numbers changes, or at the scene's end. Write the character's "
             "name as your prose spells it, carry these values forward unchanged unless this "
@@ -1146,6 +1181,16 @@ def make_plan_selector(
                     character=pov_id,
                     at=beat.story_order_key,
                 )
+                # **And what that ask means for the one artifact the writer can copy** (§186).
+                # Composed here rather than inside `render_prompt` because it is a reading of
+                # this book's records at this position — the same read `status_line` above is,
+                # one move on — and because the ask and the check must be answered from one
+                # set of records: `beat_target` is what goes on the payload for the gate, and
+                # it is the same object the example is built from. `None` on every scene where
+                # `moved_example` abstains, which renders the prompt that was rendered before.
+                beat_moved = progression.moved_example(
+                    records, beat_target, character=pov_id, at=beat.story_order_key
+                )
                 system, prompt = render_prompt(
                     beat,
                     book_title=_book_title(head),
@@ -1155,6 +1200,7 @@ def make_plan_selector(
                     # establishes it during that scene.  Keep the exact snapshot here; the
                     # ordinary character/world records still use StateMoment.ENTERING.
                     status_example=status_line,
+                    status_moved=beat_moved,
                     target_words=(policy or DraftPolicy()).target_words,
                     # A stored statement already carries the beat where the cadence schedules
                     # one — `outline_proposal` folded it in — so it is passed verbatim. A

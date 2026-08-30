@@ -20292,3 +20292,233 @@ control plane, the reader loop, or any research arm. No corpus was read, so RS1 
 research claim is promoted, no mechanism qualified, no axis admitted, and `em_dash`'s registered
 hypothesis stays VOID — neither pre-empted nor answered by a stage that makes no assertion about the
 mark.
+
+## 186. The one thing in the prompt a writer could copy was proof that the number had not moved
+
+§184 shipped the check on 2026-08-30 and pilot 18 draw 3 was the first book to meet it: two
+attempts, both refused `progression_unmoved`, the unit failed, and the chapter did not ship. The
+gate was right both times. What it caught was not a writer ignoring its plan — it was the prompt
+asking for two different things and the writer obeying the concrete one. The scene plan said
+*Rating moves here*; the furniture ask handed over `[STATUS] Ines — Rating 2 | …` under the words
+*which is the state as it stands*; §169 had already measured that a model copies a filled example
+character for character, which is the entire reason the example is filled rather than a template.
+The beat asked for motion in prose and the example anchored stasis in digits, and digits win.
+
+### 186.1 Measured first, from the two stored prompts and not from the prose
+
+Read through the `debug-book` verbs on scratchpad copies, and where a verb could not reach, through
+a read-only replay of the stored records. **The `why` dossier cannot answer for this job at all,
+and that is worth recording**: `why --scene 1` on `serial18c.db` returns `prose ABSENT`, `prompt
+ABSENT`, `plan_item ABSENT` and exits 1, because the dossier joins the prompt through the accepted
+revision and no attempt was ever accepted. A job that refuses every attempt is exactly the job
+somebody most wants a dossier for. Named here, not fixed here.
+
+What the store does hold, read off the frozen job `beat-775aee133999053d8dba6440`:
+
+| where | what it says |
+| --- | --- |
+| `selected_by` | `progression_beat: "Rating"`, `progression_column: "rating"`, `story_order_key: "s1"` |
+| user prompt, last line | *"This scene: **Rating moves here**, and the person it belongs to is there when it does."* |
+| system message | *"…in this form, **which is the state as it stands**:"* then `[STATUS] Ines — Rating 2 \| Graded 9 \| Written 1/12 \| Warmth 6/6` |
+| attempt 1 | `shape.draft.v0` pass, `integrity.standing.v0` pass, `integrity.findings.v0` pass, **`integrity.progression.v0` fail** |
+| attempt 2 | the same four, the same way |
+
+Both attempts also passed `revision.containment.v0` — §185's reviser rewrote each draft and
+preserved the status line mechanically, exactly as designed, which means the reviser faithfully
+carried `Rating 2` through as well. Three deterministic gates, a reviser, and two paid attempts
+were spent proving that a prompt containing one copyable artifact will get that artifact copied.
+
+**The sibling draw says the same thing in a second vocabulary.** `serial18b.db`'s stored system
+message carries `[STATUS] the board — Ticket 1 | read the grain 2 | cold seal 2 | …` under the same
+sentence, its plan line reads *cold seal moves here*, and §184.1 recorded the printed result as
+`cold_seal 2 → 2`. Two books, two arms of the beat vocabulary, one defect.
+
+### 186.2 What shipped: the line the scene leaves, in place of the line it entered
+
+`progression.moved_example` composes what a scheduled scene is shown, `application/planner.py`
+calls it beside `named_target` — the same records, the same position, the same `Movable` that goes
+on the payload for the gate — and the furniture ask renders one of two forms:
+
+> *unscheduled, and every abstention below* — **which is the state as it stands:**
+> `[STATUS] Ines — Rating 2 | Graded 9 | Written 1/12 | Warmth 6/6`
+>
+> *scheduled, `Rating` named* — **which is the state this scene leaves once Rating has moved from
+> the 2 it stood at:**
+> `[STATUS] Ines — Rating 3 | Graded 9 | Written 1/12 | Warmth 6/6`
+
+The two sentences after the payload line are byte-identical on both arms and were not touched:
+*"Print that line exactly once, where somebody in the scene reads it; failing that, where one of
+its numbers changes, or at the scene's end. Write the character's name as your prose spells it,
+carry these values forward unchanged unless this scene changes them, and write the numbers the
+scene leaves true."* §173's placement rule and §161.3's cardinality are therefore untouched by
+construction rather than by care.
+
+**One artifact in, one line out, and the alternative was refused on measured grounds.** Carrying
+both forms — the entering line and the after line, each with when to print it — was the obvious
+design and it is the wrong one: `extract_state` mints one `ACCEPTED_CANON` record per match at one
+order key, so two printed lines are precisely the shape `integrity.detect_contradictions` groups
+on and refuses, and a prompt holding two printable lines shown to a model measured to copy them
+verbatim is the mechanism that puts both on the page. The entering value survives as a fact stated
+in words instead — *from the 2 it stood at* — which is not copyable, and which is load-bearing for
+the opposite reason: a number a writer cannot tell has changed is one they may quietly restore.
+
+**One number differs and every other character is the string the scene would have been shown.**
+The subject as this book spells it, the sheet, the labels, the order, the other columns.
+`test_the_shown_line_differs_from_the_entering_line_in_exactly_one_number` asserts it positionally
+rather than by inspection.
+
+### 186.3 Where the number comes from, on both arms
+
+**The system arm asks the system.** `gamesystem.advance` is new — the half of `legal_moves` that
+was missing, since that function offered `Move`s and nothing here took one, so every caller
+unpacked the kind by hand. `moved_to` calls it on the sheet this character stands at and reads the
+named column off `Advancement.after`: **the same arithmetic that would record the advancement if
+the book took it**, rather than an increment reproduced at the render site. A system that ever
+declares a different step is authoritative for free. A `CHOOSE` raises rather than defaulting,
+which is §61(5) and not an omission — a fork carries the ways and not a way of taking one, so a
+function taking one without an `option_id` would have to pick.
+
+**The arm with no system takes one step**, and pilot 18 draw 3 is that arm: `systems_of` reads
+nothing on serial18c, so the beat's vocabulary is the columns the line prints and there is no
+advancement to ask. A sheet declares columns and sometimes a ceiling and never a step size; one is
+the smallest change an integer column can make, and the smallest change is the honest reading of a
+sentence whose whole content is *moves here*. **It is not a magnitude anything is held to** — the
+gate refuses only a column that did not move at all, so a scene whose events warrant more is
+refused by nothing, and §61's four attainability checks still have nothing to run on.
+
+**`extraction._standing_sheet` is the arm selection, factored.** `movables` and `moved_to` now read
+one function for *is this book a position in its own system*, so the vocabulary a beat is composed
+from and the number that beat's example prints cannot come from different arms of one question —
+`Movable`'s own argument, one step further along. `movable_names`, `movables` and `moved_to` are
+three projections of one answer: which quantities may move here, which column each occupies, and
+what that column reads afterwards.
+
+### 186.4 Every abstention is the gate's, and that is the design rather than a coincidence
+
+Where `moved_example` returns `None` the writer is shown the entering line byte for byte. The list
+is `gate_progression`'s own, read against the same records in the same order:
+
+- no story position to place a state at;
+- no line standing at that position to read a number off;
+- **canon already states this subject's state at `at`** — §184.4's abstention, and the one that
+  would otherwise have made this an outage of my own manufacture. An imported book holds a snapshot
+  for every position at once, so the numbers such a scene is shown are the ones its own author
+  stated for it; handing that writer a moved line asks for a second canon snapshot at one key and
+  refuses the scene for writing what it was told to write. Both golden fixtures are that book, and
+  §184.4 spent eleven suite failures finding the same edge from the other side.
+  `test_the_prompt_abstains_wherever_the_gate_abstains` holds the pairing;
+- the named column reads no integer on the line standing there;
+- the column has no room to move.
+
+**The last one is this entry's alone and it is a live residual, not a closed case.** A paired column
+at its own ceiling — `Warmth 6/6` — has no next value that is not `impossible_fields`' own defect,
+so the example abstains; but the gate still fires, so such a scene would be asked for a move,
+shown the unmoved line, and refused. Closing it means the beat vocabulary declining to name a maxed
+column, which is a one-line change with a shelf-wide consequence: dropping a name re-rotates
+`beat_text` for every scheduled scene of every book, so it is a second finding and §169.3's rule
+says it does not ride in this commit. It does not fire in the located book — serial18c's three
+scheduled beats reach `Rating`, `Graded` and `Written`, and never `Warmth`.
+
+### 186.5 The §97.1 citation was wrong, and the outcome it was defending is right anyway
+
+§184.3 wrote that a gate's refusal must not reach the retry's prompt *because of §97.1*, and §185
+repeated it. **§97.1 is the wrong rule for this and the citation is corrected in place** (in
+`domain/progression.py`, where it was made): §97.1 governs the operator's own diagnostics and the
+reader channel — a human read, and what the `debug-book` verbs may not become — and a deterministic
+comparison of two stored integers is neither of those. Reading it as covering every gate would make
+it mean *no check may ever inform a prompt*, which is not what it says and not what this repository
+does: `shape.draft.v0`'s target length is in the prompt, and so is the standing the standing gate
+reads.
+
+**What actually holds the door is the retry's own classification.** `PROGRESSION_UNMOVED` is
+`RETRYABLE` because asking again is asking for the thing the prompt already asked for; a retry told
+what the check found is no longer that, it is a repair loop steered by a verdict, and the argument
+for its containment would have to be made from scratch. So the outcome stands, on a rule that
+applies. **And the question is now moot, which is why nothing was widened**: the conservative fix
+puts the missing fact in the *first* prompt, so there is nothing a retry would need to be told that
+it was not told the first time. `test_no_refusal_of_the_gate_reaches_the_prompt_that_shows_the_moved_line`
+re-checks it at the surface that changed, and §184's own
+`test_no_refusal_of_this_gate_reaches_the_next_attempts_prompt` is untouched.
+
+### 186.6 Measured after: the replay, and the cost
+
+**Replayed on the located books' own stored records, with no provider call and no `runs/` write**
+(both stores copied to a scratchpad and opened read-only). serial18c holds no accepted prose, so
+its records *are* its draft-time records; serial18b's were taken back to their pre-draft set, since
+replaying against today's store would read its own output back as canon.
+
+| store, arm | scene | beat | was shown | is now shown |
+| --- | --- | --- | --- | --- |
+| serial18c, sheet | 1 | Rating | `Rating 2` | `Rating 3` |
+| serial18c, sheet | 3 | Graded | `Graded 9` | `Graded 10` |
+| serial18c, sheet | 5 | Written | `Written 1/12` | `Written 2/12` |
+| serial18c | 2, 4, 6 | *(none)* | unchanged | unchanged, byte for byte |
+| serial18b, system | 1 | cold seal | `cold seal 2` | `cold seal 3` |
+| serial18b, system | 3 | read the grain | `read the grain 2` | `read the grain 3` |
+| serial18b, system | 5 | fitter | `Ticket 1` | `Ticket 2` |
+
+**Scene 5 of serial18b is the row that could not have been got right by incrementing a label.** The
+beat names `fitter`, which is a rung; no column is called `fitter`; the column that moves is
+`RANK_KEY`, printed as `Ticket`. The value comes from `rise` through `advance`, so the naming and
+the arithmetic agree because they are the same object.
+
+**The cost is zero demands.** `uv run litharness prompts` is byte-identical before and after — every
+role at the same characters and the same count, `scene` at 894/4541 and 40 — because the report
+renders the unscheduled arm, which is unchanged. The scheduled arm is measured by a row of its own:
+`SCENE_MOVED_DEMANDS = 0` in `tests/test_prompt_budget.py`, with
+`test_showing_the_line_a_scene_leaves_costs_no_demand` computing the difference over the live
+assembly. It is deliberately **not** an arm of `_CONDITIONAL_ARMS`: that parametrisation asserts
+`block_text.startswith(base_text)` and `added >= 1`, both properties of a branch that appends, and
+this branch swaps. One sentence for one sentence, one line for one line. `house.HOUSE_RULES` is
+byte-identical and no clause was added anywhere (§138).
+
+`tests/test_progression_prompt.py` is the file, seventeen tests in five groups named in its
+docstring.
+
+### 186.7 What was refused
+
+- **Both lines in one prompt.** §186.2; the cardinality and §169's copying behaviour together.
+- **A direction or a magnitude in the check.** §184's contract is untouched: the gate still accepts
+  any change. What changed is that the *ask* now shows one legal move, and the ask may be concrete
+  where the check must not be — they are different objects, and conflating them is how an example
+  becomes a bar.
+- **Any prompt text beyond the swap.** No clause was added to `house.py` or anywhere else, no
+  ceiling moved, and nothing tells the writer how to stage a move. §184.5's refusal restated: aim
+  the machinery, add no adjective.
+- **An ordering clause.** A scene that stages the read *before* the move prints a line its own
+  fiction has not earned. Adding *"after it has moved"* is the §138 formula this whole track exists
+  to avoid, and the beat already says *the person it belongs to is there when it does*. Named as a
+  residual and left to the reviser stage's surface (§185), which is where a coherence defect of that
+  shape belongs.
+- **Fixing the beat vocabulary's superset.** The legacy arm names whatever the line prints,
+  including a resource rather than an advancement — a book whose beat rotation reaches `HP` is now
+  shown `HP 25/30`. That the beat may name such a column is §161.4's recorded residual and it is
+  unchanged; showing one step of it is not a new claim about what a beat should name.
+- **Reaching the dossier gap.** `why` cannot answer for a job that never accepted prose (§186.1).
+  Fixing it means the dossier joining the prompt through the job rather than through the accepted
+  revision, which is a change to what every dossier reads. Recorded, not done.
+- **A retraction of §184's abstention on a maxed column.** §186.4.
+
+### 186.8 Corrections in place
+
+- `tests/test_planner.py::test_the_seeded_book_asks_for_the_line_it_will_later_read` pinned
+  `[STATUS] Rook — Level 3 | …` and now pins `Level 4` and the swapped clause. The name is kept and
+  the claim is unchanged — a seeded book is asked for system voice at all; scene 1 is always a
+  scheduled beat, the rotation names `Level`, and the ask now says what the scene is for. The
+  change is annotated in the test where it is not what the test is about.
+- `domain/progression.py`'s §97.1 citation, corrected in place per §186.5. §184.3's paragraph in the
+  ledger stands as written and is corrected by this entry rather than edited.
+
+### 186.9 Anti-scope
+
+**Shipped unmeasured on the page, and that is the whole claim.** What is verified is that a
+scheduled scene is now handed an example whose numbers agree with its plan, replayed against the
+records of draws that already happened, plus the suite. **No claim is made that the writers §184
+refused will now write their way past it** — one book would not show that either way, and pilot 18's
+redraw is what finds out. No model was called, no book was drawn, no paid call was made, and neither
+`runs/` store was written to. No corpus was read, so RS1 is untouched. No research claim is promoted,
+no mechanism qualified, no axis admitted, and no bar is declared: every number here is an integer
+read off a stored record or a count of demands. Nothing here reaches the roster, the listing task,
+the editorial control plane, the reader loop, or any dossier, and nothing either pilot store said
+became prompt text, a directive or a plan item — what the stores located was a contradiction between
+two halves of one prompt, and the fix is engineering.

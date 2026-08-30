@@ -1362,6 +1362,40 @@ def choose(
     )
 
 
+def advance(sheet: CharacterSheet, move: Move, *, at: str) -> Advancement:
+    """Take a move `legal_moves` offered. Raises `IllegalAdvance` where it cannot be taken.
+
+    **The half of `legal_moves` that was missing.** That function offers `Move`s and nothing
+    here took one: every caller unpacked the kind itself and called `gain`, `deepen` or `rise`
+    by hand, so the mapping from an offered move to the arithmetic that performs it lived at
+    each call site rather than beside the moves. A second unpacking is a second answer to
+    "what does this move do", which is the defect `Movable` exists to prevent one object along.
+
+    **A `CHOOSE` raises rather than defaulting**, and that is §61(5) rather than an omission: a
+    fork carries the ways and not a way of taking one, so a function that took a `CHOOSE`
+    without an `option_id` would have to pick, and picking is the one thing this module may
+    never do. `choose` is the entry point, and it is told which way.
+
+    Nothing here writes: an `Advancement` is a value carrying the sheet the move would leave,
+    the keys it moves and the records that would say so. A caller reading `after` to *show*
+    somebody what a moved line reads has performed no advancement — which is what
+    `progression.moved_example` does, so the number a writer is shown and the number the book
+    would record come from one arithmetic.
+    """
+    if move.kind is AdvanceKind.RISE:
+        return rise(sheet, at=at)
+    if move.kind is AdvanceKind.CHOOSE:
+        raise IllegalAdvance(
+            f"{move.choice_id} is a fork, and taking one needs the way it is taken; "
+            "call choose()"
+        )
+    if move.ability_id is None:
+        raise IllegalAdvance(f"a {move.kind.value} names no ability")
+    if move.kind is AdvanceKind.GAIN:
+        return gain(sheet, move.ability_id, at=at)
+    return deepen(sheet, move.ability_id, at=at)
+
+
 # --------------------------------------------------------------------------- writing it down
 
 
@@ -2118,6 +2152,7 @@ __all__ = [
     "Rank",
     "Scale",
     "SystemDef",
+    "advance",
     "check_draw",
     "choose",
     "completion_records",
