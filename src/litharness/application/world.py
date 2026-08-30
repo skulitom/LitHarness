@@ -28,7 +28,7 @@ from typing import Any
 
 import litharness_contracts as lc
 
-from litharness.domain import genre, worlds
+from litharness.domain import genre, schema_words, worlds
 from litharness.domain import state as state_mod
 
 #: Every view is addressable by name, so the CLI's subcommand table and this module cannot
@@ -551,6 +551,18 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     §160's and reports a world whose numbers have no system behind them, one that began a
     system and left it one predicate short of readable (Serial Pilot 15b §5), or one that
     declares two sheets and would therefore silently render a line it never chose.
+
+    **`machinery_names` is §178's, and it is the one list here that `world accept` refuses on.**
+    Serial Pilot 16 named its system *the Ladder* and its criterion *Rung*, which are this
+    repository's own words for those two parts, and `Rung` reached the page as a printed column.
+    It is reported here rather than only at `accept` because the Architect is told to run this
+    view as it goes and can fix a name for nothing: the addressee holds `world declare`, so a
+    complaint it can act on beats a refusal it meets once, at the end, from a different command.
+
+    **It does not move `ok`, and that is the invariant above rather than an exception to it.**
+    `ok` is what `validate` says; a name is not a world contradicting itself, and `accept` reads
+    `domain/schema_words.py` for this the same way it reads `validate` for that. The two lists
+    are different questions and are kept as two.
     """
     coverage = worlds.manifestation_coverage(records)
     complaints = list(worlds.validate(records))
@@ -574,6 +586,7 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
         "complaints": complaints,
         "ok": not complaints,
         "gaps": gaps,
+        "machinery_names": list(schema_words.world_complaints(records)),
         "will_not_resolve": [
             warning for record in records for warning in worlds.slot_warnings(record)
         ],

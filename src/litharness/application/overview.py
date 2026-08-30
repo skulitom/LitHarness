@@ -396,7 +396,10 @@ def title_system(writer: Writer | None) -> str:
 
 
 def render_title_request(
-    overview: str, writer: Writer | None = None, taken: tuple[str, ...] = ()
+    overview: str,
+    writer: Writer | None = None,
+    taken: tuple[str, ...] = (),
+    machinery: tuple[str, ...] = (),
 ) -> CompletionRequest:
     """One title, from the listing the same writer just wrote.
 
@@ -411,12 +414,31 @@ def render_title_request(
     A title that already belongs to somebody is a fact about the world, so it goes in the
     prompt beside the listing rather than into the job, where it would become a standing rule
     about titles for every book this system ever writes.
+
+    **`machinery` is §178's and is the same shape for the same reasons.** Serial Pilot 16's
+    title was *Reading The Ladder Wrong*, and `ladder` is this repository's own word for §113's
+    chain — the operator's *"biggest unecessary leak of internal architechture to date"*. It
+    is a prohibition, it names only the word this draw actually reached for rather than the
+    whole of `house.MACHINERY_WORDS`, and it costs nothing when it is empty, which is why the
+    title role's ceiling in `tests/test_prompt_budget.py` does not move: like `taken`, it is
+    measured on the form with neither block present.
+
+    Naming the word back at the writer is deliberate. The alternative — redrawing silently —
+    invites the same coinage again, and §138's finding is that a prohibition does its work and
+    is not recited, which is the half of that measurement `taken` has been standing on since it
+    shipped.
     """
     material = f"The listing:\n\n{overview.strip()}"
     if taken:
         material += (
             "\n\nAlready the title of a published book, so it cannot be this one:\n"
             + "\n".join(f"- {name}" for name in taken)
+        )
+    if machinery:
+        material += (
+            "\n\nNot in the title, in any form: "
+            + ", ".join(sorted(machinery))
+            + ". That is the tooling's word for a part of the machinery, not this book's."
         )
     return CompletionRequest(
         prompt=material,

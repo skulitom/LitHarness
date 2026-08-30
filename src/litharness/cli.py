@@ -105,7 +105,15 @@ from litharness.application.summarize import (
 )
 from litharness.domain import characters as characters_mod
 from litharness.domain import directors as directors_domain
-from litharness.domain import extraction, gamesystem, genre, house, integrity, propagation
+from litharness.domain import (
+    extraction,
+    gamesystem,
+    genre,
+    house,
+    integrity,
+    propagation,
+    schema_words,
+)
 from litharness.domain import rivals as rivals_mod
 from litharness.domain import state as state_mod
 from litharness.domain import text as text_mod
@@ -2036,18 +2044,43 @@ def _listing_title(
     title the loop had to abandon. **An `UNKNOWN` verdict stops the retry**: a lookup that did
     not happen is not evidence of a collision, and burning three title calls on an outage
     would spend the writer's attempts on the environment's problem (§19.1).
+
+    **§178's check runs before the lookup and out of the same attempt budget.** A title built
+    out of this repository's own machinery vocabulary is dropped, named back to the writer as
+    its own prohibition, and redrawn; it is checked first because it is free and the lookup is
+    not. Serial Pilot 16's *Reading The Ladder Wrong* is the case. It does **not** join
+    `abandoned`, which is the taken-title prohibition and would be saying something false about
+    a title nobody has published. The listing loop is where the word is usually minted and is
+    checked there too; this is the surface the operator actually named, so it is checked on its
+    own rather than trusted to stay clean because its source was.
     """
     abandoned: list[str] = []
+    machinery: tuple[str, ...] = ()
     title = ""
     availability: titles.Availability | None = None
     for _ in range(max(1, attempts)):
-        request = overview_mod.render_title_request(listing, writer, tuple(abandoned))
+        request = overview_mod.render_title_request(
+            listing, writer, tuple(abandoned), machinery
+        )
         result, refusal = _completion_call(request, calls=calls, spend=spend)
         if result is None:
             print(f"  title: {refusal}", file=sys.stderr)
             break
         title = overview_mod.clean_title(result.text)
-        if not title or not check:
+        if not title:
+            break
+        if leaked := schema_words.named_in(title):
+            print(
+                f"  title: {title!r} names {', '.join(leaked)}, this system's own word for the "
+                "machinery; redrawing",
+                file=sys.stderr,
+            )
+            # Not appended to `abandoned`: that list becomes the "already the title of a
+            # published book" prohibition, and this title is not published by anybody. Two
+            # reasons to drop a title, two prohibitions, neither lying about the other.
+            machinery = tuple(sorted(set(machinery) | set(leaked)))
+            continue
+        if not check:
             break
         lookup = titles.render_check_request(title)
         found, refusal = _completion_call(lookup, calls=calls, spend=spend)
@@ -2060,6 +2093,15 @@ def _listing_title(
         if availability.verdict != titles.TAKEN:
             break
         abandoned.append(title)
+    if title and (kept := schema_words.named_in(title)):
+        # Out of attempts with the word still in it. Kept rather than blanked — a book with no
+        # title is worse — and said out loud for `listing_chained`'s reason: the run's operator
+        # is the one who can act on it, and a silent fallback is how a gate stops being one.
+        print(
+            f"litharness: kept the title {title!r} after {attempts} draw(s); it names "
+            f"{', '.join(kept)}, this system's own word for the machinery",
+            file=sys.stderr,
+        )
     return title, availability, tuple(abandoned)
 
 
@@ -2126,6 +2168,15 @@ def cmd_listing(args: argparse.Namespace) -> int:
         # Draw, then check the one shape property the fifth read named and the market bounds.
         # Deterministic throughout: a counter decides, never a model, and the comparison is
         # against a frozen scalar rather than against another candidate.
+        #
+        # **§178 adds the second reason to redraw, and this is where the leak is minted.**
+        # Serial Pilot 16's listing coined *"It called itself the Ladder"* under an empty brief,
+        # and `ladder` is this repository's word for §113's chain. Everything downstream then
+        # carried it faithfully — the title is drawn from this listing, and the Architect is
+        # told the world has to keep what it promised — so catching it at the world alone would
+        # have left a book whose blurb promises a Ladder the world is forbidden to name. The
+        # check belongs at the mint, and it is the same loop: a second frozen predicate over
+        # the returned string, no model consulted, no extra call unless one fires.
         drawn: list[str] = []
         for _attempt in range(LISTING_DRAW_ATTEMPTS):
             drafted, refusal = _completion_call(
@@ -2135,17 +2186,31 @@ def cmd_listing(args: argparse.Namespace) -> int:
                 print(f"litharness: {refusal}", file=sys.stderr)
                 return EXIT_FAULT
             drawn.append(drafted.text.strip())
-            if not overview_mod.chains_too_hard(drawn[-1], ceiling=LISTING_COORDINATOR_CEILING):
+            machinery = schema_words.named_in(drawn[-1])
+            if (
+                not overview_mod.chains_too_hard(drawn[-1], ceiling=LISTING_COORDINATOR_CEILING)
+                and not machinery
+            ):
                 break
-            print(
-                f"  redrawing: {overview_mod.coordinator_density(drawn[-1]):.2f} "
-                f"coordinators/100w over the {LISTING_COORDINATOR_CEILING} ceiling",
-                file=sys.stderr,
-            )
-        # Keep the least-chained draw. A tie keeps the earliest, so the choice is a total order
-        # over a frozen counter and not a preference among candidates (§61(5) is about a MODEL
-        # ranking; nothing here reads the prose).
-        listing = overview_mod.keep_least_chained(drawn)
+            if machinery:
+                print(
+                    f"  redrawing: the listing names {', '.join(machinery)}, which is this "
+                    "system's own word for the machinery and not this book's",
+                    file=sys.stderr,
+                )
+            else:
+                print(
+                    f"  redrawing: {overview_mod.coordinator_density(drawn[-1]):.2f} "
+                    f"coordinators/100w over the {LISTING_COORDINATOR_CEILING} ceiling",
+                    file=sys.stderr,
+                )
+        # Keep a draw that named none of our words if the loop got one, and otherwise keep what
+        # the loop already kept. Two frozen predicates in a fixed order is still a total order
+        # over counters rather than a preference among candidates (§61(5) is about a MODEL
+        # ranking; nothing here reads the prose), and the fallback is `listing_chained`'s
+        # existing shape: run out of attempts, keep the best draw, and say so on the way past.
+        clean = [draw for draw in drawn if not schema_words.named_in(draw)]
+        listing = overview_mod.keep_least_chained(clean or drawn)
         listing_density = overview_mod.coordinator_density(listing)
         listing_redraws = len(drawn) - 1
         listing_chained = listing_density > LISTING_COORDINATOR_CEILING
@@ -2153,6 +2218,15 @@ def cmd_listing(args: argparse.Namespace) -> int:
             print(
                 f"litharness: kept a listing at {listing_density:.2f} coordinators/100w after "
                 f"{len(drawn)} draw(s); the gate on the decision row records it",
+                file=sys.stderr,
+            )
+        if kept_machinery := schema_words.named_in(listing):
+            # Said out loud rather than refused, because the loop has spent its attempts and a
+            # book with no listing is worse than a listing carrying our word. What it buys is
+            # that the operator reading this run knows to expect the word downstream.
+            print(
+                f"litharness: kept a listing naming {', '.join(kept_machinery)} after "
+                f"{len(drawn)} draw(s); expect it in the title and the world",
                 file=sys.stderr,
             )
 
@@ -4012,6 +4086,25 @@ def cmd_world(args: argparse.Namespace) -> int:
                     f"litharness: {len(proposals)} proposal(s) not accepted; this world "
                     "contradicts itself. Fix it with `world declare`, or --force to accept "
                     "anyway and leave the contradiction on the record.",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+            # **§178's refusal, and it is deliberately its own branch.** A world naming its
+            # system out of this repository's own vocabulary is not a world contradicting
+            # itself, so folding it into `validate` would make the sentence above false for
+            # half the worlds it printed on. Serial Pilot 16 accepted `ladder is_a Ladder` and
+            # `rung is_a Rung` cleanly, and `Rung` was a printed column on the page twice in
+            # chapter one before anybody read it. Same `--force`, because the override is the
+            # operator's for the same reason it is on the line above: this refuses a name, and
+            # a person is allowed to decide a name is what the book wants.
+            machinery = schema_words.world_complaints(in_force)
+            if machinery and not args.force:
+                for complaint in machinery:
+                    print(f"litharness: {complaint}", file=sys.stderr)
+                print(
+                    f"litharness: {len(proposals)} proposal(s) not accepted; {len(machinery)} "
+                    "world-facing name(s) are this system's own words for its machinery. "
+                    "Rename with `world declare`, or --force to accept them anyway.",
                     file=sys.stderr,
                 )
                 return EXIT_FAULT
