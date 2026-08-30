@@ -1,4 +1,4 @@
-"""Stage-0 §179: one prohibition for two register families, at the floor and at the listing.
+"""Stage-0 §179, moved by §187: one prohibition for two register families, at one address.
 
 **The defect this file exists for was not a rule being broken.** Read 11 named two things
 separately: a construction — a narrator asserting an absence or a universal access that the
@@ -9,18 +9,25 @@ fails a *name*, and a restatement is made of words the reader already has; the t
 fails a sentence with two readings, and these have one reading and it is the right one; §168's
 clause has the unit wrong, its object being a **passage** where the defect is five words hung on
 the end of a sentence; §171's has the object wrong, failing a *generalisation used as
-explanation* where an absence asserted about one moment generalises about nobody. A sentence that
-breaks no rule is a gap, not an enforcement failure, and that is the one condition §168.2
-licenses a new clause for.
+explanation* where an absence asserted about one moment generalises about nobody.
 
-**And the address was half the finding.** Both instances of the construction are in a **listing**,
-and §174 had established the day before that the listing is the one production role standing on no
-house floor. So a register clause added to `house` would have reached every role except the one
-whose output was under read. The same sentence therefore ships at two addresses, byte-identical,
-and `test_the_floor_and_the_listing_carry_the_same_sentence` is what makes a drift between them a
-test failure rather than a thing somebody notices later.
+**The clause shipped at two addresses and left both on 2026-08-30** (§187). It is now in
+`application/reviser.py`, once. **Removing only one of the two was the thing to get wrong here**,
+and `test_the_floor_and_the_listing_carry_the_same_sentence` is the name that now holds the
+other side of the identity it used to hold: leaving the listing's copy standing would have given
+a withdrawn rule its sole home at the one production role that stands on no house floor, which
+inverts §179's own reason for writing it there. `plan/agent-impact/` is the measurement — every
+family alive at the thirteenth read is clause-addressed, and no register clause moved a sentence
+metric across ten chapters — and the operator's word at that report is the other half of §127's
+brake.
 
-Five things are asserted, and they fail for five different reasons.
+**Why this clause can live under containment, which is what qualified it to move.** Both arms
+name something a rewrite can drop without touching an event, a name or a number: an absence
+nothing had put in question, and a restatement of what the sentence carrying it already gave.
+A demand whose only compliant response is refused by the containment check one function later
+would land with its sign multiplied by zero (§154), and this one is not that.
+
+Five things are asserted about the clause, and they fail for five different reasons.
 
 **One clause and not two.** `test_the_second_arm_names_the_first_as_its_general_case` holds the
 decision that made this one sentence: the negative-space construction is the special case of the
@@ -46,7 +53,7 @@ from __future__ import annotations
 
 import pytest
 
-from litharness.application import overview, planner
+from litharness.application import overview, planner, reviser
 from litharness.domain import beats as beats_domain
 from litharness.domain import context as context_domain
 from litharness.domain import house
@@ -87,49 +94,56 @@ def _clause(text: str) -> str:
 
 
 def test_the_floor_and_the_listing_carry_the_same_sentence() -> None:
-    """The two addresses, and the guard that keeps them one rule instead of two.
+    """The two addresses, and the guard now holds the identity of an absence instead.
 
-    The listing does not stand on the house floor (`overview._system`), so a register clause in
-    `house` cannot reach the artifact read 11's instances were found in. A second statement of a
-    rule with a canonical home is what this file's subject already is — `overview` records two
-    `house.CLARITY` clauses on the same footing — and the honest version of that arrangement is
-    an assertion rather than a note, because the 2026-08-26 restoration had to establish the same
-    identity by reading both files.
+    **Inverted by §187 and the name is kept deliberately.** From 2026-08-30 this asserted that
+    `house.READER` and `overview._TASK` carried one sentence byte-identical; it now asserts that
+    neither carries it and that `reviser._TASK` does. The name survives because
+    `tests/test_architecture.py` holds every ledger citation to an existing test and §179 cites
+    this one — a deleted name breaks the citation and a renamed one resolves a reader to nothing.
+
+    What made the pair worth asserting is what makes the removal worth asserting: a rule with two
+    homes drifts in one of them, and a rule removed from one home is exactly that drift with the
+    sign flipped. The listing does not stand on the house floor (`overview._system`), so a half
+    removal here would have left the withdrawn clause live at the one role a floor edit cannot
+    reach.
     """
-    assert _clause(house.READER) == _clause(overview._TASK)
+    assert _IMPLICATION not in house.READER
+    assert _IMPLICATION not in house.HOUSE_RULES
+    assert _IMPLICATION not in overview._TASK
+    assert _IMPLICATION in reviser._TASK
 
 
 def test_the_second_arm_names_the_first_as_its_general_case() -> None:
-    """The one-clause decision, held in the words that carry it.
+    """The one-clause decision, held in the words that carry it, and they travelled unchanged.
 
     Two clauses would have cost two demands at six house numbers and at the listing's, and §127's
     brake is that a second rule against one complaint is the shape this project has measured
     failing four times. `anything else` is what makes this one rule: it says the absence arm is an
     instance of the implication arm rather than a separate prohibition sharing a terminator, which
     is the evasion §171 refused when it declined to hang its clause off an existing sentence.
+
+    **The counts moved on 2026-08-30 for §187 and they moved down**, which is the first time
+    either number in this test has fallen. `house.READER` 12 -> 10: §171's gloss and §179's own
+    clause both left for the reviser. `overview._TASK` 14 -> 13: this clause's second copy left
+    with it. They are asserted exactly rather than with `<=`, because a bound here would stop this
+    file noticing the next silent growth — `test_scene_economy`'s reason unchanged, and
+    `tests/test_prompt_budget.py` owns the ceilings themselves.
     """
-    clause = _clause(house.READER)
+    clause = _clause(reviser._TASK)
     assert clause.startswith("What fails is")
     head, _semicolon, _tail = clause.partition(";")
     assert "anything else" in head
-    # One demand at each address, not two. Asserted exactly rather than with `<=`, because a
-    # bound here would stop this file noticing the next silent growth — `test_scene_economy`'s
-    # reason unchanged, and `tests/test_prompt_budget.py` owns the ceilings themselves. The task
-    # text is counted rather than the assembled role: the budget file's 18 is this 14 plus the
-    # four demands of a cast dossier, and a ceiling that moved when a writer's dossier grew
-    # would be a ceiling on dossiers.
-    #
-    # **13 -> 14 on 2026-08-30, and the growth is not this clause's** (§183). The house genre
-    # gained its first surface at the listing, one sentence, and the budget row moved 17 -> 18
-    # with it. The exact assertion is what made that visible in this file rather than silently,
-    # which is what an exact assertion is for; §179's own clause is unchanged and still one
-    # demand at both addresses.
-    assert len(house.demands(house.READER)) == 12
-    assert len(house.demands(overview._TASK)) == 14
+    assert len(house.demands(house.READER)) == 10
+    assert len(house.demands(overview._TASK)) == 13
 
 
 def test_the_two_arms_are_bounded_differently_and_neither_reaches_a_passage() -> None:
     """The asymmetry that keeps §163's failure mode out of a clause about redundancy.
+
+    **Repointed to `reviser._TASK` by §187; the assertion is unchanged, which is the claim.**
+    The clause moved byte-identical, so a bound argued at one address is the bound in force at
+    the next, and nothing was redrafted under cover of the move.
 
     The implication arm is keyed to one sentence: a window of one cannot delete a deliberate echo
     across a scene or a callback a chapter later. The absence arm carries no window at all, and
@@ -137,9 +151,9 @@ def test_the_two_arms_are_bounded_differently_and_neither_reaches_a_passage() ->
     window-keyed rule would miss the shape that named the family. Any wider unit in this clause
     would make it §168's clause a second time at the wrong altitude.
     """
-    clause = _clause(house.READER).lower()
+    clause = _clause(reviser._TASK).lower()
     assert "its own sentence" in clause
-    for wider in ("passage", "paragraph", "chapter", "scene", "earlier", "anywhere", "book"):
+    for wider in ("passage", "paragraph", "chapter", "earlier", "anywhere", "book"):
         assert wider not in clause
 
 
@@ -153,7 +167,7 @@ def test_the_boundary_is_a_concession_inside_the_sentence() -> None:
     sentence already gives — rather than the head's negation, which would carry no boundary at
     all.
     """
-    clause = _clause(house.READER)
+    clause = _clause(reviser._TASK)
     head, semicolon, tail = clause.partition(";")
     assert semicolon, "the concession must share the prohibition's sentence"
     assert "is not that" in tail
@@ -172,6 +186,9 @@ def test_the_clause_names_none_of_the_words_the_construction_is_built_from(
 ) -> None:
     """The word-list refusal, and it is load-bearing rather than stylistic.
 
+    **Checked at one address since §187** — the clause has one home again, so the loop over two
+    is gone rather than the check.
+
     Both surface forms of this construction are built from ordinary quantifiers standing as the
     subject. A prohibition naming those words would suppress the words rather than the
     configuration — the failure every deleted word list in this repository was deleted for, and
@@ -180,8 +197,7 @@ def test_the_clause_names_none_of_the_words_the_construction_is_built_from(
     something *nothing* had put in question describes the text's prior state rather than a word a
     writer is being steered off.
     """
-    for address in (house.READER, overview._TASK):
-        assert quantifier not in _clause(address).lower()
+    assert quantifier not in _clause(reviser._TASK).lower()
 
 
 def test_the_clause_carries_no_instance_list() -> None:
@@ -191,32 +207,33 @@ def test_the_clause_carries_no_instance_list() -> None:
     configuration rather than a vocabulary, so it has nothing an instance would add. The instances
     that named the family are in this file, where a detector can read them and a prompt cannot.
     """
-    clause = _clause(house.READER)
+    clause = _clause(reviser._TASK)
     assert "—" not in clause
     assert ":" not in clause
     assert clause.count(",") == 1
 
 
 def test_the_new_clause_is_not_the_narrating_the_inference_prohibition_again() -> None:
-    """§171 is the closest neighbour on this constant, and the objects are different.
+    """§171 is the closest neighbour and the objects are different — now at the same address.
 
-    §171 fails a narrator explaining one person's act with a rule about people in general. An
-    absence asserted about one moment states no rule and generalises about nobody, so that clause
-    could not reach read 11's instances — which is why this one exists. The two stay separate
-    demands: a merge would produce a count named for a defect it does not measure, and §150.4
-    deleted a field for exactly that.
+    **Both clauses moved to `reviser._TASK` on 2026-08-30 (§187), so this test matters more than
+    it did.** On the floor they were two demands in one constant; here they are two demands in
+    one instruction, and the case for keeping them apart is unchanged: §171 fails a narrator
+    explaining one person's act with a rule about people in general, while an absence asserted
+    about one moment states no rule and generalises about nobody. A merge would produce a count
+    named for a defect it does not measure, and §150.4 deleted a field for exactly that.
     """
-    clause = _clause(house.READER)
+    clause = _clause(reviser._TASK)
     for other in ("narrator", "people in general", "however true"):
         assert other not in clause
-    assert len([item for item in house.demands(house.READER) if item.startswith("What fails")]) == 3
+    gloss = [item for item in house.demands(reviser._TASK) if "people in general" in item]
+    assert len(gloss) == 1 and gloss[0] != clause
 
 
 @pytest.mark.parametrize("word", sorted(house.MACHINERY_WORDS))
 def test_the_new_clause_does_not_speak_this_systems_own_vocabulary(word: str) -> None:
-    """The rail every reader-facing edit is held to, applied at both of §179's addresses."""
-    for address in (house.READER, overview._TASK):
-        assert word not in _clause(address).lower()
+    """The rail every reader-facing edit is held to, applied at §179's one remaining address."""
+    assert word not in _clause(reviser._TASK).lower()
 
 
 @pytest.mark.parametrize(
@@ -226,6 +243,12 @@ def test_the_new_clause_does_not_speak_this_systems_own_vocabulary(word: str) ->
 def test_no_word_of_the_read_11_items_became_prompt_text(word: str) -> None:
     """§97.1, mechanically, on the read that produced this entry.
 
+    **Widened by §187 to the clause at its new address.** A rule that travels between prompts is
+    a rule that could pick up a word on the way, so all three texts are checked: the two it left,
+    whole, and the clause it became. The third is scoped to the clause rather than to the whole
+    instruction for the reason `tests/test_plain_diction.py` records against its own version of
+    this test — a word list built from one read is evidence about one clause.
+
     A defect harvest is the operator's side of the loop. A noun lifted out of the listing under
     read — or a word of the read itself — is that diagnostic laundered into a prompt with the
     evidence still inside, and it is the one thing the debugging workflow forbids outright. Both
@@ -234,6 +257,7 @@ def test_no_word_of_the_read_11_items_became_prompt_text(word: str) -> None:
     """
     assert word not in house.HOUSE_RULES.lower()
     assert word not in overview._TASK.lower()
+    assert word not in _clause(reviser._TASK).lower()
 
 
 @pytest.mark.parametrize("fixture", TELL_FIXTURE + INFORMATIVE_FIXTURE)
@@ -242,18 +266,24 @@ def test_no_fixture_of_this_file_reaches_any_prompt(fixture: str) -> None:
 
     These sentences are invented rather than lifted for §97.1's reason, and they still may not
     travel: `house` has cut three clauses for being recited back, and every one of them was an
-    example somebody thought was harmless where it stood.
+    example somebody thought was harmless where it stood. Checked at the clause's new address
+    too, since §187 gave the fixtures a third prompt to leak into.
     """
     assert fixture not in house.HOUSE_RULES
     assert fixture not in overview._TASK
+    assert fixture not in reviser.revision_system()
 
 
 def test_the_clause_rides_the_scene_writers_live_assembled_prompt() -> None:
-    """A clause is worth nothing if it reaches a constant and not a call.
+    """The name is kept and what it asserts is inverted, which is §187's whole content.
+
+    **Until 2026-08-30 this asserted the clause reached the drafting call. It now asserts it does
+    not**, and that the reviser's live assembled system message carries it instead.
 
     `render_prompt` is the path every drafted scene goes through, and the house floor arrives on
     it through `with_house_rules`. Asserted against the live assembly rather than against
-    `HOUSE_RULES`, because a copy is the failure `tests/test_prompt_budget.py` was founded on.
+    `HOUSE_RULES`, because a copy is the failure `tests/test_prompt_budget.py` was founded on —
+    and an absence read off a constant is exactly the kind of claim that goes stale silently.
     """
     system, _prompt = planner.render_prompt(
         beats_domain.Beat(
@@ -273,18 +303,21 @@ def test_the_clause_rides_the_scene_writers_live_assembled_prompt() -> None:
             base_revision_id="r0",
         ),
     )
-    assert _clause(house.READER) in system
+    assert _IMPLICATION not in system
+    assert _clause(reviser._TASK) in reviser.revision_system()
 
 
 def test_the_clause_rides_the_listing_call_which_carries_no_floor_under_it() -> None:
-    """The second address, through the live request rather than through the constant.
+    """The second address, through the live request — and it is now an absence at both.
 
-    The assertion that matters is the pair: the clause is in the assembled system message, and
-    the house floor is not — which is the whole reason a second statement had to be written. If a
-    later track ever puts the floor back under this call, this test is where that shows up, and
-    the duplicate becomes a subtraction to make rather than a drift to chase.
+    **Inverted by §187**, and the pair this test was written to assert is the pair that decided
+    the removal: the clause was in the assembled system message and the house floor was not, so
+    the listing's copy was the only home a floor edit could not reach. Removing the floor's half
+    alone would have promoted a withdrawn rule to sole occupancy of that call. The second half of
+    the assertion is unchanged and still load-bearing: if a later track ever puts the floor back
+    under this call, this test is where that shows up.
     """
     request = overview.render_overview_request("", writers_domain.CAST["ferreira"])
     system = request.system or ""
-    assert _clause(overview._TASK) in system
+    assert _IMPLICATION not in system
     assert house.HOUSE_RULES not in system

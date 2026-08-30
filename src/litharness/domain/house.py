@@ -53,6 +53,31 @@ anything on a page, so instead of overproducing they did nothing at all, and an 
 correctly-signed prohibition took the slot. A rule here addresses a writer, and the only thing
 a writer can do is put words on a page. A clause whose object is what the reader feels has no
 addressee.
+
+**Five clauses left this module on 2026-08-30, and this is the first subtraction here made
+against a measurement rather than to pay for an addition** (§187). Both halves of §127's brake
+are present, which is the only condition under which a measured correction comes out.
+`plan/agent-impact/` is the measurement: the audit reports that every defect family the reads
+stopped naming was answered by structure, a gate or a mechanical rewrite, that every family
+still alive at the thirteenth read is clause-addressed, and that no clause on this floor ever
+moved a sentence metric across ten chapters. The operator's word is the other half, given at
+that report — *remove Register clauses in prompts*. What went: §171's narratorial gloss and
+§179's implication prohibition from `READER`, and §176's comparison, §180's chained-action and
+§181's specialist's-word prohibitions from `CLARITY`. Each paragraph below keeps its own
+history and carries the removal in place.
+
+**What did not go, and the boundary is register against comprehension.** A clause whose object
+is how a sentence *sounds* left; a clause whose object is whether a reader can assemble what
+the sentence says stayed. So the unmet-term pair, the two-ways clause, the object-acting
+clause and the paragraph trio are untouched, and §176's pronoun scope word — *one person or
+object* — stays with the paragraph clause it widened, because that is antecedent mechanics on
+a pre-existing measured rule and never was the figure clause. §168's passage-economy clause
+stays for a second reason: its family is one the reads stopped naming.
+
+**Sentence register now has one owner and it is not this module.** The four prohibitions that
+left, and one the audit asked for, are in `application/reviser.py`, which is the stage the
+battery measured moving the sentence axis. A rule in two places is §152's defect, so nothing
+removed here was left behind as a copy.
 """
 
 from __future__ import annotations
@@ -84,6 +109,14 @@ from __future__ import annotations
 #: terms they quoted were always the same shape: a word used as if the reader already knew it —
 #: `frost rooms`, `keeper`, `the lists`, `nine deep`. The fix that worked on premises is the
 #: sentence below, and it is what the prose never got.
+#:
+#: **The figure clause was removed on 2026-08-30 (§187); the scope word beside it stays.** The
+#: paragraphs below are kept as the record of what it was for. The comparison prohibition is a
+#: register rule, it is one of the four the audit found alive at read 13, and the family it was
+#: written against was named again on the read after it shipped — so it comes out under §127's
+#: brake with both halves present, a measurement (`plan/agent-impact/`) and the operator's word.
+#: The pronoun widening is not removed and is not register: it is antecedent mechanics on a
+#: clause read 2 measured, it cost no demand going in, and it costs none staying.
 #:
 #: **A figure clause and a scope word, added 2026-08-30 (§176), and the ruling that licensed
 #: them is that nothing here was violated.** Read 10 named three sentences as ones nobody says:
@@ -124,6 +157,15 @@ from __future__ import annotations
 #: ordinary anaphora, a thing named in one sentence and *it* in the next, and that is §163's
 #: failure mode exactly. A clause of its own would be §127's fourth rule. It is a residual, and a
 #: later read should expect to find it still standing.
+#:
+#: **Removed on 2026-08-30 (§187), one read after it shipped, and the read between the two is
+#: the case.** The clause went in after read 11; read 12's own record states that a member of
+#: its family was on the page despite it, and read 13 named the family again. The audit counts
+#: it among the four clause-addressed families still alive, so this is a register rule that was
+#: given one draw and did not hold — removed with §127's two halves present. It now stands in
+#: `application/reviser.py`, at the stage the battery measured moving the sentence axis. The
+#: paragraphs below are kept as the record of why its object is provenance and not rarity,
+#: which is the half that survives the move.
 #:
 #: **A diction clause, added 2026-08-30 (§181), and its object is where a word came from rather
 #: than how rare it is.** Read 11 named a third sighting of a family reads 7 and 8 already
@@ -186,6 +228,17 @@ from __future__ import annotations
 #: the read itself is in either clause (§97.1) — the three sentences are fixtures in
 #: `tests/test_figure_clarity.py` and go nowhere else. Shipped unmeasured.
 #:
+#: **Removed on 2026-08-30 (§187), and this one is redundant by construction as well as by
+#: measurement.** `application/reviser.py`'s own instruction already carries a prohibition on
+#: exactly this shape — a sentence hanging one happening on the next — so the copy here was a
+#: second home for one rule, which is §152's defect. The audit adds the measured half: the
+#: reviser is where the chain share actually moved, and no clause on this floor moved it in ten
+#: chapters. **The sentence §180 subtracted to pay for this clause does not come back.** It was
+#: a restatement of the standard the rule's opening sentence already sets, §176.1 had already
+#: classified it as the half a writer cannot act on, and reversing a subtraction because its
+#: purchase was returned would put an unaddressable sentence back on every prose call. The
+#: floor now closes on the paragraph clause. The paragraphs below are kept as the record.
+#:
 #: **A fourth read named punctuation and sentence structure, and this rule's last sentence paid
 #: for the clause that answers it (§180).** Read 11's words are the family's name — *"punctuation
 #: and sentence structure have been a problem over and over"* — over Maria's grammar items and
@@ -238,22 +291,16 @@ CLARITY = (
     "what it does to somebody. What fails is a name invented because the world wanted one "
     "and handed over to be carried while it buys the reader nothing, and the test is "
     "whether they could say what it changes for the person it happens to.\n"
-    "What fails is calling a thing by a specialist's word where ordinary speech has one for the "
-    "same thing.\n"
     "A sentence a reader can take two ways has failed, and the writer is the last person who "
     "can see it: `a sheet of directions in his brother's small hand` is handwriting to whoever "
     "wrote it and a hand inside the box to whoever reads it. Prefer the reading nobody can "
     "trip on.\n"
     "Objects do not act, speak, want, refuse or know. A box does not tell anybody anything; "
     "somebody works it out, or does not.\n"
-    "What fails is a comparison to a thing that does not have the quality it is being compared "
-    "for; one a reader completes without stopping is not that.\n"
     "A paragraph holds together or it is not a paragraph. Inside one, a pronoun points at one "
     "person or object only — where two are in play, use their names, however plain that reads. "
     "A reader who has to reread a paragraph to find out whose brother died has been thrown out "
-    "of the book, and the sentences were all fine.\n"
-    "What fails is a sentence in which a fourth thing happens after three already have; length "
-    "spent on one thing happening is not that."
+    "of the book, and the sentences were all fine."
 )
 
 #: **The second read, 2026-08-24, and every clause below is one line the operator quoted back.**
@@ -460,6 +507,16 @@ CLARITY = (
 #: none of the operator's words. Shipped unmeasured — one clause against one book's defect, with
 #: no draw behind it, and read 9's own instrument question routed elsewhere (`BRIEF.md`).
 #:
+#: **Removed on 2026-08-30 (§187), and it is the clause with the longest record of outliving
+#: its own fix.** It was written at the third read-confirmed sighting; reads 12 and 13 both
+#: named the family again, and a gate caught it a third time in between. The audit's second
+#: finding is what decides where it goes rather than whether it goes: the reviser *introduces*
+#: this shape — the gloss counter reads higher on reviser prose than on writer prose from the
+#: same listing, and read 13's first item is a sentence the reviser wrote. So the prohibition
+#: moves to the stage that produces the defect, where it is aimed at its own author. §156's
+#: boundary travels with it unchanged: a character's read of one specific moment is not the
+#: defect. The paragraphs below are kept as the record.
+#:
 #: **The narrating-the-inference tell got a clause on 2026-08-29, at its third read-confirmed
 #: sighting and its first clause of any kind.** §156 measured the construction against the
 #: market's own chapters and reported ours at a multiple of the genre's rate; that entry and its
@@ -522,6 +579,15 @@ CLARITY = (
 #: audience it follows from is a targeting decision and stays in `PLAN.md` and the ledger, never
 #: in a prompt. Nothing is added here, and the floor gets back the one demand of headroom §171
 #: spent.
+#:
+#: **Removed on 2026-08-30 (§187), from this constant and from the listing's copy together.**
+#: The clause shipped at two addresses on purpose, so it comes out of both: leaving the listing's
+#: half standing would make one rule's only home the role that does not stand on this floor, and
+#: the audit's finding is about register clauses in writer-facing prompts wherever they sit. It
+#: is now in `application/reviser.py`, one home again. Both of its arms are register: an absence
+#: nothing put in question and a restatement of what a sentence already gave are shapes a
+#: rewrite can drop without touching a fact, which is what makes the reviser able to hold it
+#: under containment. The paragraphs below are kept as the record.
 #:
 #: **The implication clause landed 2026-08-30 (§179), and it is one sentence for two families
 #: read 11 named separately.** The first is a construction: a narrator asserting an absence or a
@@ -616,13 +682,7 @@ READER = (
     "puzzle box does not have thirty-one moves, a crate does "
     "not hold forty-two bottles, and a wait is not four days: exactness spent on props, "
     "tallies and durations teaches a reader that the numbers here mean nothing, which costs "
-    "the numbers that do.\n"
-    "What fails is a narrator explaining what one person did or said with a rule about what "
-    "people in general do or mean, however true the rule is; what somebody in the scene makes "
-    "of it is not that.\n"
-    "What fails is a clause naming an absence or a permission nothing had put in question, or "
-    "stating anything else its own sentence already implies; one carrying what the reader could "
-    "not have supplied is not that."
+    "the numbers that do."
 )
 
 #: **What the reader is accumulating, and it is the genre's own economics.** The operator,

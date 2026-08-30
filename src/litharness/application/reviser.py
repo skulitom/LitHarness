@@ -23,12 +23,38 @@ the revised prose. `application/handlers.py` is where that ordering lives and wh
 
 **What it stands on.** `house.CLARITY` and nothing else of the floor (§129's tier order read
 literally). Every demand `CLARITY` makes is a sentence-or-paragraph surface — a term the reader
-has not met, a sentence with two readings, an object acting, a comparison, a pronoun inside a
-paragraph, a fourth thing happening after three — which is exactly this role's object. `READER`
-and `ACCUMULATION` are demands about **what the story contains and what its reader collects**,
-and a reviser acting on either would change the story, which containment refuses mechanically. A
-demand whose only compliant response is refused by a check one function later is a demand landing
-with its sign multiplied by zero (§154), so it is not sent.
+has not met, a sentence with two readings, an object acting, a pronoun inside a paragraph —
+which is exactly this role's object. `READER` and `ACCUMULATION` are demands about **what the
+story contains and what its reader collects**, and a reviser acting on either would change the
+story, which containment refuses mechanically. A demand whose only compliant response is refused
+by a check one function later is a demand landing with its sign multiplied by zero (§154), so it
+is not sent.
+
+**This role now owns sentence register, and it owns it because it is the only stage measured
+moving that axis** (§187). `plan/agent-impact/` is the measurement and it points both ways at
+once. The battery's largest single-step movement anywhere is at this stage and it is on the
+sentence axis alone; no clause in any writer-facing prompt moved a sentence metric across ten
+chapters, and all four defect families alive at the thirteenth read are clause-addressed. So the
+four register prohibitions that stood on the house floor are here instead, and the audit's own
+ask — a prohibition on relations left unstated across a pair of sentences — is here with them.
+The operator's word at that report is the other half of §127's brake: take the register clauses
+out of the prompts.
+
+**Two of the ported clauses are aimed at this stage's own measured defects, which is the
+argument for the address rather than an accident of it.** The gloss counter reads higher on this
+role's prose than on the writer's from the same listing, and the thirteenth read's first item is
+a sentence this role wrote — so the prohibition against narrating an inference arrives where the
+construction is produced. And the subordinate-connective density did not move under the chain
+clause alone: this stage answered a chained sentence by cutting it in two, which satisfies a
+prohibition whose object is one sentence and leaves the relation unsaid across the two that
+result. The pair clause is the unit that closes.
+
+**Every ported clause is droppable under containment, and that was the test for porting it.**
+A gloss, a restatement of what a sentence already gave, a comparison that does not land and a
+borrowed word are all things a rewrite can take out or exchange without touching an event, a
+name or a number — so none of them asks for a compliant response the check one function later
+refuses. A demand that could only be met by changing the story would land here with its sign
+multiplied by zero, which is why `READER`'s story-shaped demands stayed behind.
 
 **The model is a lever and not a claim.** `REVISION_MODEL` is `None`, which means the pinned
 provider's own model — the strongest this installation has configured (`providers/cli.py`). The
@@ -88,6 +114,40 @@ TIMEOUT_SECONDS = 600.0
 #: the sentence is what stops the model spending a call discovering it. The check is the
 #: authority; the sentence says so.
 #:
+#: **Five clauses were added on 2026-08-30 (§187): four moved here from `house` and one is new.**
+#: The four are §171's narratorial gloss, §179's absence-and-restatement prohibition, §176's
+#: comparison prohibition and §181's specialist's-word prohibition, and each arrives **byte
+#: identical to the text it left**. That is deliberate twice over: the wording is what each of
+#: those entries argued and tested its way to — the gloss bounded by a character's own read of a
+#: moment, the comparison scoped so ordinary metaphor is never reached, the diction clause keyed
+#: on provenance rather than rarity because §156.3 measured our rare-word rate inside the genre's
+#: own range — and re-drafting a clause while moving it would make a later census unable to say
+#: which change it was reading. Their tests moved with them and now assert the text at this
+#: address; there is no copy left behind, because two homes for one rule is §152's defect.
+#:
+#: **§180's chained-action prohibition was not ported, because it was already here.** The chain
+#: clause four demands above predates it in this file, so the floor's copy was the second home
+#: and its removal costs this role nothing. The same is true of the fragment, opening-run,
+#: perception-voicing, paragraph-topic and folded-fact prohibitions, none of which ever stood on
+#: the floor.
+#:
+#: **The new clause is the pair, and it exists because the chain clause has a unit and not a
+#: subject.** The audit measured the connective density flat across the one draw this stage has:
+#: the chained sentence was answered by cutting it in two, which obeys a prohibition whose object
+#: is *one sentence* and leaves the relation unsaid across the two sentences that result. So the
+#: new object is a pair of sentences standing side by side — a thing a writer can see and can
+#: emit fewer of (§154), and the same three relations the chain clause already names, so this is
+#: one relation set at two units rather than a second rule. It is prohibition-signed like every
+#: clause here (§138) and carries no concession, because it excludes by construction the way
+#: §181's does: where neither sentence is the reason, the moment or the condition of the other
+#: there is nothing for it to fail, so ordinary consecutive sentences are never reached and no
+#: exemption had to be written. §163's warning is what that guards against.
+#:
+#: **None of the operator's words are in the new clause and no read supplied it** (§97.1). The
+#: relation names are the chain clause's own, already in this file; the connective the operator
+#: named as missing is not here and neither is any word of any read, which
+#: `tests/test_reviser.py` asserts by list.
+#:
 #: Carries no word of `house.MACHINERY_WORDS` — this text reaches the book's own prose, and
 #: `tests/test_prompt_budget.py`'s leak rail is what says so rather than this comment.
 _TASK = (
@@ -104,6 +164,8 @@ _TASK = (
     "What fails is a sentence hanging one happening on the next with no more between them than "
     "a conjunction or a comma, where one of them is the reason, the moment or the condition of "
     "another and the sentence never says which.\n"
+    "What fails is a pair of sentences side by side where one is the reason, the moment or the "
+    "condition of the other and neither says which.\n"
     "What fails is a phrase punctuated as a sentence with no verb of its own, and a phrase "
     "opening a sentence whose actor is not the subject of the clause it opens.\n"
     "What fails is a run of sentences beginning the same way.\n"
@@ -114,6 +176,16 @@ _TASK = (
     "not.\n"
     "What fails is a phrase folding a fact the reader has not been given into a modifier, so "
     "that the sentence reads as though they had it.\n"
+    "What fails is a narrator explaining what one person did or said with a rule about what "
+    "people in general do or mean, however true the rule is; what somebody in the scene makes "
+    "of it is not that.\n"
+    "What fails is a clause naming an absence or a permission nothing had put in question, or "
+    "stating anything else its own sentence already implies; one carrying what the reader could "
+    "not have supplied is not that.\n"
+    "What fails is a comparison to a thing that does not have the quality it is being compared "
+    "for; one a reader completes without stopping is not that.\n"
+    "What fails is calling a thing by a specialist's word where ordinary speech has one for the "
+    "same thing.\n"
     "Return the rewritten scene and nothing else: no heading, no preamble, no commentary, and "
     "nothing about what you changed."
 )

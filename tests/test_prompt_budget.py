@@ -259,7 +259,14 @@ BUDGET: dict[str, int] = {
     # both halves of the constraint, so it costs one demand here and 236 characters, and both
     # numbers are written down in `application/overview.py` rather than only the one this counter
     # can see (§171's evasion, named against itself).
-    "listing writer": 18,
+    #
+    # **18 -> 17 on 2026-08-30, and this row falls alone because it stands alone** (§187). §179's
+    # implication prohibition shipped at two addresses byte-identical — here and on
+    # `house.READER` — and it comes out of both in one edit. Removing only the floor's half would
+    # have left a withdrawn rule with its sole home at the one production role that stands on no
+    # floor, which inverts §179's own reason for writing it here. This row does not move with
+    # `HOUSE_BUDGET`'s five, because no house floor sits under it; its -1 is the clause's own.
+    "listing writer": 17,
     # **Raised 42 -> 44 on 2026-08-29, for three sentences that replace an absence** (§163).
     # The seed ask named a ladder and named nothing that hands out its rungs, so the model
     # supplied the nearest issuer it knows and the book got an institution: pilot 14's
@@ -310,19 +317,40 @@ BUDGET: dict[str, int] = {
     # surface is indistinguishable from a prohibition. Documenting alone would have shipped a
     # schema no world ever declares, which is §160's history exactly. The two raises crossed
     # in flight on separate tracks; each names its own occupant, and this row carries both.
-    "architect seed": 48,
+    #
+    # **48 -> 43 on 2026-08-30, five demands off the floor beneath it** (§187). Four of the five
+    # were inert here by the record above — §171's and §176's own raises say so, because the
+    # Architect narrates nothing and writes no comparisons — so this row gives back demands it
+    # was paying for and could not use, which is §171.4's honest price being unwound. **One of
+    # the five was not inert**: §181's specialist's-word prohibition reached this role, since
+    # every act it takes is a `world declare` whose subject is a name it chose. That loss is real
+    # and is recorded rather than smoothed. `_SYSTEM`'s own naming rule is untouched and still
+    # asks for short plain words, so the seed is not left silent on the subject; what it no
+    # longer carries is a prohibition on where a word was borrowed from.
+    "architect seed": 43,
     # **42 -> 43 on 2026-08-30, the §176 clause.** §163's note above says this row "stays
     # on 42", which was true of §163's seed-only raise and is not a rule: this row stands on the
     # whole house floor, so a floor clause lands here as surely as it lands on the scene writer.
     # Inert at this role for the seed's reason. §173 adds nothing here — its sentence is
     # seed-only.
-    "architect grow": 44,
+    #
+    # **44 -> 39 on 2026-08-30** (§187), the same five demands off the same floor. Inert here for
+    # the seed's reason and for §181's exception too: the grow call declares as the seed does.
+    "architect grow": 39,
     # **28 -> 29 and 32 -> 33 on 2026-08-30, the §176 clause.** These two rows are the
     # ones the raise is actually for: the drafting call is where comparisons are written, so
     # this is the one place the demand is neither inert nor a delimiter. The four-demand gap
     # between the rows is the cast dossier and is unchanged.
-    "scene writer floor": 30,
-    "scene writer, cast": 34,
+    #
+    # **30 -> 25 and 34 -> 29 on 2026-08-30** (§187), and these two rows are the ones the removal
+    # is actually about. The drafting call is where every one of the five clauses was live and
+    # none was inert, so this is where the audit's finding bites: five demands rode every scene
+    # call of every book, and across ten chapters no sentence metric moved under them. The four
+    # that are register are now at the reviser, which is the stage the battery measured moving
+    # that axis; §180's is not ported because the reviser's own instruction already carried it.
+    # The four-demand gap between the rows is still the cast dossier and is still unchanged.
+    "scene writer floor": 25,
+    "scene writer, cast": 29,
     "measurement reader": 4,
     "steering reader": 4,
     # Measured 2026-08-28 and set at what was there, the ratchet this file exists to be. Both
@@ -343,7 +371,27 @@ BUDGET: dict[str, int] = {
     # `tests/test_reviser.py` asserts over the text rather than about it — §138 measured the
     # permission form of one clause at more than six times the prohibition form and worse than
     # silence, and a role whose whole job is a register is the last place to spend that.
-    "reviser": 28,
+    #
+    # **28 -> 30 on 2026-08-30, and this is the only row in this table that rises** (§187). It is
+    # two movements in opposite directions netting +2, and both belong in the open. The floor
+    # half falls with everything else: `house.CLARITY` 14 -> 11, so the fourteen this row
+    # inherited are eleven, and the note above predicting **seven** numbers moving with a floor
+    # clause is confirmed in the falling direction. The role's own half rises 14 -> 19: four
+    # prohibitions moved here from `house` byte-identical (§171's gloss, §179's absence and
+    # restatement, §176's comparison, §181's specialist's word) and one is new — a prohibition
+    # on a relation left unstated across a *pair* of sentences, which is the audit's own ask.
+    #
+    # **This raise is what the removal is for and it is not a subtraction looked for and
+    # refused.** The order this file asks for is take something out, then raise what is left on
+    # purpose; here the taking-out is the same commit, at six other rows, and the net across the
+    # table is strongly negative. What is bought is ownership: the reviser is the one stage the
+    # battery measured moving the sentence axis, and two of the four ported clauses are aimed at
+    # defects this stage was measured *producing* — the gloss counter reads higher on its prose
+    # than on the writer's from the same listing, and the pair clause exists because this stage
+    # answered a chained sentence by cutting it in two and leaving the relation unsaid. §180's
+    # chained-action prohibition was **not** ported, and that is why the rise is five and not
+    # six: this file already carried that prohibition before the floor's copy existed.
+    "reviser": 30,
 }
 
 #: The floor everything else inherits. Broken out because a clause added here is added to every
@@ -388,7 +436,37 @@ BUDGET: dict[str, int] = {
 #: standard, encodes no measurement, and by §154 is the half a writer cannot act on). Four
 #: house edits in one day: the ceilings moved once, for §181, and this note is the crossing
 #: written down.
-HOUSE_BUDGET = 27
+#:
+#: **27 -> 22 on 2026-08-30, and it is the first fall this number has ever taken** (§187). Every
+#: raise recorded above bought a clause; this one removes five, and the reason each came out is
+#: written on its own clause in `domain/house.py`. **The measurement is `plan/agent-impact/` and
+#: the direction is the operator's, which is what §127's brake asks for.** That brake is against
+#: removing a rule which encodes a measured correction *against a mood* — §176.5 and §181 both
+#: cite it, and both were right to, because neither of those tracks had a measurement. This one
+#: has the audit: every defect family still alive at the thirteenth read is clause-addressed, no
+#: clause on this floor moved a sentence metric across ten chapters, and one of the four removed
+#: was recorded being broken on the very next read after it shipped. The operator's word at that
+#: report — take the register clauses out of the prompts — is the other half.
+#:
+#: **What left, by constant.** `CLARITY` 14 -> 11: §176's comparison prohibition, §180's
+#: chained-action prohibition, §181's specialist's-word prohibition. `READER` 12 -> 10: §171's
+#: narratorial gloss, §179's absence-and-restatement prohibition. `ACCUMULATION` is untouched at
+#: one. **What stayed and why the line falls where it does**: a clause whose object is how a
+#: sentence sounds went, and a clause whose object is whether a reader can assemble what it says
+#: stayed — so the unmet-term pair, the two-ways clause, the object-acting clause and the
+#: paragraph trio are all still here, and §176's pronoun scope word stays with the paragraph
+#: clause it widened, being antecedent mechanics rather than register. §168's passage clause
+#: stays for a second reason: the reads stopped naming its family.
+#:
+#: **Five rows fall with this one and one rises.** The floor lands once in each row standing on
+#: it: `architect seed` 48 -> 43, `architect grow` 44 -> 39, the two scene rows 30 -> 25 and
+#: 34 -> 29, `SCENE_MAXIMAL_BUDGET` 46 -> 41. The listing pays its own -1, and the reviser rises
+#: +2 net; both are written on their own rows. **Every number here is set at what is now there
+#: rather than left high**, which is the opposite of what §174's note says about counts moving
+#: down arguing for nothing — that entry declined to *lower* a ceiling as an argument, and this
+#: one lowers them so the next clause added to this floor has to be a decision again rather than
+#: slack somebody found. A ratchet that keeps five demands of headroom is not a ratchet.
+HOUSE_BUDGET = 22
 
 
 @pytest.mark.parametrize("role", sorted(BUDGET))
@@ -527,7 +605,15 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
 #: demand on the floor, once in this total, and the off-by-one against the summed rows is still
 #: the length ask's leading space. This is the sixth of the six numbers that clause moved, and
 #: the reason for all of them is written at `HOUSE_BUDGET`.
-SCENE_MAXIMAL_BUDGET = 46
+#:
+#: **46 -> 41 on 2026-08-30** (§187), by that same arithmetic run backwards: five demands off the
+#: floor, once each in this total. The off-by-one against the summed rows is unchanged and is
+#: still the length ask's leading space, which is the check that this fell by the floor's five
+#: and not by anything in the conditional region — `SCENE_CONDITIONAL_BUDGET` is untouched, and
+#: no branch in `planner.py` was edited by this track. **This is the number the audit's finding
+#: is about**: it is the largest prompt a scene drafter is ever sent, five of its demands were
+#: register clauses, and no sentence metric moved under them across ten chapters.
+SCENE_MAXIMAL_BUDGET = 41
 
 
 def test_the_scene_floor_row_is_what_the_planner_actually_assembles() -> None:

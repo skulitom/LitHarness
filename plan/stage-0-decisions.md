@@ -17969,6 +17969,19 @@ No corpus was read, so RS1 is untouched, and no research claim is promoted and n
 
 ## 171. The narrating-the-inference tell had been measured, named in three books by three writers, and reached by nothing in any prompt
 
+> **Corrected in place 2026-08-30 (§187).** ~~The clause shipped here stands on `house.READER`
+> and rides every role that reads the floor.~~ **It was removed from `house.READER` and moved to
+> `application/reviser.py`.** Two things this entry could not know: the family was named again at
+> the twelfth read and again at the thirteenth, so the clause outlived its own fix twice; and the
+> reviser is where the construction is now *produced* — `plan/agent-impact/reviser-impact.md`
+> measures the gloss counter higher on that stage's prose than on the writer's from the same
+> listing, and read 13's first item is a sentence the reviser wrote. The sentence moved
+> byte-identical, so §171.1's wording, §171.2's deliberate narrowing and §156's boundary all
+> stand as written; only the address changed. §171.4's price is unwound with it — the ceiling it
+> raised at `architect seed` comes back down, and this entry's own note that the demand landed
+> **inert** at that role is why that costs nothing. `tests/test_narratorial_gloss.py` keeps every
+> name this entry cites and now asserts the clause at its new address. See §187.
+
 **Measured first, and the measurement is §156.2's rather than this entry's.** The construction — a
 narrator explaining one person's gesture or phrase by asserting what people in general do or mean
 — was counted there against the market's own chapters, ours beside the genre's, and that entry and
@@ -18642,6 +18655,18 @@ does not improve the packet.
 
 ## 176. Four reads have named figures that fail a literal read, and every prohibition on the clarity floor missed them by its object
 
+> **Corrected in place 2026-08-30 (§187), and the two edits this entry shipped were treated
+> differently.** ~~The figure clause stands on `house.CLARITY` and cost six ceilings.~~ **It was
+> removed from `house.CLARITY` and moved to `application/reviser.py`**, byte-identical, with the
+> six ceilings coming back down; at the two Architect rows this entry itself recorded the demand
+> landing **inert**, so that half of the price was being paid for nothing. **The pronoun scope
+> word did not move and is not affected.** It is antecedent mechanics on a clause read 2
+> measured — inside a paragraph a pronoun points at one thing only — and what it governs is
+> whether a reader can work out who a sentence is about, which is the comprehension side of the
+> line §187 draws. It cost no demand going in and it costs none staying. §176.6's residual is
+> unchanged and still standing. `tests/test_figure_clarity.py` keeps every name this entry cites
+> and now asserts the split. See §187.
+
 **Defect harvest, not data (§95).** Read 10 (`plan/serial-pilot-15b.md`) named three sentences in
 one chapter as ones nobody would say. Stated as shapes rather than as text, because §97.1 forbids
 the text: a pronoun whose nearest candidate noun is not the thing it stands for; a comparison to
@@ -18948,6 +18973,19 @@ Pinned by `tests/test_schema_words.py`, including
 
 ## 179. A narrator asserting what the sentence already gave had no rule anywhere, and the two instances that named it were in the one artifact standing on no floor
 
+> **Corrected in place 2026-08-30 (§187).** ~~The clause ships at two addresses, `house.READER`
+> and `application/overview._TASK`, byte-identical and asserted so.~~ **It was removed from both
+> and moved to `application/reviser.py`, where it has one home again.** Removing only the floor's
+> half was the available mistake and was refused explicitly: it would have left a withdrawn rule
+> as the sole occupant of the one production role that stands on no house floor, which inverts
+> §179.3's own reason for writing it there. Both arms qualified for the move because both name
+> something a rewrite can drop without touching an event, a name or a number, so neither asks for
+> a compliant response the reviser's containment check refuses one function later (§154).
+> §179.4's one-clause decision, §179.5's asymmetric bounds and §179.7's residual all stand as
+> written; the ceiling §179 raised at the listing comes back down.
+> `tests/test_implication_register.py` keeps every name this entry cites and now asserts the
+> removal at both old addresses and the clause at the new one. See §187.
+
 **Defect harvest, not data (§95).** Read 11 (`plan/serial-pilot-16.md` §7) named two items that
 turned out to be one. The first is a construction, and the operator's own definition of it is that
 describing what is *not* there adds complexity without information: a narrator asserting an absence,
@@ -19120,6 +19158,20 @@ Pinned by `tests/test_implication_register.py`, and in particular by
 `test_the_clause_rides_the_listing_call_which_carries_no_floor_under_it`.
 
 ## 180. A fourth read named sentence structure and a second named the em dash, and one of them is a shape a writer makes while the other is a character a machine can take out
+
+> **Corrected in place 2026-08-30 (§187), on the clause half only.** ~~The chained-sentence
+> prohibition stands on `house.CLARITY`.~~ **It was removed, and it is the one removal in §187
+> that needed no port**: `application/reviser.py` was written before this entry and already
+> forbade the same shape at the stage `plan/agent-impact/draw-battery.md` measures the chain
+> share actually falling in, so the floor's copy was a second home for one rule and §152's
+> two-homes defect was live for as long as both stood. **The em-dash half of this entry is
+> untouched and is in the audit's column of things that worked** — zero em dashes in prose at
+> every post-§180 draw. **The subtraction §180.5 made to pay for the clause is deliberately not
+> reversed**: the sentence removed then was unaddressable by §154 and restated a standard the
+> floor's opening line still sets, so restoring it because its purchase was returned would put a
+> demand landing with its sign multiplied by zero onto every prose call. The floor now closes on
+> the paragraph clause. `tests/test_sentence_structure.py` keeps every name this entry cites.
+> See §187.
 
 **Defect harvest, not data (§95).** Read 11 (`plan/serial-pilot-16.md` §7) failed pilot 16 and
 named seven families. This entry owns two of them, and the finding that decides how each is
@@ -19294,6 +19346,22 @@ Pinned by `tests/test_sentence_structure.py`, with the ceilings that did not mov
 `HOUSE_BUDGET` in `tests/test_prompt_budget.py`.
 
 ## 181. Three reads have named words a reader is expected to already know, and the only measurement we have says the fault is not that they are rare
+
+> **Corrected in place 2026-08-30 (§187), one day and one read after it shipped.** ~~The clause
+> stands on `house.CLARITY` and reaches two roles, the drafting call and the Architect.~~ **It
+> was removed from `house.CLARITY` and moved to `application/reviser.py`.** This entry has the
+> shortest record of any clause in that removal, and its own successor is the evidence:
+> `plan/agent-impact/read-recurrence-map.md` records read 12 naming a member of this family with
+> the clause live — an enforcement failure against it on the very next read — and read 13 naming
+> the family again. **One thing was lost and it is recorded rather than smoothed.** §181.2's
+> novelty was that this clause was *not* inert at the Architect, because that role's every act
+> is a `world declare` whose subject is a name it chose; the reviser rewrites prose and declares
+> no worlds, so the naming half has no surface any more. `world_agent._SYSTEM`'s own rule asking
+> for short plain words is untouched and is now the whole of what the seed is told about naming;
+> re-adding this clause there would be the two-homes defect §181.3 refused, arriving by the back
+> door. §181.1's provenance-not-rarity object and §181.4's residuals stand as written, and the
+> six ceilings this entry raised come back down. `tests/test_plain_diction.py` keeps every name
+> it cites. See §187.
 
 Read 11 (`plan/serial-pilot-16.md` §7) named a plain-diction family at its third read-confirmed
 sighting: reads 7 and 8 each carry a member, and read 11 names it as a direction. Stated as
@@ -20522,3 +20590,172 @@ read off a stored record or a count of demands. Nothing here reaches the roster,
 the editorial control plane, the reader loop, or any dossier, and nothing either pilot store said
 became prompt text, a directive or a plan item — what the stores located was a contradiction between
 two halves of one prompt, and the fix is engineering.
+
+## 187. Every defect family the reads stopped naming was answered by machinery, every family still alive was answered by a prompt clause, and the operator's instruction was to take the clauses out
+
+**The measurement is `plan/agent-impact/` and not this entry.** That directory holds four
+diagnostic files and a report the coordinator synthesised from them — a recurrence map over
+thirteen reads, a gate ledger, a reviser impact study, and a code-only battery over every accepted
+chapter one. **No number of theirs is restated here**, which is this repository's standing rule
+about counts: each file owns what it measured, this entry owns the decision. All of it is operator
+diagnostics under §95 — descriptions of pages, never treatment effects — and the report says so in
+its own opening. Nothing in it is promoted, registered, or offered as evidence under
+`EPISTEMIC_GOVERNANCE.md`, and agent prose is not evidence.
+
+**The shape of the finding, stated without its arithmetic.** The recurrence map sorts thirteen
+defect harvests into families and puts each family's last sighting beside the fix aimed at it. Two
+columns come out of that sort. Every family that stopped being named was answered by structure, by
+a deterministic gate, or by a mechanical rewrite. Every family still alive at the last read was
+answered by a prompt clause — and the map's own words for the second group are that not one of
+them is a direction gap. The battery runs the same question from the other side, over ten
+chapters and every code-only instrument the repository has: no clause ever moved a sentence
+metric, and the one place the sentence axis did move is the reviser. One of the clauses was
+recorded being broken on the very next read after it shipped.
+
+**The operator's word is the other half, and both halves are needed here.** §127's brake says a
+rule encoding a measured correction comes out against a measurement rather than against a mood.
+Two entries have cited that brake to refuse exactly this subtraction, and both were right to:
+neither had a measurement. This track has the audit, and it has the operator's instruction at that
+report — *remove Register clauses in prompts*. Neither alone would have been enough and this entry
+does not pretend otherwise.
+
+### 187.1 What shipped: five clauses out of `house`, four of them into the reviser
+
+| clause | left | arrived |
+| --- | --- | --- |
+| §171, the narratorial gloss | `house.READER` | `application/reviser.py` |
+| §179, the absence and the restatement | `house.READER` **and** `application/overview._TASK` | `application/reviser.py` |
+| §176, the failed comparison | `house.CLARITY` | `application/reviser.py` |
+| §181, the specialist's word | `house.CLARITY` | `application/reviser.py` |
+| §180, the chained action | `house.CLARITY` | **nowhere — the reviser had it already** |
+
+**The four that moved arrived byte-identical to the text that left**, and that is a decision twice
+over. Each of those wordings is what its own entry argued and tested its way to — the gloss bounded
+by a character's read of one moment, the comparison scoped so ordinary metaphor is never reached,
+the diction clause keyed on provenance rather than rarity because §156.3 measured our rare-word
+rate inside the genre's own range. Redrafting a clause while moving it would also make a later
+census unable to say which change it was reading. Each clause's own test file moved with it, keeps
+every name the ledger cites, and now asserts the sentence at its new address.
+
+**§180's needed no port, and the reason is a defect this track found rather than fixed.** The
+reviser's instruction was written before §180 and already forbade the same shape. So for as long
+as both stood, one prohibition had two homes — §152's defect — and the removal simply ends it.
+
+**A fifth clause is new, and the audit asked for it.** The reviser's existing prohibition has a
+unit and not a subject: its object is one sentence, so a chain answered by cutting it in two obeys
+the rule and leaves the relation unsaid across the two sentences that result. The audit measured
+exactly that outcome. The new clause takes a **pair of sentences** as its object and names the same
+three relations the existing one names, so it is one relation set at two units rather than a second
+rule against one complaint (§127). It is prohibition-signed (§138), its object is a thing a writer
+can see and emit fewer of (§154), and it carries no concession because it excludes by construction
+the way §181's does: where neither sentence is the reason, the moment or the condition of the
+other there is nothing for it to fail, so ordinary consecutive sentences are never reached and
+§163's failure mode has no door. None of the operator's words are in it and no read supplied it
+(§97.1) — the relation names are the reviser's own, already in that file.
+
+### 187.2 The line the removal is drawn on, and what stayed
+
+**A clause whose object is how a sentence sounds went. A clause whose object is whether a reader
+can assemble what the sentence says stayed.** That is the whole rule, and it is why the subtraction
+is not simply "the floor is too big".
+
+What stayed on `house.CLARITY`: the unmet-term pair, the two-ways clause, the object-acting clause,
+and the paragraph trio. What stayed on `house.READER`: the economy and offer clauses, the movement
+criterion, the numbers clause, and §168's passage prohibition — that last one for a second reason
+of its own, that its family is one the reads stopped naming, so it sits in the audit's column of
+things that worked.
+
+**§176's pronoun scope word stayed with the clause it widened**, and this is the one place the
+entry-number view and the object view disagree. §176 shipped two edits; only one is register. The
+widening says that inside a paragraph a pronoun points at one person *or object*, and what it
+governs is a reader rereading to find out who is meant — antecedent mechanics on a rule read 2
+measured. It cost no demand going in and it costs none staying.
+
+### 187.3 The plain-words lineage, evaluated and found not to name a live clause
+
+The audit's harm column names *"the plain-words lineage back to pilot 3"* beside the four numbered
+clauses, and the recurrence map says a plain-words clause has been in the drafting packet since
+pilot 3. **That was checked against the source rather than accepted, and it does not name a live
+clause.** The pilot-3-era rule the reads cite is C7, from the packet the clarity constitution
+deleted; its text is not in `src/` and the only trace of it anywhere in the package is a comment in
+`domain/house.py` recording that it used to pass each sentence of a paragraph that failed anyway.
+
+**So the lineage's live descendants at the last read were §176 and §181, and both are removed by
+this entry** — which is the same call arrived at from the other direction, and it is recorded here
+so a later reader does not go looking for a sixth clause that was left standing. C7's other
+enumerated failure, a verb lent to a thing that cannot perform it, survives as `CLARITY`'s
+object-acting clause, and that one **stays**: a reader who has to un-read an object performing an
+act is a comprehension failure and not a register preference, which is exactly the line §187.2
+draws. The `world declare` help text and the listing's genre clause also say *plain words*; neither
+is a diction rule and neither is touched.
+
+### 187.4 The price, in both directions
+
+`tests/test_prompt_budget.py` carries every number with its reason, and this is the first commit in
+that file's history where the totals fall. Six rows drop — the house floor, both Architect rows,
+both scene rows, the maximal assembled scene prompt — and the listing drops on its own, since no
+floor sits under it. **Every ceiling is set at what is now there rather than left high**, because a
+ratchet holding several demands of slack is not a ratchet: the next clause added to that floor has
+to be a decision again.
+
+**One row rises and it is the reviser.** Its floor half falls with everything else and its own half
+grows by the five clauses above, netting up. That raise is what the removal buys, and it is not the
+"subtraction looked for and refused" that the budget file's other raises record — the subtraction
+is in the same commit, at seven other rows, and the net across the table is strongly negative.
+
+**Two losses are recorded rather than smoothed.** The Architect no longer receives §181's naming
+prohibition, which was the one demand among the five that was not inert there; its own rule asking
+for short plain words is untouched and is now the whole of what the seed is told on the subject.
+And the demands the two Architect rows give back were, by those entries' own admission, inert — so
+what is unwound there is a price that was being paid for nothing.
+
+### 187.5 What was refused
+
+**Restoring the sentence §180 subtracted.** It paid for a clause this entry removes, and the
+temptation is to treat a subtraction as a deposit reclaimable when the purchase is returned. It is
+not: what went was unaddressable by §154 and restated a standard the floor's opening line still
+sets, so putting it back would add a demand landing with its sign multiplied by zero to every prose
+call in the pipeline. The floor closes on the paragraph clause instead.
+
+**Removing §179's floor half alone.** That clause shipped at two addresses on purpose. Taking only
+the floor's copy would have promoted a withdrawn rule to sole occupancy of the listing — the one
+production role a floor edit cannot reach — which inverts the reason §179.3 wrote it there.
+
+**Leaving a copy of any moved clause behind as a pointer.** Two homes for one rule is §152's defect
+and this track had five chances to commit it.
+
+**Redrafting the moved clauses to suit their new role**, refused for §187.1's reason.
+
+**Rewriting the reviser's stage order, persisting the pre-revision draft, teaching the census
+instruments the house page format, and demoting the coordinator's gate.** These are the audit's
+other recommendations and none of them is done here. This entry is recommendations 1a, 1c and 4
+plus the operator's extension, and nothing else; the rest are unstarted and stay that way rather
+than being half-done under one commit.
+
+**A bar, a counter, or a claim that any of this improves a page.** None is declared. The four
+attainability checks were not run because there is no quantity here to run them on: every number
+this track produced is a count of demands. **This is a subtraction shipped unmeasured on the page**
+— the audit measures what the clauses did *not* do, which is the case for removing them and is not
+evidence that removal helps. The next draw is what reads it, and a family recurring after this is
+the outcome to expect rather than a surprise, because the clauses were not what was stopping it.
+
+### 187.6 Corrections in place
+
+§171, §176, §179, §180 and §181 each carry a correction at the head of the entry: strikethrough on
+the claim about where the clause stands, the new address, and what of that entry survives the move.
+None of their reasoning is edited — §176's audit order, §179's asymmetric bounds, §181's
+provenance-not-rarity object and §180's action-not-length object are all still the arguments in
+force, at the reviser. §185's row in the budget file predicted that seven numbers would move with a
+floor clause rather than six; that prediction is confirmed here in the falling direction.
+
+### 187.7 Anti-scope
+
+No model read, ranked, selected or judged anything for this entry, and no provider call was made.
+No corpus was opened, so RS1 is untouched. No book was drawn and no `runs/` store was written to or
+read. No research claim is promoted and no mechanism is qualified: the audit is operator
+diagnostics under §95, and the report's own boundary — that a family's disappearance beside a fix
+is a co-occurrence and never a treatment effect — governs every use made of it above. Nothing from
+any read became prompt text (§97.1); the one new clause is built from words already in the file it
+was added to, and each moved clause's §97.1 test now checks the clause at its new address. No count
+from `plan/agent-impact/` is restated here, no test count is stated anywhere, and the reader
+channel, the editorial control plane, the roster and every dossier are untouched.

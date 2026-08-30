@@ -1,23 +1,31 @@
-"""Stage-0 §180: the chained-sentence prohibition, and the em dash removed by machine.
+"""Stage-0 §180, half removed by §187: the chained-sentence prohibition, and the em dash strip.
 
 **Two items from read 11 and they are answered in two different ways, which is the finding this
 file holds.** One is a shape a writer produces and only a writer can not produce; the other is a
-character, and a character does not need to be asked for.
+character, and a character does not need to be asked for. **§187 removed the first and left the
+second exactly as it is**: the strip is mechanical, it is in the audit's own column of things
+that worked, and nothing below the `--- the strip ---` rule changed.
 
-**The clause.** Read 11 named punctuation and sentence structure as a family — the fourth read to
-land on it — over a sentence chaining six separate actions. Every demand on `house.CLARITY` was
-read against that sentence first (§154's audit order) and each missed by its object: the
-unmet-term pair fails a *name* and there is none, the two-ways pair fails a sentence with two
-readings *available* and this one has a single reading with every clause in it followable, the
-object pair fails an object *acting* and each action here has a person doing it. That is
-§168.2's shape — a gap between what the rule is about and what it can fail — and the one
-condition a new clause is licensed for.
+**The clause was removed from `house.CLARITY` on 2026-08-30, and it is the one removal in §187
+that needed no port.** `application/reviser.py` already carried a prohibition on the same shape —
+a sentence hanging one happening on the next with nothing between them saying which — and it
+carried it before §180's clause was written, so the floor's copy was the second home and §152's
+two-homes defect was live for as long as both stood. The audit supplies the measured half:
+`plan/agent-impact/` reports the chain share falling by two thirds at the reviser and no clause
+on this floor moving a sentence metric across ten chapters. The operator's word at that report is
+the other half of §127's brake. `test_the_clause_fails_a_chain_and_not_a_long_sentence` now reads
+the surviving prohibition at the surviving address.
 
-`test_the_clause_fails_a_chain_and_not_a_long_sentence` is the one to read. The hazard on this
-axis runs both ways: a cap on sentence length would delete the elaborated sentence a genre
-opening lives on, and §163 is the standing record of what a filter keyed one notch wider costs.
-The object is therefore a count of actions, and the concession inside the sentence names length
-spent on one happening as *not* the failure.
+**The subtraction §180 made to pay for the clause is not reversed, and that is a decision.**
+`test_the_clause_was_paid_for_by_the_restatement_it_replaced` holds it: the sentence removed then
+was a restatement of a standard the rule's opening already sets, §176.1 had classified it as the
+half a writer cannot act on, and putting an unaddressable sentence back on every prose call
+because its purchase was returned would be the worst trade in the file.
+
+**The hazard the clause was shaped around still governs its surviving form.** It runs both ways:
+a cap on sentence length would delete the elaborated sentence a genre opening lives on, and §163
+is the standing record of what a filter keyed one notch wider costs. The object is therefore what
+happens in a sentence and never how long it is.
 
 **The strip.** The em dash is read 1's own axis returning at read 11 with no drafting rule ever
 written against it, and it is a character. A clause would have cost a demand at every role that
@@ -39,6 +47,7 @@ from __future__ import annotations
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
+from litharness.application import reviser
 from litharness.domain import house, voice
 from litharness.domain.directors import prose_axes_named
 from litharness.domain.draft import strip_em_dash
@@ -49,17 +58,24 @@ from tests.test_draft import START, conductor_for, registry_with, seeded
 #: The registered mark, read from its one home for `strip_em_dash`'s own reason.
 MARK = voice.EXHIBITION_MARKERS["em_dash"]
 
-#: The demand §180 added, held by its operative words rather than whole, so a later re-scope of
-#: its object does not have to edit an assertion about its punctuation.
+#: The demand §180 added to `house.CLARITY` and §187 removed from it. Held by its operative words
+#: so the absence is asserted against the same phrase the presence used to be.
 _CHAIN = "a fourth thing happens after three already have"
 
-#: The sentence §180 removed to pay for it. `house.demands` reads the same count as a result, so
-#: no ceiling moved and `tests/test_prompt_budget.py` needed no raise.
+#: The prohibition that survives, at the address that had it first. `application/reviser.py` was
+#: written before §180's clause and carried this shape from the start, which is why §187 removed
+#: the floor's copy without porting anything: there was nowhere to port it to that did not have
+#: it already.
+_REVISER_CHAIN = "hanging one happening on the next"
+
+#: The sentence §180 removed to pay for its clause. **§187 did not put it back**, and
+#: `test_the_clause_was_paid_for_by_the_restatement_it_replaced` is where that decision lives.
 _RESTATEMENT = "A thing the reader cannot follow is a thing that did not happen"
 
 
 def _clause() -> str:
-    (found,) = [item for item in house.demands(house.CLARITY) if _CHAIN in item]
+    """The surviving prohibition, read from `reviser._TASK` since §187."""
+    (found,) = [item for item in house.demands(reviser._TASK) if _REVISER_CHAIN in item]
     return found
 
 
@@ -71,58 +87,101 @@ def store(tmp_path) -> SqliteStore:
 # --- the clause ----------------------------------------------------------------------
 
 
+def test_the_floor_no_longer_carries_the_chain_clause_and_the_reviser_always_did() -> None:
+    """§187's removal, and the pair is the whole argument for making it without a port.
+
+    A rule with two homes drifts in one of them (§152). This one had two from the moment §180
+    shipped, because `application/reviser.py` had been written first and already forbade the same
+    shape at the stage the audit measured actually moving it. So the floor's copy comes out and
+    nothing moves anywhere: the second assertion is what makes the first safe, and a later track
+    reading only the first would conclude the prohibition was abandoned.
+    """
+    assert _CHAIN not in house.CLARITY
+    assert _CHAIN not in house.HOUSE_RULES
+    assert _REVISER_CHAIN in reviser._TASK
+
+
 def test_the_clause_fails_a_chain_and_not_a_long_sentence() -> None:
     """The object that keeps §163's failure mode out of a clause aimed at sentence structure.
 
+    **Repointed by §187 to the surviving prohibition**, which is the reviser's own and predates
+    §180's. The name is kept because `tests/test_architecture.py` holds every ledger citation to
+    an existing test and §180 cites this file; the property asserted is the same property, at the
+    address that still asserts it.
+
     A rule that failed a sentence for its *length* would delete elaboration — one thing
-    happening, described at whatever length it takes — which is not what any read has named. The
-    prohibition counts things that happen; the concession says length is not the test. Both
-    halves are asserted because either alone is the wrong rule.
+    happening, described at whatever length it takes — which is not what any read has named. This
+    prohibition's object is a sentence that hangs one happening on the next while never saying
+    which is the reason for which, so it reaches chaining and cannot reach an elaborated sentence
+    about one thing: nothing in it counts words.
     """
     clause = _clause()
     assert clause.startswith("What fails is"), (
         "§138 measured a permission returning more than six times what a prohibition did, and "
         "worse than silence. This demand is signed as a prohibition and stays that way."
     )
-    assert "sentence in which" in clause, "the object is a sentence, which a writer emits"
-    assert "length spent on one thing happening is not that" in clause, (
-        "without the concession this reaches elaboration, and §163 is the record of what a "
-        "filter keyed one notch wider than its defect costs"
+    assert "a sentence hanging" in clause, "the object is a sentence, which a writer emits"
+    assert "the reason, the moment or the condition" in clause, (
+        "the clause reaches a chain by what it leaves unsaid between two happenings; strip this "
+        "and it becomes a rule about conjunctions"
     )
+    for length in ("long", "words", "short", "brief", "length"):
+        assert length not in clause.lower(), (
+            "without this the clause reaches elaboration, and §163 is the record of what a "
+            "filter keyed one notch wider than its defect costs"
+        )
 
 
 def test_the_concession_sits_inside_the_demand_it_bounds() -> None:
     """§161.5's pattern, and the reason it is not decoration.
 
     A concession written as its own sentence is a permission, and `house.demands` would count it
-    as a second demand at every role standing on the floor. Hung off a semicolon inside the
-    sentence it delimits, it costs nothing and cannot be obeyed on its own.
+    as a second demand at every role that reads it. Hung off a semicolon inside the sentence it
+    delimits, it costs nothing and cannot be obeyed on its own.
+
+    **Repointed by §187, and the count moved from the floor to the reviser** because that is
+    where the concession-bearing clauses now are. `house.CLARITY` carried two and carries none:
+    §176's comparison clause and §180's chain clause both ended this way and both left. The
+    reviser carries four — its own perception clause, plus §171's, §179's and §176's, each of
+    which arrived with its concession attached because they moved byte-identical. The exact
+    count is what would catch a later edit letting one out into a sentence of its own.
     """
-    clause = _clause()
-    assert ";" in clause
-    prohibition, concession = clause.split(";", 1)
-    assert "What fails" in prohibition
-    assert "not that" in concession
-    assert len([item for item in house.demands(house.CLARITY) if "not that" in item]) == 2, (
-        "the figure clause (§176) and this one each carry their concession inside; a third "
-        "demand ending this way means one was let out into a sentence of its own"
+    assert len([item for item in house.demands(house.CLARITY) if "not that" in item]) == 0
+    bounded = [item for item in house.demands(reviser._TASK) if "not that" in item]
+    assert len(bounded) == 4, (
+        "four clauses at this role carry their concession inside their own sentence; a fifth "
+        "demand ending this way means one was let out into a permission of its own"
     )
+    for clause in bounded:
+        prohibition, semicolon, concession = clause.partition(";")
+        assert semicolon, f"the concession in {clause!r} must share the prohibition's sentence"
+        assert "What fails" in prohibition
+        assert "not that" in concession
 
 
 def test_the_clause_was_paid_for_by_the_restatement_it_replaced() -> None:
-    """The subtraction §176 looked for and could not make, made here.
+    """The subtraction §176 looked for and could not make, made here — and not undone by §187.
 
     §176.1 ruled the sentences opening and closing `CLARITY` the half a writer cannot act on, and
     §176.5 refused to cut the *opening* one because its second half carries the
     following-rather-than-explaining correction the constant was corrected twice in one day to
     get. The closing one carries no measurement, has no entry in the ledger and restates a
-    standard the opening already sets, so it is the candidate §127's brake does not protect.
+    standard the opening already sets, so it was the candidate §127's brake does not protect.
+
+    **§187 removed the clause that sentence paid for and deliberately did not bring the sentence
+    back.** A subtraction is not a deposit to be reclaimed when the purchase is returned: what
+    went was unaddressable by §154 and restated a standard the floor still sets in its opening
+    line, so restoring it would put a demand that lands with its sign multiplied by zero onto
+    every prose call in the pipeline. The floor now closes on the paragraph clause, which is a
+    rule about a thing a writer can see.
     """
     assert _RESTATEMENT not in house.CLARITY
-    assert _CHAIN in house.CLARITY
-    assert house.CLARITY.rstrip().endswith("is not that."), (
-        "the floor now closes on a prohibition rather than on a restatement of its own standard"
+    assert _CHAIN not in house.CLARITY
+    assert house.CLARITY.rstrip().endswith("and the sentences were all fine."), (
+        "the floor closes on the paragraph clause; if this moved, say which clause is last and "
+        "why, because the closing sentence has been a subject of three entries"
     )
+    assert "Every sentence can be followed the first time it is read." in house.CLARITY
 
 
 def test_the_clause_names_no_registered_prose_axis() -> None:
@@ -131,7 +190,9 @@ def test_the_clause_names_no_registered_prose_axis() -> None:
     `directors._CRAFT_INSTRUCTION` refuses a brief or a dossier that instructs about an axis
     under measurement, and its `em_dash` pattern fires on the word *punctuation* alone. Read 11's
     own words for this family are "punctuation and sentence structure", and none of them are in
-    the clause: its object is what happens in a sentence, not how a sentence is pointed.
+    the floor: its clauses are about what happens in a sentence, not how a sentence is pointed.
+    Still asserted over the floor after §187, because the floor is what reaches every prose role
+    and a later clause added there is the thing this guards against.
     """
     assert prose_axes_named(house.CLARITY) == ()
     assert prose_axes_named(house.HOUSE_RULES) == ()

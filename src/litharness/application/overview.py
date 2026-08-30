@@ -286,6 +286,18 @@ def chains_too_hard(listing: str, *, ceiling: float) -> bool:
 #: open. Ceiling 15 -> 16, raised on purpose in `tests/test_prompt_budget.py`. Shipped
 #: unmeasured: no draw stands behind it, and the next listing draw is what reads it.
 #:
+#: **The implication clause was removed on 2026-08-30 (§187), from here and from `house.READER`
+#: in the same edit.** It shipped at two addresses as one rule, so it comes out of both — leaving
+#: this copy standing would give a removed rule its only home at the one production role that
+#: stands on no house floor, which inverts the reason it was written. The measurement is
+#: `plan/agent-impact/`: the audit finds every family still alive at read 13 clause-addressed and
+#: no register clause moving a sentence metric across ten chapters, and the operator's word at
+#: that report is to take the register clauses out of the prompts. §127's brake needs both and
+#: has both. The clause now stands once, in `application/reviser.py`. Ceiling 18 -> 17 in
+#: `tests/test_prompt_budget.py`. The word `implies` accordingly appears once in this task again,
+#: with the genre-noun clause's sign, and the collision the paragraph below reads through is gone
+#: rather than resolved — a later track adding a second sense back should re-read it.
+#:
 #: **The implication clause arrives here the same day as the floor's, and this is the address the
 #: read actually named** (§179). Read 11 flagged two instances of a construction — a narrator
 #: asserting an absence or a universal access the surrounding words already give — and **both are
@@ -397,9 +409,6 @@ _TASK = (
     "does to somebody.\n"
     "A paragraph holds together or it is not a paragraph: a sentence that could be lifted out "
     "and dropped anywhere in the listing has failed.\n"
-    "What fails is a clause naming an absence or a permission nothing had put in question, or "
-    "stating anything else its own sentence already implies; one carrying what the reader could "
-    "not have supplied is not that.\n"
     "No title, no headings, no tags, no word about the author, and no dashes: this market's "
     "listings punctuate with full stops and commas. The person this happens to is he or she or "
     "I, and never you. About a hundred words."
