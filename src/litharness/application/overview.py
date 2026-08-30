@@ -320,6 +320,61 @@ def chains_too_hard(listing: str, *, ceiling: float) -> bool:
 #: are measured on or a clause whose removal §138 has already measured the cost of. Shipped
 #: unmeasured; the two instances that named the family are fixtures in a test and reach no prompt
 #: (§97.1).
+#:
+#: **The house genre arrives here on 2026-08-30, and until it did, nothing in this call said
+#: which kind of book was being sold** (§183). The genre is mandatory and the seed already
+#: refuses a book that cannot speak system voice (`domain/genre.genre_block`), but the seed runs
+#: *after* the premise exists: this is the call that invents what a reader is promised, and three
+#: listings were refused at the coordinator's gate in one day for promising something else —
+#: light fantasy (pilot 13), sci-fi horror with no interface in it (pilot 18), and an
+#: institution's paperwork twice (pilot 17, refused on its own §116 ground and sharing this
+#: surface).
+#:
+#: **The clause five lines down was read first and it is genre-agnostic by construction** (§154's
+#: audit order). *"A reader scanning a list has to see what kind of book this is ... name the
+#: magic, the system, the monsters, the dungeon in plain words rather than implying them"* asks a
+#: listing to be plain about whatever furniture it has; any kind of book satisfies *what kind of
+#: book this is*, and the four nouns read as instances of what to say plainly rather than as
+#: things a book must contain. Pilot 18's listing named none of them and broke no rule. So the
+#: gap is presence, not plainness, and the two clauses stand in that order: what the book has,
+#: then how to name it.
+#:
+#: **Affirmative on purpose, which §138 is usually the argument against.** That measurement is
+#: about *suppressing* an overproduced feature, and nothing can be forbidden into existence. The
+#: precedent is in this same constant: the genre-noun clause is affirmative, and removing it took
+#: four writers from 0, 2, 3, 4 of the genre's own nouns to 0, 0, 0, 0 against a market median of
+#: 2. This defect is that shape — an absence measured at zero — so the clause is signed the way
+#: the one measured against the same defect is.
+#:
+#: **What it deliberately does not say, each refusal costing nothing.** It names no shelf label:
+#: §136 measured two words of genre-as-brief outweighing every rule in this prompt, and
+#: `application/recruiter.py` reached the same conclusion at its own address on 2026-08-29 — the
+#: house genre reaches a prompt as its mechanical floor and never as its name. It names no
+#: quantity, so the numbers prohibition three clauses above governs the gain unopposed; §136's
+#: own worst listing was furniture with numbers on it. And it supplies **no noun** for the thing
+#: that is opened, so the book's own word is the model's to pick — which is what keeps §178's
+#: return-side check meaningful rather than a check on a word this prompt handed over.
+#:
+#: **One sentence carrying two halves, and the accounting is reported twice so the counter is not
+#: doing the arguing alone.** `plan/house-genre-constraint.md` names both — the furniture exists,
+#: and a gain on it is on the page rather than deferred — and a listing failing either is refused
+#: at the same gate for the same reason, which is why the terminator is one clause (§179.4's
+#: shape, conjunction rather than subsumption). `house.demands` prices it at one; the assembled
+#: system message grows 2,120 -> 2,356 characters, and §171 records that a demand bought by
+#: evading this counter is not a demand saved. Ceiling 17 -> 18 in `tests/test_prompt_budget.py`,
+#: raised on purpose, with the subtraction looked for first and refused there.
+#:
+#: **The empty-brief control is rewritten deliberately rather than silently**, which is the
+#: hazard `plan/house-genre-constraint.md` recorded before this track existed. Nothing is put in
+#: the brief field, `render_overview_request` renders the same default it always did, and an
+#: empty brief is still empty — so the operator's content channel is untouched and briefed
+#: against unbriefed is still a comparison of what was asked for. What is no longer controlled is
+#: **genre presence**: every listing drawn from now on promises this house's book in both arms,
+#: so §136's arm B is no longer a genre-free arm and no genre-noun or rank-vocabulary count
+#: taken after this clause may be read against one taken before it. §183 carries the full
+#: statement.
+#:
+#: Shipped unmeasured. No draw stands behind it; pilot 18's redraw is what reads it.
 _TASK = (
     "You are writing the listing for a new serial: the few lines a reader meets on the front "
     "page of a serial-fiction site, and the only thing that decides whether they open chapter "
@@ -329,6 +384,9 @@ _TASK = (
     "Exactness spent on floors, ranks, counts and lengths of time is space the hook needed.\n"
     "A sentence a reader can take two ways has failed, and so has one that asserts what nobody "
     "in the story could know yet.\n"
+    "The book this promises is one where the person opens something and reads their own "
+    "capabilities in it, and the promise names one of them they did not have before; a promise "
+    "missing either half is for a book this house does not publish.\n"
     "A reader scanning a list has to see what kind of book this is and what the person is "
     "after: name the magic, the system, the monsters, the dungeon in plain words rather than "
     "implying them, and say what the person is trying to get.\n"

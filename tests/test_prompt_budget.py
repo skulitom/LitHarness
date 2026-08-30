@@ -235,7 +235,23 @@ BUDGET: dict[str, int] = {
     # clauses are a 2026-08-26 restoration of text lost by accident, and §174's demand is one day
     # old. So it pays here and says why. The floor's own six rows do **not** move for this clause
     # — see `HOUSE_BUDGET`.
-    "listing writer": 17,
+    #
+    # **Raised 17 -> 18 on 2026-08-30 for the house genre, which had never had a surface at the
+    # call that invents the premise** (§183). The genre is mandatory and `domain/genre.py`
+    # refuses a book that cannot speak system voice — but that floor sits at the *seed*, which
+    # runs after the premise exists, and the listing is the promise a reader buys. Three listings
+    # were refused at the coordinator's gate in one day for promising a different kind of book.
+    # **A subtraction was looked for first**, in the order this file asks for, and refused at
+    # every candidate: the number clause and the format line are measured against this market
+    # (§138), the two `house.CLARITY` clauses are a restoration of text lost by accident, and the
+    # genre-noun clause is the nearest neighbour and the one §127's brake covers outright —
+    # removing it took four writers to 0, 0, 0, 0 of the genre's own nouns, so it encodes a
+    # measurement and does not come out against a mood. This row pays alone because it is still
+    # the one production role with no house floor under it. The clause is one sentence carrying
+    # both halves of the constraint, so it costs one demand here and 236 characters, and both
+    # numbers are written down in `application/overview.py` rather than only the one this counter
+    # can see (§171's evasion, named against itself).
+    "listing writer": 18,
     # **Raised 42 -> 44 on 2026-08-29, for three sentences that replace an absence** (§163).
     # The seed ask named a ladder and named nothing that hands out its rungs, so the model
     # supplied the nearest issuer it knows and the book got an institution: pilot 14's
