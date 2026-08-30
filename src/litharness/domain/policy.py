@@ -62,6 +62,19 @@ RETRYABLE: frozenset[Veto] = frozenset(
         # were fine and the *output* overreached, so a second attempt against the same
         # located complaint is a fair try at a narrower one.
         Veto.CITED_SCOPE_EXCEEDED,
+        # A scene whose plan named a quantity as moving and whose state does not move it.
+        # Classified here rather than in `PARKABLE`, and the distinction is the one
+        # `PARKABLE`'s own docstring draws. That set exists because retrying against a
+        # *craft proxy* is rejection sampling: the metric was calibrated on the passive
+        # distribution, and three attempts select the half of the generator it happens to
+        # favour rather than observing it three times. None of that argument reaches here.
+        # This gate reads no proxy and no calibration — it compares one integer the packet
+        # showed the writer against the same integer in the state the scene wrote down —
+        # so a second attempt is not optimisation against a threshold, it is asking again
+        # for a thing the prompt already asked for in words. Which is `LENGTH_MOVEMENT`
+        # and `SHAPE_NOT_CONFORMING` exactly: the inputs were right and the output did not
+        # do what it was told.
+        Veto.PROGRESSION_UNMOVED,
     }
 )
 

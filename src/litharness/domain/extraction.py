@@ -1415,6 +1415,7 @@ __all__ = [
     "GraphLine",
     "MalformedGraphLine",
     "MalformedSheet",
+    "Movable",
     "Sheet",
     "SheetField",
     "attested_position",
@@ -1429,6 +1430,7 @@ __all__ = [
     "implied_sheet",
     "label_for",
     "movable_names",
+    "movables",
     "normalise_subject",
     "offered_choice",
     "parse_graph_line",
@@ -1669,6 +1671,28 @@ def _stands_before(key: str | None, at: str) -> bool:
     return state_mod.comparable(key, at) and key < at
 
 
+@dataclass(frozen=True, slots=True)
+class Movable:
+    """One quantity a scheduled beat may name, and the snapshot key that quantity moves.
+
+    **The pair exists because the beat and the check read the same answer from two ends.** The
+    plan carries the `name` — the book's own word, which is the whole of §161.4's argument for
+    naming a quantity rather than a category — and the only thing that can afterwards say
+    whether it moved is the `key` it occupies in the `status_snapshot` this book prints. A
+    function returning names alone forces whoever verifies the ask to map a label back onto a
+    column by its own rule, and a second mapping is a second answer to "which number is this".
+
+    The mapping is never invented here. In the legacy arm the pair is a `SheetField`'s own
+    `(label, name)`; in the system arm it is a `gamesystem.Column`'s `(label, name)`, except
+    for a rise, which is named by the rung it reaches and moves `gamesystem.RANK_KEY` — the one
+    place the two differ, and it differs because a rank has a name of its own while the column
+    carrying it does not.
+    """
+
+    name: str
+    key: str
+
+
 def counted_names(
     records: Sequence[lc.StateRecord], *, at: str | None = None
 ) -> tuple[str, ...]:
@@ -1692,12 +1716,17 @@ def counted_names(
     guarantee has to live. A book whose every label collides falls back to the unnamed form,
     which is the correct failure — the schedule still fires and names nothing.
     """
+    return tuple(item.name for item in _counted(records, at=at))
+
+
+def _counted(records: Sequence[lc.StateRecord], *, at: str | None = None) -> tuple[Movable, ...]:
+    """`counted_names` with the column each name moves still attached. See `Movable`."""
     standing = state_as_it_stands(records, at=at)
     if standing is None:
         return ()
     held = set(standing[1])
     return tuple(
-        field_.label
+        Movable(field_.label, field_.name)
         for field_ in sheet_for(records).fields
         if field_.name in held and field_.label.casefold() not in house_mod.MACHINERY_WORDS
     )
@@ -1744,6 +1773,23 @@ def movable_names(
     accept` and a reader that saw nothing until acceptance would report an empty world
     mid-build. A beat is not that reader — a proposed system is a plan for later, and
     scheduling a scene around one would put an unaccepted draw on the page.
+
+    **The names alone**, because a plan carries words. `movables` is the same answer with the
+    column each name moves still attached, and it is the one this function projects — so the
+    quantity a beat asks for and the number a later check reads cannot come apart.
+    """
+    return tuple(item.name for item in movables(records, character=character, at=at))
+
+
+def movables(
+    records: Sequence[lc.StateRecord], *, character: str | None = None, at: str | None = None
+) -> tuple[Movable, ...]:
+    """`movable_names` with the column each name moves still attached. See `Movable`.
+
+    Every rule, arm and abstention is `movable_names`' own and is documented there; this holds
+    the body because the pair is the fuller answer and the names are a projection of it. Kept
+    as one function for the reason that docstring gives for having one source of beat
+    vocabulary at all: a second reader of "what may move here" is a second answer to it.
     """
     if character is not None:
         canon = [record for record in records if state_mod.is_canon(record)]
@@ -1752,7 +1798,7 @@ def movable_names(
             sheet = gamesystem_mod.sheet_of(canon, character, system=systems[0], at=at)
             if sheet is not None:
                 return _named_moves(systems[0], gamesystem_mod.legal_moves(sheet))
-    return counted_names(records, at=at)
+    return _counted(records, at=at)
 
 
 def _system_prints_the_line(
@@ -1778,11 +1824,14 @@ def _system_prints_the_line(
 
 def _named_moves(
     system: gamesystem_mod.SystemDef, moves: Sequence[gamesystem_mod.Move]
-) -> tuple[str, ...]:
-    """One name per available move, in the order they were offered.
+) -> tuple[Movable, ...]:
+    """One name per available move, in the order they were offered, with the column it moves.
 
     A `RISE` is named by the rung it reaches and everything else by the ability that moves,
-    which is the name the system itself declared — nothing here mints a word. `MACHINERY_WORDS`
+    which is the name the system itself declared — nothing here mints a word. **The column is
+    the ability's own** (`SystemDef.columns` prints one per ability, keyed by `ability_id`),
+    and a rise moves `RANK_KEY`, because the rung it reaches is a name and the rung column is
+    the one number carrying it. `MACHINERY_WORDS`
     are dropped for `counted_names`' reason: this vocabulary reaches the writer inside a scene
     plan and therefore shapes prose a reader reads, and a declared name is book data that no
     ceiling test can cover.
@@ -1796,16 +1845,16 @@ def _named_moves(
     """
     abilities = {ability.ability_id: ability.name for ability in system.abilities}
     ranks = {rank.rank_id: rank.name for rank in system.ranks}
-    named: list[str] = []
+    named: list[Movable] = []
     for move in moves:
         if move.kind is gamesystem_mod.AdvanceKind.CHOOSE:
             continue
         if move.kind is gamesystem_mod.AdvanceKind.RISE:
-            name = ranks.get(move.rank_id or "")
+            name, key = ranks.get(move.rank_id or ""), gamesystem_mod.RANK_KEY
         else:
-            name = abilities.get(move.ability_id or "")
-        if name and name.casefold() not in house_mod.MACHINERY_WORDS:
-            named.append(name)
+            name, key = abilities.get(move.ability_id or ""), move.ability_id or ""
+        if name and key and name.casefold() not in house_mod.MACHINERY_WORDS:
+            named.append(Movable(name, key))
     return tuple(named)
 
 

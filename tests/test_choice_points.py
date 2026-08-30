@@ -477,7 +477,9 @@ def test_the_progression_beat_never_names_a_fork() -> None:
     risen = gamesystem.rise(gamesystem.starting_sheet(system, "mira"), at="s2").sheet
     moves = gamesystem.legal_moves(risen)
     assert any(move.kind is gamesystem.AdvanceKind.CHOOSE for move in moves)
-    named = extraction._named_moves(system, moves)
+    # `_named_moves` returns `(name, column)` pairs since §184, so the beat's word and the
+    # number a later check reads cannot come apart. This assertion is about the words.
+    named = {item.name for item in extraction._named_moves(system, moves)}
     assert "Hand" not in named
     assert "Reading" in named, "the ordinary moves are still named"
 

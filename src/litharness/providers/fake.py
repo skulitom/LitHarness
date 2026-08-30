@@ -13,6 +13,7 @@ model — which is exactly the path most likely to be wrong.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from hashlib import sha256
 from typing import Any
@@ -74,6 +75,43 @@ def _synthesise(schema: dict[str, Any], seed: str) -> dict[str, Any]:
     return payload
 
 
+#: The book's own printed line, wherever the drafting call puts it in the system message.
+#: Matched by its opening token only: this provider does not know what a status line means and
+#: must not learn — the columns, the labels and the subject are the book's, and every one of
+#: them is carried through untouched.
+_STATUS_LINE = re.compile(r"^\[STATUS\] .*$", re.MULTILINE)
+
+#: An integer that is not the second half of an `n/m` pair. A paired column's maximum is a
+#: ceiling the book declared rather than a value anybody moves, so moving it would write a
+#: state no advancement produces.
+_MOVABLE_NUMBER = re.compile(r"(?<![\d/])(\d+)")
+
+
+def _carried(system: str | None) -> str | None:
+    """The book's status line with every unpaired number moved by one, or `None`.
+
+    **Why a deterministic provider prints a line at all.** `pad_to_chars`' note records the rule
+    this follows: a model-free autonomous run that cannot clear a mechanical gate poisons every
+    beat and leaves a green board over an empty manuscript, and the answer taken then was to
+    make the fake *conforming* rather than to loosen `min_chars` — "a gate loosened to make a
+    test pass is not a gate". §184's progression gate is the second mechanical gate to reach
+    this provider: a scene whose plan named a quantity as moving is refused where the state it
+    writes down holds that quantity still, and echo-and-filler output writes no state down at
+    all.
+
+    **Every number, and not the one the beat named.** Reading which column was asked for would
+    mean this provider knowing the house's own beat sentence, which is a second home for text
+    that lives in `domain/genre.py`. Moving all of them is the same mechanical trick padding is:
+    it makes the fake satisfy a contract without making it look like it understood one.
+    """
+    if not system:
+        return None
+    found = _STATUS_LINE.findall(system)
+    if not found:
+        return None
+    return _MOVABLE_NUMBER.sub(lambda match: str(int(match.group(1)) + 1), found[-1])
+
+
 def _padded(text: str, target: int, digest: str) -> str:
     """Extend ``text`` to ``target`` characters with filler derived from ``digest``.
 
@@ -116,6 +154,18 @@ class FakeProvider:
     #: Opt-in, and the filler is a pure function of the request digest, so a replayed
     #: request still produces byte-identical output and content addressing still collapses.
     pad_to_chars: int = 0
+    #: Echo the book's own status line with its numbers moved. See `_carried` for the rule this
+    #: follows, which is `pad_to_chars`' own.
+    #:
+    #: **A second field rather than a widening of that one, and the reason is a book this
+    #: cannot be safe on.** An imported book arrives holding a snapshot for every story
+    #: position at once — both golden fixtures do — so a scene there is shown the numbers its
+    #: own author stated for its position, and writing different ones mints a second canon
+    #: snapshot at one key: the shape `integrity.detect_contradictions` groups on and refuses.
+    #: Padding such a book is ordinary; moving its numbers is a contradiction. So the switch is
+    #: separate, and `build_default_registry` is the one caller that sets it — the model-free run of
+    #: the real loop, which drafts a book it created rather than one it imported.
+    carry_status: bool = False
     calls: int = 0
 
     def health(self) -> bool:
@@ -155,6 +205,9 @@ class FakeProvider:
         else:
             text = f"[fake:{digest[:12]}] {request.prompt.strip()[:120]}"
             text = _padded(text, self.pad_to_chars, digest)
+            carried = _carried(request.system) if self.carry_status else None
+            if carried is not None:
+                text = f"{text}\n\n{carried}"
 
         return self._result(request, text, digest=digest)
 

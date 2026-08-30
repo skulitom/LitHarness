@@ -66,6 +66,7 @@ from litharness.domain.policy import (
     gates_for_draft,
     policy_digest,
 )
+from litharness.domain.progression import gate_progression
 from litharness.domain.revision import Revision, node_version_id
 from litharness.domain.serials import SerialShape
 from litharness.domain.text import content_hash
@@ -84,6 +85,16 @@ class HandlerInputError(Exception):
 
 def _timestamp(now: float) -> str:
     return datetime.fromtimestamp(now, tz=UTC).isoformat().replace("+00:00", "Z")
+
+
+def _text(value: object) -> str | None:
+    """A payload slot read as a string, or `None` for anything that is not one.
+
+    A payload is JSON somebody wrote, so a reader that assumed a type would turn a malformed
+    row into a crash in the middle of an accepted draft. Absent, null and wrong-typed all mean
+    the same thing to every caller here: this payload does not carry that fact.
+    """
+    return value if isinstance(value, str) and value else None
 
 
 def _stale_base(
@@ -464,6 +475,29 @@ def make_scene_draft_handler(
             # its refusal costs an attempt where the pre-flight one does not.
             integrity, findings = gate_integrity(subject)
             gates = (*gates, standing_gate, integrity)
+
+            # **§4.2's ladder, one rung further: did the scheduled beat land?** (§184) The
+            # plan told this scene which of the book's quantities moves in it, and until now
+            # nothing compared that ask against the state the scene wrote down — so the beat
+            # rode the prompt, extraction read a snapshot off the prose, and the two never
+            # met. Both halves of the ask were recorded on the payload when the work was
+            # selected, so nothing is re-derived here: the gate reads two frozen strings and
+            # compares two integers out of `stored_records` and `extracted`, which are the
+            # same two values the integrity gate was handed above. `None` on every scene whose
+            # plan named no quantity, and the ladder is then byte-identical to what it was.
+            beat_gate = gate_progression(
+                _text(selected.get("progression_beat")),
+                _text(selected.get("progression_column")),
+                before=stored_records,
+                extracted=extracted,
+                at=(
+                    str(selected["story_order_key"])
+                    if selected.get("story_order_key")
+                    else None
+                ),
+            )
+            if beat_gate is not None:
+                gates = (*gates, beat_gate)
 
         # **`accepted` is the whole ladder's verdict, not the shape gate's.** Kept as its own
         # name rather than by rewriting `outcome`, because `outcome.vetoes` is what the
