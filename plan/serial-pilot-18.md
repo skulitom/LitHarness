@@ -198,3 +198,13 @@ characterizations ("because of the ear"; "instead of the other thing") are the i
 working.
 
 **Read 14 is the operator's.** Covers follow.
+
+## 8. Read 14, one item, and the operator routes to the backtest
+
+**Verbatim:** *"'the way he had said everything since the pump' - still odd phrasing like
+this. Let's just do the sim-readership maybe it will help"*. One item: the located
+manner-gloss ("the way X said/did Y") survives the reviser — its ported §171 prohibition
+reaches rules about people in general and deliberately spares character-located forms, and
+the operator finds the located form odd too. Recorded for the reviser instruction's next
+tuning; no fix track launches. The directive is the sim-readership backtest, now — the §123
+programme's operator go, superseding the "after the loop" sequencing.
