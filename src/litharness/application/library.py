@@ -33,11 +33,20 @@ filename carries the title instead.
 **The HTML is a fragment, not a document**, and that is what makes one artifact serve both paste
 routes: a browser renders a bare run of `<p>` elements perfectly well, so "open it and copy"
 works, and there is no `<head>` to strip if it goes into an editor's HTML source view instead.
-Only `<p>`, `<blockquote>` and `<hr>` are ever emitted, with no classes, ids or styles — the
+Prose is only ever `<p>`, `<blockquote>` and `<hr>`, with no classes and no ids — the
 conservative subset every rich-text editor preserves. **This is not verified against any
 particular platform's editor from inside this repository**, which is why a `.txt` sits beside
 every fragment: if the HTML route mangles, blank-line-separated plain text pastes as paragraphs
 in every editor there is.
+
+**The one thing outside that subset is the status panel, and it is outside it deliberately.**
+A `[STATUS]` line is a display in the fiction, and the fragment used to publish it as a
+`<blockquote>` — a sentence with pipes in it, which is what operator read 10 saw. It is now a
+`<table>` (see `statusline`), and because a fragment has no `<head>` by construction, that
+table carries inline styles. Inline styles are the widening a paste can actually afford: a
+class name is the first thing a rich-text editor drops and a `style` attribute is among the
+last, and a status table is genre-standard on the platform these files are pasted into. The
+`.txt` beside it is unchanged and still the fallback if any of that turns out to be wrong.
 
 **This is a copy button and not the publication pillar (§62).** That pillar was cut, and what it
 was measured to lack was "no chapter-release unit, no hook placement, no recap generation, no
@@ -60,8 +69,9 @@ from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 
-from litharness.application.export import NOT_DRAFTED, BookExport, collect
+from litharness.application.export import NOT_DRAFTED, BookExport, collect, reading_head
 from litharness.application.ports import ExportStore
+from litharness.application.statusline import status_block
 from litharness.domain.nodes import Node, NodeKind
 
 #: The folder name, resolved **beside the database it is derived from** rather than against
@@ -112,8 +122,10 @@ DEFAULT_SCENES_PER_CHAPTER = 1
 DEFAULT_CHAPTERS_PER_VOLUME = 50
 
 #: Stored in the derived-state cache so a rendering change republishes shelves whose manuscript
-#: head did not move. This version introduces release-volume folders and manifests.
-LIBRARY_FORMAT_VERSION = "2"
+#: head did not move. Version 2 introduced release-volume folders and manifests; version 3 gives
+#: the status line a panel, the reading copy a long-form measure, and the release volume the
+#: same head as the whole-serial copy.
+LIBRARY_FORMAT_VERSION = "3"
 
 #: A system-voice line: the bracketed all-caps tag the genre puts its state on. Restated from
 #: `domain/axes.py`'s `_SYSTEM_LINE` rather than imported, because that one is a *counter's*
@@ -305,6 +317,10 @@ def paste_fragment(scenes: Sequence[Node]) -> str:
     System-voice lines become `<blockquote>`. That is a rendering choice rather than a fact
     about the prose, and it is made because a stat block set as an ordinary paragraph reads as
     a sentence — the genre sets it apart, and every rich-text editor keeps a blockquote.
+
+    A block that is nothing but `[STATUS]` lines goes further and becomes a panel, because
+    setting a sheet apart is not the same as drawing it. See the module docstring for why that
+    one element is allowed inline styles when nothing else here is.
     """
     parts: list[str] = []
     for index, scene in enumerate(scenes):
@@ -313,6 +329,10 @@ def paste_fragment(scenes: Sequence[Node]) -> str:
             # because it survives a paste as structure instead of as three characters.
             parts.append("<hr>")
         for block in _blocks(scene.content or ""):
+            panel = status_block(block, inline=True)
+            if panel is not None:
+                parts.append(panel)
+                continue
             tag = "blockquote" if _SYSTEM_LINE.search(block) else "p"
             parts.append(f"<{tag}>{html.escape(block)}</{tag}>")
     return "\n".join(parts) + "\n"
@@ -434,22 +454,27 @@ def _volume_markdown(document: BookExport, volume: Volume) -> str:
 def _volume_html(document: BookExport, volume: Volume) -> str:
     by_number = {chapter.number: chapter for chapter in volume.chapters}
     parts = [
-        "<!DOCTYPE html>",
-        '<html lang="en">',
-        '<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, '
-        'initial-scale=1">',
-        f"<title>{html.escape(document.title)} — Volume {volume.number}</title></head>",
+        # The same head the whole-serial reading copy carries. A volume is a reading copy —
+        # the index says so — and it used to be the only one published without a stylesheet,
+        # so it opened at whatever width the window happened to be.
+        *reading_head(f"{document.title} — Volume {volume.number}"),
         "<body>",
+        '<header class="front">',
         f"<h1>{html.escape(document.title)} — Volume {volume.number}</h1>",
-        f"<p><em>Serial chapters {volume.first_chapter}-{volume.last_chapter} · revision "
-        f"<code>{html.escape(document.revision_id)}</code></em></p>",
+        f'<p class="provenance">Serial chapters {volume.first_chapter}-{volume.last_chapter} · '
+        f"revision <code>{html.escape(document.revision_id)}</code></p>",
     ]
     if document.premise:
-        parts.append(f"<blockquote>{html.escape(document.premise.strip())}</blockquote>")
+        parts.append(
+            f'<blockquote class="premise">{html.escape(document.premise.strip())}</blockquote>'
+        )
+    parts.append("</header>")
     for number in range(volume.first_chapter, volume.last_chapter + 1):
         parts.append(f"<h2>Chapter {number}</h2>")
         chapter = by_number.get(number)
-        parts.append(chapter.fragment.rstrip() if chapter else f"<p>{NOT_DRAFTED}</p>")
+        parts.append(
+            chapter.fragment.rstrip() if chapter else f'<p class="gap">{NOT_DRAFTED}</p>'
+        )
     parts += ["</body>", "</html>"]
     return "\n".join(parts) + "\n"
 
