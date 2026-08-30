@@ -131,6 +131,21 @@ _TOOLS = (
 #: the choice is to take something out or to raise the number on purpose, so both were done —
 #: this is as small as the ask gets while still carrying an issuer, a ladder that belongs to
 #: it, an inventory that is countable, and the one edge that makes it a graph.
+#: **The fourth sentence is §173's, and it names the moment the system offers.** Read 10, on the
+#: draw the coordinator's gate passed: a rendered status line arriving at a number-move reads as
+#: noise, and what a reader wants is to deliberate over what to take next. `SystemDef` had a
+#: graph, a ladder and a scale and no fork, and `plan/house-genre-constraint.md` had queued the
+#: gap since the night before. **A schema nothing seeds is §160's own history repeating** — that
+#: entry shipped a system object with no declaring path, and it took §163 to document one and
+#: §165.2 to mint what the documentation could not reach — so the ask carries the fork rather
+#: than leaving it to `world vocabulary` alone.
+#:
+#: It is held to the three constraints the sentences above are held to. **It names records**
+#: (§154): a fork, its ways, what each opens, and the rung it opens at are all `world declare`s,
+#: and nothing in it asks for an effect on a reader. **It names no institution**, which
+#: `test_the_architect_task_text_names_no_institution` enforces and §156.1's finding is the
+#: reason for. And **it names no shape**: the slots are `world vocabulary`'s to state once, and a
+#: copy here would be a second one to disagree with it (§152's defect, pre-made).
 _SYSTEM = (
     "Something in this world grants what people can do, and a ladder belongs to whatever hands "
     "out its rungs: name that thing, declare it as this world's system, and give it the "
@@ -140,7 +155,10 @@ _SYSTEM = (
     "than owning it, and the one this book is about climbs the system's.\n"
     "Declare what the system grants, in what order and at what cost, each grant countable and "
     "named in short plain words with no digits in them; at least one of them needs another one "
-    "first, or what you have declared is a list rather than a graph."
+    "first, or what you have declared is a list rather than a graph.\n"
+    "Somewhere up that ladder the system puts a fork nobody takes twice: declare it, the two or "
+    "three ways of taking it, which of the grants each way opens and which rung it opens at, "
+    "and leave what any of them costs to the world."
 )
 
 _SEED = (

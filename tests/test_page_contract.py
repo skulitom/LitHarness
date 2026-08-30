@@ -351,6 +351,11 @@ def test_the_status_line_is_asked_for_exactly_once() -> None:
     `extract_state` mints one canon record per pattern match, all at one `order_key`.
     A scene printing the line before and after a change would write two snapshots that
     disagree at one position — which `integrity.detect_contradictions` groups on exactly.
+
+    **Corrected in place on 2026-08-30 (§173), name kept**: the tail this used to assert word for
+    word — *"at the scene's end if none of them does"* — was rephrased when the placement gained a
+    person in front of it. What the test is for is the cardinality and the two fallbacks, and both
+    are asserted below in a form that does not pin one wording of the last clause.
     """
     system = _scene_system(status_example="[STATUS] sera — Attunement 1 | Threads 2/3")
     assert "exactly once" in system
@@ -358,7 +363,21 @@ def test_the_status_line_is_asked_for_exactly_once() -> None:
     # The footer form this replaced. It is gone, and its guarantee is not: the scene's end is
     # still where the line goes when nothing moves.
     assert "End the scene with a status line" not in system
-    assert "at the scene's end if none of them does" in system
+    assert "at the scene's end" in system
+
+
+def test_the_line_is_placed_where_somebody_reads_it_before_it_is_placed_at_a_change() -> None:
+    """Read 10's central item, at the one altitude a clause could reach it.
+
+    The operator's reading of the shipped contract is that a line arriving at a number-move is
+    *noise*: both of §161.3's placements anchor on an event in the machinery, so the line appears
+    because something moved rather than because anybody looked. A person now comes first, and the
+    two the contract already had stay behind them — the placement changed, the guarantee did not.
+    """
+    system = _scene_system(status_example="[STATUS] sera — Attunement 1 | Threads 2/3")
+    reader = system.index("where somebody in the scene reads it")
+    assert reader < system.index("where one of its numbers changes")
+    assert reader < system.index("at the scene's end")
 
 
 def test_the_furniture_ask_costs_the_same_four_demands_it_did_before() -> None:

@@ -18142,3 +18142,255 @@ books may share one, and the library's only job is to keep both readable.
 **Anti-scope.** The root-level index `README.md` and `.state.json` remain last-store-wins when two
 databases publish into one root — visible, pre-existing, and not this entry's defect. No bar is
 declared; nothing here measures anything; the only numbers above are name lengths.
+
+## 173. The system had no moment where it offers, so the only thing its interface could do on the page was report
+
+Read 10's central item, on serial pilot 15b draw 4 — **the draw the coordinator's gate passed**, so
+this is a gate-calibration lesson as well as a fix. The operator's words live in
+`plan/serial-pilot-15b.md` and `plan/house-genre-constraint.md`; **no word of any of them is in any
+prompt** (§97.1), and `tests/test_page_contract.py`'s existing guard over the assembled scene
+system is what says so mechanically. Defect harvest and never data (§95). The design record written
+before the code is [`plan/diegetic-system-and-choice.md`](diegetic-system-and-choice.md).
+
+**Read first, in the machinery's own terms, and neither half is a bug in the code that produces
+it.**
+
+- **§161.3 anchored the printed line to a number-move.** *"Print that line exactly once: where one
+  of its numbers changes, or at the scene's end if none of them does."* Both placements are correct
+  against the footer defect §161 wrote them for, and **both anchor on an event in the machinery**.
+  A line that appears because a number moved is a line the narrator emits. The operator's reading —
+  noise — is what that contract produces, not a failure to obey it.
+- **`gamesystem.SystemDef` modelled an ability graph, a named ladder and one magnitude scale, and
+  nothing anywhere modelled the system *offering*.** The gap was already on the record twice:
+  `plan/house-genre-constraint.md`'s closing schema note (a class concept is a queued extension,
+  carrying the operator's own awe direction natively) and §166.3's *"a schema that gives a system a
+  class concept can land without touching this text"*.
+
+**The two are one item.** A system with no fork gives a character nothing to weigh, so the only
+thing its interface can do on the page is report; and an interface that only reports has no reason
+to be opened by anybody. Deliberation is the business that makes reading the sheet a scene instead
+of a caption.
+
+### 173.1 The fork, as an object
+
+`domain/gamesystem.py`: `Option` (an id, a name, the ability ids taking it opens, an optional
+price) and `Choice` (an id, a name, its ways, and the rung it opens at). `SystemDef.choices` and
+`CharacterSheet.picks` both default empty. `choose` takes one way, `pending_choices` reports the
+forks standing open, and `AdvanceKind` gains `CHOOSE`.
+
+**Foreclosure is computed rather than asserted, and that is the whole design.** An ability named in
+any option's `grants` is **gated**: `legal_moves` does not offer it until the sheet holds the pick
+that opens it, and `_openers` skips it so a starting sheet cannot hold one. A fork therefore
+changes *what is arithmetically possible*, which is the only definition of a build fork this
+repository can check — and it is the same class of knowledge §161.4 credits the system arm of the
+beat vocabulary with over a column label.
+
+**The awe mechanism was already half-built and this finishes it.** `SystemDef.columns` prints every
+declared ability including the unheld ones, which §160 shipped with the operator's *"i wonder what
+I would pick"* quoted beside it. A fork's grants are ordinary declared abilities, so all of them
+already sit on the line at 0 from page one and exactly one branch will ever light up. **Nothing new
+had to be rendered for a reader to be able to want one.**
+
+**A pick prints nowhere on the status line**, which is §160.3's split rather than an omission:
+`extraction`'s field pattern is `(?P<name>\d+)`, so a name can no more ride a column than a rung's
+can, and §166.3 already settled where it goes instead — *"the clause reaches numerals only, so a
+class name is governed by nothing in it"*.
+
+**Five records, three of them new, two of them reused.** `worlds.OFFERS` (fork → way),
+`worlds.GRANTS` (way → ability), `worlds.CHOSE` (person → way, the fork in the value slot, the
+position in the key — `stands_at`'s shape, because a world may run several forks and an unscoped
+pick would splice two of them, which is `precedes`' own recorded reason). Reused: `governed_by` for
+the fork's membership and **`requires` for the rung it opens at**, because that predicate already
+means "not before this" and a second one saying it would be a second answer. All three are
+documented in `world vocabulary` with probes in `tests/test_world_slots.py`, which
+`test_no_predicate_is_documented_without_a_probe` makes mandatory.
+
+**No new entity role, and it is a decision.** A fork is found structurally — a subject
+`governed_by` the system carrying `offers` edges — the way a criterion is found by its comparator.
+`ENTITY_ROLES` tags subjects a *counter* has to find, nothing counts forks, and a role no reader
+reads is one more line in the surface §163 measured an omission from as indistinguishable from a
+prohibition.
+
+**A fourth `AdvanceKind`, and §160's closure argument survives rather than being waived.** That
+enum is documented closed because *"a beat names one of these, and a vocabulary that grew would be
+a vocabulary a beat has to choose within"*. The beat does not choose: `genre.beat_text` rotates by
+schedule position, which §161.4 records as arithmetic. And a `CHOOSE` never reaches that beat at
+all — `extraction._named_moves` drops it, because taking a fork moves no number and naming one
+there would tell the scene something moved when nothing did, which is §161.4's own defect through
+the other door.
+
+### 173.2 The ratchet: a system with no fork is byte-identical, measured rather than argued
+
+Every addition is defaulted, and the three that could have moved were checked against the module as
+it stood on 2026-08-29, loaded beside the new one:
+
+| what | before | after |
+| --- | --- | --- |
+| `SystemDef.digest` of a five-ability, three-rung, no-fork draw | `sys-26dcad7f12d86f741130db33` | identical |
+| `records_for` of the same draw | its whole record set | identical |
+| `records_for_sheet` and `snapshot` of its starting sheet | — | identical |
+| `legal_moves` on that sheet | — | identical |
+
+**`digest` folds the forks into its material only when there are forks, and that is a rail rather
+than a micro-optimisation.** `SYSTEM_DIGEST` exists so drift is a question a reader can ask (§160);
+a schema addition that moved every existing system's digest would report a redefinition that never
+happened, on every sheet that cites one — the value lying in the one direction it was built to make
+impossible. `test_a_system_with_no_fork_digests_exactly_as_it_always_did` pins the literal.
+
+**No migration and no migration number.** `state_records` holds arbitrary `StateRecord` JSON, so a
+fork is records and a pick is a record, exactly as §160 left it.
+
+### 173.3 The furniture, re-aimed from the change to the person
+
+`application/planner.py`'s `status_example` branch, before → after:
+
+> ~~This book states its game state on the page, in this form~~ → **The people in this book can
+> read their own state, in this form**
+>
+> ~~Print that line exactly once: where one of its numbers changes, or at the scene's end if none
+> of them does.~~ → **Print that line exactly once, where somebody in the scene reads it; failing
+> that, where one of its numbers changes, or at the scene's end.**
+
+**The cardinality §161.3 called load-bearing is untouched**, and it is untouched for its own reason
+rather than out of caution: `extract_state` runs `finditer` and mints one `ACCEPTED_CANON` record
+per match at one `order_key`, so two lines in a scene are precisely the shape
+`integrity.detect_contradictions` groups on. Both of the old placements survive behind the new one,
+so the guaranteed emission the footer form bought is still not given up. **What moved is which of
+the three placements comes first.**
+
+**Measured, and this is the first branch edit since §164 that had a number to check itself
+against**: the `status_example` block adds **4** marginal demands before and after, the maximal
+assembled scene prompt is **44** before and after, and every other row of `BUDGET`,
+`SCENE_CONDITIONAL_BUDGET` and `HOUSE_BUDGET` is identical. The whole cost is **+36 characters** in
+one conditional branch. `house.HOUSE_RULES` is byte-identical: no clause was added anywhere.
+
+### 173.4 The interaction beat, at the altitude where the budget is not
+
+`plan/house-genre-constraint.md` named the hazard before anybody drafted a clause — *"show progress
+immediately" as prompt text is a §138 formula waiting to happen; the altitude that avoids it is
+structural* — and §157 measured a schedule moving behaviour with no adjective in it. There is a
+second reason and it is arithmetic: **a scene plan rides in the user prompt as book material and
+costs no demand in any row of the budget suite**, while the house floor and three of the roles
+standing on it sit exactly at their ceilings (§171.4). The beat is free where a clause is not.
+
+`domain/genre.py` gains the reading form (*the state this book prints is opened and read here by
+the person it belongs to, and what it says is business in the scene*) and the offer form (*{fork}
+stands open here, and the person it belongs to weighs {ways} against each other on the page*). Both
+are material and not adjective on §155.3's rule, both are pronoun-free — §155.3's first draft would
+have written a male protagonist into every scheduled scene of every book — and the offer form's
+names are book data, dropped whole where any collides with `house.MACHINERY_WORDS`.
+
+**When it fires**, and the small book is the point:
+
+| condition | what the plan gains |
+| --- | --- |
+| the book prints no line at this position | nothing |
+| not on `beat_ordinals` | nothing |
+| a fork stands open at this position | the offer form |
+| the opening scene, no fork open | the reading form |
+| any other scheduled scene, no fork open | nothing |
+
+So **a book with no fork gains exactly one interaction beat, in its opening**, and a book with
+forks deliberates for as long as one stands open, on the cadence the progression beat already runs
+at. How much deliberation a book carries is a fact its own world declares rather than a number this
+entry picked. The `reads` gate is `status_example is not None` — the same value the furniture ask
+is given, so a second reader of that question cannot become a second answer to it.
+
+**It says weighs and never says picks.** What the operator asked to read is the deliberation; a
+beat that told the scene to settle the fork would spend the fork on the scene that introduces it,
+and taking one is a separate act with its own record.
+
+**Three rails hold by construction rather than by care.** §165's order-key spaces and §167's cutoff
+are `gamesystem.sheet_of`'s `within`, which is `comparable` before `<=`, so a scheduled `chose` is
+canon, readable and never read as already taken. **A fork opens off the rung the sheet carries and
+never off a story position** — §110.3's measurement that intent is not an event, reached with no
+new mechanism — so the plan cannot name a branch the book has not arrived at. And §166's licence is
+byte-identical: a fork's name is a name, and that clause reaches numerals.
+
+### 173.5 The one demand this cost, and where
+
+`world_agent._SYSTEM` gains a fourth sentence naming the fork, and `architect seed` is raised by one
+in `tests/test_prompt_budget.py` with the reason written there. **A schema nothing seeds is §160's
+own history repeating**: that entry shipped a system object with no declaring path, and it took
+§163 to document one and §165.2 to mint what documentation could not reach. The three predicates
+are *also* written into `world vocabulary`, which costs nothing because that command's output is a
+tool result rather than a counted prompt — but §163's finding is that an omission from that surface
+is indistinguishable from a prohibition, so documenting alone would have shipped a fork no world
+ever declares. **No other row moves**: `architect grow` is untouched and the house floor is
+byte-identical, so every role standing on it is too. The sentence names records and no effect
+(§154), names no institution (§156.1's rail, enforced by
+`test_the_architect_task_text_names_no_institution`), and names no slot, because
+`world vocabulary` states those once and a copy would be a second one to disagree with it (§152).
+
+### 173.6 Standalone comprehension: what the beat carries, and the half it does not
+
+Read 10 also said the chapter cannot be understood without the listing. **What the interaction beat
+carries** is the interface: a character who opens their own state teaches its labels and its
+numbers by using them, and the fork's ways are named on the page in the scene that schedules the
+deliberation. The teaching material already reached the writer — an ability's `manifests_as`
+renders into the packet as *"shows on the page as:"*, which §168.5 counts at 33 times per scene —
+and what was missing was an **occasion to spend it**. The opening gets one always.
+
+**What it does not reach, stated rather than claimed.** The rest of that item is the chapter's
+premise — a signature device whose in-world reason is never given, and stakes the chapter leans on
+the listing for. That is the premise/protagonist altitude read 3 put above direction entirely, and
+no beat, clause or schema in this entry reaches it. It belongs to the fresh-premise draw, and
+naming it is the whole of what this entry does about it.
+
+### 173.7 What was refused
+
+- **A model ranking, scoring or recommending a way.** §61(5). `choose` takes the way it is told,
+  `pending_choices` returns declaration order, and `legal_moves` returns one `CHOOSE` per fork
+  rather than one per way — a menu enumerated in some order is ranking arriving through the shape
+  of a return value instead of through a score.
+  `test_nothing_in_this_module_ranks_an_option` asserts it over the module's public surface rather
+  than about one function, which is `test_no_number_describes_the_person`'s shape.
+- **Extracting a pick from prose.** The one parsed surface is a digits-only status line, §160.3
+  refused widening it to carry a name, and a second parse surface for one predicate would be a
+  second answer to "what did this chapter establish". A pick reaches canon by declaration or by
+  `choose`. **Named as a live residual**: a drafted chapter can dramatise a pick and canon will not
+  know.
+- **A class column, a class number, or a "Level N" of any kind.** §160.3's three conditions hold
+  unchanged — every integer still names one ability and a person's only number is still their rung.
+- **Auto-granting an option's abilities on the pick.** A fork changes what is *possible*; the gain
+  stays an advancement with its own position and its own beat, because granting three columns at
+  once would collapse the progression the schedule exists to spread out.
+- **A new clause in `house.py`.** The floor is at `HOUSE_BUDGET` and §171.4 records that the next
+  clause added there raises four numbers. Everything here lands in a plan item, a rewritten
+  sentence, or the one role whose act is a `world declare`.
+- **A second entity role, and any change to `NODE_TYPES`.**
+- **A retraction or a re-choice**, for `world retract`'s reason, still owed from serial pilot 14
+  §10.
+- **A detector reconciling a `chose` edge against prose**, on §160.5's reason unchanged.
+- **Any bar.** Two-to-four ways and the label rules are arithmetic about a menu somebody reads
+  inside a scene, not a claim about how many ways a system should fork; §61's four attainability
+  checks have nothing to run on and there is no distribution of forks to place anything in.
+
+### 173.8 Corrections in place
+
+- `tests/test_page_contract.py::test_the_status_line_is_asked_for_exactly_once` pinned the old
+  placement's tail word for word; the name is kept and it now asserts the cardinality and both
+  fallbacks without pinning one wording of the last clause.
+  `test_the_line_is_placed_where_somebody_reads_it_before_it_is_placed_at_a_change` is the new
+  claim.
+- `tests/test_outline.py::test_the_beat_fires_at_six_scenes_where_no_outline_ever_runs` and
+  `test_the_drafting_lane_reads_the_statement_the_outline_wrote` both asserted the prompt *ended*
+  with the progression beat, which was true while it was the only thing appended to a scene plan.
+  Both keep their names and now allow the second scheduled item after it. The interaction beat
+  wraps a stored statement rather than being folded into it, because a statement written when the
+  outline ran was written before the book reached the rung a fork opens at, and folding one in
+  would state a schedule (§110.3).
+- `tests/test_genre_floor.py::test_a_book_seeded_by_world_declare_is_actually_asked_for_a_status_line`
+  asserted §161's wording of the ask; the assertion moves with the sentence, as its own comment
+  already said it should.
+
+### 173.9 Anti-scope
+
+**Shipped unmeasured, and that is the whole claim.** No model was called, no book was drawn, no
+paid call was made and no `runs/` database was written or read. Nothing here measures a chapter:
+the demand counts, the character deltas and the digest literal are sizes and identities. No corpus
+was read, so RS1 is untouched. No research claim is promoted, no axis admitted, no mechanism
+qualified. Whether an Architect holding the new sentence declares a fork, and whether a chapter
+carrying the interaction beat reads differently, are the next pilot's to find. Nothing here changes
+the recruiter, the listing task, the editorial control plane, any writer dossier, `house.py`, or any
+prompt other than one conditional branch of the scene call and one sentence of the Architect's seed.

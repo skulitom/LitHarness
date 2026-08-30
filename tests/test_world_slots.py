@@ -148,6 +148,35 @@ def _governed_by() -> lc.StateRecord:
     return record
 
 
+def _offers() -> lc.StateRecord:
+    """The fork is the subject and the way is the edge, so a fork is found by its own edges —
+    there is no `entity_role` for one, the way there is none for a criterion."""
+    record = rec("fork_hand", worlds.OFFERS, object_ref="opt_kiln")
+    assert worlds.offered_by([record], "fork_hand") == ("opt_kiln",)
+    assert "fork_hand offers opt_kiln as one way to take it" in sentences([record])
+    return record
+
+
+def _grants() -> lc.StateRecord:
+    """The way is the subject and the capability it opens is the edge. `gamesystem.SystemDef.gates`
+    is what turns that into a lock: nothing may reach the capability until this way is taken."""
+    record = rec("opt_kiln", worlds.GRANTS, object_ref="cap_kiln_hand")
+    assert worlds.granted_by([record], "opt_kiln") == ("cap_kiln_hand",)
+    assert "opt_kiln opens cap_kiln_hand to whoever takes it" in sentences([record])
+    return record
+
+
+def _chose() -> lc.StateRecord:
+    """`stands_at`'s shape: the thing reached in the edge, the fork it was reached on in the
+    value, and the position in the key — because a world may run several forks and an unscoped
+    pick would splice two of them, which is `precedes`' own recorded reason."""
+    record = rec(
+        "kell", worlds.CHOSE, object_ref="opt_kiln", value="fork_hand", order_key="0250"
+    )
+    assert "kell took opt_kiln of fork_hand, and cannot take another" in sentences([record])
+    return record
+
+
 def _is_a() -> lc.StateRecord:
     """The name-bearing predicate, undocumented since Serial Pilot 1's operator-typed seed and
     now carrying the rung column's printed label."""
@@ -348,6 +377,9 @@ def _graph_line() -> lc.StateRecord:
 _PROBES: dict[str, Callable[[], lc.StateRecord]] = {
     "entity_role": _entity_role,
     "governed_by": _governed_by,
+    "offers": _offers,
+    "grants": _grants,
+    "chose": _chose,
     "is_a": _is_a,
     "status_sheet": _status_sheet,
     "status_snapshot": _status_snapshot,

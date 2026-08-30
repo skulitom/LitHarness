@@ -178,6 +178,28 @@ def vocabulary() -> dict[str, Any]:
                 "printed labels live here — the word a book counts rungs in, and an ability's "
                 "— so keep those short, letters only, and free of digits"
             ),
+            # **The fork, its ways and one person's pick** (§173). A fork carries no
+            # `entity_role`: it is a subject `governed_by` the system that `offers` something,
+            # the way a criterion is a subject that declares a comparator. Which rung it opens
+            # at is a `requires` edge, above, because that predicate already means "not before
+            # this" and a second one saying it would be a second answer.
+            "offers": (
+                "one way a fork can be taken; the fork is the subject, --object the way. A "
+                "fork is a subject governed_by the system that offers two to four ways, "
+                "requires the rung it opens at, and is_a its name. One way is not a fork"
+            ),
+            "grants": (
+                "what taking one way opens; the way is the subject, --object a capability the "
+                "system declares. Until somebody takes that way they cannot reach it at all, "
+                "which is what makes the fork a choice rather than a label — so no capability "
+                "may be granted by two ways, and a way that grants nothing forecloses nothing"
+            ),
+            "chose": (
+                "which way one person took; the person is the subject, --object the way, "
+                "--value the fork it is a way of, and --order-key zero-padded digits for where "
+                "in the book they took it. Leave it off for a way already taken when the book "
+                "opens. A fork is taken once and nothing can take it back"
+            ),
             "costs": "what it takes; --value or --object",
             "taught_by": "who teaches it; --object the teacher",
             "comparator": (
@@ -278,6 +300,12 @@ def vocabulary() -> dict[str, Any]:
             "one beside it. Two of them do not collide loudly: the book falls back to a "
             "generic line written in nobody's vocabulary, which is the thing the declaration "
             "existed to escape.",
+            "A fork is four kinds of record and none of them is an entity_role: the fork "
+            "governed_by the system, is_a its name, requires the rung it opens at, and offers "
+            "each way; then each way is_a its name and grants the capabilities it opens. Every "
+            "capability a way grants has to be one the system already declares, because it is "
+            "a column of the same printed line — the reader watches the ones nobody has taken "
+            "sit at nothing.",
             "A record in the wrong slot cannot be taken back — there is no retraction, and a "
             "corrected declaration that changes the subject or the --object fills a different "
             "slot, so both survive. `declare` reports these separately from what is merely not "

@@ -1430,6 +1430,7 @@ __all__ = [
     "label_for",
     "movable_names",
     "normalise_subject",
+    "offered_choice",
     "parse_graph_line",
     "parse_sheet",
     "promotions",
@@ -1785,11 +1786,20 @@ def _named_moves(
     are dropped for `counted_names`' reason: this vocabulary reaches the writer inside a scene
     plan and therefore shapes prose a reader reads, and a declared name is book data that no
     ceiling test can cover.
+
+    **A `CHOOSE` is dropped, and it is the one move this function refuses to name.** The
+    progression beat's sentence is that a named quantity *moves*, and taking a fork moves no
+    number — `gamesystem.choose` records the pick and changes not one column, because what a fork
+    changes is which gains become legal. Naming a fork here would tell the scene something moved
+    when nothing did, which is §161.4's own defect (a beat satisfied by the wrong thing) arriving
+    through the other door. A fork belongs to `genre.interaction_text`, on its own schedule.
     """
     abilities = {ability.ability_id: ability.name for ability in system.abilities}
     ranks = {rank.rank_id: rank.name for rank in system.ranks}
     named: list[str] = []
     for move in moves:
+        if move.kind is gamesystem_mod.AdvanceKind.CHOOSE:
+            continue
         if move.kind is gamesystem_mod.AdvanceKind.RISE:
             name = ranks.get(move.rank_id or "")
         else:
@@ -1797,3 +1807,58 @@ def _named_moves(
         if name and name.casefold() not in house_mod.MACHINERY_WORDS:
             named.append(name)
     return tuple(named)
+
+
+def offered_choice(
+    records: Sequence[lc.StateRecord], *, character: str | None = None, at: str | None = None
+) -> tuple[str, tuple[str, ...]] | None:
+    """The fork standing open in front of this character here, in the book's own words.
+
+    Returns `(the fork's name, the names of its ways)`, or `None` where no fork stands open —
+    which is every book on disk today, every book whose world declares no system, and every
+    position before the rung a fork opens at. `genre.interaction_text` is the caller and `None`
+    is what makes its beat take the reading form or none at all.
+
+    **Every guard here is `movable_names`' guard, deliberately, because the two answer one
+    question about one book and a second set of rules would be a second answer.** Canon only,
+    because a proposed system is a plan for later and scheduling a scene around one would put an
+    unaccepted draw on the page. Exactly one declared system, because two are a disagreement
+    about the book's own vocabulary and choosing between them would be this module deciding which
+    of the author's answers is real. `_system_prints_the_line`, because a fork whose abilities are
+    not columns of the line the writer was handed is a fork the reader cannot watch resolve.
+
+    **The first fork in declaration order, and no ordering of any other kind** (§61(5)).
+    Declaration order is the book's own order; nothing here asks which fork is the interesting
+    one, and `gamesystem.pending_choices` is explicit that it ranks nothing.
+
+    **A name colliding with `house.MACHINERY_WORDS` abstains the whole fork rather than dropping
+    one way.** `counted_names` drops the offending label because its list is a rotation and a
+    short rotation still works; a fork named with one of its ways missing is a menu that lies
+    about what is on offer. The correct failure is the beat falling back to the reading form,
+    which is what `None` here produces.
+
+    **The position gate is the sheet's, and it cannot leak a schedule** (§165, §167).
+    `gamesystem.sheet_of` applies `state.comparable` before its cutoff, so a `chose` or a
+    `stands_at` written in the schedule space is canon, readable and never read as already
+    reached; and a fork opens off the rung the sheet carries rather than off any story position,
+    which is §110's rule that intent is not an event.
+    """
+    if character is None:
+        return None
+    canon = [record for record in records if state_mod.is_canon(record)]
+    systems = gamesystem_mod.systems_of(canon)
+    if len(systems) != 1 or not _system_prints_the_line(systems[0], records):
+        return None
+    sheet = gamesystem_mod.sheet_of(canon, character, system=systems[0], at=at)
+    if sheet is None:
+        return None
+    pending = gamesystem_mod.pending_choices(sheet)
+    if not pending:
+        return None
+    choice = pending[0]
+    names = (choice.name, *(option.name for option in choice.options))
+    if any(
+        not name.strip() or name.casefold() in house_mod.MACHINERY_WORDS for name in names
+    ):
+        return None
+    return choice.name, tuple(option.name for option in choice.options)

@@ -1,4 +1,20 @@
-"""The game system a book runs on, and one character's position in it.
+"""The game system a book runs on, one character's position in it, and what it offers them next.
+
+**The fork arrived on 2026-08-30, and it is the object read 10 says was missing.** The operator,
+on serial pilot 15b draw 4: a rendered status line arriving at a number-move reads as *noise*,
+because the system is not a thing anybody in the book opens, reads or weighs. Their direction is
+that inner deliberation over what to take next is a large part of the story, which
+`plan/house-genre-constraint.md` had already queued as a schema note — a class concept, carrying
+the operator's original awe direction (*"i wonder what I would get and pick"*) natively. So
+`Choice` and `Option` join `Ability` and `Rank`, `CharacterSheet` gains the ways one person has
+taken, and `legal_moves` will not offer what a fork gates until its fork is taken. The quotes live
+in `plan/`; none of them is in any prompt (§97.1), and nothing in this module is rendered into a
+call.
+
+**Everything below is defaulted so that a system with no fork is the system it always was**: the
+records are the same records, the digest is the same digest, and no book on disk moves.
+`plan/diegetic-system-and-choice.md` is the design record and stage-0 §173 the decision.
+
 
 **What was missing was never a vocabulary.** `plan/first-principles-litrpg-core.md` §2 says the
 pipeline has "no game system object anywhere", and the obvious reading of that is that the state
@@ -147,6 +163,14 @@ MAX_ABILITIES = 8
 #: Three rungs, because a two-rung ladder is a switch and `rung_index`'s number has nowhere to go.
 MIN_RANKS = 3
 
+#: How many ways a fork may offer. **Neither is a bar and neither was arrived at by measuring
+#: systems**, on `MIN_ABILITIES`' argument unchanged: the floor is what makes the thing a fork
+#: rather than a step — one way forecloses nothing, and foreclosure is the whole of what a choice
+#: is — and the ceiling is arithmetic about a menu somebody reads on a page inside a scene, the
+#: way `MAX_ABILITIES` is arithmetic about the width of a printed line.
+MIN_OPTIONS = 2
+MAX_OPTIONS = 4
+
 #: A magnitude of 1 is "held", so a maximum of 1 is a system where nothing can deepen and the
 #: number is a decoration — which is the exact word §114.6 used for a magnitude nothing computes
 #: with. The ceiling keeps a column one or two digits wide.
@@ -255,6 +279,77 @@ class Rank:
 
 
 @dataclass(frozen=True, slots=True)
+class Option:
+    """One way a fork can be taken: a name, and the capabilities taking it opens.
+
+    `costs` is a fact about the world in the register `worlds._record_sentence` already uses —
+    what taking this way charges, never an instruction about how to write it. Optional, because a
+    system may leave the price to the world.
+
+    **`grants` is what makes an option load-bearing.** Every id in it is a declared ability of the
+    same system, and `legal_moves` will not offer any of them until this option is the one taken.
+    An option that granted nothing would foreclose nothing and be a label on a preference;
+    `check_draw` refuses one.
+    """
+
+    option_id: str
+    name: str
+    grants: tuple[str, ...] = ()
+    costs: str | None = None
+
+    def __post_init__(self) -> None:
+        """Grants are held in a canonical order. See `SystemDef.__post_init__`."""
+        object.__setattr__(self, "grants", tuple(sorted(self.grants)))
+
+
+@dataclass(frozen=True, slots=True)
+class Choice:
+    """One fork: a moment the system offers several ways on and the same person takes one.
+
+    **The object §160 had no name for, and the operator specified the effect before the
+    schema.** *"i wonder what I would get and pick"* is a choosing-among-options effect;
+    `plan/house-genre-constraint.md` queued the concept as a schema extension and read 10 is where
+    it stopped being queued — a rendered line arriving at a number-move reads as a narrator's
+    overlay precisely because there is nothing for a character to weigh.
+
+    `opens_at` is a rung id, or `None` for a fork open from the first rung. It is a **position on
+    the ladder and never a story position**: a fork opens because the person got there, which is
+    §110's rule that a schedule is a statement of intent and intent is not an event, reached
+    without a second mechanism.
+
+    **Nothing here records who took what, and there is no default way.** Who took which is one
+    person's fact and lives on their sheet; a default would be this module deciding which way a
+    character would have gone, which is exactly the ranking §61(5) forbids.
+    """
+
+    choice_id: str
+    name: str
+    options: tuple[Option, ...] = ()
+    opens_at: str | None = None
+
+    def __post_init__(self) -> None:
+        """Options are held in id order, for `SystemDef.__post_init__`'s round-trip reason: a
+        fork written to records and read back can only return them sorted, and a digest that
+        called those two revisions different would be a lie about identity."""
+        object.__setattr__(
+            self, "options", tuple(sorted(self.options, key=lambda one: one.option_id))
+        )
+
+    @property
+    def option_ids(self) -> tuple[str, ...]:
+        return tuple(option.option_id for option in self.options)
+
+    def option(self, option_id: str) -> Option:
+        for option in self.options:
+            if option.option_id == option_id:
+                return option
+        raise IllegalAdvance(
+            f"{option_id} is not a way of taking {self.choice_id}; this fork offers "
+            f"{', '.join(self.option_ids)}"
+        )
+
+
+@dataclass(frozen=True, slots=True)
 class Scale:
     """What this system's magnitudes are called, and how high they run."""
 
@@ -297,6 +392,11 @@ class SystemDef:
     ranks: tuple[Rank, ...]
     abilities: tuple[Ability, ...]
     scale: Scale
+    #: The forks this system offers, `()` for a system with none. **Defaulted so that every
+    #: construction written before this field existed is unchanged and every book on disk reads
+    #: identically** — §160's ratchet, one field along: a system with no fork is the system it
+    #: always was, and `digest` below is careful to agree.
+    choices: tuple[Choice, ...] = ()
 
     def __post_init__(self) -> None:
         """Abilities are held in id order, and the reason is a round trip that must close.
@@ -322,6 +422,11 @@ class SystemDef:
             "abilities",
             tuple(sorted(self.abilities, key=lambda ability: ability.ability_id)),
         )
+        object.__setattr__(
+            self,
+            "choices",
+            tuple(sorted(self.choices, key=lambda choice: choice.choice_id)),
+        )
 
     @property
     def digest(self) -> str:
@@ -330,7 +435,33 @@ class SystemDef:
         The name and the labels are in the material as well as the structure, because a system
         whose columns were relabelled renders a different line out of the same numbers, and a
         digest that called those two revisions equal would be answering a question nobody asked.
+
+        **The forks join the material only when there are any, and that is a rail rather than a
+        micro-optimisation.** This value exists so drift is a question a reader can ask; a schema
+        addition that moved every existing system's digest would report a redefinition that did
+        not happen, on every sheet that cites one — the digest lying in the one direction it was
+        built to make impossible. §160's byte-identity rail
+        (`test_a_holding_with_no_number_reads_exactly_as_it_always_did`) is the same argument about
+        a sentence, and `test_a_system_with_no_fork_digests_exactly_as_it_always_did` is this one.
         """
+        forks = (
+            {
+                "choices": [
+                    [
+                        choice.choice_id,
+                        choice.name,
+                        choice.opens_at,
+                        [
+                            [option.option_id, option.name, list(option.grants), option.costs]
+                            for option in choice.options
+                        ],
+                    ]
+                    for choice in self.choices
+                ]
+            }
+            if self.choices
+            else {}
+        )
         material = payload_digest(
             {
                 "id": self.system_id,
@@ -349,6 +480,7 @@ class SystemDef:
                     for ability in self.abilities
                 ],
                 "scale": [self.scale.label, self.scale.maximum],
+                **forks,
             }
         )
         return f"sys-{sha256(material.encode()).hexdigest()[:24]}"
@@ -389,6 +521,36 @@ class SystemDef:
             f"{ability_id} is not an ability of {self.system_id}; this system declares "
             f"{', '.join(self.ability_ids)}"
         )
+
+    @property
+    def choice_ids(self) -> tuple[str, ...]:
+        return tuple(choice.choice_id for choice in self.choices)
+
+    def choice(self, choice_id: str) -> Choice:
+        for choice in self.choices:
+            if choice.choice_id == choice_id:
+                return choice
+        raise IllegalAdvance(
+            f"{choice_id} is not a fork of {self.system_id}; this system offers "
+            f"{', '.join(self.choice_ids) or 'none'}"
+        )
+
+    @property
+    def gates(self) -> Mapping[str, tuple[str, str]]:
+        """Every gated ability, and the `(choice_id, option_id)` that opens it.
+
+        **One entry per ability, and `check_draw` is what guarantees that.** An ability granted by
+        two options would have two answers to "is this locked", and a mapping that silently kept
+        the last one would decide which fork owned it — the shape `sheet_for` abstains on rather
+        than choosing. Here the draw is refused instead, so by the time anything reads this the
+        question has one answer.
+        """
+        found: dict[str, tuple[str, str]] = {}
+        for choice in self.choices:
+            for option in choice.options:
+                for ability_id in option.grants:
+                    found.setdefault(ability_id, (choice.choice_id, option.option_id))
+        return found
 
     def rank_index(self, rank_id: str) -> int:
         """A rung's 1-based place, counting from the bottom. `worlds.rung_index`' rule, in a
@@ -432,10 +594,45 @@ class CharacterSheet:
     rank_id: str
     magnitudes: tuple[tuple[str, int], ...]
     visible_to: tuple[str, ...] = ()
+    #: Which way this person took at each fork they have reached, as `(choice_id, option_id)`.
+    #: `()` by default, so every construction written before forks existed is unchanged.
+    #:
+    #: **It does not reach `snapshot`, and that is §160.3's split rather than an omission.**
+    #: `extraction`'s field pattern is digits only, so a taken way can no more ride a status
+    #: column than a rung's name can. §166.3 already settled where it goes instead: the licence
+    #: reaches numerals, "so a class *name* is governed by nothing in it". A pick is spoken in
+    #: prose, carried into the packet as a world fact, and read back off its own edge.
+    picks: tuple[tuple[str, str], ...] = ()
+
+    def __post_init__(self) -> None:
+        """Picks are held in fork order, for `SystemDef.__post_init__`'s round-trip reason."""
+        object.__setattr__(self, "picks", tuple(sorted(self.picks)))
 
     @property
     def system_id(self) -> str:
         return self.system.system_id
+
+    def took(self, choice_id: str) -> str | None:
+        """Which way this person took at that fork, or `None` for one still open to them."""
+        for held_choice, option_id in self.picks:
+            if held_choice == choice_id:
+                return option_id
+        return None
+
+    def unlocked(self, ability_id: str) -> bool:
+        """Whether this person may reach for that capability at all.
+
+        An ungated capability is always reachable — most of them are, and a system with no fork
+        answers `True` here for everything, which is what keeps every book on disk unchanged. A
+        gated one is reachable only by whoever took the way that opens it. This is the arithmetic
+        that makes a fork a fork rather than a label; `legal_moves` is the only caller, and it
+        stops offering what the character foreclosed.
+        """
+        gate = self.system.gates.get(ability_id)
+        if gate is None:
+            return True
+        choice_id, option_id = gate
+        return self.took(choice_id) == option_id
 
     def magnitude(self, ability_id: str) -> int:
         for held_id, value in self.magnitudes:
@@ -462,21 +659,43 @@ class CharacterSheet:
 
 
 class AdvanceKind(StrEnum):
-    """The three moves a sheet can make. Closed, and small on purpose: a beat names one of
-    these, and a vocabulary that grew would be a vocabulary a beat has to choose within."""
+    """The moves a sheet can make. Small on purpose: a beat names one of these, and a vocabulary
+    that grew would be a vocabulary a beat has to choose within.
+
+    **`CHOOSE` is the fourth, and the closure argument above survives it rather than being
+    waived.** The progression beat does not choose within this enum — `genre.beat_text` rotates
+    by schedule position, which §161.4 records as arithmetic and not a preference — so a fourth
+    member is one more position in a cycle rather than one more decision. And it never reaches
+    that beat at all: `extraction._named_moves` drops a `CHOOSE`, because a fork is not a quantity
+    that moves and naming one there would tell the scene a number moved when none did. A fork is
+    the interaction beat's business (`genre.interaction_text`), which is a different schedule.
+
+    It is also the only move that **forecloses**: a gain and a deepen add, a rise climbs, and a
+    choice shuts three doors to open one. That is why it could not be modelled as either of the
+    other three.
+    """
 
     GAIN = "gain"
     DEEPEN = "deepen"
     RISE = "rise"
+    CHOOSE = "choose"
 
 
 @dataclass(frozen=True, slots=True)
 class Move:
-    """One advancement that is available. `ability_id` is `None` for a rise."""
+    """One advancement that is available. `ability_id` is `None` for a rise or a choice.
+
+    A `CHOOSE` carries the fork and **not** a way of taking it. Returning one move per option
+    would be handing a caller a menu this module had enumerated in some order, and the caller's
+    next act is to pick from it — which is §61(5)'s ranking arriving through the shape of a return
+    value rather than through a score. The fork is what is available; which way is the drafting
+    call's, under whatever constraint it is already working to.
+    """
 
     kind: AdvanceKind
     ability_id: str | None = None
     rank_id: str | None = None
+    choice_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -640,6 +859,80 @@ def check_draw(system: SystemDef) -> tuple[str, ...]:
             "the prerequisites run in a cycle, so no order of gaining them exists"
         )
 
+    # --- the forks
+    #
+    # **Every check is membership or arithmetic**, exactly as the ones above are. Nothing here asks
+    # whether a fork is interesting, whether its ways are balanced, or which of them a character
+    # ought to take: there is no ordering over options in this module and `legal_moves` is
+    # explicit that it mints none.
+    seen_options: dict[str, str] = {}
+    granted_by_option: dict[str, str] = {}
+    for choice in system.choices:
+        if not choice.choice_id.isidentifier():
+            complaints.append(
+                f"the fork id {choice.choice_id!r} is not usable as an identifier"
+            )
+        if not _printable_label(choice.name):
+            complaints.append(
+                f"the fork {choice.choice_id}'s name {choice.name!r} cannot be put in a scene "
+                "plan: a name is printable prose, at most 24 characters, and carries no digit"
+            )
+        if not MIN_OPTIONS <= len(choice.options) <= MAX_OPTIONS:
+            complaints.append(
+                f"the fork {choice.choice_id} offers {len(choice.options)} way(s); a fork offers "
+                f"{MIN_OPTIONS} to {MAX_OPTIONS}, the floor being that one way forecloses "
+                "nothing and the ceiling being how long a menu somebody reads inside a scene"
+            )
+        if choice.opens_at is not None and choice.opens_at not in known_ranks:
+            complaints.append(
+                f"the fork {choice.choice_id} opens at {choice.opens_at}, which this system "
+                "declares as no rung"
+            )
+        if len({option.name.strip() for option in choice.options}) != len(choice.options):
+            complaints.append(
+                f"two ways of taking {choice.choice_id} are named the same, so taking one "
+                "shows nothing"
+            )
+        for option in choice.options:
+            if not option.option_id.isidentifier():
+                complaints.append(
+                    f"the option id {option.option_id!r} is not usable as an identifier"
+                )
+            if not _printable_label(option.name):
+                complaints.append(
+                    f"the option {option.option_id}'s name {option.name!r} cannot be put in a "
+                    "scene plan: a name is printable prose, at most 24 characters, and carries "
+                    "no digit"
+                )
+            if option.option_id in seen_options:
+                complaints.append(
+                    f"{option.option_id} is offered by {seen_options[option.option_id]} and by "
+                    f"{choice.choice_id}; one way belongs to one fork, or taking it forecloses "
+                    "in two places at once"
+                )
+            seen_options[option.option_id] = choice.choice_id
+            if not option.grants:
+                complaints.append(
+                    f"{option.option_id} opens nothing, so taking it forecloses nothing and the "
+                    f"fork {choice.choice_id} is a label rather than a choice"
+                )
+            for ability_id in option.grants:
+                if ability_id not in known_abilities:
+                    complaints.append(
+                        f"{option.option_id} opens {ability_id}, which this system does not "
+                        "declare as an ability"
+                    )
+                    continue
+                if ability_id in granted_by_option:
+                    complaints.append(
+                        f"{ability_id} is opened by {granted_by_option[ability_id]} and by "
+                        f"{option.option_id}; an ability behind two gates has two answers to "
+                        "whether it is locked"
+                    )
+                granted_by_option[ability_id] = option.option_id
+    if len(set(system.choice_ids)) != len(system.choice_ids):
+        complaints.append("two forks share an id, so a pick could not say which is meant")
+
     # --- the scale
     if not _printable_label(system.scale.label):
         complaints.append(
@@ -704,10 +997,20 @@ def _openers(system: SystemDef) -> tuple[str, ...]:
     This is what a starting sheet holds, and the reason `check_draw` refuses a system with none:
     a book whose protagonist can hold nothing on page one has a sheet of zeroes, which clears no
     floor and asks the writer for nothing.
+
+    **A gated ability is never an opener**, and that is the fork working rather than an extra
+    rule: a starting sheet holding what a fork was declared to gate would hand the character a
+    branch they never took, and the reader a column that lit up before the choice existed. So a
+    system whose every ability sits behind a fork has no starting sheet, and the complaint
+    `check_draw` already carries — *"no ability can be held at the first rung"* — is the one that
+    fires, which is the right sentence for that draw.
     """
     first = system.rank_ids[0] if system.ranks else None
+    gated = set(system.gates)
     holdable: list[str] = []
     for ability in system.abilities:
+        if ability.ability_id in gated:
+            continue
         if any(need.ref in set(system.ability_ids) for need in ability.needs):
             continue
         if any(need.ref != first for need in ability.needs if need.ref in set(system.rank_ids)):
@@ -780,20 +1083,69 @@ def legal_moves(sheet: CharacterSheet) -> tuple[Move, ...]:
     possible; it does not say which is best, most dramatic or most earned, and there is no
     function in this module that does. A caller that wants one of them chooses by its own rule —
     a schedule, a plan, a beat — and never by asking this module to rank.
+
+    **A gated ability is not offered until its fork has been taken.** That is the same class of
+    knowledge as an unmet prerequisite, which §161.4 records as the reason the system arm of the
+    beat vocabulary is strictly better than a column label: a label cannot know that a move is
+    unavailable, so a schedule built on one names moves the book cannot make. A fork is one more
+    thing a label cannot know.
+
+    Order is abilities, then forks, then the rise: a fork is a thing that happens *to* the
+    inventory, so it reads beside it, and the rise stays last where it has always been.
     """
     moves: list[Move] = []
     system = sheet.system
     for ability in system.abilities:
         held = sheet.magnitude(ability.ability_id)
         if held == 0:
-            if not _needs_met(sheet, ability):
+            if sheet.unlocked(ability.ability_id) and not _needs_met(sheet, ability):
                 moves.append(Move(AdvanceKind.GAIN, ability_id=ability.ability_id))
         elif held < system.scale.maximum:
+            # **Deepening a held ability is never re-gated**, on `deepen`'s own rule: the gate is
+            # the condition for having it at all, and re-asking would make a sheet's past illegal
+            # whenever the world's declaration moved underneath it.
             moves.append(Move(AdvanceKind.DEEPEN, ability_id=ability.ability_id))
+    for choice in _open_choices(sheet):
+        moves.append(Move(AdvanceKind.CHOOSE, choice_id=choice.choice_id))
     index = system.rank_index(sheet.rank_id)
     if index < len(system.ranks):
         moves.append(Move(AdvanceKind.RISE, rank_id=system.rank_ids[index]))
     return tuple(moves)
+
+
+def _open_choices(sheet: CharacterSheet) -> tuple[Choice, ...]:
+    """The forks this person has reached and not yet taken, in declaration order."""
+    system = sheet.system
+    standing = system.rank_index(sheet.rank_id)
+    return tuple(
+        choice
+        for choice in system.choices
+        if sheet.took(choice.choice_id) is None
+        and (
+            choice.opens_at is None
+            or (
+                choice.opens_at in set(system.rank_ids)
+                and system.rank_index(choice.opens_at) <= standing
+            )
+        )
+    )
+
+
+def pending_choices(sheet: CharacterSheet) -> tuple[Choice, ...]:
+    """The forks standing open in front of this person, in declaration order.
+
+    **This is the deliberation surface, and it is deliberately a list of forks rather than a
+    recommendation.** Read 10's direction is that weighing what to take next is a large part of
+    the story; what a story needs for that is the fork and its ways on the page, which is what
+    this returns. Nothing here says which way, and nothing in this module can be asked (§61(5)).
+
+    **A fork opens because the person got to the rung, never because the book got to a scene.**
+    §110.3 measured position-implies-settlement failing in both directions inside one run, and
+    §167 settled the same question for disclosure: a schedule is a statement of intent, and intent
+    is not an event. Here the event is the standing the sheet already carries, so this needs no
+    story position at all and cannot leak one.
+    """
+    return _open_choices(sheet)
 
 
 def _advanced(
@@ -804,10 +1156,12 @@ def _advanced(
     rank_id: str | None = None,
     ability_id: str | None = None,
     magnitude: int | None = None,
+    choice_id: str | None = None,
+    option_id: str | None = None,
 ) -> Advancement:
     """The one place a new sheet, its moved keys and its records are built together.
 
-    Three entry points share it so the three moves cannot drift in what they write down — the
+    Four entry points share it so the four moves cannot drift in what they write down — the
     defect `genre.with_beat` avoids by the same means, one function two call sites.
     """
     before = sheet.snapshot()
@@ -819,6 +1173,17 @@ def _advanced(
             rank_id=rank_id,
             magnitudes=sheet.magnitudes,
             visible_to=sheet.visible_to,
+            picks=sheet.picks,
+        )
+    elif kind is AdvanceKind.CHOOSE:
+        assert choice_id is not None and option_id is not None
+        after_sheet = CharacterSheet(
+            system=sheet.system,
+            character=sheet.character,
+            rank_id=sheet.rank_id,
+            magnitudes=sheet.magnitudes,
+            visible_to=sheet.visible_to,
+            picks=(*sheet.picks, (choice_id, option_id)),
         )
     else:
         assert ability_id is not None and magnitude is not None
@@ -831,6 +1196,7 @@ def _advanced(
                 for held_id, value in sheet.magnitudes
             ),
             visible_to=sheet.visible_to,
+            picks=sheet.picks,
         )
     after = after_sheet.snapshot()
     moved = tuple(key for key in after if after[key] != before.get(key))
@@ -846,6 +1212,32 @@ def _advanced(
                 order_key=at,
                 pov_visibility=sheet.visible_to,
             )
+        )
+    elif kind is AdvanceKind.CHOOSE:
+        # **The pick, and no snapshot beside it.** Every other move writes the edge that changed
+        # plus the line it renders; a choice changes no number, so the snapshot would restate a
+        # value already on record — and `worlds.record_id_for` is position-blind under an
+        # `INSERT OR IGNORE` store, so the restatement would be silently dropped anyway. §160
+        # found that the hard way when the first `_advanced` rewrote the whole sheet at every
+        # advancement and was discarding most of what it claimed to write. Writing the one thing
+        # that happened says what happened.
+        records.append(
+            worlds_mod.world_record(
+                sheet.character,
+                worlds_mod.CHOSE,
+                value=choice_id,
+                object_ref=option_id,
+                order_key=at,
+                pov_visibility=sheet.visible_to,
+            )
+        )
+        return Advancement(
+            kind=kind,
+            sheet=after_sheet,
+            moved=moved,
+            before=before,
+            after=after,
+            records=tuple(records),
         )
     else:
         records.append(
@@ -928,6 +1320,46 @@ def rise(sheet: CharacterSheet, *, at: str) -> Advancement:
             f"{sheet.character} stands at {sheet.rank_id}, the top rung of {system.criterion}"
         )
     return _advanced(sheet, AdvanceKind.RISE, at=at, rank_id=system.rank_ids[index])
+
+
+def choose(
+    sheet: CharacterSheet, choice_id: str, option_id: str, *, at: str
+) -> Advancement:
+    """Take one way at a fork this person has reached. Raises `IllegalAdvance` otherwise.
+
+    **No number moves and that is the design.** Taking a way opens what it grants — those
+    abilities stop being refused by `legal_moves` — and gaining any of them is still an
+    advancement with its own position and its own beat. Granting three columns in one act would
+    collapse the progression the schedule exists to spread out, which is the `progression` block's
+    own recorded argument one object along.
+
+    **Irrevocable.** A fork already taken raises, because foreclosure is the whole of what
+    separates a choice from a checklist, and because there is no `world retract` to undo a `chose`
+    edge with (§160.5, still owed from serial pilot 14 §10).
+
+    **This function takes the way it is told and never picks one** (§61(5)). The caller supplies
+    `option_id`; there is no default, no first-is-best, and no path here that consults anything
+    about which way would be better.
+    """
+    choice = sheet.system.choice(choice_id)
+    option = choice.option(option_id)
+    taken = sheet.took(choice_id)
+    if taken is not None:
+        raise IllegalAdvance(
+            f"{sheet.character} already took {taken} at {choice_id}, and a fork is taken once"
+        )
+    if choice not in _open_choices(sheet):
+        raise IllegalAdvance(
+            f"{choice_id} opens at {choice.opens_at}, and {sheet.character} stands at "
+            f"{sheet.rank_id}"
+        )
+    return _advanced(
+        sheet,
+        AdvanceKind.CHOOSE,
+        at=at,
+        choice_id=choice_id,
+        option_id=option.option_id,
+    )
 
 
 # --------------------------------------------------------------------------- writing it down
@@ -1047,6 +1479,47 @@ def records_for(system: SystemDef) -> tuple[lc.StateRecord, ...]:
                     object_ref=need.ref,
                 )
             )
+    # **The forks, and a system with none writes nothing here** — which is what keeps every
+    # record set this function has ever produced byte-identical.
+    for choice in system.choices:
+        records.append(
+            worlds_mod.world_record(
+                choice.choice_id, worlds_mod.GOVERNED_BY, object_ref=system.system_id
+            )
+        )
+        records.append(worlds_mod.world_record(choice.choice_id, "is_a", value=choice.name))
+        if choice.opens_at is not None:
+            # **`requires` and not a predicate of its own**, because that predicate already
+            # means "this cannot be had before that" and a second one saying it would be a
+            # second answer to the same question. No `order_key`: which rung a fork opens at is
+            # a standing fact about the fork, exactly as a prerequisite is a standing fact about
+            # the capability (`REQUIRES`' own distinction from a reified change's precondition).
+            records.append(
+                worlds_mod.world_record(
+                    choice.choice_id, worlds_mod.REQUIRES, object_ref=choice.opens_at
+                )
+            )
+        for option in choice.options:
+            records.append(
+                worlds_mod.world_record(
+                    choice.choice_id, worlds_mod.OFFERS, object_ref=option.option_id
+                )
+            )
+            records.append(
+                worlds_mod.world_record(option.option_id, "is_a", value=option.name)
+            )
+            if option.costs:
+                records.append(
+                    worlds_mod.world_record(
+                        option.option_id, worlds_mod.COSTS, value=option.costs
+                    )
+                )
+            for ability_id in option.grants:
+                records.append(
+                    worlds_mod.world_record(
+                        option.option_id, worlds_mod.GRANTS, object_ref=ability_id
+                    )
+                )
     return tuple(records)
 
 
@@ -1089,6 +1562,17 @@ def records_for_sheet(
                     pov_visibility=sheet.visible_to,
                 )
             )
+    for choice_id, option_id in sheet.picks:
+        records.append(
+            worlds_mod.world_record(
+                sheet.character,
+                worlds_mod.CHOSE,
+                value=choice_id,
+                object_ref=option_id,
+                order_key=at,
+                pov_visibility=sheet.visible_to,
+            )
+        )
     records.append(_snapshot_record(sheet, at=at))
     return tuple(records)
 
@@ -1206,7 +1690,66 @@ def _assemble(
         ranks=tuple(Rank(rank_id=rank_id, name=names.get(rank_id, rank_id)) for rank_id in chain),
         abilities=abilities,
         scale=scale,
+        choices=_choices_of(records, system_id, governed, names, set(chain)),
     )
+
+
+def _choices_of(
+    records: Sequence[lc.StateRecord],
+    system_id: str,
+    governed: Mapping[str, str],
+    names: Mapping[str, str],
+    rank_ids: set[str],
+) -> tuple[Choice, ...]:
+    """The forks this system offers, read off its own edges.
+
+    **A fork is found structurally and carries no `entity_role`**, which is a decision rather than
+    an omission. `worlds.ENTITY_ROLES` tags subjects a *counter* has to find — the bestiary and
+    the manifestation checks are what it was added for — and nothing counts forks; a role no
+    reader reads is one more thing an Architect can get wrong, and one more line in the surface
+    §163 measured an omission from as indistinguishable from a prohibition. So a fork is a subject
+    `governed_by` this system carrying `offers` edges, the way a criterion is a subject carrying a
+    comparator.
+
+    A subject that is `governed_by` the system and offers nothing is not a fork here and is not
+    complained about either: `_assemble` already skips it as an ability unless it is a declared
+    capability, and `genre.system_gap` is where a half-built system is reported.
+    """
+    found: list[Choice] = []
+    for subject in sorted(
+        candidate for candidate, owner in governed.items() if owner == system_id
+    ):
+        option_ids = worlds_mod.offered_by(records, subject)
+        if not option_ids:
+            continue
+        opens = [
+            record.object_ref
+            for record in records
+            if record.predicate == worlds_mod.REQUIRES
+            and record.subject == subject
+            and record.object_ref in rank_ids
+        ]
+        found.append(
+            Choice(
+                choice_id=subject,
+                name=names.get(subject, subject),
+                options=tuple(
+                    Option(
+                        option_id=option_id,
+                        name=names.get(option_id, option_id),
+                        grants=worlds_mod.granted_by(records, option_id),
+                        costs=_first_value(records, option_id, worlds_mod.COSTS),
+                    )
+                    for option_id in option_ids
+                ),
+                # Sorted rather than first-seen, for `_assemble`'s round-trip reason. A `Choice`
+                # holds one opening rung so a *drawn* system can never write two, but a world
+                # declared by hand can, and taking whichever record the store returned first
+                # would make the same canon read back differently on two reads.
+                opens_at=sorted(opens)[0] if opens else None,
+            )
+        )
+    return tuple(found)
 
 
 def unfinished_systems(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
@@ -1509,12 +2052,41 @@ def sheet_of(
             value if isinstance(value, int) and not isinstance(value, bool) else 1
         )
         magnitudes.append((ability_id, max(0, magnitude)))
+
+    # **The picks, read off the same edges under the same cutoff.** A `chose` is a fact about the
+    # book at a position, exactly as a `stands_at` is, so `within` decides it: a scheduled pick in
+    # the other order-key space is canon, readable, and never read as already taken (§165, §167).
+    # A pick naming a fork or a way this system does not declare is dropped rather than guessed
+    # at — the world said something this reader cannot place, and `worlds.slot_warnings` is where
+    # a declaration is told so.
+    taken: list[tuple[str, str, str]] = []
+    for record in records:
+        if record.predicate != worlds_mod.CHOSE or record.subject != character:
+            continue
+        if not record.object_ref or not state_mod.is_canon(record) or not within(record):
+            continue
+        choice_id = str(record.value or "").strip()
+        if choice_id not in set(system.choice_ids):
+            continue
+        if record.object_ref not in set(system.choice(choice_id).option_ids):
+            continue
+        taken.append((choice_id, state_mod.order_key_of(record) or "", record.object_ref))
+    # **The earliest pick wins, and it is a fork's own rule rather than a tie-break.** A fork is
+    # taken once; a second `chose` on one fork is the world contradicting itself, and keeping the
+    # later one would let a redeclaration quietly un-take a branch nothing can retract. Ties at
+    # one position resolve by option id, because the alternative is store row order — which is
+    # what §170 measured deciding whose interface a whole chapter printed.
+    picks: dict[str, str] = {}
+    for choice_id, _key, option_id in sorted(taken):
+        picks.setdefault(choice_id, option_id)
+
     return CharacterSheet(
         system=system,
         character=character,
         rank_id=rank_id,
         magnitudes=tuple(magnitudes),
         visible_to=tuple(sorted(visible)),
+        picks=tuple(sorted(picks.items())),
     )
 
 
@@ -1522,8 +2094,10 @@ __all__ = [
     "CONFIGURATION_PREDICATES",
     "MAGNITUDE_SCALE",
     "MAX_ABILITIES",
+    "MAX_OPTIONS",
     "MAX_SCALE_MAXIMUM",
     "MIN_ABILITIES",
+    "MIN_OPTIONS",
     "MIN_RANKS",
     "MIN_SCALE_MAXIMUM",
     "RANK_KEY",
@@ -1533,20 +2107,24 @@ __all__ = [
     "AdvanceKind",
     "Advancement",
     "CharacterSheet",
+    "Choice",
     "Column",
     "Furniture",
     "IllegalAdvance",
     "MalformedSystem",
     "Move",
     "Need",
+    "Option",
     "Rank",
     "Scale",
     "SystemDef",
     "check_draw",
+    "choose",
     "completion_records",
     "deepen",
     "gain",
     "legal_moves",
+    "pending_choices",
     "records_for",
     "records_for_sheet",
     "rise",

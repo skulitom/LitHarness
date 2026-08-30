@@ -239,7 +239,27 @@ BUDGET: dict[str, int] = {
     # declares a world through tools and narrates nothing, so by §154 the referent is empty — and
     # that is the honest price: a demand the seed cannot use, against a rule the roles that write
     # prose need in the one place that does not drift.
-    "architect seed": 45,
+    #
+    # **Raised 45 -> 46 on 2026-08-30 for one sentence, and this one is not inert** (§173). Read
+    # 10's central item is that a rendered status line arriving at a number-move reads as noise
+    # because the system is not a thing anybody in the book opens or weighs, and that the
+    # deliberation over what to take next is a large part of what a reader of this genre is here
+    # for. `gamesystem.SystemDef` had a graph, a ladder and a scale and **no fork**;
+    # `plan/house-genre-constraint.md` had queued exactly that gap. `_SYSTEM`'s fourth sentence is
+    # the ask for one, and it lands at the only role whose act is a `world declare`, which is what
+    # makes it addressable here (§154) where the §171 clause above is not.
+    #
+    # **The alternative was measured and refused**: the three predicates are also written into
+    # `world vocabulary`, which costs nothing because that command's output is a tool result and
+    # not a counted prompt — and §163's own finding is that an omission from *that* surface is
+    # indistinguishable from a prohibition. Documenting alone would have shipped a schema no world
+    # ever declares, which is §160's history exactly: a system object with no declaring path took
+    # §163 and §165.2 to make reachable. Nothing came out to pay for it, because the three
+    # sentences already there are the issuer, the ladder and the graph, and §163 had already cut
+    # that ask from six sentences to three against this same ceiling. **No other row moves** —
+    # `architect grow` is untouched at 42 and the house floor is byte-identical, so the roles that
+    # stand on it are too.
+    "architect seed": 46,
     "architect grow": 42,
     "scene writer floor": 28,
     "scene writer, cast": 32,
