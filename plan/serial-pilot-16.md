@@ -112,3 +112,74 @@ grey against a light label. Description, not a threshold (§61); all four ship a
 ranked them (§84). Variants: the descent with the tethered handset; the city cracked open
 to the pit; the ladder printing out of a cracked phone; the read-off against a long grey
 thing.
+
+## 7. Read 11 fails the book, and names three new families
+
+**Defect harvest, not data (§95). Arrived 2026-08-30. The casting note first, verbatim:**
+
+> *"We had hired so many writers, yet we chose one that failed so many times before."*
+
+The coordinator's casting call, owned: ferreira was the operator's named default from
+2026-08-28, and the roster of nine accepted recruits exists to be used. **The next draw is
+cast from the uncast recruits, by slate order.** The items:
+
+> *"'Ladder' included in Title perhaps the biggest unecessary leak of internal architechture
+> to date. Perhaps internally we can have a set of words to mean Ladder instead of just
+> ladder (eg ranks)?"*
+
+**Schema-vocabulary leak.** The prompts say "ladder" as a schema term; the Architect named
+the world's system "the Ladder"; the listing put it in the title. The internal word became
+the book's proper noun three surfaces deep. New check owed: world-facing names (system,
+rungs, title) must not be the schema's own tokens.
+
+> *"'and nobody had asked for it' - ai tell... The pattern i see is nobody x, or the way
+> anyone x. It's like talking about negative space... nobody mentions it, it's obvious from
+> what was already said" / "'rules where anyone can read them' - where anyone can x, another
+> AI tell"*
+
+**The negative-space tell, named as a family.** Asserting absence or universal access the
+context already implies. Both instances are in the LISTING — and §174 established the
+listing does not stand on the house floor, so §171's register clause never reaches it.
+
+> *"'class came out weak and I cannot fight anything that bites' - we need to cut... it's
+> obvious information... The trend i see here is we are spoon feeding the readers
+> information, a good story has a lot of worldbuilding and things that are left unsaid...
+> overexplaining things will make readers feel disrespected (we shouldn't treat out
+> audience as kids)"*
+
+**The implication register, stated as a principle.** What context implies is not restated.
+
+> *"'Theo had the back off a phone' - not something humans say with no context given" /
+> "'folding rule' - do you mean folding ruler? kind of a niche thing" / "'The queue for the
+> Assay' - instead of being pedantic 'Assay', we should say plainly 'Laboratory', we are
+> excluding readers for not knowing niche vocab"*
+
+**Plain-diction direction.** Niche, trade-correct or archaic words exclude the popcorn
+reader even when precise. Reaches prose diction and the Architect's world nouns both.
+
+> *"Why is this sentence so long? like one thousand commas, we really need to fix
+> punctuation and sentece structure... punction and sentence structure have been a problem
+> over and over"*
+
+**The comma-chain sentence, fourth read to name the family** (Maria's grammar items, reads
+5/10's not-what-humans-say, now named structurally). Countable: clause-chains per sentence.
+
+> *"The begining of chapter 1 i feel like we are describing the world to the readers,
+> instead of focusing on the actual story... One big thing, we are putting too much details
+> on page and not enough work in the background. Background worldbuilding and details
+> should be > what's written."*
+
+**The iceberg principle.** §168's own residual named the mechanism before this read did:
+the packet renders every `manifests_as` as "shows on the page as:" ~33 times per scene, and
+the §168 post-mortem measured the opening discharging five of them near-verbatim. The world
+should out-mass the page; today the packet pushes the world ONTO the page.
+
+> *"I see em dashes again"*
+
+**Em dashes — read 1's own axis, returning at read 11** with no drafting rule ever written
+against it. Mechanical, a countable character class.
+
+**Routing:** five tracks (schema-leak check; negative-space + implication register clauses,
+reaching the listing; sentence/punctuation bound + em-dash prohibition; plain diction;
+packet-discharge cap), §178–§182 pre-allocated in that order, re-scanned at commit. The
+gate checklist gains all seven families. No fix is designed in this entry.
