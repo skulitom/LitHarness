@@ -503,13 +503,135 @@ def main(argv: list[str] | None = None) -> int:
         print(f"pass --yes to spend (stage {args.stage}); --stage dry costs nothing",
               file=sys.stderr)
         return 1
-    print(
-        "paid stages are wired but deliberately not runnable from this commit: the operator "
-        "gate on the first spend is the programme's own rule. Remove this refusal in a commit "
-        "that cites the operator's go.",
-        file=sys.stderr,
-    )
-    return 1
+    # The operator's go arrived 2026-08-30, verbatim: "Let's just do the sim-readership
+    # maybe it will help" — recorded in plan/serial-pilot-18.md §8 (commit 930127e), five
+    # days after §123's registration. This commit is the citation the refusal above asked
+    # for; every ceiling and stage gate below it still holds.
+    return run_paid(args)
+
+
+def run_paid(args: argparse.Namespace) -> int:
+    """Stages (b) and (c): probe-before-arm, all five arms, the registered analysis, one file.
+
+    Thin on method by the module's own charter — every choice below names the sibling that
+    owns it. The ledger is read after every session (`run_sessions`); the ceiling aborts
+    mid-arm and the partial result says so. The pilot's own gate (PREREG §8: no VOID fired,
+    ledger within 2x of estimate) is computed descriptively here because `verdicts`'s
+    insufficient_n precedence deliberately silences VOIDs below target n.
+    """
+    import elicit
+    from force_remote import SingleRun
+
+    pairs_path = Path(args.pairs)
+    pool = confirmatory(load_pairs(pairs_path))
+    stage_plan = plan(args.stage, len(pool))
+    stage_pairs = pool[: stage_plan["pairs_this_stage"]]
+    fictions = load_fictions(Path(args.fictions))
+    out_path = Path(args.out) if args.out else HERE / f"result-{args.stage}.json"
+
+    with SingleRun(HERE / "backtest.pid", label=f"backtest {args.stage}"):
+        elicitor = elicit.Elicitor(
+            cache_path=Path(args.cache), model=args.model,
+            spot_model=None,  # PREREG §7: no spot model — cutoff reasoning
+            transport="cli",
+        )
+        ledger: dict[str, float] = {"equivalent_usd": 0.0}
+
+        needed = sorted({p.high for p in stage_pairs} | {p.low for p in stage_pairs})
+        probes: list[dict[str, Any]] = []
+        classifications: dict[str, str] = {}
+        for fiction_id in needed:
+            record = probe_book(elicitor, fictions[fiction_id], model=args.model)
+            classifications[fiction_id] = record["classification"]
+            probes.append(record)
+        recognised = sorted(f for f, c in classifications.items() if c != "clean")
+
+        sessions = build_sessions(stage_pairs, fictions, classifications,
+                                  population.POPULATION)
+        skipped_pairs = sessions.pop("skipped_pairs")
+        votes: dict[str, list[analysis.Vote]] = {}
+        aborted = False
+        for arm_name in ("C", "P", "sham", "damage", "surface"):
+            if aborted:
+                votes[arm_name] = []
+                continue
+            votes[arm_name], aborted = run_sessions(
+                elicitor, sessions[arm_name], model=args.model, ledger=ledger,
+            )
+
+        reward_ids = [p.persona_id for p in population.reward_split()]
+        primary_agg = analysis.aggregate_by_pair(to_member_space(votes["C"]), reward_ids)
+        primary_outcomes = outcomes_from(primary_agg)
+        largest_true = (
+            abs(sum(primary_outcomes) / len(primary_outcomes) - 0.5)
+            if primary_outcomes else 0.0
+        )
+        positional = analysis.positional_rate(votes["C"])
+        by_sham: dict[str, list[analysis.Vote]] = {}
+        for vote in votes["sham"]:
+            by_sham.setdefault(vote.pair_id, []).append(vote)
+        sham = analysis.sham_floor(by_sham)
+        damage_agg = analysis.aggregate_by_pair(to_member_space(votes["damage"]), reward_ids)
+        damage_outcomes = outcomes_from(damage_agg)
+        try:
+            shuffle = analysis.label_shuffle(
+                primary_outcomes, seed_material="|".join(map(str, primary_outcomes)),
+            )
+        except ValueError as refusal:
+            shuffle = {"clear_share": 0.0, "refused": str(refusal)}
+        try:
+            verdict = analysis.verdicts(
+                primary_outcomes, largest_true_effect=largest_true, positional=positional,
+                sham=sham, damage_outcomes=damage_outcomes, shuffle=shuffle,
+            )
+        except ValueError as refusal:
+            verdict = {"verdict": "refused", "why": str(refusal)}
+
+        positional_deviation = (
+            abs(positional["rate"] - 0.5) if positional.get("rate") is not None else None
+        )
+        pilot_gate = {
+            "ledger_usd": ledger["equivalent_usd"],
+            "estimate_usd": stage_plan["estimated_usd"],
+            "ledger_within_2x": ledger["equivalent_usd"] <= 2 * stage_plan["estimated_usd"],
+            "void_positional": (
+                positional_deviation is not None and positional_deviation >= largest_true
+                and bool(primary_outcomes)
+            ),
+            "void_sham": sham["floor"] >= largest_true and bool(primary_outcomes),
+            "shuffle_clear_share": shuffle.get("clear_share"),
+            "aborted_at_ceiling": aborted,
+        }
+
+        surface_agg = analysis.aggregate_by_pair(to_member_space(votes["surface"]),
+                                                 reward_ids)
+        p_agg = analysis.aggregate_by_pair(to_member_space(votes["P"]), reward_ids)
+        result = {
+            "stage": args.stage,
+            "plan": stage_plan,
+            "registration": registration_digests(pairs_path),
+            "probe": {"books": len(needed), "recognised": recognised,
+                      "skipped_pairs": skipped_pairs},
+            "votes": {arm: len(v) for arm, v in votes.items()},
+            "primary": {"aggregate": primary_agg, "outcomes": primary_outcomes,
+                        "largest_true_effect": largest_true},
+            "p_arm": {"aggregate": p_agg},
+            "surface": {"aggregate": surface_agg},
+            "positional": positional,
+            "sham": sham,
+            "damage_outcomes": damage_outcomes,
+            "shuffle": shuffle,
+            "verdict": verdict,
+            "pilot_gate": pilot_gate,
+            "ledger": ledger,
+            "spend": elicitor.spend() if hasattr(elicitor, "spend") else {},
+        }
+        write_result(result, out_path)
+        print(json.dumps({"stage": args.stage, "out": str(out_path),
+                          "ledger_usd": ledger["equivalent_usd"],
+                          "verdict": verdict.get("verdict"),
+                          "pilot_gate": pilot_gate}, indent=2, sort_keys=True))
+    return 0
 
 
 if __name__ == "__main__":
