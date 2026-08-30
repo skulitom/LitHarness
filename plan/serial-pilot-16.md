@@ -101,3 +101,14 @@ writer-repetition observable, recorded, not a chapter defect.
 
 No bar, no axis, no research claim promoted; the clause-effect statements above are one
 draw's descriptions. Counts live where they live: spend in §1, the suite in the suite.
+
+## 6. The cover set
+
+Four variants from `runs/pilots/pilot16/listing.json`, no art direction (the standing
+control), no cost reported by the provider. Mean luminance 37.7 against the prior
+twenty-four covers' 50.6 — the darkest set on the shelf, and for the first time the
+darkness is the premise's own (a dungeon under a city at night), not a palette drifting
+grey against a light label. Description, not a threshold (§61); all four ship and no model
+ranked them (§84). Variants: the descent with the tethered handset; the city cracked open
+to the pit; the ladder printing out of a cracked phone; the read-off against a long grey
+thing.
