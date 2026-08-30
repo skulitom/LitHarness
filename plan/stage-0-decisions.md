@@ -18841,6 +18841,111 @@ Pinned by `tests/test_statusline.py`, and at the two artifacts by
 `test_the_markdown_copy_keeps_the_status_line_as_written` and
 `test_the_plain_text_chapter_keeps_the_status_line_exactly`.
 
+## 178. The rail that keeps our vocabulary out of a prompt held, and the book was still named after the schema
+
+Read 11, the operator, on Serial Pilot 16's *Reading The Ladder Wrong*: *"'Ladder' included in
+Title perhaps the biggest unecessary leak of internal architechture to date. Perhaps internally
+we can have a set of words to mean Ladder instead of just ladder (eg ranks)?"* `ladder` is this
+repository's own word for §113's ordinal chain — the noun `world declare`'s help uses, the noun
+the Architect's ask uses, and the name of a `litharness world` subcommand.
+
+**Measured first, and the measurement is what decides the shape of the fix: the word was not
+echoed, it was coined.** Pilot 16's listing ran under an empty brief, and the listing role's
+assembled prompt contains none of `house.MACHINERY_WORDS` — it passes
+`test_a_reader_facing_prompt_never_speaks_in_this_system_s_own_vocabulary`, `litharness prompts
+--role listing` is where anyone can check it, and `domain/writers.py` carries no occurrence
+either. The listing came back saying *"It called itself the Ladder"*. The model reached the same
+English metaphor for a progression system that this schema reached, on its own.
+
+Everything downstream then behaved correctly and carried it. The title is drawn from the listing;
+the Architect is told the world has to keep what the listing promised, and the world came back
+with `ladder is_a Ladder`, `rung is_a Rung`, a `graph_line` label of `[LADDER]` and a printed
+column `Rung` — which put `[STATUS] Theo — Rung 1 | Depth 0/0 | …` on the page twice in chapter
+one. Four world records, a title, and a listing: six surfaces from one coinage.
+
+**So the input rail was never the hole. There was no rail on the return.**
+`tests/test_prompt_budget.py` has kept `house.MACHINERY_WORDS` out of reader-facing prompts since
+§120 measured `standing` reaching a chapter. Nothing anywhere read what came *back*.
+
+**The base rate, over every world and listing on disk.** 173 world-facing names across the nine
+pilot worlds (five of them hold any such name at all); 9 listings and 9 titles. The check as
+shipped refuses **5 names in 2 worlds** — pilot 16's four, and pilot 15c's criterion named
+`standing`, which is §120's own defect — and **1 listing and 1 title, both pilot 16's**. No other
+world, listing or title is touched. The leak is possible and not inevitable: pilot 15's system is
+*Seamwork*, and pilots 15b/c/d's is *the Keeping*.
+
+**What shipped.** `domain/schema_words.py`, reading `house.MACHINERY_WORDS` and defining no
+second list, plus three call sites:
+
+- `world check` reports `machinery_names`. It does **not** move `ok`, which stays `validate`'s —
+  a name is not a world contradicting itself — and it is reported here because the Architect is
+  told to run this view as it goes and holds `world declare`, so it can rename for nothing.
+- `world accept` refuses on it, in its own branch beside `validate`'s and under the same
+  `--force`. Its own branch because folding it into `validate` would make that refusal's
+  sentence — *"this world contradicts itself"* — false for half the worlds it printed on.
+- The listing loop redraws on it, and the title loop drops and redraws on it. The listing is
+  where the word is minted, and catching it only at the world would have left a book whose blurb
+  promises a Ladder the world is forbidden to name.
+
+**Two shapes of the question, because there are two shapes of string, and one measurement forced
+the split.** A declared display name is checked for *being* one of our words (articles, brackets
+and case stripped); free prose and a title are checked for using one *as a proper noun*
+(capitalised, not opening a sentence). Run as containment over all 173 names, the name check
+refused pilot 15's column *"Seams standing in Ashfen"*, where `standing` is an English participle
+inside a phrase and nothing has leaked. Identity declines that name and still catches all five
+real ones. Whole words, not substrings, for the same reason `Outstanding` would otherwise fail; the
+input rail matches substrings and is right to, because it reads text we wrote.
+
+**What was refused.**
+
+- **Rotating the internal word — the operator's own suggestion, *"eg ranks"*.** It would not have
+  prevented this: the word did not come from our text, so changing our text changes nothing about
+  the coinage. And `ranks` is furniture this genre owns outright, which §138 measures as the form
+  that gets used most — trading a rare leak for a common one. Overturnable by the operator; the
+  measurement, not a preference, is the reason.
+- **Taking `ladder` and `rungs` out of the Architect's ask.** Same reason, plus two: §163 has just
+  documented `world vocabulary` as the single place a slot is written down, and §163's own finding
+  is that an omission from a vocabulary surface reads as a prohibition.
+- **A word list of our own.** `house.MACHINERY_WORDS` already exists and already has a rail on it.
+  A second list is §152's defect made deliberately.
+- **Adding `grant`, `fork`, `depth`, `ledger` or `system` to that list.** No evidence names them,
+  and `overview._TASK` positively instructs a listing to *"name the magic, the system, the
+  monsters, the dungeon in plain words"* — a check that refused *the System* would refuse the
+  genre on this project's own instruction. `ledger` in particular is §116's premise question and
+  answering it with a word ban here would hide it from §116.
+- **Reading ids.** `ladder` was also pilot 16's subject id. An id is a handle, not something a
+  reader meets, and every id that matters carries an `is_a` anyway.
+
+**No bar is declared and nothing here is a quality claim.** A reader has never seen this schema
+and cannot perceive this leak; the reason to refuse it is ours — our vocabulary should not become
+our books' — and it is the operator's call, recorded as his. The counts above are memberships in
+a frozen set of strings, not scores, and no model is consulted at any of the three call sites.
+
+**Prompt budget: zero.** Every role's rendered bytes are unchanged. The one prompt addition is the
+title prohibition, which names only the word that draw actually reached for — a menu gets recited,
+one prohibition does not (§138) — and is absent when nothing leaked, which is the form the
+ceiling is measured on, exactly as `taken` has been since it shipped.
+
+**Anti-scope.** No prose rule, no house-floor clause, no scene path and no reader role is touched.
+This refuses names, never prose: a world may still call things whatever it likes, and the
+fourteen strings are the whole exception. Nothing retracts a name already in canon — there is no
+`world retract`, so pilot 16 keeps its Ladder and this changes nothing about that book.
+
+**The input rail's own gaps are named here and deliberately not fixed**, because they are the
+other half of the question and want their own measurement: `domain/characters.py` renders
+*"stands at: {rung} on {criterion}"* and *"(rung N)"* straight into the scene writer's packet, and
+`application/planner.py` says *"the standing"* twice in the scene writer's system message. Neither
+role is in `test_prompt_budget.READER_FACING`, so the rail has never run over either. Extending it
+there fails immediately on both and is a track, not a line.
+
+Pinned by `tests/test_schema_words.py`, including
+`test_an_ordinary_name_is_left_alone` (the identity-vs-containment measurement),
+`test_pilot_sixteens_title_is_named`,
+`test_the_titles_this_project_has_actually_drawn_are_left_alone`,
+`test_world_check_reports_the_names_without_moving_ok`,
+`test_an_id_is_not_a_world_facing_name`, and
+`test_the_title_prompt_is_unchanged_when_nothing_leaked`.
+
 ## 179. A narrator asserting what the sentence already gave had no rule anywhere, and the two instances that named it were in the one artifact standing on no floor
 
 **Defect harvest, not data (§95).** Read 11 (`plan/serial-pilot-16.md` §7) named two items that
