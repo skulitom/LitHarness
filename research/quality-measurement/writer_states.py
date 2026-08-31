@@ -270,7 +270,16 @@ class Generator:
                     "text": dry_text or "(dry run: no model was called)",
                     "refused": False, "usage": {}, "dry_run": True}
         argv = [
-            "claude", "-p", prompt,
+            # `-p` with NO positional prompt: the prompt goes down stdin (`input=` below,
+            # which replaces the closed stdin this call used to pass — the two conflict).
+            # Windows caps a command line at 32,767 characters, an over-long argv raises
+            # `OSError`, and the retry loop below records that as `transport_error:OSError`
+            # after three identical failures — so a retell too large to *send* was cached as
+            # a transport failure, a loss correlated with scene length rather than random.
+            # Same ceiling and same fix as `providers/cli.py::subprocess_runner` and
+            # `elicit.py::_call_cli`, where the measurements live. The cache key is a digest
+            # of the request, not the argv, so every record written before this fix replays.
+            "claude", "-p",
             "--output-format", "json",
             "--model", self.model,
             "--system-prompt", system,
@@ -289,7 +298,7 @@ class Generator:
             try:
                 completed = subprocess.run(
                     argv, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                    timeout=GEN_TIMEOUT_SECONDS, stdin=subprocess.DEVNULL, check=False,
+                    timeout=GEN_TIMEOUT_SECONDS, input=prompt, check=False,
                 )
             except (subprocess.TimeoutExpired, OSError) as error:
                 completed, error_name = None, type(error).__name__
