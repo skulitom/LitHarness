@@ -4,8 +4,11 @@ What this file pins: the member-space remap (the driver's own arithmetic — a s
 aggregate would be positional nonsense), the confirmatory filter, the probe-before-arm
 structural rule, the plan arithmetic, the PID lock's named refusal, the dry stage running
 with a sentinel elicitor that makes constructing one the failure, and the paid stages'
-standing operator-gate refusal. What it does not establish: anything about any model — the
-paid path is exercised only through the refusal that guards it.
+standing operator-gate refusal. Added after the 2026-08-30 pilot's under-run: distinct pairs
+produce distinct stimuli on a synthetic fixture, a degenerate cell is refused by name and
+counted, and a probe that came back empty does not make a book `clean`. What it does not
+establish: anything about any model — the paid path is exercised only through the refusal
+that guards it.
 """
 
 from __future__ import annotations
@@ -13,6 +16,7 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 sys.path.insert(
     0, str(Path(__file__).resolve().parent.parent / "research" / "sim-readership-backtest")
@@ -22,6 +26,9 @@ import pytest
 backtest = pytest.importorskip("backtest", reason="research module; imported by path")
 analysis = pytest.importorskip("analysis", reason="research module; imported by path")
 corpus = pytest.importorskip("corpus", reason="research module; imported by path")
+population = pytest.importorskip("population", reason="research module; imported by path")
+
+_DATES = ("2025-03-01T00:00:00Z", "2025-03-02T00:00:00Z", "2025-03-03T00:00:00Z")
 
 
 def _vote(choice: str, order: int, pair: str = "p1") -> analysis.Vote:
@@ -29,6 +36,36 @@ def _vote(choice: str, order: int, pair: str = "p1") -> analysis.Vote:
         pair_id=pair, arm="C", persona_id="r1", order=order, choice=choice, reason="",
         high_was="A" if order == 0 else "B",
     )
+
+
+def _fiction(fiction_id: str, *, stem: str, title: str = "A Borrowed Lantern") -> Any:
+    """One synthetic fiction whose chapters 1-3 are identified by their title ordinals.
+
+    Each chapter is three paragraphs of `stem`-prefixed tokens, so two fictions built with
+    different stems share no byte and one built with the same stem is byte-identical after
+    blinding — which is exactly the two cases the stimulus rail has to tell apart.
+    """
+    texts = [
+        "\n\n".join(" ".join(f"{stem}{chapter}{p}{w}" for w in range(12)) for p in range(3))
+        for chapter in range(3)
+    ]
+    return corpus.fiction_from_rows([
+        {
+            "fiction_id": fiction_id, "title": title, "author": "Rowan Alder",
+            "tags": '["LitRPG"]', "warnings": "[]",
+            "description": " ".join(f"blurbword{n}" for n in range(40)),
+            "status": None, "followers": 30.0, "total_views": 600.0, "average_views": 200.0,
+            "chapter_id": f"{fiction_id}-c{index + 1}",
+            "chapter_title": f"Chapter {index + 1}",
+            "release_datetime": _DATES[index], "text": text,
+        }
+        for index, text in enumerate(texts)
+    ])
+
+
+def _pair(pair_id: str, high: str, low: str) -> Any:
+    return corpus.Pair(pair_id=pair_id, high=high, low=low,
+                       cell=("undeclared_2025", "LitRPG", "short", ""), ratio=3.0)
 
 
 def test_the_member_space_remap_names_the_high_member_a_in_both_orders() -> None:
@@ -169,3 +206,80 @@ def test_registration_digests_cover_prereg_population_and_pairs(tmp_path: Path) 
     digests = backtest.registration_digests(pairs_path)
     assert set(digests) == {"prereg_sha256", "population_digest", "pairs_digest"}
     assert len(digests["prereg_sha256"]) == 64
+
+
+def test_distinct_pairs_produce_distinct_stimuli_and_a_whole_plan() -> None:
+    """Four books, two pairs: every planned C cell carries its own bytes and none is lost.
+
+    The 2026-08-30 pilot's under-run was first hypothesised to be stimulus collapse — pairs
+    resolving to the same or empty excerpts, so their requests replayed instead of buying.
+    The census refuted that on the real artifact (40 of 40 stimuli distinct and non-empty),
+    and this pins the property the hypothesis assumed, so a future collapse has a test that
+    fails rather than a cache to be reconstructed from.
+    """
+    personas = population.POPULATION[:2]
+    fictions = {f"f{i}": _fiction(f"f{i}", stem=f"stem{i}") for i in range(4)}
+    pairs = [_pair("a" * 16, "f0", "f1"), _pair("b" * 16, "f2", "f3")]
+    sessions = backtest.build_sessions(
+        pairs, fictions, dict.fromkeys(fictions, "clean"), personas
+    )
+    assert sessions["degenerate_stimuli"] == [], "a whole plan refuses nothing"
+    assert len(sessions["C"]) == len(pairs) * len(personas) * 2 == 8
+    assert len(sessions["P"]) == 8
+    cells = {(s.spec.excerpt_a_digest, s.spec.excerpt_b_digest) for s in sessions["C"]}
+    assert len(cells) == 4, "two pairs x two orders, each its own (A, B) pair of digests"
+    assert len({digest for cell in cells for digest in cell}) == 4, "four books, four stimuli"
+
+
+def test_byte_identical_or_empty_stimuli_are_refused_by_name_and_counted() -> None:
+    """A cell that cannot pose its question leaves the plan loudly, with a count.
+
+    Two books whose prose is byte-identical blind to the same excerpt: both orders would ask
+    the same question and any answer would be counted as a preference. Both main arms refuse
+    the pair, and `build_sessions` reports the refusals rather than returning a quietly
+    shorter plan — the shape that let a twentieth-of-plan arm read as a finished one.
+    """
+    personas = population.POPULATION[:2]
+    twins = {"f0": _fiction("f0", stem="same"), "f1": _fiction("f1", stem="same")}
+    sessions = backtest.build_sessions(
+        [_pair("c" * 16, "f0", "f1")], twins, dict.fromkeys(twins, "clean"), personas
+    )
+    assert sessions["C"] == [] and sessions["P"] == []
+    refusals = sessions["degenerate_stimuli"]
+    assert len(refusals) == 2, "the C and P cells each refuse, each counted"
+    assert [r.split("/")[0] for r in refusals] == ["C", "P"]
+    assert all("byte-identical stimuli are not a comparison" in r for r in refusals)
+    assert all("c" * 16 in r for r in refusals), "the refusal names the cell"
+    with pytest.raises(backtest.DegenerateStimuli, match="an empty stimulus is not a stimulus"):
+        backtest._sessions_for_pair("p1", "C", "some text", "   ", personas)
+
+
+def test_a_probe_that_answered_nothing_does_not_make_a_book_clean() -> None:
+    """PREREG §3 says every candidate book is probed; a silent transport probed nothing.
+
+    In the pilot, 12 of 40 books had all three probes fail on the transport and all 12 were
+    scored `clean` — the screen carrying the whole memorisation defense certified books it
+    never asked about. An unanswered probe now lands the book outside `clean`, where
+    `build_sessions` will not let it into an arm.
+    """
+    class Silent:
+        def ask_raw(self, system: str, turns: Any, **kwargs: Any) -> dict[str, Any]:
+            return {"text": "", "refused": True, "stop_reason": "transport_error:OSError"}
+
+    class Answering:
+        def ask_raw(self, system: str, turns: Any, **kwargs: Any) -> dict[str, Any]:
+            return {"text": "I do not recognise this passage.", "refused": False}
+
+    fiction = _fiction("f0", stem="stem0")
+    silent = backtest.probe_book(Silent(), fiction, model="m")
+    assert silent["classification"] == "unprobed"
+    assert silent["unanswered"] == ["title", "author", "continuation"]
+    assert "silence is not a miss" in silent["why"]
+    answering = backtest.probe_book(Answering(), fiction, model="m")
+    assert answering["classification"] == "clean"
+    assert "unanswered" not in answering
+    skipped = backtest.build_sessions(
+        [_pair("d" * 16, "f0", "f1")], {}, {"f0": "unprobed", "f1": "clean"},
+        population.POPULATION[:2],
+    )
+    assert skipped["C"] == [] and skipped["skipped_pairs"] == 1

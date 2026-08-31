@@ -2,8 +2,13 @@
 
 PREREG.md §8 and §10 are the contract. This module is thin on method — every methodological
 choice lives in the six siblings — and thick on refusals: no session runs before its book is
-probe-classified, no stage runs twice concurrently, no spend passes the registered ceiling,
-and the full stage refuses without a pilot whose ledger held and whose VOIDs stayed silent.
+probe-classified, no book counts as probed on a probe that returned nothing, no cell enters a
+plan whose two stimuli are empty or byte-identical, no stage runs twice concurrently, no spend
+passes the registered ceiling, and the full stage refuses without a pilot whose ledger held
+and whose VOIDs stayed silent. Every refusal is counted where the result file can see it:
+`under_run` carries planned sessions beside returned votes beside the transport's own failure
+count, because the one failure mode this driver had no words for was an arm that bought a
+twentieth of its plan and reported as a finished arm.
 
 **Vote spaces, and the one remap this module owns.** `arms` produces choices in slot space
 ("A"/"B" as shown), which is what the positional control must read. The registered aggregate
@@ -26,7 +31,7 @@ import json
 import math
 import os
 import sys
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -169,13 +174,25 @@ def probe_material(fiction: corpus.Fiction) -> tuple[str, str] | None:
 
 
 def probe_book(elicitor: Any, fiction: corpus.Fiction, *, model: str) -> dict[str, Any]:
-    """Run the three probes for one book and classify. Precedes every main-arm session."""
+    """Run the three probes for one book and classify. Precedes every main-arm session.
+
+    **A probe that was never answered is not a probe that came back negative.** PREREG §3 says
+    every candidate book is probed before any main-arm call; a transport that returns no text
+    has not probed it, and scoring that silence as a miss turns an unasked question into
+    evidence of no recognition. Such a book is classified `unprobed` — outside `clean`, so it
+    enters no arm — and the names of the unanswered probes travel with the record.
+
+    The rule was written after the 2026-08-30 pilot, where 12 of 40 books had all three probes
+    fail on the transport and all 12 were classified `clean`; the screen that carries the
+    entire memorisation defense had, for those books, screened nothing.
+    """
     material = probe_material(fiction)
     if material is None:
         return {"fiction_id": fiction.fiction_id, "classification": "recognised",
                 "why": "no identifiable opening to probe; excluded rather than unprobed"}
     excerpt, truth = material
     results = []
+    unanswered: list[str] = []
     for index, (probe_name, template) in enumerate(recognition.PROBES):
         record = elicitor.ask_raw(
             "", [{"role": "user", "content": template.format(excerpt=excerpt)}],
@@ -183,17 +200,26 @@ def probe_book(elicitor: Any, fiction: corpus.Fiction, *, model: str) -> dict[st
             tag={"stage": "probe", "probe": probe_name, "fiction": fiction.fiction_id},
             sample=_probe_sample(fiction.fiction_id, index), model=model,
         )
+        answer = record.get("text") or ""
+        if not answer.strip():
+            unanswered.append(probe_name)
         results.append(
             recognition.score_probe(
-                probe_name, record.get("text") or "", title=fiction.title,
+                probe_name, answer, title=fiction.title,
                 author=fiction.author, truth_continuation=truth,
             )
         )
-    return {
+    classification = recognition.classify(results)
+    out = {
         "fiction_id": fiction.fiction_id,
-        "classification": recognition.classify(results),
+        "classification": classification,
         "probes": [asdict(result) for result in results],
     }
+    if unanswered and classification == "clean":
+        out["classification"] = "unprobed"
+        out["why"] = f"no answer from probe(s) {', '.join(unanswered)}; a silence is not a miss"
+        out["unanswered"] = unanswered
+    return out
 
 
 def _probe_sample(fiction_id: str, probe_index: int) -> int:
@@ -212,10 +238,38 @@ class PlannedSession:
     text_b: str
 
 
+class DegenerateStimuli(ValueError):
+    """A planned cell whose two stimuli cannot pose the question the cell exists to pose."""
+
+
 def _sessions_for_pair(
     pair_id: str, arm: str, high_text: str, low_text: str,
     personas: Sequence[population.Persona],
 ) -> list[PlannedSession]:
+    """Ten personas x two orders for one cell, or a named refusal if the cell is degenerate.
+
+    Two byte-identical stimuli are not a comparison — both orders ask the same question and
+    any answer is a coin the arm would count as a preference — and an empty stimulus is not a
+    stimulus. Either raises `DegenerateStimuli`; `build_sessions` catches, counts and reports
+    it, so a cell can leave the plan but never leave it quietly.
+
+    The rail is here because of what the 2026-08-30 pilot cost, even though its own loss came
+    later in the pipeline: 380 of 400 planned C-arm cells returned no vote — 360 of them left
+    no record at all — and the result file said only that 20 votes existed, so the under-run
+    had to be reconstructed from the raw cache. Every way a planned cell can fail to be one
+    gets a count from now on: this is the build-time half, and `run_paid`'s planned-versus-
+    returned census is the run-time half.
+    """
+    if not high_text.strip() or not low_text.strip():
+        raise DegenerateStimuli(
+            f"{arm}/{pair_id}: an empty stimulus is not a stimulus "
+            f"(lengths {len(high_text)}, {len(low_text)})"
+        )
+    if high_text == low_text:
+        raise DegenerateStimuli(
+            f"{arm}/{pair_id}: byte-identical stimuli are not a comparison "
+            f"(digest {corpus.excerpt_digest(high_text)[:16]})"
+        )
     out = []
     for persona in personas:
         for order in (0, 1):
@@ -244,12 +298,27 @@ def build_sessions(
     arm: primary C and P over recognition-clean pairs; C1 shams and the same-book C2 damage
     arm over the first clean high-side books; the C4 surface arm over outcome-matched,
     formatting-divergent clean book pairs.
+
+    Two counts ride out with the sessions and neither may be dropped by a caller:
+    `skipped_pairs` (no clean classification) and `degenerate_stimuli` (the named refusals
+    `_sessions_for_pair` raised). A plan is only as trustworthy as its own account of what
+    left it.
     """
     def clean(fiction_id: str) -> bool:
         return classifications.get(fiction_id) == "clean"
 
     sessions: dict[str, list[PlannedSession]] = {"C": [], "P": [], "sham": [], "damage": [],
                                                  "surface": []}
+    degenerate: list[str] = []
+
+    def cell(arm: str, pair_id: str, high_text: str, low_text: str) -> list[PlannedSession]:
+        """One cell's sessions, or none plus a recorded refusal. Never a silent none."""
+        try:
+            return _sessions_for_pair(pair_id, arm, high_text, low_text, personas)
+        except DegenerateStimuli as refusal:
+            degenerate.append(str(refusal))
+            return []
+
     skipped_pairs = 0
     clean_pairs = []
     for pair in pairs:
@@ -258,18 +327,16 @@ def build_sessions(
             continue
         clean_pairs.append(pair)
         high_c, low_c = arms.c_arm_texts(pair, fictions, blinding.blind)
-        sessions["C"].extend(_sessions_for_pair(pair.pair_id, "C", high_c, low_c, personas))
+        sessions["C"].extend(cell("C", pair.pair_id, high_c, low_c))
         high_p, low_p = arms.p_arm_texts(pair, fictions, blinding.blind)
-        sessions["P"].extend(_sessions_for_pair(pair.pair_id, "P", high_p, low_p, personas))
+        sessions["P"].extend(cell("P", pair.pair_id, high_p, low_p))
 
     clean_high_books = [fictions[p.high] for p in clean_pairs]
     for fiction in clean_high_books[:SHAM_BOOKS]:
         windows = arms.sham_windows(fiction, blinding.blind)
         if windows is None:
             continue
-        sessions["sham"].extend(
-            _sessions_for_pair(f"sham-{fiction.fiction_id}", "sham", *windows, personas)
-        )
+        sessions["sham"].extend(cell("sham", f"sham-{fiction.fiction_id}", *windows))
     for fiction in clean_high_books[:DAMAGE_BOOKS]:
         chapters = corpus.chapters_1_to_3(fiction)
         if chapters is None:
@@ -282,13 +349,11 @@ def build_sessions(
         if shuffled == intact:
             continue  # too few paragraphs to displace; an unmoved sham is no damage arm
         sessions["damage"].extend(
-            _sessions_for_pair(f"damage-{fiction.fiction_id}", "damage", intact, shuffled,
-                               personas)
+            cell("damage", f"damage-{fiction.fiction_id}", intact, shuffled)
         )
-    sessions["surface"].extend(
-        _surface_sessions(clean_pairs, fictions, personas)
-    )
+    sessions["surface"].extend(_surface_sessions(clean_pairs, fictions, personas, cell))
     sessions["skipped_pairs"] = skipped_pairs  # type: ignore[assignment]
+    sessions["degenerate_stimuli"] = degenerate  # type: ignore[assignment]
     return sessions
 
 
@@ -306,6 +371,7 @@ def _surface_sessions(
     clean_pairs: Sequence[corpus.Pair],
     fictions: Mapping[str, corpus.Fiction],
     personas: Sequence[population.Persona],
+    cell: Callable[[str, str, str, str], list[PlannedSession]],
 ) -> list[PlannedSession]:
     """C4: same-cell book pairs matched on outcome, divergent on paragraph formatting.
 
@@ -337,9 +403,7 @@ def _surface_sessions(
                 high, low = (fa, fb) if oa >= ob else (fb, fa)
                 high_text = arms._c_arm_text(high, blinding.blind)
                 low_text = arms._c_arm_text(low, blinding.blind)
-                out.extend(
-                    _sessions_for_pair(pair_id, "surface", high_text, low_text, personas)
-                )
+                out.extend(cell("surface", pair_id, high_text, low_text))
                 used.update((fa.fiction_id, fb.fiction_id))
                 break
     return out
@@ -496,6 +560,8 @@ def main(argv: list[str] | None = None) -> int:
         )
         for arm_name in ("C", "P", "sham", "damage", "surface"):
             print(f"  {arm_name}: {len(sessions[arm_name])} session(s)")
+        for refusal in sessions["degenerate_stimuli"]:
+            print(f"  refused: {refusal}")
         print("dry: no elicitor constructed, nothing spent", file=sys.stderr)
         return 0
 
@@ -553,11 +619,14 @@ def run_paid(args: argparse.Namespace) -> int:
             record = probe_book(elicitor, fictions[fiction_id], model=args.model)
             classifications[fiction_id] = record["classification"]
             probes.append(record)
-        recognised = sorted(f for f, c in classifications.items() if c != "clean")
+        recognised = sorted(f for f, c in classifications.items() if c == "recognised")
+        unprobed = sorted(f for f, c in classifications.items() if c == "unprobed")
 
         sessions = build_sessions(stage_pairs, fictions, classifications,
                                   population.POPULATION)
         skipped_pairs = sessions.pop("skipped_pairs")
+        degenerate_stimuli = sessions.pop("degenerate_stimuli")
+        planned_sessions = {arm: len(cells) for arm, cells in sessions.items()}
         votes: dict[str, list[analysis.Vote]] = {}
         aborted = False
         for arm_name in ("C", "P", "sham", "damage", "surface"):
@@ -620,8 +689,21 @@ def run_paid(args: argparse.Namespace) -> int:
             "plan": stage_plan,
             "registration": registration_digests(pairs_path),
             "probe": {"books": len(needed), "recognised": recognised,
-                      "skipped_pairs": skipped_pairs},
+                      "unprobed": unprobed, "skipped_pairs": skipped_pairs},
             "votes": {arm: len(v) for arm, v in votes.items()},
+            # The under-run census: what the plan asked for, beside what came back, beside the
+            # transport's own count of calls that never landed. The 2026-08-30 pilot reported
+            # `votes` alone, so an arm that bought 20 of its 400 planned sessions read as a
+            # completed arm and the shortfall had to be reconstructed from the raw cache. Any
+            # gap between `planned` and `votes_returned` is a hole in the arm, whatever opened
+            # it, and it is now on the face of the result file.
+            "under_run": {
+                "planned": planned_sessions,
+                "votes_returned": {arm: len(v) for arm, v in votes.items()},
+                "degenerate_stimuli": degenerate_stimuli,
+                "transport_failures": getattr(elicitor, "transport_failures", None),
+                "failure_reasons": dict(getattr(elicitor, "failure_reasons", {}) or {}),
+            },
             "primary": {"aggregate": primary_agg, "outcomes": primary_outcomes,
                         "largest_true_effect": largest_true},
             "p_arm": {"aggregate": p_agg},
@@ -639,6 +721,7 @@ def run_paid(args: argparse.Namespace) -> int:
         print(json.dumps({"stage": args.stage, "out": str(out_path),
                           "ledger_usd": ledger["equivalent_usd"],
                           "verdict": verdict.get("verdict"),
+                          "under_run": result["under_run"],
                           "pilot_gate": pilot_gate}, indent=2, sort_keys=True))
     return 0
 
