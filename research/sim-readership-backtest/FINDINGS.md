@@ -80,3 +80,36 @@ screen came back **0 recognised of 40 books probed** — the corpus's obscurity 
 The verdict slot reads `refused` (2 outcomes < the registered minimum of 10), which is the
 arithmetic refusing to manufacture a bound — the §85 rail working. Probes, P-arm and control
 plumbing all ran end to end; every bought record replays free for any rerun.
+
+## The re-pilot (stage b, second run), 2026-08-31, under the fixed transport
+
+**Every arm ran to plan for the first time: zero transport failures, zero degenerate
+stimuli, 400/400 C votes, and all 40 books really probed — 0 recognised.** Record:
+`result-pilot.json`; cumulative ledger $175.05 (subscription-equivalent) against the raised
+$900 ceiling, within 2x of the corrected estimate — the gate's cost half passes.
+
+**The primary, descriptively (pilot n, no confirmatory claim): the reward split's aggregate
+post-dicted the real market's retained member on 15 of 19 decided pairs (0.789), bootstrap
+lower bound 0.579.** One pair undecided. Positional counterbalancing worked: within-order
+first-position rates split 0.627 / 0.311 and cancel to a 0.035 deviation, far under the
+void line. Shuffle clear-share 0.02, under its limit.
+
+**Two control-arm corners fired, and both are design corners rather than verdicts:**
+
+1. **The sham floor hit 0.5 off a two-vote sham.** Same-book window pairs draw heavy
+   "neither" (sensibly), so decided-n per sham ran 2–14; the registered max-not-pooled
+   floor is degenerate at n_decided=2 (any split is 0 or 1). The 0.5 floor exceeds the
+   primary effect (0.289), so `void_sham` fired at the pilot's descriptive gate.
+2. **The control arms are fixed-size and cache-frozen, so stage (c) would inherit these
+   exact control outcomes by replay** — the sham void and the damage bound (11/15 intact
+   preferred; lower bound 0.467 ≤ 0.5) are predetermined at full under the current
+   constants. A confirmatory run whose control verdicts are decided in advance answers
+   nothing.
+
+**The honest path, stated before anyone likes an outcome:** any amendment (a minimum
+decided-n for a sham to set the floor; stage-salted samples so controls draw fresh at (c);
+larger control arms) is a post-hoc analysis change made after seeing data, and must be
+recorded as such — justified mechanically (a two-vote sham cannot carry a floor), with the
+full run reporting the original rule's verdict beside any amended one. The choice is the
+operator's; nothing is amended in this entry, and stage (c) remains blocked by the
+registered no-VOID gate until it is resolved.
