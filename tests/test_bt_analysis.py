@@ -8,6 +8,12 @@ on a fair-coin null, the descriptive health signature's verdict-free shape, and 
 scenario per named outcome of the §9 rule including its documented precedence. Every expected
 number is stated in the test and derived by hand before anything runs. What this does not
 establish: anything about any model's answers — no vote here was produced by a call.
+
+Added with PREREG's post-hoc amendment of 2026-08-31: the sham guard's boundary (a two-vote
+sham excluded, a six-vote sham kept, the floor recomputed), the constant pinned to the
+unanimity arithmetic that chose it, the guard's structural direction (it can only lower a
+floor), the amended-only `void_sham_unmeasured` outcome and the registered rule's inability to
+reach it, and the honesty check that the guard does **not** clear the pilot's own sham void.
 """
 
 from __future__ import annotations
@@ -281,13 +287,91 @@ def test_shams_with_no_decided_votes_cannot_set_the_floor() -> None:
     # No shams at all: floor 0.0. A sham whose panel abandoned both windows has no defined
     # deviation (None) and raises no floor.
     empty = analysis.sham_floor({})
-    assert empty == {"floor": 0.0, "per_sham": {}}
+    assert empty == {"floor": 0.0, "min_decided": 0, "n_qualifying": 0, "per_sham": {}}
     abandoned = analysis.sham_floor(
         {"sham-silent": [_vote(choice="neither"), _vote(persona="r2", choice="neither")]}
     )
     assert abandoned["per_sham"]["sham-silent"]["deviation"] is None
     assert abandoned["per_sham"]["sham-silent"]["n_decided"] == 0
+    assert abandoned["per_sham"]["sham-silent"]["counts_toward_floor"] is False
     assert abandoned["floor"] == 0.0
+    assert abandoned["n_qualifying"] == 0
+
+
+# ------------------------------------------------- the amended sham guard (post-hoc, 2026-08-31)
+
+
+def _sham(votes_for_a: int, votes_for_b: int, *, neither: int = 0) -> list[analysis.Vote]:
+    """One sham's votes with a hand-chosen decided split, plus optional abandonments."""
+    return (
+        [_vote(persona=f"a{i}") for i in range(votes_for_a)]
+        + [_vote(persona=f"b{i}", choice="B") for i in range(votes_for_b)]
+        + [_vote(persona=f"n{i}", choice="neither") for i in range(neither)]
+    )
+
+
+def test_the_minimum_decided_n_is_exactly_its_unanimity_arithmetic_and_not_a_round_number() -> (
+    None
+):
+    """The constant is pinned to the argument that chose it, so it cannot drift into taste.
+
+    Under the sham's own null the per-sham statistic reaches its maximum (0.5, unanimity) with
+    probability 2**(1-n). The registered ALPHA is the line: the minimum is the smallest n whose
+    unanimity probability sits at or under it, and the n below must fail.
+    """
+    n = analysis.SHAM_MIN_DECIDED
+    assert 2 ** (1 - n) <= analysis.ALPHA, "the chosen minimum must clear alpha"
+    assert 2 ** (1 - (n - 1)) > analysis.ALPHA, "one vote fewer must not clear it"
+    assert (2 ** (1 - 5), 2 ** (1 - 6)) == (0.0625, 0.03125)
+    assert n == 6
+
+
+def test_a_two_vote_sham_is_kept_in_the_record_but_cannot_set_the_amended_floor() -> None:
+    """The boundary, hand-derived: 2 decided votes attain only {0, 0.5} — resolution, not
+    deviation — so a 2-0 sham reads 0.5 under the registered rule and is excluded from the
+    amended one. The 6-vote sham at 5A/1B (deviation |5/6 - 1/2| = 0.3333) qualifies and
+    becomes the amended floor. Nothing is deleted: the excluded sham keeps its deviation."""
+    by_sham = {"sham-tiny": _sham(2, 0), "sham-six": _sham(5, 1)}
+
+    registered = analysis.sham_floor(by_sham)
+    assert registered["floor"] == pytest.approx(0.5)
+    assert registered["min_decided"] == 0 and registered["n_qualifying"] == 2
+
+    amended = analysis.sham_floor(by_sham, min_decided=analysis.SHAM_MIN_DECIDED)
+    assert amended["floor"] == pytest.approx(1 / 3)
+    assert amended["n_qualifying"] == 1
+    assert amended["per_sham"]["sham-tiny"]["counts_toward_floor"] is False
+    assert amended["per_sham"]["sham-tiny"]["deviation"] == pytest.approx(0.5), (
+        "an excluded sham keeps its measured deviation on the record"
+    )
+    assert amended["per_sham"]["sham-six"]["counts_toward_floor"] is True
+
+
+def test_the_guard_counts_decided_votes_only_so_abandonments_never_buy_qualification() -> None:
+    """Twenty votes of which five are decided is a five-vote sham: "neither" is undecided
+    everywhere else in this module and cannot be spent here to reach the minimum."""
+    by_sham = {"sham-loud-but-thin": _sham(5, 0, neither=15)}
+    amended = analysis.sham_floor(by_sham, min_decided=analysis.SHAM_MIN_DECIDED)
+    assert amended["per_sham"]["sham-loud-but-thin"]["n_decided"] == 5
+    assert amended["per_sham"]["sham-loud-but-thin"]["counts_toward_floor"] is False
+    assert amended["floor"] == 0.0 and amended["n_qualifying"] == 0
+
+
+def test_the_amended_floor_can_only_be_lower_than_the_registered_one() -> None:
+    """The amendment's structural bias, asserted rather than argued: removing cells from a
+    maximum can only lower it. Stated in PREREG §A.4(3) so a reader discounts it; pinned here
+    so no later edit can quietly make the guard raise a floor instead."""
+    by_sham = {
+        "s2": _sham(2, 0),  # 0.5, excluded
+        "s5": _sham(4, 1),  # 0.3, excluded
+        "s9": _sham(8, 1),  # 0.3889, kept
+        "s12": _sham(6, 6),  # 0.0, kept
+    }
+    registered = analysis.sham_floor(by_sham)["floor"]
+    amended = analysis.sham_floor(by_sham, min_decided=analysis.SHAM_MIN_DECIDED)["floor"]
+    assert amended <= registered
+    assert registered == pytest.approx(0.5)
+    assert amended == pytest.approx(8 / 9 - 0.5)
 
 
 # ------------------------------------------------------------------------- the C3 label shuffle
@@ -420,6 +504,84 @@ def test_void_sham_fires_when_the_floor_reaches_larger_than_the_true_effect() ->
     assert got["sham_floor"] == pytest.approx(0.4)
 
 
+def test_an_amended_floor_with_no_qualifying_sham_voids_instead_of_passing() -> None:
+    """A floor of 0.0 has two meanings and only one of them is a pass.
+
+    Every sham under the minimum: the amended floor is 0.0, which would sail past a
+    `floor >= effect` comparison as though twelve shams had all sat at chance. The record
+    says `n_qualifying: 0`, and the rule reads it — a control that did not measure cannot
+    certify. This outcome is reachable only on the amended path.
+    """
+    thin = {f"sham-{i}": _sham(2, 0) for i in range(3)}
+    amended = analysis.sham_floor(thin, min_decided=analysis.SHAM_MIN_DECIDED)
+    assert amended["floor"] == 0.0 and amended["n_qualifying"] == 0
+    controls = _clean_controls()
+    got = analysis.verdicts(
+        STRONG_PRIMARY,
+        positional=controls["positional"],
+        sham=amended,
+        shuffle=controls["shuffle"],
+        largest_true_effect=0.3,
+        damage_outcomes=DAMAGE_OK,
+    )
+    assert got["verdict"] == "void_sham_unmeasured"
+    assert got["sham_min_decided"] == analysis.SHAM_MIN_DECIDED
+    assert got["sham_n_qualifying"] == 0
+
+
+def test_the_registered_rule_cannot_reach_the_amended_void_at_all() -> None:
+    """The registration set no minimum, so `void_sham_unmeasured` is unreachable from it:
+    the same thin shams, read under the default, set a floor of 0.5 and void the ordinary
+    way. The amendment adds an outcome to one path without touching the other."""
+    thin = {f"sham-{i}": _sham(2, 0) for i in range(3)}
+    registered = analysis.sham_floor(thin)
+    assert registered["min_decided"] == 0 and registered["n_qualifying"] == 3
+    controls = _clean_controls()
+    got = analysis.verdicts(
+        STRONG_PRIMARY,
+        positional=controls["positional"],
+        sham=registered,
+        shuffle=controls["shuffle"],
+        largest_true_effect=0.3,
+        damage_outcomes=DAMAGE_OK,
+    )
+    assert got["verdict"] == "void_sham"
+    assert got["sham_floor"] == pytest.approx(0.5)
+
+
+def test_the_guard_does_not_clear_the_pilots_sham_void_on_the_pilots_own_table() -> None:
+    """PREREG §A.4(1)'s honesty check, in code, on the re-pilot's twelve shams.
+
+    The votes are reconstructed from `result-pilot.json`'s per-sham (n_decided, share) table —
+    2/5/5/6/7/8/9/9/12/12/13/14 decided — so the arithmetic is the pilot's, not an invention.
+    The registered floor is 0.5 off the two-vote sham; the amended floor is 0.3889 off the
+    nine-vote one; the pilot's primary effect was 0.2895. **Both floors exceed it**, so the
+    guard is not what would clear anything, and a test fails if anyone later writes that it is.
+    """
+    pilot = {  # (votes for A, votes for B) per sham, ordered by decided n
+        "sham-103284": (2, 0), "sham-111442": (4, 1), "sham-113516": (4, 1),
+        "sham-100771": (4, 2), "sham-102074": (4, 3), "sham-103379": (4, 4),
+        "sham-103788": (8, 1), "sham-112338": (5, 4), "sham-102842": (6, 6),
+        "sham-114617": (4, 8), "sham-108845": (10, 3), "sham-103872": (10, 4),
+    }
+    by_sham = {sham_id: _sham(a, b) for sham_id, (a, b) in pilot.items()}
+    assert sum(a + b for a, b in pilot.values()) == 102, "the pilot's decided sham votes"
+
+    registered = analysis.sham_floor(by_sham)
+    amended = analysis.sham_floor(by_sham, min_decided=analysis.SHAM_MIN_DECIDED)
+    pilot_primary_effect = abs(15 / 19 - 0.5)  # 15 of 19 decided pairs, |acc - 0.5|
+
+    assert registered["floor"] == pytest.approx(0.5)
+    assert registered["n_qualifying"] == 12
+    assert amended["floor"] == pytest.approx(8 / 9 - 0.5)  # 0.3889, sham-103788 at n=9
+    assert amended["n_qualifying"] == 9, "three shams fall under the minimum: n = 2, 5, 5"
+    assert pilot_primary_effect == pytest.approx(0.2894736842105263)
+    assert amended["floor"] > pilot_primary_effect, (
+        "the amended floor still voids the pilot's sham arm; fresh draws at stage (c), not "
+        "this guard, are what could change the corner"
+    )
+
+
 def test_void_shuffle_fires_when_the_clear_share_exceeds_three_alpha_halves() -> None:
     # A null that clears 0.5 on 10% of draws (> 3 * alpha/2 = 7.5%) means the analysis path
     # leaks the label; everything downstream is void regardless of the primary.
@@ -497,9 +659,14 @@ def test_a_clean_strong_primary_qualifies_with_an_auditable_record() -> None:
         "largest_true_effect",
         "positional_deviation",
         "sham_floor",
+        "sham_min_decided",
+        "sham_n_qualifying",
         "shuffle_clear_share",
         "damage_lower_bound",
     }
+    # The registered rule's own record says which sham rule produced its floor, so a file
+    # holding both verdicts can never be read as two copies of one rule.
+    assert got["sham_min_decided"] == 0
 
 
 def test_a_clean_chance_level_primary_does_not_qualify() -> None:

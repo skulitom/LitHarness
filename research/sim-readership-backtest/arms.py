@@ -17,6 +17,12 @@ The sample index folds (pair_id, persona_id, order) into one stable integer the 
 `feed_session.py` folds replicate into step: the replay cache keys on a digest of the request
 plus this index, and ollama uses it as the sampler seed, so two distinct sessions must never
 share one.
+
+Because the index is in the cache key (`elicit._call`: `f"{digest(params)}:{sample}"`), it is
+also the seam through which a cell can be made to draw again rather than replay. The optional
+`stage_salt` is that seam, added by PREREG's post-hoc amendment of 2026-08-31 for the control
+arms alone; `backtest` decides which arms carry it and at which stage, and the empty default
+leaves every existing index byte-identical.
 """
 
 from __future__ import annotations
@@ -217,7 +223,9 @@ def ordered(high_text: str, low_text: str, order: int) -> tuple[str, str]:
 # --------------------------------------------------------------------------- the full request
 
 
-def build_session(spec: SessionSpec, system: str, text_a: str, text_b: str) -> dict[str, Any]:
+def build_session(
+    spec: SessionSpec, system: str, text_a: str, text_b: str, *, stage_salt: str = ""
+) -> dict[str, Any]:
     """The full request the transport will send, stage-1 fields at top level.
 
     Shape: {"system", "turns", "schema" (None for stage 1), "plan", "tag", "sample"}.
@@ -226,8 +234,10 @@ def build_session(spec: SessionSpec, system: str, text_a: str, text_b: str) -> d
     the first `ask_raw` sends. `tag` carries every SessionSpec field so any cached record can
     be attributed back to its cell without consulting run state.
 
-    `sample` is `_sample_index(spec)`: stable across runs and platforms, and distinct across
-    cells for the collision-freedom argument documented there.
+    `sample` is `_sample_index(spec, stage_salt)`: stable across runs and platforms, and
+    distinct across cells for the collision-freedom argument documented there. The salt is
+    empty by default, so an unsalted call builds exactly the request it built before the
+    amendment — which is what lets the primary arms' pilot cells replay.
     """
     plan: list[dict[str, Any]] = [
         {
@@ -247,11 +257,11 @@ def build_session(spec: SessionSpec, system: str, text_a: str, text_b: str) -> d
         "schema": None,
         "plan": plan,
         "tag": asdict(spec),
-        "sample": _sample_index(spec),
+        "sample": _sample_index(spec, stage_salt),
     }
 
 
-def _sample_index(spec: SessionSpec) -> int:
+def _sample_index(spec: SessionSpec, stage_salt: str = "") -> int:
     """A stable integer folding (pair_id, persona_id, order); see the collision argument.
 
     sha256 over the NUL-joined fields, first 16 hex digits as an integer — 64 bits. Two
@@ -262,8 +272,16 @@ def _sample_index(spec: SessionSpec) -> int:
     source in the pipeline. And unlike `feed_session`'s arithmetic scheme, the request bytes
     themselves already differ per cell (different excerpts, different system), so the replay
     cache collides only if BOTH the request digest and this index collide.
+
+    `stage_salt` appends one more field to that fold, and **the empty default appends nothing
+    at all** — not a delimiter, not a marker — so an unsalted index is the same integer this
+    function returned before the amendment existed, and every unsalted cell still replays from
+    the pilot cache. A salted cell is a different key for a byte-identical request, which is
+    exactly the intent: same stimulus, fresh draw, at the stage that has to certify it.
     """
     payload = "\x00".join((spec.pair_id, spec.persona_id, str(spec.order)))
+    if stage_salt:
+        payload = f"{payload}\x00stage:{stage_salt}"
     return int(hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16], 16)
 
 

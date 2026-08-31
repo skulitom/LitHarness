@@ -9,10 +9,17 @@ produce distinct stimuli on a synthetic fixture, a degenerate cell is refused by
 counted, and a probe that came back empty does not make a book `clean`. What it does not
 establish: anything about any model — the paid path is exercised only through the refusal
 that guards it.
+
+Added with PREREG's post-hoc amendment of 2026-08-31: which arms carry the stage salt at which
+stage and an unknown stage refusing rather than defaulting to none, the salt reaching the
+sample index and nothing the model sees, the amendment provenance addressing its own
+registration text, and the dual verdict's shape — both rules present, differing only in the
+sham input, and no key called `verdict`.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -257,6 +264,157 @@ def test_byte_identical_or_empty_stimuli_are_refused_by_name_and_counted() -> No
     assert all("c" * 16 in r for r in refusals), "the refusal names the cell"
     with pytest.raises(backtest.DegenerateStimuli, match="an empty stimulus is not a stimulus"):
         backtest._sessions_for_pair("p1", "C", "some text", "   ", personas)
+
+
+# ------------------------------------- the post-hoc amendment (2026-08-31): salt and verdicts
+
+
+def test_only_the_control_arms_carry_the_stage_salt_and_only_after_the_pilot() -> None:
+    """PREREG §A.3 in one table: the primary arms never salt, the controls salt at (c) only.
+
+    Stage (b) keeps the empty salt so the pilot's committed control numbers keep replaying
+    free — the RUNBOOK's standing guarantee — and stage (c) salts its controls so they draw
+    fresh at the stage that has to certify them.
+    """
+    assert backtest.CONTROL_ARMS == ("sham", "damage", "surface")
+    for arm in ("C", "P"):
+        assert backtest.control_stage_salt("full", arm) == ""
+        assert backtest.control_stage_salt("pilot", arm) == ""
+    for arm in backtest.CONTROL_ARMS:
+        assert backtest.control_stage_salt("full", arm) == "full"
+        assert backtest.control_stage_salt("pilot", arm) == ""
+        assert backtest.control_stage_salt("dry", arm) == ""
+
+
+def test_an_unknown_stage_refuses_rather_than_silently_returning_no_salt() -> None:
+    """A typo that fell through to "" would put stage (c)'s controls back on the pilot's
+    cached answers — the exact defect the amendment removes — and would do it silently."""
+    with pytest.raises(ValueError, match="unknown stage"):
+        backtest.control_stage_salt("rehearsal", "sham")
+
+
+def test_run_sessions_passes_the_salt_into_the_sample_and_into_nothing_else() -> None:
+    """The salt reaches the cache key and stops there: same system, same turns, same schema,
+    different `sample`. Checked through the driver's own loop rather than the builder, because
+    the loop is what a paid stage actually runs."""
+    seen: list[dict[str, Any]] = []
+
+    class Recording:
+        def ask_raw(self, system, turns, *, schema, max_tokens, tag, sample=0, model=None):
+            seen.append({"system": system, "turns": turns, "schema": schema,
+                         "sample": sample, "tag": tag})
+            return {"text": '{"continue": "A", "reason": ""}'}
+
+        def spend(self) -> dict[str, float]:
+            return {"equivalent_usd": 0.0}
+
+    spec = backtest.arms.SessionSpec(
+        pair_id="sham-f0", arm="sham", persona_id="r1", order=0,
+        excerpt_a_digest="d1", excerpt_b_digest="d2",
+    )
+    planned = [backtest.PlannedSession(spec, "SYSTEM", "window one", "window two")]
+    for salt in ("", "full"):
+        votes, aborted = backtest.run_sessions(
+            Recording(), planned, model="m", ledger={}, stage_salt=salt
+        )
+        assert aborted is False and len(votes) == 1
+
+    unsalted, salted = seen[0], seen[2]  # each session makes two calls; take stage 1 of each
+    assert unsalted["sample"] != salted["sample"], "the salted cell re-draws"
+    assert unsalted["system"] == salted["system"]
+    assert unsalted["turns"] == salted["turns"]
+    assert unsalted["tag"] == salted["tag"]
+    assert all(record["sample"] == seen[0]["sample"] for record in seen[:2]), (
+        "both stages of one session share the cell's sample index"
+    )
+
+
+def test_the_amendment_provenance_carries_the_directive_and_addresses_its_own_text() -> None:
+    """The result file must say, on its own face, that `verdict_amended` is post-hoc and
+    which change it came from. The section digest is content-addressed against PREREG.md, so
+    the code and the registration text cannot drift apart unnoticed."""
+    got = backtest.amendment_provenance()
+    assert got["present"] is True
+    assert got["operator_directive"] == "draft the amendment, run the full after reset"
+    assert got["date"] == "2026-08-31"
+    assert got["sham_min_decided"] == backtest.analysis.SHAM_MIN_DECIDED
+    assert got["control_arms_stage_salted"] == list(backtest.CONTROL_ARMS)
+    assert got["primary_arms_stage_salted"] == []
+    assert len(got["section_sha256"]) == 64
+    assert "first 10%" in got["disclosure"], "the replay disclosure travels with the run"
+    prereg = (backtest.HERE / "PREREG.md").read_text(encoding="utf-8")
+    index = prereg.find(backtest.AMENDMENT_SECTION)
+    assert index > 0, "the amendment is appended, never replacing the registration"
+    assert got["section_sha256"] == hashlib.sha256(
+        prereg[index:].encode("utf-8")
+    ).hexdigest()
+
+
+def test_the_dual_verdict_writes_both_rules_and_no_key_called_verdict() -> None:
+    """PREREG §A.5's output shape, over one set of votes.
+
+    The shams are twelve two-vote cells: under the registered rule they set a floor of 0.5 and
+    void the arm; under the amended rule none of them qualifies, so the floor is unmeasured and
+    the amended path voids for its own named reason. Both verdicts are present, they differ,
+    and neither is called `verdict` — a reader has to name the rule.
+    """
+    by_sham = {
+        f"sham-{i}": [
+            analysis.Vote(pair_id=f"sham-{i}", arm="sham", persona_id=p, order=0,
+                          choice="A", reason="", high_was="A")
+            for p in ("r1", "r2")
+        ]
+        for i in range(12)
+    }
+    got = backtest.dual_verdict(
+        [1] * 200,
+        largest_true_effect=0.3,
+        positional=analysis.positional_rate([]),
+        votes_by_sham=by_sham,
+        damage_outcomes=[1] * 20,
+        shuffle={"draws": 200, "clears": 0, "clear_share": 0.0},
+    )
+    assert set(got) == {"sham", "sham_amended", "verdict_registered", "verdict_amended",
+                        "amendment"}
+    assert "verdict" not in got, "no default rule: the reader names one"
+    assert got["verdict_registered"]["verdict"] == "void_sham"
+    assert got["verdict_amended"]["verdict"] == "void_sham_unmeasured"
+    assert got["sham"]["floor"] == pytest.approx(0.5)
+    assert got["sham_amended"]["floor"] == 0.0
+    assert got["sham_amended"]["n_qualifying"] == 0
+    assert got["amendment"]["present"] is True
+
+
+def test_both_verdicts_differ_in_the_sham_input_and_in_nothing_else() -> None:
+    """One difference, auditable: every other field of the two records is identical, so a
+    disagreement between the rules is attributable to the sham corner alone."""
+    by_sham = {  # one two-vote sham (excluded, deviation 0.5) and one eight-vote sham at 0.25
+        "sham-thin": [
+            analysis.Vote(pair_id="sham-thin", arm="sham", persona_id=p, order=0,
+                          choice="A", reason="", high_was="A")
+            for p in ("r1", "r2")
+        ],
+        "sham-thick": [
+            analysis.Vote(pair_id="sham-thick", arm="sham", persona_id=f"r{i}", order=0,
+                          choice="A" if i < 6 else "B", reason="", high_was="A")
+            for i in range(8)
+        ],
+    }
+    got = backtest.dual_verdict(
+        [1] * 200,
+        largest_true_effect=0.3,
+        positional=analysis.positional_rate([]),
+        votes_by_sham=by_sham,
+        damage_outcomes=[1] * 20,
+        shuffle={"draws": 200, "clears": 0, "clear_share": 0.0},
+    )
+    registered, amended = got["verdict_registered"], got["verdict_amended"]
+    assert registered["verdict"] == "void_sham" and registered["sham_floor"] == 0.5
+    assert amended["verdict"] == "qualified"
+    assert amended["sham_floor"] == pytest.approx(0.25)
+    differing = {k for k in registered if registered[k] != amended[k]}
+    assert differing == {"verdict", "fired", "sham_floor", "sham_min_decided",
+                         "sham_n_qualifying"}
 
 
 def test_a_probe_that_answered_nothing_does_not_make_a_book_clean() -> None:

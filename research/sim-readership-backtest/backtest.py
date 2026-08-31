@@ -19,6 +19,14 @@ prediction. Slot-space votes feed `analysis.positional_rate` and `analysis.sham_
 untouched. The remap lives in exactly one function (`to_member_space`) for the same reason
 `arms.ordered` is the only place order is applied.
 
+**Two verdicts since 2026-08-31.** PREREG's appended post-hoc amendment changed two things
+about the control corners, and this module is where both land: control arms carry a stage salt
+in their sample index so they draw fresh at the stage that has to certify them
+(`control_stage_salt`), and every paid run writes `verdict_registered` beside `verdict_amended`
+over one set of votes (`dual_verdict`). Neither verdict is called `verdict`, and the primary
+arms are deliberately unsalted — their pilot pairs replay, which `amendment.disclosure` states
+on the face of the result file.
+
 The fictions input is the excerpt pass's artifact (rows with text for paired books only,
 regenerated per RUNBOOK.md under the MirrorBench venv); this module never touches parquet.
 """
@@ -78,6 +86,29 @@ SURFACE_PAIRS = 15
 MATCHED_RATIO_MAX = 1.5
 #: ... and formatting-divergent (mean-paragraph-length ratio at least this).
 SURFACE_SPREAD_MIN = 2.0
+
+#: The arms whose sample indices carry the stage salt (PREREG's post-hoc amendment of
+#: 2026-08-31, part 2: **controls are sampled at the stage they certify**). The primary C and
+#: P arms are deliberately absent — their pilot pairs are registered pairs of the confirmatory
+#: set and replay by design, which the amendment discloses rather than hides.
+CONTROL_ARMS = ("sham", "damage", "surface")
+
+#: Per-stage salt for `arms._sample_index`. The pilot's controls were drawn under the empty
+#: salt and its committed record must keep replaying free (RUNBOOK's guarantee), so stage (b)
+#: keeps the empty string; stage (c) salts with its own name, which changes the cache key of a
+#: byte-identical request and buys a fresh draw. The map is the whole mechanism: no salt, no
+#: re-draw; wrong salt, wrong stage.
+STAGE_SALT: dict[str, str] = {"dry": "", "pilot": "", "full": "full"}
+
+#: PREREG's amendment section title, its date, and the operator's words that ordered it. The
+#: constants live here because the result file must carry the amendment's provenance beside
+#: the two verdicts it produces; `amendment_provenance` assembles them.
+AMENDMENT_SECTION = "## Post-hoc amendment (2026-08-31)"
+AMENDMENT_DATE = "2026-08-31"
+AMENDMENT_DIRECTIVE = "draft the amendment, run the full after reset"
+AMENDMENT_COMMIT_SUBJECT = (
+    "Amend the two control corners for their mechanical reasons, and report both verdicts"
+)
 
 #: The declared per-session cost basis of the §8 ceiling arithmetic; the pilot's measured
 #: ledger x10 must land within 2x of the estimate built from this, or the full stage refuses.
@@ -427,19 +458,24 @@ def _surface_sessions(
 
 def run_sessions(
     elicitor: Any, planned: Sequence[PlannedSession], *, model: str,
-    ledger: dict[str, float],
+    ledger: dict[str, float], stage_salt: str = "",
 ) -> tuple[list[analysis.Vote], bool]:
     """Two-stage sessions in order; returns (votes, aborted_at_ceiling).
 
     After every session the elicitor's own spend is read into the ledger; crossing
     `COST_CEILING_USD` finishes nothing further — the current session completes, the abort
     flag raises to the caller, and the partial result says so.
+
+    `stage_salt` is passed straight to `arms.build_session` and reaches nothing else: it
+    changes the cache key, never the stimulus, the system prompt, the schema or the parse.
+    `run_paid` is the only caller that sets it, and only for `CONTROL_ARMS`.
     """
     votes: list[analysis.Vote] = []
     for planned_session in planned:
         request = arms.build_session(
             planned_session.spec, planned_session.system,
             planned_session.text_a, planned_session.text_b,
+            stage_salt=stage_salt,
         )
         stage1 = elicitor.ask_raw(
             request["system"], request["plan"][0]["turns"], schema=None,
@@ -532,6 +568,116 @@ def plan(stage: str, n_confirmatory: int) -> dict[str, Any]:
 # ------------------------------------------------------------------------------------ result
 
 
+def control_stage_salt(stage: str, arm: str) -> str:
+    """The salt one arm carries at one stage: `STAGE_SALT[stage]` for a control, else empty.
+
+    Two lookups, no branching cleverness, because this is the function that decides which
+    cells re-draw and which replay — and a reader has to be able to check that decision
+    against PREREG's amendment in one glance. An unknown stage raises rather than defaulting
+    to the empty string: a silent no-salt would put stage (c)'s controls back on the pilot's
+    cached answers, which is the exact defect the amendment exists to remove.
+    """
+    if stage not in STAGE_SALT:
+        raise ValueError(f"unknown stage {stage!r}; stages are {', '.join(STAGES)}")
+    return STAGE_SALT[stage] if arm in CONTROL_ARMS else ""
+
+
+def amendment_provenance() -> dict[str, Any]:
+    """The amendment's own record, read out of PREREG.md so the two cannot drift apart.
+
+    The result file must be able to say, on its own face, that its `verdict_amended` came from
+    a post-hoc change and which change: the date, the operator's words verbatim, the two
+    mechanical parameters, and a content address for the registration text that argues them.
+    `section_sha256` is taken over PREREG.md from the amendment heading to end of file, read
+    through Python's universal-newline translation so the digest is the same on an LF or a
+    CRLF checkout (`registration_digests`' whole-file digest is over raw bytes and is not).
+
+    The amendment commit's hash cannot be in a file that commit contains, so the pointer is
+    its subject line — `git log --grep` finds it — beside the content address, which pins the
+    bytes that matter. If the section is absent the record says so and the run is still
+    written: a missing registration text is a fact about the run, not a reason to lose it.
+    """
+    text = (HERE / "PREREG.md").read_text(encoding="utf-8")
+    index = text.find(AMENDMENT_SECTION)
+    if index < 0:
+        return {
+            "present": False,
+            "why": f"PREREG.md carries no {AMENDMENT_SECTION!r} section; the code amended "
+                   "what the registration did not — report the amended verdict as unregistered",
+        }
+    return {
+        "present": True,
+        "date": AMENDMENT_DATE,
+        "kind": "post-hoc analysis amendment, drafted after the re-pilot's control numbers "
+                "were seen and recorded as such",
+        "operator_directive": AMENDMENT_DIRECTIVE,
+        "prereg_section": AMENDMENT_SECTION.lstrip("# "),
+        "section_sha256": hashlib.sha256(text[index:].encode("utf-8")).hexdigest(),
+        "commit_subject": AMENDMENT_COMMIT_SUBJECT,
+        "sham_min_decided": analysis.SHAM_MIN_DECIDED,
+        "control_arms_stage_salted": list(CONTROL_ARMS),
+        "primary_arms_stage_salted": [],
+        "disclosure": (
+            "The primary C and P arms are not salted: the pilot's 20 pairs are registered "
+            "members of the confirmatory set, so this run's aggregate includes their replayed "
+            "votes as its first 10%. Registered design, same rules, stated rather than silent."
+        ),
+    }
+
+
+def _verdict_or_refusal(
+    primary_outcomes: Sequence[int], **rule: Any
+) -> dict[str, Any]:
+    """`analysis.verdicts`, with its ten-outcome refusal caught and named rather than raised.
+
+    The refusal is a result (a bound from a handful of pairs is §85's zero-width defect), so
+    it lands in the record as `{"verdict": "refused", "why": ...}` exactly as the single-verdict
+    path recorded it before the amendment. Both verdicts go through here, so neither can fail
+    in a way the other hides.
+    """
+    try:
+        return analysis.verdicts(primary_outcomes, **rule)
+    except ValueError as refusal:
+        return {"verdict": "refused", "why": str(refusal)}
+
+
+def dual_verdict(
+    primary_outcomes: Sequence[int], *,
+    largest_true_effect: float,
+    positional: Mapping[str, Any],
+    votes_by_sham: Mapping[str, Sequence[analysis.Vote]],
+    damage_outcomes: Sequence[int],
+    shuffle: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Both rules over one set of votes — PREREG's post-hoc amendment, part 3.
+
+    Returns the five keys the result file carries for the decision: `sham` (the registered
+    floor), `sham_amended` (the guarded floor), `verdict_registered`, `verdict_amended`, and
+    `amendment` (the provenance). **There is no key named `verdict`**: the whole point is that
+    a reader has to name the rule they are quoting.
+
+    The two verdicts differ in exactly one input, the sham record. Same primary outcomes, same
+    positional record, same damage outcomes, same shuffle, same `largest_true_effect` — so any
+    difference between them is attributable to the sham corner and to nothing else. That is
+    also why this is one function rather than two call sites that could drift apart.
+    """
+    sham = analysis.sham_floor(votes_by_sham)
+    sham_amended = analysis.sham_floor(votes_by_sham, min_decided=analysis.SHAM_MIN_DECIDED)
+    rule: dict[str, Any] = {
+        "largest_true_effect": largest_true_effect,
+        "positional": positional,
+        "damage_outcomes": damage_outcomes,
+        "shuffle": shuffle,
+    }
+    return {
+        "sham": sham,
+        "sham_amended": sham_amended,
+        "verdict_registered": _verdict_or_refusal(primary_outcomes, sham=sham, **rule),
+        "verdict_amended": _verdict_or_refusal(primary_outcomes, sham=sham_amended, **rule),
+        "amendment": amendment_provenance(),
+    }
+
+
 def registration_digests(pairs_path: Path) -> dict[str, str]:
     prereg = (HERE / "PREREG.md").read_bytes()
     return {
@@ -597,6 +743,13 @@ def run_paid(args: argparse.Namespace) -> int:
     mid-arm and the partial result says so. The pilot's own gate (PREREG §8: no VOID fired,
     ledger within 2x of estimate) is computed descriptively here because `verdicts`'s
     insufficient_n precedence deliberately silences VOIDs below target n.
+
+    Since PREREG's post-hoc amendment of 2026-08-31 this function writes **two** verdicts over
+    one set of votes: `verdict_registered` under the rule as registered, `verdict_amended`
+    under the amended sham floor, with `amendment` carrying the provenance of the change.
+    Control arms draw fresh at a salted stage (`control_stage_salt`); the primary arms do not,
+    so a full run's aggregate contains the pilot pairs' replayed votes — which the amendment
+    record states in `amendment.disclosure` rather than leaving to be inferred from a cache.
     """
     import elicit
     from force_remote import SingleRun
@@ -648,6 +801,7 @@ def run_paid(args: argparse.Namespace) -> int:
                 continue
             votes[arm_name], aborted = run_sessions(
                 elicitor, sessions[arm_name], model=args.model, ledger=ledger,
+                stage_salt=control_stage_salt(args.stage, arm_name),
             )
 
         reward_ids = [p.persona_id for p in population.reward_split()]
@@ -661,7 +815,6 @@ def run_paid(args: argparse.Namespace) -> int:
         by_sham: dict[str, list[analysis.Vote]] = {}
         for vote in votes["sham"]:
             by_sham.setdefault(vote.pair_id, []).append(vote)
-        sham = analysis.sham_floor(by_sham)
         damage_agg = analysis.aggregate_by_pair(to_member_space(votes["damage"]), reward_ids)
         damage_outcomes = outcomes_from(damage_agg)
         try:
@@ -670,13 +823,10 @@ def run_paid(args: argparse.Namespace) -> int:
             )
         except ValueError as refusal:
             shuffle = {"clear_share": 0.0, "refused": str(refusal)}
-        try:
-            verdict = analysis.verdicts(
-                primary_outcomes, largest_true_effect=largest_true, positional=positional,
-                sham=sham, damage_outcomes=damage_outcomes, shuffle=shuffle,
-            )
-        except ValueError as refusal:
-            verdict = {"verdict": "refused", "why": str(refusal)}
+        dual = dual_verdict(
+            primary_outcomes, largest_true_effect=largest_true, positional=positional,
+            votes_by_sham=by_sham, damage_outcomes=damage_outcomes, shuffle=shuffle,
+        )
 
         positional_deviation = (
             abs(positional["rate"] - 0.5) if positional.get("rate") is not None else None
@@ -689,7 +839,10 @@ def run_paid(args: argparse.Namespace) -> int:
                 positional_deviation is not None and positional_deviation >= largest_true
                 and bool(primary_outcomes)
             ),
-            "void_sham": sham["floor"] >= largest_true and bool(primary_outcomes),
+            "void_sham": dual["sham"]["floor"] >= largest_true and bool(primary_outcomes),
+            "void_sham_amended": (
+                dual["sham_amended"]["floor"] >= largest_true and bool(primary_outcomes)
+            ),
             "shuffle_clear_share": shuffle.get("clear_share"),
             "aborted_at_ceiling": aborted,
         }
@@ -722,10 +875,14 @@ def run_paid(args: argparse.Namespace) -> int:
             "p_arm": {"aggregate": p_agg},
             "surface": {"aggregate": surface_agg},
             "positional": positional,
-            "sham": sham,
             "damage_outcomes": damage_outcomes,
             "shuffle": shuffle,
-            "verdict": verdict,
+            # sham, sham_amended, verdict_registered, verdict_amended, amendment
+            **dual,
+            "control_stage_salt": {
+                arm: control_stage_salt(args.stage, arm)
+                for arm in ("C", "P", "sham", "damage", "surface")
+            },
             "pilot_gate": pilot_gate,
             "ledger": ledger,
             "spend": elicitor.spend() if hasattr(elicitor, "spend") else {},
@@ -733,7 +890,8 @@ def run_paid(args: argparse.Namespace) -> int:
         write_result(result, out_path)
         print(json.dumps({"stage": args.stage, "out": str(out_path),
                           "ledger_usd": ledger["equivalent_usd"],
-                          "verdict": verdict.get("verdict"),
+                          "verdict_registered": dual["verdict_registered"].get("verdict"),
+                          "verdict_amended": dual["verdict_amended"].get("verdict"),
                           "under_run": result["under_run"],
                           "pilot_gate": pilot_gate}, indent=2, sort_keys=True))
     return 0

@@ -42,6 +42,32 @@ MIN_OUTCOMES = 10
 #: exceeds three times that expectation the analysis path leaks the label and everything is void.
 SHUFFLE_CLEAR_LIMIT = 3 * ALPHA / 2
 
+#: The AMENDED minimum decided votes for one sham to set the floor (PREREG's "Post-hoc
+#: amendment (2026-08-31)", part 1). It is not the registered rule: the registration set no
+#: minimum, so `sham_floor`'s parameter defaults to 0 and the registered floor still computes
+#: bit for bit. A caller that wants the amended floor passes this constant and says so.
+#:
+#: The arithmetic, and it is the only reason for the number — never which verdict it produces.
+#: The per-sham statistic is d = |k/n - 1/2| over n decided votes, so its attainable set is
+#: {j/(2n) : j = n mod 2, 0 <= j <= n}: lattice spacing 1/n, maximum 0.5 at unanimity.
+#:   * n = 2 attains {0, 0.5} and nothing between. That statistic reports whether the panel
+#:     split, not by how much — resolution, not deviation, which is the defect measured.
+#:   * Bare non-degeneracy (some value strictly inside (0, 0.5) must exist) needs only n >= 3.
+#:   * Under the sham's own null — two windows of ONE book, so the true continue-share is 0.5 —
+#:     the maximum is attained by chance with probability 2 * 2**-n = 2**(1-n). Requiring that
+#:     to sit at or under the programme's registered ALPHA: 2**(1-n) <= 0.05 <=> n - 1 >=
+#:     log2(20) = 4.3219 <=> n >= 5.3219, i.e. **n >= 6** (n = 5 gives 0.0625 > 0.05; n = 6
+#:     gives 0.03125). This is the binding criterion and the constant below.
+#:   * The strictest available criterion was measured and refused: lattice spacing no coarser
+#:     than PREREG §7's registered +0.05 margin needs 1/n <= 0.05, i.e. n >= 20 — the whole
+#:     per-sham vote budget (10 personas x 2 orders) with not one "neither". The pilot measured
+#:     2-14 decided of 20, so that criterion empties the control at every attainable size, and
+#:     a control that cannot fire is the §120.2 defect the sham arm exists to avoid.
+#: What the guard does NOT do: repair the max-not-pooled estimator's own noise. Under the null
+#: E|d| is 0.156 at n = 6 and 0.113 at n = 12, and the floor is a max over twelve shams; the
+#: amendment states that consequence in numbers rather than leaving it implied.
+SHAM_MIN_DECIDED = 6
+
 
 @dataclass(frozen=True, slots=True)
 class Vote:
@@ -218,7 +244,9 @@ def positional_rate(votes: Sequence[Vote]) -> dict[str, Any]:
     }
 
 
-def sham_floor(votes_by_sham: Mapping[str, Sequence[Vote]]) -> dict[str, Any]:
+def sham_floor(
+    votes_by_sham: Mapping[str, Sequence[Vote]], *, min_decided: int = 0
+) -> dict[str, Any]:
     """Per sham pair |continue-share - 0.5| over decided votes; the floor is the LARGEST
     per-sham deviation, never pooled (the K2 form).
 
@@ -226,21 +254,43 @@ def sham_floor(votes_by_sham: Mapping[str, Sequence[Vote]]) -> dict[str, Any]:
     sham alone and takes the max. A "neither" is undecided here too. A sham with no decided
     votes has no defined deviation (None) and cannot set the floor; if no sham has any, the
     floor is 0.0 — nothing observed deviated.
+
+    `min_decided` is the amendment's seam and **defaults to the registered rule, which set no
+    minimum**: at 0 this function is the registration, byte for byte, and the pilot's committed
+    floor recomputes from its own votes. A caller passing `SHAM_MIN_DECIDED` gets the amended
+    floor, where a sham below the minimum keeps its measured deviation in `per_sham` — nothing
+    is hidden — but carries `counts_toward_floor: False` and cannot raise the max. The reason
+    is `SHAM_MIN_DECIDED`'s arithmetic and nothing else.
+
+    `n_qualifying` rides out with the floor because a floor of 0.0 has two very different
+    meanings — twelve shams that all sat at chance, or no sham allowed to speak — and a caller
+    that cannot tell them apart will read an unmeasured control as a passed one. `verdicts`
+    reads exactly this field to refuse that reading.
     """
     per_sham: dict[str, dict[str, Any]] = {}
     floor = 0.0
+    n_qualifying = 0
     for sham_id, votes in votes_by_sham.items():
         decided = [v for v in votes if v.choice in ("A", "B")]
         share = sum(v.choice == "A" for v in decided) / len(decided) if decided else None
         deviation = abs(share - 0.5) if share is not None else None
+        counts = deviation is not None and len(decided) >= min_decided
         per_sham[sham_id] = {
             "continue_share": share,
             "deviation": deviation,
             "n_decided": len(decided),
+            "counts_toward_floor": counts,
         }
-        if deviation is not None and deviation > floor:
-            floor = deviation
-    return {"floor": floor, "per_sham": per_sham}
+        if counts:
+            n_qualifying += 1
+            if deviation is not None and deviation > floor:
+                floor = deviation
+    return {
+        "floor": floor,
+        "min_decided": min_decided,
+        "n_qualifying": n_qualifying,
+        "per_sham": per_sham,
+    }
 
 
 # ------------------------------------------------------------------------- the C3 label shuffle
@@ -337,11 +387,18 @@ def verdicts(
 
       "insufficient_n"   len(primary_outcomes) < n_target
       "void_positional"  positional deviation |rate - 0.5| >= largest_true_effect
+      "void_sham_unmeasured"  a minimum was applied and NO sham qualified to set the floor
       "void_sham"        sham floor >= largest_true_effect
       "void_shuffle"     shuffle clear-share > 3 * (alpha / 2)  — analysis leaks the label
       "damage_failed"    damage bootstrap lower bound <= 0.5
       "qualified"        primary lower bound > 0.5 AND none of the above fired
       "not_qualified"    otherwise
+
+    `void_sham_unmeasured` exists only on the amended path and cannot fire on the registered
+    one: it is reachable only when the caller passed a `min_decided` above 0 (the registration
+    set none) and every sham fell under it, leaving a floor of 0.0 that means "nothing was
+    allowed to speak" rather than "nothing deviated". A control that did not measure cannot
+    certify, so it voids rather than passing quietly.
 
     The returned record carries every input number beside the verdict, because a verdict that
     cannot be audited from its own record is not a verdict. With fewer than ten primary
@@ -360,6 +417,9 @@ def verdicts(
         abs(positional_rate_value - 0.5) if positional_rate_value is not None else None
     )
     sham_floor_value: float = sham["floor"]
+    sham_min_decided = int(sham.get("min_decided", 0))
+    sham_n_qualifying = sham.get("n_qualifying")
+    sham_unmeasured = sham_min_decided > 0 and sham_n_qualifying == 0
     clear_share: float = shuffle["clear_share"]
 
     fired: list[str] = []
@@ -367,6 +427,8 @@ def verdicts(
         fired.append("insufficient_n")
     elif positional_deviation is not None and positional_deviation >= largest_true_effect:
         fired.append("void_positional")
+    elif sham_unmeasured:
+        fired.append("void_sham_unmeasured")
     elif sham_floor_value >= largest_true_effect:
         fired.append("void_sham")
     elif clear_share > SHUFFLE_CLEAR_LIMIT:
@@ -390,6 +452,8 @@ def verdicts(
         "largest_true_effect": largest_true_effect,
         "positional_deviation": positional_deviation,
         "sham_floor": sham_floor_value,
+        "sham_min_decided": sham_min_decided,
+        "sham_n_qualifying": sham_n_qualifying,
         "shuffle_clear_share": clear_share,
         "damage_lower_bound": damage_lb,
     }

@@ -113,3 +113,22 @@ recorded as such — justified mechanically (a two-vote sham cannot carry a floo
 full run reporting the original rule's verdict beside any amended one. The choice is the
 operator's; nothing is amended in this entry, and stage (c) remains blocked by the
 registered no-VOID gate until it is resolved.
+
+## The amendment (2026-08-31, drafted and implemented; no arm run under it)
+
+The operator resolved the choice above by ordering two of the three options and refusing the
+third. **PREREG.md's appended "Post-hoc amendment (2026-08-31)" is the canonical text** and
+owns every number in the argument: the minimum-decided-n arithmetic and the resolution
+criterion it was chosen by, the cache-key mechanism behind the stage salt and which arms
+carry it, the disclosure that stage (c)'s aggregate replays the pilot pairs, the pre-run
+statement that the sham corner may void again on fresh draws, and the sentence naming what
+licenses stage (c) when the pilot's gate did not clear.
+
+The one result to carry back here, because it is the check most worth failing: **applying the
+guard to the pilot's own sham table does not clear the pilot's sham void** — the amended floor
+still exceeds the pilot's primary effect. The guard is not what would clear anything; fresh
+stage-(c) draws are what make the control a measurement, and they may void it again.
+
+Status of every arm is unchanged by this entry: no model was asked anything for it, and the
+re-pilot's `insufficient_n` remains the verdict on record for stage (b). Stage (c) will write
+`verdict_registered` and `verdict_amended` side by side, and neither will be reported alone.
