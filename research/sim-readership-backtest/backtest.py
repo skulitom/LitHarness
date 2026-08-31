@@ -75,7 +75,14 @@ SURFACE_SPREAD_MIN = 2.0
 
 #: The declared per-session cost basis of the §8 ceiling arithmetic; the pilot's measured
 #: ledger x10 must land within 2x of the estimate built from this, or the full stage refuses.
-EST_USD_PER_SESSION = 0.012
+#: **Corrected 2026-08-31 under the K1a precedent (an edit forced by an error names the
+#: number it had seen): the registered 0.012 was wrong by 6.2x — the 2026-08-30 pilot
+#: measured $41.2066 over 1,104 records (510 two-call sessions + 84 probe calls), i.e.
+#: $0.0747/session — and the correction was made after that number, under the operator's
+#: standing go (plan/serial-pilot-18.md §8). At this basis the registered full stage prices
+#: at ~$660 against the $180 ceiling; the ceiling is untouched and will refuse it, which is
+#: the fork the operator decides.**
+EST_USD_PER_SESSION = 0.075
 
 #: Words of true continuation kept for the recognition probe's (c) leg.
 TRUTH_WORDS = 80

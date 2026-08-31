@@ -93,3 +93,9 @@ research/quality-measurement/results/.*.pid
 # ignored for the same reason — a file rewritten on every launch would leave the working copy
 # permanently dirty for every parallel session sharing this checkout.
 /dashboard.html
+
+# sim-readership backtest run artifacts: regenerable (excerpt_pass.py) or spend records; never repo objects
+research/sim-readership-backtest/fictions-v0.json
+research/sim-readership-backtest/backtest-raw.jsonl
+research/sim-readership-backtest/result-*.json
+research/sim-readership-backtest/backtest.pid

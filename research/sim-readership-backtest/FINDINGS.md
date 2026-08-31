@@ -66,10 +66,16 @@ screen came back **0 recognised of 40 books probed** — the corpus's obscurity 
 - **The C-arm under-ran by construction: 2 of 20 pairs bought sessions; 1 decided pair
   reached the primary.** The cache signature: pair one bought all 20 sessions (40 records),
   pair two bought 10 (20 records), pairs three through twenty bought nothing — their
-  requests replayed earlier digests, which is only possible if their stimuli were
-  byte-identical to earlier ones. The P-arm ran all 20 pairs correctly (800 records, 400
-  votes). The defect is in the C-arm stimulus path, not the transport, and it is under
-  diagnosis; nothing here reached a confirmatory number, so nothing is promoted or voided.
+  requests replayed earlier digests, ~~which is only possible if their stimuli were
+  byte-identical to earlier ones~~ **corrected same day: the stimuli were fine (40/40
+  distinct, 0 empty) — the cause was Windows' 32,767-character command-line ceiling in
+  `elicit._call_cli`, which failed every oversized request at send, uncached and uncounted;
+  the threshold predicts all 80 pilot cells with zero exceptions. Fixed by moving the prompt
+  to stdin (commit 5006609), with three rails: degenerate stimuli refuse by name, an
+  unanswered probe classifies `unprobed` (12 of 40 books had been certified clean by probes
+  that never got through), and the result file carries an `under_run` block.** The P-arm ran
+  all 20 pairs correctly (800 records, 400 votes) because its stimuli fit the ceiling.
+  Nothing here reached a confirmatory number, so nothing is promoted or voided.
 
 The verdict slot reads `refused` (2 outcomes < the registered minimum of 10), which is the
 arithmetic refusing to manufacture a bound — the §85 rail working. Probes, P-arm and control
