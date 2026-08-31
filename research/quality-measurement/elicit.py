@@ -918,6 +918,9 @@ class Elicitor:
         the same way a refusal is — `_cell` finds no valid verdict and marks the sample unscored
         rather than guessing. The count of those lands in `refused_samples`, which is where a
         transport that cannot hold its format would show up.
+
+        **The prompt is not a command-line argument**, and the comment on `argv` says which run
+        measured why: a long prompt on argv is unsendable on Windows and the failure is silent.
         """
         system = params["system"]
         schema = (
@@ -930,7 +933,21 @@ class Elicitor:
                 "else — no prose, no code fence:\n" + json.dumps(schema, sort_keys=True)
             )
         argv = [
-            "claude", "-p", _flatten_turns(params["messages"]),
+            "claude",
+            # `-p` with NO positional prompt: the prompt goes down stdin instead. Windows caps
+            # a command line at 32,767 characters (`CreateProcess`), an over-long argv raises
+            # `OSError`, and the handler below counts that as a transport failure and does not
+            # cache it — so a request too large to *send* left no record at all and the arm
+            # finished short while reporting as a finished arm. Measured in the sim-readership
+            # pilot of 2026-08-30: of 400 planned C-arm sessions only the two pairs whose
+            # stage-1 command line fit bought anything (26,305 and 31,651 characters against a
+            # next-smallest 35,204), one of those two lost every stage-2 call at 33,727, and 12
+            # of 40 recognition probes were never actually asked yet scored as `clean`. The
+            # generation-side transport had already been moved to stdin for exactly this
+            # ceiling and with the same measurement; see `providers/cli.py::subprocess_runner`.
+            # Nothing about the request changes, so the cache key is untouched and every
+            # record written before this fix still replays.
+            "-p",
             "--output-format", "json",
             "--model", params["model"],
             "--system-prompt", system,
@@ -939,7 +956,8 @@ class Elicitor:
         try:
             completed = subprocess.run(
                 argv, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                timeout=CLI_TIMEOUT_SECONDS, stdin=subprocess.DEVNULL, check=False,
+                timeout=CLI_TIMEOUT_SECONDS, input=_flatten_turns(params["messages"]),
+                check=False,
             )
         except (subprocess.TimeoutExpired, OSError) as error:
             record = {**tag, "key": key, "model": params["model"], "text": "", "refused": True,
