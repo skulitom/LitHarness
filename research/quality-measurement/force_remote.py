@@ -233,7 +233,14 @@ class Ledger:
 
 def _call(prompt: str, model: str, *, timeout: int = 300) -> dict[str, Any]:
     argv = [
-        "claude", "-p", prompt,
+        # `-p` with NO positional prompt: the seed goes down stdin. Windows caps a command
+        # line at 32,767 characters, an over-long argv raises `OSError`, and the retry loop
+        # in `continuations` reads `OSError` as a retryable transport failure — so a seed too
+        # large to *send* was retried, failed identically, and was recorded as a missing
+        # replicate, a loss correlated with seed length rather than random. Same ceiling and
+        # same fix as `providers/cli.py::subprocess_runner` and `elicit.py::_call_cli`, where
+        # the measurements live.
+        "claude", "-p",
         "--output-format", "json",
         "--model", model,
         "--system-prompt", CONTINUATION_SYSTEM,
@@ -248,7 +255,7 @@ def _call(prompt: str, model: str, *, timeout: int = 300) -> dict[str, Any]:
     # not a random one. `elicit.py:931` had already solved this; this is that line, copied.
     completed = subprocess.run(
         argv, capture_output=True, text=True, encoding="utf-8", errors="replace",
-        timeout=timeout, check=False,
+        timeout=timeout, input=prompt, check=False,
     )
     if completed.returncode != 0 or not completed.stdout.strip():
         raise RuntimeError(f"cli_error rc={completed.returncode}: {completed.stderr[:200]}")
