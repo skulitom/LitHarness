@@ -132,3 +132,27 @@ stage-(c) draws are what make the control a measurement, and they may void it ag
 Status of every arm is unchanged by this entry: no model was asked anything for it, and the
 re-pilot's `insufficient_n` remains the verdict on record for stage (b). Stage (c) will write
 `verdict_registered` and `verdict_amended` side by side, and neither will be reported alone.
+
+## Addendum to the re-pilot entry, 2026-08-31, from an external review the operator relayed
+
+**C4 has a number, quoted here because the entry above omitted it:** 6 of 6 surface pairs
+decided, majority share 0.667, deviation 0.167 — under the pilot primary effect (0.2895),
+so the formatting confound does not reach the primary at pilot n. Its sign expectation
+(§7: shared with the primary, reported never subtracted) gets its real test at (c).
+
+**Three pre-(c) actions taken on the review's argument, before stage (c)'s result exists:**
+the both-rule-void sequel is skeletoned in `RETEST-SKELETON.md` (not registered; registered
+only if (c) fires it, naming the numbers then seen); the result file now flags when an
+outcome lands in PREREG §7's uncoded +0.05 clearance band, so the text/code divergence
+announces itself exactly when it matters; and stage (c) reports fresh-180-only accuracy
+beside the pooled 200 (the continuation disclosure's arithmetic companion). The full run
+already in flight carries none of these in-process; its relaunch after any quota stall
+does, and if it completes without one, all three are computed post hoc from the result
+file's own per-pair table and recorded here — none requires a new call.
+
+**Carried with eyes open, no action now:** at this effect size the central attack line is
+dataset exposure rather than book recognition (the probe tests the latter only); the cheap
+second rail — a small, explicitly non-confirmatory arm of genuinely post-cutoff 2026
+fictions via live fetch — is a candidate for its own registered act after (c). And the
+registered n stays 200: a downward power recalculation after a good pilot is optional
+stopping in a nicer coat.

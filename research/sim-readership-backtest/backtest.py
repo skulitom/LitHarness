@@ -669,12 +669,50 @@ def dual_verdict(
         "damage_outcomes": damage_outcomes,
         "shuffle": shuffle,
     }
+    def _in_margin_band(floor: float) -> bool:
+        return floor < largest_true_effect < floor + 0.05
+
     return {
         "sham": sham,
         "sham_amended": sham_amended,
         "verdict_registered": _verdict_or_refusal(primary_outcomes, sham=sham, **rule),
         "verdict_amended": _verdict_or_refusal(primary_outcomes, sham=sham_amended, **rule),
+        # PREREG §7 registers a +0.05 clearance margin over the sham floor that
+        # `analysis.verdicts` never implemented (it implements the void half only) — recorded
+        # as an observation at amendment time, deliberately not closed post hoc. This flag
+        # makes the divergence announce itself exactly when it matters: the outcome landed
+        # where the registered TEXT and the registered CODE disagree, and a reader of either
+        # verdict has to say which authority they are quoting.
+        "unimplemented_margin_band": {
+            "registered": _in_margin_band(sham["floor"]),
+            "amended": _in_margin_band(sham_amended["floor"]),
+            "band": "floor < effect < floor + 0.05 (PREREG §7's uncoded clearance)",
+        },
         "amendment": amendment_provenance(),
+    }
+
+
+def _fresh_only(
+    primary_agg: Mapping[str, Any], pool: Sequence[corpus.Pair], stage: str,
+) -> dict[str, Any] | None:
+    """Accuracy over the confirmatory pairs the pilot never saw; None below stage (c).
+
+    The pilot's pairs are `pool[:20]` by construction (the pilot plan's own slice), so the
+    fresh set is everything decided beyond them. Descriptive only — the registered primary
+    stays the pooled aggregate, and PREREG §A.4(4) discloses the pooling.
+    """
+    if stage != "full":
+        return None
+    pilot_ids = {p.pair_id for p in pool[: plan("pilot", len(pool))["pairs_this_stage"]]}
+    fresh = [
+        1 if entry["predicted"] == "A" else 0
+        for pair_id, entry in primary_agg["pairs"].items()
+        if entry["decided"] and pair_id not in pilot_ids
+    ]
+    return {
+        "n": len(fresh),
+        "correct": sum(fresh),
+        "accuracy": (sum(fresh) / len(fresh)) if fresh else None,
     }
 
 
@@ -871,7 +909,12 @@ def run_paid(args: argparse.Namespace) -> int:
                 "failure_reasons": dict(getattr(elicitor, "failure_reasons", {}) or {}),
             },
             "primary": {"aggregate": primary_agg, "outcomes": primary_outcomes,
-                        "largest_true_effect": largest_true},
+                        "largest_true_effect": largest_true,
+                        # The continuation check, descriptive: stage (c) was ordered after
+                        # the pilot showed 15/19, which tilts the pooled estimate's null.
+                        # The fresh-pairs-only accuracy stands beside the pooled figure so
+                        # agreement kills the objection on contact and divergence is seen.
+                        "fresh_only": _fresh_only(primary_agg, pool, args.stage)},
             "p_arm": {"aggregate": p_agg},
             "surface": {"aggregate": surface_agg},
             "positional": positional,

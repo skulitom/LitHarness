@@ -375,8 +375,12 @@ def test_the_dual_verdict_writes_both_rules_and_no_key_called_verdict() -> None:
         shuffle={"draws": 200, "clears": 0, "clear_share": 0.0},
     )
     assert set(got) == {"sham", "sham_amended", "verdict_registered", "verdict_amended",
-                        "amendment"}
+                        "unimplemented_margin_band", "amendment"}
     assert "verdict" not in got, "no default rule: the reader names one"
+    # §7's uncoded +0.05 clearance: floor 0.5 sits ABOVE the 0.3 effect here, so the outcome
+    # is not in the band where the registered text and the registered code diverge — and the
+    # flag must say so rather than fire on every void.
+    assert got["unimplemented_margin_band"]["registered"] is False
     assert got["verdict_registered"]["verdict"] == "void_sham"
     assert got["verdict_amended"]["verdict"] == "void_sham_unmeasured"
     assert got["sham"]["floor"] == pytest.approx(0.5)
