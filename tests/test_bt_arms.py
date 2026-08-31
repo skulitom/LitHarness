@@ -12,10 +12,15 @@ numbered tokens so the exact cut positions (paragraph 59 of the capped C-arm, pa
 the P-arm opening) are stated before anything runs. What this file does not establish:
 anything about real shard data — no parquet is read here, no model is called, and no
 network is touched.
+
+Added with PREREG's post-hoc amendment of 2026-08-31: the stage salt moves a cell's sample
+index (its cache key) and moves nothing the model sees, and the empty default leaves the index
+byte-identical to the pre-amendment one — the property the primary arms' replay rests on.
 """
 
 from __future__ import annotations
 
+import hashlib
 import re
 import sys
 from pathlib import Path
@@ -340,6 +345,38 @@ def test_sample_indices_are_distinct_across_all_eight_pair_persona_order_cells()
     ]
     samples = [module.build_session(spec, "S", "A", "B")["sample"] for spec in specs]
     assert len(set(samples)) == len(samples) == 8
+
+
+def test_the_empty_stage_salt_leaves_the_sample_index_exactly_where_it_was() -> None:
+    """The amendment's replay guarantee, at its root: an unsalted index is the pre-amendment
+    integer, so unsalted cells still hit the pilot's cache. Pinned against the hash itself, not
+    against the function, so a future edit to the payload cannot pass this test by agreeing
+    with itself."""
+    spec = _spec("pair-one", "grinder", 1)
+    expected = int(
+        hashlib.sha256(b"pair-one\x00grinder\x001").hexdigest()[:16], 16
+    )
+    assert module._sample_index(spec) == expected
+    assert module._sample_index(spec, "") == expected
+    assert module.build_session(spec, "S", "A", "B")["sample"] == expected
+
+
+def test_a_stage_salt_moves_the_sample_index_without_moving_the_request() -> None:
+    """Same stimulus, same system, same schema — different cache key. That is the whole
+    mechanism: the salted cell is re-asked instead of replayed, and nothing the model sees
+    changes, so the fresh draw answers the same question the pilot's draw answered."""
+    spec = _spec("pair-one", "grinder", 1)
+    plain = module.build_session(spec, "SYSTEM", "TEXT-A", "TEXT-B")
+    salted = module.build_session(spec, "SYSTEM", "TEXT-A", "TEXT-B", stage_salt="full")
+
+    assert salted["sample"] != plain["sample"], "the key must move"
+    assert salted["system"] == plain["system"]
+    assert salted["turns"] == plain["turns"]
+    assert salted["plan"] == plain["plan"], "both stages byte-identical under the salt"
+    assert salted["tag"] == plain["tag"], "the cell's identity is unchanged"
+    # Two different stages are two different draws of the same cell.
+    other = module.build_session(spec, "SYSTEM", "TEXT-A", "TEXT-B", stage_salt="pilot")
+    assert len({plain["sample"], salted["sample"], other["sample"]}) == 3
 
 
 # ----------------------------------------------------------------------------------- parsing

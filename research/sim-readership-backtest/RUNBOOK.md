@@ -46,11 +46,20 @@ else runs under `uv run`. One sustained job at a time on this box — CPU jobs c
   the ledger within 2x of estimate.
 - **(c) full run** — one confirmatory look; everything after is exploratory and labelled.
 
-Replays: the elicit cache is keyed by request digest; pointing the driver's `--cache` at a
-prior raw JSONL reproduces any reported number without a call.
+Replays: the elicit cache is keyed by request digest **plus the sample index**
+(`elicit._call`); pointing the driver's `--cache` at a prior raw JSONL reproduces any reported
+number without a call.
+
+Since PREREG's post-hoc amendment of 2026-08-31 that is true of the primary arms and the probes
+but deliberately not of the control arms at stage (c): `backtest.control_stage_salt` puts the
+stage name into the sample index for `sham`, `damage` and `surface`, so those cells re-draw
+instead of replaying. Stage (b) keeps the empty salt, so the pilot's committed control numbers
+still replay free from `backtest-raw.jsonl` — check that first if a pilot rerun starts spending.
+A stage (c) result file carries two verdicts (`verdict_registered`, `verdict_amended`) and no
+key called `verdict`.
 
 ## Tests
 
 `uv run pytest tests/test_bt_corpus.py tests/test_bt_blinding.py tests/test_bt_recognition.py
-tests/test_bt_population.py tests/test_bt_arms.py tests/test_bt_analysis.py -q` — hermetic,
-no shard, no call.
+tests/test_bt_population.py tests/test_bt_arms.py tests/test_bt_analysis.py
+tests/test_bt_backtest.py -q` — hermetic, no shard, no call.
