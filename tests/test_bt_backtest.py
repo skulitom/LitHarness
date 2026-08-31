@@ -104,10 +104,11 @@ def test_the_plan_prices_the_pilot_at_a_tenth_of_the_target() -> None:
     assert full["pairs_this_stage"] == backtest.N_TARGET
     assert pilot["pairs_this_stage"] == 20
     assert pilot["sessions"] < full["sessions"]
-    # Under the K1a-corrected cost basis (0.012 -> 0.075, measured by the 2026-08-30 pilot)
-    # the registered full stage prices ABOVE the ceiling — the ceiling's refusal is now the
-    # fact this test pins, until the operator resolves the fork the FINDINGS record.
-    assert full["estimated_usd"] > backtest.COST_CEILING_USD
+    # Under the K1a-corrected cost basis (0.012 -> 0.075) the registered full stage priced
+    # above the original $180 ceiling; the operator resolved the fork on 2026-08-31 by
+    # raising the ceiling to 900 (quota-denominated). Both stages fit again, with margin —
+    # which is the fact this test now pins.
+    assert full["estimated_usd"] <= backtest.COST_CEILING_USD
     assert pilot["estimated_usd"] <= backtest.COST_CEILING_USD
     with pytest.raises(ValueError, match="unknown stage"):
         backtest.plan("rehearsal", 10)

@@ -57,7 +57,13 @@ STAGES = ("dry", "pilot", "full")
 PILOT_FRACTION = 0.10
 
 #: PREREG §8: the ceiling is a refusal, not a note.
-COST_CEILING_USD = 180.0
+#: **Raised 180 -> 900 on 2026-08-31 by the operator, verbatim: "yeah it's fine raise the
+#: ceiling, we are using subscription quota anyways, just might be rate limited earlier in
+#: the week before the reset." The number seen (K1a): the corrected basis prices the
+#: registered full stage at ~$663 beside a ~$132 cumulative pilot; 900 covers both with
+#: margin. The dollars are subscription-equivalent; the practical constraint the operator
+#: names is the weekly rate-limit reset, not cash.**
+COST_CEILING_USD = 900.0
 
 #: PREREG §8: decided confirmatory pairs the full stage aims for.
 N_TARGET = 200

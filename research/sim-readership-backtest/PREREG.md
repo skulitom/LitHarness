@@ -201,7 +201,9 @@ ledger, replay caches keyed by request digest:
 
 Panel model `claude-haiku-4-5`, no spot model (§3's cutoff reasoning — a 2026-cutoff frontier
 model reading excerpts would void cutoff-cleanness by construction). Cost ceiling for the
-whole programme: **$180** on the haiku panel — dominated by the C-arm's ~4,000 two-turn
+whole programme: ~~**$180**~~ **$900 (raised 2026-08-31 by the operator after the pilot
+measured the registered basis 6.2x low; his words and the numbers seen are recorded at
+`backtest.COST_CEILING_USD`; quota-denominated)** on the haiku panel — dominated by the C-arm's ~4,000 two-turn
 sessions over up-to-6,000-word excerpt pairs; the P-arm, the probes and the control arms are
 small beside it. The ceiling is a refusal, not a note, and stage (b)'s ledger check (pilot
 cost x 10 within 2x of estimate) is what keeps it one.
