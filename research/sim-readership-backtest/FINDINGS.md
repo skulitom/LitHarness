@@ -49,3 +49,28 @@ The pilot: ~20 confirmatory pairs, all controls live, inside the registered $180
 its own PID lock and cost ledger, estimated by the driver's `plan("pilot", ...)`. It is the
 programme's first paid call and the operator's one-bit gate applies; the driver refuses until
 a commit cites that go.
+
+## The pilot (stage b), run 2026-08-30/31 under the operator's go
+
+**The gate refused the full stage, and both reasons are exactly what a pilot exists to buy.**
+Record: `result-pilot.json` beside this file; raw cache `backtest-raw.jsonl` (1,104 records,
+1 transport refusal). No VOID fired: positional deviation and the sham floor both sat under
+the (degenerate) largest-true-effect, and the shuffle's clear share was 0.0. The recognition
+screen came back **0 recognised of 40 books probed** — the corpus's obscurity carried it.
+
+- **The cost basis was wrong by 2.09x.** Ledger $41.21 against the registered $19.68
+  estimate; the 2x rule refused. At the measured per-pair price (~$2.06) the registered
+  n=200 full run prices at ~$410 against the $180 programme ceiling — the ceiling is a
+  refusal, so the full stage as registered cannot run. The correction and its options are
+  the operator's (PREREG's K1a precedent governs any edit: it must name this number).
+- **The C-arm under-ran by construction: 2 of 20 pairs bought sessions; 1 decided pair
+  reached the primary.** The cache signature: pair one bought all 20 sessions (40 records),
+  pair two bought 10 (20 records), pairs three through twenty bought nothing — their
+  requests replayed earlier digests, which is only possible if their stimuli were
+  byte-identical to earlier ones. The P-arm ran all 20 pairs correctly (800 records, 400
+  votes). The defect is in the C-arm stimulus path, not the transport, and it is under
+  diagnosis; nothing here reached a confirmatory number, so nothing is promoted or voided.
+
+The verdict slot reads `refused` (2 outcomes < the registered minimum of 10), which is the
+arithmetic refusing to manufacture a bound — the §85 rail working. Probes, P-arm and control
+plumbing all ran end to end; every bought record replays free for any rerun.
