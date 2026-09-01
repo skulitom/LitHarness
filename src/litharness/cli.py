@@ -3148,6 +3148,9 @@ def cmd_prompts(args: argparse.Namespace) -> int:
             ),
         },
     )
+    # The shelf the writer would be shown under `--exemplars` (§196), so what this inspector
+    # prints is what a scene call carries; without the flag the request is what it always was.
+    shelf = _selected_shelf(args)
     scene_system, scene_prompt = render_scene_prompt(
         beat,
         book_title="The Deep Ledger",
@@ -3155,6 +3158,7 @@ def cmd_prompts(args: argparse.Namespace) -> int:
         target_words=900,
         scene_plan="Rook pays a cost that changes what returning home would mean.",
         writer=writer,
+        shelf=shelf,
     )
     base = PlanRevision(
         "specimen-book",
@@ -3188,7 +3192,11 @@ def cmd_prompts(args: argparse.Namespace) -> int:
     measurement = readers_mod.pool(readers_mod.MEASUREMENT)[0]
     steering = readers_mod.pool(readers_mod.STEERING)[0]
     roles: dict[str, CompletionRequest] = {
-        "listing": overview_mod.render_overview_request(premise, writer),
+        "listing": overview_mod.render_overview_request(
+            premise,
+            writer,
+            blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
+        ),
         "title": overview_mod.render_title_request("A debtor takes the road below.", writer),
         "title-lookup": titles.render_check_request("The Deep Ledger", writer),
         "architect-seed": world_agent.render_seed_request("A debtor takes the road below.", writer),
