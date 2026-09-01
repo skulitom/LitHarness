@@ -21471,3 +21471,167 @@ ours, no corpus is opened, and the RoyalRoad-derived number in `PROVENANCE` is p
 not a datum crossing to the generation side. Nothing here promotes a research claim under
 `EPISTEMIC_GOVERNANCE.md`: the panel's status is unchanged by pointing it at our own drafts, and
 this entry claims a column with an `OBSERVED` count of exactly zero house reads so far.
+
+## 193. A win that survives its own paragraph shuffle is surface, and nineteen of twenty-one scorecard rows survive it by construction — so the adversarial layer ships with a critic roster whose unquotable claims evaporate
+
+The continuous-loop direction's same-day amendment (`plan/continuous-loop-direction.md`) asked
+for competent adversarial testers who have to optimize for rejection, so that the loop cannot
+overfit an unrelated quantity. This entry is the layer's build: mechanical adversaries that try
+to make a provisional win fail, and a critic roster paid in verified kills. **Nothing here
+gates, ranks or ships anything** — the binding rule (provisional win → adversarial battery →
+survived-or-rejected) is the coordinator's to apply, and these modules only report.
+
+### 193.1 Measured first: the damage arm is nearly inert against a scorecard made of counts
+
+Before writing any check, the damage transform was run against the battery it would be asked to
+attack. On a ten-paragraph fixture carrying two status blocks and two progression moves, a
+full-strength `ablate.paragraph_shuffle` moved **2 of 21 numeric rows**: `first_event_fraction`
+and `median_gap`. The other 19 — word counts, event counts, mention counts, sentence mean,
+sentence length CV, proper nouns, em dashes, gloss counts — came back **byte-identical**.
+
+This is not a defect in the transform; it is arithmetic. A paragraph shuffle is exactly
+length-preserving, so every row that *counts* something must return the same number, and a
+damage arm run against counts alone can only ever report that everything survived. The
+consequence is stated rather than smoothed over: **a purely count-based scorecard cannot be
+damage-tested at all.** The rows that carry the damage arm's whole discriminating power are the
+ones asking *where* an event fell and how evenly the events were spaced, so those were added to
+the local battery (`measures_adapter.gap_statistics`), and the fact is pinned as a test
+(`test_shuffle_moves_only_the_order_sensitive_rows`) rather than left as a comment.
+
+### 193.2 What shipped
+
+`research/loop/`, research-side and importable from nothing under `src/litharness/`:
+
+- **`measures_adapter.py`** — the one seam to the scorecard being built as §190 in a sibling
+  worktree. `load_measures()` tries `scorecard`, then `chapter_measures`, then a local fallback
+  built from `progression_cadence`, `number_context` and `register_census`, and every battery
+  record says which answered. **§190 was unmerged when this was written and the adapter takes
+  the degraded path today**, which is why the fallback exists and why it is documented as not
+  being a second scorecard.
+- **`adversarial.py`** — eight checks. Two transforms: `damage_survival` (the winner's own
+  paragraphs shuffled, then re-measured) and `sham_separation` (two windows of one draw, in
+  `arms.sham_windows`' shape, carrying §120.2's refusal intact — a byte-identical sham is no
+  control and is refused rather than reported clear). Six degenerate maxima, one per named axis:
+  `furniture_spam`, `checklist_stuffing`, `staccato_monotony`, `opening_repetition`,
+  `cast_starvation`, `word_dilution`. Output is a battery record per variant — check,
+  fired/clear/not-run, and the number behind it — plus a plain table.
+- **`critic_prompts.py` / `critics.py`** — a five-lens roster and its runner, parser, verifier
+  and tally.
+
+### 193.3 The claim schema, verbatim
+
+Every critic claim arrives in exactly this shape, and the schema is closed at every level
+(`additionalProperties: false` at both depths — the §69 lesson applied twice, because an open
+schema is how an unfalsifiable field arrives through a side door):
+
+```json
+{
+  "family": "<one code from the read-recurrence map's taxonomy>",
+  "quote_span": {"text": "<verbatim from the chapter>", "location": "<where>"},
+  "claim": "<one sentence>",
+  "cashable_as": "mechanical" | "gate-checkable" | "taxonomy-item"
+}
+```
+
+**A claim without a verbatim span is dropped in the parser.** Structurally uncashable, it
+evaporates before anything reads it. That is the load-bearing line of the whole design: an agent
+instructed to find fault will find fault, so the only claims that survive are the ones anchored
+to text that is actually on the page.
+
+### 193.4 The verification split, and the asymmetry inside it
+
+Nine terminal statuses, and what each establishes is different:
+
+| status | what the code established |
+|---|---|
+| `dropped:no-verbatim-span` | the span is not in the chapter — the claim never existed |
+| `dropped:span-too-short` | under `MIN_SPAN_WORDS`; a two-word span matches half the chapter |
+| `refuted:off-map` | the family is not on the recurrence map |
+| `refuted:miscited-furniture` | a claim about prose, quoting only status furniture |
+| `refuted:counter-empty` | the critic promised a counter and the counter came back zero |
+| `unverified:no-counter` | marked mechanical, but no counter exists for that family |
+| `verified:mechanical` | a counter ran over the span and found the named thing |
+| `verified:taxonomy` | the span is verbatim and the family is on the map |
+| `gate-read` | a line citation, left for the coordinator's gate |
+
+**`verified:mechanical` and `verified:taxonomy` are not equal evidence, and the record keeps
+them apart rather than pooling them.** A mechanical verification *demonstrates* the defect. A
+taxonomy verification establishes only that the critic quoted this chapter and named a real
+family — **it is a citation, not a finding** — and the coordinator's gate read is what turns it
+into a rejection. This is the weakest joint in the build and is named here rather than hidden:
+the amendment allows a claim to cash out as a taxonomy item, so the class exists, but its
+verification cannot do more than it does.
+
+`refuted:counter-empty` is the half that makes the roster honest. A critic asserting an em dash
+in a span that holds none is refuted in code and the refutation is tallied against it.
+
+### 193.5 The roster, and the tally as bookkeeping
+
+Five lenses, each given a disjoint slice of the map's families (a critic that may claim anything
+produces a scattergun whose hit rate says nothing about the lens): `sentence-fabric` (D1, D2,
+D4, E1–E3), `spoonfeed-implication` (G1–G3, C3, C5), `diegesis-integrity` (A1–A4, L1, M1),
+`premise-freshness` (B1–B6), `popcorn-momentum` (C1, C2, C4, H1, J1, J2, K1, F1, I1).
+
+`I2` is on the map and is deliberately **not** claimable: the map records it as a stated
+preference rather than a defect, and a preference offered to an agent told to reject would come
+back as a defect every time.
+
+The per-critic tally of verified kills persists in a roster file and is **bookkeeping, not
+training**. Nothing trains on it, nothing selects on it, no prompt reads it, and a tally written
+under one `ROSTER_VERSION` is refused rather than pooled into another — a reworded prompt is a
+different instrument, and carrying its record forward would credit one instrument with another's
+finds.
+
+### 193.6 No bar was declared, and the one constant that exists says so
+
+Every degeneracy check is a **sign test** wherever one is possible: the row moved the winning
+way AND the degenerate component carries the move AND the component that would carry a real gain
+did not. A decomposition of signs needs no threshold, which is the whole reason it was built
+that way — §81, §85, §87 and §89 each named a quantity that could not do what it said.
+
+One exception, declared: `checklist_stuffing`'s outlier form uses `MAD_K = 3.0` over a draw
+family. **It is a screening constant, not a bar.** None of the four attainability checks (range
+at the real n, direction, independent unit, non-empty subgroup) was run on it, it licenses no
+promotion, it is reported beside every number it was applied to, and the comparative form of the
+same check — which needs no constant — runs beside it and is the one to trust. Where a check has
+no baseline to decompose against, it fires only on the extreme that needs no threshold
+(`furniture_spam` at an all-furniture draw) and otherwise reports its number and stays clear.
+
+A check that could not run reports `not-run`, never `clear`. Collapsing the two is how a battery
+starts reporting silence as safety.
+
+### 193.7 What was refused
+
+- **No aggregate and no verdict.** No battery score, no critic score, no overall outcome, no
+  pass/fail. Two tests scan the emitted JSON for a field named score, verdict, rating or overall.
+- **No critic preference gating.** Critics judge nothing and rank nothing. They have no way to
+  express approval — the schema's only list is a list of accusations — and no critic output
+  orders, selects among or prefers between variants. §61(5)/§84 are untouched.
+- **No paid call in this build.** Every test runs against a written-here fake. The panel
+  preference half of the damage arm is an optional callable; when it is absent the report records
+  `"panel preference not purchased"` rather than omitting the half. The first paid critic run is
+  the coordinator's.
+- **No beat-satisfaction degenerate maximum.** The obvious one — a beat satisfied by a furniture
+  line rather than by prose — needs the scorecard's beat spans, which do not exist yet. It was
+  refused rather than faked against a guessed interface, and is named here as the gap to fill
+  when §190's beat row lands.
+- **No write into any store or prompt path.** The roster tally file is the only write either
+  module makes, and a test asserts the runner touches nothing else on disk.
+
+### 193.8 Containment, checked rather than asserted
+
+§97.1 is enforced by a test that lifts every operator quotation out of
+`plan/agent-impact/read-recurrence-map.md` and asserts none of them appears in any string a
+critic is shown. The map's own header says the family names are ours and the quoted phrases are
+the operator's, given once and not to become prompt text; only the codes and our own glosses are
+in the prompts. A second test asserts nothing under `src/litharness/` imports these modules.
+
+### 193.9 Anti-scope
+
+Measurement and refutation only. Nothing here mints a system, edits a generation prompt, touches
+`src/litharness/`, gates, ranks or selects anything, admits an axis, or promotes a research claim
+under `EPISTEMIC_GOVERNANCE.md` — the checks are `REGISTERED` shapes and the one measurement
+(§193.1) is `OBSERVED` on a fixture written for the purpose, not on any real draw. No corpus was
+read. No critic prose reaches the writer, the reviser, the editorial control plane, the reader
+loop, the roster or any dossier. RS1 is untouched: chapter text the caller already holds goes in,
+and derived numbers come out. The layer is built and inert until a coordinator runs it.
