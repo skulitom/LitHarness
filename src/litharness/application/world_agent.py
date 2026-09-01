@@ -149,7 +149,9 @@ _TOOLS = (
 _SYSTEM = (
     "Something in this world grants what people can do, and a ladder belongs to whatever hands "
     "out its rungs: name that thing, declare it as this world's system, and give it the "
-    "ladder.\n"
+    "ladder; the line the book prints has that ladder's word and the system's grants for its "
+    "columns and nothing else, because a sheet that prints other numbers is a position in no "
+    "system and leaves the one you declared unfinished.\n"
     "Whatever else is in the world may recognise where somebody has got to, price it or "
     "withhold it, and the book is better when something does — but it reads the ladder rather "
     "than owning it, and the one this book is about climbs the system's.\n"

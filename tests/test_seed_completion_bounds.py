@@ -35,6 +35,19 @@ def test_the_seed_states_the_ability_bound_the_completion_enforces() -> None:
     assert low in grants[0] and high in grants[0]
 
 
+def test_the_seed_says_the_printed_line_s_columns_are_the_system_s() -> None:
+    """Serial Pilot 20: seven grants, inside the bound, and the system still unfinished, because
+    the Architect printed a sheet of strength, speed, wind and stones beside a system whose
+    columns are the rung and its grants. The seed's first system sentence now says which
+    columns the printed line carries, on a semicolon, so the demand count is unchanged."""
+    first = [
+        item for item in house.demands(world_agent._SYSTEM) if "declare it as this world" in item
+    ]
+    assert len(first) == 1
+    assert "ladder's word and the system's grants for its columns and nothing else" in first[0]
+    assert "leaves the one you declared unfinished" in first[0]
+
+
 def test_the_check_carries_the_completion_s_reason_beside_the_missing_scale(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
