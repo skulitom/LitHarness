@@ -286,9 +286,15 @@ def plan_pairs(manifest: Mapping[str, Any], built: Mapping[str, Mapping[str, Sti
         have = built[arm]
         ours = [s for s in have.values() if s.entry.side == "ours" and s.entry.in_product]
         summits = [s for s in have.values() if s.entry.side == "summit"]
-        for mine in ours:
-            for summit in summits:
-                pairs.append(PairSpec(arm, mine.label, summit.label, "ours-vs-summit"))
+        # **Calibration and control pairs first, the product after** (2026-09-01, after the
+        # product's first ten pairs all read one way): the pairs that decide how a product
+        # share is read are the ones a person needs earliest, and buying order changes nothing
+        # about any cell — pair ids are content-addressed and every cell replays.
+        product = [
+            PairSpec(arm, mine.label, summit.label, "ours-vs-summit")
+            for mine in ours
+            for summit in summits
+        ]
         for label_a, label_b in calibration.get(arm, []):
             if label_a not in have or label_b not in have:
                 continue
@@ -305,6 +311,7 @@ def plan_pairs(manifest: Mapping[str, Any], built: Mapping[str, Mapping[str, Sti
             else:
                 kind = "ours-vs-summit"
             pairs.append(PairSpec(arm, label_a, label_b, kind))
+        pairs.extend(product)
     return pairs
 
 

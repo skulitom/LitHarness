@@ -57,7 +57,30 @@ convergence question; the panel reads the openings as they are.
 
 ## 4. The seed and the chapter
 
-*(filled after the ticks)*
+**The seed** (one draw, clean check, accepted without `--force`): 253 records. The Architect
+built *the Assay*, which grades everybody inside *the Sill* — a drystone wall built at a size
+nobody would build a wall, which the lecture hall's row K dropped into — and pays in cut
+stones. A five-rung ladder (Fill, Footing, Face, Throughband, Cope); **seven grants** in a
+graph (Heft and Grip stand alone, Seam needs Heft, Hush needs Grip, and Set, Quarry and Ring
+are sealed behind *the Turn* at Face, a one-time fork where a hand goes through one of three
+words); a topside Gate Office that reads the grade and decides what a stair does; an abusable
+rule (a room grades to the highest thing standing in it); and Theo Rennick last on the board
+with nothing but Flinch, which the Assay grants to nobody and prints on the sheet of anybody
+the Sill has decided is not going back up. Three names above him on the board took the three
+ways at the Turn, so all three are on the page before he chooses.
+
+**Seven grants: the bound §195's fix put into the seed ask held on its first draw** (pilot 19
+drew eleven the evening before the sentence existed). **And the system still did not complete,
+for the other reason the completion can refuse**: the book prints a sheet of strength, speed,
+wind and stones, and the system's own columns are the rung and its seven grants, so
+`world accept` left the system unfinished on purpose rather than put the book under the rule
+that a sheet must be a position in its system and stop it drafting. The seed ask says nothing
+about which columns the printed line carries; that is the third seed-side gap this track has
+found, and it is recorded here for the fix rather than patched into this store. The draw
+proceeds as pilot 19 did: the floor cleared by the accepted sheet, the progression beat on the
+legacy arm, the offer beat and the `[OFFER]` line abstaining.
+
+**Chapter 1:** *(filled after the ticks)*
 
 ## 5. The panel's reading
 
