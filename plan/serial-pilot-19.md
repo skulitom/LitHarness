@@ -168,5 +168,11 @@ in the summits' range where the four baseline openings had almost none.
 
 ## 5. The panel's reading
 
-*(filled from `runs/opening-parity/summary.md` once this opening has been added to the
-manifest as an "ours" entry and the pairs against the six summits have been bought)*
+Bought 2026-09-01 as PREREG §5d: this opening over *The Primal Hunter* 20 of 20, over
+*Defiance of the Fall* 20 of 20, over *The Gam3* 19 of 19, both orders, all three anchors
+probe-clean; against the baseline station opening, 9 to 11. **And a paragraph-shuffled copy of
+this opening was taken over *The Primal Hunter* 20 of 20 as well.** The reading is
+`research/opening-parity/FINDINGS.md`'s and stage-0 §195.5's: the panel's preference does not
+depend on the story being in order, so these shares are about surface and the instrument
+cannot say whether this opening stands beside the anchor. The chapter is on the shelf for the
+operator's milestone read, which is the channel this pilot was drawn for.

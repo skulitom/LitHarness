@@ -1,0 +1,282 @@
+{
+  "cost": {
+    "estimated_usd": 1.494,
+    "ledger_is_cumulative_over_cache": true,
+    "ledger_usd": 35.6045,
+    "max_sessions": 1500,
+    "max_usd": 120.0,
+    "sessions": 20,
+    "usd_per_session_basis": 0.0747
+  },
+  "exploratory": true,
+  "inputs": {
+    "file_a": {
+      "blinding_removed": {
+        "author": 0,
+        "author_note": 0,
+        "chapter_heading": 0,
+        "platform": 0,
+        "title": 0,
+        "url": 0
+      },
+      "digest": "aa5b0fe70b3ac68e9318e78f577729a9d8517444d74002a9097f5f8816c37541",
+      "label": "station-shuffled",
+      "path": "C:\\DEV\\LitHarness\\runs\\opening-parity\\stimuli\\opening-station-shuffled.txt",
+      "words": 1517
+    },
+    "file_b": {
+      "blinding_removed": {
+        "author": 0,
+        "author_note": 0,
+        "chapter_heading": 0,
+        "platform": 0,
+        "title": 0,
+        "url": 0
+      },
+      "digest": "671c6e2dc1fd2db0adb890e6e7fe683c8f6a734a12dcb17f143af5c24b7cd105",
+      "label": "dotf",
+      "path": "C:\\DEV\\LitHarness\\runs\\opening-parity\\stimuli\\opening-dotf.txt",
+      "words": 1506
+    }
+  },
+  "pair": {
+    "arm": "opening",
+    "file_a": "station-shuffled",
+    "file_b": "dotf",
+    "kind": "control-vs-summit"
+  },
+  "panel": {
+    "arm": "house",
+    "model": "claude-haiku-4-5",
+    "orders": [
+      0,
+      1
+    ],
+    "pair_id": "house-71f0e9d0204f9344",
+    "personas": 10,
+    "population_digest": "d024470d5266ea63"
+  },
+  "positional": {
+    "by_order": {
+      "0": {
+        "decided": 10,
+        "first_slot": 10,
+        "first_slot_share": 1.0
+      },
+      "1": {
+        "decided": 10,
+        "first_slot": 2,
+        "first_slot_share": 0.2
+      }
+    },
+    "decided": 20,
+    "exploratory": true,
+    "first_slot": 12,
+    "first_slot_share": 0.6
+  },
+  "provenance": "EXPLORATORY: this column reuses the sim-readership backtest's frozen ten-persona panel, whose only evidence is descriptive — 0.789 post-diction on 19 decided RoyalRoad pairs at pilot n, control corners unsettled (the sham corner voided and stage (c) is paused), and no validity licence for the instrument. These shares describe what ten simulated readers did with two of our own drafts; they gate nothing, rank nothing, promote nothing, and never reach a prompt.",
+  "reads": "one person; nothing downstream consumes this file",
+  "reason_codes": {
+    "counts": {
+      "": 4,
+      "confusing": 0,
+      "hooked-by-other": 14,
+      "no-advancement": 1,
+      "prose-friction": 0,
+      "seen-it-before": 0,
+      "slow-start": 1,
+      "wrong-genre-for-me": 0
+    },
+    "exploratory": true
+  },
+  "sessions": {
+    "aborted_at_ceiling": false,
+    "fresh_calls": 287,
+    "planned": 20,
+    "replayed_calls": 127,
+    "returned": 20,
+    "transport_failures": 0,
+    "unanswered": 0
+  },
+  "shares": {
+    "aggregate": {
+      "decided": 20,
+      "file_a": 18,
+      "file_b": 2,
+      "neither": 0,
+      "returned": 20,
+      "share_of_decided": {
+        "file_a": 0.9,
+        "file_b": 0.1
+      },
+      "share_of_returned": {
+        "file_a": 0.9,
+        "file_b": 0.1,
+        "neither": 0.0
+      }
+    },
+    "by_persona": {
+      "comfort": {
+        "decided": 2,
+        "file_a": 2,
+        "file_b": 0,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 1.0,
+          "file_b": 0.0
+        },
+        "share_of_returned": {
+          "file_a": 1.0,
+          "file_b": 0.0,
+          "neither": 0.0
+        }
+      },
+      "crossover": {
+        "decided": 2,
+        "file_a": 2,
+        "file_b": 0,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 1.0,
+          "file_b": 0.0
+        },
+        "share_of_returned": {
+          "file_a": 1.0,
+          "file_b": 0.0,
+          "neither": 0.0
+        }
+      },
+      "grinder": {
+        "decided": 2,
+        "file_a": 1,
+        "file_b": 1,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 0.5,
+          "file_b": 0.5
+        },
+        "share_of_returned": {
+          "file_a": 0.5,
+          "file_b": 0.5,
+          "neither": 0.0
+        }
+      },
+      "novelty": {
+        "decided": 2,
+        "file_a": 2,
+        "file_b": 0,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 1.0,
+          "file_b": 0.0
+        },
+        "share_of_returned": {
+          "file_a": 1.0,
+          "file_b": 0.0,
+          "neither": 0.0
+        }
+      },
+      "numbers": {
+        "decided": 2,
+        "file_a": 1,
+        "file_b": 1,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 0.5,
+          "file_b": 0.5
+        },
+        "share_of_returned": {
+          "file_a": 0.5,
+          "file_b": 0.5,
+          "neither": 0.0
+        }
+      },
+      "omnivore": {
+        "decided": 2,
+        "file_a": 2,
+        "file_b": 0,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 1.0,
+          "file_b": 0.0
+        },
+        "share_of_returned": {
+          "file_a": 1.0,
+          "file_b": 0.0,
+          "neither": 0.0
+        }
+      },
+      "skimmer": {
+        "decided": 2,
+        "file_a": 2,
+        "file_b": 0,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 1.0,
+          "file_b": 0.0
+        },
+        "share_of_returned": {
+          "file_a": 1.0,
+          "file_b": 0.0,
+          "neither": 0.0
+        }
+      },
+      "slowburn": {
+        "decided": 2,
+        "file_a": 2,
+        "file_b": 0,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 1.0,
+          "file_b": 0.0
+        },
+        "share_of_returned": {
+          "file_a": 1.0,
+          "file_b": 0.0,
+          "neither": 0.0
+        }
+      },
+      "stylist": {
+        "decided": 2,
+        "file_a": 2,
+        "file_b": 0,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 1.0,
+          "file_b": 0.0
+        },
+        "share_of_returned": {
+          "file_a": 1.0,
+          "file_b": 0.0,
+          "neither": 0.0
+        }
+      },
+      "wanderer": {
+        "decided": 2,
+        "file_a": 2,
+        "file_b": 0,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 1.0,
+          "file_b": 0.0
+        },
+        "share_of_returned": {
+          "file_a": 1.0,
+          "file_b": 0.0,
+          "neither": 0.0
+        }
+      }
+    },
+    "exploratory": true
+  }
+}

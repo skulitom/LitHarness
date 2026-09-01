@@ -112,4 +112,8 @@ summits on §195.1's axis.
 
 ## 5. The panel's reading
 
-*(filled once this opening is on the manifest and its pairs are bought)*
+Not bought. The run was stopped before this opening's pairs, once the shuffle controls on the
+baseline and on pilot 19 had shown the panel's preference across the ours/summit line to be
+about surface (`research/opening-parity/FINDINGS.md`, stage-0 §195.5); buying the same shares
+for this opening would have described nothing further. The chapter is on the shelf for the
+operator's milestone read beside pilot 19's and *The Primal Hunter*'s.

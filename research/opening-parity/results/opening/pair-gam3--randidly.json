@@ -1,0 +1,282 @@
+{
+  "cost": {
+    "estimated_usd": 1.494,
+    "ledger_is_cumulative_over_cache": true,
+    "ledger_usd": 25.7894,
+    "max_sessions": 1500,
+    "max_usd": 120.0,
+    "sessions": 20,
+    "usd_per_session_basis": 0.0747
+  },
+  "exploratory": true,
+  "inputs": {
+    "file_a": {
+      "blinding_removed": {
+        "author": 0,
+        "author_note": 0,
+        "chapter_heading": 0,
+        "platform": 0,
+        "title": 0,
+        "url": 0
+      },
+      "digest": "534de813a8e0cdd5e6e859bd5f2f82a391e1f5d0b98d90ceaa85efc3b707168c",
+      "label": "gam3",
+      "path": "C:\\DEV\\LitHarness\\runs\\opening-parity\\stimuli\\opening-gam3.txt",
+      "words": 1522
+    },
+    "file_b": {
+      "blinding_removed": {
+        "author": 0,
+        "author_note": 0,
+        "chapter_heading": 0,
+        "platform": 0,
+        "title": 0,
+        "url": 0
+      },
+      "digest": "4f09e2520e86b8ce1cedd0a4016c43433e25446672c157cdf986f8818126b8be",
+      "label": "randidly",
+      "path": "C:\\DEV\\LitHarness\\runs\\opening-parity\\stimuli\\opening-randidly.txt",
+      "words": 1512
+    }
+  },
+  "pair": {
+    "arm": "opening",
+    "file_a": "gam3",
+    "file_b": "randidly",
+    "kind": "summit-vs-summit"
+  },
+  "panel": {
+    "arm": "house",
+    "model": "claude-haiku-4-5",
+    "orders": [
+      0,
+      1
+    ],
+    "pair_id": "house-b205da9d4d0aaa46",
+    "personas": 10,
+    "population_digest": "d024470d5266ea63"
+  },
+  "positional": {
+    "by_order": {
+      "0": {
+        "decided": 10,
+        "first_slot": 0,
+        "first_slot_share": 0.0
+      },
+      "1": {
+        "decided": 8,
+        "first_slot": 8,
+        "first_slot_share": 1.0
+      }
+    },
+    "decided": 18,
+    "exploratory": true,
+    "first_slot": 8,
+    "first_slot_share": 0.4444
+  },
+  "provenance": "EXPLORATORY: this column reuses the sim-readership backtest's frozen ten-persona panel, whose only evidence is descriptive — 0.789 post-diction on 19 decided RoyalRoad pairs at pilot n, control corners unsettled (the sham corner voided and stage (c) is paused), and no validity licence for the instrument. These shares describe what ten simulated readers did with two of our own drafts; they gate nothing, rank nothing, promote nothing, and never reach a prompt.",
+  "reads": "one person; nothing downstream consumes this file",
+  "reason_codes": {
+    "counts": {
+      "": 1,
+      "confusing": 0,
+      "hooked-by-other": 14,
+      "no-advancement": 0,
+      "prose-friction": 1,
+      "seen-it-before": 2,
+      "slow-start": 2,
+      "wrong-genre-for-me": 0
+    },
+    "exploratory": true
+  },
+  "sessions": {
+    "aborted_at_ceiling": false,
+    "fresh_calls": 47,
+    "planned": 20,
+    "replayed_calls": 127,
+    "returned": 20,
+    "transport_failures": 0,
+    "unanswered": 0
+  },
+  "shares": {
+    "aggregate": {
+      "decided": 18,
+      "file_a": 0,
+      "file_b": 18,
+      "neither": 2,
+      "returned": 20,
+      "share_of_decided": {
+        "file_a": 0.0,
+        "file_b": 1.0
+      },
+      "share_of_returned": {
+        "file_a": 0.0,
+        "file_b": 0.9,
+        "neither": 0.1
+      }
+    },
+    "by_persona": {
+      "comfort": {
+        "decided": 2,
+        "file_a": 0,
+        "file_b": 2,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 0.0,
+          "file_b": 1.0
+        },
+        "share_of_returned": {
+          "file_a": 0.0,
+          "file_b": 1.0,
+          "neither": 0.0
+        }
+      },
+      "crossover": {
+        "decided": 2,
+        "file_a": 0,
+        "file_b": 2,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 0.0,
+          "file_b": 1.0
+        },
+        "share_of_returned": {
+          "file_a": 0.0,
+          "file_b": 1.0,
+          "neither": 0.0
+        }
+      },
+      "grinder": {
+        "decided": 2,
+        "file_a": 0,
+        "file_b": 2,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 0.0,
+          "file_b": 1.0
+        },
+        "share_of_returned": {
+          "file_a": 0.0,
+          "file_b": 1.0,
+          "neither": 0.0
+        }
+      },
+      "novelty": {
+        "decided": 2,
+        "file_a": 0,
+        "file_b": 2,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 0.0,
+          "file_b": 1.0
+        },
+        "share_of_returned": {
+          "file_a": 0.0,
+          "file_b": 1.0,
+          "neither": 0.0
+        }
+      },
+      "numbers": {
+        "decided": 2,
+        "file_a": 0,
+        "file_b": 2,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 0.0,
+          "file_b": 1.0
+        },
+        "share_of_returned": {
+          "file_a": 0.0,
+          "file_b": 1.0,
+          "neither": 0.0
+        }
+      },
+      "omnivore": {
+        "decided": 2,
+        "file_a": 0,
+        "file_b": 2,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 0.0,
+          "file_b": 1.0
+        },
+        "share_of_returned": {
+          "file_a": 0.0,
+          "file_b": 1.0,
+          "neither": 0.0
+        }
+      },
+      "skimmer": {
+        "decided": 2,
+        "file_a": 0,
+        "file_b": 2,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 0.0,
+          "file_b": 1.0
+        },
+        "share_of_returned": {
+          "file_a": 0.0,
+          "file_b": 1.0,
+          "neither": 0.0
+        }
+      },
+      "slowburn": {
+        "decided": 2,
+        "file_a": 0,
+        "file_b": 2,
+        "neither": 0,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 0.0,
+          "file_b": 1.0
+        },
+        "share_of_returned": {
+          "file_a": 0.0,
+          "file_b": 1.0,
+          "neither": 0.0
+        }
+      },
+      "stylist": {
+        "decided": 1,
+        "file_a": 0,
+        "file_b": 1,
+        "neither": 1,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 0.0,
+          "file_b": 1.0
+        },
+        "share_of_returned": {
+          "file_a": 0.0,
+          "file_b": 0.5,
+          "neither": 0.5
+        }
+      },
+      "wanderer": {
+        "decided": 1,
+        "file_a": 0,
+        "file_b": 1,
+        "neither": 1,
+        "returned": 2,
+        "share_of_decided": {
+          "file_a": 0.0,
+          "file_b": 1.0
+        },
+        "share_of_returned": {
+          "file_a": 0.0,
+          "file_b": 0.5,
+          "neither": 0.5
+        }
+      }
+    },
+    "exploratory": true
+  }
+}

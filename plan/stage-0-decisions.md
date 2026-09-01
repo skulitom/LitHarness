@@ -21775,3 +21775,55 @@ research claim is promoted under `EPISTEMIC_GOVERNANCE.md`; the census is `OBSER
 panel run is `REGISTERED`. The operator's target sentence lives here and in the registration
 and reaches no prompt (§97.1). Read-side machinery, the backtest's registered programme, its
 cache and its paused stage (c) are untouched.
+
+### 195.5 Addendum, 2026-09-01: the panel's reading, and the one thing it settled
+
+**Owed by §195.2 item 6, and the number it owes is the control's.** The measurement ran under
+three recorded amendments (`research/opening-parity/PREREG.md` §5a–§5e: the four anchors with
+blurbs, the product cut to two of ours after three pairs, the shuffle controls, and the two
+openings drawn under this entry's machinery entering as a fifth and sixth of ours) and was
+stopped after 22 pairs of the `opening` arm, at $34 of a $120 ceiling, when the controls had
+answered. `research/opening-parity/FINDINGS.md` owns the reading and `results/opening/` the
+pair files; nothing below restates a count that file does not carry.
+
+**Measured.** Every opening of ours was taken over every summit by nearly every persona in both
+orders — the baseline station and kettle, and pilot 19's *The Game Nobody Plays Anymore*
+drawn under this entry's beats, in the first person, by a genre-centre writer from a
+situation brief. And **a paragraph-shuffled copy of ours was taken over *The Primal Hunter*
+at exactly the ordered copy's rate**, while against its own ordered source the panel took
+whichever copy was shown first in seventeen of twenty cells. By the decision table fixed
+before the controls were bought, the panel is not reading story order at this length, and
+every ours-versus-summit share is a preference about surface.
+
+**So the one thing settled is about the instrument, and it is the §140/§141 finding with the
+shuffle added:** this readership places our prose above the market's top for a property that
+survives the story being taken out of the text, and it cannot arbitrate the operator's
+question. No parity claim is made in either direction. The panel is not saturated in general
+— it separated anchor from anchor (15 of 18, 18 of 18, 16 of 18) and ours from ours (near
+even, and 14 to 6) — only across the ours/summit line.
+
+**What the two draws under this entry did show, as descriptions and not as effects.** Both
+openings carry the summit shape the census could not find in the four baseline openings:
+who the person was before on the page first, the system arriving inside it, the sheet read
+aloud as business, the exception used on the page, the grade or the wind moving where the
+reader can see it, and the chapter ending on a thing offered and unanswered. Both are in the
+first person with first-person marks and interior verbs in the summits' range. Both carry
+the same residual family the reviser does not name — *the way you …* similes, *that is the
+part I keep coming back to*, the narrator addressing the reader about his own account — and
+both had their game system left unfinished by the completion, for two different reasons the
+seed ask never stated (eleven abilities against a bound of eight; a printed sheet whose
+columns are not the system's), each of which is now in the seed ask and the check
+(`test_the_seed_states_the_ability_bound_the_completion_enforces`,
+`test_the_seed_says_the_printed_line_s_columns_are_the_system_s`,
+`test_the_check_carries_the_completion_s_reason_beside_the_missing_scale`). And both writers,
+under two briefs that said nothing about the skill, made the exception a see-it-coming skill:
+the exception slot converges the way read 5 §4.3 found premises converging.
+
+**What is refused.** No promotion of either opening; no claim that the beats, the person or
+the writers caused what the census counts; no bar over anything the panel returned; no
+further spend on this panel for this question. **What is owed**: an instrument whose answer
+moves when the paragraphs are shuffled, before the parity question is asked of a machine
+again — the anticipation probe and the causal-salience battery are the candidates already on
+the record — and, now, the operator's milestone read of the two openings beside *The Primal
+Hunter*'s, which is the channel this track was started for and the only one left for the
+question as asked.
