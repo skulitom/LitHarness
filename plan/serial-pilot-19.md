@@ -74,7 +74,34 @@ uv run litharness --database runs/pilots/databases/serial19.db --library book-li
 
 ## 3. The listing
 
-*(filled after the call)*
+**Drawn 2026-09-01 in one draw** (no redraw fired on either frozen predicate): *The Game
+Nobody Plays Anymore*, 118 words, first person, `runs/pilots/pilot19/listing.txt`; the book
+stood up as serial19.db, book `af68085d`, six empty scenes, no seed state (the floor's advisory
+printed as designed; the Architect seeds the sheet).
+
+**The coordinator's gate, §183's checklist, item by item — PASS.**
+
+| item | on the page |
+| --- | --- |
+| opens something and reads their own capabilities | a sheet with his name on it; a line theirs did not have |
+| names one they did not have before | a class offered to nobody else, and a skill that shows what a thing will do before it does it |
+| the genre's furniture in plain words | sheet, system, class, skill, monsters, climb |
+| the person's life the day before, one clause and no more | scanning parcels on a depot night shift; the one thing he was good at |
+| person | first, as asked under the brief |
+| our machinery's words | none (`schema_words.named_in` clean) |
+| dashes, headings, tags, author | none |
+| what the person is after | "Now I climb, and I am not going back to nights" |
+
+**The browsing pool, 3 of 4 would start it, 1 passed, 0 saved.** The pass is the typicality
+item (read 5 §4.2's family B5): *"system arrives, I was secretly good at the thing it's made
+of — I've read that opening five times this year."* Recorded and not acted on: the shape is
+the summit shape on purpose (§195.1), and the parity panel is what says whether this instance
+of it stands beside the anchors. The three starts name the ramp (depot night shift to a class
+nobody else got) and the exception having a reason rather than a bigger number, which is the
+operator's hook direction (read 3) arriving unprompted.
+
+**One thing the listing does that the brief did not ask for:** it makes the system *out of*
+the dead game. That is the writer's, and it is the exception's reason.
 
 ## 4. The seed and the chapter
 
