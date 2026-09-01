@@ -42,6 +42,7 @@ from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
 from litharness.application import covers, recruiter, revoice, titles, world_agent
+from litharness.application import exemplars as exemplars_mod
 from litharness.application import export as export_module
 from litharness.application import library as library_module
 from litharness.application import overview as overview_mod
@@ -531,6 +532,25 @@ def _resolve_writer(
     return writer, ""
 
 
+def _selected_shelf(args: argparse.Namespace) -> exemplars_mod.Shelf | None:
+    """Resolve `--exemplars` to the shelf the writer is shown, or `None` for the control.
+
+    `_selected_writer`'s rule: a directory that does not exist, or holds no exemplar, is refused
+    loudly rather than defaulted to nothing, because a mistyped path that silently produced the
+    control arm is the worst failure available to a run whose question is whether the arms
+    differ (stage-0 §196).
+    """
+    root = getattr(args, "exemplars", "") or ""
+    if not root:
+        return None
+    try:
+        return exemplars_mod.load_shelf(
+            Path(root), limit=int(getattr(args, "exemplars_limit", exemplars_mod.DEFAULT_LIMIT))
+        )
+    except (FileNotFoundError, ValueError) as error:
+        raise SystemExit(f"litharness: --exemplars: {error}") from error
+
+
 def _selected_writer(
     args: argparse.Namespace, store: SqliteStore | None = None
 ) -> writers_domain.Writer | None:
@@ -600,6 +620,9 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             # Who is drafting. `None` without `--writer`, which is what every book written
             # before 2026-08-25 got and what this is read against.
             writer=_selected_writer(args, store),
+            # How this shelf sounds (§196): `None` without `--exemplars`, which is every
+            # book drafted before the shelf existed and the control it is read against.
+            shelf=_selected_shelf(args),
             **({"token_budget": args.context_budget} if args.context_budget is not None else {}),
         ),
         handlers={
@@ -633,7 +656,12 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
                 schedule_summary=True,
                 reader_mechanism=reader_mechanism,
                 reader_shape=SerialShape(args.chapter_scenes, args.arc_chapters),
-                revise=not getattr(args, "no_revise", False),
+                # **The reviser is off unless asked for** (§196, the operator's drop after the
+                # keep/modify/drop milestone): two settled-listing A/Bs found no sentence win
+                # the battery would accept, at 109% of the writer's cost, and reads 13 to 15
+                # landed on its output. `--revise` is the arm that keeps it reachable.
+                revise=bool(getattr(args, "revise", False)),
+                shelf=_selected_shelf(args),
             ),
             READER_OBSERVE: make_reader_observation_handler(
                 registry, store, args.project, budget=_budget(args)
@@ -2241,7 +2269,14 @@ def cmd_listing(args: argparse.Namespace) -> int:
         for _attempt in range(LISTING_DRAW_ATTEMPTS):
             drafted, refusal = _completion_call(
                 overview_mod.render_overview_request(
-                    brief, writer, person=getattr(args, "person", None)
+                    brief,
+                    writer,
+                    person=getattr(args, "person", None),
+                    blurbs=(
+                        exemplars_mod.render_blurbs(shelf)
+                        if (shelf := _selected_shelf(args)) is not None
+                        else None
+                    ),
                 ),
                 calls=calls,
                 spend=spend,
@@ -5531,13 +5566,22 @@ def build_parser() -> argparse.ArgumentParser:
         "(Formerly §54's control arm; that measurement concluded, §57/§65)",
     )
     parser.add_argument(
+        "--revise",
+        action="store_true",
+        default=_env_flag("LITHARNESS_REVISE"),
+        help="rewrite the drafted scene for sentence and paragraph structure before gating it "
+        "(§185's reviser); also read from LITHARNESS_REVISE. **Off by default since "
+        "2026-09-02** (stage-0 §196): the operator dropped the stage after two settled-listing "
+        "A/Bs found no sentence win its own battery would accept. With it set a second call is "
+        "made and a second decision written; without it the frozen policy digest is the one "
+        "every scene drafted before the reviser existed already carries",
+    )
+    parser.add_argument(
         "--no-revise",
         action="store_true",
         default=_env_flag("LITHARNESS_NO_REVISE"),
-        help="do not rewrite the drafted scene for sentence and paragraph structure before "
-        "gating it; also read from LITHARNESS_NO_REVISE. This is the control arm (§185): with "
-        "it set no second call is made, no second decision is written, and the frozen policy "
-        "digest is the one every scene drafted before the reviser existed already carries",
+        help="accepted and does nothing: the reviser is off unless --revise is given. Kept so "
+        "a recipe written for §185's control arm still parses",
     )
     parser.add_argument(
         "--chapter-scenes",
@@ -5562,6 +5606,23 @@ def build_parser() -> argparse.ArgumentParser:
         help="chapters per derived release volume in the book library; 50 by default. This "
         "changes packaging only: the canonical book remains one open-ended serial and its "
         "state, promises, characters, and chapter numbering continue across boundaries",
+    )
+    parser.add_argument(
+        "--exemplars",
+        default=os.environ.get("LITHARNESS_EXEMPLARS", ""),
+        help="a directory of openings the operator placed by hand, one folder per book holding "
+        "Chapter1.txt and optionally blurb.txt, shown to the scene writer as how this shelf "
+        "sounds and to the listing writer as how its listings sound (stage-0 §196). Also read "
+        "from LITHARNESS_EXEMPLARS. Off by default and no shelf is the control. The directory "
+        "must sit outside the repository's tracked tree: nothing shown is ever committed, and a "
+        "draft sharing a run of consecutive words with an exemplar is refused on the ladder",
+    )
+    parser.add_argument(
+        "--exemplars-limit",
+        type=int,
+        default=int(os.environ.get("LITHARNESS_EXEMPLARS_LIMIT", exemplars_mod.DEFAULT_LIMIT)),
+        help="how many exemplars from that directory are shown, in the order exemplars.json "
+        f"names or else by folder name; {exemplars_mod.DEFAULT_LIMIT} by default",
     )
     parser.add_argument(
         "--writer",

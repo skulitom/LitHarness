@@ -26,11 +26,13 @@ were themselves reading for *"what the next rung costs"*, so they scored the jar
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Any
 
 import pytest
 
 from litharness.application import (
+    exemplars,
     overview,
     planner,
     readers,
@@ -565,6 +567,17 @@ _PROGRESSION = extraction_domain.render_status_line(
 _STANDING = "Kestrel stands at courier (1 of 3); the book's plan has them at gate-runner (2 of 3)"
 _STANDING_LINE = "[STANDING] Kestrel stands at courier"
 _OFFER_LINE = "[OFFER] warrant — hull: opens binding, carrying | watch: opens appraising"
+#: A shelf of one short exemplar (§196). Its text lands in the *prompt*, which this file does
+#: not count; what the system gains is `SHELF_SYSTEM`, one sentence, priced below.
+_SHELF = exemplars.Shelf(
+    root=Path(),
+    exemplars=(
+        exemplars.Exemplar(
+            name="Placed", title="Placed", chapter="One opening.", blurb=None,
+            digest="0" * 16, words=2,
+        ),
+    ),
+)
 _CRITERIA = "- guild_rank: outranks — courier then gate-runner then warden"
 
 
@@ -583,6 +596,7 @@ _CONDITIONAL_ARMS: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
     "status_example": ({}, {"status_example": _STATUS_EXAMPLE}),
     "progression": ({"status_example": _STATUS_EXAMPLE}, {"progression": _PROGRESSION}),
     "offer_line": ({"status_example": _STATUS_EXAMPLE}, {"offer_line": _OFFER_LINE}),
+    "exemplars": ({}, {"shelf": _SHELF}),
     "standing": ({}, {"standing": _STANDING}),
     "standing_line": ({"standing": _STANDING}, {"standing_line": _STANDING_LINE}),
     "target_words": ({}, {"target_words": 900}),
@@ -603,6 +617,10 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
     # each opens are the book's own words (`gamesystem.offer_line`), so the payload line is
     # furniture and not a demand about prose.
     "offer_line": 2,
+    # **Joined 2026-09-02 at what is there** (§196): the one sentence saying whose the shelf's
+    # chapters are and that no name, place, thing or line of theirs may appear. The chapters
+    # themselves are material in the prompt and are not demands.
+    "exemplars": 1,
     "standing": 3,
     "standing_line": 2,
     "target_words": 3,
@@ -639,7 +657,10 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
 #: **41 -> 43 on 2026-09-01 for the `offer_line` conditional** (the opening-parity track): the
 #: one new branch in `planner.render_prompt`, priced at its own row above and landing twice here
 #: as one sentence and one furniture line. The off-by-one against the summed rows is unchanged.
-SCENE_MAXIMAL_BUDGET = 43
+#:
+#: **43 -> 44 on 2026-09-02 for the `exemplars` conditional** (§196): one sentence in the system
+#: when a shelf is shown, and the shelf's chapters in the prompt where nothing here counts them.
+SCENE_MAXIMAL_BUDGET = 44
 
 
 def test_the_scene_floor_row_is_what_the_planner_actually_assembles() -> None:
@@ -736,6 +757,7 @@ def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -
             target_words=900,
             criteria=_CRITERIA,
             offer_line=_OFFER_LINE,
+            shelf=_SHELF,
         )
     )
     assert len(counted) <= SCENE_MAXIMAL_BUDGET, (

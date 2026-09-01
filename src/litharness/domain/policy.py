@@ -76,6 +76,10 @@ RETRYABLE: frozenset[Veto] = frozenset(
         # and `SHAPE_NOT_CONFORMING` exactly: the inputs were right and the output did not
         # do what it was told.
         Veto.PROGRESSION_UNMOVED,
+        # A lifted run from an exemplar shown as register (§196): the model wrote the wrong
+        # thing, so ask again — and the retry is a genuinely different draft, for
+        # `detect_duplicate_scene`'s reason (the seed is derived from the attempt number).
+        Veto.EXEMPLAR_LEAK,
     }
 )
 

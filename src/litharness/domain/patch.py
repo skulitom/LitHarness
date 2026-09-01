@@ -61,6 +61,10 @@ class Veto(enum.StrEnum):
     #: and not one per column, for `CONTINUITY_BREACH`'s reason — the ladder acts on the veto,
     #: and the action is the same whichever number the schedule had named.
     PROGRESSION_UNMOVED = "progression_unmoved"
+    #: Raised by `application.exemplars` only: the candidate shares a run of consecutive words
+    #: with an exemplar it was shown as register (stage-0 §196). One veto, because the ladder's
+    #: action is the same whichever exemplar was lifted from: ask again.
+    EXEMPLAR_LEAK = "exemplar_leak"
     #: Raised by `domain.integrity` only: a blocking finding stands against the candidate.
     #: One veto for every finding category, because §4.2's ladder acts on the veto and the
     #: action is the same for all of them — see `findings.vetoes_for`.

@@ -36,6 +36,7 @@ import litharness_contracts as lc
 
 from litharness.application.conductor import JobHandler
 from litharness.application.editorial import reader_jobs_for_checkpoint
+from litharness.application.exemplars import Shelf, gate_exemplar_leak
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import DraftStore, TextGenerator
 from litharness.application.repair import evaluation_job_for, summary_job_for
@@ -449,8 +450,13 @@ def make_scene_draft_handler(
     revise: bool = False,
     reviser_policy: ReviserPolicy | None = None,
     reviser_model: str | None = REVISION_MODEL,
+    shelf: Shelf | None = None,
 ) -> JobHandler:
     """Build a `JobHandler` that drafts one node's prose and gates the result.
+
+    `shelf` is the exemplar shelf the selector showed the writer (stage-0 §196); the ladder
+    then carries `gate_exemplar_leak`, which refuses a draft sharing a run of consecutive words
+    with any exemplar. `None` — every book drafted without `--exemplars` — adds no gate row.
 
     A closure rather than a class because `JobHandler` is a bare callable protocol and the
     Conductor needs no more than that — `handlers[SCENE_DRAFT] = make_scene_draft_handler(...)`
@@ -789,6 +795,14 @@ def make_scene_draft_handler(
             # refused with no reason attached — the shape gate passed, so it has none to give.
             # The integrity gate's veto lives on its own `GateOutcome`, which `decide` and the
             # decision record already read.
+            #
+            # **Nothing shown as register may reach the page as text** (§196). Runs over the
+            # stripped candidate whatever the shape gate said, so a lifted run is refused on
+            # the same attempt that would otherwise have been accepted; `None` without a
+            # shelf, which keeps every other book's ladder the ladder it was.
+            leak_gate = gate_exemplar_leak(stripped, shelf)
+            if leak_gate is not None:
+                gates = (*gates, leak_gate)
             return _Ladder(
                 text=stripped,
                 marks_removed=marks,

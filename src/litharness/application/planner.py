@@ -43,6 +43,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from hashlib import sha256
 
+from litharness.application import exemplars as exemplars_mod
 from litharness.application.conductor import WorkSelector
 from litharness.application.directive_planner import (
     DIRECTIVE_PLAN,
@@ -55,6 +56,7 @@ from litharness.application.director import (
     scene_block,
 )
 from litharness.application.editorial import enqueue_ready_editorial_panel
+from litharness.application.exemplars import Shelf
 from litharness.application.handlers import SCENE_DRAFT
 from litharness.application.narrative_planner import (
     NARRATIVE_PLAN,
@@ -260,8 +262,14 @@ def render_prompt(
     chapter: Position | None = None,
     point_of_view: str | None = None,
     offer_line: str | None = None,
+    shelf: Shelf | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
+
+    `shelf` is the exemplar shelf (stage-0 §196): its openings block goes into the prompt
+    *before* the packet, so the packet and the task still end the prompt, and the system gains
+    the one sentence saying whose the block is and what may not be taken from it. `None` is
+    every book drafted before the shelf existed, byte for byte.
 
     This was the seam §12 step 2 attaches to, and the packet is now what fills it. Before,
     the prompt was the scene's title, its ordinal, the word "resolution" and the premise —
@@ -601,6 +609,9 @@ def render_prompt(
         f"{pov_line} Dramatic function: {beat.function}."
         f"{plan_line}"
     )
+    if shelf is not None:
+        system += f"\n{exemplars_mod.SHELF_SYSTEM}"
+        prompt = f"{exemplars_mod.render_openings(shelf)}\n\n{prompt}"
     return system, prompt
 
 
@@ -820,6 +831,7 @@ def make_plan_selector(
     chapters_per_volume: int = 50,
     open_ended: bool = False,
     writer: Writer | None = None,
+    shelf: Shelf | None = None,
 ) -> WorkSelector:
     """Build a `WorkSelector` that materialises the next unblocked beat.
 
@@ -1297,6 +1309,7 @@ def make_plan_selector(
                     point_of_view=pov_id,
                     writer=writer,
                     offer_line=offered_line(records, character=pov_id, at=beat.story_order_key),
+                    shelf=shelf,
                 )
                 payload: dict[str, object] = {
                     "revision_id": head.revision_id,
@@ -1305,6 +1318,10 @@ def make_plan_selector(
                     "logical_id": beat.logical_id,
                     "prompt": prompt,
                     "system": system,
+                    # **Which exemplars this scene was shown, by identity and never by
+                    # text** (§196). Absent without a shelf, so a payload drafted before the
+                    # shelf existed is the payload it was.
+                    **({"exemplars": shelf.record()} if shelf is not None else {}),
                     # **The packet on its own, for the reviser** (§185). The assembled
                     # `prompt` above already contains it, and this is deliberately a second
                     # copy rather than an offset into the first: the reviser must be shown

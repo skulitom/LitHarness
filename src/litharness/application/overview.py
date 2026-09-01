@@ -450,13 +450,22 @@ FIRST_PERSON_ASK = "Told by the person it happens to, as I."
 
 
 def render_overview_request(
-    brief: str, writer: Writer | None = None, *, person: str | None = None
+    brief: str,
+    writer: Writer | None = None,
+    *,
+    person: str | None = None,
+    blurbs: str | None = None,
 ) -> CompletionRequest:
     """One overview, from a brief that may be empty.
 
     `person` is `"first"` for a book told in the first person and otherwise `None`; the first
     person appends `FIRST_PERSON_ASK` under the brief and nothing else changes, so every listing
     drawn before this parameter existed renders byte-identically.
+
+    `blurbs` is the exemplar shelf's listings block (`exemplars.render_blurbs`), shown above
+    the brief as how this shelf's listings sound (stage-0 §196), or `None` for the prompt as it
+    was. It is material in the user message and not a rule in the system: the block says whose
+    it is and what it is for, and the task's demands are untouched.
 
     An empty brief is legitimate and is the control the retired Forge kept for the same reason:
     a book built from no direction at all is what a directed one is read against.
@@ -481,8 +490,11 @@ def render_overview_request(
     ask = brief.strip() or "Anything you would most want to read."
     if person == "first":
         ask = f"{ask}\n{FIRST_PERSON_ASK}"
+    prompt = f"What this book is to be about:\n{ask}"
+    if blurbs:
+        prompt = f"{blurbs}\n\n{prompt}"
     return CompletionRequest(
-        prompt=f"What this book is to be about:\n{ask}",
+        prompt=prompt,
         system=_system(writer),
         max_output_tokens=MAX_OUTPUT_TOKENS,
         profile=OVERVIEW_PROFILE,
