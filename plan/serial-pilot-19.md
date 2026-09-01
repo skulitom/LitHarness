@@ -131,7 +131,40 @@ progression beat falls to the legacy arm (the sheet's own columns, *Grade moves 
 because the Pick opens at Seat and Owen enters at Next. The beats that do fire are the opening's
 two and the interaction beat.
 
-**Chapter 1:** *(filled after the ticks)*
+**Chapter 1:** two scenes, 1,995 words, every scene accepted on its first attempt, seven ticks
+(three of them the eval and summary follow-ups; the seventh drafted chapter 2's first scene
+as a bonus), $9.00 on the store with the listing and the seed. Published to
+`book-library/the-game-nobody-plays-anymore/`.
+
+**The coordinator's gate read, the checklist and nothing else.**
+
+| item | on the page |
+| --- | --- |
+| the opening beat: who he was before, on the page before the first printed line | the belt at Sallow Lane, the written warning for scan rate, the bowling-alley back room and *Vantage*, all before the Monday |
+| the first printed line landing inside that | the message on every screen, then the sheet read aloud in the sorting shed by Priya, then his |
+| the interface as business in the scene | Priya reads hers out; the blank class row is what everyone minds; Nell reads his with her chin on his shoulder |
+| the exception on the page | CLASS: VANE and READ where every other sheet has a blank; the monster's tell known from the game |
+| the grade moving where the reader can see it | `[STATUS] Owen — GRADE 3` printed once per scene, NEXT gone to SEAT after the fight |
+| the hook: the chapter ends on something offered and unanswered | the Pick's three words and a cursor that does not blink, and Nell's job at ten o'clock, both open |
+| person | first, throughout |
+| cast bound | three named per scene (Owen, Priya, Baz; Owen, Priya, Nell) |
+| dashes, schema words | none; none |
+
+**Residuals below the line, for the reviser's milestone and the operator, not fixed here:**
+three similes of the *the way you …* shape in scene 1 (§171's family, on the page despite the
+reviser); *"which is the part everyone kept coming back to"* restates a thing the paragraph
+already gave (§179's family); two *to me she looked like* inferences narrated (§171). Scene 2
+has no fight and spends its length on the cordon and Nell's offer, which is the chapter's
+hook and is also the pace read 10 called stagnant on a different book; the panel is what says
+whether a reader stays for it.
+
+**What the machinery did and did not do.** The opening's two beats and the interaction beat
+fired and landed; the progression beat fired on the legacy arm (*Grade moves here*) and landed
+(NEXT → SEAT); the `[OFFER]` line did not print, because the system is unfinished (above) and
+because the fork opens at Seat, which Owen only reached on the page — the writer put the
+three words on the sheet from the world's own facts anyway. The shape census puts this
+opening beside the summits on the axis §195.1 measured: first-person marks and interior verbs
+in the summits' range where the four baseline openings had almost none.
 
 ## 5. The panel's reading
 
