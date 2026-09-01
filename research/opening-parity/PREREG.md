@@ -183,6 +183,17 @@ treatment effect (`plan/serial-pilot-7.md` §0). The plan grows by 16 pairs to 5
 sessions, $80.68 at the session basis), inside the registered ceilings, and the run is
 relaunched on the amended manifest with every bought cell replaying.
 
+## 5e. Amendment, 2026-09-01, the sixth opening — pilot 20, the tutorial shape
+
+Serial Pilot 20's chapter 1 (*Nineteen Floors Down*, writer `tanaka`, the tutorial brief,
+`--person first`) was published at 2,141 words. It enters as a sixth "ours" in the product,
+with its own damage control (`floors-shuffled`, seed 1) against the two original anchors and
+its source, and one ours × ours calibration pair (`floors` vs `game`: the two shapes drawn
+under the new machinery beside each other). The plan grows by 16 pairs to 70 (1,400 sessions,
+$104.58 at the session basis); the registered spend ceiling moves $100 → $120 and the session
+ceiling 1,300 → 1,500 to fit it and for no other reason, both before any cell under this
+amendment was bought. The buying order stands: calibration and controls first, product after.
+
 ## 6. Anti-scope
 
 No persona is edited. No bar is declared and none of §61's four attainability checks was run,

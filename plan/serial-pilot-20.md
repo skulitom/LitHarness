@@ -80,7 +80,35 @@ found, and it is recorded here for the fix rather than patched into this store. 
 proceeds as pilot 19 did: the floor cleared by the accepted sheet, the progression beat on the
 legacy arm, the offer beat and the `[OFFER]` line abstaining.
 
-**Chapter 1:** *(filled after the ticks)*
+**Chapter 1:** two scenes, 2,141 words, every scene accepted on its first attempt, seven ticks
+(the seventh drafted chapter 2's first scene as a bonus), $9.68 on the store with the listing
+and the seed. Published to `book-library/nineteen-floors-down/`.
+
+**The coordinator's gate read, the checklist and nothing else.**
+
+| item | on the page |
+| --- | --- |
+| who he was before, on the page before the first printed line | the nine o'clock Materials lecture, the degree picked so his mother's husband would think him a real person, the arch on the slide he could read and the self he could not |
+| the first printed line landing inside that | the floor goes to fitted stone under the row; the lecturer says *think status, and ask it*; the letters open at his chest |
+| the interface as business in the scene | Wren leans in and sees nothing; her own hangs in front of her; the names wall at the floor's head, cut while he stands there, with a price column beside it |
+| the exception on the page | Flinch: the wedge goes left and his body goes right without consulting him; the slab lifted by reading which stone is the argument |
+| the numbers moving where the reader can see | `[STATUS] Theo Rennick — STRENGTH 8 \| SPEED 12 \| WIND 13/13 \| CUT STONES 0`, then WIND 9/13 climbing to eleven while he stands and breathes, and the stone in his hand not yet counted |
+| the hook: the chapter ends on something offered and unanswered | the man at the board: Footing is four stones, maybe twenty on the floor tonight, *pick which one now* |
+| person; cast bound; dashes; schema words | first throughout; three named per scene (Theo, Anouk, Wren); none; none |
+
+**Residuals below the line, the same family as pilot 19's:** five similes of the *the way you
+…* / *the way a …* shape in 2,141 words (§171's family, on the page despite the reviser);
+*"That is the part I keep coming back to"* (§179's restatement gloss, the exact phrase pilot
+19's scene 2 also used — a house tic, now seen twice in one evening); *"I want to be honest
+about this"* and *"which I would like written down somewhere in case I am wrong about it
+later"* (the narrator addressing the reader about his own account, a first-person habit the
+reviser's instruction does not name). Recorded for the reviser's milestone; not fixed here.
+
+**What the machinery did.** The opening's two beats, the interaction beat and the legacy-arm
+progression beat all fired and landed; the `[OFFER]` line abstained (unfinished system, and
+the Turn opens at Face where Theo is at Fill) — the writer put the fork's economics on the
+page from the world's facts anyway, as marsh did. The census puts this opening beside the
+summits on §195.1's axis.
 
 ## 5. The panel's reading
 

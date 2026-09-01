@@ -2,6 +2,14 @@
   "_comment": "Paths are repository-relative and every one is gitignored text: our shelf under book-library/, the summits under research/quality-measurement/derived/. Titles and authors are what blinding strips. Labels are ours and are never shown to a persona.",
   "ours": [
     {
+      "label": "floors",
+      "chapter": "book-library/nineteen-floors-down/chapters/Chapter1.txt",
+      "blurb": "book-library/nineteen-floors-down/overview.txt",
+      "title": "Nineteen Floors Down",
+      "author": "tanaka",
+      "note": "serial pilot 20, 2026-09-01: the tutorial shape under §195's machinery (tanaka, a situation brief, --person first); PREREG §5e"
+    },
+    {
       "label": "game",
       "chapter": "book-library/the-game-nobody-plays-anymore/chapters/Chapter1.txt",
       "blurb": "book-library/the-game-nobody-plays-anymore/overview.txt",
@@ -117,6 +125,12 @@
       "shuffle_of": "game",
       "shuffle_seed": 1,
       "note": "PREREG §5d: pilot 19's opening under the same damage control as the baseline"
+    },
+    {
+      "label": "floors-shuffled",
+      "shuffle_of": "floors",
+      "shuffle_seed": 1,
+      "note": "PREREG §5e: pilot 20's opening under the same damage control"
     }
   ],
   "calibration": {
@@ -134,7 +148,11 @@
       ["game", "station"],
       ["game-shuffled", "ph"],
       ["game-shuffled", "dotf"],
-      ["game-shuffled", "game"]
+      ["game-shuffled", "game"],
+      ["floors", "game"],
+      ["floors-shuffled", "ph"],
+      ["floors-shuffled", "dotf"],
+      ["floors-shuffled", "floors"]
     ],
     "listing": [
       ["ph", "dotf"],
