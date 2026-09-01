@@ -91,7 +91,9 @@ SCORECARD_CANDIDATES = (
 #: `{script}`, `{database}` and `{shelf}` are substituted. Overridable end to end, because
 #: this shape is a guess made before build 1 landed and a wrong guess must not become a
 #: silent absence.
-DEFAULT_SCORECARD_COMMAND = "uv run python {script} --database {database} --json"
+#: §190's real interface is `scorecard.py <target> [--out <json>]`; the earlier guess at a
+#: `--database --json` shape failed on the first live arm at $0 and is corrected here.
+DEFAULT_SCORECARD_COMMAND = "uv run python {script} {shelf} --out {destination}"
 
 DEFAULT_LITHARNESS = "uv run litharness"
 
@@ -782,6 +784,7 @@ def run_scorecard(
             script=str(script),
             database=str(spec.database),
             shelf=str(spec.library_root / state.shelf) if state.shelf else "",
+            destination=str(destination),
         )
         for token in shlex.split(spec.scorecard_command)
     ]

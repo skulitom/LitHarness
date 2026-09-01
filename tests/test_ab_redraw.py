@@ -532,11 +532,14 @@ def test_the_scorecard_is_absent_rather_than_fatal_when_build_one_has_not_landed
 
 
 def test_a_scorecard_that_has_landed_is_run_and_its_output_kept(tmp_path: Path) -> None:
-    """And the database reaches it WHOLE.
+    """And the shelf path reaches it WHOLE.
 
     `shlex.split` is POSIX: splitting a command string that already carries `C:\\DEV\\...` eats
     every backslash and hands the scorecard a path to nothing. The template is split first and
-    substituted after, so this assertion is the one that would catch it coming back.
+    substituted after, so this assertion is the one that would catch it coming back. The
+    template was repointed at §190's real interface after the first live arm (shelf target
+    plus --out; the database is no longer an argument), so the whole-path assertion now rides
+    the shelf and the destination.
     """
     script = tmp_path / "research" / "quality-measurement" / "scorecard.py"
     script.parent.mkdir(parents=True)
@@ -554,8 +557,10 @@ def test_a_scorecard_that_has_landed_is_run_and_its_output_kept(tmp_path: Path) 
 
     assert result["status"] == "written"
     assert (tmp_path / "scorecard.json").read_text(encoding="utf-8") == '{"rows": []}'
-    assert str(spec.database) in runner.calls[0][1]
-    assert str(script) in runner.calls[0][1]
+    argv = runner.calls[0][1]
+    assert str(spec.library_root / "the-station") in argv
+    assert str(tmp_path / "scorecard.json") in argv
+    assert str(script) in argv
 
 
 def test_a_scorecard_that_refuses_this_invocation_is_recorded_not_swallowed(
