@@ -163,6 +163,26 @@ damage control of §5b, which the running plan had not yet reached.
 - **The reading is unchanged** (§4, §5b): shares and counts, no bar, the controls decide whether
   a share is about surface.
 
+## 5d. Amendment, 2026-09-01, the fifth opening — pilot 19, the first drawn under §195
+
+Serial Pilot 19's chapter 1 (*The Game Nobody Plays Anymore*, writer `marsh`, a situation
+brief, `--person first`, the opening beats live) was published to the shelf at 1,995 words
+while the cut run was in flight. It enters the manifest as a fifth "ours", **in the product**
+and listed first so its pairs are bought before the baseline's remaining ones, with:
+
+- its own damage control (`game-shuffled`, seed 1) against the two original anchors and
+  against its source, the same shape as §5b's;
+- one ours × ours calibration pair (`game` vs `station`): the new machinery's opening beside
+  the baseline's best, on the same panel.
+
+**What this asks, and what it cannot answer.** The pair `game` vs an anchor is the question the
+operator set — an opening drawn under the new machinery beside *The Primal Hunter*'s — read
+with the baseline pairs beside it and the shuffle controls deciding whether any of it is
+about story. One draw is one draw; `game` vs `station` is two descriptions and never a
+treatment effect (`plan/serial-pilot-7.md` §0). The plan grows by 16 pairs to 54 (1,080
+sessions, $80.68 at the session basis), inside the registered ceilings, and the run is
+relaunched on the amended manifest with every bought cell replaying.
+
 ## 6. Anti-scope
 
 No persona is edited. No bar is declared and none of §61's four attainability checks was run,

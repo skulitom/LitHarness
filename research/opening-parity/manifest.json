@@ -2,6 +2,14 @@
   "_comment": "Paths are repository-relative and every one is gitignored text: our shelf under book-library/, the summits under research/quality-measurement/derived/. Titles and authors are what blinding strips. Labels are ours and are never shown to a persona.",
   "ours": [
     {
+      "label": "game",
+      "chapter": "book-library/the-game-nobody-plays-anymore/chapters/Chapter1.txt",
+      "blurb": "book-library/the-game-nobody-plays-anymore/overview.txt",
+      "title": "The Game Nobody Plays Anymore",
+      "author": "marsh",
+      "note": "serial pilot 19, 2026-09-01: the first opening drawn under §195's machinery (opening beats, --person first, marsh, a situation brief). Listed first so its pairs are bought first (PREREG §5d)"
+    },
+    {
       "label": "station",
       "chapter": "book-library/the-station-keeps-score--fa09c89c/chapters/Chapter1.txt",
       "blurb": "book-library/the-station-keeps-score--fa09c89c/overview.txt",
@@ -103,6 +111,12 @@
       "label": "kettle-shuffled",
       "shuffle_of": "kettle",
       "shuffle_seed": 1
+    },
+    {
+      "label": "game-shuffled",
+      "shuffle_of": "game",
+      "shuffle_seed": 1,
+      "note": "PREREG §5d: pilot 19's opening under the same damage control as the baseline"
     }
   ],
   "calibration": {
@@ -116,7 +130,11 @@
       ["station-shuffled", "dotf"],
       ["kettle-shuffled", "ph"],
       ["kettle-shuffled", "dotf"],
-      ["station-shuffled", "station"]
+      ["station-shuffled", "station"],
+      ["game", "station"],
+      ["game-shuffled", "ph"],
+      ["game-shuffled", "dotf"],
+      ["game-shuffled", "game"]
     ],
     "listing": [
       ["ph", "dotf"],
