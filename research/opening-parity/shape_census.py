@@ -14,7 +14,9 @@ opening, each a plain integer or position and none a quality:
 
 Run over the registered manifest; no third-party text is printed, only counts:
 
-    uv run python research/opening-parity/shape_census.py \n        --manifest research/opening-parity/manifest.json
+    uv run python research/opening-parity/shape_census.py --manifest MANIFEST
+
+where MANIFEST is `research/opening-parity/manifest.json`.
 
 The market anchors are read from the shelf and the derived folder (both gitignored); the
 counts may be committed, the text never is (RS1, and the derived folder's own rule).
@@ -31,7 +33,7 @@ from typing import Any
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parent.parent
 
-_FIRST_PERSON = re.compile(r"\b(?:I|I'm|I’m|my)\b")
+_FIRST_PERSON = re.compile(r"\b(?:I|I'm|I\u2019m|my)\b")
 _INTERIOR = re.compile(
     r"\b(?:thought|wondered|realized|realised|figured|knew|felt|decided|hoped|guessed|"
     r"supposed|reckoned)\b",
