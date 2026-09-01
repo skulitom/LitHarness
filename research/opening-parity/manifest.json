@@ -23,7 +23,8 @@
       "blurb": "book-library/reading-the-ladder-wrong/overview.txt",
       "title": "Reading The Ladder Wrong",
       "author": "ferreira",
-      "note": "serial pilot 16; the only listing on the shelf told in the first person"
+      "in_product": false,
+      "note": "serial pilot 16; the only listing on the shelf told in the first person. Out of the product since PREREG §5c; calibration only"
     },
     {
       "label": "weather",
@@ -31,7 +32,8 @@
       "blurb": "book-library/unlicensed-weather/overview.txt",
       "title": "Unlicensed Weather",
       "author": "larkin",
-      "note": "serial pilot 14, read 8's book"
+      "in_product": false,
+      "note": "serial pilot 14, read 8's book. Out of the product since PREREG §5c; calibration only"
     }
   ],
   "summits": [

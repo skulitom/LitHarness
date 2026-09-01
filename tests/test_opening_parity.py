@@ -223,6 +223,24 @@ def test_a_shuffle_control_holds_the_source_s_words_in_a_seeded_order(
         )
 
 
+def test_an_ours_entry_can_sit_out_of_the_product_and_still_calibrate(
+    manifest: Path, tmp_path: Path
+) -> None:
+    """PREREG §5c: `in_product: false` keeps one of ours on the manifest for calibration pairs
+    only. The product shrinks by exactly that entry's pairs and nothing else moves."""
+    payload = json.loads(manifest.read_text(encoding="utf-8"))
+    payload["ours"][1]["in_product"] = False
+    built = parity.build_all(payload, tmp_path, tmp_path / "out")
+    pairs = parity.plan_pairs(payload, built)
+    product = [p for p in pairs if p.kind == "ours-vs-summit"]
+    assert {p.label_a for p in product} == {"ours-one"}
+    assert len(product) == 3  # ours-one x two summits in the opening arm, one in the listing
+    assert any(
+        p.kind == "ours-vs-ours" and {p.label_a, p.label_b} == {"ours-one", "ours-two"}
+        for p in pairs
+    )
+
+
 def test_a_full_run_writes_shares_and_no_verdict(manifest: Path, tmp_path: Path) -> None:
     summary = _run(manifest, tmp_path, FakeElicitor())
     assert house_panel.forbidden_keys(summary) == []

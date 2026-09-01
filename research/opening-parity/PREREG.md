@@ -142,6 +142,27 @@ added, the backtest's damage arm brought to this pairing:
   ceiling moves 1,200 → 1,300 to fit it and for no other reason. Bought on the next launch of
   the driver, which replays every cell already bought; the run in flight is untouched.
 
+## 5c. Post-hoc amendment, 2026-09-01, after three pairs — the product is cut to two of ours
+
+**This is a change made after seeing data, and it is recorded as one.** The amended run had
+written three pairs when it was stopped: station vs *The Primal Hunter* 20 of 20 for ours,
+station vs *Defiance* 19 of 19, station vs *Magical Girl Gunslinger* 19 of 19, every one
+order-clean and every summit probe-clean. The remaining 21 product pairs of the `opening` arm
+were nearly certain to read the same way, and what decides how any of them is read is the
+damage control of §5b, which the running plan had not yet reached.
+
+- **The product is two of ours** (station, kettle) × six summits per arm. The other two of
+  ours (ladder, weather) stay on the manifest as `in_product: false` for the ours × ours
+  calibration pair and nothing else.
+- **What the cut buys**: the controls and the calibration pairs are reached hours earlier, and
+  ~$30 of near-certain repeats is not spent. What it costs: no per-summit share is pooled over
+  four of ours; the two that remain are the two the coordinator's reads put ahead.
+- **The plan after the cut**: 12 + 5 + 5 pairs in `opening`, 12 + 4 in `listing`: 38 pairs,
+  760 sessions, $56.77 at the session basis, 60 probes all replayed. Ceilings unchanged ($100,
+  1,300). The three pairs already bought replay and are reported; every bought record replays.
+- **The reading is unchanged** (§4, §5b): shares and counts, no bar, the controls decide whether
+  a share is about surface.
+
 ## 6. Anti-scope
 
 No persona is edited. No bar is declared and none of §61's four attainability checks was run,

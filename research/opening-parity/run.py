@@ -105,6 +105,10 @@ class Entry:
     author: str
     shuffle_of: str | None = None
     shuffle_seed: int = 0
+    #: Whether an `ours` entry enters the ours x summit product. `False` keeps it on the
+    #: manifest for calibration pairs only (PREREG §5c cut the product to two of ours after
+    #: three pairs had read the same way); a summit ignores the field.
+    in_product: bool = True
 
     @classmethod
     def from_row(cls, row: Mapping[str, Any], side: str, root: Path) -> Entry:
@@ -118,6 +122,7 @@ class Entry:
             author=str(row.get("author") or ""),
             shuffle_of=(str(row["shuffle_of"]) if row.get("shuffle_of") else None),
             shuffle_seed=int(row.get("shuffle_seed") or 0),
+            in_product=bool(row.get("in_product", True)),
         )
 
 
@@ -279,7 +284,7 @@ def plan_pairs(manifest: Mapping[str, Any], built: Mapping[str, Mapping[str, Sti
     calibration = manifest.get("calibration", {})
     for arm in arms:
         have = built[arm]
-        ours = [s for s in have.values() if s.entry.side == "ours"]
+        ours = [s for s in have.values() if s.entry.side == "ours" and s.entry.in_product]
         summits = [s for s in have.values() if s.entry.side == "summit"]
         for mine in ours:
             for summit in summits:
