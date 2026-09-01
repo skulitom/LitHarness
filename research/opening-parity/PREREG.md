@@ -115,6 +115,33 @@ record replays; nothing is lost.
   browser when the operator is beside it. Both are operator-named summits in the same sense as
   rows 1 and 2 there.
 
+## 5b. Amendment, 2026-09-01, the damage control — recorded before any cell under it was bought
+
+The first pair result written by the amended run (`opening`, station vs *The Primal Hunter*,
+both openings probe-clean) read 20 of 20 decided for ours, 10 of 10 in each order. That is the
+shape §140 produced on listings, where this readership preferred ours to the market's best 15
+of 16 times and §141.3 then found its resolution within the top tier unproven; the
+reader-architecture programme's own caution is that a mechanism can pass the follower gradient
+and still prefer polish to event. Nothing in this run can tell those apart, so one control is
+added, the backtest's damage arm brought to this pairing:
+
+- **A control entry** is one of our openings with its paragraphs in a seeded random order —
+  the same cut, the same words, a fixed permutation (`run._shuffled`, seed in the manifest and
+  the result file). It never enters the ours × summit product; it is paired only where the
+  calibration list names it, and the pair's kind names it (`control-vs-summit`,
+  `control-vs-source`).
+- **The reading, fixed now.** If a shuffled opening of ours is still taken over an anchor at
+  the rate the ordered one is, the panel's preference does not depend on the story being in
+  order, and the ours-vs-summit shares in this run are read as a preference about surface,
+  never as parity. `control-vs-source` is the sanity check that the panel can see the shuffle
+  at all; a panel that cannot is not reading story either way.
+- **Cost.** Two controls (station, kettle) × two anchors (*Primal Hunter*, *Defiance*) plus one
+  control-vs-source pair in the `opening` arm: 5 pairs, 100 sessions, ~$7.50, no probes (a
+  control is never probed; its source's probe stands for it). The whole plan is then 62 pairs
+  and 1,240 sessions, $92.63 at the session basis, inside the registered $100; the session
+  ceiling moves 1,200 → 1,300 to fit it and for no other reason. Bought on the next launch of
+  the driver, which replays every cell already bought; the run in flight is untouched.
+
 ## 6. Anti-scope
 
 No persona is edited. No bar is declared and none of §61's four attainability checks was run,

@@ -90,13 +90,31 @@
       "note": "fifth by followers; The Butcher of Gadobhra (10,516) sits above it and is excluded because its shard text carries no paragraph breaks and cannot be cut to a boundary. cic and sotw (the third and fourth local summits) left the manifest on 2026-09-01 when the operator placed four anchors on the shelf; two locals remain as the market-sample leg (PREREG.md §5a)"
     }
   ],
+  "controls": [
+    {
+      "label": "station-shuffled",
+      "shuffle_of": "station",
+      "shuffle_seed": 1,
+      "note": "PREREG §5b: the station opening's paragraphs in a seeded random order; same cut, same words"
+    },
+    {
+      "label": "kettle-shuffled",
+      "shuffle_of": "kettle",
+      "shuffle_seed": 1
+    }
+  ],
   "calibration": {
     "opening": [
       ["ph", "dotf"],
       ["gam3", "randidly"],
       ["mgg", "lfoi"],
       ["station", "kettle"],
-      ["ladder", "weather"]
+      ["ladder", "weather"],
+      ["station-shuffled", "ph"],
+      ["station-shuffled", "dotf"],
+      ["kettle-shuffled", "ph"],
+      ["kettle-shuffled", "dotf"],
+      ["station-shuffled", "station"]
     ],
     "listing": [
       ["ph", "dotf"],

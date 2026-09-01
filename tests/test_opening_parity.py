@@ -181,6 +181,48 @@ def test_the_two_arms_cut_as_registered(manifest: Path, tmp_path: Path) -> None:
     assert parity._paragraphed("a\n\nb\n") == "a\n\nb\n"
 
 
+def test_a_shuffle_control_holds_the_source_s_words_in_a_seeded_order(
+    manifest: Path, tmp_path: Path
+) -> None:
+    """The damage control is the source's cut with its paragraphs reordered and nothing else:
+    same words, a different order, the same order on every run of the same seed, and never
+    the identity order. A control never enters the ours x summit product; it is paired only
+    where the calibration list names it, and the pair's kind says which side is which."""
+    text = "\n\n".join(f"paragraph {i} words here" for i in range(8))
+    once = parity._shuffled(text, 7)
+    again = parity._shuffled(text, 7)
+    other = parity._shuffled(text, 8)
+    assert once == again
+    assert once != text
+    assert sorted(once.split("\n\n")) == sorted(text.split("\n\n"))
+    assert other != once
+    assert parity._shuffled("one paragraph only", 3) == "one paragraph only"
+
+    payload = json.loads(manifest.read_text(encoding="utf-8"))
+    payload["controls"] = [{"label": "ours-one-shuffled", "shuffle_of": "ours-one",
+                            "shuffle_seed": 5}]
+    payload["calibration"]["opening"].append(["ours-one-shuffled", "summit-one"])
+    payload["calibration"]["opening"].append(["ours-one-shuffled", "ours-one"])
+    built = parity.build_all(payload, tmp_path, tmp_path / "out")
+    control = built["opening"]["ours-one-shuffled"]
+    source = built["opening"]["ours-one"]
+    assert control.entry.side == "control"
+    assert control.entry.chapter == source.entry.chapter
+    assert sorted(control.text.split("\n\n")) == sorted(source.text.split("\n\n"))
+    assert control.text != source.text
+    pairs = parity.plan_pairs(payload, built)
+    product = [p for p in pairs if p.kind == "ours-vs-summit"]
+    assert all("shuffled" not in (p.label_a, p.label_b) for p in product)
+    kinds = {(p.label_a, p.label_b): p.kind for p in pairs}
+    assert kinds[("ours-one-shuffled", "summit-one")] == "control-vs-summit"
+    assert kinds[("ours-one-shuffled", "ours-one")] == "control-vs-source"
+    with pytest.raises(ValueError, match="shuffles an entry the manifest lacks"):
+        parity.build_all(
+            {**payload, "controls": [{"label": "x", "shuffle_of": "nobody"}]},
+            tmp_path, tmp_path / "out",
+        )
+
+
 def test_a_full_run_writes_shares_and_no_verdict(manifest: Path, tmp_path: Path) -> None:
     summary = _run(manifest, tmp_path, FakeElicitor())
     assert house_panel.forbidden_keys(summary) == []

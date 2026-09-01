@@ -88,14 +88,23 @@ _DEFAULT_OUT = REPO_ROOT / "runs" / "opening-parity"
 
 @dataclass(frozen=True, slots=True)
 class Entry:
-    """One manifest row: a chapter file, an optional blurb file, and what to blind out."""
+    """One manifest row: a chapter file, an optional blurb file, and what to blind out.
+
+    A row under `controls` names `shuffle_of`: its stimulus is another entry's chapter with
+    its paragraphs in a seeded random order — the backtest's damage arm, brought here so a
+    preference for one of our openings over a summit can be asked whether it survives the
+    story being taken out of the text. A control never enters the ours x summit product; it is
+    paired only where the manifest's calibration list names it.
+    """
 
     label: str
-    side: str  # "ours" | "summit"
+    side: str  # "ours" | "summit" | "control"
     chapter: Path
     blurb: Path | None
     title: str
     author: str
+    shuffle_of: str | None = None
+    shuffle_seed: int = 0
 
     @classmethod
     def from_row(cls, row: Mapping[str, Any], side: str, root: Path) -> Entry:
@@ -107,6 +116,8 @@ class Entry:
             blurb=(root / str(blurb)) if blurb else None,
             title=str(row.get("title") or ""),
             author=str(row.get("author") or ""),
+            shuffle_of=(str(row["shuffle_of"]) if row.get("shuffle_of") else None),
+            shuffle_seed=int(row.get("shuffle_seed") or 0),
         )
 
 
@@ -132,6 +143,25 @@ def _read(path: Path) -> str:
     if not raw.strip():
         raise house_panel.ForbiddenOutput(f"{path} is empty; an empty stimulus is not a stimulus")
     return _paragraphed(raw)
+
+
+def _shuffled(text: str, seed: int) -> str:
+    """The text's paragraphs in a seeded random order; a one-paragraph text is unchanged.
+
+    `random.Random(seed)` rather than the module-level generator, so the permutation depends
+    on the seed and the paragraph count alone and every run of the same manifest shows a
+    persona the same control.
+    """
+    import random
+
+    paragraphs = [p for p in text.split("\n\n") if p.strip()]
+    if len(paragraphs) < 2:
+        return text
+    order = list(range(len(paragraphs)))
+    random.Random(seed).shuffle(order)
+    if order == list(range(len(paragraphs))):
+        order = order[1:] + order[:1]
+    return "\n\n".join(paragraphs[i] for i in order)
 
 
 def _paragraphed(raw: str) -> str:
@@ -161,6 +191,12 @@ def build_stimulus(entry: Entry, arm: str, out_dir: Path) -> Stimulus | None:
     raw = _read(entry.chapter)
     cut = OPENING_WORDS if arm == "opening" else LISTING_WORDS
     excerpt = blinding.first_words(raw, cut)
+    if entry.shuffle_of is not None:
+        # The damage control: the SAME cut as the source, then its paragraphs in a seeded
+        # random order, so the two stimuli hold the same words and differ only in whether the
+        # story is in order. The seed is in the manifest and the result file, so the shuffle
+        # is one fixed permutation and not a fresh coin per run.
+        excerpt = _shuffled(excerpt, entry.shuffle_seed)
     if len(excerpt.split()) > cut * OVERSHOOT_RATIO:
         raise house_panel.ForbiddenOutput(
             f"{entry.chapter}: no paragraph boundary near the {cut}-word cut "
@@ -190,13 +226,34 @@ def build_all(manifest: Mapping[str, Any], root: Path, out_dir: Path,
     """Every stimulus for every arm, keyed arm -> label. Entries without a blurb skip `listing`."""
     entries = [Entry.from_row(row, "ours", root) for row in manifest["ours"]]
     entries += [Entry.from_row(row, "summit", root) for row in manifest["summits"]]
+    by_label = {entry.label: entry for entry in entries}
+    for row in manifest.get("controls", []):
+        source = by_label.get(str(row.get("shuffle_of") or ""))
+        if source is None:
+            raise ValueError(f"control {row.get('label')!r} shuffles an entry the manifest lacks")
+        # A control is the source's chapter and blurb, cut and blinded as the source is, with
+        # only the paragraph order changed — so it inherits the source's files and identity.
+        entries.append(
+            Entry(
+                label=str(row["label"]), side="control", chapter=source.chapter,
+                blurb=source.blurb, title=source.title, author=source.author,
+                shuffle_of=source.label, shuffle_seed=int(row.get("shuffle_seed") or 0),
+            )
+        )
     labels = [entry.label for entry in entries]
     if len(set(labels)) != len(labels):
         raise ValueError(f"manifest labels must be unique; got {labels}")
+    calibration = manifest.get("calibration", {})
     built: dict[str, dict[str, Stimulus]] = {}
     for arm in arms:
         built[arm] = {}
+        named = {label for pair in calibration.get(arm, []) for label in pair}
         for entry in entries:
+            # A control exists only in an arm whose calibration list names it: it is never in
+            # the product, so building it elsewhere would probe and cut a stimulus nothing
+            # ever shows.
+            if entry.side == "control" and entry.label not in named:
+                continue
             stimulus = build_stimulus(entry, arm, out_dir / "stimuli")
             if stimulus is not None:
                 built[arm][entry.label] = stimulus
@@ -230,10 +287,18 @@ def plan_pairs(manifest: Mapping[str, Any], built: Mapping[str, Mapping[str, Sti
         for label_a, label_b in calibration.get(arm, []):
             if label_a not in have or label_b not in have:
                 continue
-            sides = {have[label_a].entry.side, have[label_b].entry.side}
-            kind = "ours-vs-ours" if sides == {"ours"} else (
-                "summit-vs-summit" if sides == {"summit"} else "ours-vs-summit"
-            )
+            side_a, side_b = have[label_a].entry.side, have[label_b].entry.side
+            sides = {side_a, side_b}
+            if "control" in sides:
+                kind = "control-vs-source" if sides == {"control", "ours"} else (
+                    "control-vs-summit" if "summit" in sides else "control-vs-control"
+                )
+            elif sides == {"ours"}:
+                kind = "ours-vs-ours"
+            elif sides == {"summit"}:
+                kind = "summit-vs-summit"
+            else:
+                kind = "ours-vs-summit"
             pairs.append(PairSpec(arm, label_a, label_b, kind))
     return pairs
 
@@ -286,6 +351,8 @@ def probe_stimulus(elicitor: house_panel.Elicits, stimulus: Stimulus, *, model: 
         "unanswered": unanswered,
         "digest": stimulus.digest,
         "words": stimulus.words,
+        "shuffle_of": stimulus.entry.shuffle_of,
+        "shuffle_seed": stimulus.entry.shuffle_seed if stimulus.entry.shuffle_of else None,
     }
 
 
@@ -422,7 +489,10 @@ def summarize(outcomes: Sequence[PairOutcome], probes: Sequence[Mapping[str, Any
             "by_summit": by_summit,
             "calibration": {
                 kind: _pool([o for o in arm_outcomes if o.spec.kind == kind], ours_is="file_a")
-                for kind in ("summit-vs-summit", "ours-vs-ours")
+                for kind in (
+                    "summit-vs-summit", "ours-vs-ours", "control-vs-summit",
+                    "control-vs-source", "control-vs-control",
+                )
             },
             "positional_void_reading": void,
             "positional_band": list(POSITIONAL_BAND),
@@ -558,9 +628,13 @@ def main(argv: list[str] | None = None, *, elicitor_factory: Any = None) -> int:
     pairs = plan_pairs(manifest, built, arms)
     per_pair = sessions_per_pair()
     planned_sessions = per_pair * len(pairs)
-    probe_calls = 0 if args.skip_probes else sum(
-        len(recognition.PROBES) for arm in arms for _ in built[arm].values()
-    )
+    # A control is one of our own openings reordered; recognition is not a question it can be
+    # asked, so it is never probed and its source's probe stands for it.
+    probed = [
+        stimulus for arm in arms for stimulus in built[arm].values()
+        if stimulus.entry.side != "control"
+    ]
+    probe_calls = 0 if args.skip_probes else len(recognition.PROBES) * len(probed)
     print(f"{house_panel.LABEL}: {len(pairs)} pair(s) x {per_pair} sessions = "
           f"{planned_sessions} session(s); {probe_calls} probe call(s)")
     for arm in arms:
@@ -597,12 +671,11 @@ def main(argv: list[str] | None = None, *, elicitor_factory: Any = None) -> int:
 
     probes: list[dict[str, Any]] = []
     if not args.skip_probes:
-        for arm in arms:
-            for stimulus in built[arm].values():
-                probes.append(probe_stimulus(elicitor, stimulus, model=args.model))
-                last = probes[-1]
-                print(f"{house_panel.LABEL}: probe {arm}:{last['label']} -> "
-                      f"{last['classification']} {last['hits']}")
+        for stimulus in probed:
+            probes.append(probe_stimulus(elicitor, stimulus, model=args.model))
+            last = probes[-1]
+            print(f"{house_panel.LABEL}: probe {stimulus.arm}:{last['label']} -> "
+                  f"{last['classification']} {last['hits']}")
 
     outcomes: list[PairOutcome] = []
     progress_lock = threading.Lock()
