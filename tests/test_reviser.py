@@ -852,7 +852,9 @@ def test_every_craft_clause_the_reviser_carries_says_what_fails() -> None:
         for demand in house.demands(module._TASK)
         if demand.startswith("What fails")
     ]
-    assert len(craft) == 11, (
+    # 11 -> 12 on 2026-09-01: §194's located manner-gloss prohibition (reads 13-14's item,
+    # recorded at read 14 as this instruction's next tuning; tested as turn 3's variant).
+    assert len(craft) == 12, (
         "the register spec is prohibition-signed or it is not a spec, and it is counted exactly "
         "because this is now the role sentence register is added to"
     )

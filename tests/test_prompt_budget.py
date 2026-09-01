@@ -391,7 +391,11 @@ BUDGET: dict[str, int] = {
     # answered a chained sentence by cutting it in two and leaving the relation unsaid. §180's
     # chained-action prohibition was **not** ported, and that is why the rise is five and not
     # six: this file already carried that prohibition before the floor's copy existed.
-    "reviser": 30,
+    # 30 -> 31 on 2026-09-01 for §194: the located manner-gloss prohibition, reads 13-14's
+    # twice-named item, recorded at read 14 as this instruction's next tuning. The reviser
+    # is the one role sentence register is added to since §187, so its ceiling moves where
+    # the writer-facing ones fell; tested as the turn-3 A/B variant before adoption.
+    "reviser": 31,
 }
 
 #: The floor everything else inherits. Broken out because a clause added here is added to every

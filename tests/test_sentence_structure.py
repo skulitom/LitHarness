@@ -148,7 +148,9 @@ def test_the_concession_sits_inside_the_demand_it_bounds() -> None:
     """
     assert len([item for item in house.demands(house.CLARITY) if "not that" in item]) == 0
     bounded = [item for item in house.demands(reviser._TASK) if "not that" in item]
-    assert len(bounded) == 4, (
+    # 4 -> 5 on 2026-09-01: §194's clause carries its concession the same way ("one showing
+    # what they do now is not that") - the pattern held, deliberately, not by drift.
+    assert len(bounded) == 5, (
         "four clauses at this role carry their concession inside their own sentence; a fifth "
         "demand ending this way means one was let out into a permission of its own"
     )

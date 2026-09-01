@@ -186,6 +186,14 @@ _TASK = (
     "for; one a reader completes without stopping is not that.\n"
     "What fails is calling a thing by a specialist's word where ordinary speech has one for the "
     "same thing.\n"
+    # §194: the located manner-gloss — a habit told where an act would show. Reads 13 and 14
+    # both named the shape on reviser-processed prose ("the way she said most things", "the way
+    # he had said everything since"); §187's ported gloss prohibition reaches rules about people
+    # in general and deliberately spares person-located forms, and the operator finds the
+    # located habitual form odd too. Recorded at read 14 as this instruction's next tuning;
+    # tested against v1 in the turn-3 A/B before any production adoption.
+    "What fails is a sentence explaining this moment by what a person always does or says; one "
+    "showing what they do now is not that.\n"
     "Return the rewritten scene and nothing else: no heading, no preamble, no commentary, and "
     "nothing about what you changed."
 )

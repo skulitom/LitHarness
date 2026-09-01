@@ -21635,3 +21635,30 @@ under `EPISTEMIC_GOVERNANCE.md` — the checks are `REGISTERED` shapes and the o
 read. No critic prose reaches the writer, the reviser, the editorial control plane, the reader
 loop, the roster or any dossier. RS1 is untouched: chapter text the caller already holds goes in,
 and derived numbers come out. The layer is built and inert until a coordinator runs it.
+
+## 194. The reviser's instruction gains the located manner-gloss prohibition, and the loop tests it before production believes it
+
+**Measured first.** Reads 13 and 14 named the same shape twice on reviser-processed prose —
+a habit told where an act would show (*"the way she said most things"*, *"the way he had
+said everything since the pump"*) — and the reviser-impact audit (`plan/agent-impact/
+reviser-impact.md`) measured the stage INTRODUCING the wider gloss family (1→3 on its page)
+in the same period. §187's ported prohibition reaches rules about people in general and
+deliberately spares person-located forms; the operator finds the located habitual form odd
+too, and read 14's record marked it as this instruction's next tuning.
+
+**What shipped.** One prohibition appended to `application/reviser._TASK`: *"What fails is
+a sentence explaining this moment by what a person always does or says; one showing what
+they do now is not that."* §138-signed; the concession rides the semicolon (§161.5's
+pattern, counted deliberately by `test_the_concession_sits_inside_the_demand_it_bounds`,
+4→5). The reviser's ceiling moves 30→31 with the reason in `tests/test_prompt_budget.py` —
+the one role sentence register is added to since §187, so its ceiling rises where the
+writer-facing ones fell. No writer-facing prompt moves (§187's freeze holds).
+
+**What is refused.** Production belief: the clause is the turn-3 A/B variant
+(`runs/ab/reviser-v2/`) before anything treats it as an improvement — the loop's own
+binding rule applied to the loop's own tuning. No instance list; no operator words in the
+clause (§97.1 — the quoted shapes above live in this entry, not in any prompt).
+
+**Anti-scope.** Nothing here answers the keep/modify/drop question on the reviser — that is
+the operator's milestone decision, and turns 1–2 (`plan/ab-reviser-on-off*.md`) carry the
+descriptions it reads. One clause, one role, one test-before-belief.
