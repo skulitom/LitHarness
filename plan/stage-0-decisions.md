@@ -21137,6 +21137,117 @@ roster or any dossier, and nothing the operator said about any of these books be
 text, a directive or a plan item (§97.1). The defect was in a detector and the fix is a second
 detector.
 
+## 191. The settled-listing redraw becomes a script, and every part a person kept in their head becomes a refusal
+
+`plan/continuous-loop-direction.md` build 2. Pilots 15b and 18 each ran the same recipe by hand
+four times — stand a settled listing up on a fresh store, seed, check, accept, tick to chapter 1,
+publish — and between draws the pipeline changed while the listing did not. That is the whole
+value of the exercise and none of it was written down.
+
+### 191.1 Measured first: what the hand-run record says went wrong, and what refuses it now
+
+Nothing new was measured here; four recorded failures were, and each becomes a structural refusal
+rather than a paragraph of advice.
+
+| the recorded failure | where | what refuses it now |
+| --- | --- | --- |
+| a flag remembered on some calls and not others | pilot 12 §5 | one uniform global prefix on **every** invocation — both ceilings, `--writer`, `--chapter-scenes`, `--library` — so "both ceilings on every paid invocation" needs nobody to know which invocations are paid |
+| two draws under one title overwrote one shelf | pilot 15b §7 → §172 | a fresh store per arm is required (a `--database` that already exists is refused), and the shelf is read back through `library.shelf_slug` |
+| a failing `claude -p` returns and the run completes with unanswered cells | CLAUDE.md | the store's `exceptions` table and its poisoned/parked jobs are read **after every step**, so no exit code is trusted |
+| undirected variation bought nothing and cost 2.25x the calls | §105.5 | an arm refuses to run until a person has filled every `FILL:` marker in the experiment's `EXPERIMENT.md` |
+
+**And one defect this build found in itself.** The scorecard invocation originally substituted a
+Windows database path into a command string and *then* `shlex.split` it. `shlex` runs POSIX: every
+backslash is an escape, so `C:\DEV\...\serial.db` arrives as `C:DEV...serial.db`, and build 1's
+scorecard would have been handed a path to nothing — silently, because a scorecard failure is
+recorded and deliberately never stops an arm. The template is now split *first* and substituted
+into the resulting tokens. `test_a_scorecard_that_has_landed_is_run_and_its_output_kept` is what
+catches it coming back.
+
+### 191.2 What shipped
+
+`tools/ab_redraw.py`, beside `tools/serial_pilot_check.py` and for the same reason: it drives the
+`litharness` CLI as a subprocess and reads the store through the package's own adapter. It reads
+no corpus, so the research side would have been the wrong home (CONTRIBUTING's dependency
+direction; RS1 untouched).
+
+**One arm** is `--experiment`, `--arm`, a settled listing directory (`title.txt` + `listing.txt`),
+`--writer`, `--database`, and both ceilings. It runs `init → new --scenes N → architect seed →
+world check → world accept → tick ×N → library`, ticking until the first `--chapter-scenes` scenes
+are all drafted or the cap is reached.
+
+**The result folder is `runs/ab/<experiment>/<arm>/`** and holds `commands.log` (every argv, exit
+code and output), `spend.json` (summed off `policy_decisions` over the UTC days the arm touched,
+so a run across midnight reports itself whole rather than the fraction after the boundary),
+`shelf.txt` (the published paths), `arm.json`, and `scorecard.json` when build 1's per-draw
+scorecard has landed. `EXPERIMENT.md` sits one level up at the experiment root, because "variant A
+vs B" belongs to the pair and not to either arm.
+
+**The listing digest is the control made checkable.** Each arm records the sha256 of `title.txt`
+and `listing.txt`, and a second arm arriving under a different listing is refused
+(`test_a_second_arm_under_a_different_listing_is_refused`). "Same listing byte-for-byte" was an
+assertion in four hand-run documents that nobody could check; it is now the thing the harness will
+not let you get wrong.
+
+**The `EXPERIMENT.md` template carries §105's caution verbatim as a standing header** — the 2.25x
+sentence and §105.7's anti-scope, quoted rather than paraphrased, because a paraphrase is how a
+rule loses its teeth — plus §54's control shape (what was held constant, and *"the confound, which
+is not small"*), and the standing boundary that two draws are two draws.
+`test_the_experiment_template_carries_105s_caution_verbatim` pins the quotations.
+
+**The refusals, all structural**: the pid lock (`force_remote.SingleRun`'s discipline as the
+backtest carries it, held at the runs root so it spans experiments), a missing or unfilled
+`EXPERIMENT.md`, either ceiling absent, a listing directory missing or empty, a listing digest that
+disagrees with a sibling arm's, an existing database, an already-recorded arm, and an empty
+`--writer`. Four ways of stopping mid-recipe are named as failures rather than endings: a non-zero
+step, an open exception or terminal job, an idle queue with the chapter unfinished, and the tick
+cap. Tests sit beside the code in `tests/test_ab_redraw.py`.
+
+### 191.3 What was refused, and why
+
+- **`world accept --force` is not offered at all.** There is no flag to pass it. Accepting a world
+  that contradicts itself is a person's call on a named contradiction, never a step a script takes
+  to keep going; a non-zero `world check` stops the arm and says so, and the standing one-re-seed
+  allowance stays a person's to spend
+  (`test_a_failing_world_check_stops_the_arm_and_refuses_to_spend_the_reseed`).
+- **Nothing ranks, scores or compares.** The harness lays two descriptions in two folders; it
+  computes no delta, no winner and no aggregate. §61(5)/§84 hold, and the two-draws boundary
+  travels inside `arm.json` rather than living only in a document somebody may not open.
+- **No paid call was made by this build, and the tests cannot make one.** Every test passes a fake
+  runner or drives `--dry-run`; `test_the_dry_run_executes_nothing` replaces `subprocess.run` with
+  a failure, so the claim is enforced rather than asserted. The first real arm is the
+  coordinator's, operator-gated.
+- **The box rule is not overclaimed.** The lock refuses a second *arm of this harness*; it cannot
+  see a pytest run, a GPU job or an Architect run started elsewhere, and the file says so. One
+  sustained job at a time still needs a person to check the process list.
+- **Build 1 is probed, never depended on.** It had landed neither on `main` nor in any worktree
+  when this shipped, so a missing scorecard is a column an arm does not have rather than a failed
+  arm — and a scorecard present but refusing this invocation shape is recorded as `failed` with its
+  output, so the absence carries a reason
+  (`test_a_scorecard_that_refuses_this_invocation_is_recorded_not_swallowed`).
+- **No parallel arms, and no "just this once" flag for it.** There is no override on the lock.
+
+### 191.4 No bar is declared
+
+Nothing here is a threshold. The tick cap is a stop, not a standard; the spend figures are
+arithmetic on `policy_decisions` and a floor rather than a total (pilot 12 §5); the listing digests
+are identity, not quality. §81/§85/§87/§89's four attainability checks were not run because no
+quantity here is asked to clear anything. **Two arms under one listing are two draws and never a
+treatment effect** (`plan/serial-pilot-15b.md` §0) — the harness writes that sentence into every
+`arm.json` it produces.
+
+### 191.5 Anti-scope
+
+No paid call, no listing loop, no covers, no reader in any role. Nothing here writes a prompt,
+edits a clause, touches `src/litharness/`, or reaches the writer, the reviser, the editorial
+control plane, the roster or any dossier. Nothing ranks or selects among candidates, admits an
+axis, or promotes a research claim under `EPISTEMIC_GOVERNANCE.md`; a folder of descriptions is not
+evidence and this entry claims none. No corpus is read — the harness reads one book database and a
+listing directory, so RS1 is untouched. No model judged anything. What an operator or coordinator
+says about either arm's book stays out of prompts, directives, findings and plan items (§97.1).
+The experiment this harness makes cheap is exactly the one §105 warned about, and the
+`EXPERIMENT.md` gate is the price of admission rather than a suggestion.
+
 ## 192. The panel can read our own drafts, and everything it says is labelled as the pilot-grade thing it is
 
 **Built 2026-09-01 as build 3 of [`plan/continuous-loop-direction.md`](continuous-loop-direction.md)**
