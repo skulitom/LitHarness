@@ -21137,6 +21137,137 @@ roster or any dossier, and nothing the operator said about any of these books be
 text, a directive or a plan item (§97.1). The defect was in a detector and the fix is a second
 detector.
 
+## 190. Every code-only instrument the project owns now runs over one book in one command, and the honest half of that card is the column that says why a row has no market number
+
+`research/quality-measurement/scorecard.py`, build 1 of `plan/continuous-loop-direction.md` — the
+keystone the A/B redraw harness and the exploratory panel column both hang off. One command over
+one book's published chapters, every measure this project already had, each printed beside the
+market reference recorded for it or beside a stated reason there is none.
+
+    uv run python research/quality-measurement/scorecard.py <book dir or chapter .txt> [--out card.json]
+
+**No new metric is minted and no counter is edited.** Every number comes from an instrument that
+already existed. The work was assembling them, choosing which market half each may legally be
+read against, and refusing the three-quarters of that table where none may be.
+
+### 190.1 Measured: the five shelf books, and what the card says about them
+
+Five books, one chapter each; scorecards recorded in `plan/agent-impact/scorecards/`.
+
+**The brief named "the four shelf books that exist … both the-station-keeps-score slugs" and
+there are three station slugs** — `the-station-keeps-score`, `--435c41f9` and `--fa09c89c`,
+written 14:48, 17:51 and 19:47 on 2026-08-30. All three are carded rather than two guessed at.
+
+| row | ladder | station | s-435c41f9 | s-fa09c89c | kettle | market reference |
+| --- | --: | --: | --: | --: | --: | --- |
+| `cadence_v0_events` | 0 | 0 | 0 | 0 | 0 | median 0.00/1k, mean 1.224, p75 1.26 (§155.1) |
+| `cadence_v2_events` | 2 | 2 | 2 | 2 | 2 | **refused** — §189.3 |
+| `numbers_v0_system_magnitude_per_1k` | 0 | 0 | 0 | 0 | 0 | 2.632/1k (§162.1) |
+| `numbers_v0_magnitude_share_of_anchored` | 0 | 0 | 0 | 0 | 0 | genre 0.2002 (§162.2) |
+| `numbers_v0_calendar_duration_per_1k` | 2.545 | 0 | 0 | 1.005 | 0 | 0.718/1k (§162.3) |
+| `gloss_tier_a_per_1k` | 0 | 0 | 0.516 | 0.503 | 0.537 | mean 0.0344/1k, 93.3% of chapters at zero |
+| `gloss_tier_b_per_1k` | 0.509 | 0.532 | 1.031 | 0 | 0.537 | mean 0.0027/1k, 99.4% at zero |
+| `proper_nouns_per_1k` | 9.16 | 2.662 | 5.673 | 4.523 | 13.43 | median 37.82, p10 11.68 |
+| `status_lines_per_1k` | 1.018 | 1.065 | 1.032 | 1.005 | 1.075 | mean 0.3181, median 0.0 |
+| `status_number_moved` | no | no | no | **yes** | **yes** | 43.75% of market units with ≥2 |
+| `em_dash_prose_per_1k` | 7.125 | 0 | 0 | 0.503 | 0 | **none recorded** — §180.1 is ours-only |
+| `machinery_names_in_prose` | `ladder` | — | — | — | — | house rail |
+
+Four readings the card makes mechanical, none of them new claims and none of them a verdict:
+
+1. **The v0 system half is still flat on the post-redesign shelf.** `system_magnitude` and
+   `magnitude_share_of_anchored` are zero on all five against a genre pooled 2.632/1k and 0.2002.
+   That is §162's finding, unmoved, on books §162 never saw. The v2 rows beside them find 12–30
+   system numbers per chapter, and **that is the detector and not the book** — which is exactly
+   why they carry no market column.
+2. **Gloss (family G1) runs one to two orders of magnitude above the genre mean** where it
+   appears — tier A up to 0.537/1k against 0.0344, tier B up to 1.031 against 0.0027 — and two
+   books are at zero on tier A. G1 is the family the recurrence map records as aimed three times
+   and named again at reads 12 and 13.
+3. **Four of five books sit below the market's 10th percentile for proper nouns** (11.68/1k).
+   The cast prohibition and the sparse-naming register are not distinguishable in this column,
+   which is why it is reported as proper nouns and never as cast.
+4. **Every book carries its `[STATUS]` page contract and two of five move a number on it.**
+   Against a market where 2.32% of chapters carry a system line at all and 43.75% of those
+   carrying two or more show differing digits. The `status_number_moved` row is the §184
+   `progression_unmoved` question asked of the published page rather than of the gate.
+
+### 190.2 What shipped
+
+- **`research/quality-measurement/scorecard.py`** — 43 rows, 19 with a market reference, 40 tagged
+  with the `read-recurrence-map.md` §3 family they bear on (A1 20, A3 7, C2 5, G1 4, B1 3, D1 3,
+  D2 3, C4 2, D4 2, L1 1), so the coordinator's gate read can consume the card as its mechanical
+  half. Plain table to stdout, JSON beside the book or at `--out`, the whole per-chapter battery
+  kept in the JSON so a later question needs no re-run.
+- **`research/quality-measurement/chapter_measures.py`** — the per-chapter battery lifted
+  **verbatim** out of `plan/agent-impact/scripts/draw_battery.py`, which now imports it. Two
+  runners, one definition. Verified by re-running the draw battery across all ten draws before
+  and after: **byte-identical output**, so the refactor moved code and changed no number.
+- **`tests/test_scorecard.py`** — hermetic, synthetic chapters only, no shelf path and no corpus.
+  Three of its pins are refusals rather than behaviours:
+  `test_no_v2_row_carries_a_market_reference`, `test_no_row_is_a_score_or_a_verdict`,
+  `test_every_row_without_a_reference_says_why`.
+  `test_register_census_references_match_the_committed_results_file` and
+  `test_the_quoted_instrument_digests_are_the_live_ones` catch a transcription typo and a rotated
+  digest respectively — a stale citation beside a book would otherwise never surface.
+- **`plan/agent-impact/scorecards/*.json`** — the five cards, as the first records.
+
+### 190.3 What was refused
+
+- **No aggregate, no pass/fail, no bar, and the row list is checked for it.** §61's four
+  attainability checks — range at the real n, direction, independent unit, non-empty subgroup —
+  have been run for none of these quantities, and §81/§85/§87/§89 are four entries' worth of what
+  happens when a bar is declared without them. The card describes two numbers and says nothing
+  about which is better. `test_no_row_is_a_score_or_a_verdict` refuses a row named like a verdict,
+  because a quietly-named column is the cheapest way for a bar to arrive.
+- **No v2 number is placed beside any market number** (§189.3, mechanised). Six rows carry the
+  refusal instead. The direction of the invalidity flatters us — v2 adds an accepted line shape
+  and removes none, so it can only ever find more furniture than the v0 instrument every market
+  figure was computed with — which is why it is refused rather than caveated.
+- **The market census was not re-run under v2** to restore comparability. `progression_cadence.py
+  census --version v2` exists and stays unrun: it is a registered market act, it is not what this
+  build was for, and one sustained job at a time on this box.
+- **A count is never printed beside a rate.** Four `number_context` families whose recorded market
+  half is a pooled per-1,000-word rate are converted to that unit rather than shown as counts;
+  five rows that have only a count form say so and point at the per-1k row beside them.
+- **The comic-beat census (5.50 beats/1k) was refused as a column.** Its locator is a model at
+  0.54 reliability whose byte-identical re-ask moves the count by a median of 5 beats. It cannot
+  enter a deterministic per-chapter battery, whatever the market number is worth.
+- **The register census's friction half was refused**, as `draw-battery.md` §3.3 already found:
+  it needs the corpus frequency table and has no per-chapter form. **Proper nouns are never
+  reported as cast** (§175 shipped a prompt bound and built no count of drafted prose).
+
+### 190.4 One limitation is printed rather than hidden, and one instrument has gone missing
+
+The two system-line market figures (2.32% of chapters, 43.75% of multi-line chapters moving a
+digit) were computed by `research/quality-measurement/system_lines.py` over
+`domain/axes._SYSTEM_LINE`, and **neither file is in the tree any more**. This card counts with
+`statusline.parse_status_line`, the renderer's own parser, which is the stricter of the two: it
+demands a subject and a labelled cell where the market counter demanded a leading bracketed
+token. Stricter on our side understates us against a reference we already sit far above, so the
+rows print with `DETECTOR MISMATCH` stated in the table and in the JSON rather than being dropped.
+Re-deriving the reference would cost a market pass with a counter that no longer exists.
+
+This is the second instrument whose published numbers outlived its code — §180.1's chain script
+was the first, and the three chain rows here carry that refusal for the same reason. Nothing is
+proposed about it in this entry beyond recording that it has now happened twice.
+
+### 190.5 Anti-scope
+
+Measurement only, and one direction only. Nothing here gates, ranks, selects or promotes
+anything; the card lays descriptions side by side and a person decides (§61(5)). **No model ran
+at all** — regex and arithmetic end to end — so no judge needed a validity licence and no
+generative role needed containment. **No corpus was opened**: every market figure is a constant
+transcribed from a results file already committed to this repo, so RS1 is untouched, and nothing
+under `src/litharness/` imports either new module (CONTRIBUTING's dependency direction; the
+research side may read the package, never the reverse). No number here reaches the writer, the
+reviser, the editorial control plane, the reader loop, the roster or any dossier. No prompt text,
+directive or plan item was derived from anything the operator said about any of these books
+(§97.1). No axis is admitted and no research claim is promoted under `EPISTEMIC_GOVERNANCE.md` —
+these are `OBSERVED` counts on five of our own chapters and nothing above that. The A/B redraw
+harness and the exploratory panel column are the direction's builds 2 and 3 and are not started
+here.
+
 ## 191. The settled-listing redraw becomes a script, and every part a person kept in their head becomes a refusal
 
 `plan/continuous-loop-direction.md` build 2. Pilots 15b and 18 each ran the same recipe by hand

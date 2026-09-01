@@ -1,0 +1,1051 @@
+{
+  "book": "what-the-kettle-remembers",
+  "path": "C:/DEV/LitHarness/book-library/what-the-kettle-remembers",
+  "chapters": [
+    "Chapter1.txt"
+  ],
+  "no_bar": "Descriptive only. No aggregate score, no pass/fail, no threshold, no bar: stage-0 §61's four attainability checks (range at the real n, direction, independent unit, non-empty subgroup) stand between any row here and a bar, and none has been run for any of these quantities. No model ranked, selected or judged anything (§61(5)); no model ran at all.",
+  "rows": [
+    {
+      "key": "prose_words",
+      "label": "prose words (system lines and separators dropped)",
+      "value": 1861,
+      "unit": "words",
+      "aggregation": "median over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 1861
+      },
+      "instrument": "len(text.split()) on chapter_measures.prose_only",
+      "market_reference": {
+        "value": 2053,
+        "unit": "words",
+        "population": "market LitRPG chapters",
+        "n": 13364,
+        "source": "stage-0 §155.1 length control; research/quality-measurement/progression-cadence-results.md",
+        "digest": "5d42f2065efb7e09",
+        "spread": "median chapter length",
+        "caveat": ""
+      },
+      "market_reference_rendered": "2053 words (median chapter length) [market LitRPG chapters, n=13364]"
+    },
+    {
+      "key": "file_words",
+      "label": "words in the published file",
+      "value": 1906,
+      "unit": "words",
+      "aggregation": "median over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 1906
+      },
+      "instrument": "len(text.split())",
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (the market length reference is measured on prose; see the prose_words row)"
+    },
+    {
+      "key": "gloss_tier_a_per_1k",
+      "label": "narratorial gloss, tier A (understanding/meaning/asking)",
+      "value": 0.537,
+      "unit": "hits/1k prose words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.537
+      },
+      "instrument": "register_census.gloss_counts v0 2029fc350b1e6684",
+      "checklist": [
+        "G1"
+      ],
+      "market_reference": {
+        "value": 0.0344,
+        "unit": "hits/1k words",
+        "population": "market LitRPG chapters",
+        "n": 13364,
+        "source": "research/quality-measurement/results/register-census.json gloss_per_1k['market_litrpg|tier_a']; read in stage-0 §156.2",
+        "digest": "2029fc350b1e6684",
+        "spread": "mean; median 0.0, 93.3% of chapters at zero",
+        "caveat": ""
+      },
+      "market_reference_rendered": "0.0344 hits/1k words (mean; median 0.0, 93.3% of chapters at zero) [market LitRPG chapters, n=13364]"
+    },
+    {
+      "key": "gloss_tier_b_per_1k",
+      "label": "narratorial gloss, tier B (manner)",
+      "value": 0.537,
+      "unit": "hits/1k prose words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.537
+      },
+      "instrument": "register_census.gloss_counts v0 2029fc350b1e6684",
+      "checklist": [
+        "G1"
+      ],
+      "market_reference": {
+        "value": 0.0027,
+        "unit": "hits/1k words",
+        "population": "market LitRPG chapters",
+        "n": 13364,
+        "source": "research/quality-measurement/results/register-census.json gloss_per_1k['market_litrpg|tier_b']; read in stage-0 §156.2",
+        "digest": "2029fc350b1e6684",
+        "spread": "mean; median 0.0, 99.4% of chapters at zero",
+        "caveat": ""
+      },
+      "market_reference_rendered": "0.0027 hits/1k words (mean; median 0.0, 99.4% of chapters at zero) [market LitRPG chapters, n=13364]"
+    },
+    {
+      "key": "gloss_tier_a",
+      "label": "narratorial gloss, tier A, absolute",
+      "value": 1,
+      "unit": "hits",
+      "aggregation": "sum over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 1
+      },
+      "instrument": "register_census.gloss_counts v0 2029fc350b1e6684",
+      "checklist": [
+        "G1"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (the recorded market half for this counter is a rate per 1,000 words, not a per-chapter count; see the per-1k row beside this one)"
+    },
+    {
+      "key": "gloss_tier_b",
+      "label": "narratorial gloss, tier B, absolute",
+      "value": 1,
+      "unit": "hits",
+      "aggregation": "sum over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 1
+      },
+      "instrument": "register_census.gloss_counts v0 2029fc350b1e6684",
+      "checklist": [
+        "G1"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (the recorded market half for this counter is a rate per 1,000 words, not a per-chapter count; see the per-1k row beside this one)"
+    },
+    {
+      "key": "proper_nouns_per_1k",
+      "label": "distinct proper nouns (NOT cast size)",
+      "value": 13.434,
+      "unit": "distinct/1k prose words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 13.434
+      },
+      "instrument": "register_census.proper_nouns v0 2029fc350b1e6684",
+      "checklist": [
+        "C4"
+      ],
+      "market_reference": {
+        "value": 37.8184,
+        "unit": "distinct/1k words",
+        "population": "market LitRPG chapters, friction sample",
+        "n": 496,
+        "source": "research/quality-measurement/results/register-census.json proper_noun_per_1k['market_litrpg']; read in stage-0 §156.3",
+        "digest": "2029fc350b1e6684",
+        "spread": "median; p10 11.68, p90 79.86",
+        "caveat": "the counter is a strict superset of cast — it also catches places, institutions and system names — so this is proper nouns on both sides and cast on neither (§175 shipped a prompt bound and built no count of drafted prose)"
+      },
+      "market_reference_rendered": "37.8184 distinct/1k words (median; p10 11.68, p90 79.86) [market LitRPG chapters, friction sample, n=496]"
+    },
+    {
+      "key": "proper_nouns_distinct",
+      "label": "distinct proper nouns, absolute (NOT cast size)",
+      "value": 25,
+      "unit": "distinct",
+      "aggregation": "max over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 25
+      },
+      "instrument": "register_census.proper_nouns v0 2029fc350b1e6684",
+      "checklist": [
+        "C4"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (the recorded market half for this counter is a rate per 1,000 words, not a per-chapter count; see the per-1k row beside this one)"
+    },
+    {
+      "key": "cadence_v0_events",
+      "label": "progression events located, v0",
+      "value": 0,
+      "unit": "events",
+      "aggregation": "sum over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0
+      },
+      "instrument": "progression_cadence.measure v0 5d42f2065efb7e09",
+      "checklist": [
+        "A1",
+        "C2"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (the recorded market half for this counter is a rate per 1,000 words, not a per-chapter count; see the per-1k row beside this one)"
+    },
+    {
+      "key": "cadence_v0_events_per_1k",
+      "label": "progression events, v0",
+      "value": 0.0,
+      "unit": "events/1k file words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.0
+      },
+      "instrument": "progression_cadence.measure v0 5d42f2065efb7e09",
+      "checklist": [
+        "A1",
+        "C2"
+      ],
+      "market_reference": {
+        "value": 0.0,
+        "unit": "events/1k words",
+        "population": "market LitRPG chapters",
+        "n": 13364,
+        "source": "stage-0 §155.1; research/quality-measurement/progression-cadence-results.md",
+        "digest": "5d42f2065efb7e09",
+        "spread": "median; mean 1.224, p75 1.26, p90 3.60, p95 5.53",
+        "caveat": ""
+      },
+      "market_reference_rendered": "0 events/1k words (median; mean 1.224, p75 1.26, p90 3.60, p95 5.53) [market LitRPG chapters, n=13364]"
+    },
+    {
+      "key": "cadence_v0_carries_any_event",
+      "label": "chapters carrying at least one located event, v0",
+      "value": 0.0,
+      "unit": "share of this book's chapters",
+      "aggregation": "share over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0
+      },
+      "instrument": "progression_cadence.measure v0 5d42f2065efb7e09",
+      "checklist": [
+        "A1",
+        "C2"
+      ],
+      "market_reference": {
+        "value": 0.49,
+        "unit": "share of chapters",
+        "population": "market LitRPG chapters",
+        "n": 13364,
+        "source": "stage-0 §155.1 coverage; 51.0% carry none, 6.50x the non-LitRPG control",
+        "digest": "5d42f2065efb7e09",
+        "spread": "non-LitRPG control 0.128",
+        "caveat": "§155.1 records this as a joint claim about the market and about the instrument's recall, and says that caveat travels with it wherever it is quoted"
+      },
+      "market_reference_rendered": "0.49 share of chapters (non-LitRPG control 0.128) [market LitRPG chapters, n=13364]"
+    },
+    {
+      "key": "cadence_v0_first_event_words",
+      "label": "first located event, v0",
+      "value": null,
+      "unit": "words into the chapter",
+      "aggregation": "median over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": null
+      },
+      "instrument": "progression_cadence.measure v0 5d42f2065efb7e09",
+      "checklist": [
+        "A1",
+        "B1"
+      ],
+      "market_reference": {
+        "value": 585,
+        "unit": "words into the chapter",
+        "population": "market LitRPG chapters carrying an event",
+        "n": 13364,
+        "source": "stage-0 §155.1; progression-cadence-results.md",
+        "digest": "5d42f2065efb7e09",
+        "spread": "median; 22.5% of chapters have one inside the first 500 words",
+        "caveat": ""
+      },
+      "market_reference_rendered": "585 words into the chapter (median; 22.5% of chapters have one inside the first 500 words) [market LitRPG chapters carrying an event, n=13364]"
+    },
+    {
+      "key": "cadence_v0_first_event_fraction",
+      "label": "first located event, v0",
+      "value": null,
+      "unit": "fraction of the chapter",
+      "aggregation": "median over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": null
+      },
+      "instrument": "progression_cadence.measure v0 5d42f2065efb7e09",
+      "checklist": [
+        "A1",
+        "B1"
+      ],
+      "market_reference": {
+        "value": 0.29,
+        "unit": "fraction of the chapter",
+        "population": "market LitRPG chapters carrying an event",
+        "n": 13364,
+        "source": "research/quality-measurement/progression-cadence-results.md",
+        "digest": "5d42f2065efb7e09",
+        "spread": "median; p25 0.10, p75 0.56",
+        "caveat": ""
+      },
+      "market_reference_rendered": "0.29 fraction of the chapter (median; p25 0.10, p75 0.56) [market LitRPG chapters carrying an event, n=13364]"
+    },
+    {
+      "key": "cadence_v0_gap_cv",
+      "label": "spacing of events, v0",
+      "value": null,
+      "unit": "coefficient of variation",
+      "aggregation": "median over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": null
+      },
+      "instrument": "progression_cadence.measure v0 5d42f2065efb7e09",
+      "checklist": [
+        "A1"
+      ],
+      "market_reference": {
+        "value": 0.96,
+        "unit": "coefficient of variation",
+        "population": "market LitRPG chapters with two or more events",
+        "n": 4496,
+        "source": "stage-0 §155.1; median gap 89 words (p25 31, p75 276)",
+        "digest": "5d42f2065efb7e09",
+        "spread": "essentially Poisson",
+        "caveat": ""
+      },
+      "market_reference_rendered": "0.96 coefficient of variation (essentially Poisson) [market LitRPG chapters with two or more events, n=4496]",
+      "note": "the instrument declines below three events and returns null; that is not a zero"
+    },
+    {
+      "key": "cadence_v2_events",
+      "label": "progression events located, v2",
+      "value": 2,
+      "unit": "events",
+      "aggregation": "sum over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 2
+      },
+      "instrument": "progression_cadence.measure v2 f1a205af2cd3d718",
+      "checklist": [
+        "A1",
+        "C2"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (v2 incomparable with the v0 census — stage-0 §189.3: every published market figure for this instrument is v0's, and v2 can only ever find more furniture)"
+    },
+    {
+      "key": "cadence_v2_events_per_1k",
+      "label": "progression events, v2",
+      "value": 1.049,
+      "unit": "events/1k file words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 1.049
+      },
+      "instrument": "progression_cadence.measure v2 f1a205af2cd3d718",
+      "checklist": [
+        "A1",
+        "C2"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (v2 incomparable with the v0 census — stage-0 §189.3: every published market figure for this instrument is v0's, and v2 can only ever find more furniture)"
+    },
+    {
+      "key": "cadence_v2_first_event_fraction",
+      "label": "first located event, v2",
+      "value": 0.4827,
+      "unit": "fraction of the chapter",
+      "aggregation": "median over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.4827
+      },
+      "instrument": "progression_cadence.measure v2 f1a205af2cd3d718",
+      "checklist": [
+        "A1",
+        "B1"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (v2 incomparable with the v0 census — stage-0 §189.3: every published market figure for this instrument is v0's, and v2 can only ever find more furniture)"
+    },
+    {
+      "key": "numbers_v0_mentions_per_1k",
+      "label": "all numeric mentions, v0",
+      "value": 9.135,
+      "unit": "mentions/1k prose words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 9.135
+      },
+      "instrument": "number_context.measure v0 8e10ac598828d404 on prose",
+      "checklist": [
+        "A3"
+      ],
+      "market_reference": {
+        "value": 12.831,
+        "unit": "mentions/1k words",
+        "population": "market LitRPG chapters, pooled",
+        "n": 13364,
+        "source": "stage-0 §162.3; research/quality-measurement/number-context-results.md",
+        "digest": "8e10ac598828d404",
+        "spread": "",
+        "caveat": ""
+      },
+      "market_reference_rendered": "12.831 mentions/1k words [market LitRPG chapters, pooled, n=13364]"
+    },
+    {
+      "key": "numbers_v0_system_magnitude_per_1k",
+      "label": "system magnitude numbers, v0",
+      "value": 0.0,
+      "unit": "per 1k prose words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.0
+      },
+      "instrument": "number_context.measure v0 8e10ac598828d404 on prose",
+      "checklist": [
+        "A1"
+      ],
+      "market_reference": {
+        "value": 2.632,
+        "unit": "per 1k words",
+        "population": "market LitRPG chapters, pooled",
+        "n": 13364,
+        "source": "stage-0 §162.1; number-context-results.md",
+        "digest": "8e10ac598828d404",
+        "spread": "10.7x the non-LitRPG control (0.246); 55.5% of chapters carry one",
+        "caveat": ""
+      },
+      "market_reference_rendered": "2.632 per 1k words (10.7x the non-LitRPG control (0.246); 55.5% of chapters carry one) [market LitRPG chapters, pooled, n=13364]"
+    },
+    {
+      "key": "numbers_v0_system_ordinal_per_1k",
+      "label": "system ordinal numbers, v0",
+      "value": 0.0,
+      "unit": "per 1k prose words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.0
+      },
+      "instrument": "number_context.measure v0 8e10ac598828d404 on prose",
+      "checklist": [
+        "A1"
+      ],
+      "market_reference": {
+        "value": 0.104,
+        "unit": "per 1k words",
+        "population": "market LitRPG chapters, pooled",
+        "n": 13364,
+        "source": "stage-0 §162.2; number-context-results.md",
+        "digest": "8e10ac598828d404",
+        "spread": "non-genre 0.068; §162 records this as the one column our shelf was above",
+        "caveat": ""
+      },
+      "market_reference_rendered": "0.104 per 1k words (non-genre 0.068; §162 records this as the one column our shelf was above) [market LitRPG chapters, pooled, n=13364]"
+    },
+    {
+      "key": "numbers_v0_magnitude_share_of_anchored",
+      "label": "system share of anchored mentions, v0",
+      "value": 0.0,
+      "unit": "share",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.0
+      },
+      "instrument": "number_context.measure v0 8e10ac598828d404 on prose",
+      "checklist": [
+        "A1",
+        "A3"
+      ],
+      "market_reference": {
+        "value": 0.2002,
+        "unit": "share of anchored mentions",
+        "population": "market LitRPG chapters",
+        "n": 13364,
+        "source": "stage-0 §162.2; the bounded genre reference (our shelf then read 0.0029)",
+        "digest": "8e10ac598828d404",
+        "spread": "non-genre 0.0323",
+        "caveat": ""
+      },
+      "market_reference_rendered": "0.2002 share of anchored mentions (non-genre 0.0323) [market LitRPG chapters, n=13364]"
+    },
+    {
+      "key": "numbers_v0_mundane_core_per_1k",
+      "label": "mundane core numbers, v0",
+      "value": 0.0,
+      "unit": "per 1k prose words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.0
+      },
+      "instrument": "number_context.measure v0 8e10ac598828d404 on prose",
+      "checklist": [
+        "A3"
+      ],
+      "market_reference": {
+        "value": 1.236,
+        "unit": "per 1k words",
+        "population": "market LitRPG chapters, pooled",
+        "n": 13364,
+        "source": "stage-0 §162.1/§162.3; number-context-results.md",
+        "digest": "8e10ac598828d404",
+        "spread": "non-LitRPG 1.121 (1.10x — §162 kept it as the non-discrimination check); 25.4% of market chapters carry no mundane number at all",
+        "caveat": ""
+      },
+      "market_reference_rendered": "1.236 per 1k words (non-LitRPG 1.121 (1.10x — §162 kept it as the non-discrimination check); 25.4% of market chapters carry no mundane number at all) [market LitRPG chapters, pooled, n=13364]"
+    },
+    {
+      "key": "numbers_v0_object_count_per_1k",
+      "label": "object counts, v0",
+      "value": 3.7614,
+      "unit": "per 1k prose words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 3.7614
+      },
+      "instrument": "number_context.measure v0 8e10ac598828d404 on prose",
+      "checklist": [
+        "A3"
+      ],
+      "market_reference": {
+        "value": 4.113,
+        "unit": "per 1k words",
+        "population": "market LitRPG chapters, pooled",
+        "n": 13364,
+        "source": "stage-0 §162.3; number-context-results.md",
+        "digest": "8e10ac598828d404",
+        "spread": "",
+        "caveat": ""
+      },
+      "market_reference_rendered": "4.113 per 1k words [market LitRPG chapters, pooled, n=13364]"
+    },
+    {
+      "key": "numbers_v0_calendar_duration_per_1k",
+      "label": "calendar and duration numbers, v0",
+      "value": 0.0,
+      "unit": "per 1k prose words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.0
+      },
+      "instrument": "number_context.measure v0 8e10ac598828d404 on prose",
+      "checklist": [
+        "A3"
+      ],
+      "market_reference": {
+        "value": 0.718,
+        "unit": "per 1k words",
+        "population": "market LitRPG chapters, pooled",
+        "n": 13364,
+        "source": "stage-0 §162.3; number-context-results.md — §162's concentrated excess",
+        "digest": "8e10ac598828d404",
+        "spread": "non-genre 0.724",
+        "caveat": ""
+      },
+      "market_reference_rendered": "0.718 per 1k words (non-genre 0.724) [market LitRPG chapters, pooled, n=13364]",
+      "note": "§162.3 recorded this family as our shelf's concentrated numeric excess"
+    },
+    {
+      "key": "numbers_v2_system_any",
+      "label": "system numbers located, v2 (whole file)",
+      "value": 14,
+      "unit": "count",
+      "aggregation": "sum over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 14
+      },
+      "instrument": "number_context.measure v2 6c007094f6159474",
+      "checklist": [
+        "A1"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (v2 incomparable with the v0 census — stage-0 §189.3: every published market figure for this instrument is v0's, and v2 can only ever find more furniture)"
+    },
+    {
+      "key": "numbers_v2_system_share_of_anchored",
+      "label": "system share of anchored mentions, v2",
+      "value": 0.6667,
+      "unit": "share",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.6667
+      },
+      "instrument": "number_context.measure v2 6c007094f6159474",
+      "checklist": [
+        "A1",
+        "A3"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (v2 incomparable with the v0 census — stage-0 §189.3: every published market figure for this instrument is v0's, and v2 can only ever find more furniture)"
+    },
+    {
+      "key": "numbers_v2_mundane_core_per_1k",
+      "label": "mundane core numbers, v2",
+      "value": 0.0,
+      "unit": "per 1k prose words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.0
+      },
+      "instrument": "number_context.measure v2 6c007094f6159474",
+      "checklist": [
+        "A3"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (v2 incomparable with the v0 census — stage-0 §189.3: every published market figure for this instrument is v0's, and v2 can only ever find more furniture)",
+      "note": "§189.2 records mundane_core, object_count and unanchored as byte-identical between v0-on-prose and v2-on-whole-file on all ten draws of the first battery, so the v0 row above is the one that carries the market comparison"
+    },
+    {
+      "key": "status_lines",
+      "label": "[STATUS] lines on the page",
+      "value": 2,
+      "unit": "lines",
+      "aggregation": "sum over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 2
+      },
+      "instrument": "statusline.parse_status_line",
+      "checklist": [
+        "A1"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (the recorded market half for this counter is a rate per 1,000 words, not a per-chapter count; see the per-1k row beside this one)"
+    },
+    {
+      "key": "status_lines_per_1k",
+      "label": "[STATUS] lines on the page",
+      "value": 1.0747,
+      "unit": "lines/1k prose words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 1.0747
+      },
+      "instrument": "statusline.parse_status_line",
+      "checklist": [
+        "A1"
+      ],
+      "market_reference": {
+        "value": 0.3181,
+        "unit": "lines/1k words",
+        "population": "RoyalRoad LitRPG chapters, shards 3+30",
+        "n": 14156,
+        "source": "research/quality-measurement/numbers-go-up-results.md §4 (Task 6)",
+        "digest": "",
+        "spread": "mean; median 0.0 — 97.7% of market chapters carry no system line at all",
+        "caveat": "DETECTOR MISMATCH: the market half was counted by system_lines.py over domain/axes._SYSTEM_LINE, and neither file is in the tree any more"
+      },
+      "market_reference_rendered": "0.3181 lines/1k words (mean; median 0.0 — 97.7% of market chapters carry no system line at all) [RoyalRoad LitRPG chapters, shards 3+30, n=14156]"
+    },
+    {
+      "key": "carries_status_line",
+      "label": "chapters carrying at least one [STATUS] line",
+      "value": 1.0,
+      "unit": "share of this book's chapters",
+      "aggregation": "share over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 2
+      },
+      "instrument": "statusline.parse_status_line",
+      "checklist": [
+        "A1"
+      ],
+      "market_reference": {
+        "value": 0.0232,
+        "unit": "share of chapters with at least one",
+        "population": "RoyalRoad LitRPG chapters, shards 3+30",
+        "n": 14156,
+        "source": "research/quality-measurement/numbers-go-up-results.md §4 (Task 6); within-story control 2.59% over 394 stories",
+        "digest": "",
+        "spread": "era split 8.29% declared-AI-2025 / 2.66% undeclared-2025 / 1.16% human-pre-LLM, from which that results file concludes nothing",
+        "caveat": "DETECTOR MISMATCH: the market half was counted by system_lines.py over domain/axes._SYSTEM_LINE, and neither file is in the tree any more. This side uses statusline.parse_status_line, which is the stricter counter (it demands a subject and a labelled cell). Stricter on our side understates us against a reference we already sit far above, so the row is printed with the mismatch named rather than dropped"
+      },
+      "market_reference_rendered": "0.0232 share of chapters with at least one (era split 8.29% declared-AI-2025 / 2.66% undeclared-2025 / 1.16% human-pre-LLM, from which that results file concludes nothing) [RoyalRoad LitRPG chapters, shards 3+30, n=14156]"
+    },
+    {
+      "key": "status_number_moved",
+      "label": "a subject's own number changes between two prints",
+      "value": true,
+      "unit": "true/false per chapter",
+      "aggregation": "any over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": true
+      },
+      "instrument": "statusline.parse_status_line, same subject and same label compared between consecutive prints",
+      "checklist": [
+        "A1"
+      ],
+      "market_reference": {
+        "value": 0.4375,
+        "unit": "share of such chapters whose digits differ",
+        "population": "RoyalRoad LitRPG chapters carrying two or more system lines",
+        "n": 144,
+        "source": "research/quality-measurement/numbers-go-up-results.md §4 (Task 6)",
+        "digest": "",
+        "spread": "",
+        "caveat": "DETECTOR MISMATCH, as above; and the market counter compared digit sets on the line where this one compares the same subject's same-labelled cell between consecutive prints. The two ask nearly the same question and are not the same test"
+      },
+      "market_reference_rendered": "0.4375 share of such chapters whose digits differ [RoyalRoad LitRPG chapters carrying two or more system lines, n=144]"
+    },
+    {
+      "key": "status_cells_moved",
+      "label": "which cells moved",
+      "value": [
+        "Mira Kell:Carried 2/3->3/3"
+      ],
+      "unit": "list",
+      "aggregation": "union over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": [
+          "Mira Kell:Carried 2/3->3/3"
+        ]
+      },
+      "instrument": "statusline.parse_status_line",
+      "checklist": [
+        "A1"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (a house rail; nothing in the market corresponds to it)"
+    },
+    {
+      "key": "status_raw_id_subject",
+      "label": "a [STATUS] subject rendered as a raw record id",
+      "value": [],
+      "unit": "list",
+      "aggregation": "union over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": []
+      },
+      "instrument": "statusline.parse_status_line; the §169 defect is a subject carrying no capital",
+      "checklist": [
+        "A1"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (a house rail; nothing in the market corresponds to it)"
+    },
+    {
+      "key": "sentence_words_median",
+      "label": "sentence length",
+      "value": 7,
+      "unit": "words",
+      "aggregation": "median over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 7
+      },
+      "instrument": "voice.sentences + voice._WORD",
+      "checklist": [
+        "D2"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (§180.1's census covered this shelf only; no market half was recorded)"
+    },
+    {
+      "key": "sentence_words_max",
+      "label": "longest sentence",
+      "value": 58,
+      "unit": "words",
+      "aggregation": "max over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 58
+      },
+      "instrument": "voice.sentences + voice._WORD",
+      "checklist": [
+        "D2"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (§180.1's census covered this shelf only; no market half was recorded)"
+    },
+    {
+      "key": "sentence_over_30_share",
+      "label": "sentences over 30 words",
+      "value": 0.1135,
+      "unit": "share",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.1135
+      },
+      "instrument": "voice.sentences + voice._WORD",
+      "checklist": [
+        "D2"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (§180.1's census covered this shelf only; no market half was recorded)"
+    },
+    {
+      "key": "chain_joins_mean",
+      "label": "coordinated joins per sentence (commas plus free-standing 'and')",
+      "value": 1.695,
+      "unit": "joins/sentence",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 1.695
+      },
+      "instrument": "REIMPLEMENTED from §180.1's own sentence; splitter is voice.sentences",
+      "checklist": [
+        "D1"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (§180.1's chain script was not kept, so this counter is a REIMPLEMENTATION and is not comparable with §180.1's own published levels either)"
+    },
+    {
+      "key": "chain_4plus_share",
+      "label": "sentences carrying four or more joins",
+      "value": 0.2057,
+      "unit": "share",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.2057
+      },
+      "instrument": "REIMPLEMENTED; the bound is §180.3's fourth action",
+      "checklist": [
+        "D1"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (§180.1's chain script was not kept, so this counter is a REIMPLEMENTATION and is not comparable with §180.1's own published levels either)"
+    },
+    {
+      "key": "chain_6plus",
+      "label": "sentences carrying six or more joins",
+      "value": 15,
+      "unit": "sentences",
+      "aggregation": "sum over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 15
+      },
+      "instrument": "REIMPLEMENTED",
+      "checklist": [
+        "D1"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (§180.1's chain script was not kept, so this counter is a REIMPLEMENTATION and is not comparable with §180.1's own published levels either)"
+    },
+    {
+      "key": "em_dash_prose_per_1k",
+      "label": "em dashes in prose",
+      "value": 0.0,
+      "unit": "per 1k prose words",
+      "aggregation": "mean over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0.0
+      },
+      "instrument": "voice.exhibition_census on chapter_measures.prose_only",
+      "checklist": [
+        "D4"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (§180.1's census covered this shelf only; no market half was recorded)"
+    },
+    {
+      "key": "em_dash_in_prose",
+      "label": "em dashes in prose, absolute",
+      "value": 0,
+      "unit": "dashes",
+      "aggregation": "sum over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": 0
+      },
+      "instrument": "voice.exhibition_census on chapter_measures.prose_only",
+      "checklist": [
+        "D4"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (§180.1's census covered this shelf only; no market half was recorded)",
+      "note": "the [STATUS] line's own subject separator IS U+2014, so the file count is not this number; draft.strip_em_dash protects exactly those lines in production"
+    },
+    {
+      "key": "machinery_names_in_prose",
+      "label": "our own machinery vocabulary used as a proper noun",
+      "value": [],
+      "unit": "list",
+      "aggregation": "union over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": []
+      },
+      "instrument": "schema_words.named_in on prose",
+      "checklist": [
+        "L1"
+      ],
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (a house rail; nothing in the market corresponds to it)"
+    },
+    {
+      "key": "v2_mask_matches_pipeline",
+      "label": "the v2 furniture mask agrees with draft._SYSTEM_LINE",
+      "value": 1.0,
+      "unit": "true/false per chapter",
+      "aggregation": "share over 1 chapter(s)",
+      "per_chapter": {
+        "Chapter1": true
+      },
+      "instrument": "progression_cadence.prose_only v2 vs the pipeline's own rule",
+      "market_reference": null,
+      "market_reference_rendered": "no market reference (an instrument-health row, not a property of the book)",
+      "note": "the research modules transcribe the pipeline's system-line shape rather than importing it; a value below 1.0 means the transcription has drifted"
+    }
+  ],
+  "per_chapter": {
+    "Chapter1": {
+      "words": 1906,
+      "prose_words": 1861,
+      "separator_and_furniture_words": 45,
+      "gloss": {
+        "a1": 0,
+        "a2": 1,
+        "tier_a": 1,
+        "tier_b": 1,
+        "tier_a_per_1k": 0.537,
+        "tier_b_per_1k": 0.537
+      },
+      "cadence": {
+        "events": 0,
+        "per_1k": 0.0,
+        "first_event_words": null,
+        "first_event_fraction": null,
+        "median_gap": null,
+        "gap_cv": null,
+        "by_family": {
+          "system_block": 0,
+          "level_up": 0,
+          "capability_gain": 0,
+          "stat_delta": 0
+        }
+      },
+      "numbers": {
+        "mentions": 17,
+        "mentions_per_1k": 9.135,
+        "system_any": 0,
+        "system_per_1k": 0.0,
+        "system_magnitude": 0,
+        "system_ordinal": 0,
+        "mundane_core": 0,
+        "mundane_per_1k": 0.0,
+        "anchored": 7,
+        "system_share_of_anchored": 0.0,
+        "furniture_lines": 0,
+        "english_share": 0.389,
+        "by_family": {
+          "system_magnitude": 0,
+          "system_ordinal": 0,
+          "calendar_duration": 0,
+          "age": 0,
+          "money": 0,
+          "measure": 0,
+          "object_count": 7,
+          "ordinal_enumeration": 4,
+          "multiplicative": 3,
+          "unanchored": 3
+        }
+      },
+      "em_dash": {
+        "in_file": 2,
+        "in_prose": 0,
+        "on_status_lines": 2,
+        "prose_per_1k": 0.0
+      },
+      "sentences": {
+        "sentences": 141,
+        "words_mean": 13.23,
+        "words_median": 7,
+        "words_max": 58,
+        "over_30": 16,
+        "over_30_share": 0.1135
+      },
+      "chains_REIMPLEMENTED": {
+        "sentences": 141,
+        "joins_mean": 1.695,
+        "joins_max": 10,
+        "chained_4plus": 29,
+        "chained_4plus_share": 0.2057,
+        "chained_6plus": 15
+      },
+      "proper_nouns_NOT_CAST": {
+        "distinct": 25,
+        "per_1k": 13.434,
+        "names": [
+          "ashfen",
+          "ask",
+          "asking",
+          "bellows",
+          "boiling",
+          "bring",
+          "coldhalt",
+          "dole",
+          "evening",
+          "fair",
+          "ferry",
+          "fill",
+          "here",
+          "ivory",
+          "marr",
+          "measuring",
+          "millwrights",
+          "move",
+          "orrin",
+          "proving",
+          "sark",
+          "sennet",
+          "table",
+          "ux",
+          "whatever"
+        ]
+      },
+      "status": {
+        "status_lines": 2,
+        "subjects": [
+          "Mira Kell"
+        ],
+        "raw_id_subject": [],
+        "cells_moved": [
+          "Mira Kell:Carried 2/3->3/3"
+        ],
+        "any_number_moved": true,
+        "lines": [
+          "[STATUS] Mira Kell — Hold 3 | Carried 2/3 | Mending 4 | Reading 3 | Hearing 0 | Piecing 1",
+          "[STATUS] Mira Kell — Hold 3 | Carried 3/3 | Mending 4 | Reading 3 | Hearing 0 | Piecing 1"
+        ]
+      },
+      "machinery_names_in_prose": [],
+      "furniture_detected_by_market_instruments": {
+        "number_context": 0,
+        "progression_cadence": 0,
+        "number_context_v2": 2,
+        "progression_cadence_v2": 2,
+        "actually_present": 2
+      },
+      "cadence_v2": {
+        "registration_digest": "f1a205af2cd3d718",
+        "events": 2,
+        "per_1k": 1.049,
+        "first_event_words": 920,
+        "first_event_fraction": 0.4827,
+        "median_gap": 897,
+        "gap_cv": null,
+        "by_family": {
+          "system_block": 2,
+          "level_up": 0,
+          "capability_gain": 0,
+          "stat_delta": 0
+        }
+      },
+      "numbers_v2": {
+        "registration_digest": "6c007094f6159474",
+        "mentions": 31,
+        "system_any": 14,
+        "system_magnitude": 14,
+        "system_ordinal": 0,
+        "mundane_core": 0,
+        "mundane_per_1k": 0.0,
+        "object_count": 7,
+        "furniture_lines": 2,
+        "system_share_of_anchored": 0.6667,
+        "by_family": {
+          "system_magnitude": 14,
+          "system_ordinal": 0,
+          "calendar_duration": 0,
+          "age": 0,
+          "money": 0,
+          "measure": 0,
+          "object_count": 7,
+          "ordinal_enumeration": 4,
+          "multiplicative": 3,
+          "unanchored": 3
+        },
+        "mundane_core_v0_on_prose": 0
+      },
+      "v2_mask_matches_pipeline": true
+    }
+  }
+}
