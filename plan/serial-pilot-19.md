@@ -105,7 +105,33 @@ the dead game. That is the writer's, and it is the exception's reason.
 
 ## 4. The seed and the chapter
 
-*(filled after the ticks)*
+**The seed** (one draw, one `world check` read, accepted without `--force`): 257 records, 12
+calls, $6.15 with the listing. The Architect built *the Judge* — a system that on the Monday
+printed every sheet on Earth in the vocabulary of a dead arcade fighting game: a six-rung
+queue-at-the-cabinet ladder (Watcher, Next, Seat, Holder, King, Regional), eleven governed
+abilities in a graph (Spacing feeds Guard, Punish and Read; Read feeds Counter; Throw feeds
+Ringout), a fork at Seat (*the Pick*: three words touched once, never offered again — Pressure,
+Range, Grapple, each opening two abilities), two institutions charging for the climb
+(Halloway Logistics by rung; the Rota reading grades off a tablet at a cordon), and Owen Dace
+as the exception the listing promised: his sheet opened at Next with his old player tag and a
+class no other sheet was offered, and Read came with it. The sheet prints GRADE, LIFE, SPEED,
+POWER, WEIGHT; Owen stands at Next; Nell Halloway has taken her Pick (Grapple); nobody else has.
+
+**The system did not complete, and the reason is a bound the Architect was never told.**
+`world accept` mints a drawn system's scale and digest (§165's completion), and it refused
+this one: *eleven abilities; a drawn system carries five to eight, the upper bound being the
+number of columns a status line can print*. `world check` reported it as *"judge lacks a
+magnitude_scale"*, which is true and is not the reason. Two follow-ups are owed and neither is
+taken here: the seed ask does not state the completion's ability bound, so the Architect can
+draw a system the completion must refuse; and the check's gap sentence should carry the
+completion's own reason rather than the symptom. Nothing can be retracted on this store, so
+the draw proceeds with the system unfinished: the floor is cleared by the accepted sheet, the
+progression beat falls to the legacy arm (the sheet's own columns, *Grade moves here*), and
+§173's offer beat and §195's `[OFFER]` line abstain — which they would have anyway in chapter 1,
+because the Pick opens at Seat and Owen enters at Next. The beats that do fire are the opening's
+two and the interaction beat.
+
+**Chapter 1:** *(filled after the ticks)*
 
 ## 5. The panel's reading
 
