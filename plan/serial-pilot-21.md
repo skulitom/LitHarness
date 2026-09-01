@@ -84,7 +84,24 @@ coordinator's.
 
 ## 4. The seed and the chapter
 
-*(filled after the ticks)*
+**The seed** (one draw, clean check, accepted without `--force`, 189 records): *the System* as
+the sole issuer of Rank and of seven kept grants — Push, Hold, Step, Mend, and behind the
+fork Break, Sift, Bind — each bought once with a night of dead sleep and never spent back; a
+printed line of the ladder's word and the seven grants and nothing else; the fork (*the
+Class*: Hand opens Break, Wall opens Bind, Eye opens Sift) at Entrant, the second rung, so the
+choice is reached inside chapter one; Danny Poole's edge as a line under the columns that
+reads a move a beat early, which works on a riser and a fist and not on a person deciding
+whether to lie; Cormack Freight pricing a day shift at a rung and a Registry that cannot read
+a sheet; and a rival already a Contender.
+
+**The system completed on the first draw after §196's two seed-side sentences**: seven grants
+inside the bound, the sheet's columns the system's own, `world check` clean with no gap, the
+scale and digest minted at `world accept`, and canon holding scheduled snapshots at rank two
+and at Push one. Pilots 19 and 20 both drew a system the completion refused; this is the first
+pilot whose progression beats speak the system's own vocabulary and whose fork can print as
+the `[OFFER]` line where it opens.
+
+**Chapter 1:** *(filled after the ticks)*
 
 ## 5. The loop, as the operator set it
 
