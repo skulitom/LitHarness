@@ -188,16 +188,30 @@ def system_gap(records: Sequence[lc.StateRecord]) -> str | None:
         # Canon-filtered for `_declared_systems`' reason: a proposal is not yet this book's
         # system, and telling a world mid-build it began one and stopped would report the
         # ordinary state of every seed as a fault.
-        unfinished = gamesystem_mod.unfinished_systems(
-            [record for record in records if state_mod.is_canon(record)]
-        )
+        canon = [record for record in records if state_mod.is_canon(record)]
+        unfinished = gamesystem_mod.unfinished_systems(canon)
         if unfinished:
+            # **The symptom and the reason, both** (Serial Pilot 19 §4). `unfinished_systems`
+            # says what the system lacks — a scale, most often — and the scale is minted at
+            # acceptance by `completion_records`, which can refuse: eleven abilities against a
+            # bound of eight, a ladder it cannot read. The refusal's own sentence was printed
+            # once, at `world accept`, on a channel nobody re-reads; a check that names only
+            # the missing scale sends the operator to declare a thing that cannot be declared
+            # (§163.2). So the completion is asked again here, purely, and its reasons ride
+            # beside the symptom.
+            _minted, reasons = gamesystem_mod.completion_records(canon)
+            because = (
+                " Acceptance would not finish it either, and says why: " + "; ".join(reasons)
+                if reasons
+                else ""
+            )
             return (
                 "this book began a game system and did not finish it: "
                 + "; ".join(unfinished)
                 + ". An unfinished system reads back as no system at all, so the sheet is "
                 "never checked as a position in it and no beat speaks its ranks or "
                 "abilities."
+                + because
             )
         return (
             "this book declares no game system: no subject holds the system role with a "
