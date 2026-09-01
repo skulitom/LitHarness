@@ -1,0 +1,104 @@
+{
+  "_comment": "Paths are repository-relative and every one is gitignored text: our shelf under book-library/, the summits under research/quality-measurement/derived/. Titles and authors are what blinding strips. Labels are ours and are never shown to a persona.",
+  "ours": [
+    {
+      "label": "station",
+      "chapter": "book-library/the-station-keeps-score--fa09c89c/chapters/Chapter1.txt",
+      "blurb": "book-library/the-station-keeps-score--fa09c89c/overview.txt",
+      "title": "The Station Keeps Score",
+      "author": "sandoval",
+      "note": "serial pilot 18 draw 4, the first chapter through the post-audit pipeline"
+    },
+    {
+      "label": "kettle",
+      "chapter": "book-library/what-the-kettle-remembers--23825cc4/chapters/Chapter1.txt",
+      "blurb": "book-library/what-the-kettle-remembers--23825cc4/overview.txt",
+      "title": "What the Kettle Remembers",
+      "author": "penhale",
+      "note": "A/B turn 2 arm B (no reviser), the coordinator's hand read put it slightly ahead"
+    },
+    {
+      "label": "ladder",
+      "chapter": "book-library/reading-the-ladder-wrong/chapters/Chapter1.txt",
+      "blurb": "book-library/reading-the-ladder-wrong/overview.txt",
+      "title": "Reading The Ladder Wrong",
+      "author": "ferreira",
+      "note": "serial pilot 16; the only listing on the shelf told in the first person"
+    },
+    {
+      "label": "weather",
+      "chapter": "book-library/unlicensed-weather/chapters/Chapter1.txt",
+      "blurb": "book-library/unlicensed-weather/overview.txt",
+      "title": "Unlicensed Weather",
+      "author": "larkin",
+      "note": "serial pilot 14, read 8's book"
+    }
+  ],
+  "summits": [
+    {
+      "label": "ph",
+      "chapter": "book-library/PrimalHunter/Chapter1.txt",
+      "blurb": null,
+      "title": "The Primal Hunter",
+      "author": "Zogarth",
+      "followers": 33714,
+      "note": "anchor-set.md row 1, VERIFIED SUMMIT; placed on the shelf by the operator 2026-09-01; blurb not on disk (RoyalRoad 403s the fetcher)"
+    },
+    {
+      "label": "dotf",
+      "chapter": "book-library/DefianceOfTheFall/Chapter1.txt",
+      "blurb": null,
+      "title": "Defiance of the Fall",
+      "author": "TheFirstDefier",
+      "followers": 18793,
+      "note": "anchor-set.md row 2, VERIFIED SUMMIT; placed on the shelf by the operator 2026-09-01; blurb not on disk"
+    },
+    {
+      "label": "mgg",
+      "chapter": "research/quality-measurement/derived/opening-parity/summit-magical-girl-gunslinger.ch1.txt",
+      "blurb": "research/quality-measurement/derived/opening-parity/summit-magical-girl-gunslinger.blurb.txt",
+      "title": "Magical Girl Gunslinger",
+      "author": "Mikasane",
+      "followers": 14287,
+      "note": "highest-follower LitRPG-tagged fiction with a chapter 1 in the cached shards; human_pre_llm cohort"
+    },
+    {
+      "label": "lfoi",
+      "chapter": "research/quality-measurement/derived/opening-parity/summit-low-fantasy-occultist-isekai.ch1.txt",
+      "blurb": "research/quality-measurement/derived/opening-parity/summit-low-fantasy-occultist-isekai.blurb.txt",
+      "title": "Low-Fantasy Occultist Isekai",
+      "author": "Persimmon",
+      "followers": 9313,
+      "note": "fifth by followers; The Butcher of Gadobhra (10,516) sits above it and is excluded because its shard text carries no paragraph breaks and cannot be cut to a boundary"
+    },
+    {
+      "label": "cic",
+      "chapter": "research/quality-measurement/derived/opening-parity/summit-book-2-complete-cultivation-is-creation-.ch1.txt",
+      "blurb": "research/quality-measurement/derived/opening-parity/summit-book-2-complete-cultivation-is-creation-.blurb.txt",
+      "title": "Cultivation is Creation",
+      "author": "Kynan",
+      "followers": 10108
+    },
+    {
+      "label": "sotw",
+      "chapter": "research/quality-measurement/derived/opening-parity/summit-soul-of-the-warrior-book-1-stubbed-thru-.ch1.txt",
+      "blurb": "research/quality-measurement/derived/opening-parity/summit-soul-of-the-warrior-book-1-stubbed-thru-.blurb.txt",
+      "title": "Soul of the Warrior",
+      "author": "Kyfe",
+      "followers": 10010
+    }
+  ],
+  "calibration": {
+    "opening": [
+      ["ph", "dotf"],
+      ["mgg", "lfoi"],
+      ["station", "kettle"],
+      ["ladder", "weather"]
+    ],
+    "listing": [
+      ["mgg", "lfoi"],
+      ["cic", "sotw"],
+      ["station", "ladder"]
+    ]
+  }
+}
