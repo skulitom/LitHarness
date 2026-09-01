@@ -40,7 +40,11 @@ _PRIOR_LIFE = "did not spend the years before the book mastering one trade"
 #: The ban this clause is placed *away* from and depends on: it keeps the biography off the page,
 #: which is what stops a constraint on the prior life being answered by narrating one. §154
 #: narrowed it to the prior life after five listings of eight opened on a mundane job.
-_BIOGRAPHY_BAN = "not the life whoever this happens to had before it began"
+#: **Re-signed 2026-09-01 (stage-0 §195).** The ban used to be absolute — *not the life whoever
+#: this happens to had before it began* — and the market's summit blurbs all carry exactly one
+#: clause of it, so the sentence now allows that one clause and bans more than one. What this
+#: file leans on is the ban half, which is this phrase.
+_BIOGRAPHY_BAN = "one with more has become an account of it"
 
 #: What the removed clause enumerated. Held verbatim rather than paraphrased: this is a
 #: regression guard against that exact text returning, not a list of words nobody may write.

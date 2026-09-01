@@ -55,6 +55,8 @@ platform-wide 0.1% sits above the sample's own p99.9.
 | 10 | Blessed Time | pending | | | RoyalRoad | not yet located |
 | 11 | The Mage of Shimmer Mountain | pending | | | RoyalRoad | not yet located |
 | 12 | ~~Harry Potter~~ | n/a | | | not RoyalRoad | **EXCLUDED — see §3** |
+| 13 | **The Legend of Randidly Ghosthound** | **14,275** | — | — | RR search card, read through the browser 2026-09-01 (725 chapters, 11,439,713 views) | **VERIFIED SUMMIT** — above the local sample's p99.9; operator-named 2026-09-01, chapter 1 and blurb on the shelf |
+| 14 | The Gam3 | 5,404 | — | — | RR search card, read through the browser 2026-09-01 (STUB: 81 chapters remain, 3,772,714 views) | **ABOVE p99, BELOW BAR** on the stubbed figure; operator-named 2026-09-01, chapter 1 and blurb on the shelf. Admitted to the opening-parity manifest as an operator-named anchor with this status recorded beside it |
 
 **Retrieval note.** RoyalRoad returns HTTP 403 to the fetcher, so figures come from search-result
 summaries, which surface the stats panel only sometimes. Every row above is checkable by opening

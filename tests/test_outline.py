@@ -865,7 +865,19 @@ def test_the_drafting_lane_reads_the_statement_the_outline_wrote(store: SqliteSt
     tail = prompt.rstrip()
     assert stored.text.strip() in tail
     after = tail[tail.index(stored.text.strip()) + len(stored.text.strip()) :].strip()
-    assert after in ("", genre.INTERACTION_BEAT), after
+    # **2026-09-01 (§195): the opening's beats fold after the interaction beat on the first
+    # chapter's scenes**, by the same render-time rule and for the same reason — read out of
+    # the position being drafted, never stored. What may follow the stored text is therefore
+    # a composition of the scheduled render-time folds and nothing else.
+    scheduled = (
+        "",
+        genre.INTERACTION_BEAT,
+        genre.OPENING_FIRST,
+        genre.OPENING_HOOK,
+        f"{genre.INTERACTION_BEAT} {genre.OPENING_FIRST}",
+        f"{genre.INTERACTION_BEAT} {genre.OPENING_HOOK}",
+    )
+    assert after in scheduled, after
 
 
 def test_the_control_arm_is_reachable_through_the_operator_surface(
@@ -939,7 +951,11 @@ def test_the_beat_fires_at_six_scenes_where_no_outline_ever_runs(
         assert genre.BEAT_TAIL in prompt
         tail = prompt.rstrip()[prompt.rstrip().index(genre.BEAT_TAIL) :]
         last = staging.bound_text() if bounded else genre.BEAT_TAIL
-        assert tail.endswith((genre.INTERACTION_BEAT, last)), (
+        # 2026-09-01 (§195): the opening's two beats are the last render-time fold on the
+        # first chapter's scenes, after the interaction beat; still nothing off a schedule.
+        assert tail.endswith(
+            (genre.INTERACTION_BEAT, last, genre.OPENING_FIRST, genre.OPENING_HOOK)
+        ), (
             "the scheduled folds render last and in composition order - beat, then the "
             "opening's bound, then the interaction beat where one fires - and nothing "
             "off either schedule follows them"
