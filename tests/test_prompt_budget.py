@@ -266,7 +266,17 @@ BUDGET: dict[str, int] = {
     # have left a withdrawn rule with its sole home at the one production role that stands on no
     # floor, which inverts §179's own reason for writing it here. This row does not move with
     # `HOUSE_BUDGET`'s five, because no house floor sits under it; its -1 is the clause's own.
-    "listing writer": 17,
+    #
+    # **17 -> 18 on 2026-09-01, the opening-parity track, and it is one clause re-signed rather
+    # than one added.** The task's second sentence forbade the life the person had before the
+    # book began, written against listings that opened on backstory. Measured against the
+    # market's summits (`research/opening-parity/PREREG.md` §2: the two anchors the operator
+    # placed on the shelf and the four highest-follower local LitRPG openings), every blurb
+    # gives that life in one plain clause before the thing that changes, and ours gave none —
+    # the reader is handed a cook, a mender and an apprentice with nobody to stand beside. The
+    # sentence now names both failures, none and more than one, which `house.demands` reads as
+    # two demands where it read one.
+    "listing writer": 18,
     # **Raised 42 -> 44 on 2026-08-29, for three sentences that replace an absence** (§163).
     # The seed ask named a ladder and named nothing that hands out its rungs, so the model
     # supplied the nearest issuer it knows and the book got an institution: pilot 14's
@@ -554,6 +564,7 @@ _PROGRESSION = extraction_domain.render_status_line(
 )
 _STANDING = "Kestrel stands at courier (1 of 3); the book's plan has them at gate-runner (2 of 3)"
 _STANDING_LINE = "[STANDING] Kestrel stands at courier"
+_OFFER_LINE = "[OFFER] warrant — hull: opens binding, carrying | watch: opens appraising"
 _CRITERIA = "- guild_rank: outranks — courier then gate-runner then warden"
 
 
@@ -571,6 +582,7 @@ def _scene_system(**conditionals: Any) -> str:
 _CONDITIONAL_ARMS: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
     "status_example": ({}, {"status_example": _STATUS_EXAMPLE}),
     "progression": ({"status_example": _STATUS_EXAMPLE}, {"progression": _PROGRESSION}),
+    "offer_line": ({"status_example": _STATUS_EXAMPLE}, {"offer_line": _OFFER_LINE}),
     "standing": ({}, {"standing": _STANDING}),
     "standing_line": ({"standing": _STANDING}, {"standing_line": _STANDING_LINE}),
     "target_words": ({}, {"target_words": 900}),
@@ -585,6 +597,12 @@ _CONDITIONAL_ARMS: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
 SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
     "status_example": 4,
     "progression": 3,
+    # **Joined 2026-09-01 at what is there, the opening-parity track**: one sentence saying the
+    # book prints the fork where it is put in front of the person, and the line itself. Nested
+    # inside `status_example` because a fork needs the sheet it is a fork in. The ways and what
+    # each opens are the book's own words (`gamesystem.offer_line`), so the payload line is
+    # furniture and not a demand about prose.
+    "offer_line": 2,
     "standing": 3,
     "standing_line": 2,
     "target_words": 3,
@@ -617,7 +635,11 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
 #: no branch in `planner.py` was edited by this track. **This is the number the audit's finding
 #: is about**: it is the largest prompt a scene drafter is ever sent, five of its demands were
 #: register clauses, and no sentence metric moved under them across ten chapters.
-SCENE_MAXIMAL_BUDGET = 41
+#:
+#: **41 -> 43 on 2026-09-01 for the `offer_line` conditional** (the opening-parity track): the
+#: one new branch in `planner.render_prompt`, priced at its own row above and landing twice here
+#: as one sentence and one furniture line. The off-by-one against the summed rows is unchanged.
+SCENE_MAXIMAL_BUDGET = 43
 
 
 def test_the_scene_floor_row_is_what_the_planner_actually_assembles() -> None:
@@ -713,6 +735,7 @@ def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -
             standing_line=_STANDING_LINE,
             target_words=900,
             criteria=_CRITERIA,
+            offer_line=_OFFER_LINE,
         )
     )
     assert len(counted) <= SCENE_MAXIMAL_BUDGET, (

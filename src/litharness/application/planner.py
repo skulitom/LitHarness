@@ -91,6 +91,7 @@ from litharness.domain.extraction import (
     graph_line_for,
     movable_names,
     offered_choice,
+    offered_line,
     progression_target,
     standing_example,
     standing_target,
@@ -258,6 +259,7 @@ def render_prompt(
     standing_line: str | None = None,
     chapter: Position | None = None,
     point_of_view: str | None = None,
+    offer_line: str | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -442,6 +444,19 @@ def render_prompt(
             "name as your prose spells it, carry these values forward unchanged unless this "
             "scene changes them, and write the numbers the scene leaves true."
         )
+        if offer_line:
+            # **The fork as furniture, beside the sheet it belongs to** (2026-09-01, the
+            # opening-parity track). §173 gave the system a fork and the plan an offer beat,
+            # and the packet rendered the ways as flat triples — `warrant offers stock as one
+            # way to take it` — so the one thing a reader of this genre wants to see, the menu
+            # with what each way opens, reached the writer as notation. The book prints it as
+            # it prints the sheet: one bracketed line, in the book's own words, exactly once.
+            # Inside the `status_example` branch because a fork needs the sheet it is a fork in.
+            system += (
+                " Where this fork is put in front of the person, the book prints this line, "
+                "exactly once, and they read it on the page:\n"
+                f"{offer_line}"
+            )
         if progression:
             # **The instruction above defaults to stasis, and a model with no reason to
             # change anything keeps everything.** Measured over 24 scenes: the ledger never
@@ -1231,14 +1246,33 @@ def make_plan_selector(
                     # say what the scene contains, the bound says what it may not also contain.
                     # A stored statement already carries both — `outline_proposal` folds them
                     # in the same order — so only the statement-less branch composes here.
+                    # **The opening's two beats ride the same render-time fold as the
+                    # interaction beat** (2026-09-01, the opening-parity track): who the
+                    # person was before, then the first printed line inside that; and the
+                    # first chapter ending on a thing read or offered and unanswered. Gated
+                    # on the same `reads` so every book that prints no line composes the
+                    # sentence it composed before, and keyed to the chapter shape where one
+                    # exists so the hook lands on the first chapter's last scene whatever
+                    # its length.
                     scene_plan=(
-genre.with_interaction(
-                            base_plan,
+                        genre.with_opening(
+                            genre.with_interaction(
+                                base_plan,
+                                beat.ordinal,
+                                beat.of_total,
+                                reads=status_line is not None,
+                                offer=offered_choice(
+                                    records, character=pov_id, at=beat.story_order_key
+                                ),
+                            ),
                             beat.ordinal,
-                            beat.of_total,
                             reads=status_line is not None,
-                            offer=offered_choice(
-                                records, character=pov_id, at=beat.story_order_key
+                            arc_index=arc_index or None,
+                            chapter_scene=(
+                                position.index_in_chapter if position is not None else None
+                            ),
+                            scenes_in_chapter=(
+                                position.scenes_in_chapter if position is not None else None
                             ),
                         )
                         if base_plan is not None
@@ -1262,6 +1296,7 @@ genre.with_interaction(
                     chapter=position,
                     point_of_view=pov_id,
                     writer=writer,
+                    offer_line=offered_line(records, character=pov_id, at=beat.story_order_key),
                 )
                 payload: dict[str, object] = {
                     "revision_id": head.revision_id,

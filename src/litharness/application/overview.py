@@ -391,8 +391,10 @@ _TASK = (
     "You are writing the listing for a new serial: the few lines a reader meets on the front "
     "page of a serial-fiction site, and the only thing that decides whether they open chapter "
     "one.\n"
-    "A reader meeting this has not started the book. Not an account of the world, and not the "
-    "life whoever this happens to had before it began.\n"
+    "A reader meeting this has not started the book. Not an account of the world. The life "
+    "whoever this happens to had before it began is one plain clause saying who they were the "
+    "day before, and no more: a listing with none has given the reader nobody to stand beside, "
+    "and one with more has become an account of it.\n"
     "Exactness spent on floors, ranks, counts and lengths of time is space the hook needed.\n"
     "A sentence a reader can take two ways has failed, and so has one that asserts what nobody "
     "in the story could know yet.\n"
@@ -440,8 +442,21 @@ def _system(writer: Writer | None) -> str:
     return f"{writer.render()}\n\n{_TASK}" if writer is not None else _TASK
 
 
-def render_overview_request(brief: str, writer: Writer | None = None) -> CompletionRequest:
+#: The line a first-person book's listing carries, as material under the brief rather than as
+#: a rule in the system: the task already allows "I" and forbids "you", so this says only which
+#: person this particular book is told in. Nothing about how; the person is a position, the
+#: same class of fact as `Point of view:` in the scene prompt.
+FIRST_PERSON_ASK = "Told by the person it happens to, as I."
+
+
+def render_overview_request(
+    brief: str, writer: Writer | None = None, *, person: str | None = None
+) -> CompletionRequest:
     """One overview, from a brief that may be empty.
+
+    `person` is `"first"` for a book told in the first person and otherwise `None`; the first
+    person appends `FIRST_PERSON_ASK` under the brief and nothing else changes, so every listing
+    drawn before this parameter existed renders byte-identically.
 
     An empty brief is legitimate and is the control the retired Forge kept for the same reason:
     a book built from no direction at all is what a directed one is read against.
@@ -464,6 +479,8 @@ def render_overview_request(brief: str, writer: Writer | None = None) -> Complet
     not a shelf label.
     """
     ask = brief.strip() or "Anything you would most want to read."
+    if person == "first":
+        ask = f"{ask}\n{FIRST_PERSON_ASK}"
     return CompletionRequest(
         prompt=f"What this book is to be about:\n{ask}",
         system=_system(writer),

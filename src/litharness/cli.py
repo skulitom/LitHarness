@@ -158,7 +158,13 @@ from litharness.domain.plan_refinement import (
     StoredPlanProposal,
     rollback_proposal,
 )
-from litharness.domain.plans import import_plan, premise_of, scene_plan_for
+from litharness.domain.plans import (
+    FIRST_PERSON_CONSTRAINT,
+    FIRST_PERSON_PLAN_ID,
+    import_plan,
+    premise_of,
+    scene_plan_for,
+)
 from litharness.domain.policy import (
     GateKind,
     GateOutcome,
@@ -2234,7 +2240,11 @@ def cmd_listing(args: argparse.Namespace) -> int:
         drawn: list[str] = []
         for _attempt in range(LISTING_DRAW_ATTEMPTS):
             drafted, refusal = _completion_call(
-                overview_mod.render_overview_request(brief, writer), calls=calls, spend=spend
+                overview_mod.render_overview_request(
+                    brief, writer, person=getattr(args, "person", None)
+                ),
+                calls=calls,
+                spend=spend,
             )
             if drafted is None:
                 print(f"litharness: {refusal}", file=sys.stderr)
@@ -4503,6 +4513,22 @@ def cmd_new(args: argparse.Namespace) -> int:
         authority=lc.PlanAuthority.INTENDED,
         locked=True,
     )
+    # **Grammatical person is a position the book is created with, or it is nobody's.** Read 4
+    # found the writer choosing third person eight scenes out of eight with nothing anywhere
+    # deciding it; `--person first` seeds one locked constraint beside the premise, and it reaches
+    # every scene call the way a director's own constraint does. Absent, nothing is seeded and
+    # the book is the book it always was.
+    seeded_items = [premise]
+    if getattr(args, "person", None) == "first":
+        seeded_items.append(
+            lc.PlanItem(
+                logical_id=FIRST_PERSON_PLAN_ID,
+                kind=lc.PlanKind.CONSTRAINT,
+                text=FIRST_PERSON_CONSTRAINT,
+                authority=lc.PlanAuthority.INTENDED,
+                locked=True,
+            )
+        )
     # **A debt with a settlement date, seeded before the first scene exists.** The measured
     # defect is the project's oldest: 40 promises opened and 0 paid on the live serial, 32 and 0
     # before it — every one of them opened by the summary handler out of a scene that had just
@@ -4612,7 +4638,7 @@ def cmd_new(args: argparse.Namespace) -> int:
         store.record_plan_items(
             book_id,
             branch_id,
-            [premise],
+            seeded_items,
             created_at=stamp,
             events=[
                 Event(
@@ -4623,7 +4649,11 @@ def cmd_new(args: argparse.Namespace) -> int:
                     book_id=book_id,
                     branch_id=branch_id,
                     revision_id=revision.revision_id,
-                    payload={"items": 1, "premise": True},
+                    payload={
+                        "items": len(seeded_items),
+                        "premise": True,
+                        "person": getattr(args, "person", None),
+                    },
                 )
             ],
         )
@@ -5760,6 +5790,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     new.add_argument("--state", type=Path, help="a StateSnapshot to seed canon with")
     new.add_argument(
+        "--person",
+        choices=("first", "third"),
+        default=None,
+        help="which grammatical person the story is told in. `first` seeds one locked "
+        "constraint beside the premise that every scene call then carries; `third` and "
+        "the default seed nothing, which is the book as it was before this existed",
+    )
+    new.add_argument(
         "--promises",
         type=Path,
         help="debts to open before scene one, each with a due scene; the answers live in the "
@@ -6137,6 +6175,13 @@ def build_parser() -> argparse.ArgumentParser:
         "is a person's job — which is a human in the production loop (§126)",
     )
     listing.add_argument("--out", type=Path, help="write listing.txt, title.txt and the bundle")
+    listing.add_argument(
+        "--person",
+        choices=("first", "third"),
+        default=None,
+        help="which grammatical person the book is told in: `first` asks the listing for it "
+        "and, with --scenes, seeds the book's locked constraint (see `new --person`)",
+    )
     listing.add_argument("--json", action="store_true")
     listing.add_argument(
         "--title-attempts",

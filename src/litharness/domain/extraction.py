@@ -1434,6 +1434,7 @@ __all__ = [
     "moved_to",
     "normalise_subject",
     "offered_choice",
+    "offered_line",
     "parse_graph_line",
     "parse_sheet",
     "promotions",
@@ -1998,3 +1999,27 @@ def offered_choice(
     ):
         return None
     return choice.name, tuple(option.name for option in choice.options)
+
+
+def offered_line(
+    records: Sequence[lc.StateRecord], *, character: str | None = None, at: str | None = None
+) -> str | None:
+    """The `[OFFER]` line the book prints for the fork standing open here, or `None`.
+
+    Every guard is `offered_choice`'s, by calling it: a fork that function abstains on is a
+    fork this line does not print. What this adds is only the rendering, `gamesystem.offer_line`,
+    so the writer is handed the fork as furniture rather than as a sentence about a fork — the
+    operator's read-10 item was a system that only reports, and a fork the reader cannot see
+    the ways of is a fork the reader cannot want one of.
+    """
+    if offered_choice(records, character=character, at=at) is None or character is None:
+        return None
+    canon = [record for record in records if state_mod.is_canon(record)]
+    system = gamesystem_mod.systems_of(canon)[0]
+    sheet = gamesystem_mod.sheet_of(canon, character, system=system, at=at)
+    if sheet is None:
+        return None
+    pending = gamesystem_mod.pending_choices(sheet)
+    if not pending:
+        return None
+    return gamesystem_mod.offer_line(system, pending[0])

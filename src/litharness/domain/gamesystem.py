@@ -1131,6 +1131,35 @@ def _open_choices(sheet: CharacterSheet) -> tuple[Choice, ...]:
     )
 
 
+#: The line the book prints where a fork is put in front of a person. Bracketed like the
+#: status line so `draft`'s em-dash strip and the reviser's containment both read it as the
+#: book speaking as a machine (`_MACHINE_LINE`'s shape), and tagged differently so
+#: `extraction` never parses it: the status line is the one parsed surface (§160.3) and this
+#: is furniture the reader watches, never a record.
+OFFER_TAG = "[OFFER]"
+
+
+def offer_line(system: SystemDef, choice: Choice) -> str:
+    """The fork as the book prints it: the fork's name, then each way and what it opens.
+
+    **Every word on the line is the book's own** — the fork's name, the ways' names, the
+    abilities' names, and a way's price where the system declared one — joined by grammar and
+    nothing else. Nothing here says which way; the ways come in the fork's own order, which is
+    id order, the same order `Choice.options` holds them in (§61(5): no ordering of any other
+    kind). An ability an option grants that the system does not declare is a defect
+    `check_draw` refuses, so it is named here by id rather than swallowed.
+    """
+    by_id = {ability.ability_id: ability.name for ability in system.abilities}
+    ways = []
+    for option in choice.options:
+        opens = ", ".join(by_id.get(ability_id, ability_id) for ability_id in option.grants)
+        way = f"{option.name}: opens {opens}" if opens else option.name
+        if option.costs:
+            way = f"{way}, costs {option.costs}"
+        ways.append(way)
+    return f"{OFFER_TAG} {choice.name} — " + " | ".join(ways)
+
+
 def pending_choices(sheet: CharacterSheet) -> tuple[Choice, ...]:
     """The forks standing open in front of this person, in declaration order.
 
@@ -2134,6 +2163,7 @@ __all__ = [
     "MIN_OPTIONS",
     "MIN_RANKS",
     "MIN_SCALE_MAXIMUM",
+    "OFFER_TAG",
     "RANK_KEY",
     "REGISTRY_VERSION",
     "SYSTEM_DIGEST",
@@ -2159,6 +2189,7 @@ __all__ = [
     "deepen",
     "gain",
     "legal_moves",
+    "offer_line",
     "pending_choices",
     "records_for",
     "records_for_sheet",

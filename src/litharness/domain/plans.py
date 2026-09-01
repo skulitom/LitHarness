@@ -25,6 +25,19 @@ from dataclasses import dataclass
 
 import litharness_contracts as lc
 
+#: The locked constraint a book told in the first person carries from creation. **A position,
+#: not a handling instruction**: it says which person the story is told in and stops, the way
+#: `Point of view: kell.` says whose scene it is and stops (`planner.render_prompt`). It travels
+#: as an author-locked plan item, so it reaches every scene call through `render_constraints`
+#: at the director's authority rather than as a rule in the house floor, and a book created
+#: without `--person first` carries nothing and renders byte-identically to what it did before.
+#: Recorded as a position because read 4 (2026-08-22) found grammatical person decided by
+#: nobody, and the market's summits are told from inside the person they follow.
+FIRST_PERSON_CONSTRAINT = "The story is told in the first person, by the person it follows."
+
+#: The plan item id the constraint above is seeded under; one per book, like `plan-premise`.
+FIRST_PERSON_PLAN_ID = "plan-person"
+
 
 @dataclass(frozen=True, slots=True)
 class ImportedPlan:

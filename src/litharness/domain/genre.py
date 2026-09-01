@@ -567,6 +567,91 @@ def with_interaction(
     return f"{stripped}{joiner}{beat}"
 
 
+#: The opening's two beats, and where they come from is a measurement rather than a taste.
+#: The market's summits open the same way: who this person is and what their days were is on
+#: the page before the system is, the system arrives inside that, and the chapter ends on a
+#: thing the person has read or been offered and has not answered. Measured 2026-09-01 on the
+#: two anchors the operator placed on the shelf and the four highest-follower local LitRPG
+#: openings (`research/opening-parity/PREREG.md` §2); our four newest openings did none of
+#: it. Written as material, like every beat above: a thing that happens in the scene, never an
+#: adjective about it, and each names a token the writer can put on the page (§154) — the
+#: person's days before, the first printed line, the unanswered thing at the end.
+OPENING_FIRST = (
+    "Who this person is and what their days were before any of this is on the page before the "
+    "first line the book prints, and the first line the book prints lands inside that."
+)
+
+OPENING_HOOK = (
+    "The scene ends on something the person has just read or been offered and has not yet "
+    "answered."
+)
+
+
+def opening_text(
+    ordinal: int,
+    *,
+    reads: bool = False,
+    arc_index: int | None = None,
+    chapter_scene: int | None = None,
+    scenes_in_chapter: int | None = None,
+    opening: int = 2,
+) -> str | None:
+    """The opening beat this scene carries, or `None` for a scene that carries none.
+
+    `reads` is the same gate `interaction_text` takes: a book that prints no line has no
+    first printed line for the first beat to land inside, so neither beat fires and every
+    book that speaks no system voice renders byte-identically to what it did before this
+    existed. `arc_index` keeps a serial's later arcs from opening the book again, exactly as
+    `staging.bounds_opening` does.
+
+    **Which scene is the chapter's last is the chapter's to say.** Where the caller knows the
+    chapter shape it passes `chapter_scene` and `scenes_in_chapter`, and the hook lands on the
+    last scene of the first chapter whatever its length; a caller without a shape falls back
+    to `opening`, the same placed number `staging.OPENING` carries, so the two modules agree
+    about which span is the opening on the shape the house actually runs.
+    """
+    if not reads:
+        return None
+    if arc_index is not None and arc_index > 1:
+        return None
+    if ordinal == 1:
+        return OPENING_FIRST
+    if chapter_scene is not None and scenes_in_chapter is not None:
+        last_of_first_chapter = ordinal == scenes_in_chapter and chapter_scene == scenes_in_chapter
+        return OPENING_HOOK if last_of_first_chapter and ordinal > 1 else None
+    return OPENING_HOOK if ordinal == opening else None
+
+
+def with_opening(
+    statement: str,
+    ordinal: int,
+    *,
+    reads: bool = False,
+    arc_index: int | None = None,
+    chapter_scene: int | None = None,
+    scenes_in_chapter: int | None = None,
+    opening: int = 2,
+) -> str:
+    """One scene's plan text, with the opening beat appended where it is scheduled.
+
+    Appended after the statement and after the progression and interaction beats, so an
+    opening scene reads: what it is about, what moves in it, that the interface is opened in
+    it, and then what the opening asks of it. `reads=False` renders nothing at all, which is
+    the control.
+    """
+    beat = opening_text(
+        ordinal, reads=reads, arc_index=arc_index, chapter_scene=chapter_scene,
+        scenes_in_chapter=scenes_in_chapter, opening=opening,
+    )
+    if beat is None:
+        return statement
+    stripped = statement.strip()
+    if not stripped:
+        return beat
+    joiner = " " if stripped.endswith((".", "!", "?")) else ". "
+    return f"{stripped}{joiner}{beat}"
+
+
 def with_beat(
     statement: str,
     ordinal: int,
@@ -613,6 +698,8 @@ __all__ = [
     "NAMED_BEAT",
     "NO_SHEET",
     "OFFER_BEAT",
+    "OPENING_FIRST",
+    "OPENING_HOOK",
     "beat_name_in",
     "beat_ordinals",
     "beat_text",
@@ -620,7 +707,9 @@ __all__ = [
     "has_starting_sheet",
     "interaction_ordinals",
     "interaction_text",
+    "opening_text",
     "system_gap",
     "with_beat",
     "with_interaction",
+    "with_opening",
 ]

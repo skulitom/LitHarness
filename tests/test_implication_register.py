@@ -129,13 +129,19 @@ def test_the_second_arm_names_the_first_as_its_general_case() -> None:
     with it. They are asserted exactly rather than with `<=`, because a bound here would stop this
     file noticing the next silent growth — `test_scene_economy`'s reason unchanged, and
     `tests/test_prompt_budget.py` owns the ceilings themselves.
+
+    **`overview._TASK` 13 -> 14 on 2026-09-01, the opening-parity track**, and nothing about this
+    clause moved: the task's second sentence, which forbade the person's life before the book
+    began, was re-signed to allow exactly one clause of it and to name both failures, and
+    `house.demands` reads that as two where it read one. `tests/test_prompt_budget.py` carries the
+    reason at the listing's ceiling, 17 -> 18.
     """
     clause = _clause(reviser._TASK)
     assert clause.startswith("What fails is")
     head, _semicolon, _tail = clause.partition(";")
     assert "anything else" in head
     assert len(house.demands(house.READER)) == 10
-    assert len(house.demands(overview._TASK)) == 13
+    assert len(house.demands(overview._TASK)) == 14
 
 
 def test_the_two_arms_are_bounded_differently_and_neither_reaches_a_passage() -> None:
