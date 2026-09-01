@@ -156,3 +156,18 @@ second rail — a small, explicitly non-confirmatory arm of genuinely post-cutof
 fictions via live fetch — is a candidate for its own registered act after (c). And the
 registered n stays 200: a downward power recalculation after a good pilot is optional
 stopping in a nicer coat.
+
+## Stage (c) state: started, paused deliberately, and one assembly defect found while flying
+
+Started 2026-08-31 under the operator's go and the raised ceiling; **paused cleanly
+2026-09-01 at 5,627 cache records** (all 400 confirmatory books probed; C-arm ~48 of 200
+pairs) while the operator weighs the run's remaining value against the book loop's quota —
+the coordinator's recorded recommendation is to stop and bank the pilot as the diagnostic.
+Nothing is lost either way: every bought record replays, and the lock is released.
+
+**Assembly defect, found by an external review the operator relayed:** the driver's plan
+slices exactly 200 raw pairs while PREREG registers a target of **200 decided** pairs; at
+the pilot's 19/20 decided rate the run as-built lands at ~190 decided and returns
+`insufficient_n` structurally. Any relaunch must first add the top-up rule (run pairs until
+200 decide or the pool exhausts, which PREREG's own attrition sentence anticipates). Not
+fixed in code yet — recorded here so a resume cannot happen without it.
