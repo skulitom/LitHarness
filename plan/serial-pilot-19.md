@@ -1,0 +1,86 @@
+# Serial Pilot 19 — the first opening drawn under the summit shape, a genre-centre writer, a situation brief and the first person
+
+**Status: PROTOCOL, 2026-09-01, written before the listing call.** The first book stood up under
+everything stage-0 §195 shipped: the opening's two beats, the printed `[OFFER]` line, `--person
+first`, the re-signed listing clause, and a writer recruited for the genre's centre. It is the
+"treatment" opening the opening-parity measurement (`research/opening-parity/`) will read
+beside the four "baseline" openings and the six summits, on the same frozen panel, once its
+chapter exists.
+
+## 0. What this is, and what it is not
+
+**A description of one draw.** Everything moved at once — writer, brief, person, three pieces of
+machinery — so nothing here is a treatment effect (`serial-pilot-7.md` §0, the standing
+boundary). The comparison that carries information is the parity panel's: this opening beside
+the summits, read with the baseline openings beside the same summits. That comparison is
+descriptive too (PREREG §4), and one draw is one draw.
+
+**No model chose anything here.** The writer is cast by the coordinator for the shape the
+operator named; the brief is the coordinator's, written as a situation and not a shelf label
+(§136); the listing gate is the coordinator's deterministic checklist; the pilot follows the
+settled recipe of pilot 15b §1 flag for flag except where this file says otherwise.
+
+**The operator reads at milestones, not per iteration** (`plan/continuous-loop-direction.md`):
+the listing and the chapter go on the shelf, the parity panel reads them, and the operator's
+read is asked for at the point the panel's description makes it worth asking.
+
+## 1. The draw, as it was set up
+
+- **Writer:** `marsh` (progression-fantasy, several-with-beat), accepted on the installation
+  roster 2026-09-01 — the integration-day shape named on purpose.
+- **Brief** (`runs/pilots/pilot19/brief.txt`, the designed input channel; a situation, no
+  genre noun, no read quote): a twenty-three-year-old a year short of a chemistry degree, night
+  shifts at a parcel depot, one old game he is uselessly good at; on an ordinary Monday every
+  screen on Earth shows the same message and everybody gets the same sheet except him. The
+  exception itself is left to the writer.
+- **Person:** `--person first`, the operator's stated preference (read 4 §3), shipped as a
+  position. §195.1's census found the two anchors close third with a reported mind, so this is
+  a choice and not a finding; a first-versus-third A/B on this settled listing is the obvious
+  next arm.
+- **Shape:** six scenes, two per chapter, the standard pilot length.
+- **Ceilings:** the pilot-15b recipe's (`--max-cost-usd-per-day 40`,
+  `--max-tokens-per-day 20000000`).
+
+```bash
+uv run litharness --database runs/pilots/databases/serial19.db init
+uv run litharness --database runs/pilots/databases/serial19.db \
+    --roster-database C:/DEV/LitHarness/runs/roster/roster.db --chapter-scenes 2 \
+    listing --writer marsh --brief-file runs/pilots/pilot19/brief.txt \
+    --scenes 6 --person first --out runs/pilots/pilot19
+# coordinator's gate on the listing (§183's checklist), then:
+uv run litharness --database runs/pilots/databases/serial19.db --roster-database ... \
+    --library book-library --writer marsh \
+    --max-cost-usd-per-day 40 --max-tokens-per-day 20000000 architect seed
+uv run litharness --database runs/pilots/databases/serial19.db world check
+uv run litharness --database runs/pilots/databases/serial19.db world accept
+uv run litharness --database runs/pilots/databases/serial19.db --roster-database ... \
+    --library book-library --writer marsh --chapter-scenes 2 \
+    --max-cost-usd-per-day 40 --max-tokens-per-day 20000000 tick    # until chapter 1 stands
+uv run litharness --database runs/pilots/databases/serial19.db --library book-library \
+    --chapter-scenes 2 library
+```
+
+## 2. What is refused before the draw
+
+- **No redraw on taste.** The listing is redrawn only on the two frozen predicates the command
+  already carries (coordinator density, machinery words) and on §183's gate; a listing the
+  coordinator merely dislikes stands.
+- **No prose reads before the panel.** The coordinator's gate reads the checklist (standalone
+  comprehension, diegetic interface, the offer on the page, the opening's two beats landed,
+  cast bound, no schema words); it does not grade sentences. The register question is the
+  reviser's milestone and stays the operator's.
+- **No promotion.** Whatever the panel says, this draw is a description. A second draw under
+  the same settled listing is what the A/B harness (§191) exists for.
+
+## 3. The listing
+
+*(filled after the call)*
+
+## 4. The seed and the chapter
+
+*(filled after the ticks)*
+
+## 5. The panel's reading
+
+*(filled from `runs/opening-parity/summary.md` once this opening has been added to the
+manifest as an "ours" entry and the pairs against the six summits have been bought)*
