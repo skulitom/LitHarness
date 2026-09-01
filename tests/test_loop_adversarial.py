@@ -411,6 +411,15 @@ def test_flatten_excludes_booleans():
     assert adv.flatten({"a": True, "b": 2, "c": {"d": 3.5}}) == {"b": 2.0, "c.d": 3.5}
 
 
-def test_measures_adapter_falls_back_and_honours_a_preference():
-    assert ma.load_measures("no-such-module-anywhere").source == "local-fallback"
+def test_measures_adapter_falls_back_and_honours_a_preference(monkeypatch):
+    """A bad preference falls through, absence falls back, presence wins.
+
+    Written in a worktree where no scorecard module existed, this first asserted that a bad
+    `prefer` lands on the local fallback — true only of that tree. On main §190's battery is
+    importable, so the contract is: a bad preference falls through to the first importable
+    SCORECARD_MODULE, and only genuine absence (simulated here) reaches the fallback.
+    """
+    assert ma.load_measures("no-such-module-anywhere").source in ma.SCORECARD_MODULES
     assert ma.load_measures().source in {"local-fallback", *ma.SCORECARD_MODULES}
+    monkeypatch.setattr(ma, "SCORECARD_MODULES", ())
+    assert ma.load_measures("no-such-module-anywhere").source == "local-fallback"
