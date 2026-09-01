@@ -21136,3 +21136,96 @@ count here reaches the writer, the reviser, the editorial control plane, the rea
 roster or any dossier, and nothing the operator said about any of these books became prompt
 text, a directive or a plan item (§97.1). The defect was in a detector and the fix is a second
 detector.
+
+## 192. The panel can read our own drafts, and everything it says is labelled as the pilot-grade thing it is
+
+**Built 2026-09-01 as build 3 of [`plan/continuous-loop-direction.md`](continuous-loop-direction.md)**
+— the operator's promotion of the loop from read-driven to instrument-driven. Code:
+`research/sim-readership-backtest/house_panel.py`. Tests: `tests/test_bt_house_panel.py`. The two
+sibling builds (the per-draw scorecard, the A/B redraw harness) are their own entries; this one
+is the column that lands beside them.
+
+**No model was called for this entry.** Every test drives a fake elicitor, as `test_bt_arms.py`
+and `test_bt_backtest.py` do; the first paid panel read is the coordinator's and is
+operator-gated. The only live exercise was a `--dry-run` over two real chapter files (pilot 15,
+shelf draws 3 and 2), which constructs no elicitor: 20 sessions, $1.49 subscription-equivalent,
+pair `house-6b47efd2e72a2ff6`.
+
+### 192.1 What shipped
+
+One research-side script that points the backtest's **frozen** session machinery at two of our
+own chapter files. Nothing about the instrument is re-authored: `population.POPULATION`'s ten
+personas, `arms`' two byte-frozen turns, `arms.STAGE2_SCHEMA`'s closed answer, `blinding.blind`,
+and `backtest._sessions_for_pair`'s both-orders cell with its degenerate-stimuli refusal are all
+reused as they stand. Given file A and file B — typically draw N and draw N-1 of one settled
+listing — it plans ten personas x two orders, runs them through `elicit.Elicitor` on the haiku
+panel against its own content-addressed cache (`runs/ab/panel-cache.jsonl` by default, so a
+re-run replays free), and writes one JSON beside the A/B results for **a person** to read:
+per-persona and aggregate preference shares, decided/neither counts, the positional split, and
+the closed reason codes.
+
+Three properties are worth naming, because they are why the column can exist at all:
+
+- **The labelling is structural.** `PROVENANCE` is one frozen sentence naming the pilot's actual
+  status — descriptive 0.789 at pilot n, control corners unsettled, no validity licence — printed
+  on every run and stamped on the file; each block inside the file (`shares`, `positional`,
+  `reason_codes`) additionally carries its own `exploratory: true`, so a number lifted out on its
+  own still says what it is.
+- **The positional split is reported in slot space**, where the artifact lives, beside the
+  file-space shares. Folding position into file space is how a panel that answered on order reads
+  as a panel that answered on prose.
+- **A house cell cannot be mistaken for a registered cell.** Sessions carry the arm tag `house`
+  and a pair id under the `house-` prefix; `arms._sample_index` folds pair id, persona and order
+  and *not* the arm, so the prefix is the actual rail against a cache-key collision with a bought
+  C, P, sham, damage or surface draw. A test pins it.
+
+### 192.2 The ceilings, because `elicit` has none
+
+`elicit.Elicitor` expresses no spend ceiling — it exposes `spend()` and nothing else — so the
+refusal lives here: **both** `--max-usd` and `--max-sessions` must be expressed (flag or
+`LITHARNESS_PANEL_MAX_USD` / `LITHARNESS_PANEL_MAX_SESSIONS`), **neither has a default**, the
+estimate is checked against both before the first call, and the ledger is read after every
+session exactly as `backtest.run_sessions` does — a crossing finishes the session in hand, stops,
+and writes `aborted_at_ceiling: true` on the face of the file. `backtest.COST_CEILING_USD` is
+deliberately *not* reused: it is the registered programme's budget, and an exploratory read must
+not spend against it. The cost note is printed per run and is one multiplication a person checks
+by hand (sessions x the pilot-measured per-session basis, which `PREREG.md` and `FINDINGS.md`
+own).
+
+### 192.3 What was refused
+
+- **Any gating use.** The file gates nothing, ranks nothing, and is consumed by nothing: it is
+  written for a person, and `reads` says so in its own bytes. §61(5)/§84 hold — no model ranks
+  candidate books, and a share is not a promotion.
+- **Any prompt path.** Nothing this column produces reaches scene drafting, story planning, the
+  editorial control plane, a dossier, or a revision. The standing axiom on raw chapter-reader
+  answers is untouched; stage-1 free text is not even parsed here.
+- **A field named `verdict` or `score`.** Enforced on the bytes about to be written, not in a
+  comment: `write_result` refuses any payload with a key *containing* either substring,
+  case-insensitively. The substring rule is deliberate — `verdict_registered` is precisely the
+  name the dual-verdict lesson is about.
+- **`analysis.Vote` and `analysis.aggregate_by_pair`.** Our chapters have no market outcome, so
+  there is no higher-conversion member and no member space; `Vote.high_was` would have been a
+  field lying by name, and a field that lies by name is how a number gets promoted. The column
+  carries its own `PanelAnswer` and counts slot space and file space separately.
+- **The reward/holdout split.** Not reported. It exists to decide which personas may become a
+  reward model under a registration this column does not run, and printing it here would invite
+  exactly that reading.
+- **Writing anywhere but one `.json`.** `check_destination` refuses a `.db`/`.sqlite` suffix by
+  name, and anything that is not `.json`; it is called once before any call is bought and again
+  inside `write_result`, so no caller routes around it. The module imports no `sqlite3` and no
+  package code; tests pin both, and that `src/litharness/` never references it.
+- **A bar, a floor, or a target share.** §81/§85/§87/§89's four attainability checks were not run
+  on any quantity here, because nothing here is a bar. There is no threshold at which a draw
+  "wins": the file reports shares and stops.
+
+### 192.4 Anti-scope
+
+No persona is edited, added, removed or reweighted — a reader redesign is its own registered act
+(`plan/continuous-loop-direction.md`'s anti-scope). The backtest's paused stage (c) is untouched
+and is not revived by this column: no registered arm, ceiling, salt, verdict rule or cache is
+modified, and `PREREG.md` gains nothing. RS1 is untouched — the only text this module reads is
+ours, no corpus is opened, and the RoyalRoad-derived number in `PROVENANCE` is provenance prose,
+not a datum crossing to the generation side. Nothing here promotes a research claim under
+`EPISTEMIC_GOVERNANCE.md`: the panel's status is unchanged by pointing it at our own drafts, and
+this entry claims a column with an `OBSERVED` count of exactly zero house reads so far.
