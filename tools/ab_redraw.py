@@ -663,6 +663,13 @@ def run_arm(
     """
     run = ArmRun(spec=spec, listing=listing, started_at=datetime.now(tz=UTC).isoformat())
 
+    # sqlite cannot create intermediate directories, and the first live arm proved it: `init`
+    # exited 2 on a database whose arm folder did not exist yet, then the folder appeared when
+    # this module wrote the command log into it, so the same command by hand succeeded and the
+    # failure read as a mystery. The folder is made before the first step, not at the write.
+    spec.database.parent.mkdir(parents=True, exist_ok=True)
+    spec.arm_dir.mkdir(parents=True, exist_ok=True)
+
     def look() -> StoreState:
         run.state = probe(spec.database, spec.chapter_scenes, spec.library_root)
         return run.state
