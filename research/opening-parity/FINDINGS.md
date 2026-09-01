@@ -35,6 +35,37 @@ two anchors' blurbs and two further anchors on the shelf; every bought record re
 
 ## The reading
 
-*(filled from `runs/opening-parity/summary.md` when the run completes; shares and counts only,
-the positional split in slot space beside them, the recognised stratum kept apart from the
-clean one, and no bar)*
+### What the first seven baseline pairs said, before any control existed
+
+Read off the result files of the cut run (2026-09-01, `opening` arm, all probe-clean except
+*Randidly*, whose opening the title probe recognised): station over *Primal Hunter* 20 of 20,
+over *Defiance* 19 of 19, over *The Gam3* 20 of 20, over *Magical Girl Gunslinger* 19 of 19,
+over *Low-Fantasy Occultist Isekai* 19 of 20, over *Randidly Ghosthound* 15 of 20 with a
+first-slot share of 0.65; kettle over *Primal Hunter* 20 of 20. Every pair but the last is
+order-clean (first-slot share 0.50–0.55). The reason code is `hooked-by-other` in most cells.
+
+**This is not read as parity, and the reason is on the record before the controls' numbers
+are.** It is the shape stage-0 §140 produced on listings — ours over the market's best 15 of 16
+— where §141.3 then found the readership's resolution within the top tier unproven and the
+reader-architecture programme named the failure to watch for: a mechanism that passes the
+follower gradient and still prefers polish to event. Seven pairs at 19–20 of 20 against four
+summits with 5,000 to 34,000 followers is either that failure or a finding, and nothing in
+these cells can tell which.
+
+### The decision table for the controls, fixed before they were bought (PREREG §5b, §5d)
+
+| control result | what the ours-vs-summit shares then mean |
+| --- | --- |
+| `control-vs-source` near even: the panel cannot tell a shuffled opening of ours from the ordered one | the panel is not reading story order at this length; every ours-vs-summit share is about surface and none is about story |
+| `control-vs-summit` at or near the ordered opening's rate: a shuffled opening of ours is still taken over an anchor 18–20 of 20 | the preference does not depend on the story being in order; the shares are a preference about surface, never parity |
+| `control-vs-summit` well under the ordered rate, and `control-vs-source` clearly for the source | the preference depends on order; the shares are the panel's preference about these openings, which is still a pilot-grade instrument's preference and not a validity claim |
+
+No threshold is declared for "near" or "well under": the numbers are reported and read against
+each other, and §61's attainability checks were not run because none of this is a bar.
+
+### The result
+
+*(filled from `runs/opening-parity/summary.md` when the amended run completes — pilot 19's
+opening, the baseline, the calibration pairs, the three controls, the listing arm — shares and
+counts only, the positional split in slot space beside them, the recognised stratum kept apart
+from the clean one)*
