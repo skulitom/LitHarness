@@ -14,7 +14,7 @@ opening, each a plain integer or position and none a quality:
 
 Run over the registered manifest; no third-party text is printed, only counts:
 
-    uv run python research/opening-parity/shape_census.py --manifest research/opening-parity/manifest.json
+    uv run python research/opening-parity/shape_census.py \n        --manifest research/opening-parity/manifest.json
 
 The market anchors are read from the shelf and the derived folder (both gitignored); the
 counts may be committed, the text never is (RS1, and the derived folder's own rule).
