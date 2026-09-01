@@ -282,6 +282,24 @@ def test_a_variant_expressed_as_a_flag_rides_every_invocation(tmp_path: Path) ->
         assert "--no-revise" in step.argv, step.label
 
 
+def test_a_first_person_arm_creates_its_book_in_that_person_and_nowhere_else(
+    tmp_path: Path,
+) -> None:
+    """Stage-0 §195's position is a flag of `new`, so it rides that step alone; an arm that
+    names no person creates the book exactly as every arm before the flag existed."""
+    first = _spec(tmp_path, person="first")
+    steps = ab_redraw.plan_steps(first, ab_redraw.read_listing(first.listing))
+    for step in steps:
+        carried = "--person" in step.argv
+        assert carried is (step.label == "new"), step.label
+    new = next(step for step in steps if step.label == "new")
+    assert new.argv[new.argv.index("--person") + 1] == "first"
+
+    plain = _spec(tmp_path)
+    for step in ab_redraw.plan_steps(plain, ab_redraw.read_listing(plain.listing)):
+        assert "--person" not in step.argv, step.label
+
+
 # ----------------------------------------------------------------------------------- the arm
 
 

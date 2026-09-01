@@ -214,6 +214,11 @@ class ArmSpec:
     max_cost_usd_per_day: float | None = None
     max_tokens_per_day: int | None = None
     extra_args: tuple[str, ...] = ()
+    #: The grammatical person the book is created in, or `None` for the book as it was. A
+    #: subcommand flag of `new` rather than a global one, so it cannot ride `extra_args` and
+    #: has its own slot; `--person first` is stage-0 §195's position, and first-versus-third
+    #: on one settled listing is the arm that position exists to be measured by.
+    person: str | None = None
     litharness: tuple[str, ...] = tuple(shlex.split(DEFAULT_LITHARNESS))
     scorecard: Path | None = None
     scorecard_command: str = DEFAULT_SCORECARD_COMMAND
@@ -443,6 +448,7 @@ def plan_steps(spec: ArmSpec, listing: Listing) -> list[Step]:
                 listing.premise,
                 "--scenes",
                 str(spec.scenes),
+                *(("--person", spec.person) if spec.person else ()),
             ),
             note="the settled listing, byte for byte off disk",
         ),
@@ -857,6 +863,7 @@ def write_folder(run: ArmRun, *, scorecard: dict[str, object], spend: dict[str, 
         "chapter_scenes": run.spec.chapter_scenes,
         "ticks": run.ticks,
         "extra_args": list(run.spec.extra_args),
+        "person": run.spec.person,
         "ceilings": {
             "max_cost_usd_per_day": run.spec.max_cost_usd_per_day,
             "max_tokens_per_day": run.spec.max_tokens_per_day,
@@ -968,6 +975,14 @@ def build_parser() -> argparse.ArgumentParser:
         "Argparse reads a bare `--extra-arg --no-revise` as a missing value followed by an "
         "unknown option, and refuses. Repeatable; recorded in arm.json",
     )
+    parser.add_argument(
+        "--person",
+        choices=("first", "third"),
+        default=None,
+        help="the grammatical person the arm's book is created in (`new --person`); a variant "
+        "that is this flag is expressed here rather than through --extra-arg, because it is "
+        "a flag of `new` and not of every invocation. Recorded in arm.json",
+    )
     parser.add_argument("--litharness", default=DEFAULT_LITHARNESS, help="how to invoke the CLI")
     parser.add_argument("--scorecard", type=Path, default=None, help="build 1's script, explicitly")
     parser.add_argument("--scorecard-command", default=DEFAULT_SCORECARD_COMMAND)
@@ -997,6 +1012,7 @@ def spec_from(args: argparse.Namespace) -> ArmSpec:
         max_cost_usd_per_day=args.max_cost_usd_per_day,
         max_tokens_per_day=args.max_tokens_per_day,
         extra_args=tuple(args.extra_args),
+        person=args.person,
         litharness=tuple(shlex.split(args.litharness)),
         scorecard=args.scorecard,
         scorecard_command=args.scorecard_command,
