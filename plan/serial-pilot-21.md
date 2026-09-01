@@ -86,6 +86,22 @@ coordinator's.
 
 *(filled after the ticks)*
 
-## 5. Read 16
+## 5. The loop, as the operator set it
 
-*(the operator's)*
+**The operator, 2026-09-02, verbatim:** *"once you put all the necessary fixes and regenerate
+it, could you hand read again? I feel like you understand the flaws much better than previous
+models and you go much more indepth on your analysis than me. Then we could repeat the loop."*
+
+So the loop from here, on this settled listing unless a read finds the listing itself at
+fault: the coordinator hand-reads each draw's chapter 1 in depth against the two anchors,
+routes every defect (enforcement, gap, structural), makes the fix that is structural rather
+than a clause wherever one exists, redraws under the same listing, and reads again. Each draw
+is recorded below as §5.N with its read, its routing, and the fix that followed; the
+operator reads at milestones and his read is what the loop answers to. **The coordinator's
+read is a diagnostic and never evidence** (§95, and the standing frame of every read file):
+an LLM reading prose is what this project measures with, and this one steers but certifies
+nothing. Two draws under one listing are two draws (`serial-pilot-7.md` §0).
+
+### 5.1 Draw 1
+
+*(the read, after the chapter)*
