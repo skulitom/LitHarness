@@ -101,7 +101,11 @@ and at Push one. Pilots 19 and 20 both drew a system the completion refused; thi
 pilot whose progression beats speak the system's own vocabulary and whose fork can print as
 the `[OFFER]` line where it opens.
 
-**Chapter 1:** *(filled after the ticks)*
+**Chapter 1 (draw 1):** two scenes, 1,970 words, both accepted on the first attempt, the
+leak gate on both decisions reading *no run of 8 words is shared with any exemplar shown*,
+the frozen request carrying both anchor chapters and the prohibition, and the beat in the
+system's own vocabulary for the first time (*Push moves here*). Published to
+`book-library/the-line-nobody-else-has/`.
 
 ## 5. The loop, as the operator set it
 
@@ -119,6 +123,53 @@ read is a diagnostic and never evidence** (§95, and the standing frame of every
 an LLM reading prose is what this project measures with, and this one steers but certifies
 nothing. Two draws under one listing are two draws (`serial-pilot-7.md` §0).
 
-### 5.1 Draw 1
+### 5.1 Draw 1 — the coordinator's read
 
-*(the read, after the chapter)*
+**What moved, and it is the largest move any draw has made.** The system speaks. The Monday
+message arrives as five lines the reader reads with Danny (*READ TO THE END. THIS WILL NOT
+CLEAR UNTIL YOU HAVE.*), the sheet shows a column of seven grants at zero with three greyed
+words under them, and the offers arrive as the system's own text — *PUSH, offered, because
+you reached for it with the body you have and it did not come up. Price: one night's sleep.*
+— which is the best invention in any draw so far and is *Defiance*'s shape (the boxes with a
+manner) transferred without a word of its text (the leak gate says so). The progression is
+felt: he pays a night on the concrete for a one, the pallet comes up in the morning, and in
+scene two the one moves the thing and does not put it down, so HOLD is offered on his knees.
+The chapter ends inside the fight, on an offer unanswered, with the count *Ankles. Ankles.
+Up.* running. The sheet reaches the page at word 250, not 850. Ade is a real foil (*Fifty-one
+years old. That's what they wrote out of me.*). The voice is looser than pilots 19 and 20
+(*said something out loud that my mother would not have enjoyed*; *the machine's idea of
+tea*). Read beside *The Primal Hunter*'s chapter one, this is the more eventful chapter and
+the faster one.
+
+**What is still the machine's, counted where a count exists.**
+
+1. **Definition by absence, worse than before**: 18 *nobody / nothing / never / no one*
+   tokens in 1,970 words — *Nobody has ever paid me for that. Nobody has ever asked.*; *Not
+   cracked. Not lifted. Not so much as swept different.*; *holding his own nothing*; *nothing
+   at all, no dreams, none*; *watching and nobody watching, both at once*; *not damaged, and I
+   was*; *not a number and not a door*. The one clause against this family (§179) lived on
+   the reviser, and the reviser is off, so nothing reaches it now. It did not reach it when
+   it was on either (§187).
+2. **The same simile shape, seven times**: *the way you do when you already know*, *the way a
+   wall comes up*, *the way a bright window stays in your eyes*, *the way you don't tell
+   anybody the combo*, *the way water goes out of a sink*, *the way you know a sneeze is
+   coming*, *the way you take a pallet*. Unchanged from pilots 19 and 20; neither anchor does
+   this once.
+3. **The turned last line and the narrator announcing his moves, fewer and lighter**: *which
+   turned out to be an amount you could measure and be embarrassed by*; *That is not bravery,
+   it is that the lane is the lane*; *I did not fall so much as arrive on the concrete*; *I
+   want to say I weighed it. What I actually thought about was…*; *That is what I remember
+   first: not the thing, but…*; *That is the thing.* About eight where pilots 19 and 20 had
+   one per paragraph.
+4. **Still nobody exclaims.** Zero exclamation marks. Zac's panic did not transfer; Danny is
+   controlled and dry, which fits a night-shift man and is still cooler than the shelf.
+5. **A markdown leak**: *\*\*Nobody\*\** in the prose, the emphasis markers printed as
+   asterisks in the pastable chapter. Mechanical; no rule or strip reaches it.
+
+**Routing.** Item 5 is structural and cheap: the em-dash strip's neighbour, a deterministic
+strip of emphasis and heading markup before the ladder, counted like the marks. Items 1 to 4
+are the register the exemplars have moved partly and the clauses never moved; the one lever
+still unpulled on them is the shelf's size — draw 1 showed two openings, and the shelf holds
+four. Draw 2 therefore changes two things, recorded as two: the markup strip, and
+`--exemplars-limit 3` (adding *Randidly Ghosthound*, 2,033 words). Two draws, never a treatment
+effect; the read decides whether the register moved again.

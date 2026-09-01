@@ -47,7 +47,13 @@ from litharness.application.reviser import (
 )
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
-from litharness.domain.draft import DraftOutcome, DraftPolicy, gate_draft, strip_em_dash
+from litharness.domain.draft import (
+    DraftOutcome,
+    DraftPolicy,
+    gate_draft,
+    strip_em_dash,
+    strip_markup,
+)
 from litharness.domain.editorial import (
     InterventionRealization,
     ReaderMechanism,
@@ -250,6 +256,9 @@ class _Ladder:
     extracted: tuple[lc.StateRecord, ...]
     findings: list[DomainFinding]
     accepted: bool
+    #: Markdown markers the strip removed before the gates (`draft.strip_markup`); `0` for
+    #: every text that carried none, and defaulted so the ladder's callers need no change.
+    markup_removed: int = 0
 
 
 def _revision_gate(passed: bool, detail: str | None) -> GateOutcome:
@@ -670,6 +679,9 @@ def make_scene_draft_handler(
             # judges its own text, and the strip is still the last rewrite before the gate on
             # whichever text is adopted, which is all §185.2's argument ever required.
             stripped, marks = strip_em_dash(candidate)
+            # The markup strip rides the em-dash strip's seat and its rules: after the model,
+            # before the gate, machine lines untouched, the count on the record.
+            stripped, markup = strip_markup(stripped)
             outcome = gate_draft(
                 revision,
                 logical_id,
@@ -806,6 +818,7 @@ def make_scene_draft_handler(
             return _Ladder(
                 text=stripped,
                 marks_removed=marks,
+                markup_removed=markup,
                 outcome=outcome,
                 gates=gates,
                 extracted=extracted,
@@ -880,6 +893,7 @@ def make_scene_draft_handler(
         findings = ladder.findings
         accepted = ladder.accepted
         marks_removed = ladder.marks_removed
+        markup_removed = ladder.markup_removed
         result = replace(result, text=ladder.text)
 
         if findings:
@@ -999,6 +1013,7 @@ def make_scene_draft_handler(
                 # read 1 and read 11 both named, and a census over published books after this
                 # ships would read zero and mean nothing; this is where it stays visible.
                 "em_dashes_removed": marks_removed,
+                "markup_removed": markup_removed,
                 # **Which model's sentences these are, when they are not the writer's** (§185).
                 # The decision this event names attributes the *candidate* to the drafting
                 # call, and that stays true — but the accepted prose came out of a second call

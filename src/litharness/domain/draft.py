@@ -198,6 +198,42 @@ def strip_em_dash(text: str) -> tuple[str, int]:
     return "\n".join(rewrite(line) for line in text.split("\n")), removed
 
 
+#: Markdown emphasis and heading markers, which a model reaches for as naturally as it reaches
+#: for the em dash and which a pastable chapter prints as asterisks and hashes. Pilot 21's
+#: first draw put `**Nobody**` on the page (`plan/serial-pilot-21.md` §5.1). Strong emphasis
+#: first so its markers are not read as two italic runs; the italic form refuses a run that
+#: opens or closes on a space, so a scene-break line of spaced asterisks is not emphasis.
+_STRONG = re.compile(r"\*\*(?=\S)(.+?)(?<=\S)\*\*")
+_EMPHASIS = re.compile(r"(?<![\w*])\*(?=\S)([^*\n]+?)(?<=\S)\*(?![\w*])")
+_HEADING = re.compile(r"^#{1,6}[ \t]+")
+
+
+def strip_markup(text: str) -> tuple[str, int]:
+    """`text` with markdown emphasis and heading markers removed from its prose, and how many.
+
+    `strip_em_dash`'s sibling and held to its rules: mechanical, after the model has finished,
+    asserting nothing in any prompt; a line the book prints as a machine passes through
+    untouched, because `[STATUS]` and its kin are parsed by character; and the count comes back
+    so the record can say how often the model reached for the markers. The words inside the
+    markers are kept exactly — only the markup goes.
+    """
+    if "*" not in text and "#" not in text:
+        return text, 0
+    removed = 0
+
+    def rewrite(line: str) -> str:
+        nonlocal removed
+        if _SYSTEM_LINE.match(line):
+            return line
+        line, headings = _HEADING.subn("", line)
+        line, strong = _STRONG.subn(r"\1", line)
+        line, emphasis = _EMPHASIS.subn(r"\1", line)
+        removed += headings + strong + emphasis
+        return line
+
+    return "\n".join(rewrite(line) for line in text.split("\n")), removed
+
+
 def draft_block(
     revision: Revision,
     logical_id: str,
