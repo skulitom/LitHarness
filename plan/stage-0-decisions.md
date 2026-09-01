@@ -21662,3 +21662,116 @@ clause (§97.1 — the quoted shapes above live in this entry, not in any prompt
 **Anti-scope.** Nothing here answers the keep/modify/drop question on the reviser — that is
 the operator's milestone decision, and turns 1–2 (`plan/ab-reviser-on-off*.md`) carry the
 descriptions it reads. One clause, one role, one test-before-belief.
+
+## 195. The market's summits open the same way and our openings did none of it, so the opening gets its shape, the fork gets its printed line, and grammatical person gets a position
+
+**The operator's target, verbatim (2026-09-01):** *"I would be happy if as a first step we
+would be able to produce as good of an overview and chapter 1 as primal hunter for example."*
+They placed chapter 1 of *The Primal Hunter* and *Defiance of the Fall* on the shelf the same
+evening (`book-library/`, gitignored), which is the anchor acquisition `plan/anchor-set.md` §4
+had left as an operator decision.
+
+### 195.1 Measured first: the shape, code-only, over the registered openings
+
+`research/opening-parity/shape_census.py` over `research/opening-parity/manifest.json` — our
+four newest chapter-1 openings and six summits: the two anchors, and the four highest-follower
+LitRPG-tagged fictions in the cached shards with a chapter 1 the arm can cut (one above them,
+*The Butcher of Gadobhra*, is a single paragraph in the dump and is excluded by name). Counts,
+never a quality; the script and the manifest own them:
+
+| | words | first-person marks | interior verbs | machine lines |
+| --- | --: | --: | --: | --: |
+| ours, four openings | 1,981–2,081 | 6, 21, 8, 15 | 4, 2, 2, 1 | 2, 2, 2, 0 |
+| anchors (*Primal Hunter*, *Defiance*) | 1,630 / 1,563 | 2 / 2 | 5 / 11 | 0 / 0 |
+| four local summits | 2,151–6,524 | 389, 29, 129, 1 | 22, 8, 10, 21 | 0 |
+
+**Two corrections to what this session first said, made here rather than carried.** First, the
+two anchors are *not* first person: they are close third with a reported mind (five and eleven
+interior verbs against our one to four), and it is the four local summits that split between
+first person and close third. The shared trait is interiority, not the pronoun; first person is
+the operator's stated preference (read 4 §3) and is shipped below as a position, never as a
+finding. Second, *Defiance*'s system boxes are mixed-case (`[Initiating System…]`), which the
+house's machine-line pattern does not count — the zero in its cell is the pattern's, not the
+book's. Read by eye rather than counted: every summit opening gives who the person was before
+in its first paragraphs, arrives at its system inside that, and ends its chapter on a thing
+read or offered and not yet answered; the summit blurbs on disk (85–316 words) name the
+person's ordinary situation in their first sentence. Our four listings name a cook, a mender, a
+phone-fixer and an apprentice, and none says what their days were.
+
+### 195.2 What shipped, and each one is a ratchet
+
+1. **The opening's two beats** (`genre.OPENING_FIRST`, `genre.OPENING_HOOK`, `with_opening`).
+   Scene 1: who this person is and what their days were is on the page before the first line
+   the book prints, and that line lands inside it. The first chapter's last scene, whatever the
+   chapter's length: the scene ends on something the person has read or been offered and has
+   not answered. Folded at render time beside the interaction beat (`planner`, the same seam
+   §173 used), gated on the same *prints a line* so every book that speaks no system voice
+   composes the sentence it composed before, and keyed to the chapter shape so a four-scene
+   chapter hooks at its fourth scene
+   (`test_the_hook_lands_on_the_first_chapter_s_last_scene_whatever_its_length`). Material, not
+   adjectives (§154): each names the first printed line or the unanswered thing.
+2. **The fork as furniture** (`gamesystem.offer_line`, `extraction.offered_line`, one
+   conditional in `render_prompt`). §173 built the fork and the packet handed it over as flat
+   triples — *warrant offers stock as one way to take it*; pilot 18 draw 4 withheld the three
+   words on the panel from the reader entirely. The book now prints the fork as it prints the
+   sheet: `[OFFER] Hand — Kiln: opens Kiln Hand | Reed: opens Reed Hand`, the fork's own name,
+   its ways in id order, what each opens, its price where the system declared one, exactly once,
+   where the person reads it. Every guard is `offered_choice`'s
+   (`test_the_offer_line_is_read_off_canon_with_every_guard_the_offer_beat_has`); the reviser
+   and the em-dash strip already read the tag as the book speaking as a machine; the status line
+   stays the one parsed surface (§160.3). Priced at `tests/test_prompt_budget.py`: a new
+   conditional row of two, and the scene maximal 41 → 43.
+3. **Grammatical person as a position.** `new --person first` and `listing --person first` seed
+   one locked constraint beside the premise (`plans.FIRST_PERSON_CONSTRAINT`), which reaches
+   every scene call through `render_constraints` at the director's authority, and the listing is
+   asked for it under the brief as material (`overview.FIRST_PERSON_ASK`). Nothing about how; a
+   book created without it seeds nothing
+   (`test_a_first_person_book_carries_the_constraint_as_a_locked_plan_item`).
+4. **The listing's second clause, re-signed.** It forbade the life the person had before the
+   book began, written against listings that opened on backstory; it now allows exactly one
+   plain clause of who they were the day before and names both failures, none and more.
+   `house.demands` reads two where it read one: the listing ceiling 17 → 18, and
+   `tests/test_implication_register.py`'s exact count 13 → 14, both with the reason written.
+5. **Two genre-centre writers on the installation roster**, hand-declared and accepted: `marsh`
+   (progression-fantasy, several-with-beat — the integration-day shape named on purpose, with
+   read 5 §4.3's convergence accepted because the shape is the target) and `tanaka`
+   (portal-fantasy, several-no-beat — the tutorial). Both rehearsed against `roster check` and
+   legal on every rail; `runs/roster/roster.db` holds the decisions.
+6. **The opening-parity measurement, registered before its first paid call**
+   (`research/opening-parity/PREREG.md`, `run.py`, `tests/test_opening_parity.py`): the
+   backtest's frozen ten-persona panel and both-orders cell, pointed at every (ours × summit)
+   pair in two arms — the first 1,500 words length-matched, and the P-arm's blurb-plus-500 —
+   with calibration pairs beside, recognition probes in front of every stimulus, and a
+   stimulus with no paragraph boundary near its cut refused by name
+   (`test_the_pair_plan_is_fixed_by_the_manifest`,
+   `test_a_probe_hit_moves_the_summit_to_the_recognised_stratum`). Descriptive only; the
+   result file may carry no key naming a verdict or a score. Running at the time of this entry
+   under a $100 / 1,100-session ceiling (47 pairs, 940 sessions, 54 probes); its reading is
+   owed as an addendum here and as `research/opening-parity/FINDINGS.md`, and nothing in this
+   entry anticipates it.
+
+### 195.3 What was refused
+
+- **A fact-scoping cut to the packet.** The newest scene prompt carried 207 facts, 93% of the
+  packet, against one beat sentence, and the plan of 2026-09-01 named scoping it. Refused for
+  now because §132 raised the writer's budget on the operator's word and a cut would reverse
+  that decision by the side door; if a scoped packet is wanted it is a registered A/B on the
+  settled-listing recipe (§191), not a default.
+- **An interiority clause.** The measured trait is a reported mind, and the roster refuses the
+  word in a dossier for §138's reason; the pronoun position above is the only handle shipped,
+  and it is the operator's to set per book.
+- **Any use of the summit text on the generation side.** RS1 holds: the anchors and the
+  derived summits are read by the panel and by the census and reach no prompt, no dossier, no
+  exemplar. The two anchors' blurbs are not on disk (RoyalRoad returns 403 to the fetcher) and
+  were not reconstructed from memory; the anchors sit out of the listing arm until they are.
+- **A bar.** None of §61's four attainability checks was run on any quantity here, because no
+  quantity here is a bar; the census is a description and the panel's shares will be too.
+
+### 195.4 Anti-scope
+
+No persona edited, no corpus text committed, no model ranked a candidate: the pairs are fixed
+in the manifest before the run, and nothing selects among our openings on the result. No
+research claim is promoted under `EPISTEMIC_GOVERNANCE.md`; the census is `OBSERVED` and the
+panel run is `REGISTERED`. The operator's target sentence lives here and in the registration
+and reaches no prompt (§97.1). Read-side machinery, the backtest's registered programme, its
+cache and its paused stage (c) are untouched.
