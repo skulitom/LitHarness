@@ -38,20 +38,38 @@
     {
       "label": "ph",
       "chapter": "book-library/PrimalHunter/Chapter1.txt",
-      "blurb": null,
+      "blurb": "book-library/PrimalHunter/blurb.txt",
       "title": "The Primal Hunter",
       "author": "Zogarth",
       "followers": 33714,
-      "note": "anchor-set.md row 1, VERIFIED SUMMIT; placed on the shelf by the operator 2026-09-01; blurb not on disk (RoyalRoad 403s the fetcher)"
+      "note": "anchor-set.md row 1, VERIFIED SUMMIT; chapter and blurb placed on the shelf by the operator 2026-09-01"
     },
     {
       "label": "dotf",
       "chapter": "book-library/DefianceOfTheFall/Chapter1.txt",
-      "blurb": null,
+      "blurb": "book-library/DefianceOfTheFall/blurb.txt",
       "title": "Defiance of the Fall",
       "author": "TheFirstDefier",
       "followers": 18793,
-      "note": "anchor-set.md row 2, VERIFIED SUMMIT; placed on the shelf by the operator 2026-09-01; blurb not on disk"
+      "note": "anchor-set.md row 2, VERIFIED SUMMIT; chapter and blurb placed on the shelf by the operator 2026-09-01"
+    },
+    {
+      "label": "gam3",
+      "chapter": "book-library/TheGam3/Chapter1.txt",
+      "blurb": "book-library/TheGam3/blurb.txt",
+      "title": "The Gam3",
+      "author": "Cosimo Yap",
+      "followers": null,
+      "note": "operator-named anchor placed on the shelf 2026-09-01 (the second addition); follower figure not yet retrieved for anchor-set.md; the dump has no blank lines and the driver paragraphs it on single newlines"
+    },
+    {
+      "label": "randidly",
+      "chapter": "book-library/RandidlyGhosthound/Chapter1.txt",
+      "blurb": "book-library/RandidlyGhosthound/blurb.txt",
+      "title": "The Legend of Randidly Ghosthound",
+      "author": "puddles4263",
+      "followers": null,
+      "note": "operator-named anchor placed on the shelf 2026-09-01 (the second addition); follower figure not yet retrieved for anchor-set.md"
     },
     {
       "label": "mgg",
@@ -69,35 +87,21 @@
       "title": "Low-Fantasy Occultist Isekai",
       "author": "Persimmon",
       "followers": 9313,
-      "note": "fifth by followers; The Butcher of Gadobhra (10,516) sits above it and is excluded because its shard text carries no paragraph breaks and cannot be cut to a boundary"
-    },
-    {
-      "label": "cic",
-      "chapter": "research/quality-measurement/derived/opening-parity/summit-book-2-complete-cultivation-is-creation-.ch1.txt",
-      "blurb": "research/quality-measurement/derived/opening-parity/summit-book-2-complete-cultivation-is-creation-.blurb.txt",
-      "title": "Cultivation is Creation",
-      "author": "Kynan",
-      "followers": 10108
-    },
-    {
-      "label": "sotw",
-      "chapter": "research/quality-measurement/derived/opening-parity/summit-soul-of-the-warrior-book-1-stubbed-thru-.ch1.txt",
-      "blurb": "research/quality-measurement/derived/opening-parity/summit-soul-of-the-warrior-book-1-stubbed-thru-.blurb.txt",
-      "title": "Soul of the Warrior",
-      "author": "Kyfe",
-      "followers": 10010
+      "note": "fifth by followers; The Butcher of Gadobhra (10,516) sits above it and is excluded because its shard text carries no paragraph breaks and cannot be cut to a boundary. cic and sotw (the third and fourth local summits) left the manifest on 2026-09-01 when the operator placed four anchors on the shelf; two locals remain as the market-sample leg (PREREG.md §5a)"
     }
   ],
   "calibration": {
     "opening": [
       ["ph", "dotf"],
+      ["gam3", "randidly"],
       ["mgg", "lfoi"],
       ["station", "kettle"],
       ["ladder", "weather"]
     ],
     "listing": [
+      ["ph", "dotf"],
+      ["gam3", "randidly"],
       ["mgg", "lfoi"],
-      ["cic", "sotw"],
       ["station", "ladder"]
     ]
   }

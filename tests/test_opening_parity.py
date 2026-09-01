@@ -165,6 +165,20 @@ def test_the_two_arms_cut_as_registered(manifest: Path, tmp_path: Path) -> None:
     wall_entry.chapter.write_text(" ".join(f"W{i}" for i in range(2500)), encoding="utf-8")
     with pytest.raises(house_panel.ForbiddenOutput, match="paragraph boundary"):
         parity.build_stimulus(wall_entry, "opening", tmp_path / "stim")
+    # A chapter saved with one newline per paragraph and no blank lines is paragraphed on
+    # those newlines and cut like any other; one saved with blank lines is left as it is.
+    single = parity.Entry(
+        label="single", side="summit", chapter=tmp_path / "single.txt", blurb=None,
+        title="Single", author="x",
+    )
+    single.chapter.write_text(
+        "\n".join(" ".join(f"S{p}w{w}" for w in range(10)) for p in range(200)), encoding="utf-8"
+    )
+    cut_single = parity.build_stimulus(single, "opening", tmp_path / "stim")
+    assert cut_single is not None
+    assert parity.OPENING_WORDS <= cut_single.words < parity.OPENING_WORDS + 10
+    assert "\n\n" in cut_single.text
+    assert parity._paragraphed("a\n\nb\n") == "a\n\nb\n"
 
 
 def test_a_full_run_writes_shares_and_no_verdict(manifest: Path, tmp_path: Path) -> None:

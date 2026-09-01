@@ -31,6 +31,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 import threading
 from collections.abc import Mapping, Sequence
@@ -130,7 +131,22 @@ def _read(path: Path) -> str:
     raw = path.read_text(encoding="utf-8")
     if not raw.strip():
         raise house_panel.ForbiddenOutput(f"{path} is empty; an empty stimulus is not a stimulus")
-    return raw
+    return _paragraphed(raw)
+
+
+def _paragraphed(raw: str) -> str:
+    """A text whose paragraphs are separated by single newlines, re-separated by blank lines.
+
+    Every cut in this driver lands on a paragraph boundary, and `blinding.first_words` reads a
+    boundary as a blank line. A chapter saved with one newline per paragraph and no blank
+    lines at all — *The Gam3*'s file as placed on the shelf — would therefore be shown whole
+    and refused as not length-matched. A file that already has blank lines is returned
+    untouched, so nothing already measured moves; a file with no newlines at all is returned
+    untouched too, and the overshoot guard refuses it as before.
+    """
+    if "\n\n" in raw or "\n" not in raw.strip():
+        return raw
+    return re.sub(r"\n+", "\n\n", raw.strip()) + "\n"
 
 
 def build_stimulus(entry: Entry, arm: str, out_dir: Path) -> Stimulus | None:

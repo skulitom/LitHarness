@@ -89,6 +89,32 @@ Registered ceilings: **$100** and **1,100 sessions** across both arms. The elici
 is cumulative over its cache file, so an abort can only come early. Cache:
 `runs/opening-parity/panel-cache.jsonl`; every bought record replays free.
 
+## 5a. Amendment, 2026-09-01, recorded before any cell under it was bought
+
+The first run was stopped at 164 cache records (the 54 probes and the first ~55 sessions of
+the `opening` arm) when the operator placed four things on the shelf: the two anchors' blurbs,
+and chapter 1 plus blurb of *The Gam3* and *The Legend of Randidly Ghosthound*. Every bought
+record replays; nothing is lost.
+
+- **Stimuli.** The two anchors now run in both arms. The two new anchors join both arms. The
+  third and fourth local summits (*Cultivation is Creation*, *Soul of the Warrior*) leave: with
+  four operator-named anchors the local leg's job is a market-sample check, and two locals do
+  it. Any pair session already bought against them is sunk (~$4 at most) and is reported in
+  the cache, not in the result.
+- **A single-newline chapter is paragraphed on its newlines.** *The Gam3*'s file has one
+  newline per paragraph and no blank lines; `first_words` would show it whole. The driver now
+  re-separates such a file on its newlines (`run._paragraphed`) and leaves every file with
+  blank lines untouched, so the ten stimuli already built are byte-identical.
+- **The plan and the ceilings.** Four of ours × six summits per arm, plus five and four
+  calibration pairs: 29 + 28 = 57 pairs, 1,140 sessions, 60 probes (the dry run of the
+  amended manifest printed exactly this). The registered $100 stands (the estimate is $85.16
+  at the session basis); the session ceiling moves 1,100 → 1,200 to fit the plan and for no
+  other reason.
+- **Follower figures for the two new anchors are not yet retrieved** and are `null` in the
+  manifest; `plan/anchor-set.md`'s rule is checkability, and they can be fetched through the
+  browser when the operator is beside it. Both are operator-named summits in the same sense as
+  rows 1 and 2 there.
+
 ## 6. Anti-scope
 
 No persona is edited. No bar is declared and none of §61's four attainability checks was run,
