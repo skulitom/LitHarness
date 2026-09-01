@@ -50,7 +50,37 @@ gitignored store and nowhere else.
 
 ## 3. The listing
 
-*(filled after the call)*
+**Drawn 2026-09-02 in one draw, with the two anchors' blurbs shown above the brief**: *The
+Line Nobody Else Has*, 121 words, three paragraphs, first person,
+`runs/pilots/pilot21/listing.txt`; serial21.db, book `d5635294`.
+
+**It has the shape read 15 asked for and the anchors' blurbs have.** Paragraph one is the life
+before in one sentence (a year short of a chemistry degree, nights at a depot, the dead
+fighting game). Paragraph two is the turn: the System on every screen, a sheet and a class to
+pick, the line nobody else's carries, the first monster out of the floor moving like an
+opponent beaten a thousand times. Paragraph three is the want and the promise: off nights for
+good, and a ladder that starts where he already stands. Pilot 19's listing was six sentences
+of fact in one paragraph; this is a situation, a turn and a want. Two draws, and the brief
+moved between them as much as the blurbs did, so this is a description of what the brief and
+the blurbs together produced and not an effect of either.
+
+**The coordinator's gate, §183's checklist — PASS.** The sheet and the class to pick; the
+line nobody else has, and what it does; System, sheet, class, monster, ladder in plain words;
+the life before as one sentence; first person; no machinery words, no dashes, no title inside
+the listing; the want in the last line.
+
+**The browsing pool: 3 of 4 would start it, 1 passed.** The pass is `magic_m`'s typicality
+item again, the same reader that passed on pilot 19 (*I've read that opening a dozen times*);
+the three starts name plain nouns, a small edge that has to be earned, and a blurb that says
+what he wants *instead of being coy about it*.
+
+**One residual, recorded and not acted on.** The title is built on an absence — *Nobody Else*
+— which is the family read 15 named in the prose (*nobody bowls in*) and §179's clause
+forbids at the reviser, and the listing carries it once more (*a line I have not found on
+anybody else's*). The title loop carries no such rule and the title passed its two frozen
+predicates; the anchors' titles are noun phrases. Left standing, because the readout of this
+draw is the operator's read and a title the coordinator retitled by hand would be the
+coordinator's.
 
 ## 4. The seed and the chapter
 
