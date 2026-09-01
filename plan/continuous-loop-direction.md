@@ -65,3 +65,34 @@ produces are structural or they are not made. Counts point to canonical homes.
 No training, no fine-tuning, no persona editing under this note (a reader redesign is its
 own registered act). No bar is declared here. The backtest's confirmatory stage stays
 paused per its FINDINGS entry and is not revived by this direction.
+
+## Amendment, same day: the adversarial layer (operator direction)
+
+> *"We need to have compentent adverserial testers so that we don't overoptimise on
+> something unrelated. i mean adverserial agents, who have to opimize for rejection"*
+
+A variant does not win an A/B by scoring better; it wins by scoring better AND surviving an
+adversarial battery built to make the win fail. Two halves:
+
+1. **Mechanical adversaries in the harness** — the backtest's control philosophy
+   generalized: the damage arm (a paragraph-shuffled copy of the winning draw — a
+   preference or scorecard gain that survives shuffling is surface, not story), the sham
+   arm (two windows of the same draw — position/format bias), and axis-specific degeneracy
+   checks (a cadence win by furniture spam, a diegesis win by [STATUS] stuffing, a
+   sentence-metric win by staccato monotony — each named axis ships with the check for its
+   own degenerate maximum).
+2. **Rejection-optimized critic agents** — a small versioned roster whose ONLY success
+   metric is verified kills: given the winning variant and its scorecard, produce the
+   strongest case for rejection. The governance that keeps this honest cuts both ways:
+   a critic's prose is never evidence (the standing rule) — every claim must cash out as a
+   mechanical demonstration, a line citation the coordinator's gate can check, or an item
+   on the operator's recorded defect-family taxonomy — and a verified kill BLOCKS the
+   variant while an unverified opinion evaporates. Critics judge nothing and gate nothing
+   by preference; they hunt falsifiable defects and are scored on confirmed finds, so
+   competence pressure points at rejection, exactly as directed. Their prompts draw on the
+   defect-family taxonomy (the read-recurrence map's family names), never on operator
+   quotes (§97.1), and their output never reaches a generation prompt (containment).
+
+The binding rule, added to the selection section: **provisional win → adversarial battery →
+survived-or-rejected**, with the battery's results in the same experiment folder. The
+operator's milestone read remains above all of it.
