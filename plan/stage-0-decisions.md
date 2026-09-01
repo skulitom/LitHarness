@@ -21827,3 +21827,73 @@ again — the anticipation probe and the causal-salience battery are the candida
 the record — and, now, the operator's milestone read of the two openings beside *The Primal
 Hunter*'s, which is the channel this track was started for and the only one left for the
 question as asked.
+
+## 196. Fifteen reads named one register and no clause moved it, so the writer is shown the shelf, the reviser is dropped, and RS1 gains its one exception
+
+**The operator's decision, verbatim (2026-09-02), after read 15** (`plan/reader-read-15.md`):
+*"Yes go ahead with the exemplars, and drop the reviser."* The read that put the two options
+in front of him is §4.2 of that file: the two openings drawn under §195 carry the summit shape
+and the wrong voice — the turned last line, the narrator announcing his moves, definition by
+absence, one simile shape nine times, feeling never named or loud, a system with no lines —
+and the record of clauses against that register (§171, §176, §179, §180, §181, §187, §194) is
+a record of one shape moving and the register staying.
+
+### 196.1 What was reversed, and what was not
+
+**RS1's generation-side half, for one class of text and no other.** Openings the operator
+places by hand on a gitignored shelf (`--exemplars DIR`, `LITHARNESS_EXEMPLARS`; today the four
+anchors of `plan/anchor-set.md` rows 1, 2, 13 and 14 under `book-library/`) are read at draft
+time and shown to the scene writer as *how this shelf sounds* — two chapter ones as a headed
+block before the packet — and to the listing writer as *how this shelf's listings sound*. RS1
+was written for measurement independence and for never committing a corpus, and both reasons
+still hold in full: the measurement corpora (the shards, the anchors' role in any panel) stay
+out of generation, and nothing shown is ever committed. `CLAUDE.md` carries the exception in
+one sentence beside the rule.
+
+**The containment, enforced rather than promised** (`application/exemplars.py`,
+`tests/test_exemplars.py`):
+
+- **Never committed.** The shelf is a directory the operator names outside the tracked tree;
+  the loader writes nothing; the leak audit over every committed blob is untouched.
+- **Never on the page.** `exemplar.leak.v0`, a deterministic blocking gate on the drafting
+  ladder, refuses any draft sharing a run of eight consecutive words with an exemplar shown
+  (`voice.longest_shared_run`, the borrowing control §89.5 registered, two words stricter
+  than `revoice`'s six because a chapter is longer than a passage). `Veto.EXEMPLAR_LEAK` is
+  `RETRYABLE`: the model wrote the wrong thing, and the retry is a different draft
+  (`test_a_draft_that_lifts_a_run_from_an_exemplar_is_refused_and_a_short_echo_is_not`).
+- **Never material.** The block's heading says whose the chapters are and that nothing in
+  them is true of this book; the system carries one sentence saying no name, place, thing or
+  line of theirs may appear. The scene maximal ceiling moves 43 → 44 for that sentence and
+  the listing's system moves not at all (`tests/test_prompt_budget.py`).
+- **Never silent.** The job payload records which exemplars a scene was shown, by name and
+  digest, never by text; absent a shelf the key is absent.
+- **The control is byte-identical.** Without `--exemplars` every prompt, listing, payload and
+  ladder is what it was
+  (`test_the_scene_prompt_carries_the_block_before_the_packet_and_the_system_one_sentence`).
+- **The anchors leave the measurement side for any book that saw them.**
+  `research/opening-parity/PREREG.md` §6 records it; the local top summits are the held-out
+  leg for any later panel over a shelf-drafted book.
+
+**The reviser is dropped.** `--revise` is opt-in and off by default; `--no-revise` still
+parses and does nothing. The evidence is on the record: two settled-listing A/Bs found no
+sentence win the adversarial battery would accept (`plan/ab-reviser-on-off*.md`), it cost 109%
+of the writer, and reads 13, 14 and 15 all landed on its output. The keep/modify/drop
+milestone was the operator's and this is the drop.
+
+### 196.2 What was refused
+
+- **No clause.** Not one word was added to the house floor or to any writer-facing rule for
+  read 15's items; §187's finding — clauses do not move this axis — stands and is the reason
+  for the reversal.
+- **No general corpus channel.** The exception is a directory of files a person placed, read
+  as files; nothing under `src/litharness/` names a corpus source, and the package-side leak
+  checks still pass (`test_no_package_code_names_a_corpus_source`).
+- **No claim that exemplars work.** The first draw under them is a description; the operator's
+  read is the readout, because §195.5 voided the panel for the question.
+
+### 196.3 Anti-scope
+
+No model ranked an exemplar or a draft; the shelf's order is the operator's file or the folder
+name. No research claim is promoted. The operator's words above live here and in read 15's
+file and reach no prompt (§97.1). The measurement programme, its cache and its registered
+arms are untouched.

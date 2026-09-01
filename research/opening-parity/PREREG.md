@@ -194,6 +194,17 @@ $104.58 at the session basis); the registered spend ceiling moves $100 → $120 
 ceiling 1,300 → 1,500 to fit it and for no other reason, both before any cell under this
 amendment was bought. The buying order stands: calibration and controls first, product after.
 
+## 5f. The anchors leave the measurement side for any book that saw them (2026-09-02, §196)
+
+The operator reversed RS1 for the openings he placed on the shelf: from 2026-09-02 a book
+drafted with `--exemplars` is shown *The Primal Hunter* and *Defiance of the Fall* as register.
+Such a book may not be measured against those openings, or against any exemplar it was shown,
+by this or any panel: the comparison would be between a text and the text it was told to sound
+like. For a shelf-drafted book the held-out leg is the local summits (`mgg`, `lfoi`, and the
+rest of the derived inventory), and the manifest must say which exemplars the book saw (the job
+payload's `exemplars` block carries the digests). The openings already measured here were drawn
+before any shelf existed and their readings stand.
+
 ## 6. Anti-scope
 
 No persona is edited. No bar is declared and none of §61's four attainability checks was run,

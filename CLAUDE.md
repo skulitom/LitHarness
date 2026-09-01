@@ -38,7 +38,12 @@ to distrust first (PLAN.md header, the same lesson recorded three times).
   operator, not one blinded pair. LLM-only measurement. The operator's own reads are defect
   harvests, not data. Do not propose human readers, labels, or panels.
 - **RS1**: no corpus text or digest crosses to the generation side. Nothing under
-  `src/litharness/` references a corpus; `tests/test_corpus_leak_audit.py` checks.
+  `src/litharness/` references a corpus; `tests/test_corpus_leak_audit.py` checks. **One
+  exception, the operator's (stage-0 §196, 2026-09-02):** openings the operator places by
+  hand on a gitignored shelf may be shown to the writer as register through
+  `application/exemplars.py` (`--exemplars`), never committed, never quoted on the page
+  (`exemplar.leak.v0` refuses an eight-word run), and never used again as measurement
+  material for a book that saw them. Measurement corpora stay out of generation.
 - **Declare no bar** without the four attainability checks — range at the real n, direction,
   independent unit, non-empty subgroup (§81, §85, §87, §89 each named a quantity that could
   not do what it said). Distributions before bars. A pre-registered null is a result (§61).
