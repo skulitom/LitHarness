@@ -280,6 +280,24 @@ def test_the_outline_plans_the_first_arc_against_the_concept_and_the_old_payload
     assert "book_concept" not in json.loads(before.prompt)
 
 
+def test_a_concept_naming_its_system_with_a_machinery_word_is_caught() -> None:
+    """Pilot 24's first concept called its system *the Standing* (`plan/serial-pilot-24.md`
+    §1): the listing loop redrew three times and carried the name each time, because the name
+    was upstream of it. The check is the listing's own, identity on the declared names and
+    capitalised use in the rendered text."""
+    plain = concept.Concept.from_payload(_example())
+    assert plain.machinery_names() == ()
+    payload = _example()
+    payload["system"]["name"] = "the Standing"
+    assert concept.Concept.from_payload(payload).machinery_names() == ("standing",)
+    payload = _example()
+    payload["second_system"]["name"] = "The Ladder"
+    assert concept.Concept.from_payload(payload).machinery_names() == ("ladder",)
+    payload = _example()
+    payload["first_use"] = "he reads his sheet and the Rung under it moves"
+    assert concept.Concept.from_payload(payload).machinery_names() == ("rung",)
+
+
 def test_the_debts_are_the_shape_the_promise_loader_reads() -> None:
     drawn = concept.Concept.from_payload(_example())
     entries = drawn.promise_entries()

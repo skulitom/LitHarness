@@ -258,6 +258,11 @@ LISTING_COORDINATOR_CEILING = 5.89
 #: least-chained draw is kept and the gate on the decision row records the failure.
 LISTING_DRAW_ATTEMPTS = 3
 
+#: The concept's own bounded redraw, on the listing's rail and no other: a machinery word used
+#: as a name. Pilot 24's first concept named its system *the Standing* and every listing drawn
+#: from it carried the name through three redraws, because the name was upstream of them.
+CONCEPT_DRAW_ATTEMPTS = 3
+
 
 def _creation_template(scenes: int, shape: SerialShape) -> tuple[BeatTemplate, bool]:
     """The sheet for a new structure and whether that structure is an endless serial.
@@ -2579,15 +2584,40 @@ def cmd_concept(args: argparse.Namespace) -> int:
             person=getattr(args, "person", None),
             blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
         )
-        result, refusal = _completion_call(request, calls=calls, spend=spend)
-        if result is None or not isinstance(result.parsed, Mapping):
-            print(f"litharness: {refusal or 'the concept came back unparsed'}", file=sys.stderr)
-            return EXIT_FAULT
-        try:
-            concept = concept_mod.Concept.from_payload(result.parsed)
-        except concept_mod.MalformedConcept as error:
-            print(f"litharness: the concept is unusable: {error}", file=sys.stderr)
-            return EXIT_FAULT
+        # **One rail, the listing's, and a bounded loop.** A concept that names its system
+        # with one of this house's machinery words is redrawn, because everything downstream
+        # carries the name faithfully: the listing loop cannot escape it and `world accept`
+        # refuses it. A frozen predicate over the concept's own names and text; no model reads
+        # anything here, and the first clean draw is kept (§61(5) is about a model ranking).
+        drawn: list[concept_mod.Concept] = []
+        for _attempt in range(CONCEPT_DRAW_ATTEMPTS):
+            result, refusal = _completion_call(request, calls=calls, spend=spend)
+            if result is None or not isinstance(result.parsed, Mapping):
+                print(
+                    f"litharness: {refusal or 'the concept came back unparsed'}", file=sys.stderr
+                )
+                return EXIT_FAULT
+            try:
+                drawn.append(concept_mod.Concept.from_payload(result.parsed))
+            except concept_mod.MalformedConcept as error:
+                print(f"litharness: the concept is unusable: {error}", file=sys.stderr)
+                return EXIT_FAULT
+            machinery = drawn[-1].machinery_names()
+            if not machinery:
+                break
+            print(
+                f"  redrawing: the concept names {', '.join(machinery)}, which is this "
+                "system's own word for the machinery and not this book's",
+                file=sys.stderr,
+            )
+        clean = [draw for draw in drawn if not draw.machinery_names()]
+        concept = clean[0] if clean else drawn[-1]
+        if kept_names := concept.machinery_names():
+            print(
+                f"litharness: kept a concept naming {', '.join(kept_names)} after "
+                f"{len(drawn)} draw(s); expect it in the listing and the world",
+                file=sys.stderr,
+            )
         gate = GateOutcome(
             gate=GateKind.SHAPE,
             rule_or_critic_id=concept_mod.CONCEPT_PROFILE,
@@ -2596,6 +2626,8 @@ def cmd_concept(args: argparse.Namespace) -> int:
             detail=(
                 f"{len(concept.debts)} debt(s); the turn {concept.turn.when}; "
                 + ("two systems" if concept.second_system is not None else "one system")
+                + f"; {len(drawn)} draw(s)"
+                + (f"; names {', '.join(kept_names)}" if kept_names else "")
             ),
         )
         store.record_decision(

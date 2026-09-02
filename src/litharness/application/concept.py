@@ -53,6 +53,7 @@ from typing import Any
 import litharness_contracts as lc
 
 from litharness.application.overview import FIRST_PERSON_ASK
+from litharness.domain import schema_words
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
@@ -472,6 +473,25 @@ class Concept:
             },
             "want": self.want,
         }
+
+    def machinery_names(self) -> tuple[str, ...]:
+        """This house's machinery words the concept uses as names, or none.
+
+        Pilot 24's first concept named its system *the Standing* (`plan/serial-pilot-24.md`
+        §1): `standing` is a machinery word (§120), the listing loop redrew three times and
+        could not escape a name the concept holds, and `world accept` would have refused the
+        world or the Architect renamed the system under the listing's feet. The check is the
+        listing's own (`domain/schema_words.py`): identity on the declared names, capitalised
+        use anywhere in the rendered text. Nothing here reads what a name means.
+        """
+        found: set[str] = set()
+        names = [self.system.name]
+        if self.second_system is not None:
+            names.append(self.second_system.name)
+        for name in names:
+            found.update(schema_words.taken_as_a_name(name))
+        found.update(schema_words.named_in(self.render()))
+        return tuple(sorted(found))
 
     def promise_entries(self) -> list[dict[str, Any]]:
         """The debts in the shape `new --promises` reads, so one loader opens both."""
