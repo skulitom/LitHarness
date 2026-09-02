@@ -21976,3 +21976,32 @@ leak rail in `domain/world_brief.py` is the reason a planner is told *when* and 
 
 **Anti-scope.** No change to what a scene writer is told; no change to measurement; the
 reviser stays off; nothing in a concept reaches a judge or a reader pool.
+
+### 197.1 The first arm under a concept timed out at the seed, and three fixes shipped before the redraw
+
+**Measured (pilot 22 arm draw1, `plan/serial-pilot-22.md` §4, 2026-09-02).** Under the
+first two-system concept the Architect ran the seed call's whole 1,800-second ceiling and the
+transport cut it off (*claude_code timed out after 1800.0s*), still declaring, its own check
+pass never reached; the harness stopped before `world check` and the arm's spend shows no
+invocation because no decision row was written. By the deadline it had built 273 proposed
+records: both systems with their own ladders (a nine-rung Clearance ladder; a five-livery one),
+one sheet, the protagonist and five cast, eight rules, the four debts' answers as scheduled
+claims, and a snapshot schedule. Three defects stood in it, all the machine's: the carried-over
+grant was declared under the first system's own id, so `address` was governed by two systems,
+which `world check` refuses and no retraction can undo (the sentence that asked for it — *a
+grant of the second system that the first also had* — read as the same id under both); the
+first system carried nine grants against the bound of eight; and the check could not say so,
+because `system_gap` previews completion over canon and before accept nothing is canon.
+
+**What shipped.** The seed's ceiling is 3,600 seconds (`world_agent.SEED_TIMEOUT_SECONDS`): a
+ceiling is what a runaway hits, not what a seed aims at, and one system took twelve minutes
+on draw 4. `_SECOND_SYSTEM` asks for the carried-over grant *with a name of its own* and
+names the refusal. `world check` gains `would_not_finish`: the completion asked over
+everything declared, as accept would carry it, with only its reasons kept and `ok` unmoved
+(`test_the_check_previews_what_acceptance_would_refuse_over_the_proposals`).
+
+**Refused.** Repairing the store by hand: retracting a proposal the check names would be a
+person authoring the world, and the world is the draw's. Arm draw1b re-runs the recipe with
+the three fixes, a fresh store, the same listing and concept byte for byte.
+
+**No bar.** One arm, stopped; nothing read.

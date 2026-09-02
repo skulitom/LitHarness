@@ -86,6 +86,10 @@ ALLOWED_TOOLS: tuple[str, ...] = (
 
 MAX_OUTPUT_TOKENS = 16000
 
+#: The seed's wall-clock ceiling. Pilot 22's first arm (§197.1) measured a two-system seed
+#: running past 1,800 seconds and being cut off mid-declaration.
+SEED_TIMEOUT_SECONDS = 3600.0
+
 _TOOLS = (
     "You build this world by running `litharness world` at a shell. It is the only command you "
     "have.\n"
@@ -190,7 +194,8 @@ _SECOND_SYSTEM = (
     "Where the book's concept puts the person under a second system after its turn, declare "
     "that one too as a system of its own with its own ladder and grants, declare the sheet of "
     "the one system the book opens under and of no other, and declare what the concept says "
-    "carries over as a grant of the second system that the first also had."
+    "carries over as a grant of the second system with a name of its own, because a grant "
+    "governed by two systems is a contradiction the check refuses."
 )
 
 _GROW = (
@@ -228,7 +233,10 @@ def render_seed_request(
         max_output_tokens=MAX_OUTPUT_TOKENS,
         profile=SEED_PROFILE,
         call_class="generation",
-        timeout_seconds=1800.0,
+        # **3,600 rather than 1,800, measured** (§197.1): a two-system seed under a concept ran
+        # the whole of the old ceiling and was cut off still declaring, its own check pass
+        # never reached. A ceiling is what a runaway hits, not what a seed aims at.
+        timeout_seconds=SEED_TIMEOUT_SECONDS,
         allowed_tools=ALLOWED_TOOLS,
     )
 

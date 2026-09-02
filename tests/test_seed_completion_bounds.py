@@ -15,7 +15,7 @@ from __future__ import annotations
 import pytest
 from test_choice_points import _accepted, _system
 
-from litharness.application import world_agent
+from litharness.application import world, world_agent
 from litharness.domain import gamesystem, genre, house
 
 _NUMBER_WORDS = {5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten"}
@@ -82,3 +82,20 @@ def test_the_check_carries_the_completion_s_reason_beside_the_missing_scale(
     finished = genre.system_gap(short)
     assert finished is not None
     assert "Acceptance would not finish it" not in finished
+
+
+def test_the_check_previews_what_acceptance_would_refuse_over_the_proposals() -> None:
+    """Before `world accept` nothing is canon, so `system_gap` could not see a system the
+    completion would refuse (§197.1: pilot 22's first seed carried nine grants to the deadline
+    and the check said only that no system was declared). The check now asks the completion
+    the question over the proposals and keeps its reasons; `ok` stays what `validate` says."""
+    proposed = [
+        record
+        for record in gamesystem.records_for(_system())
+        if record.predicate not in gamesystem.CONFIGURATION_PREDICATES
+    ]
+    report = world.check(proposed)
+    assert report["ok"]
+    assert any("declares no depth" in reason for reason in report["would_not_finish"])
+    complete = [_accepted(record) for record in gamesystem.records_for(_system())]
+    assert world.check(complete)["would_not_finish"] == []

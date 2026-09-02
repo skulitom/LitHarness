@@ -128,7 +128,34 @@ listing at all, and should not be: it lands at the arc's close.
 
 ## 4. The seed and the chapter
 
-*(after the arm)*
+**Arm draw1 stopped at the seed (2026-09-02, `runs/ab/pilot22/draw1/`).** The Architect ran
+for the transport's whole ceiling of 1,800 seconds and the call exited without returning
+(*the provider failed: claude_code timed out after 1800.0s*), so the harness stopped before
+`world check`, and the arm's spend record shows no invocation because no decision row was
+written. What it had built by the deadline: 273 proposed records; both systems, Dispatch with
+a nine-rung Clearance ladder and the Standing Order with a five-livery ladder, and one sheet,
+Dispatch's, as the second-system sentence asked; a cast of six with Callum as the
+protagonist; eight world rules (*Dispatch charges the holder in the body for goods issued to
+somebody else*; *a world that finishes its integration does not switch its system off*); the
+four debts' answers as claims scheduled by scene; a snapshot schedule at three positions. It
+was still declaring manifestations at the deadline, and its own check pass never ran.
+
+**Three defects, all the machine's and none the writer's.** (1) The ceiling: a two-system
+seed under a concept is more than twice draw 4's twelve minutes, and the seed's timeout was
+set for one system. Fixed at 3,600 seconds. (2) The carried-over grant was declared under the
+first system's own id, so `address` is governed by two systems, which `world check` refuses
+and no retraction can undo; the sentence that asked for it (*a grant of the second system
+that the first also had*) read as the same id under both. Fixed: the sentence asks for a name
+of its own and says why. (3) Dispatch has nine grants against the bound of eight, and the
+check could not say so: it previews completion over canon, and before accept nothing is
+canon. Fixed: the check previews acceptance over the proposals too and reports what would not
+finish, without moving `ok`. Stage-0 §197.1 records the three. Arm draw1b re-runs the recipe
+with them, a fresh store, the same listing and concept byte for byte.
+
+No hand repair of the store: retracting a proposal the check names is a person authoring the
+world, and the world is the draw's.
+
+*(draw1b, after the arm)*
 
 ## 5. The read
 

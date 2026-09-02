@@ -28,7 +28,7 @@ from typing import Any
 
 import litharness_contracts as lc
 
-from litharness.domain import genre, schema_words, worlds
+from litharness.domain import gamesystem, genre, schema_words, worlds
 from litharness.domain import state as state_mod
 
 #: Every view is addressable by name, so the CLI's subcommand table and this module cannot
@@ -582,10 +582,19 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     from_system = genre.system_gap(records)
     if from_system is not None:
         gaps.append(from_system)
+    # **What acceptance would refuse, previewed over the proposals** (§197.1). `system_gap`
+    # reads canon, and before `world accept` nothing is canon, so an Architect running this
+    # view as it goes could not see a nine-grant system or a ladder that will not read until
+    # the one command it cannot run refused it — pilot 22's first seed carried both to the
+    # deadline. The completion is asked the question over everything declared, as accept
+    # would carry it, and only its reasons are kept; nothing is minted here and `ok` does
+    # not move, for the invariant above.
+    _, would_not_finish = gamesystem.completion_records(records)
     return {
         "complaints": complaints,
         "ok": not complaints,
         "gaps": gaps,
+        "would_not_finish": list(would_not_finish),
         "machinery_names": list(schema_words.world_complaints(records)),
         "will_not_resolve": [
             warning for record in records for warning in worlds.slot_warnings(record)
