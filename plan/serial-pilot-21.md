@@ -223,3 +223,57 @@ into who the writer is. Draw 3 therefore changes one thing: the writer, a hand-d
 recruit whose dossier is the man telling it to a mate at the bar the same night, checked legal
 against the roster's rail. Same listing, same shelf, same three exemplars, strip live. One
 change; two draws; the read decides.
+
+### 5.3 Draw 3 — the coordinator's read, and the milestone
+
+**Run through the harness** (`runs/ab/pilot21-loop/draw3/`): the same listing byte for byte,
+writer `barlow` (the stance dossier, hand-declared and accepted 2026-09-02), first person,
+three exemplars, the strip live; a fresh world (the Registry and its assessors, Grade with
+Rated as the first word that pays, Wind as the resource, Hard Hands, Carry, Long Sight, Read
+Ahead, Set Up, Weak Point as the grants) completed at accept with no gap; 1,969 words, both
+scenes accepted first time, the leak gate clean on both, on the shelf at
+`book-library/the-line-nobody-else-has--0ffc8699/`.
+
+**The voice moved, and it moved the way the dossier said.** *Right, so the depot.* — *Bleep,
+chute, bleep, chute.* — *I used to tell people that as a joke about myself. I had the timing of
+it down.* — *"Rated," he says. "Tuesday." / "Get lost."* — *"Since about nine seconds ago,
+Ollie."* — *He was made up for me. That is the horrible part.* — *my heart going like a rabbit*
+— *like a lad reading a shopping list* — and a refrain the writer made and kept: *the world
+ends and the vans still come at four.* This is a person telling it. Ollie, who climbs faster
+because he does not ask what a column costs, and Marek, who told the Registry twice he will
+not be climbing, thanks, are alive in three lines each. The story is the best of the three
+draws: the monster taped off in bays six and seven for two nights with the word TWO-STEP
+standing over it, which to everyone else is a name and to Danny is a move list; the racking
+collapse that is not the monster; Carry going from nothing to one while he holds a tonne of
+somebody's Christmas off a girl's leg; the assessor reading sheets aloud with demonstrations;
+Danny skipping his one secret column in a flat voice and the sweat going down his back; going
+in *on the stop* with the cage; and the assessor who saw him go early, will put him at Rated
+tonight, cannot file a sheet she cannot account for, and turns a figure round on the table
+that is more than he makes in a year of nights. The chapter ends on that figure.
+
+**What is still the machine's, and it is now small enough to name in one line each.**
+
+1. **The confessional aside**, three times: *I want to be honest about this bit* — *I want to
+   be straight with you about what I did* — *I want it on record that I was terrified*. Two
+   writers, three draws, one construction; in this voice it reads as character more than
+   scaffolding, and it is still the construction the model reaches for whenever a first-person
+   narrator has done something.
+2. **Definition by what a thing is not**, fifteen tokens, of which about half are earned by the
+   sheet's noughts and the fight (*I did not go on the step, I went on the stop*) and half are
+   the tic (*That is the bit nobody tells you*; *Not a pause, a stop*; *the noise it made I will
+   not be describing to you*).
+3. **Tense drift**: scene two slips into the present for stretches (*Marek's roaring*; *she
+   says*; *The shift's screaming*), which the bar-telling stance licenses and the anchors never
+   do; a reader may hear it as looseness rather than voice.
+4. Zero exclamation marks, still; the narration is loud now (*Marek's roaring*) and the
+   narrator himself never is.
+
+Simile shape: one. Interior verbs: two. Absent: the turned last line as a habit (the few that
+remain are the refrain and character), the proof-of-seeing, the narrator announcing his moves
+beyond item 1.
+
+**The milestone.** Three draws under one listing: draw 1 gave the system its voice, draw 2
+gave the chapter its story, draw 3 gave the narrator his. The two families that remain are
+named above and no structural lever the coordinator can pull tonight reaches them without a
+clause. This is the draw to put in front of the operator beside *The Primal Hunter*, with draw
+1 for contrast. Read 16 is his.
