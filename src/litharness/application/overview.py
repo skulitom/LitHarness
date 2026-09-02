@@ -29,6 +29,7 @@ hooks, so asking for twice that was buying room for the throat-clearing.
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
@@ -79,6 +80,40 @@ def chains_too_hard(listing: str, *, ceiling: float) -> bool:
     so that nothing about where the number came from can leak into generation.
     """
     return coordinator_density(listing) > ceiling
+
+
+_SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
+
+
+def longest_sentence(listing: str) -> int:
+    """Words in the listing's longest sentence.
+
+    The seventeenth operator read (`plan/reader-read-17.md` §3.1): a thirty-three-word
+    sentence with its verb in the middle and three clauses hung off it, which the reader *had
+    to decrypt*, and which the coordinator counter could not see because it chains on commas
+    and *because* rather than on *and*. A shape property with a right answer, like the density
+    above, and no more a quality claim than it is: a listing under the ceiling is not good, it
+    is merely not that.
+    """
+    parts = (part for part in _SENTENCE_END.split(listing.strip()) if part.strip())
+    return max((len(part.split()) for part in parts), default=0)
+
+
+def sentence_ceiling(blurbs: Sequence[str]) -> int | None:
+    """The longest sentence any of the shelf's own listings runs to, or `None` with no shelf.
+
+    The number is the market's rather than ours: the shelf is the operator's hand-placed
+    openings and their blurbs (stage-0 §196), and the ceiling moves when the shelf does.
+    Measured 2026-09-02 on the four blurbs placed: 23, 20, 27 and 19 words, against 36 and 30
+    in the two listings this house had drawn. `None` is no ceiling and the loop as it was.
+    """
+    lengths = [longest_sentence(blurb) for blurb in blurbs if blurb.strip()]
+    return max(lengths) if lengths else None
+
+
+def runs_too_long(listing: str, *, ceiling: int | None) -> bool:
+    """Whether a sentence in this listing outruns the shelf's longest; never with no shelf."""
+    return ceiling is not None and longest_sentence(listing) > ceiling
 
 #: **Five instructions, and the count is the point.** With the house rules appended this
 #: call made sixteen demands of a hundred-word artifact, eleven of them rules written for

@@ -2281,6 +2281,17 @@ def cmd_listing(args: argparse.Namespace) -> int:
         # have left a book whose blurb promises a Ladder the world is forbidden to name. The
         # check belongs at the mint, and it is the same loop: a second frozen predicate over
         # the returned string, no model consulted, no extra call unless one fires.
+        # **The second shape rail, and its number is the shelf's** (read 17, §3.1): no
+        # sentence longer than the longest in the blurbs the operator placed. With no shelf
+        # there is no ceiling and the loop is what it was.
+        shelf = _selected_shelf(args)
+        length_ceiling = (
+            overview_mod.sentence_ceiling(
+                [exemplar.blurb for exemplar in shelf.exemplars if exemplar.blurb]
+            )
+            if shelf is not None
+            else None
+        )
         drawn: list[str] = []
         for _attempt in range(LISTING_DRAW_ATTEMPTS):
             drafted, refusal = _completion_call(
@@ -2288,11 +2299,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
                     brief,
                     writer,
                     person=getattr(args, "person", None),
-                    blurbs=(
-                        exemplars_mod.render_blurbs(shelf)
-                        if (shelf := _selected_shelf(args)) is not None
-                        else None
-                    ),
+                    blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
                     concept=concept.render_for_listing() if concept is not None else None,
                 ),
                 calls=calls,
@@ -2303,10 +2310,11 @@ def cmd_listing(args: argparse.Namespace) -> int:
                 return EXIT_FAULT
             drawn.append(drafted.text.strip())
             machinery = schema_words.named_in(drawn[-1])
-            if (
-                not overview_mod.chains_too_hard(drawn[-1], ceiling=LISTING_COORDINATOR_CEILING)
-                and not machinery
-            ):
+            chained = overview_mod.chains_too_hard(
+                drawn[-1], ceiling=LISTING_COORDINATOR_CEILING
+            )
+            too_long = overview_mod.runs_too_long(drawn[-1], ceiling=length_ceiling)
+            if not chained and not machinery and not too_long:
                 break
             if machinery:
                 print(
@@ -2314,10 +2322,16 @@ def cmd_listing(args: argparse.Namespace) -> int:
                     "system's own word for the machinery and not this book's",
                     file=sys.stderr,
                 )
-            else:
+            elif chained:
                 print(
                     f"  redrawing: {overview_mod.coordinator_density(drawn[-1]):.2f} "
                     f"coordinators/100w over the {LISTING_COORDINATOR_CEILING} ceiling",
+                    file=sys.stderr,
+                )
+            else:
+                print(
+                    f"  redrawing: a {overview_mod.longest_sentence(drawn[-1])}-word sentence, "
+                    f"over the shelf's {length_ceiling}",
                     file=sys.stderr,
                 )
         # Keep a draw that named none of our words if the loop got one, and otherwise keep what
@@ -2325,7 +2339,12 @@ def cmd_listing(args: argparse.Namespace) -> int:
         # over counters rather than a preference among candidates (§61(5) is about a MODEL
         # ranking; nothing here reads the prose), and the fallback is `listing_chained`'s
         # existing shape: run out of attempts, keep the best draw, and say so on the way past.
-        clean = [draw for draw in drawn if not schema_words.named_in(draw)]
+        clean = [
+            draw
+            for draw in drawn
+            if not schema_words.named_in(draw)
+            and not overview_mod.runs_too_long(draw, ceiling=length_ceiling)
+        ]
         listing = overview_mod.keep_least_chained(clean or drawn)
         listing_density = overview_mod.coordinator_density(listing)
         listing_redraws = len(drawn) - 1
@@ -2334,6 +2353,13 @@ def cmd_listing(args: argparse.Namespace) -> int:
             print(
                 f"litharness: kept a listing at {listing_density:.2f} coordinators/100w after "
                 f"{len(drawn)} draw(s); the gate on the decision row records it",
+                file=sys.stderr,
+            )
+        if overview_mod.runs_too_long(listing, ceiling=length_ceiling):
+            print(
+                f"litharness: kept a listing with a {overview_mod.longest_sentence(listing)}-word "
+                f"sentence over the shelf's {length_ceiling} after {len(drawn)} draw(s); the gate "
+                "on the decision row records it",
                 file=sys.stderr,
             )
         if kept_machinery := schema_words.named_in(listing):
@@ -2418,6 +2444,8 @@ def cmd_listing(args: argparse.Namespace) -> int:
                 f"{len(listing.split())} words; "
                 f"{listing_density:.2f} coordinators/100w vs the "
                 f"{LISTING_COORDINATOR_CEILING} ceiling"
+                + f"; longest sentence {overview_mod.longest_sentence(listing)} words"
+                + (f" vs the shelf's {length_ceiling}" if length_ceiling is not None else "")
                 + (f" after {listing_redraws} redraw(s)" if listing_redraws else "")
                 + "; "
                 + (
