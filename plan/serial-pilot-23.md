@@ -1,6 +1,6 @@
 # Serial Pilot 23 — the same concept, told to nobody
 
-**Status: RUNNING, 2026-09-02.** Pilot 22's concept (`plan/serial-pilot-22.md` §1, byte for
+**Status: READ at draw1, 2026-09-02; the operator's milestone.** Pilot 22's concept (`plan/serial-pilot-22.md` §1, byte for
 byte) with the two changes read 17 forced (`plan/reader-read-17.md`): a listing redrawn under
 the sentence-length rail, and a writer who tells it to nobody. For the loop the operator set
 (`plan/serial-pilot-21.md` §5): the coordinator hand-reads each draw on both halves, routes its
@@ -72,8 +72,115 @@ the name rail lets through by design (§178 refuses it only as a name).
 
 ## 4. The seed and the chapter
 
-*(after the arm)*
+**Arm draw1 (2026-09-02, `runs/ab/pilot23/draw1/`).** The seed took 835 seconds; `world check`
+clean; `world accept` finished both systems and minted their digests; the fork the concept
+implies is declared at grade four as a delivery-preference form with three boxes (*hold at
+depot*, *return to sender*, *deliver to neighbour*, each the one door to a locked grant); the
+carried-over grant is declared under its own name (*receiving*); only Dispatch carries a sheet.
+The Architect chose *grade* for the ladder's word and said why in its own summary (*the floor
+calls them rungs, which is Callum's word, not the notice's*), so the machinery word stayed off
+the line. It declared the reason the address is him (the depot holds the national returns
+contract and Dispatch inherited the carrier's routing table whole) and five things true that
+nobody has been told, one of them that Consignee One in Lagos is the previous returns bay and
+not the strongest man alive. Both scenes accepted first attempt, 1,962 words, the leak gate
+clean, three em dashes stripped and no markup, $4.40. The ledger paid its first debt on the
+page: *why the address is him* is marked paid at scene 1, where the first paragraph shows it
+(*one bay's worth of the whole country's failures every night*); the summary handler opened
+five more (the two over the one; nobody to ring; how Ondrej Vasko died; the resit and the lie
+to his mum; Ryan's number). On the shelf at `book-library/signed-for-by-nobody/`.
 
 ## 5. The read
 
-*(the operator's nine items first, then both halves)*
+**Against read 17's nine items, in his order.**
+
+1. *The sentence to decrypt*: gone from the listing (§3).
+2. *Its colours*: the listing says *livery* (watched, §3); the chapter uses neither, and the
+   ladder arrives in a reader's words through Ryan (*he'd got Courier, whatever that meant,
+   that it had a number on it and the number was going to go up*).
+3. *Right, nights at Aldergate. Returns.*: gone. The chapter opens *The last bay at the cold end
+   of B belt was mine*, and what returns are is told as narration, not to a listener. No draw
+   under this writer opens on *Right* or *So*.
+4. *And then and then*: still here, at 4.1 *and* per hundred words. *I had one resit left,
+   sports science, and I kept not sitting it, and she kept telling her sister I'd graduated,
+   and that's about the size of me* is three *and*s to a punchline; the bay's description runs
+   the same way. Two dossiers, one without *straight through*, and the family is unmoved: it is
+   the model's and not the listener's.
+5. *The reading-aloud excuse*: gone. He reads a notice once, as an act (*ATTEMPT 1 OF 3, I
+   read*), and no trait is planted for it.
+6. *Jiffy bag*: none. Five tokens a reader elsewhere would stumble on (*holdall*, *trainers*,
+   *kit issue*, *did doors*, *van-park light*), the same count as before; the dialect grammar
+   (*stood* eleven times, *sat* four) is the voice.
+7. *The over-explained mechanic*: shorter and still there. *It wasn't on a screen. It was just
+   there, the way a word is there when you've read it, sat in front of my face over the
+   trainers*: one clause of explaining where draw2 had three, and the same move.
+8. *The children's book*: the second-person generic simile is four (*the way a word is there
+   when you've read it*; *you take the whole weight before you've set your feet*; *the thing you
+   ring somebody about*; *that thing where you can't stand still*), down from five. The
+   listener is gone and the form survived him: it is the model's way of explaining a sensation.
+9. *I want you to picture*: gone; zero addresses to a listener on the page. The aside survived
+   without one, seven of them (*I want to say I thought about it … That's not thinking. That's
+   just what was in my head while my hand went out*; *that's about the size of me*; *I don't
+   know what with*; *That's the thing*), down from ten, and the first of them is draw 1's own
+   construction returning under a fourth writer.
+
+**Elsewhere in the register, counted.** No historic present at all, the first draw with none.
+Zero exclamation marks, seven draws running. Absence tokens twenty, about eight in the tic form
+(*Nobody wants it*; *No name on it*; *nothing behind it and nothing in front of it*; *Nothing
+in them. Still full to the shoulder*; *Not swollen, set*), and the chapter's best line is one of
+them (*There was nobody to ring*). Similes nine and concrete, one of them used twice across the
+scene break (*like this was a kit issue and she'd been handed the manual in advance* / *like it
+was kit issue and she was one signature behind*), which a reader hears as the writer repeating
+himself. The status line prints its labels as the world declared them, in lowercase (*grade 1 |
+signing 1 | carrying 2/1*), which reads less like a sheet than the earlier worlds' capitals.
+
+**The engagement half, on the fixed questions.**
+
+- *What makes a reader want chapter 2.* A notice over his own face in a bus-shelter panel,
+  *YOU MAY SIGN AS THE ADDRESS*, on a consignment at attempt one, with the price of the last
+  signature now on that face: a jaw set wrong, one eye arriving half a beat behind, *He was a
+  big lad and I'm not*. Two clocks (the attempt count; *Ten o'clock. Don't be asleep*). A win
+  paid on the first night when Ryan's four hundred picks moved nothing, with its price on the
+  same line (*carrying 2/1*: *It's a bay with more in it than it takes*). And a threat the
+  earlier draws did not have: the supervisor reads his hand on the table, names a trade in
+  classes stripped from the dead, and tells him it will be her name on it. His secret now looks
+  like a crime.
+- *How far the book promises to go.* *One bay's worth of the whole country's failures every
+  night* and Ryan's number that is going to go up; the Registry, Consignee One and the nine
+  grades are in canon and not on the page, the fourth draw running.
+- *What is mysterious about the system, and who wonders.* Shown rather than read out: *I
+  signed it. I don't know what with. My hand knew*; the weight arriving as a fridge on the
+  stairs; the dead man's body arriving in his by morning, which is the listing's promise (*It
+  cost me, and it showed on me by morning*) kept inside chapter one. The name on the line is
+  handled a third way: in silence. *No name on it. Just the bay* stands nine lines above
+  *[STATUS] Callum Reece*, and nothing on the page notices.
+- *The twist on the standard shape.* The address signs for the dead, and carries the dead.
+- *A laugh.* *That's about the size of me*; *You're walking like my dad*; *It's a chute with a
+  duvet in it*. Fewer and drier than draw2.
+- *What he wants beyond the rung.* Off the worst bay on the floor, and out from under the lie
+  he told his mum, which the ledger now holds as a debt.
+
+**Two writers, one concept, side by side, and never a treatment effect.** Taking the listener
+out cleared the spoken opener, the direct address, the reading-aloud scaffold and the historic
+present, and it lowered the aside and the *you* simile without removing them. What it did not
+touch: the chained *and*, the absence tic, the idiom residue, the explaining of a mechanic. Two
+dossiers have now failed to move those four; they are the model's first-person defaults. The
+levers left are the shelf (a first-person opening the operator rates; every exemplar shown is
+close third) and the person flip (his position, read 4 §3), and both are his.
+
+**Findings, and their routing.**
+
+1. **The name on the line, a third handling.** Two writers made it a mystery; this one let it
+   stand unnoticed, which a reader is likelier to catch. The per-subject heading (pilot 22 §6,
+   finding 1) is the fix, and it still waits for the operator's read: it decides what the line
+   prints in every chapter of the book.
+2. **The four model-default families**: no clause (§187). Counted, and the levers are named.
+3. **A value printed over its own ceiling** (*carrying 2/1*). The world's rule says the weight
+   goes on the body at the issue weight, the sheet's ceiling says one, and the writer made the
+   contradiction the beat. `extraction.impossible_fields` calls such a snapshot impossible and
+   the evaluation ran no rule that reads it (findings zero), so nothing refused what the page
+   meant. A seam between the ceiling's meaning and a world that spends past it; counted.
+4. **Lowercase labels on the line**: the world's own declaration, printed as declared. Counted;
+   `world vocabulary` says nothing about the case a label prints in.
+
+**The milestone.** Seven of the operator's nine items are gone from this page and two are at
+lower counts; the chapter is in front of him with its listing. No further arm until his read.
