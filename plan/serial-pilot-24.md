@@ -152,7 +152,38 @@ its own listing; a third arm under either is a new note.
 
 ## 3. The two listings
 
-*(after they land)*
+**Drawn 2026-09-02 from the redrawn concept under `marsh`, one per person.** Each redrew once
+on the length rail (a 31-word and a 29-word sentence against the shelf's 27) and kept a draw
+under it; neither fired the name rail; the measurement pool would start both, four of four,
+naming the walked-map power and the drain-mapper's hobby as the reason. A reading of the
+listings and not a gate. Settled at `runs/pilots/pilot24b-first/` and `-third/` (gitignored).
+
+**First person, *Ground Held*, 118 words:**
+
+> I stocked shelves on the night shift and mapped the storm drains under my city for a hobby.
+>
+> Then the Ratchet arrived. It draws a chalk white line at ankle height wherever a person stands, counts at them, and hands out classes. Everything alive underground that night climbed back out of the drains as a monster still in its own clothes. Mine came up the stockroom drain wearing my manager's coveralls.
+>
+> My sheet has no class on it, only a line that says GROUND HELD and one power I have never heard of anybody else being given. I step into a wall and come out anywhere my own feet have already walked.
+>
+> I want to finish the map.
+
+**Third person, *The Ratchet Counts Down*, 110 words:**
+
+> He stocked shelves on the night shift and mapped the storm drains under his city for a hobby nobody understood.
+>
+> Then the Ratchet came, counting in white letters low on every wall, dealing a class to everyone alive. His sheet had no class on it. It listed every tunnel his own feet had walked, and it told him he could step into a wall and come out standing in one of them.
+>
+> The things that fell through the unmapped basements are climbing back out of them, still in the clothes they were wearing when the world changed. He wants the map finished, and he wants that dark to be his.
+
+**Against reads 17 and 18's listing items.** No sentence to decrypt in either; no want in a
+world term (*I want to finish the map*; *he wants the map finished, and he wants that dark to
+be his*); the system's look on the page in both (*a chalk white line at ankle height*; *white
+letters low on every wall*); the threat with its face in the first (*wearing my manager's
+coveralls*) and its rule in the third (*still in the clothes they were wearing when the world
+changed*); the power said plainly in both. *GROUND HELD* is the sheet's own line and arrives
+as the sheet's text. The third's close is the stronger want; the first has the image. Watched:
+the prize (a click buys safety) is in neither, and the anchors' blurbs carry it as *survive*.
 
 ## 4. The two chapters
 
