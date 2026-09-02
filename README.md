@@ -61,25 +61,57 @@ uv sync --extra cover
 
 ## Start a serial
 
-The listing loop is the normal entry point. It writes the listing a reader sees, records
-experimental appetite observations without feeding them back into revision, checks the title
-for collisions, and creates the empty scenes:
+The concept comes first (stage-0 §197 to §199). One writer invents the book before its
+listing — who the person was, the one power nobody else has and the first time it works in
+chapter one, what they want in their own words, the system's manner and look, how far the
+ladder goes and what a step buys, what kills people in the first days, the turn and where it
+falls, the first arc in three events, and two to four debts with the scene each is due by.
+It is written to disk so the listing, the world seed and the outline are all drawn from the
+same settled concept, and a concept that names its system with one of this house's own
+machinery words is redrawn:
+
+```bash
+uv run litharness --database book.db --writer halloran \
+  --exemplars book-library --exemplars-limit 3 \
+  concept --scenes 24 --out runs/pilots/my-book
+```
+
+`--exemplars` names the shelf: openings and blurbs the operator places by hand under
+`book-library/<Name>/Chapter1.txt` and `blurb.txt` (gitignored, never committed, never quoted
+— an eight-word run lifted from one refuses the draft). The shelf is shown to the concept,
+listing and scene writers as how this shelf sounds, sets the listing's sentence-length
+ceiling, and sets the ceiling per family for the tells pass on the drafting ladder: each
+sentence of a regular family (a clause built on an absence, a paradox, a located habit, an
+echo, a chained *and*) over the shelf's own rate is said again by a model and kept only if
+the counter no longer finds the shape, with the rates before and after on the decision row.
+Without a shelf there is no ceiling, no pass, and no change.
+
+The listing loop is then the entry point for the book. It writes the listing a reader sees
+from the concept, records experimental appetite observations without feeding them back into
+revision, checks the title for collisions, and creates the empty scenes carrying the concept
+and its debts:
 
 ```bash
 uv run litharness --database book.db listing \
   --writer halloran \
-  --brief "A debt collector discovers every debt is also a spell." \
+  --concept runs/pilots/my-book/concept.json \
+  --person third \
   --scenes 24 \
-  --out runs/listings/debt-book
+  --out runs/pilots/my-book
 ```
+
+`--person` is a position, not a finding: `first` seeds one locked constraint every scene call
+carries, `third` and the default seed nothing. The operator's position since read 19 is third
+person. `--brief` still takes a story, a situation, a constraint somebody cares about — never
+a shelf label — and an empty brief is a valid control.
 
 `--writer` names a compiled cast writer or any writer the roster has accepted. The roster lives
 in the open database unless `--roster-database` (or `LITHARNESS_ROSTER_DATABASE`) names the
 installation's roster store, which is what lets a writer accepted once draft on every fresh book
 database (stage-0 §151).
 
-An empty brief is a valid control. Use `new` when title and premise already exist, or `import` for
-a contracts fixture or manuscript:
+Use `new` when title and premise already exist (`--concept` carries a settled concept and
+opens its debts on the promise ledger), or `import` for a contracts fixture or manuscript:
 
 ```bash
 uv run litharness --database book.db new "The Toll Road" \
@@ -109,6 +141,22 @@ uv run litharness --database book.db world accept
 
 `world accept` is a recorded state transition, not a ranking step. After a chapter, `architect
 grow` reconciles and extends the same world through the same constrained tool surface.
+
+The whole recipe under one settled listing and concept, with a fresh store per arm, both
+spend ceilings on every call, the simulated readership on chapter one after the shelf, and a
+folder per arm that records the listing's digests, every command, the spend and the reading,
+is `tools/ab_redraw.py`. Its experiment note must be written before an arm runs: a variant
+comes from a diagnosed defect, never from undirected variation (stage-0 §105).
+
+```bash
+uv run python tools/ab_redraw.py --experiment my-book --arm draw1 \
+  --listing runs/pilots/my-book --writer halloran \
+  --database runs/ab/my-book/draw1/serial.db --library book-library \
+  --scenes 6 --chapter-scenes 2 --person third \
+  --rivals research/quality-measurement/derived/rivals.json \
+  --max-cost-usd-per-day 40 --max-tokens-per-day 20000000 \
+  --extra-arg=--exemplars=book-library --extra-arg=--exemplars-limit=3
+```
 
 ## Run the production loop
 
