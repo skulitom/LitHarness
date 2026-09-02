@@ -52,6 +52,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import locale
 import os
 import shlex
 import subprocess
@@ -88,11 +89,15 @@ SCORECARD_CANDIDATES = (
     Path("tools/scorecard.py"),
 )
 
-#: `{script}`, `{database}` and `{shelf}` are substituted. Overridable end to end, because
-#: this shape is a guess made before build 1 landed and a wrong guess must not become a
-#: silent absence.
+#: `{script}`, `{database}`, `{shelf}` and `{destination}` are substituted. Overridable end to
+#: end, because this shape is a guess made before build 1 landed and a wrong guess must not
+#: become a silent absence.
 #: §190's real interface is `scorecard.py <target> [--out <json>]`; the earlier guess at a
 #: `--database --json` shape failed on the first live arm at $0 and is corrected here.
+#: The contract any template is held to: the script writes its JSON to `{destination}`, and
+#: whatever it prints is the table. `keep_scorecard` keeps the two apart, because this harness
+#: once wrote the printed table over the JSON the script had just written — pilot 21's draws
+#: 2 and 3 (2026-09-02) each hold a `scorecard.json` that `json.load` refuses.
 DEFAULT_SCORECARD_COMMAND = "uv run python {script} {shelf} --out {destination}"
 
 DEFAULT_LITHARNESS = "uv run litharness"
@@ -616,14 +621,33 @@ class StepResult:
     output: str
 
 
+def decode_output(raw: bytes) -> str:
+    """A step's output as text: UTF-8 where it is UTF-8, the console codepage where it is not.
+
+    Children disagree about what they print in. §190's scorecard reconfigures its stdout to
+    UTF-8 — its `--out` help names the console codepage as what mangles an em dash — while a
+    child that never reconfigures prints in that codepage. `text=True` decoded both as the
+    codepage, which is how the section sign reached the first live arms' folders as two
+    characters. UTF-8 goes first because codepage text with a high byte in it is almost never
+    valid UTF-8; the fallback replaces rather than raises, because a step's output is evidence
+    and never a reason to fail the step. Line endings are folded the way `text=True` folded
+    them, so nothing downstream sees a difference but the characters.
+    """
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        text = raw.decode(locale.getpreferredencoding(False), errors="replace")
+    return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
 def subprocess_runner(label: str, argv: Sequence[str], cwd: Path) -> StepResult:
     started = datetime.now(tz=UTC)
     # argv is built in this file and handed to the OS as a list; nothing is shell-interpolated.
+    # Bytes rather than `text=True`: the decoding is `decode_output`'s, one stream at a time.
     completed = subprocess.run(
         list(argv),
         cwd=cwd,
         capture_output=True,
-        text=True,
         check=False,
     )
     elapsed = (datetime.now(tz=UTC) - started).total_seconds()
@@ -632,7 +656,7 @@ def subprocess_runner(label: str, argv: Sequence[str], cwd: Path) -> StepResult:
         argv=tuple(argv),
         returncode=completed.returncode,
         seconds=elapsed,
-        output=(completed.stdout or "") + (completed.stderr or ""),
+        output=decode_output(completed.stdout or b"") + decode_output(completed.stderr or b""),
     )
 
 
@@ -803,20 +827,62 @@ def run_scorecard(
             "returncode": result.returncode,
             "detail": result.output[-2000:],
         }
-    destination.write_text(result.output, encoding="utf-8", newline="\n")
+    kept = keep_scorecard(destination, result.output)
     return {
-        "status": "written",
+        "status": kept.pop("status"),
         "script": str(script),
         "argv": list(argv),
-        "path": destination.name,
+        **kept,
     }
+
+
+def keep_scorecard(destination: Path, printed: str) -> dict[str, object]:
+    """Leave the JSON where the script wrote it, and the printed table beside it as `.md`.
+
+    §190's script writes its JSON to `--out` and prints its table, and this harness's first
+    live arms wrote that stdout over the file the script had just written: pilot 21's draws 2
+    and 3 (2026-09-02) each hold a `scorecard.json` that is the table, which `json.load`
+    refuses. So the two are kept apart, and the JSON is loaded before the arm calls it
+    written — a `scorecard.json` that exists is one that parses, or it is moved aside and the
+    record says so. The table is fenced, because a Markdown viewer would otherwise reflow its
+    columns into prose. Nothing here reads a value: the JSON is parsed, never interpreted.
+    """
+    if not destination.is_file():
+        return {
+            "status": "unparsed",
+            "detail": (
+                f"the scorecard exited 0 and wrote nothing at {destination}; the command "
+                "template must carry `--out {destination}`, which holds the JSON while "
+                "stdout holds the table"
+            ),
+        }
+    try:
+        json.loads(destination.read_text(encoding="utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        aside = destination.with_suffix(".unparsed.txt")
+        destination.replace(aside)
+        return {
+            "status": "unparsed",
+            "detail": f"{destination.name} did not parse ({exc}); moved to {aside.name}",
+        }
+    record: dict[str, object] = {"status": "written", "path": destination.name, "table": None}
+    body = printed.strip("\r\n")
+    if body.strip():
+        table = destination.with_suffix(".md")
+        table.write_text(f"```text\n{body}\n```\n", encoding="utf-8", newline="\n")
+        record["table"] = table.name
+    return record
 
 
 # -------------------------------------------------------------------------------- what it writes
 
 
 def write_folder(run: ArmRun, *, scorecard: dict[str, object], spend: dict[str, object]) -> Path:
-    """`runs/ab/<experiment>/<arm>/` — the command log, the spend, the shelf, the scorecard."""
+    """`runs/ab/<experiment>/<arm>/` — the command log, the spend, the shelf, the scorecard.
+
+    The scorecard is two files when it ran: `scorecard.json`, which loads, and `scorecard.md`,
+    the table it printed. `run_scorecard` leaves those; this writes the rest and the record.
+    """
     directory = run.spec.arm_dir
     directory.mkdir(parents=True, exist_ok=True)
 

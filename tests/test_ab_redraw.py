@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
@@ -532,6 +533,53 @@ def test_the_recorded_digest_is_what_the_sibling_refusal_reads(tmp_path: Path) -
 
 # ------------------------------------------------------------------------------- the scorecard
 
+#: What §190's script prints: a table, ending in its own pointer to where the JSON went. The one
+#: value is a count, because the card carries counts and nothing else.
+TABLE = (
+    "scorecard: the-station\n"
+    "  path      the-station\n"
+    "\n"
+    "  row         value  chk  market reference\n"
+    "  ----------------------------------------\n"
+    "  file_words     12  -    no market reference\n"
+    "\n"
+    "  json: scorecard.json\n"
+)
+
+#: What §190's script writes to `--out`.
+CARD = '{"book": "the-station", "rows": [{"key": "file_words", "value": 12}]}\n'
+
+#: A synthetic chapter for the real scorecard to count — written here, transcribed from nowhere.
+CHAPTER = """\
+Teo counted the crates on the platform twice and got the same number both times.
+
+[STATUS] Teo — Lift 1 | Carried 2/4
+
+The foreman said nothing. The rain said a great deal.
+"""
+
+
+class OutRunner(FakeRunner):
+    """`FakeRunner` holding §190's contract: the JSON goes to `--out`, the table to stdout."""
+
+    def __init__(self, written: str, output: str = TABLE) -> None:
+        super().__init__(output=output)
+        self.written = written
+
+    def __call__(self, label: str, argv: Sequence[str], cwd: Path) -> ab_redraw.StepResult:
+        if label == "scorecard" and "--out" in argv:
+            out = Path(argv[list(argv).index("--out") + 1])
+            out.write_text(self.written, encoding="utf-8", newline="\n")
+        return super().__call__(label, argv, cwd)
+
+
+def _scorecard_script(tmp_path: Path) -> Path:
+    """A stand-in at the first probed path, so `find_scorecard` finds it without being told."""
+    script = tmp_path / "research" / "quality-measurement" / "scorecard.py"
+    script.parent.mkdir(parents=True)
+    script.write_text("# build 1", encoding="utf-8")
+    return script
+
 
 def test_the_scorecard_is_absent_rather_than_fatal_when_build_one_has_not_landed(
     tmp_path: Path,
@@ -557,13 +605,12 @@ def test_a_scorecard_that_has_landed_is_run_and_its_output_kept(tmp_path: Path) 
     substituted after, so this assertion is the one that would catch it coming back. The
     template was repointed at §190's real interface after the first live arm (shelf target
     plus --out; the database is no longer an argument), so the whole-path assertion now rides
-    the shelf and the destination.
+    the shelf and the destination. "Its output kept" has meant, since pilot 21's draws 2 and
+    3, the JSON where the script wrote it — the next test is that defect, pinned.
     """
-    script = tmp_path / "research" / "quality-measurement" / "scorecard.py"
-    script.parent.mkdir(parents=True)
-    script.write_text("# build 1", encoding="utf-8")
+    script = _scorecard_script(tmp_path)
     spec = _spec(tmp_path)
-    runner = FakeRunner(output='{"rows": []}')
+    runner = OutRunner(written=CARD)
 
     result = ab_redraw.run_scorecard(
         spec,
@@ -574,7 +621,7 @@ def test_a_scorecard_that_has_landed_is_run_and_its_output_kept(tmp_path: Path) 
     )
 
     assert result["status"] == "written"
-    assert (tmp_path / "scorecard.json").read_text(encoding="utf-8") == '{"rows": []}'
+    assert (tmp_path / "scorecard.json").read_text(encoding="utf-8") == CARD
     argv = runner.calls[0][1]
     assert str(spec.library_root / "the-station") in argv
     assert str(tmp_path / "scorecard.json") in argv
@@ -601,6 +648,137 @@ def test_a_scorecard_that_refuses_this_invocation_is_recorded_not_swallowed(
     assert result["status"] == "failed"
     assert "unrecognized arguments" in str(result["detail"])
     assert not (tmp_path / "scorecard.json").exists()
+
+
+def test_the_written_scorecard_json_parses_and_the_printed_table_lands_beside_it(
+    tmp_path: Path,
+) -> None:
+    """The defect pilot 21 found on 2026-09-02, pinned.
+
+    `runs/ab/pilot21-loop/draw2/scorecard.json` and `draw3/scorecard.json` were the printed
+    table, ending in the script's own `json: ...` pointer, because the harness wrote the
+    scorecard's stdout over the file the scorecard had just written to `--out`; `json.load`
+    raised on both. Now the JSON is where the script put it and loads, the table is a fenced
+    `scorecard.md` beside it, and the record names the two files and nothing else — no bar,
+    no verdict, no value read out of either.
+    """
+    _scorecard_script(tmp_path)
+    destination = tmp_path / "ab" / "arm" / "scorecard.json"
+    destination.parent.mkdir(parents=True)
+
+    result = ab_redraw.run_scorecard(
+        _spec(tmp_path),
+        ab_redraw.StoreState(shelf="the-station"),
+        destination,
+        runner=OutRunner(written=CARD, output=TABLE),
+        repo=tmp_path,
+    )
+
+    assert result["status"] == "written"
+    assert set(result) == {"status", "script", "argv", "path", "table"}
+    assert result["path"] == "scorecard.json"
+    assert result["table"] == "scorecard.md"
+    card = json.loads(destination.read_text(encoding="utf-8"))
+    assert card["book"] == "the-station"
+    table = destination.with_suffix(".md").read_text(encoding="utf-8")
+    assert table == "```text\n" + TABLE.strip("\n") + "\n```\n"
+
+
+def test_a_scorecard_that_prints_but_writes_no_json_is_unparsed_not_written(
+    tmp_path: Path,
+) -> None:
+    """A template without `--out {destination}` gets a reason, never a `.json` holding a table."""
+    _scorecard_script(tmp_path)
+    destination = tmp_path / "scorecard.json"
+
+    result = ab_redraw.run_scorecard(
+        _spec(tmp_path),
+        ab_redraw.StoreState(shelf="the-station"),
+        destination,
+        runner=FakeRunner(output=TABLE),
+        repo=tmp_path,
+    )
+
+    assert result["status"] == "unparsed"
+    assert "--out {destination}" in str(result["detail"])
+    assert not destination.exists()
+    assert not destination.with_suffix(".md").exists()
+
+
+def test_a_scorecard_json_that_does_not_parse_is_moved_aside_and_said_to_be(
+    tmp_path: Path,
+) -> None:
+    """A `scorecard.json` that exists is one that loads; anything else is renamed, not kept."""
+    _scorecard_script(tmp_path)
+    destination = tmp_path / "scorecard.json"
+
+    result = ab_redraw.run_scorecard(
+        _spec(tmp_path),
+        ab_redraw.StoreState(shelf="the-station"),
+        destination,
+        runner=OutRunner(written=TABLE, output=""),
+        repo=tmp_path,
+    )
+
+    assert result["status"] == "unparsed"
+    assert "moved to scorecard.unparsed.txt" in str(result["detail"])
+    assert not destination.exists()
+    assert not destination.with_suffix(".md").exists()
+    assert (tmp_path / "scorecard.unparsed.txt").read_text(encoding="utf-8") == TABLE
+
+
+def test_a_step_output_is_read_as_utf8_before_the_console_codepage() -> None:
+    """The scorecard prints UTF-8 by its own reconfigure; `text=True` read it as the codepage,
+    and the first live arms' folders carry the section sign as two characters to show for it."""
+    assert ab_redraw.decode_output("§61 — no bar\r\nrow\rvalue\n".encode()) == (
+        "§61 — no bar\nrow\nvalue\n"
+    )
+    fallback = ab_redraw.decode_output(b"\xa7 alone\n")
+    assert fallback.endswith(" alone\n")  # decoded and never raised; the character is the box's
+
+
+def test_the_real_scorecard_through_the_default_template_leaves_json_that_loads(
+    tmp_path: Path,
+) -> None:
+    """§190's script itself, driven the way an arm drives it, `uv run` swapped for this interpreter.
+
+    Both scorecard defects so far were found on paid arms rather than here, because every
+    earlier test faked the script: the `--database --json` guess died on the first live arm,
+    and the table-over-JSON overwrite on pilot 21's draws 2 and 3. The script is regex and
+    arithmetic over a synthetic chapter — no model runs and no corpus is opened — so running
+    it is not a paid call; and the section sign in its no-bar paragraph is the check that the
+    table is decoded as the script wrote it rather than through the console codepage.
+    """
+    script = ab_redraw.REPO / ab_redraw.SCORECARD_CANDIDATES[0]
+    if not script.is_file():
+        pytest.skip("build 1's scorecard is not in this tree")
+    assert ab_redraw.DEFAULT_SCORECARD_COMMAND.startswith("uv run python ")
+    shelf = tmp_path / "library" / "the-station"
+    (shelf / "chapters").mkdir(parents=True)
+    (shelf / "chapters" / "Chapter1.txt").write_text(CHAPTER, encoding="utf-8")
+    spec = _spec(
+        tmp_path,
+        library=tmp_path / "library",
+        scorecard_command=(
+            f'"{Path(sys.executable).as_posix()}" '
+            + ab_redraw.DEFAULT_SCORECARD_COMMAND.removeprefix("uv run python ")
+        ),
+    )
+    destination = tmp_path / "ab" / "arm" / "scorecard.json"
+    destination.parent.mkdir(parents=True)
+
+    result = ab_redraw.run_scorecard(
+        spec, ab_redraw.StoreState(shelf="the-station"), destination, repo=ab_redraw.REPO
+    )
+
+    assert result["status"] == "written", result
+    card = json.loads(destination.read_text(encoding="utf-8"))
+    assert card["book"] == "the-station"
+    assert card["chapters"] == ["Chapter1.txt"]
+    table = destination.with_suffix(".md").read_text(encoding="utf-8")
+    assert "scorecard: the-station" in table
+    assert "§61" in table
+    assert "json:" in table
 
 
 # --------------------------------------------------------------------- against a real store
