@@ -173,3 +173,53 @@ still unpulled on them is the shelf's size — draw 1 showed two openings, and t
 four. Draw 2 therefore changes two things, recorded as two: the markup strip, and
 `--exemplars-limit 3` (adding *Randidly Ghosthound*, 2,033 words). Two draws, never a treatment
 effect; the read decides whether the register moved again.
+
+### 5.2 Draw 2 — the coordinator's read
+
+**Run through the settled-listing harness** (`runs/ab/pilot21-loop/draw2/`, arm.json: the same
+listing byte for byte, `marsh`, first person, `--exemplars-limit=3`, the markup strip live),
+a fresh world — *the Bracket*, a Grade ladder, Wind as the resource, Guard, Reach, Read,
+Counter and Stagger as the grants, a four-way class (Brawler, Runner, Warden, Wild) with a
+deadline — completed at accept with no gap; 1,925 words in two scenes, both accepted first
+time, the leak gate clean on both, `markup_removed` on the record.
+
+**What moved.** This one is more *story* than draw 1: Danny reads the thing's three moves
+before it makes them and calls them for Kesh; he could step out of the overhand and takes it
+for her instead, and Guard goes from nothing to one *"and it had cost me exactly one thing:
+standing still for a hit I could have avoided"* — a choice with a price, on the page; Kesh
+finishes it with the bay bar and her Grade goes to two while his stays at one, because the
+Bracket counts the finish and not the calling, which is the system's rule arriving as an
+injustice the reader feels; and the Standing Office inspector walks up the ramp with a
+licence application whose every field must be read out in front of an officer, which is the
+chapter's unanswered offer and a real threat to the one line he has not told anyone. The
+simile shape fell from seven to two; absences from eighteen to thirteen; the sheet is opened
+by shutting his eyes, which is a nice diegetic touch; the boss-pattern line (*like a boss
+pattern in a game with no more coins in it*) is the genre's own idiom.
+
+**What did not move, and it is now two families.**
+
+1. **The narrator's honesty move**: *That is the only way I can put it.* — *I want to be
+   honest about that, because it has mattered since.* — *That is what people get wrong
+   afterwards.* — *I would like to say I thought about the fairness of that. What I actually
+   thought…* Draw 1 had *I want to say I weighed it. What I actually thought about was…* — the
+   same construction, verbatim in shape, two draws running. The narrator keeps stepping out
+   of the scene to vouch for his own account.
+2. **Definition by what a thing is not**, thirteen: *Not a crack. That is what people get
+   wrong afterwards. The steel did not break, it did not buckle* — *It had no face I could
+   describe to an inspector. It did not bleed, later, when it should have.* — *Not through a
+   hole.* — *It did not stagger and it did not stumble; it simply had nowhere in its list* —
+   *Every field. Not the head of it. Every field.* Some of these are earned (the sheet's
+   zeros); the habit is the model's.
+3. Zero exclamation marks, again. Kesh breathes out through her teeth; nobody shouts.
+
+The system's own voice thinned this draw (*There would be a sheet, it said. Only I could read
+mine.* — reported, where draw 1 printed it), which is variance between two draws and not a
+regression to fix.
+
+**Routing.** Items 1 and 2 are the narrator's *stance* — a man vouching for his account from
+outside it — and no exemplar has displaced it in two draws, because a dossier says what its
+writer loves and nothing about who is talking. Read 15 §4.3 named the lever: write the stance
+into who the writer is. Draw 3 therefore changes one thing: the writer, a hand-declared
+recruit whose dossier is the man telling it to a mate at the bar the same night, checked legal
+against the roster's rail. Same listing, same shelf, same three exemplars, strip live. One
+change; two draws; the read decides.
