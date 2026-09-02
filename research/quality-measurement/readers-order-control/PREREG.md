@@ -25,9 +25,17 @@ scene 2 as the readers read it, in three copies:
 - `sentences`: the sentences inside each paragraph shuffled with a fixed seed, paragraph order
   kept.
 
-Each copy is cut at `text.stop_point` (the same fraction), so every reader sees the same
+Each copy is cut at `text.stop_point` (the same fraction), so every reader sees about the same
 number of words and the same future is withheld. The rival is the same named book for every
 cell (`rivals.draw` on a fixed key).
+
+**Amendment a, 2026-09-02, before any cell was bought.** The dry run measured the cut: the
+`ordered` and `sentences` copies stop at 648 words and the `paragraphs` copy at 593, because
+the stop point snaps to a paragraph boundary and shuffling the paragraphs moves the boundary
+nearest the fraction. The passages are therefore not equal in length across all three copies;
+the word count per copy is reported beside every number, and any reading that leans on the
+`paragraphs` copy alone is weaker than one that leans on `sentences`, which is cut identically
+to `ordered`. The rival every cell names is *The Exorcist Doctor*.
 
 ## The lanes and the measurables, all code
 
