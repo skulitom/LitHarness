@@ -123,6 +123,19 @@ read is a diagnostic and never evidence** (§95, and the standing frame of every
 an LLM reading prose is what this project measures with, and this one steers but certifies
 nothing. Two draws under one listing are two draws (`serial-pilot-7.md` §0).
 
+**Amended after read 16 (2026-09-02), on the operator's direction — verbatim:** *"can you also
+hand read to examine how to make it more interesting and engaging? including more creative
+world and story"*. From draw 4 on every read has a second half, on fixed questions: what
+makes a reader want chapter 2 (a win paid early, a clock, a rival, a choice the reader would
+argue about); how far the book promises to go and whether the reader can feel the scale; what
+is mysterious about the system and whether anybody in the book wonders about it; what the
+twist on the standard shape is; whether there is a laugh; and what the person wants beyond
+the next rung. The operator's example premise for the second question — a system-apocalypse
+Earth, a botched portal spell survived on stats for years, emergence on the far side of the
+universe under a competing system with some old abilities kept — is recorded in the track's
+next entry as the shape the pipeline cannot yet invent or print, and the concept stage and
+the two-system sheet are the fixes it names.
+
 ### 5.1 Draw 1 — the coordinator's read
 
 **What moved, and it is the largest move any draw has made.** The system speaks. The Monday
