@@ -390,13 +390,55 @@ def test_no_shelf_label_the_recruiter_holds_can_reach_a_book_brief() -> None:
 
 def test_the_exemplar_socket_is_not_reachable_from_the_recruiter_path() -> None:
     """Socket only, own-generated if ever admitted, and admission sits on R1's boundary as an
-    operator act rather than a build decision."""
+    operator act rather than a build decision.
+
+    **Re-pinned 2026-09-02, and why.** From §146 the second half of this test was a substring
+    check: `--exemplar` absent from the whole text of `cli.py`. That held only while no flag in
+    the CLI began with those letters. Stage-0 §196 gave the *writer* `--exemplars DIR`, the
+    operator's shelf of hand-placed openings shown to the scene and listing writers as how the
+    shelf sounds, and the old pin matched that flag, and the docstring that names it, though
+    neither touches a roster row. The rail was always narrower than the file, so it is now held
+    where it lives: no command on the recruiter's path takes an exemplar option (`recruit` in
+    this process, and every `roster` verb the run's allowance lets the agent type); none of
+    their handlers reads the writer's shelf; and each allowance entry starts at the `roster`
+    verb, so a root flag cannot be typed inside the run. `revoice` holds the same rail in
+    `tests/test_revoice_cli.py::test_the_command_takes_no_exemplar_flag`, and the flag the
+    writer is allowed is pinned in `tests/test_exemplars.py`.
+    """
     from litharness.adapters.sqlite_roster import SqliteRosterRepository
+    from litharness.cli import build_parser
 
     parameters = inspect.signature(
         SqliteRosterRepository.record_proposed_writer
     ).parameters
     assert "exemplar_digest" not in parameters
-    assert "--exemplar" not in Path(
-        Path(recruiter.__file__).parents[2] / "litharness" / "cli.py"
-    ).read_text(encoding="utf-8")
+
+    parser = build_parser()
+    commands = parser._subparsers._group_actions[0].choices
+    on_the_path = {"recruit": commands["recruit"], "roster": commands["roster"]}
+    on_the_path.update(
+        (f"roster {verb}", command)
+        for verb, command in commands["roster"]._subparsers._group_actions[0].choices.items()
+    )
+    for verb, command in on_the_path.items():
+        options = {option for action in command._actions for option in action.option_strings}
+        assert not {option for option in options if "exemplar" in option}, verb
+        handler = command.get_default("func")
+        if handler is None:
+            continue
+        tree = ast.parse(inspect.getsource(handler))
+        names = {node.id for node in ast.walk(tree) if isinstance(node, ast.Name)} | {
+            node.attr for node in ast.walk(tree) if isinstance(node, ast.Attribute)
+        }
+        reads = {
+            name for name in names if "exemplar" in name.lower() or name == "_selected_shelf"
+        }
+        assert not reads, (verb, sorted(reads))
+    # The writer's flag is a root option, which is what the old pin could not tell apart from
+    # one on the recruiter's path. It is refused after the verb, and never read by the handler.
+    assert "--exemplars" in {
+        option for action in parser._actions for option in action.option_strings
+    }
+    with pytest.raises(SystemExit):
+        parser.parse_args(["recruit", "--specialization", "isekai", "--exemplars", "somewhere"])
+    assert all(entry.startswith("Bash(litharness roster ") for entry in recruiter.ALLOWED_TOOLS)
