@@ -52,6 +52,18 @@ def test_a_rewrite_the_locator_still_finds_is_refused_and_the_sentence_is_left()
     assert result.text == PAGE
 
 
+def test_a_rewrite_that_trades_one_family_for_another_is_refused() -> None:
+    """§199.1: on pilot 24's redraw the echo rose while absence fell. A sentence said again
+    without its absence but with a phrase repeated is not a sentence said again."""
+    traded = "He mapped the storm drains, mapped the storm drains, for a hobby of his own."
+    assert tells.ECHO in {item.family for item in tells.locate(traded)}
+    complete = _answering(traded, "He mapped the storm drains for a hobby of his own.")
+    result = tells_pass.apply(PAGE, limits=ZERO, complete=complete)
+    assert result.rewritten == 1 and result.calls == 2
+    assert "hobby of his own." in result.text
+    assert "mapped the storm drains, mapped" not in result.text
+
+
 def test_a_failed_call_or_a_runaway_answer_leaves_the_sentence() -> None:
     too_long = " ".join(["word"] * 60)
     complete = _answering(None, too_long)

@@ -36,7 +36,10 @@ ATTEMPTS = 2
 FAMILY_ASKS: Mapping[str, str] = {
     tells.ABSENCE: "Say what is there rather than what is not.",
     tells.PARADOX: "Say it once, without turning it back on itself.",
-    tells.THE_WAY: "Show what the person does now, not what they always do.",
+    # Named literally, because the family holds two shapes (the located habit and the
+    # *the way a dropped thing coils* simile) and an ask about habit left the simile standing:
+    # on pilot 24's redraw this family moved 2.2 to 2.1 while the others fell (§199.1).
+    tells.THE_WAY: "Say it without the words 'the way'.",
     tells.ECHO: "Say the phrase once.",
     tells.CHAINED_AND: "Break it into more than one sentence, with at most one and in each.",
 }
@@ -113,7 +116,11 @@ def _acceptable(original: str, replacement: str | None, family: str) -> bool:
     words, was = len(text.split()), len(original.split())
     if words > 2 * was + 4 or words * 3 < was:
         return False
-    return family not in {item.family for item in tells.locate(text)}
+    # **No family at all, not merely the one being said again** (§199.1): on pilot 24's
+    # redraw the echo rose while absence fell, because a sentence said again without its
+    # absence came back with a phrase repeated, and the check looked only at the family it
+    # was fixing. A rewrite that trades one shape for another is refused.
+    return not tells.locate(text)
 
 
 def apply(

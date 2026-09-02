@@ -506,12 +506,18 @@ def make_scene_draft_handler(
         else None
     )
 
+    # **Every call the pass makes, kept so the spend reaches a decision row** (§199.1): pilot
+    # 24's redraw counted forty-five rewrite calls on its acceptance events and none on the
+    # spend ledger, so the arm's cost was a floor. Cleared before each ladder run.
+    tells_calls: list[CompletionResult] = []
+
     def _say_again(request: CompletionRequest) -> str | None:
         """One located sentence, said again; a failed call is a sentence left as drafted."""
         try:
             answer, _resolution = registry.complete(request)
         except OperationalFailure:
             return None
+        tells_calls.append(answer)
         return answer.text
 
     budget_policy = budget or BudgetPolicy()
@@ -887,6 +893,7 @@ def make_scene_draft_handler(
         # gate's verdict cannot change** — so those rewrites were incapable of altering the
         # outcome they were paid for, by the design's own reasoning. A refused draft now costs
         # the writer's call and nothing else.
+        tells_calls.clear()
         ladder = run_ladder(result.text)
 
         # **One draft in, one revision out: no second candidate, no scoring, nothing choosing
@@ -945,6 +952,31 @@ def make_scene_draft_handler(
         marks_removed = ladder.marks_removed
         markup_removed = ladder.markup_removed
         tells_record = ladder.tells.to_jsonable() if ladder.tells is not None else None
+        if tells_calls and ladder.tells is not None:
+            # **The pass's spend, on a row of its own** (§199.1), the reviser's shape: the
+            # drafting call's row names the drafting call, and forty-five rewrites are not
+            # that call. One row per ladder run, `ACCEPT` because a rewrite refused by the
+            # locator is a sentence left as drafted and not a refusal of the draft.
+            costs = [call.cost_usd for call in tells_calls if call.cost_usd is not None]
+            store.record_decision(
+                PolicyDecision(
+                    decision_id=decision_id_for(f"tells:{job.job_id}", job.attempts, ()),
+                    outcome=Outcome.ACCEPT,
+                    gates=(),
+                    job_id=job.job_id,
+                    logical_id=logical_id,
+                    base_revision_id=revision_id,
+                    attempt=job.attempts,
+                    provider=tells_calls[0].provider,
+                    model=tells_calls[0].model,
+                    profile=tells_pass.REWRITE_PROFILE,
+                    invocations=sum(call.invocations for call in tells_calls),
+                    total_tokens=sum(call.usage.total for call in tells_calls),
+                    cost_usd=sum(costs) if costs else None,
+                    reason=ladder.tells.detail,
+                ),
+                decided_at=_timestamp(now),
+            )
         result = replace(result, text=ladder.text)
 
         if findings:

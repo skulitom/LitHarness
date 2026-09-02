@@ -22177,3 +22177,35 @@ change — is one draw; its counts before and after are on its decision rows.
 
 **Anti-scope.** Nothing shown to the writer changes; the reviser stays off; nothing here reaches
 a judge or a reader pool.
+
+### 199.1 The pass moved three families to the shelf's rate on its first draw and missed two for reasons of its own; the readers' order control read surface on both lanes
+
+**Measured (pilot 24, `plan/serial-pilot-24.md` §6; `research/quality-measurement/readers-order-control/FINDINGS.md`, 2026-09-02).**
+The third-person chapter redrawn with the pass on, one change: on the page against draw1,
+absence 4.4 to 2.7 per thousand words (the shelf's ceiling 2.6), the paradox 1.1 to 0.0, the
+chained *and* 7.2 to 0.5 (the shelf's own rate); the located habit 2.2 to 2.1 and the echo 3.9
+to 2.7, with the echo *rising* in scene 2 (4.2 to 5.3). Fourteen sentences said again, fifteen
+left, forty-five calls. Two causes, both the pass's: a rewrite was checked only for the family
+it was fixing, so a sentence said again without its absence came back with a phrase repeated;
+and the located-habit family holds two shapes, the habit and the *the way a dropped thing
+coils* simile, and an ask about habit left the simile standing. The forty-five calls were
+counted on the acceptance events and on no decision row, so the arm's spend was a floor.
+
+The readers' order control, registered before spend and bought after the draw: the
+`sentences` copy carried on four of four, the ordered copy's count, against the table's two;
+overlap with the withheld continuation was no lower on either shuffled copy (0.040, 0.040,
+0.047); the sentence-shuffled passage was reassembled into the ordered scene almost word for
+word, and the paragraph-shuffled copy's readers "predicted" the ending the shuffle had moved
+into view. Both lanes read content wherever it sits and not where the story is, and the
+measurement lane is saturated at four of four on everything this loop has shown it.
+
+**What shipped.** A rewrite is kept only if the locator finds no family in it at all
+(`test_a_rewrite_that_trades_one_family_for_another_is_refused`); the located-habit ask names
+the words; the pass's calls land on a decision row of their own with their spend, the
+reviser's shape. The control's registration and reading stand as OBSERVED.
+
+**Refused, and owed.** Retuning a reader on this file (§89, §97.1). A story-sensitive
+instrument is owed with a measurable that depends on order by construction — reassembly of
+shuffled paragraphs scored by rank correlation is the candidate — and a cost that bites,
+which §122's costed continuation carries and the `readers` lane does not. Both are
+registrations before spend. No bar; one chapter is one chapter.

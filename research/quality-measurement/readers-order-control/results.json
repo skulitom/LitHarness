@@ -1,0 +1,24 @@
+{
+  "rival": "The Exorcist Doctor",
+  "seed": 20260902,
+  "summary": {
+    "ordered": {
+      "carried_on": 4,
+      "answered": 4,
+      "mean_overlap": 0.0403,
+      "mean_specificity": 0.46
+    },
+    "paragraphs": {
+      "carried_on": 4,
+      "answered": 4,
+      "mean_overlap": 0.0399,
+      "mean_specificity": 3.83
+    },
+    "sentences": {
+      "carried_on": 4,
+      "answered": 4,
+      "mean_overlap": 0.0467,
+      "mean_specificity": 0.0
+    }
+  }
+}

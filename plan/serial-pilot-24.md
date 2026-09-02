@@ -1,6 +1,6 @@
 # Serial Pilot 24 — a power that works in chapter one, in both persons
 
-**Status: READ in both persons, 2026-09-02; the operator's milestone.** The first concept drawn under stage-0 §198's four fields (a
+**Status: READ in both persons and redrawn in third with the tells pass, 2026-09-02; the operator's milestone.** The first concept drawn under stage-0 §198's four fields (a
 first use, a threat, a prize, a look), answering read 18 (`plan/reader-read-18.md`): seven
 chapters under three concepts, every one ending with its person worse off or merely offered
 something, and the operator not hooked. The concept is drawn once and run in both persons,
@@ -267,3 +267,49 @@ absence in the third, and the geography.
 **The milestone.** Two chapters under one concept in two persons, read by the readership and
 by the coordinator, in front of the operator with the concept and both listings. His read is
 the person, and whether this is the chapter he keeps reading.
+
+## 6. Draw2 in third person — the tells pass on, one change
+
+**Arm draw2 (`runs/ab/pilot24-third/draw2/`, 2026-09-02).** Draw1's pipeline with stage-0 §199's
+tells pass on the ladder and nothing else: the same concept, listing, writer, person and shelf,
+a fresh store. Seed 1,818 seconds (a fresh world: Jesse Mott at Dunmore, Denny, the shift
+manager Ruben, the Marlow Street outfall), `world check` clean, both scenes accepted first
+attempt, 1,955 words, the readership four of four carrying on against a named rival, and every
+answer the book's own again (*a thing wearing his coworker's bad knee walking toward the tool
+cage*). $6.85 on the decision rows, and that figure is a floor: the pass's forty-five calls are
+counted on the acceptance events (17 and 28) and on no decision row, so the spend ledger does
+not see them; §199.1 gives the pass a row of its own.
+
+**What the pass did, counted on the decision rows and on the page.** Scene 1: absence 5.4 to
+3.2, the chained *and* 4.3 to 0.0, the located habit 2.2 to 1.1; seven sentences said again,
+five left as drafted, seventeen calls. Scene 2: absence 4.2 to 2.1, the paradox 1.1 to 0.0, the
+chained *and* 3.2 to 1.1, the located habit 4.2 to 3.2, and the echo 4.2 to **5.3**; seven said
+again, ten left, twenty-eight calls. On the whole chapter against draw1: absence 4.4 to 2.7 (the
+shelf runs 2.6), paradox 1.1 to 0.0, the chained *and* 7.2 to 0.5 (the shelf's own rate), the
+echo 3.9 to 2.7, the located habit 2.2 to 2.1.
+
+**Two defects of the pass, both its own.** The echo rose in scene 2 because a sentence said
+again without its absence came back with a phrase repeated, and the check looked only at the
+family it was fixing; the fix is that a rewrite may carry no family at all. The located habit
+barely moved because its family holds two shapes, the habit (*the way he always*) and the
+simile (*the way a dropped thing coils*), and an ask about habit left the simile standing on
+ten sentences; the ask now names the words. Both are §199.1.
+
+**The read.** The chapter reads cleaner than draw1 in the one place a reader feels it: the
+sentences end. *That was the part that did it. The drain wasn't it. The knee.* The arrival has
+the world in it (*Somewhere over by paint a woman screamed, and then laughed, and then said
+okay about four times*). The Ratchet's audit is the same invention as draw1's and better
+staged: it names his hollows one at a time and refuses Lacewood because his feet rode clear of
+the floor. The first use is on the page and works, as an escape from the thing in Ruben's
+coveralls with Ruben's knee. The close is the concept's turn arriving as an offer unanswered,
+in the system's own voice with its own correction (*I WILL BUY IT. A PAGE READ TRUE. A CLICK.
+CORRECTION. A PAGE READ TRUE AND PLACED. A CLICK.*), which is the best system voice in nine
+draws. What remains, counted: three *the way* similes; the absence family at the shelf's rate
+and some of it the story's (*nobody came up it*); the *you* simile once (*the way you stop short
+of a wire*). What the pass cannot reach and the operator will: a figure that fails a literal
+read, if one is here, and an unmet term (*hollows* is glossed this time: *every hollow drawn
+in the book in his back pocket*).
+
+**Two draws, one change, never a treatment effect.** The pass is the difference the counts
+show and the read feels; a second world, a second draft, and the seed's own choices are the
+rest. The operator's read is what it answers to.
