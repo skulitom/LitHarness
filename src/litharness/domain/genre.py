@@ -47,6 +47,7 @@ import litharness_contracts as lc
 from litharness.domain import gamesystem as gamesystem_mod
 from litharness.domain import state as state_mod
 from litharness.domain.extraction import (
+    MAX_SUFFIX,
     SHEET_PREDICATE,
     STATUS_PREDICATE,
     speaks_system_voice,
@@ -147,7 +148,21 @@ def _is_position_in(
     generation earlier.
     """
     wanted = set(system.value_keys)
-    return any(set(snapshot) == wanted for snapshot in _canon_snapshots(records))
+    # **A ceiling is a column's ceiling and not a column** (§197.2). Pilot 22's seed put
+    # a bearing_max key beside bearing — the printed form of *Bearing 0/1*, which the declared
+    # sheet's own `paired` flag renders — and an exact key comparison read that sheet as a
+    # different book's, so `world accept` refused to finish both drawn systems and the
+    # chapter drafted with no system read back. A ceiling for a column the system does not
+    # have is still a different sheet.
+    for snapshot in _canon_snapshots(records):
+        keys = {
+            key
+            for key in snapshot
+            if not (key.endswith(MAX_SUFFIX) and key[: -len(MAX_SUFFIX)] in wanted)
+        }
+        if keys == wanted:
+            return True
+    return False
 
 
 def system_gap(records: Sequence[lc.StateRecord]) -> str | None:

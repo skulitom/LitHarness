@@ -155,8 +155,102 @@ with them, a fresh store, the same listing and concept byte for byte.
 No hand repair of the store: retracting a proposal the check names is a person authoring the
 world, and the world is the draw's.
 
-*(draw1b, after the arm)*
+**Arm draw1b (2026-09-02, `runs/ab/pilot22/draw1b/`).** The seed took 874 seconds under the
+new ceiling; `world check` clean, `would_not_finish` empty; `world accept` carried 294 of 296
+proposals (two superseded by later declarations of the same slot) and **refused to finish both
+drawn systems**: the floor's position check compared the snapshot's key set exactly against
+the system's columns, and the seed's snapshot carried `bearing_max` beside `bearing`, the
+printed form of *Bearing 0/1*, which the declared sheet's own `paired` flag renders. So the
+book cleared the floor as a hand-seeded sheet with no system behind it, and **the chapter
+drafted under the legacy arm**: no system read back, the fork the world declared (a delivery
+preference Dispatch offers once) never printed, beats from counted names. Both scenes were
+accepted first attempt; 1,956 words; the leak gate clean; fourteen markup markers stripped
+from scene 1 (the notices were formatted) and none from scene 2; $4.78. The world: Marchpole
+Regional's returns bay; Dispatch with a nine-rung Clearance ladder and seven grants; the
+Standing Order beside it with five, its sheet undeclared as asked; Danny Rowe (the name is the
+seed's, not the concept's), Priya Rademaker, Femi, the dead fork-truck driver Ray Tomlin, Gil
+Speers the agency casual who is *the next valid address*, and Abel Iwu, Consignee 0001, at five
+of nine in a yard in Lagos; thirteen rules, the four debts' answers scheduled as claims; the
+summary handler opened three more promises off scene 1 (Thursday's assessment; who wrote his
+name in the status line; *the loudest Two is the law*). On the shelf at
+`book-library/failed-delivery-notice/`.
 
 ## 5. The read
 
-*(both halves, per `serial-pilot-21.md` §5)*
+**The register, counted.** The voice is carver's and it holds: the far listener gets the depot
+explained (*Everything the district couldn't deliver comes back down to me and I look at it and
+I decide where it goes*; *He gets you to lift something, he writes a number down*), and read
+16's family is five tokens (*a wee* twice, *fag*, *dead sound*, *thick as a plank*) with the
+dialect grammar (*stood*, *sat*, fourteen) as the voice. The confessional aside is eight, steady
+with draw 4 (*I'm not going to be clever about that* — *I want to be honest with you about the
+shaking* — *I want that on the record* — *That's the bit I want you to have* — *And here's the
+mad part*), and one of them has become story: *I'm telling you that because I said last time I
+hadn't, and I want to be straight with you* is the narrator correcting his own earlier account,
+which is the frame paying off rather than scaffolding. Definition by absence: thirteen tokens,
+about five in the tic form (*Not a bell, not a countdown, no dramatic music*; *Nothing printed.
+Not one.*), and the chapter closes on a not for the second draw running (*and I have not signed
+it yet*; draw 4: *and I haven't said yes*). The *the way X* shape is at four, all descriptive
+and none a simile; the similes that carry the chapter are thirteen and the genre's own (*hums
+like it's thinking about it*; *like the bay's the bloke and I'm the coat rack it's stood in*;
+*patient as a parking ticket*; *like you've said hello to a vending machine*; *like a man on a
+treadmill he's lied about the settings on*). Zero exclamation marks, five draws running, and
+no capitals this time. Tense holds, the frame closing in the present (*And I'm stood here with
+my hand somewhere between my pocket and that cage*). The listener has no biography this draw.
+
+**The engagement half, on the fixed questions.**
+
+- *What makes a reader want chapter 2.* Two clocks, both real: *Attempt 3 of 3. That's it.
+  That's the last one they do*, and Thursday, when the Board's man reads a number off you. A
+  choice the reader would argue about, and it has a victim: sign for the dead man's class or
+  let the third attempt lapse, and the notice goes on to *the next valid address*, the agency
+  lad already rubbing one flat line across his shoulder (*Have my bay, then*). A win paid
+  early with its price on the same line: answering a notice took him from One to Two (*It said
+  Two*), and the sheet then says what being careful is worth (*Signing: nothing. Bearing:
+  nothing out of one*). A rival in Priya, who audits the floor rather than walking it. The
+  pull is a decision with a body attached, not an appointment.
+- *How far the book promises to go.* Felt and not counted. *The ceiling you'd measured your
+  whole life against turns out to be a rung, and there's another one above it, and another
+  one above that, and nobody's told you where they stop* is the horizon as a feeling, and the
+  Board, the licence and *proper paid* put an economy under the ladder. The count the concept
+  holds, nine rungs and Consignee 0001 at five in Lagos, is in canon (Abel Iwu's snapshot and
+  his cast line) and never reaches the page: the outline's two statements kept scene 1 and 2
+  at the bay. The concept fixed the listing's horizon; the outline has not yet spent it.
+- *What is mysterious about the system, and who wonders.* The strongest of the five draws.
+  Dispatch has a manner (*a tracking number, a consignment weight, an attempt count, and polite
+  regret*), answers being answered (*Acknowledgement received from this address. Recipient
+  present. Clearance amended*), and the narrator wonders at it out loud (*Who's this actually
+  for?*; *I have no idea who wrote it there*). The weight of goods issued to somebody else
+  shows on a body before it shows on a sheet, which is the concept's first debt arriving as
+  Gil's headache and not as a notice; and the reason the address is him, the second debt, is
+  shown when Belt Four goes quiet and the bay prints again. Both are on the page ahead of the
+  scenes they were due by, as things seen and not said.
+- *The twist on the standard shape.* A class as an undelivered parcel, with three attempts and
+  a next address, so refusing has a cost to somebody else; and the sheet that counts what
+  your hands did and not what you nearly did.
+- *A laugh.* *"Nothing. Wasp." "In November." "Big wasp."*; *like a mattress with the wrong
+  postcode on it*; *Priya doesn't walk the floor, she audits it*; *dead sound, thick as a
+  plank*. More than any draw before it.
+- *What he wants beyond the rung.* *The only place in the world my actual name is written
+  down*, and *licensed*, which is the market's want made local.
+
+**Three findings, and their routing.**
+
+1. **The system was not live, and the chapter did not need it to be good** (§4 above). The
+   fix is the floor's: a ceiling key is a column's ceiling and not a column (stage-0 §197.2).
+   Arm draw2 redraws with it, so the declared fork can print and the beats come from the
+   system's grants. What a live system adds to a chapter this strong is the read's to say.
+2. **The printed line names a man the System never names.** The house line prints the subject
+   through `extraction.display_name` (canon's `is_a`), and this world's system *never uses a
+   name, only an address*. The writer turned the contradiction into a mystery (*It's the only
+   place in the world my actual name is written down since all this started and I have no idea
+   who wrote it there*), which is now an opened promise and the best invention on the page. It
+   is still a seam: the manner cannot hold on the one surface the house prints. A heading slot
+   on the declared sheet, read back by the parser, is the fix; it waits for draw2's read.
+3. **The horizon's count stays in canon.** The concept holds it and the seed declared it; the
+   outline did not place it. Counted; the next outline is watched for it.
+
+**The milestone.** Five draws: draw 1 gave the system its voice, draw 2 the chapter its story,
+draw 3 the narrator his, draw 4 the listener theirs, and this one the book a horizon, a system
+with a manner and a choice with a victim, from a concept the stage invented under an empty
+brief. This is the draw to put in front of the operator beside draw 4, with the concept's text
+above it. Nothing here is evidence; the read is his.

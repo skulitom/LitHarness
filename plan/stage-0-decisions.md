@@ -22005,3 +22005,31 @@ person authoring the world, and the world is the draw's. Arm draw1b re-runs the 
 the three fixes, a fresh store, the same listing and concept byte for byte.
 
 **No bar.** One arm, stopped; nothing read.
+
+### 197.2 The first concept-stage chapter drafted with its systems refused at accept, over a ceiling key
+
+**Measured (pilot 22 arm draw1b, `plan/serial-pilot-22.md` §4 and §5, 2026-09-02).** The seed
+took 874 seconds under the new ceiling; `world check` was clean with `would_not_finish` empty;
+`world accept` carried 294 of 296 proposals and refused to finish both drawn systems, because
+the floor's `_is_position_in` compared the snapshot's key set exactly against the system's
+columns and the seed's snapshot carried `bearing_max` beside `bearing` — the printed form of
+*Bearing 0/1*, which the declared sheet's own `paired` flag renders. The book cleared the floor
+as a hand-seeded sheet with no system behind it, and the chapter drafted under the legacy arm:
+no system read back, the declared fork (a delivery preference offered once) never printed, the
+beats from counted names. The chapter is nonetheless the strongest of five draws on the
+engagement half (§5: two clocks, a choice with a victim, a system with a manner that answers
+being answered, the first two debts shown ahead of their due scenes).
+
+**What shipped.** The position check ignores a column's ceiling key and still refuses a ceiling
+for a column the system does not have
+(`test_a_ceiling_key_on_the_snapshot_is_still_a_position_in_the_system`). Arm draw2 redraws
+with it and nothing else.
+
+**Recorded, not acted on.** The house line prints the subject's name (`extraction.display_name`,
+canon's `is_a`) on the one surface the house prints, and this world's system *never uses a
+name, only an address*; the writer made a mystery of it (*who wrote my name there*), now an
+opened promise. The fix is a heading slot on the declared sheet with the parser mapping it back
+to the subject; it waits for draw2's read. The horizon's count (nine rungs; Consignee 0001 at
+five) is in canon and the outline did not place it; watched.
+
+**No bar.** Five draws are five descriptions; the operator's read is the milestone.

@@ -627,3 +627,42 @@ def test_a_system_is_left_unfinished_rather_than_blocking_a_book_that_drafts(
 
     assert main(["--database", str(db), "status"]) == EXIT_OK
     assert "blocked" not in capsys.readouterr().out
+
+
+def test_a_ceiling_key_on_the_snapshot_is_still_a_position_in_the_system() -> None:
+    """Pilot 22 draw1b (§197.2): the seed's snapshot carried `bearing_max` beside `bearing`,
+    the printed form of `Bearing 0/1`, and the floor compared key sets exactly, so `world
+    accept` refused to finish both drawn systems and the chapter drafted under the legacy arm.
+    A ceiling is a column's ceiling and not a column; a ceiling for a column the system does
+    not have is still a different sheet."""
+    import dataclasses
+
+    from litharness.domain import gamesystem as gs
+
+    complete = [
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in gs.records_for(_weave())
+    ]
+    position = {
+        "rank": 1,
+        "seamsight": 1,
+        "threadpull": 0,
+        "stillwater": 0,
+        "lanterncall": 0,
+        "deepweave": 0,
+    }
+
+    def sheet(value: dict[str, int]) -> lc.StateRecord:
+        return lc.StateRecord(
+            record_id="seed",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject="silas",
+            predicate=STATUS_PREDICATE,
+            value=value,
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+
+    assert genre.has_starting_sheet([*complete, sheet(position)])
+    assert genre.has_starting_sheet([*complete, sheet({**position, "seamsight_max": 3})])
+    assert not genre.has_starting_sheet([*complete, sheet({**position, "glow_max": 3})])
+    assert not genre.has_starting_sheet([*complete, sheet({**position, "glow": 3})])
