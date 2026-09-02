@@ -371,23 +371,22 @@ class Concept:
             f"Who they were the day before: {self.person_before}",
             f"What they alone have, from the first chapter: {self.exception}",
             f"What they want past the next step up: {self.want}",
+            f"The system, {self.system.name}. How it shows itself: {self.system.manner}",
             (
-                f"The system, {self.system.name}: it shows itself {self.system.manner} "
-                f"It goes {self.system.steps} steps up, and the strongest person anyone has "
-                f"heard of stands at {self.system.strongest_known}"
+                f"How far up it goes: {self.system.steps} steps. Where the strongest person "
+                f"anyone has heard of stands: {self.system.strongest_known}"
             ),
             f"The turn, {self.turn.when}: {self.turn.event}",
         ]
         if self.second_system is not None:
             lines.append(
-                f"A second system after the turn, {self.second_system.name}: it shows itself "
-                f"{self.second_system.manner} What carries over from the first: "
-                f"{self.second_system.kept}"
+                f"A second system after the turn, {self.second_system.name}. How it shows "
+                f"itself: {self.second_system.manner}"
             )
-        lines.append(
-            f"The first arc opens as {self.first_arc.opens} In its middle, "
-            f"{self.first_arc.middle} It closes as {self.first_arc.closes}"
-        )
+            lines.append(f"What carries over from the first: {self.second_system.kept}")
+        lines.append(f"The first arc opens: {self.first_arc.opens}")
+        lines.append(f"Its middle: {self.first_arc.middle}")
+        lines.append(f"It closes: {self.first_arc.closes}")
         lines.append("What the book owes, and the scene each is due by:")
         for debt in self.debts:
             due = f" (by scene {debt.due_scene})" if debt.due_scene is not None else ""
