@@ -44,7 +44,13 @@ ATTEMPTS = 2
 #: One line per family, rendered only for the family the batch carries. Each names what to
 #: leave out of a sentence; none is a rule about the page.
 FAMILY_ASKS: Mapping[str, str] = {
-    tells.ABSENCE: "Say what is there rather than what is not.",
+    # Named literally (§199.7), like the located habit: asked to say what is there rather
+    # than what is not, the model returned three of eleven sentences verbatim and kept
+    # *nothing* in three more.
+    tells.ABSENCE: (
+        "Say it without the words 'nobody', 'nothing', 'never' or 'no one', and without "
+        "opening on 'not' or 'no'."
+    ),
     tells.PARADOX: "Say it once, without turning it back on itself.",
     # Named literally, because the family holds two shapes (the located habit and the
     # *the way a dropped thing coils* simile) and an ask about habit left the simile standing.
@@ -53,6 +59,18 @@ FAMILY_ASKS: Mapping[str, str] = {
     tells.CHAINED_AND: "Break it into more than one sentence, with at most one and in each.",
     tells.LONG: "Say it as two or more sentences, none longer than {long_words} words.",
 }
+
+#: The order the pass works the families in: the whole-sentence families first, since
+#: their rewrites split and shorten, and a sentence carrying four families is cleared by
+#: being split before any word-found family is asked of the pieces (§199.7).
+PASS_ORDER: tuple[str, ...] = (
+    tells.LONG,
+    tells.CHAINED_AND,
+    tells.ECHO,
+    tells.THE_WAY,
+    tells.PARADOX,
+    tells.ABSENCE,
+)
 
 _SYSTEM = (
     "You are asked to say some sentences of a novel again, each on its own. Keep every fact "
@@ -179,19 +197,24 @@ def _neighbours(text: str, located: tells.Located) -> tuple[str, str]:
     return before, after
 
 
-def _needed(text: str, family: str, limits: Mapping[str, float]) -> list[tells.Located]:
-    """The located sentences of a family, as many as the ceiling asks, in reading order."""
+def _needed(text: str, family: str, limits: Mapping[str, float]) -> tuple[list[tells.Located], int]:
+    """Every located sentence of a family in reading order, and how many must go.
+
+    All of them travel (§199.7): the first version sent only as many as the ceiling asked,
+    and on pilot 25's page those were the four-family openers no rewrite could clear, so
+    the batch spent both tries on the sentences least likely to move. The ceiling is
+    kept at acceptance: the earliest accepted rewrites are put back, as many as the
+    shelf's rate asks, and the page is held to that rate and not below it.
+    """
     long_words = limits.get(tells.LONG_WORDS)
     rate = tells.density(text, long_words=long_words)[family]
     ceiling = limits.get(family, 0.0)
     if rate <= ceiling:
-        return []
-    found = [
-        item for item in tells.locate(text, long_words=long_words) if item.family == family
-    ]
+        return [], 0
+    found = [item for item in tells.locate(text, long_words=long_words) if item.family == family]
     words = tells.word_count(text) or 1
     allowed = int(ceiling * words / 1000.0)
-    return found[: max(0, len(found) - allowed)]
+    return found, max(0, len(found) - allowed)
 
 
 def apply(
@@ -213,10 +236,10 @@ def apply(
     if limits is None:
         return TellsResult(text, before, before, 0, 0, 0)
     rewritten = left = calls = 0
-    for family in tells.FAMILIES:
-        pending = _needed(text, family, limits)
+    for family in PASS_ORDER:
+        pending, need = _needed(text, family, limits)
         for _attempt in range(attempts):
-            if not pending:
+            if not pending or need <= 0:
                 break
             items = [
                 Item(f"S{index + 1}", located, *_neighbours(text, located))
@@ -239,11 +262,14 @@ def apply(
                     refused.append(item.located)
                 else:
                     accepted.append((item.located, kept))
-            for located, kept in sorted(
-                accepted, key=lambda pair: (pair[0].paragraph, pair[0].sentence), reverse=True
-            ):
+            # The earliest accepted rewrites, as many as the ceiling asks, put back from the
+            # end of the page forward so no index moves under another.
+            accepted.sort(key=lambda pair: (pair[0].paragraph, pair[0].sentence))
+            taken = accepted[:need]
+            for located, kept in reversed(taken):
                 text = tells.replace_sentence(text, located, kept)
-            rewritten += len(accepted)
+            rewritten += len(taken)
+            need -= len(taken)
             # Re-locate what was refused against the text as it now stands, since indices in
             # a paragraph shift when an earlier sentence became two.
             still = {item.text for item in refused}
@@ -252,7 +278,7 @@ def apply(
                 for item in tells.locate(text, long_words=long_words)
                 if item.family == family and item.text in still
             ]
-        left += len(pending)
+        left += min(len(pending), need)
     return TellsResult(
         text, before, tells.density(text, long_words=long_words), rewritten, left, calls
     )
@@ -261,6 +287,7 @@ def apply(
 __all__ = [
     "ATTEMPTS",
     "FAMILY_ASKS",
+    "PASS_ORDER",
     "REWRITE_PROFILE",
     "SCHEMA",
     "Item",

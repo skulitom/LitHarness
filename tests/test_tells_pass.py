@@ -137,7 +137,10 @@ def test_the_pass_stops_at_the_ceiling_rather_than_rewriting_every_sentence() ->
     assert result.rewritten == 1 and result.calls == 1
     assert result.after[tells.ABSENCE] <= limits[tells.ABSENCE]
     request = complete.seen[0]  # type: ignore[attr-defined]
-    assert "[S2]" not in request.prompt, "only as many as the ceiling asks"
+    assert "[S2]" in request.prompt, "every located sentence travels (§199.7)"
+    assert "Nothing came up the drain." in result.text, (
+        "but only as many as the ceiling asks go back"
+    )
 
 
 def test_the_rewrite_ask_names_the_sentences_and_no_rule_about_the_page() -> None:
@@ -174,3 +177,62 @@ def test_a_long_sentence_is_said_again_as_shorter_ones_and_kept_under_the_shelf_
     assert tells_pass.rewrite_system(tells.CHAINED_AND) == tells_pass.rewrite_system(
         tells.CHAINED_AND, long_words=20.0
     ), "the number reaches only the long family's ask"
+
+
+def test_the_absence_ask_names_its_words_and_a_verbatim_answer_is_refused() -> None:
+    """§199.7: asked to say what is there rather than what is not, the model gave back three of
+    eleven sentences unchanged and kept *nothing* in three more; the ask now names the words,
+    like the located habit's, and the locator refuses the unchanged sentence as before."""
+    ask = tells_pass.FAMILY_ASKS[tells.ABSENCE]
+    assert "'nobody'" in ask and "'nothing'" in ask and "'not'" in ask
+    complete = _answering(
+        _batch(ABSENT), _batch("He mapped the storm drains for a hobby of his own.")
+    )
+    result = tells_pass.apply(PAGE, limits=ZERO, complete=complete)
+    assert result.rewritten == 1 and result.calls == 2
+
+
+def test_whole_sentence_families_go_first_so_a_split_clears_the_words_too() -> None:
+    """§199.7: a sentence carrying the long family and an absence is asked of the long family
+    first; split into two short sentences with the absence gone, nothing is left for the
+    absence batch and it makes no call."""
+    long_absent = (
+        "He mapped the storm drains for a hobby nobody understood, and he walked them at night "
+        "with a torch in his teeth and a notebook in his back pocket, every foot of it on his "
+        "boots."
+    )
+    page = f"{PLAIN}\n\n{long_absent}"
+    limits = {**ZERO, tells.LONG_WORDS: 20.0}
+    complete = _answering(
+        _batch(
+            "He mapped the storm drains for a hobby of his own. He walked them at night with a "
+            "torch in his teeth."
+        )
+    )
+    result = tells_pass.apply(page, limits=limits, complete=complete)
+    assert result.calls == 1 and result.rewritten == 1 and result.left == 0
+    first = complete.seen[0]  # type: ignore[attr-defined]
+    assert tells_pass.FAMILY_ASKS[tells.LONG].split("{")[0] in (first.system or "")
+    assert result.after[tells.ABSENCE] == 0.0 and result.after[tells.LONG] == 0.0
+    assert tells_pass.PASS_ORDER[0] == tells.LONG and tells_pass.PASS_ORDER[-1] == tells.ABSENCE
+    assert set(tells_pass.PASS_ORDER) == set(tells.FAMILIES)
+
+
+def test_the_batch_carries_every_located_sentence_and_puts_back_the_earliest_accepted() -> None:
+    """§199.7: three absences, a ceiling that allows one; all three travel, the model clears
+    all three, and the two earliest go back so the page sits at the shelf's rate."""
+    page = "\n\n".join([ABSENT, "Nothing came up the drain.", "Nobody answered.", PLAIN])
+    words = tells.word_count(page)
+    limits = {**ZERO, tells.ABSENCE: 1000.0 / words}
+    complete = _answering(
+        _batch(
+            "He mapped the storm drains for a hobby of his own.",
+            "Water came up the drain.",
+            "The line stayed silent.",
+        )
+    )
+    result = tells_pass.apply(page, limits=limits, complete=complete)
+    assert result.calls == 1 and result.rewritten == 2 and result.left == 0
+    assert "hobby of his own" in result.text and "Water came up the drain." in result.text
+    assert "Nobody answered." in result.text, "the third stays: the shelf has absences too"
+    assert result.after[tells.ABSENCE] <= limits[tells.ABSENCE]

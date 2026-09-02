@@ -1,6 +1,6 @@
 # Serial pilot 25 — a second writer's concept in the third person, under the batched pass
 
-Status: **draw1b read; the chapter is with the operator** (2026-09-02, late). Draw1 stopped at scene 1 for a seed breach (stage-0 §200).
+Status: **draw2 read; draw3 running under the pass's fourth version (stage-0 §199.7)** (2026-09-03). Draw1 stopped at scene 1 for a seed breach (stage-0 §200).
 Records to be read beside plan/serial-pilot-24.md §7,
 which is the last chapter the operator has (draw3 of *The Ratchet Counts Down*), and against
 the reads' families in plan/reader-read-17.md to -19.md. Nothing here is evidence; the
@@ -268,3 +268,74 @@ to show.
 **One draw, one description.** Nothing here is a treatment effect against pilot 24 or
 against draw1, and no bar is declared: the counts sit beside the shelf's, the read sits beside
 the reads' families, and the operator's read is the readout.
+
+## 5. Draw2 — the counter reading narration only, and why the absence family still did not move
+
+**What ran** (`runs/ab/pilot25/draw2/`, 2026-09-02 23:09 to 23:33 UTC, tree 09ffaef clean).
+One change from draw1b, stage-0 §199.6: the counter reads narration only. The seed in 844
+seconds, check and accept clean, two scenes on the first attempt, the pass, the shelf
+(`book-library/marks-for-moving--d6b7e9f8/`), the readership. Thirty-three calls, $10.44.
+Four of four readers carried on, every one naming the scheme as the system and three naming
+BANKING ticking from nought.
+
+**Counted, per scene, from the decision rows** (per thousand words, before and after the pass):
+
+| scene | absence | paradox | the way | echo | chained and | long | said again / left / calls | spend |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| scene 1 | 6.8 to 6.9 | 2.3 to 2.3 | 2.3 to 1.1 | 4.6 to 3.4 | 4.6 to 1.1 | 6.8 to 3.4 | 4 / 16 / 12 | $2.14, 554,497 tokens |
+| scene 2 | 9.6 to 9.6 | 1.1 to 1.1 | 2.1 to 1.1 | 1.1 to 1.1 | 2.1 to 0.0 | 2.1 to 0.0 | 3 / 10 / 10 | $1.73, 459,041 tokens |
+
+**Counted on the whole chapter, beside the shelf** (1,810 words; the counter reading
+narration only on both sides): absence 8.3 against 2.6, paradox 1.7 against 0.0, the located
+habit 1.1 against 0.6, the echo 2.2 against 1.0, the chained *and* 0.6 against 0.5, long 1.7
+against 0.0. Census: median 10, longest 42. The absence family did not move on a fourth and
+fifth scene, with speech now out of the count, so the speech reading (§199.6) was a cause
+and not the cause.
+
+**One diagnostic call, the pass's absence batch reproduced on this page** (2026-09-03,
+$0.19; the answers quoted here are the model's about our page and nothing else). Eleven
+sentences over the ceiling went out under the ask *Say what is there rather than what is
+not*. Three came back verbatim (*Not the lights, the floor itself ...*; the chaperone's
+*nothing at all, not a mask, not a blank, an absence ...*; *Nothing, the way a page is
+blank*). Three kept the word (*the air held nothing at all*; *The air beside him held
+nothing*; *eyes resting on nothing in particular*, inside a forty-three-word sentence that
+also carries the located habit, an echo and the length). Five were accepted (*Every one of
+them came up somewhere other than the capitals*; *Everyone stayed exactly where they were*;
+*Threes, rather than twos*; *he alone could do*; *Something other than a nought*). The arm's
+batch had sent only as many as the ceiling asked, the first in reading order, and on this
+page those were the four-family openers no rewrite clears; of that batch one would have been
+accepted. Three fixes follow, all code (§199.7): the ask names its words, as the located
+habit's did in §199.1; the whole-sentence families go first, so a four-family sentence is
+split before its words are asked of the pieces; and every located sentence travels, with the
+earliest accepted put back as many as the shelf's rate asks.
+
+**The read.** The opening paragraph is the read-15 list (*There was a postdoc ... There was a
+chapter ... There was a clock ...*), and the concept's edge is stated rather than shown
+(*a list of items with marks against them was the most familiar object in his life*). The
+arrival is the same look as draw1b's, less well staged (the bell *behind his back teeth*, the
+capitals *at exactly the height at which he would have pointed*). Two things this draw has
+that draw1b does not: the marks appearing beside a candidate's shoulder *like a struck
+match* as each item is attempted, which is the scheme made visible as it pays; and the
+first-scene close, BANKING ticking from nought to one *while he stood in the place where an
+invigilator stands*, with the line *BANKING IS ISSUED AT BAND FOUR* above it, a mystery with
+a number in it. The second scene's rule-demonstration (the boy at the end of aisle C, no
+mark in the air beside him, *Nothing, the way a page is blank*, his hand closing on air) is
+the chapter's best passage and the readers' too; the close (*OR BY THE INVIGILATOR*; *is
+that a thing in here, or is that you?*) is a threat the reader can feel. Beside draw1b: the
+first use is weaker (he shouts *everybody up* and nobody moves; the sheet's field that does
+work is BANKING, which the reader cannot yet cash), and the absence habit is at three times
+the shelf's rate against draw1b's under it.
+
+**What a reader will hit.** The absence family everywhere (*eyes on nothing in particular*;
+*where a face went there was nothing at all, not a mask, not a blank, an absence*; *There was
+nothing in the air beside him. Not a nought. Nothing, the way a page is blank*; *No sound*;
+*Nothing on the scheme said ...*; *Nothing on it said ...*): read 19's first item, six times
+in narration. *Because putting your pen down is what you do* and *a hall does what it has
+been told to do* are the narrator's rule addressed to nobody. *He felt it in the jaw and not
+in the ear at all* is the paradox family. The status row has eight fields and six zeros. *A
+name on a paper, rather than a man in a grey coat* pays off the coat; the register held all
+morning and never opened is a debt the chapter leaves.
+
+**Two draws under one concept, never a treatment effect.** Draw1b and draw2 differ by the
+counter's reading and by a fresh seed and draft; the read above is a description of two
+chapters, and the operator's read is what both answer to.

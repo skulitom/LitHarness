@@ -22393,3 +22393,42 @@ ceiling could be read for it.
 character's (free indirect, a report of speech) is counted as the narrator's, which is the
 rule's edge and is stated. Whether the pass now moves the absence family is the next
 chapter's to show.
+
+### 199.7 The absence ask returned the sentence or kept the word, and the batch sent the sentences least likely to move; the ask names its words, the long families go first, every located sentence travels
+
+**Measured (plan/serial-pilot-25.md §5, 2026-09-03).** With speech out of the count
+(§199.6) the absence family still did not move on pilot 25's draw2 (6.8 to 6.9 and 9.6 to
+9.6), its fourth and fifth scene of standstill under the batched pass. One diagnostic call
+reproduced the pass's absence batch on that page, all eleven sentences over the ceiling, for
+$0.19: three came back verbatim, three kept the word (*the air held nothing at all*), five
+were accepted by the locator. The arm's batch had sent only as many sentences as the ceiling
+asked, the first in reading order, which on this page were the two openers carrying four
+families each (a forty-three-word sentence with an absence, the located habit, an echo and the
+length); of the four it sent, one would have been accepted, and the retry re-sent the three
+refused. So two causes, both the pass's: an ask without its words (*Say what is there rather
+than what is not*), which the model answered by saying the sentence again as it was, the same
+failure the located habit's ask had before §199.1 named *the way*; and a batch shape that
+spent both tries on the sentences least likely to clear.
+
+**What shipped** (`application/tells_pass.py`, the fourth version). The absence ask names its
+words: *without the words 'nobody', 'nothing', 'never' or 'no one', and without opening on
+'not' or 'no'*. The pass works the families in its own order, `PASS_ORDER`: the long
+sentence, the chained *and* and the echo first, since their rewrites split and shorten and a
+four-family sentence is cleared by being split before any word is asked of the pieces; then
+the located habit, the paradox, the absence. Every located sentence of a family travels in the
+batch; the earliest accepted rewrites are put back, as many as the shelf's rate asks, and the
+page is held to that rate and not below it, so the ceiling's meaning is unchanged and the
+batch's yield is not capped by reading order. Tests: the ask names its words and a verbatim
+answer is still refused; a sentence carrying the length and an absence is asked of the long
+family first and split clean, so the absence batch makes no call; three absences under a
+ceiling that allows one all travel and the two earliest go back.
+
+**What was refused.** Keeping the raw answers in the book's store: the diagnostic is a
+scratchpad call, its verdicts are quoted in the pilot note, and the question it settled was
+settled by one call rather than by a new column. A third try per family (§199.3). An ask that
+supplies the replacement (*say 'everyone stayed where they were'*): that is the model's
+sentence to write and the counter's to check.
+
+**Anti-scope.** The next chapter drawn says what the fourth version moves; a diagnostic call
+on one page is one page. The four-family sentence remains the residue the pass is least
+likely to clear, and the census (§199.4) says the shelf does not write it.
