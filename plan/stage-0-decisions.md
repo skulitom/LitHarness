@@ -22117,3 +22117,63 @@ mechanism is qualified (the editorial control plane, §129's tiers). The story-s
 control is owed before that question is even asked: the same reads on a paragraph-shuffled
 copy of the chapter, registered before spend, with §195.5's decision table. No bar: two
 chapters, eight readers, one reading.
+
+## 199. The regular tells run three to ten times the shelf's rate on every chapter, so a counter finds them and a model says each located sentence again
+
+**The operator's two decisions first (read 19, `plan/reader-read-19.md` §1).** *Let's go with
+third person going forward*: the position of read 4 §3, shipped in §195.2 as a position and
+never a finding, is replaced; every draw from here is created without `--person first`, which
+is the book as it was before that flag existed. *We really need to fix the recognition of order
+of sentences and meaning for our readers*: the readership's story-sensitivity control is
+registered before spend (§3.2 of the read), and until an instrument passes it, what the
+readership says is a reading beside the chapter and steers nothing.
+
+**Measured first.** `domain/tells.py` holds five shapes nineteen reads named under four writers
+and both persons, each a frozen pattern over one sentence: a clause built on *nobody / nothing
+/ never* or opening on what a thing is not (absence); the same word repeated around *without*,
+*not* or *than*, and the definition by contrast (paradox); *the way* a person *always* does a
+thing (the located habit, §194's family); two content words each said twice in one sentence
+(the echo); three *and*s in one sentence (the chained *and*). Counted per thousand words on the
+operator's four placed openings and on the six chapters this loop drew from pilot 21 draw 4 to
+pilot 24, machine lines excluded, on 2026-09-02:
+
+| family | the four placed openings | ours, six chapters |
+| --- | --- | --- |
+| absence | 1.0 to 2.6 | 4.4 to 12.3 |
+| paradox | 0.0 on all four | 0.0 to 1.6 |
+| the way | 0.0 to 0.6 | 1.5 to 3.1 |
+| echo | 0.0 to 1.0 | 1.1 to 4.0 |
+| chained and | 0.0 to 0.5 | 5.1 to 7.2 |
+
+Every one of our chapters is over the shelf's highest rate on every family but one cell. This
+is the operator's *still having lots of the same issues* as a count, and it is what every
+prompt-side lever was measured not to move: five clauses on the house floor (§176 to §181,
+removed in §187 after the agent-impact audit), three exemplars (§196), four dossiers, the
+person flip. What has removed a tell in this house is code at the seat after the model and
+before the gate: the em-dash strip and the markup strip.
+
+**What shipped.** (1) The counter (`tells.locate`, `density`, `ceilings`, `over`): the ceiling
+per family is the highest rate any placed opening reaches, so the number a page is held to is
+the market's and moves when the shelf does; `None` with no shelf. (2) The surgical pass
+(`application/tells_pass.py`, `handlers.run_ladder` beside the two strips): each located
+sentence of a family over its ceiling, in reading order, is handed to a model with the sentence
+before and after it for its facts and one line naming what to leave out, and the answer is kept
+only if the locator no longer finds the family in it and it is neither empty nor a paragraph;
+two tries, then the sentence stays as drafted; the pass stops the moment the family is under
+the shelf. The acceptance event carries the rates before and after, the sentences said again
+and the sentences left; the decision row carries `tells.v0`, a report that never blocks. A book
+with no shelf sees no call and no change (`tests/test_tells.py`, `tests/test_tells_pass.py`).
+The rewrite's four lines are a reader-facing role in `tests/test_prompt_budget.py`.
+
+**Refused, and why.** A sixth clause on the floor: measured (§187). A redraw of the scene on
+the counter, as the listing does: two thousand words of the same defaults for the price of a
+scene, where a sentence costs a sentence. A model asked whether a sentence is better: no
+verdict is asked anywhere; the locator is the only judge and it is arithmetic. Hand edits: none.
+The two families that are not regular (a figure that fails a literal read; the unmet term)
+are counted and left to a reader that reads meaning, which is the control's question.
+
+**No bar.** The next draw — pilot 24's concept and its third-person listing, the pass on, one
+change — is one draw; its counts before and after are on its decision rows.
+
+**Anti-scope.** Nothing shown to the writer changes; the reviser stays off; nothing here reaches
+a judge or a reader pool.

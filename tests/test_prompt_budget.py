@@ -40,6 +40,7 @@ from litharness.application import (
     recruiter,
     reviser,
     revoice,
+    tells_pass,
     titles,
     world_agent,
 )
@@ -47,7 +48,7 @@ from litharness.cli import EXIT_OK, _prompt_pressure, main
 from litharness.domain import beats as beats_domain
 from litharness.domain import context as context_domain
 from litharness.domain import extraction as extraction_domain
-from litharness.domain import house
+from litharness.domain import house, tells
 from litharness.domain import progression as progression_domain
 from litharness.domain import voice as voice_domain
 from litharness.domain import writers as writers_domain
@@ -111,6 +112,10 @@ def _roles() -> dict[str, str]:
         # rendering is shown to the listing writer as material, so a machinery word in this
         # task is one remove from a reader.
         "concept writer": concept._system(WRITER),
+        # **The tells rewriter, one sentence at a time** (§199): reader-facing, since its answer
+        # replaces a sentence on the page; three lines and one family's line, the largest of
+        # the five shown.
+        "tells rewriter": tells_pass.rewrite_system(tells.CHAINED_AND),
         # **The seed with a second system, which only a two-system concept renders.** One
         # sentence over the plain seed row, and a row of its own so the number is visible.
         "architect seed, second system": (
@@ -259,6 +264,9 @@ BUDGET: dict[str, int] = {
     # after read 18 found the ladder reaching the page as a number going up for no reason and
     # the arrival of the System met with a clipboard.
     "concept writer": 18,
+    # **The tells rewriter, new on 2026-09-02** (§199): the three lines every rewrite carries and
+    # the one line for the family, four.
+    "tells rewriter": 4,
     # The plain seed's row plus the one second-system sentence.
     "architect seed, second system": 44,
     "title lookup": 6,
@@ -840,6 +848,7 @@ def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -
 READER_FACING = (
     "listing writer",
     "concept writer",
+    "tells rewriter",
     "title writer",
     "measurement reader",
     "steering reader",

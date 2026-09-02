@@ -34,6 +34,7 @@ from hashlib import sha256
 
 import litharness_contracts as lc
 
+from litharness.application import tells_pass
 from litharness.application.conductor import JobHandler
 from litharness.application.editorial import reader_jobs_for_checkpoint
 from litharness.application.exemplars import Shelf, gate_exemplar_leak
@@ -45,6 +46,7 @@ from litharness.application.reviser import (
     REVISION_PROFILE,
     render_revision_request,
 )
+from litharness.domain import tells
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
 from litharness.domain.draft import (
@@ -99,6 +101,8 @@ from litharness.domain.text import content_hash
 
 #: Job kind this handler answers to.
 SCENE_DRAFT = "scene_draft"
+#: The tells pass's recorded verdict on the decision row (stage-0 §199).
+TELLS_GATE = "tells.v0"
 
 
 class HandlerInputError(Exception):
@@ -259,6 +263,9 @@ class _Ladder:
     #: Markdown markers the strip removed before the gates (`draft.strip_markup`); `0` for
     #: every text that carried none, and defaulted so the ladder's callers need no change.
     markup_removed: int = 0
+    #: What the tells pass did to this text (`tells_pass.apply`), or `None` without a shelf,
+    #: which is every book drafted before stage-0 §199 and every book with no ceiling.
+    tells: tells_pass.TellsResult | None = None
 
 
 def _revision_gate(passed: bool, detail: str | None) -> GateOutcome:
@@ -464,6 +471,9 @@ def make_scene_draft_handler(
     """Build a `JobHandler` that drafts one node's prose and gates the result.
 
     `shelf` is the exemplar shelf the selector showed the writer (stage-0 §196); the ladder
+    also holds every draft to the shelf's own rate of the regular tells (`domain/tells.py`)
+    and says the sentences over it again (`tells_pass`), stage-0 §199; without a shelf
+    there is no ceiling, no call, and no change.
     then carries `gate_exemplar_leak`, which refuses a draft sharing a run of consecutive words
     with any exemplar. `None` — every book drafted without `--exemplars` — adds no gate row.
 
@@ -488,6 +498,22 @@ def make_scene_draft_handler(
     it did not ask for. `litharness run` passes `revise=not args.no_revise`, so production has
     the stage and `--no-revise` is the control.
     """
+    # **The shelf's own rate of each regular tell, read once** (stage-0 §199): the highest
+    # density any placed opening reaches, family by family, is what a draft is held to.
+    tells_limits = (
+        tells.ceilings(exemplar.chapter for exemplar in shelf.exemplars)
+        if shelf is not None
+        else None
+    )
+
+    def _say_again(request: CompletionRequest) -> str | None:
+        """One located sentence, said again; a failed call is a sentence left as drafted."""
+        try:
+            answer, _resolution = registry.complete(request)
+        except OperationalFailure:
+            return None
+        return answer.text
+
     budget_policy = budget or BudgetPolicy()
     revision_policy = reviser_policy or ReviserPolicy()
     #: Absent rather than null when the stage is off; see `policy_digest`.
@@ -682,6 +708,16 @@ def make_scene_draft_handler(
             # The markup strip rides the em-dash strip's seat and its rules: after the model,
             # before the gate, machine lines untouched, the count on the record.
             stripped, markup = strip_markup(stripped)
+            # **The tells pass rides the same seat** (stage-0 §199): after the model, before
+            # the gate, one text and one hash. Each sentence of a regular family over the
+            # shelf's own rate is said again by a model and verified by the locator; with no
+            # shelf there is no ceiling and no call, and the ladder is the ladder it was.
+            tells_result: tells_pass.TellsResult | None = None
+            if tells_limits is not None:
+                tells_result = tells_pass.apply(
+                    stripped, limits=tells_limits, complete=_say_again
+                )
+                stripped = tells_result.text
             outcome = gate_draft(
                 revision,
                 logical_id,
@@ -815,10 +851,24 @@ def make_scene_draft_handler(
             leak_gate = gate_exemplar_leak(stripped, shelf)
             if leak_gate is not None:
                 gates = (*gates, leak_gate)
+            # The pass's own recorded verdict: a report, never blocking, so the decision row
+            # carries the rates before and after and what was left as drafted.
+            if tells_result is not None:
+                gates = (
+                    *gates,
+                    GateOutcome(
+                        gate=GateKind.SHAPE,
+                        rule_or_critic_id=TELLS_GATE,
+                        passed=not tells.over(stripped, tells_limits),
+                        blocking=False,
+                        detail=tells_result.detail,
+                    ),
+                )
             return _Ladder(
                 text=stripped,
                 marks_removed=marks,
                 markup_removed=markup,
+                tells=tells_result,
                 outcome=outcome,
                 gates=gates,
                 extracted=extracted,
@@ -894,6 +944,7 @@ def make_scene_draft_handler(
         accepted = ladder.accepted
         marks_removed = ladder.marks_removed
         markup_removed = ladder.markup_removed
+        tells_record = ladder.tells.to_jsonable() if ladder.tells is not None else None
         result = replace(result, text=ladder.text)
 
         if findings:
@@ -1014,6 +1065,9 @@ def make_scene_draft_handler(
                 # ships would read zero and mean nothing; this is where it stays visible.
                 "em_dashes_removed": marks_removed,
                 "markup_removed": markup_removed,
+                # What the tells pass did (stage-0 §199), or `None` for a book with no shelf:
+                # the rates per family before and after, and the sentences left as drafted.
+                "tells": tells_record,
                 # **Which model's sentences these are, when they are not the writer's** (§185).
                 # The decision this event names attributes the *candidate* to the drafting
                 # call, and that stays true — but the accepted prose came out of a second call
