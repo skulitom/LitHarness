@@ -47,7 +47,28 @@ edit of any listing or chapter. No bar.
 
 ## 3. The listing
 
-*(after it lands)*
+**Drawn 2026-09-02 from pilot 22's concept under `hollis` and the length rail**: one draw, no
+redraw fired (longest sentence 25 words against the shelf's 27; 2.73 coordinators per hundred
+words; no machinery word used as a name). The title loop abandoned *The Third Rung* for naming
+this system's own word and *Undeliverable* as already somebody's, and kept *Signed For By
+Nobody*, free on lookup. The measurement pool, which never steers: four of four would start it,
+each naming the address-not-a-name rule and the rung with a livery as a goal it understood. A
+reading of the listing and not a gate. Settled at `runs/pilots/pilot23/listing.txt` and
+`title.txt` (gitignored), 110 words, byte for byte:
+
+> I was a night sorter at a parcel depot, one exam short of a degree. The System arrived mid shift and called itself Dispatch. Every sorter on the belt got a class. I got a failed delivery notice. Dispatch never uses my name, only my address, and undeliverable things end up there. A skill meant for a man who died before it reached him arrived at my station, a parcel nobody else can see or sign for. It cost me, and it showed on me by morning. I signed anyway. I want the third rung, the lowest that comes with a livery, before the sorters who got classes get there.
+
+**Against read 17's two listing items.** The sentence the operator had to decrypt is gone: the
+longest here is twenty-five words with its verb early (*A skill meant for a man who died before
+it reached him arrived at my station*), and the cost and the choice are on the page in eight
+words (*It cost me, and it showed on me by morning. I signed anyway*). The want is still stated
+in a world term: *its colours* has become *the third rung, the lowest that comes with a
+livery*, and *livery* is the concept's own word for the same thing, with no consequence a
+reader who has not met it could cash. No counter reaches that; the operator's read does.
+Watched, and two more with it: nine short declaratives in a row risk the *list of facts* the
+operator named on pilots 19 and 20, though each here is an event in order and one is a turn;
+and *rung* in the listing's last sentence is this house's machinery word in lowercase, which
+the name rail lets through by design (§178 refuses it only as a name).
 
 ## 4. The seed and the chapter
 
