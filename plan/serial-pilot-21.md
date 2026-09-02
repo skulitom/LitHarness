@@ -301,4 +301,107 @@ narrator's words. Draw 4 changes the listener and nothing else: writer `carver`,
 is barlow's stance told to a mate from the other side of the world who reads these books and
 has never set foot in a depot. Same listing, shelf, three exemplars, strip.
 
-*(the read, after the chapter)*
+**Run through the harness** (`runs/ab/pilot21-loop/draw4/`): the same listing byte for byte,
+writer `carver` (barlow's stance with the far listener, hand-declared and accepted 2026-09-02),
+first person, three exemplars, the strip live; a fresh world (Brayfield, a Grade ladder, Tell
+as the one column nobody else has, Step, Guard, Punish, Cancel, Throw and Quiet as the grants,
+three ways of assignment, a System that prints flat English on the nearest screen and never
+answers back) completed at accept with no gap; 1,997 words, both scenes accepted first time,
+the leak gate clean on both, on the shelf at `book-library/the-line-nobody-else-has--b232e377/`.
+The seed took twelve of the arm's sixteen minutes.
+
+**The listener worked, and the page shows where.** The baler is explained to the person being
+told (*That's the machine that eats the flattened boxes and squashes them into blocks. Mouth
+on it like a garage door.*), which is the sentence draw 3's narrator never needed to say to a
+mate at the bar. What remains of read 16's family is seven tokens a reader from elsewhere
+would stumble on (*twice out*, *no side to him*, *clocked*, *mug*, *totes*, *pump truck*, *the
+hub*) against a chapter of them in draw 3; the dialect grammar (*I was stood there*, *sat
+here*, twelve times) and the register words (*lads*, *mate*, *fella*) are the voice and are
+followable. The frame the dossier asked for arrived as a device the serial can keep: each
+scene is the night's telling, closed in the present (*I'm on again tonight. I want the next
+one.* — *I'm sat here with the letter on my knee, and I haven't said yes.*), and the tense
+holds except one stretch of historic present in Gethin's first fight (*He goes in front of it,
+sets his arms, and it hits him*), scene two clean. The simile shape is at one (*the way I read
+a cabinet*) and the similes that replaced it are the genre's own and concrete (*if a pallet
+truck were wet*; *like a shoulder in a crowd*; *like a lad waiting for a bus*). Shouting
+reached the page in capitals (*LEFT, he's coming left*; *NOW*) with the exclamation count
+still zero.
+
+**What is still the machine's, counted.**
+
+1. **The confessional aside, eight**, up from three, because the listener frame invites it:
+   *I'm not going to pretend* — *which I want on record as the stupidest thing I have ever
+   done* — *And here's the bit I keep going back over* — *I want you to understand that when
+   I'm doing that* — *And this is the bit I keep chewing* — *a noise out of him I'm not going
+   to write down for you* — *I said something out loud that I'll not repeat*. Two are one
+   construction repeated inside a chapter (*the bit I keep going back over* / *the bit I keep
+   chewing*), and the refusal to describe a noise is now the same shape across two writers
+   (draw 3: *the noise it made I will not be describing to you*). The diagnosis this draw adds:
+   the three openings shown are all close third (the two anchors by §195.1's count, *Randidly*
+   by eye), so the exemplars show the interiority and never a first-person voice, and what
+   fills the gap is the model's own first-person default, a man vouching for his account. The
+   lever is a first-person opening on the shelf, and the shelf is the operator's to place
+   (§196).
+2. **Definition by what a thing is not**, about eleven in the tic form (*Not cracked. Went.*
+   — *Nothing clever. My own legs.* — *No floodlights. No racking. No Marek.* — *Not once did
+   I touch it. Not once.* — *my hands did nothing at all*) of twenty-two negation tokens, the
+   rest plain or in dialogue; the chapter closes on one (*and I haven't said yes*). Steady
+   against draw 3's fifteen.
+3. **The listener acquired a biography**: *You know the one. You've seen me play it.* A reader
+   has not, and the dossier's listener has never been near the Kestrel; two tokens, new to
+   this draw, from the frame.
+4. Zero exclamation marks, four draws running.
+
+**The engagement half, on the fixed questions.**
+
+- *What makes a reader want chapter 2.* A win paid early: yes, and for the first time it is
+  his own and by wit — he baits the thing on its tell into the baler and the sheet goes from
+  0 to 1 while everyone else's stays at 0 (*That's off your own hands, that*). A rival:
+  Gethin, first to the ladder, wrong about it, and decent. A choice: the letter, a seat on the
+  van, unanswered. A clock: only the van in the morning. What the reader is given to want is
+  the assessment; what the reader is given to fear is nothing. The pull is an appointment.
+- *How far the book promises to go.* Nowhere the reader can feel. *Everybody on Earth got a
+  sheet* is said once and the book is a shed, a Grading Office in a town he has been to once,
+  and Grade 1 of a ladder whose length the page never states; the second monster is the first
+  monster again; nothing is said of what is happening past the gate. *Primal Hunter* closes
+  its first chapter on *the 93rd Universe*; *Defiance* names a multiverse, a herald with a
+  hundred-thousand-sided die and an Earth merged with other planets before its first fight.
+  **The listing is the cause**, and it is the first fault this loop has found in it: its
+  horizon is *off nights for good*, and the seed is shown the listing and nothing above it
+  (`world_agent.render_seed_request`), so the world it builds is the world the listing sold.
+  The system the seed chose — *flat English on the nearest screen, never answers back* —
+  removes the genre's second character, the voice that in both anchors is the thing the
+  reader is most curious about.
+- *What is mysterious about the system, and who wonders.* On the page: the woman with the
+  lanyard who writes down what everybody can do *and will not say what the list is for*;
+  Gethin's claim that the class picked on Monday sets your ceiling, which the narrator does
+  not believe; and the rule the reader learns by watching it count and then refuse to count —
+  the sheet pays hands and not eyes. That last is the best system writing in four draws.
+  Nobody wonders about the System itself: where it came from, why the message, what it wants.
+- *The twist on the standard shape.* The premise's (a fighting-game read as the one column
+  nobody else has), executed as *nose down means now*; and a structural one the draw found by
+  itself: a system that pays hands and not eyes cannot level the one man who can see, so his
+  gift has to route through somebody else's hands or his own bad ones, which is a progression
+  problem that makes plot. Guard's price, found off Marek (*being set means you are not going
+  anywhere*), is a grant with a cost the reader watches being paid.
+- *A laugh.* Five or six, dry: *if a pallet truck were wet*; *cried at a dog film in the
+  canteen*; *apologising, actually apologising, to the lads pushing him*; *no phone number
+  anywhere on it that a human being answers*.
+- *What he wants beyond the rung.* *I want the floor to open*: to be the best in the room at
+  something that counts, after the one thing he was best at died. The listing's *off nights*
+  is not on the page and the page's want is the better one.
+
+**Routing.** Read 16's family is fixed by the listener; counted, not acted on further. Items 1
+to 3 are counted and the one lever (a first-person opening on the shelf) is the operator's.
+The engagement half finds the listing at fault on scale, and behind the listing a gap in the
+pipeline rather than in a prompt: there is nothing above the listing — no book-level concept
+with a turn, no horizon the seed is asked to build toward, no macro-arc the outline plans
+against, and a drafting side that assumes exactly one system (`extraction.offered_choice`,
+`_system_prints_the_line`). The fix is structural: a concept stage in front of the listing,
+which the listing is written from and the seed builds toward, and two-system support on the
+sheet. Draw 5 is therefore not an arm of this loop: it is pilot 22, the concept stage's first
+listing, writer `carver`, the same shelf and strip, read on both halves. The settled listing
+has done its work: four draws gave the system its voice, the chapter its story, the narrator
+his, and the listener theirs.
+
+Anti-scope: no bar, no treatment effect, nothing here evidence.
