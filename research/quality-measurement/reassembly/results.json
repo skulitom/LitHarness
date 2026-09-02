@@ -1,0 +1,45 @@
+{
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "summary": {
+    "ours-draw1": {
+      "mean_tau": 0.954,
+      "min_tau": 0.9448,
+      "mean_adjacent": 0.6896,
+      "paragraphs": 30
+    },
+    "ours-draw2": {
+      "mean_tau": 0.928,
+      "min_tau": 0.8069,
+      "mean_adjacent": 0.9081,
+      "paragraphs": 30
+    },
+    "shelf-primal-hunter": {
+      "mean_tau": 0.9969,
+      "min_tau": 0.9908,
+      "mean_adjacent": 0.9655,
+      "paragraphs": 30
+    },
+    "shelf-defiance": {
+      "mean_tau": 0.8835,
+      "min_tau": 0.8207,
+      "mean_adjacent": 0.4253,
+      "paragraphs": 30
+    },
+    "shelf-randidly": {
+      "mean_tau": 0.9954,
+      "min_tau": 0.9908,
+      "mean_adjacent": 0.9311,
+      "paragraphs": 30
+    },
+    "shelf-gam3": {
+      "mean_tau": 0.8544,
+      "min_tau": 0.7747,
+      "mean_adjacent": 0.8391,
+      "paragraphs": 30
+    }
+  }
+}

@@ -22209,3 +22209,22 @@ instrument is owed with a measurable that depends on order by construction — r
 shuffled paragraphs scored by rank correlation is the candidate — and a cost that bites,
 which §122's costed continuation carries and the `readers` lane does not. Both are
 registrations before spend. No bar; one chapter is one chapter.
+
+### 199.2 Reassembly reads order and finds our chapters inside the market's range; the CI fixes merged
+
+**Measured (`research/quality-measurement/reassembly/FINDINGS.md`, 2026-09-02).** Registered on
+the operator's direction and bought after the order control: the first thirty paragraphs of
+six chapters shuffled three ways each, one plain reader asked for the reading order, Kendall's
+tau by code. The four placed openings reassemble at mean tau 0.85 to 1.00, so the instrument
+reads at this grain and cannot be passed on content alone; ours at 0.954 (the pass off) and
+0.928 (the pass on) sit inside that range, between *Defiance* and *Randidly*. By the reading
+fixed before spend: our chapters' order is as recoverable as the market's. Recoverability is
+coherence and is not claimed as engagement; the instrument stays as a diagnostic beside the
+tells counter, since a chapter below the shelf's range would be the *list* the reads have
+named, found by code. Owed still: the reader that reads meaning, and a cost that bites.
+
+**The CI fixes.** The operator's worktree `claude/github-ci-issue-28f539` (a store handle
+closed from any thread; the readers' order-control answers exempted from the corpus-history
+audit by file and key; room for the Windows runners) went green on both its runs, held still
+for twenty minutes, and was merged to main, which had been red for exactly those three
+things since §199. Merged locally, the suite and the audit run on the result before the push.
