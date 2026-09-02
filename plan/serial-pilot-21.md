@@ -277,3 +277,15 @@ gave the chapter its story, draw 3 gave the narrator his. The two families that 
 named above and no structural lever the coordinator can pull tonight reaches them without a
 clause. This is the draw to put in front of the operator beside *The Primal Hunter*, with draw
 1 for contrast. Read 16 is his.
+
+### 5.4 Draw 4 — after read 16
+
+Read 16 (`plan/reader-read-16.md`): *"overall greatly improved"*, and three items that are one
+family — the narrator's British depot idiom and trade compression (*he is days*, *on a double*,
+*made up*, *three shifts a day have walked flat*), which a reader from anywhere else cannot
+parse and the anchors never use. The cause is draw 3's dossier: a mate at the bar shares the
+narrator's words. Draw 4 changes the listener and nothing else: writer `carver`, whose dossier
+is barlow's stance told to a mate from the other side of the world who reads these books and
+has never set foot in a depot. Same listing, shelf, three exemplars, strip.
+
+*(the read, after the chapter)*
