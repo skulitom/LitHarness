@@ -35,7 +35,13 @@ jobs:
   tests:
     name: tests (${{ matrix.os }}, Python ${{ matrix.python }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
+    # The Windows runners vary about threefold between otherwise identical jobs on the same
+    # day (five and fifteen minutes for the suite, 2026-09-02); a ceiling that fits the slow
+    # end still catches a real hang.
+    timeout-minutes: 30
+    env:
+      # So a slow job names its slow tests instead of just being slow.
+      PYTEST_ADDOPTS: --durations=10
     strategy:
       fail-fast: false
       matrix:

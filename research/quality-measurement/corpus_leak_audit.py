@@ -88,12 +88,24 @@ OURS_FIELDS = ("pre_registration",)
 #: committed as clarity baselines and later deleted; the history-wide audit still sees their
 #: blobs. The refused text file is entirely project-authored and is handled by
 #: :data:`OURS_EXACT_PATHS`. `blurb-rewrite` declares `texts` as the project's three
-#: `kind: "ours"` listings in its pre-registration.
+#: `kind: "ours"` listings in its pre-registration. The readers' order control records what
+#: a simulated reader said about a chapter of ours; see :data:`_READER_ANSWER_FIELD`.
 _FORGE_AUTHORED_FIELD = re.compile(
     r"\.candidates\[\d+\](?:"
     r"\.premise|\.world\..+|\.seed\.records\[\d+\]\.value|"
     r"\.screen\.answers\.[^.]+\.expect_next"
     r")"
+)
+
+#: The readers' order control (stage-0 §199.1, 2026-09-02) writes each simulated reader's
+#: *parsed* answer beside the raw `text` it was parsed from. `text` is already a response
+#: field; the parsed copy holds the same words under the reading schema's own keys
+#: (`application/readers.py`: `felt`, `expect_next`, `hoping_for`, `dreading` for a reading,
+#: `next`, `because` for a choice), and what every reader read was this project's chapter.
+#: Keyed to the one file and the six keys, so a seventh key — or the same shape in a new
+#: file — fails loudly, which is the friction this audit is for.
+_READER_ANSWER_FIELD = re.compile(
+    r"line\d+\.answer\.(?:felt|expect_next|because|next|hoping_for\[\d+\]|dreading\[\d+\])"
 )
 
 OURS_PATH_FIELDS: tuple[tuple[str, re.Pattern[str]], ...] = (
@@ -106,6 +118,7 @@ OURS_PATH_FIELDS: tuple[tuple[str, re.Pattern[str]], ...] = (
         "research/quality-measurement/results/blurb-rewrite.json",
         re.compile(r"\.texts\[\d+\]\.listing"),
     ),
+    ("research/quality-measurement/readers-order-control/raw.jsonl", _READER_ANSWER_FIELD),
 )
 
 

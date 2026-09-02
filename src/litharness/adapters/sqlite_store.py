@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import threading
 import weakref
 from collections.abc import Collection, Iterable, Mapping, Sequence
 from contextlib import suppress
@@ -231,8 +232,17 @@ class SqliteStore:
         # The finalizer owns the native handle without retaining this store. Explicit
         # context management calls it early; legacy short-lived call sites still close as
         # soon as the wrapper becomes unreachable, including through reference cycles.
+        #
+        # A cycle is collected on whichever thread happens to trigger the collector, so the
+        # handle has to be closable from any thread: `open` turns off sqlite3's same-thread
+        # check for exactly that reason (a refused close inside a finalizer is unraisable,
+        # and it leaks the handle). The discipline that check used to give moves to the
+        # transaction below, the one operation that corrupts a database when two threads
+        # interleave it. Reads from another thread are serialised by SQLite itself
+        # (`sqlite3.threadsafety == 3`) and are not refused.
         self._finalizer = weakref.finalize(self, connection.close)
-        transaction = partial(SqliteStore._Transaction, connection)
+        self._owner = threading.get_ident()
+        transaction = partial(SqliteStore._Transaction, connection, owner=self._owner)
         self._jobs = SqliteJobRepository(connection, transaction)
         self._audience = SqliteAudienceRepository(
             connection,
@@ -258,7 +268,10 @@ class SqliteStore:
 
     @classmethod
     def open(cls, path: str | Path, *, migrations: Path | None = None) -> SqliteStore:
-        connection = sqlite3.connect(str(path), isolation_level=None)
+        # `check_same_thread=False` so the finalizer registered in `__init__` can close the
+        # handle from whatever thread the collector runs it on; `_Transaction` keeps writes
+        # on the opening thread.
+        connection = sqlite3.connect(str(path), isolation_level=None, check_same_thread=False)
         try:
             connection.row_factory = sqlite3.Row
             # `journal_mode=WAL` is the first statement that touches the file's header, so
@@ -357,10 +370,20 @@ class SqliteStore:
         self.close()
 
     class _Transaction:
-        def __init__(self, connection: sqlite3.Connection) -> None:
+        def __init__(self, connection: sqlite3.Connection, *, owner: int) -> None:
             self._connection = connection
+            self._owner = owner
 
         def __enter__(self) -> sqlite3.Connection:
+            current = threading.get_ident()
+            if current != self._owner:
+                # The refusal sqlite3 made for every call before `open` relaxed its check,
+                # kept for the one place interleaving corrupts: a `BEGIN` on one thread and
+                # a `COMMIT` on another would commit each other's half-written rows.
+                raise sqlite3.ProgrammingError(
+                    "SqliteStore transactions run only on the thread that opened the store; "
+                    f"opened on thread id {self._owner} and this is thread id {current}"
+                )
             self._connection.execute("BEGIN IMMEDIATE")
             return self._connection
 
@@ -377,7 +400,7 @@ class SqliteStore:
                 self._connection.execute("ROLLBACK")
 
     def transaction(self) -> SqliteStore._Transaction:
-        return SqliteStore._Transaction(self._connection)
+        return SqliteStore._Transaction(self._connection, owner=self._owner)
 
     # -- revisions ------------------------------------------------------------
 

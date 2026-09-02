@@ -117,6 +117,33 @@ def test_project_authored_forge_exemptions_are_exact_paths_and_fields():
     assert frozenset({"reader-book-forge/refused.txt"}) == audit.OURS_EXACT_PATHS
 
 
+def test_the_order_controls_reader_answers_are_exempt_by_path_and_key():
+    """`raw.jsonl` fields arrive prefixed by their line, so the pattern must match that too."""
+    path = "research/quality-measurement/readers-order-control/raw.jsonl"
+    for field in (
+        "line3.answer.felt",
+        "line12.answer.expect_next",
+        "line1.answer.because",
+        "line1.answer.next",
+        "line7.answer.hoping_for[0]",
+        "line7.answer.dreading[3]",
+    ):
+        assert audit.is_ours_path_field(path, field), field
+    # A seventh key, a nested one, the row's other fields, and the same shape in another file
+    # all still count: the exemption is the six keys of one file, nothing wider.
+    for field in (
+        "line3.answer.source_excerpt",
+        "line3.answer.felt.excerpt",
+        "line3.copy",
+        "line3.text",
+        ".answer.felt",
+    ):
+        assert not audit.is_ours_path_field(path, field), field
+    assert not audit.is_ours_path_field(
+        "research/quality-measurement/other-control/raw.jsonl", "line3.answer.felt"
+    )
+
+
 # --------------------------------------------------------------- RS1, the half nothing checked
 
 #: Names that mark a corpus *source*, for the string half of the RS1 check below.

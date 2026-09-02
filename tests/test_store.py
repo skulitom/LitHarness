@@ -10,6 +10,7 @@ from __future__ import annotations
 import gc
 import shutil
 import sqlite3
+import threading
 import weakref
 
 import pytest
@@ -54,6 +55,48 @@ def test_unreachable_store_closes_its_native_handle(tmp_path) -> None:
     assert reference() is None
     with pytest.raises(sqlite3.ProgrammingError, match="closed database"):
         connection.execute("SELECT 1")
+
+
+def test_a_store_dropped_on_another_thread_still_closes_its_handle(tmp_path) -> None:
+    """The collector runs a finalizer on whichever thread triggers it, and the handle has to
+    close there too. With sqlite3's same-thread check still on, this raised inside the
+    finalizer — unraisable, which the suite turns into a failure of whatever test was running
+    — and left the handle open (CI, 2026-09-02: `test_opening_parity`'s thread pool was the
+    usual trigger, for stores other test modules had left to the collector)."""
+    store = SqliteStore.open(tmp_path / "threaded.db")
+    connection = store._connection
+    holder = [store]
+    del store
+
+    worker = threading.Thread(target=holder.clear)
+    worker.start()
+    worker.join()
+
+    with pytest.raises(sqlite3.ProgrammingError, match="closed database"):
+        connection.execute("SELECT 1")
+
+
+def test_a_transaction_from_another_thread_is_refused(store: SqliteStore) -> None:
+    """Closing from any thread is safe; a `BEGIN` from one is not, so that refusal stays."""
+    outcome: list[object] = []
+
+    def attempt() -> None:
+        try:
+            with store.transaction():
+                outcome.append("entered")
+        except sqlite3.ProgrammingError as error:
+            outcome.append(error)
+
+    worker = threading.Thread(target=attempt)
+    worker.start()
+    worker.join()
+
+    assert len(outcome) == 1
+    assert isinstance(outcome[0], sqlite3.ProgrammingError)
+    assert "thread" in str(outcome[0])
+    # The opening thread is unaffected.
+    with store.transaction() as connection:
+        assert connection.execute("SELECT 1").fetchone()[0] == 1
 
 
 def accepted_event(revision: Revision, note: str = "") -> Event:
