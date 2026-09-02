@@ -1,6 +1,6 @@
 # Serial pilot 25 — a second writer's concept in the third person, under the batched pass
 
-Status: **running** (2026-09-02, late). Records to be read beside plan/serial-pilot-24.md §7,
+Status: **draw1b read; the chapter is with the operator** (2026-09-02, late). Draw1 stopped at scene 1 for a seed breach (stage-0 §200).
 which is the last chapter the operator has (draw3 of *The Ratchet Counts Down*), and against
 the reads' families in plan/reader-read-17.md to -19.md. Nothing here is evidence; the
 operator's read is what it answers to. Harness folder `runs/ab/pilot25/` (gitignored), its
