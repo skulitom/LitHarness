@@ -75,6 +75,8 @@ DEFAULT_RUNS_ROOT = Path("runs/ab")
 #: One holder across every experiment under one runs root, because the constraint being
 #: enforced is about the box and not about the experiment.
 LOCK_NAME = ".ab-redraw.lock"
+#: The settled concept's file beside `title.txt` and `listing.txt` (stage-0 §197).
+CONCEPT_NAME = "concept.json"
 
 EXPERIMENT_FILENAME = "EXPERIMENT.md"
 
@@ -262,10 +264,16 @@ class Listing:
     premise: str
     title_sha256: str
     premise_sha256: str
+    #: The settled concept beside the listing (`concept.json`, stage-0 §197), or `None` for a
+    #: listing drawn before the concept stage existed. Part of the control when present: a
+    #: second arm under a different concept is a different book, and the digest says so.
+    concept: str | None = None
+    concept_sha256: str | None = None
 
     @property
     def digest(self) -> str:
-        return f"{self.title_sha256}:{self.premise_sha256}"
+        digest = f"{self.title_sha256}:{self.premise_sha256}"
+        return digest if self.concept_sha256 is None else f"{digest}:{self.concept_sha256}"
 
 
 def read_listing(directory: Path) -> Listing:
@@ -282,11 +290,21 @@ def read_listing(directory: Path) -> Listing:
     for name, text in (("title.txt", title), ("listing.txt", premise)):
         if not text:
             raise Refusal(f"{directory / name} is empty; there is no settled listing here")
+    concept: str | None = None
+    concept_path = directory / CONCEPT_NAME
+    if concept_path.is_file():
+        concept = concept_path.read_text(encoding="utf-8").strip()
+        if not concept:
+            raise Refusal(f"{concept_path} is empty; a settled concept is a file with a book in it")
     return Listing(
         title=title,
         premise=premise,
         title_sha256=hashlib.sha256(title.encode("utf-8")).hexdigest(),
         premise_sha256=hashlib.sha256(premise.encode("utf-8")).hexdigest(),
+        concept=concept,
+        concept_sha256=(
+            hashlib.sha256(concept.encode("utf-8")).hexdigest() if concept is not None else None
+        ),
     )
 
 
@@ -454,6 +472,11 @@ def plan_steps(spec: ArmSpec, listing: Listing) -> list[Step]:
                 "--scenes",
                 str(spec.scenes),
                 *(("--person", spec.person) if spec.person else ()),
+                *(
+                    ("--concept", str(spec.listing / CONCEPT_NAME))
+                    if listing.concept is not None
+                    else ()
+                ),
             ),
             note="the settled listing, byte for byte off disk",
         ),
@@ -921,6 +944,7 @@ def write_folder(run: ArmRun, *, scorecard: dict[str, object], spend: dict[str, 
             "directory": str(run.spec.listing),
             "title_sha256": run.listing.title_sha256,
             "premise_sha256": run.listing.premise_sha256,
+            "concept_sha256": run.listing.concept_sha256,
             "digest": run.listing.digest,
         },
         "writer": run.spec.writer,

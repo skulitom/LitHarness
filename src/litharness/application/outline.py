@@ -54,6 +54,7 @@ from typing import Any
 
 import litharness_contracts as lc
 
+from litharness.application import concept as concept_mod
 from litharness.application.conductor import JobHandler
 from litharness.application.model_context import StoryStateView, at_scene, planning_records
 from litharness.application.plan_refinement import accept_plan_proposal
@@ -260,6 +261,7 @@ def render_outline_request(
     serial_arc_index: int | None = None,
     prior_summaries: Sequence[tuple[str, str]] = (),
     arc_entry_state: StoryStateView | None = None,
+    concept: concept_mod.Concept | None = None,
 ) -> CompletionRequest:
     """Freeze the premise and the whole beat sheet into one structured-output request.
 
@@ -302,6 +304,11 @@ def render_outline_request(
     reveals; it is not allowed to answer which mutable facts are current. The separate view is
     active canon entering the first beat, with its scene coordinate and any slicing abstention
     explicit. Omitted only for direct/legacy callers that have no manuscript view to supply.
+
+    **`concept` is the book-level shape the outline plans against** (stage-0 §197): the first
+    arc's three events, the turn and where it falls, the horizon and the want, as a
+    `book_concept` field with its own rules. Absent for a book created without one, and then
+    the payload is byte-identical to what it was — the same additivity the world field keeps.
     """
     ordinals = _ordinal_of(beats)
     owed = [
@@ -352,6 +359,7 @@ def render_outline_request(
             # has no key at all — see the docstring.
             **({"world": world.to_jsonable()} if world is not None else {}),
             **({"protagonist": protagonist.to_jsonable()} if protagonist is not None else {}),
+            **({"book_concept": concept.for_outline()} if concept is not None else {}),
             # The debts this book has already opened, for the payoff schedule. Absent for a
             # book that owes nothing — which is every book at its first outline, since
             # promises are written by the summary handler after a scene is accepted.
@@ -435,7 +443,8 @@ def render_outline_request(
                 [rule.format(subject=protagonist.subject) for rule in PROTAGONIST_RULES]
                 if protagonist is not None
                 else []
-            ),
+            )
+            + (concept_mod.outline_rules(serial_arc_index) if concept is not None else []),
         },
         ensure_ascii=False,
         sort_keys=True,
@@ -1063,6 +1072,7 @@ def make_outline_handler(
                 f"book {book_id} has no single premise; an outline of nothing is thirty "
                 "scenes of plausible prose about nothing"
             )
+        concept = concept_mod.concept_of(base.items)
 
         head = store.head(book_id, branch_id)
         if head is None:
@@ -1187,6 +1197,7 @@ def make_outline_handler(
             serial_arc_index=arc_index if isinstance(arc_index, int) else None,
             prior_summaries=prior_summaries,
             arc_entry_state=entry_state,
+            concept=concept,
         )
         day = stamp[:10]
         provider, _ = registry.resolve(request.call_class)

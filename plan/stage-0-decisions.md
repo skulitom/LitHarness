@@ -21897,3 +21897,82 @@ No model ranked an exemplar or a draft; the shelf's order is the operator's file
 name. No research claim is promoted. The operator's words above live here and in read 15's
 file and reach no prompt (§97.1). The measurement programme, its cache and its registered
 arms are untouched.
+
+## 197. Nothing stood above the listing: a concept stage drawn before it, and two systems one at a time
+
+**Measured first (`plan/serial-pilot-21.md` §5.4, 2026-09-02).** Draw 4 of pilot 21 — the
+fourth draw under one settled listing, writer `carver`, the far listener — was the first read
+with the loop's engagement half. The register loop had done what its levers could: read 16's
+depot idiom was down to seven tokens with the baler explained on the page, the simile shape at
+one, shouting in capitals; what remained (the confessional aside at eight, definition by
+absence at about eleven) has one lever left, a first-person opening on the operator's shelf,
+since the three openings shown are all close third. The engagement half found the fault above
+every prompt the loop had touched: no horizon a reader could feel. *Everybody on Earth got a
+sheet*, said once; then a shed, the first monster again, and the first grade of a ladder whose
+length the page never states. Both anchors close chapter one on a scale and ours closed on an
+appointment. The listing's own horizon was *off nights for good*, and
+`world_agent.render_seed_request` showed the seed the listing and nothing above it, so the
+world it built was the world the listing sold. The same day the operator asked whether the
+pipeline could invent a premise with a turn in it — a system-apocalypse Earth, a botched portal
+spell survived on stats for years, emergence on the far side of the universe under a competing
+system with some old abilities kept — and the answer was no: it executed briefed premises and
+invented none, and the drafting side assumed exactly one declared system
+(`extraction._standing_sheet`, `offered_choice`, `offered_line`).
+
+**What shipped.**
+
+1. **The concept stage** (`application/concept.py`, `litharness concept`). One writer, one
+   structured concept before the listing, never chosen among (§61(5)): who the person was the
+   day before, the exception that is theirs alone, what they want past the next step, the
+   system with a manner and a horizon as a count (how many steps up; where the strongest known
+   stands), the turn and where it falls (before chapter one, inside the first arc, after it), a
+   second system only where the turn puts the person under one and what carries over, the first
+   arc as three events, and two to four debts with the scene each is due by. Material, not a
+   rule essay one level up (§154): every field is consumed downstream. The task is floorless
+   like the listing and held to the reader-facing vocabulary rail (`tests/test_prompt_budget.py`,
+   the `concept writer` row); the schema has no slot for an opinion
+   (`test_the_schema_has_no_slot_for_an_opinion`). The operator's example premise round-trips
+   through it (`test_the_schema_holds_the_operator_s_example_premise_and_it_round_trips`) as a
+   fixture, and is nothing a model is shown.
+2. **Where it lives.** One plan item of the contracts' `BOOK_PLAN` kind — unused until now —
+   unlocked, under `plan-concept` (`new --concept`; `listing --concept --scenes` carries it
+   through). `plans.constraints_of` carries only locked items into the scene call, so the
+   writer's packet is byte-identical and the turn never reaches a scene before the world
+   schedules it (`test_the_concept_is_a_book_plan_item_the_scene_writer_never_sees`). A concept
+   the book carries and cannot read is a fault, not an absence.
+3. **What each stage is told.** The listing is written from it (`overview.render_overview_request`,
+   material under the brief; the task untouched). The seed is told what the world has to be able
+   to hold, under the listing, and its task gains one sentence (`world_agent._SECOND_SYSTEM`)
+   only for a concept with a second system (the `architect seed, second system` row). The
+   outline gets `book_concept` — the first arc's three events, the turn, the horizon, the want —
+   with two rules by arc (`concept.outline_rules`). Its debts open the promise ledger before
+   scene one through the `--promises` loader, which is the ledger a listing-created book never
+   wrote to (`cmd_new`'s own comment: forty opened and none paid on the live serial before a
+   seeded debt existed). Each of the three renders byte-identically without a concept (three
+   pins in `tests/test_concept.py`).
+4. **Two systems, one at a time.** The drafting arms read the one declared system whose columns
+   the printed line has (`extraction._printing_system`), a fact about the book's line and not a
+   preference; two that both print it are two answers and abstain as before
+   (`tests/test_two_systems.py`). The seed's second-system sentence asks for one sheet: the
+   system the book opens under.
+5. **The harness carries it.** `tools/ab_redraw.py` reads `concept.json` beside the settled
+   listing, passes it to `new` byte for byte, and folds its digest into the arm's control
+   (`test_a_settled_concept_beside_the_listing_rides_new_and_joins_the_digest`).
+
+**Refused, and why.** (a) The swap itself: a book whose printed line changes systems mid-serial
+needs `extraction.sheet_for` to carry a position, and it still abstains to the default on two
+declared sheets; until that half exists a two-system book opens after its turn or holds the
+turn past the first arc, which is the shape of the operator's example anyway. (b) A clause
+about scale in the listing task or on the house floor: the fault was that no stage held a
+horizon, and a sentence asking for one would be the rule-essay path §136 and §187 measured; the
+concept holds it as a count instead. (c) Ranking concepts: one per book, and a redraw is a new
+book. (d) Rendering the concept into the scene call: the turn is a scheduled reveal, and the
+leak rail in `domain/world_brief.py` is the reason a planner is told *when* and a writer only
+*what has happened*.
+
+**No bar, and nothing measured yet.** Pilot 22 is the first draw under a concept — writer
+`carver`, the same shelf, the same strip, first person — read on both halves
+(`plan/serial-pilot-22.md` when it runs). Two draws are two draws.
+
+**Anti-scope.** No change to what a scene writer is told; no change to measurement; the
+reviser stays off; nothing in a concept reaches a judge or a reader pool.

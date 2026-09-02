@@ -32,6 +32,7 @@ from typing import Any
 import pytest
 
 from litharness.application import (
+    concept,
     exemplars,
     overview,
     planner,
@@ -55,6 +56,32 @@ from litharness.domain.generation import CompletionRequest
 #: One writer, fixed, so a budget is about the rules rather than about whose dossier is longest.
 WRITER = writers_domain.CAST["ferreira"]
 
+#: A concept with a second system, the one shape that adds a sentence to the seed (§197).
+_TWO_SYSTEM_CONCEPT = concept.Concept.from_payload(
+    {
+        "person_before": "a physics dropout on nights",
+        "exception": "the one the portal failed to kill",
+        "want": "to belong in a room",
+        "system": {
+            "name": "the Tally",
+            "manner": "in a clerk's voice.",
+            "steps": 12,
+            "strongest_known": "the seventh step.",
+        },
+        "turn": {"event": "the portal holds him eleven years.", "when": "before chapter one"},
+        "second_system": {
+            "name": "the Accord",
+            "manner": "as a voice that bargains.",
+            "kept": "his endurance.",
+        },
+        "first_arc": {"opens": "he walks out.", "middle": "an offer.", "closes": "he takes it."},
+        "debts": [
+            {"subject": "the silence", "owed": "why the Tally went quiet.", "due_scene": 5},
+            {"subject": "the years", "owed": "what the portal did with them.", "due_scene": 6},
+        ],
+    }
+)
+
 #: A descriptor with the shape a real one has and none of its provenance. The numbers do not
 #: matter to a demand count and are never sent anywhere from this file; what matters is that
 #: `render_exemplar_request` cannot be called without one, which is the design rule this
@@ -76,6 +103,18 @@ def _roles() -> dict[str, str]:
     """Every assembled system prompt this system actually sends, by the role that sends it."""
     return {
         "listing writer": overview._system(WRITER),
+        # **Floorless like the listing, and reader-facing like it** (§197): the concept's
+        # rendering is shown to the listing writer as material, so a machinery word in this
+        # task is one remove from a reader.
+        "concept writer": concept._system(WRITER),
+        # **The seed with a second system, which only a two-system concept renders.** One
+        # sentence over the plain seed row, and a row of its own so the number is visible.
+        "architect seed, second system": (
+            world_agent.render_seed_request(
+                "a listing", WRITER, concept=_TWO_SYSTEM_CONCEPT
+            ).system
+            or ""
+        ),
         "title writer": overview.title_system(WRITER),
         "title lookup": titles.render_check_request("a title").system or "",
         "architect seed": world_agent.render_seed_request("a listing", WRITER).system or "",
@@ -210,6 +249,11 @@ def _roles() -> dict[str, str]:
 #: diverge, the divergence is in the registered arm rather than in the role.
 BUDGET: dict[str, int] = {
     "title writer": 10,
+    # **The concept writer, new on 2026-09-02** (§197): eleven task sentences and the dossier.
+    # Set at what is there, like every row since §187.
+    "concept writer": 15,
+    # The plain seed's row plus the one second-system sentence.
+    "architect seed, second system": 44,
     "title lookup": 6,
     # **Raised 24 -> 25 on 2026-08-29, deliberately and for one named sentence.** The house
     # genre had been living nowhere (`plan/house-genre-constraint.md`; pilot 13 §8.2), carried
@@ -788,6 +832,7 @@ def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -
 #: whose output *replaces* drafted prose is where it would cost the most.
 READER_FACING = (
     "listing writer",
+    "concept writer",
     "title writer",
     "measurement reader",
     "steering reader",
@@ -845,6 +890,7 @@ def test_prompt_inspector_covers_every_production_communication_role(
     rows = json.loads(capsys.readouterr().out)
     assert {
         "listing",
+        "concept",
         "title",
         "title-lookup",
         "architect-seed",

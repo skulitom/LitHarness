@@ -1002,3 +1002,42 @@ def test_the_experiment_template_forbids_a_bar_or_a_rank(tmp_path: Path) -> None
 
     assert "may not produce a win, a rank, a score, a bar" in text
     assert "two draws are two draws" in text
+
+
+def test_a_settled_concept_beside_the_listing_rides_new_and_joins_the_digest(
+    tmp_path: Path,
+) -> None:
+    """Stage-0 §197: `concept.json` beside the listing is part of the settled book, so it is
+    passed to `new` byte for byte off disk and its digest joins the listing's; a listing drawn
+    before the concept stage existed carries none and the recipe is what it always was."""
+    directory = _listing(tmp_path)
+    (directory / ab_redraw.CONCEPT_NAME).write_text(
+        '{"person_before": "a clerk"}', encoding="utf-8"
+    )
+    spec = _spec(tmp_path, listing=directory)
+    listing = ab_redraw.read_listing(directory)
+
+    assert listing.concept == '{"person_before": "a clerk"}'
+    assert listing.concept_sha256 is not None
+    assert listing.digest.endswith(listing.concept_sha256)
+    new = next(step for step in ab_redraw.plan_steps(spec, listing) if step.label == "new")
+    assert new.argv[new.argv.index("--concept") + 1] == str(directory / ab_redraw.CONCEPT_NAME)
+
+    plain_dir = _listing(tmp_path / "plain")
+    plain = ab_redraw.read_listing(plain_dir)
+    assert plain.concept is None and plain.concept_sha256 is None
+    assert plain.digest == f"{plain.title_sha256}:{plain.premise_sha256}"
+    plain_new = next(
+        step
+        for step in ab_redraw.plan_steps(_spec(tmp_path / "plain", listing=plain_dir), plain)
+        if step.label == "new"
+    )
+    assert "--concept" not in plain_new.argv
+
+
+def test_an_empty_concept_file_is_refused_rather_than_read_as_none(tmp_path: Path) -> None:
+    directory = _listing(tmp_path)
+    (directory / ab_redraw.CONCEPT_NAME).write_text("", encoding="utf-8")
+    with pytest.raises(ab_redraw.Refusal) as refusal:
+        ab_redraw.read_listing(directory)
+    assert "empty" in str(refusal.value)

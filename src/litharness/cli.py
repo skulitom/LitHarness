@@ -41,6 +41,7 @@ import litharness_contracts as lc
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
+from litharness.application import concept as concept_mod
 from litharness.application import covers, recruiter, revoice, titles, world_agent
 from litharness.application import exemplars as exemplars_mod
 from litharness.application import export as export_module
@@ -530,6 +531,20 @@ def _resolve_writer(
             "writer the roster holds"
         )
     return writer, ""
+
+
+def _concept_from(path: str | os.PathLike[str] | None) -> concept_mod.Concept | None:
+    """The settled concept at `path`, `None` for none, and a refusal for one that will not read.
+
+    Refused before any paid call, like every other input this CLI reads off disk (§19.1): a
+    concept the stages cannot use is a fault to name at the one moment naming it is free.
+    """
+    if not path:
+        return None
+    try:
+        return concept_mod.Concept.from_text(Path(path).read_text(encoding="utf-8"))
+    except (OSError, concept_mod.MalformedConcept) as error:
+        raise SystemExit(f"litharness: {path}: {error}") from error
 
 
 def _selected_shelf(args: argparse.Namespace) -> exemplars_mod.Shelf | None:
@@ -2232,6 +2247,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
             return EXIT_FAULT
 
     brief = _read_text(args.brief_file) if args.brief_file else (args.brief or "")
+    concept = _concept_from(getattr(args, "concept", None))
     store = _store(args)
     try:
         # **Resolved inside the store's lifetime, because a writer can now be a record.** The
@@ -2277,6 +2293,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
                         if (shelf := _selected_shelf(args)) is not None
                         else None
                     ),
+                    concept=concept.render_for_listing() if concept is not None else None,
                 ),
                 calls=calls,
                 spend=spend,
@@ -2502,6 +2519,86 @@ def cmd_listing(args: argparse.Namespace) -> int:
         created.state = None
         created.promises = None
         return cmd_new(created)
+    return EXIT_OK
+
+
+def cmd_concept(args: argparse.Namespace) -> int:
+    """The concept stage: one writer invents the book before its listing (stage-0 §197).
+
+    One call, one concept, no readers and no title: the artifact is cheap and the operator can
+    read it before the listing, the seed and the chapters are paid for. `--out` writes it as
+    the settled file `listing --concept` and `new --concept` read, byte for byte, which is what
+    makes a redraw under one concept a redraw. Nothing here ranks: a second draw is a second
+    book.
+    """
+    stamp = _stamp(_now())
+    brief = _read_text(args.brief_file) if args.brief_file else (args.brief or "")
+    store = _store(args)
+    try:
+        writer, reason = _installed_writer(args, getattr(args, "writer", "") or "", store)
+        if reason:
+            print(reason, file=sys.stderr)
+            return EXIT_FAULT
+        registry = build_default_registry()
+        run = _StageSpend()
+        spend = _StageSpend()
+        calls = _ProviderCalls(registry=registry, store=store, args=args, stamp=stamp, run=run)
+        shelf = _selected_shelf(args)
+        request = concept_mod.render_concept_request(
+            brief,
+            writer,
+            scenes=args.scenes,
+            person=getattr(args, "person", None),
+            blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
+        )
+        result, refusal = _completion_call(request, calls=calls, spend=spend)
+        if result is None or not isinstance(result.parsed, Mapping):
+            print(f"litharness: {refusal or 'the concept came back unparsed'}", file=sys.stderr)
+            return EXIT_FAULT
+        try:
+            concept = concept_mod.Concept.from_payload(result.parsed)
+        except concept_mod.MalformedConcept as error:
+            print(f"litharness: the concept is unusable: {error}", file=sys.stderr)
+            return EXIT_FAULT
+        gate = GateOutcome(
+            gate=GateKind.SHAPE,
+            rule_or_critic_id=concept_mod.CONCEPT_PROFILE,
+            passed=True,
+            blocking=False,
+            detail=(
+                f"{len(concept.debts)} debt(s); the turn {concept.turn.when}; "
+                + ("two systems" if concept.second_system is not None else "one system")
+            ),
+        )
+        store.record_decision(
+            PolicyDecision(
+                decision_id=decision_id_for(f"concept:{stamp}", 0, (gate,)),
+                outcome=Outcome.ACCEPT,
+                gates=(gate,),
+                profile=concept_mod.CONCEPT_PROFILE,
+                provider=spend.provider,
+                model=spend.model,
+                invocations=spend.invocations,
+                total_tokens=spend.total_tokens,
+                cost_usd=spend.cost_usd,
+                reason="one writer invented one book; nothing ranked or chose among candidates",
+            ),
+            decided_at=stamp,
+        )
+    finally:
+        store.close()
+
+    if args.out:
+        args.out.mkdir(parents=True, exist_ok=True)
+        (args.out / "concept.json").write_text(concept.to_text() + "\n", encoding="utf-8")
+        (args.out / "concept.txt").write_text(concept.render() + "\n", encoding="utf-8")
+    if args.json:
+        _say(concept.to_text())
+    else:
+        _say(concept.render())
+        print(f"  writer {writer.name if writer else '(none)'}")
+        if args.out:
+            print(f"  {args.out}/concept.json, concept.txt")
     return EXIT_OK
 
 
@@ -2745,8 +2842,9 @@ def cmd_architect(args: argparse.Namespace) -> int:
                     file=sys.stderr,
                 )
                 return EXIT_FAULT
-            print(f"  seeding under {source}")
-            request = world_agent.render_seed_request(overview, writer)
+            concept = concept_mod.concept_of(store.plan_items(book_id, branch_id))
+            print(f"  seeding under {source}" + (" and the book's concept" if concept else ""))
+            request = world_agent.render_seed_request(overview, writer, concept=concept)
         else:
             head = store.head(book_id, branch_id)
             if head is None:
@@ -3195,6 +3293,12 @@ def cmd_prompts(args: argparse.Namespace) -> int:
         "listing": overview_mod.render_overview_request(
             premise,
             writer,
+            blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
+        ),
+        "concept": concept_mod.render_concept_request(
+            premise,
+            writer,
+            scenes=SerialShape().scenes_per_arc,
             blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
         ),
         "title": overview_mod.render_title_request("A debtor takes the road below.", writer),
@@ -4572,6 +4676,12 @@ def cmd_new(args: argparse.Namespace) -> int:
                 locked=True,
             )
         )
+    # **The concept rides beside the premise, unlocked** (§197). `plans.constraints_of` carries
+    # only locked items into the scene call, so the writer is never handed the turn; the seed
+    # and the outline read it back through `concept.concept_of`, and its debts open below.
+    concept = _concept_from(getattr(args, "concept", None))
+    if concept is not None:
+        seeded_items.append(concept.plan_item())
     # **A debt with a settlement date, seeded before the first scene exists.** The measured
     # defect is the project's oldest: 40 promises opened and 0 paid on the live serial, 32 and 0
     # before it — every one of them opened by the summary handler out of a scene that had just
@@ -4584,8 +4694,13 @@ def cmd_new(args: argparse.Namespace) -> int:
     # width from the scene count and a hand-padded key would sort wrong against the book's own.
     # A non-chronological template mints none, and then this abstains rather than guessing.
     promise_rows: list[Promise] = []
+    entries: object = None
     if args.promises:
         entries = json.loads(Path(args.promises).read_text(encoding="utf-8"))
+    elif concept is not None:
+        # The concept's debts, through the same loader, so one path opens both kinds.
+        entries = concept.promise_entries()
+    if entries is not None:
         planned_beats = (
             beats_for_serial(revision, shape) if serial_mode else beats_for(revision, template)
         )
@@ -4696,6 +4811,7 @@ def cmd_new(args: argparse.Namespace) -> int:
                         "items": len(seeded_items),
                         "premise": True,
                         "person": getattr(args, "person", None),
+                        "concept": concept is not None,
                     },
                 )
             ],
@@ -4711,7 +4827,12 @@ def cmd_new(args: argparse.Namespace) -> int:
     print(f"  book={book_id} branch={branch_id}")
     print(f"  {args.scenes} empty scene(s); template {template.template_id}")
     print(f"  {len(records)} seed state record(s)")
-    if promise_rows:
+    if concept is not None:
+        print(
+            f"  concept seeded as {concept_mod.CONCEPT_PLAN_ID}; {len(promise_rows)} debt(s) "
+            "opened from it for the world to hold answers to"
+        )
+    elif promise_rows:
         print(f"  {len(promise_rows)} seeded promise(s), each with an answer already in canon")
     if graph_fault:
         print(f"  graph line declared and UNUSABLE, so this book has none: {graph_fault}")
@@ -5872,6 +5993,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="debts to open before scene one, each with a due scene; the answers live in the "
         "seed snapshot. Without it the ledger only ever holds what a scene invented",
     )
+    new.add_argument(
+        "--concept",
+        type=Path,
+        help="the settled concept (`concept.json` from `litharness concept`) this book is "
+        "created from: persisted beside the premise as an unlocked plan item the scene "
+        "writer never sees, read back by the world seed and the outline, and its debts "
+        "opened as promises before scene one",
+    )
     new.add_argument("--book", help="book id; a fresh uuid by default")
     new.add_argument("--branch", help="branch id; a fresh uuid by default")
     new.set_defaults(func=cmd_new)
@@ -6279,9 +6408,50 @@ def build_parser() -> argparse.ArgumentParser:
         "one bad row refuses the file. Without it there is no named competitor, which is the "
         "control arm and is what every round before 2026-08-26 measured",
     )
+    listing.add_argument(
+        "--concept",
+        type=Path,
+        help="write the listing from this settled concept (`concept.json` from `litharness "
+        "concept`), shown under the brief as material; with --scenes the book carries it "
+        "(see `new --concept`)",
+    )
     listing.add_argument("--book", help="book id, when --scenes creates one")
     listing.add_argument("--branch", help="branch id, when --scenes creates one")
     listing.set_defaults(func=cmd_listing)
+
+    concept = sub.add_parser(
+        "concept",
+        help="invent the book before its listing: one writer, one concept, written to disk "
+        "for `listing --concept` (stage-0 §197)",
+    )
+    concept.add_argument(
+        "--brief",
+        default="",
+        help="what this book is to be about: a story, a situation, a constraint somebody "
+        "cares about; never a shelf label (§136). Empty is legitimate",
+    )
+    concept.add_argument("--brief-file", help="the brief as a file, or - for stdin")
+    concept.add_argument(
+        "--writer",
+        default=argparse.SUPPRESS,
+        help=_WRITER_OVERRIDE_HELP,
+    )
+    concept.add_argument(
+        "--scenes",
+        type=int,
+        default=SerialShape().scenes_per_arc,
+        help="how many scenes the first arc has, so the debts are due by scene numbers the "
+        "outline can schedule (default: one arc)",
+    )
+    concept.add_argument(
+        "--person",
+        choices=("first", "third"),
+        default=None,
+        help="which grammatical person the book is told in; `first` asks for it as a position",
+    )
+    concept.add_argument("--out", type=Path, help="write concept.json and concept.txt here")
+    concept.add_argument("--json", action="store_true")
+    concept.set_defaults(func=cmd_concept)
 
     cover = sub.add_parser(
         "cover",

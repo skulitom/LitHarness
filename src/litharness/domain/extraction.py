@@ -1819,11 +1819,11 @@ def _standing_sheet(
     if character is None:
         return None
     canon = [record for record in records if state_mod.is_canon(record)]
-    systems = gamesystem_mod.systems_of(canon)
-    if len(systems) != 1 or not _system_prints_the_line(systems[0], records):
+    system = _printing_system(canon, records)
+    if system is None:
         return None
-    sheet = gamesystem_mod.sheet_of(canon, character, system=systems[0], at=at)
-    return None if sheet is None else (systems[0], sheet)
+    sheet = gamesystem_mod.sheet_of(canon, character, system=system, at=at)
+    return None if sheet is None else (system, sheet)
 
 
 def moved_to(
@@ -1887,6 +1887,26 @@ def moved_to(
     if isinstance(ceiling, int) and not isinstance(ceiling, bool) and was + 1 > ceiling:
         return None
     return was + 1
+
+
+def _printing_system(
+    canon: Sequence[lc.StateRecord], records: Sequence[lc.StateRecord]
+) -> gamesystem_mod.SystemDef | None:
+    """The one declared system whose columns are the line this book prints, or `None`.
+
+    **Two systems, one at a time** (§197). Until the concept stage a book's canon declared one
+    system or none, and every arm here asked for exactly one. A book whose person comes under a
+    second system after a turn declares two, and the one they stand in is the one whose columns
+    the printed line has — `_system_prints_the_line`'s own test, applied to each. That is a fact
+    about the book's line and not a preference among candidates (§61(5)); two systems that both
+    print it are two answers, and the arms abstain as they always did.
+    """
+    printing = [
+        system
+        for system in gamesystem_mod.systems_of(canon)
+        if _system_prints_the_line(system, records)
+    ]
+    return printing[0] if len(printing) == 1 else None
 
 
 def _system_prints_the_line(
@@ -1959,10 +1979,12 @@ def offered_choice(
     **Every guard here is `movable_names`' guard, deliberately, because the two answer one
     question about one book and a second set of rules would be a second answer.** Canon only,
     because a proposed system is a plan for later and scheduling a scene around one would put an
-    unaccepted draw on the page. Exactly one declared system, because two are a disagreement
-    about the book's own vocabulary and choosing between them would be this module deciding which
-    of the author's answers is real. `_system_prints_the_line`, because a fork whose abilities are
-    not columns of the line the writer was handed is a fork the reader cannot watch resolve.
+    unaccepted draw on the page. One declared system printing the line (`_printing_system`):
+    a book may declare two (§197), and the one whose columns the printed line has is the one
+    the person stands in, which is a fact about the book and not a choice between the
+    author's answers; two that both print it are two answers and abstain.
+    `_system_prints_the_line`, because a fork whose abilities are not columns of the line the
+    writer was handed is a fork the reader cannot watch resolve.
 
     **The first fork in declaration order, and no ordering of any other kind** (§61(5)).
     Declaration order is the book's own order; nothing here asks which fork is the interesting
@@ -1983,10 +2005,10 @@ def offered_choice(
     if character is None:
         return None
     canon = [record for record in records if state_mod.is_canon(record)]
-    systems = gamesystem_mod.systems_of(canon)
-    if len(systems) != 1 or not _system_prints_the_line(systems[0], records):
+    system = _printing_system(canon, records)
+    if system is None:
         return None
-    sheet = gamesystem_mod.sheet_of(canon, character, system=systems[0], at=at)
+    sheet = gamesystem_mod.sheet_of(canon, character, system=system, at=at)
     if sheet is None:
         return None
     pending = gamesystem_mod.pending_choices(sheet)
@@ -2015,7 +2037,9 @@ def offered_line(
     if offered_choice(records, character=character, at=at) is None or character is None:
         return None
     canon = [record for record in records if state_mod.is_canon(record)]
-    system = gamesystem_mod.systems_of(canon)[0]
+    system = _printing_system(canon, records)
+    if system is None:
+        return None
     sheet = gamesystem_mod.sheet_of(canon, character, system=system, at=at)
     if sheet is None:
         return None

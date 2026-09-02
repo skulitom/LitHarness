@@ -50,8 +50,13 @@ out.
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer, system_for
+
+if TYPE_CHECKING:
+    from litharness.application.concept import Concept
 
 #: Frozen profiles, one per job, so seeding a world and growing one are separable on the rows.
 SEED_PROFILE = "architect.seed.v0"
@@ -176,6 +181,18 @@ _SEED = (
     "and what you deliberately left open."
 )
 
+#: **The second system, asked for only where the concept names one** (§197). The operator's
+#: example puts the person under a competing system after a turn with some of the first's
+#: grants kept. `_SYSTEM` declares one system; this sentence rides beside it only for a book
+#: whose concept has two, so every one-system seed renders byte-identically. It names records
+#: (a system, a ladder, grants, one sheet) and no shape, institution or effect, like the rest.
+_SECOND_SYSTEM = (
+    "Where the book's concept puts the person under a second system after its turn, declare "
+    "that one too as a system of its own with its own ladder and grants, declare the sheet of "
+    "the one system the book opens under and of no other, and declare what the concept says "
+    "carries over as a grant of the second system that the first also had."
+)
+
 _GROW = (
     "You keep the world of a book that is being written. A chapter has just been drafted; your "
     "job is that the world still holds — that what the chapter established is in it, that "
@@ -189,11 +206,25 @@ _GROW = (
 )
 
 
-def render_seed_request(overview: str, writer: Writer | None = None) -> CompletionRequest:
-    """Build a world under a listing a reader has already been shown."""
+def render_seed_request(
+    overview: str, writer: Writer | None = None, *, concept: Concept | None = None
+) -> CompletionRequest:
+    """Build a world under a listing a reader has already been shown.
+
+    `concept` is the book as its writer conceived it before the listing (stage-0 §197): what
+    the world has to be able to hold rides under the listing as material, and the seed's task
+    gains `_SECOND_SYSTEM` only for a concept that names one. `None` renders the request as
+    it was, byte for byte: the listing and nothing above it.
+    """
+    prompt = f"The listing this book was sold on:\n\n{overview.strip()}"
+    seed = _SEED
+    if concept is not None:
+        prompt = f"{prompt}\n\n{concept.render_for_seed()}"
+        if concept.second_system is not None:
+            seed = f"{_SEED}\n{_SECOND_SYSTEM}"
     return CompletionRequest(
-        prompt=f"The listing this book was sold on:\n\n{overview.strip()}",
-        system=system_for(_SEED, writer),
+        prompt=prompt,
+        system=system_for(seed, writer),
         max_output_tokens=MAX_OUTPUT_TOKENS,
         profile=SEED_PROFILE,
         call_class="generation",
