@@ -122,3 +122,34 @@ def test_a_sentence_past_the_shelf_s_longest_is_the_long_family_and_only_with_a_
     past = " ".join(["word"] * (n + 1)) + "."
     assert tells.over(f"{PLAIN}\n\n{past}", limits) == (tells.LONG,)
     assert tells.over(page, limits) == ()
+
+
+def test_a_line_of_speech_is_not_located_and_the_same_words_in_narration_are() -> None:
+    """§199.6: on the four placed openings no located sentence of any family lies inside quoted
+    speech; on ours the absence family sat in speech on half of one chapter's sentences, where
+    the absence is the thing said, and the pass had refused every absence rewrite for it."""
+    line = "Nobody has to be any good at it."
+    spoken = f'"{line}" Nick said, and put the register under his arm.'
+    narrated = f"{line} Nick put the register under his arm."
+    assert tells.is_speech(spoken, line) and not tells.is_speech(narrated, line)
+    assert tells.locate(spoken) == ()
+    assert [item.family for item in tells.locate(narrated)] == [tells.ABSENCE]
+    # The absence in the narration half of a half-quoted sentence is the narrator's.
+    tail = '"I was leaning over," Priya said, to nobody, in the voice of somebody with an alibi.'
+    assert [item.family for item in tells.locate(tail)] == [tells.ABSENCE]
+    assert tells.speech_share(tail, tail) < 0.5
+    # An unclosed opening quote runs to the end of its paragraph.
+    carried = (
+        '"Nobody understood the hobby, and nobody asked, and nobody came, and it stayed that way'
+    )
+    assert tells.locate(carried) == ()
+    # Curly quotes count; a single quote is an apostrophe.
+    assert tells.locate("\u201cNobody came.\u201d She shrugged.") == ()
+    assert [item.family for item in tells.locate("'Nobody came,' she said, and nobody had.")] == [
+        tells.ABSENCE
+    ]
+    # Indices still address the sentence where it sits, so a replacement lands in place.
+    page = 'He waited.\n\n"Nobody came," she said. Nobody had, and the hall knew it.'
+    [item] = tells.locate(page)
+    assert (item.paragraph, item.sentence) == (1, 1)
+    assert "Nobody had, and the hall knew it." in tells.replace_sentence(page, item, item.text)

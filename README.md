@@ -82,8 +82,9 @@ uv run litharness --database book.db --writer halloran \
 listing and scene writers as how this shelf sounds, sets the listing's sentence-length
 ceiling, and sets the ceiling per family for the tells pass on the drafting ladder: each
 sentence of a regular family (a clause built on an absence, a paradox, a located habit, an
-echo, a chained *and*, a sentence longer than the shelf's longest) over the shelf's own rate
-is said again by a model and kept only if
+echo, a chained *and*, a sentence longer than the shelf's longest; narration only, since a
+line a character says is the character's) over the shelf's own rate is said again by a model
+and kept only if
 the counter no longer finds the shape, with the rates before and after on the decision row.
 Without a shelf there is no ceiling, no pass, and no change.
 

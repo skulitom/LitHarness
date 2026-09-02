@@ -33,6 +33,16 @@ longest, and the pass's own residue was the long compound sentence carrying thre
 families at once. A sentence longer than the longest the shelf writes is located like the
 rest; the threshold travels in the limits under `LONG_WORDS`, is read off the shelf by
 `ceilings`, and with no threshold the family locates nothing.
+
+**Speech is not counted** (§199.6). On the four placed openings not one located sentence of
+any family lies inside quoted speech; on ours the absence family sat in speech on half of
+one chapter's located sentences (*Nothing at all for sitting down*), where the absence is
+the thing said and no rewrite keeps the line and loses the word, and the pass had refused
+every absence rewrite on three scenes. The reads named their shapes in narration. A
+sentence more than half inside a quoted span of its paragraph is a line, not a habit, and
+is left to the character; the shelf's ceilings are read by the same rule, so they do not
+move. Double quotes only, straight or curly: a single quote is an apostrophe too often to
+be trusted as a mark of speech.
 """
 
 from __future__ import annotations
@@ -57,9 +67,7 @@ _WORD = re.compile(r"[A-Za-z][A-Za-z']*")
 
 #: A clause built on an absence: *nobody understood*, *nothing came*, *never once*, and the
 #: sentence that opens by saying what a thing is not (*Not a scream.* / *No name on it.*).
-_ABSENCE = re.compile(
-    r"\b(?:nobody|no one|no-one|nothing|never)\b|^(?:not|no)\s+\w", re.IGNORECASE
-)
+_ABSENCE = re.compile(r"\b(?:nobody|no one|no-one|nothing|never)\b|^(?:not|no)\s+\w", re.IGNORECASE)
 #: The same word repeated around *without*, *not* or *than*: *taking it back without taking it
 #: back*. Four letters or more so *a ... a* and *it ... it* do not count.
 _PARADOX_TURN = re.compile(
@@ -80,6 +88,8 @@ CHAIN_ANDS = 3
 
 #: A line the book prints as a machine, never counted (`draft.strip_em_dash` keeps them too).
 _MACHINE_LINE = re.compile(r"^\s*\[[A-Z]+\]")
+#: A double quotation mark, straight or curly; single quotes are apostrophes too often.
+_QUOTE = re.compile(r"[\"\u201c\u201d]")
 
 
 @dataclass(frozen=True, slots=True)
@@ -104,20 +114,73 @@ def sentences_of(paragraph: str) -> list[str]:
     return [part.strip() for part in _SENTENCE_END.split(paragraph.strip()) if part.strip()]
 
 
-def _families_of(sentence: str, long_words: float | None = None) -> tuple[str, ...]:
+def _quoted_spans(paragraph: str) -> list[tuple[int, int]]:
+    """The character ranges inside double quotes, marks paired in order; an unpaired
+    opening mark runs to the end of the paragraph, the convention for speech that carries
+    over into the next paragraph."""
+    marks = [match.start() for match in _QUOTE.finditer(paragraph)]
+    spans = [(marks[i], marks[i + 1]) for i in range(0, len(marks) - 1, 2)]
+    if len(marks) % 2:
+        spans.append((marks[-1], len(paragraph)))
+    return spans
+
+
+def speech_share(paragraph: str, sentence: str) -> float:
+    """How much of a sentence lies inside its paragraph's quoted speech, 0.0 to 1.0.
+
+    A sentence the paragraph does not contain verbatim is narration (0.0).
+    """
+    start = paragraph.find(sentence)
+    if start < 0 or not sentence:
+        return 0.0
+    end = start + len(sentence)
+    inside = 0
+    for left, right in _quoted_spans(paragraph):
+        inside += max(0, min(end, right + 1) - max(start, left))
+    return min(1.0, inside / len(sentence))
+
+
+def is_speech(paragraph: str, sentence: str) -> bool:
+    """A sentence more than half inside quoted speech: a line, not a habit."""
+    return speech_share(paragraph, sentence) > 0.5
+
+
+def _outside(pattern: re.Pattern[str], sentence: str, spans: Sequence[tuple[int, int]]) -> bool:
+    """Whether the pattern matches somewhere in the sentence that is not quoted speech."""
+    return any(
+        not any(left <= match.start() <= right for left, right in spans)
+        for match in pattern.finditer(sentence)
+    )
+
+
+def _families_of(
+    sentence: str,
+    long_words: float | None = None,
+    spans: Sequence[tuple[int, int]] = (),
+) -> tuple[str, ...]:
+    """The families one sentence carries; `spans` are its quoted ranges (§199.6).
+
+    A family found by a word (an absence, a paradox, the located habit) is the narrator's only
+    where the word sits outside the quotes; a family that is a property of the whole sentence
+    (the echo, the chained *and*, the length) is the narrator's only where the sentence is
+    mostly narration.
+    """
     found: list[str] = []
-    if _ABSENCE.search(sentence):
+    if _outside(_ABSENCE, sentence, spans):
         found.append(ABSENCE)
-    if _PARADOX_TURN.search(sentence) or _PARADOX_CONTRAST.search(sentence):
+    if _outside(_PARADOX_TURN, sentence, spans) or _outside(_PARADOX_CONTRAST, sentence, spans):
         found.append(PARADOX)
-    if _THE_WAY.search(sentence):
+    if _outside(_THE_WAY, sentence, spans):
         found.append(THE_WAY)
-    if _has_echo(sentence):
-        found.append(ECHO)
-    if len(_AND.findall(sentence)) >= CHAIN_ANDS:
-        found.append(CHAINED_AND)
-    if long_words is not None and len(sentence.split()) > long_words:
-        found.append(LONG)
+    quoted = sum(right - left + 1 for left, right in spans)
+    mostly_speech = sentence and quoted > len(sentence) / 2
+    if not mostly_speech:
+        if _has_echo(sentence):
+            found.append(ECHO)
+        if len(_AND.findall(sentence)) >= CHAIN_ANDS:
+            found.append(CHAINED_AND)
+        if long_words is not None and len(sentence.split()) > long_words:
+            found.append(LONG)
     return tuple(found)
 
 
@@ -140,9 +203,34 @@ def _has_echo(sentence: str) -> bool:
 
 _STOPWORDS = frozenset(
     (
-        "that", "this", "with", "from", "they", "them", "their", "there", "then", "than",
-        "were", "when", "what", "have", "been", "into", "over", "your", "will", "would",
-        "could", "about", "which", "where", "while", "after", "before", "because",
+        "that",
+        "this",
+        "with",
+        "from",
+        "they",
+        "them",
+        "their",
+        "there",
+        "then",
+        "than",
+        "were",
+        "when",
+        "what",
+        "have",
+        "been",
+        "into",
+        "over",
+        "your",
+        "will",
+        "would",
+        "could",
+        "about",
+        "which",
+        "where",
+        "while",
+        "after",
+        "before",
+        "because",
     )
 )
 
@@ -156,8 +244,15 @@ def locate(text: str, *, long_words: float | None = None) -> tuple[Located, ...]
     for p_index, paragraph in enumerate(text.split("\n\n")):
         if not paragraph.strip() or is_machine_line(paragraph):
             continue
+        spans = _quoted_spans(paragraph)
         for s_index, sentence in enumerate(sentences_of(paragraph)):
-            for family in _families_of(sentence, long_words):
+            start = paragraph.find(sentence)
+            relative = [
+                (max(0, left - start), min(len(sentence) - 1, right - start))
+                for left, right in spans
+                if start >= 0 and left < start + len(sentence) and right >= start
+            ]
+            for family in _families_of(sentence, long_words, relative):
                 located.append(Located(family, p_index, s_index, sentence))
     return tuple(located)
 
@@ -256,10 +351,12 @@ __all__ = [
     "ceilings",
     "density",
     "is_machine_line",
+    "is_speech",
     "locate",
     "longest_sentence",
     "over",
     "replace_sentence",
     "sentences_of",
+    "speech_share",
     "word_count",
 ]

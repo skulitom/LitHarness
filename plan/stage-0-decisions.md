@@ -22353,3 +22353,43 @@ which is the price of a strip and is stated here rather than hidden.
 count of one chapter (measure first); an ear for the pass (a model asked whether a rewrite
 reads well is a judge, §61(5)). **Anti-scope.** One chapter, one seed; no treatment effect
 against draw3 or draw1, and no bar.
+
+### 199.6 The shelf's tells are all narration and ours were partly speech; the counter now reads narration only
+
+**Measured (`tools/tells_census.py`, 2026-09-03, no model).** Every located sentence of every
+family on the four placed openings lies outside quoted speech: twelve absence sentences, two
+of the located habit, eight echoes, two chained *and*s, six long sentences, and not one of
+them a line a character says. On ours the absence family sat inside speech on four of eight
+located sentences of pilot 25's chapter (*Nothing at all for sitting down*, *So nobody stops*,
+*Nobody has to be any good at it*, *Grip, nothing*), five of seventeen on pilot 19's, seven of
+fifteen on *Reading the Ladder Wrong*, thirteen of twenty-one on one *Kettle* draw; the other
+families sat in speech on a sentence here and there. That is the family the batched pass had
+refused every rewrite of on three scenes running (§199.5): a line whose absence is the thing
+said cannot be said again with its fact kept and its word lost, and the batch was spending its
+tries on lines. The reads named their shapes in narration (read 19's five items are all the
+narrator's).
+
+**What shipped.** `domain/tells.py`: a family found by a word (the absence, the paradox, the
+located habit) is located only where the word sits outside the paragraph's quoted spans; a
+family that is a property of the whole sentence (the echo, the chained *and*, the length) is
+located only where the sentence is mostly narration; double quotes only, straight or curly,
+an unpaired opening mark running to the paragraph's end; `speech_share` and `is_speech` are
+the readings. The shelf's ceilings are read by the same rule and do not move (absence 2.6,
+the located habit 0.6, the echo 1.0, the chained *and* 0.5, long 0.0 with the threshold at 35
+words). Pilot 25's chapter under the rule: absence 2.0 per thousand against the shelf's 2.6,
+where the old reading had 4.1. Tests in `tests/test_tells.py`: a line of speech is not
+located and the same words in narration are; the narrator's absence in the tail of a
+half-quoted sentence is; an unclosed quote runs to the paragraph's end; curly marks count and
+a single quote is an apostrophe; indices still address the sentence where it sits.
+`tools/tells_census.py` prints every family, narration beside speech, the shelf beside ours.
+
+**What was refused.** Single-quote speech: an apostrophe too often, and the shelf and every
+draw here use double marks. Leaving speech counted and telling the pass to skip it: the
+ceiling is the shelf's rate under one reading, and a page held to it must be read the same
+way. A speech family of its own (a character's *nobody* as a tell): the shelf has none, so no
+ceiling could be read for it.
+
+**Anti-scope.** A counter reads what it can find; a sentence outside quotes that is still a
+character's (free indirect, a report of speech) is counted as the narrator's, which is the
+rule's edge and is stated. Whether the pass now moves the absence family is the next
+chapter's to show.
