@@ -22097,3 +22097,23 @@ The concept was redrawn; the two listings and the two arms run from the redraw.
 
 **Refused.** Editing the name by hand in the concept file: a concept is the writer's, and a
 hand-edited concept is a person authoring the book. No bar.
+
+### 198.2 The simulated readership is in the generation loop, as a reading beside every chapter
+
+**Measured (pilot 24, `plan/serial-pilot-24.md` §4, 2026-09-02).** The operator asked why the
+simulated readership had never been pointed at a chapter he had read, and the answer was that
+the coordinator built the loop on hand reads after §195.5 voided the opening-parity panel for
+reading surface, instead of fixing the instrument and keeping the audience in. `litharness
+readers` existed and was never run on this track. Run on both of pilot 24's chapters with the
+sixty-book rival pool: the measurement pool carried on four of four in both persons and went to
+no rival; the steering pool's expectations and dreads name the book's own rules and numbers.
+
+**What shipped.** The settled-listing harness carries a `readers` step after chapter one and
+records it in the arm's folder (`tools/ab_redraw.py --rivals`), so the readership is part of
+every generation loop this house runs rather than a command somebody remembers.
+
+**Refused, and owed.** Steering: nothing a reader says reaches a prompt or a plan until the
+mechanism is qualified (the editorial control plane, §129's tiers). The story-sensitivity
+control is owed before that question is even asked: the same reads on a paragraph-shuffled
+copy of the chapter, registered before spend, with §195.5's decision table. No bar: two
+chapters, eight readers, one reading.

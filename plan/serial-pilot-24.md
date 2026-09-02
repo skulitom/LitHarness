@@ -1,6 +1,6 @@
 # Serial Pilot 24 — a power that works in chapter one, in both persons
 
-**Status: RUNNING, 2026-09-02.** The first concept drawn under stage-0 §198's four fields (a
+**Status: READ in both persons, 2026-09-02; the operator's milestone.** The first concept drawn under stage-0 §198's four fields (a
 first use, a threat, a prize, a look), answering read 18 (`plan/reader-read-18.md`): seven
 chapters under three concepts, every one ending with its person worse off or merely offered
 something, and the operator not hooked. The concept is drawn once and run in both persons,
@@ -187,8 +187,83 @@ the prize (a click buys safety) is in neither, and the anchors' blurbs carry it 
 
 ## 4. The two chapters
 
-*(after the arms)*
+**Arm draw1 in each experiment (2026-09-02).** First person, *Ground Held*: seed 881 seconds,
+`world check` clean, one system (the Ratchet, its scale minted), both scenes accepted first
+attempt, 2,010 words, $4.51, on the shelf at `book-library/ground-held/`. Third person, *The
+Ratchet Counts Down*: seed 1,059 seconds, the same, 1,984 words, $6.21, at
+`book-library/the-ratchet-counts-down/`. No exceptions, no redraws, the leak gate clean four
+times. The ledger paid one of the concept's debts on the page in each (first: *the rule of his
+own footsteps*; third: *the hollow count on his sheet*) and the summary handler opened five
+more in each.
+
+**The simulated readership, on both, for the first time in this loop** (read 18's question,
+and the operator's of the same day: *shouldn't this be part of any generation development
+loop we do?*). `litharness readers --scene scene-2 --rivals research/quality-measurement/derived/rivals.json`:
+the measurement pool stopped part-way with a reading budget and a named rival it had not
+opened, the steering pool asked what it felt and what it thinks comes next. **Both chapters:
+four of four carried on, none put it down, none went to the rival, none saved it for later.**
+The answers are the book's own: on the first, *2 out of 4118*, the turning he copied instead
+of walked, *you have to have slept on the ground to leave from it*; on the third, *the page is
+not the ground*, *nine years deeper than the map in his hand*, the push-drag in the water. The
+dreads are the shelf's (a montage grind; free teleportation; an agency; the woman east handing
+him a shortcut; a boss with a level over its head). Recorded in each arm's `readers.txt` and in
+the stores' `reader_reads`. **A reading and not evidence, and not yet a control**: until a
+paragraph-shuffled copy of a chapter loses these same reads, the lane has not shown it reads
+story rather than surface (§195.5's finding on the panel), and nothing it says steers.
 
 ## 5. The read
 
-*(the operator's read 18 question first, then both halves, in both persons)*
+**Against read 18's question first: would it hook him.** The third-person chapter is the first
+chapter this loop has drawn that the coordinator kept reading without being asked to. The
+arrival has scale (*the floor let go of the sound*; a laugh on the sales floor that does not
+stop); the system counts his own private nights back at him (*YOU WERE NINETEEN. IT WAS
+RAINING.*) and refuses the one walk that was not his; he pushes on a cinderblock wall because he
+wants the counting to have been about him, and there is no wall; then the same power nearly
+drowns him, because his map is nine years old and the ledge is under; the sheet stays at zero
+because he left through a wall instead of finishing the circuit; and the street at the end has a
+word at everyone's feet but his. The first-person chapter has the better single moment, the
+Ratchet buying the pages he has walked and refusing the one he copied, and the best closing
+line in eight draws (*HOW MANY MORE OF THOSE ARE IN THE BOOK.*), and it puts the horizon on the
+page for the first time (4,118; a woman east who holds a hospital at click three). But it opens
+nine days in with the threat already holding the store, and the power's first use is reported
+(*I'd been telling myself the first time was a mistake*) and then fails on the page.
+
+**§198's four fields, on the page.** The first use: on the page and working in the third;
+reported and then failing in the first, so `concept.FIRST_USE_RULE` was in the first arm's
+outline and not honoured by it (one arm; counted). The threat: a face in the first (*the thing
+in Hallock's coveralls* squaring a pallet with its boot the way Ray did); the arrival's scale
+and a push-drag in the water in the third, no face yet. The look: on the page in both, the
+chalk-white seam at ankle height, the struck match, capitals burnt into concrete. The prize: in
+the first (*a woman east who's got a hospital. Click three*), absent from the third. The want
+in his words: both (*the whole plan of his life*; *It was mine because nobody else wanted it*).
+The count: both.
+
+**The register, counted, in both persons.** Third: no aside, no addressee, two *you* similes,
+eleven absence tokens, one exclamation mark (the first in eight draws: *Tull!*), the historic
+present nowhere. First: three asides, four *you* similes, eighteen absence tokens, none. The
+chained *and* is 4.2 and 4.3 per hundred words, the same in both persons, so it is the model's
+and not the person's. The concept's big-box hardware store became a British car park in both
+(fourteen setting tokens in the first, five in the third): the writer's default geography,
+counted. The name on the line does not bite in this world: the Ratchet counts *at you* and
+prints the name it counts.
+
+**Two draws under one concept, one per person, and never a treatment effect.** Same writer,
+same concept, same shelf, different listing text. The third-person draw honoured the first use,
+carried the arrival's scale, and shed every first-person tell but the chained *and*; the first
+carried the horizon and the prize and the stronger system voice. What is the operator's: the
+person. What is the loop's: the first-use rule's placement (one arm broke it), the prize's
+absence in the third, and the geography.
+
+**Findings, and their routing.**
+
+1. **The readership is in the loop.** The harness gains a `readers` step after chapter one, so
+   every arm carries the readership's reading in its folder (§198.2). Its story-sensitivity
+   control is owed before anything it says may steer: the same reads on a paragraph-shuffled
+   copy must lose.
+2. **The first-use rule can be outlined past** (the first arm). Counted; if a second arm does
+   it, the placement moves from a rule the outline is told to a beat the opening carries.
+3. **The prize and the geography**: counted.
+
+**The milestone.** Two chapters under one concept in two persons, read by the readership and
+by the coordinator, in front of the operator with the concept and both listings. His read is
+the person, and whether this is the chapter he keeps reading.
