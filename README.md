@@ -140,6 +140,9 @@ uv run litharness --database book.db world check
 uv run litharness --database book.db world accept
 ```
 
+`world check` reports, beside the world's own contradictions, what the drafting gate would
+refuse on this world before any scene (a declared shape the seed itself breaches), and
+`world accept` refuses on that list the way it refuses a machinery name (stage-0 §200).
 `world accept` is a recorded state transition, not a ranking step. After a chapter, `architect
 grow` reconciles and extends the same world through the same constrained tool surface.
 

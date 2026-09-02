@@ -173,3 +173,97 @@ the name); and the tense moves from *He was ... walking* to *hangs ... kills ...
 gets* inside one paragraph, where the shelf's blurbs hold one tense. Neither was redrawn: no
 rail asks, and a redraw on my reading would be a selection (§105).
 
+
+## 4. Draw1b — the chapter, its counts, and the read
+
+**What ran** (`runs/ab/pilot25/draw1b/`, 2026-09-02 22:31 to 22:56 UTC, tree 150d467 clean
+at start and at finish). The seed in 956 seconds, `world check` and `world accept` clean under
+§200's preview, the outline, two scenes on the first attempt each, the pass on both, the
+shelf (`book-library/marks-for-moving--38700be7/`), the readership. Thirty-one calls,
+$10.01. Four of four readers carried on against a named rival, every one naming the mark
+scheme as the reason and three of four naming the boy who folded his hands.
+
+**Counted, per scene, from the decision rows** (per thousand words, before and after the pass):
+
+| scene | absence | paradox | the way | echo | chained and | long | said again / left / calls | spend |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| scene 1 | 3.2 to 3.2 | 0.0 | 2.1 to 0.0 | 1.1 to 1.1 | 2.1 to 1.1 | 6.3 to 1.1 | 7 / 4 / 9 | $1.57, 413,693 tokens |
+| scene 2 | 5.0 to 5.0 | 1.0 to 0.0 | 3.0 to 1.0 | 3.0 to 1.0 | 6.0 to 1.0 | 10.9 to 1.0 | 12 / 8 / 11 | $1.93, 506,211 tokens |
+
+Beside pilot 24's draw3 (twenty-six and thirty-five calls, $4.46 and $5.98): a third of the
+calls and a third of the spend for more sentences said again (nineteen against sixteen) and
+fewer left (twelve against twenty-two). The harness tax is unchanged at about forty-six
+thousand tokens a call; the batching is what moved.
+
+**Counted on the whole chapter, beside the shelf:**
+
+| family | shelf's ceiling | draw1b | pilot 24 draw3, for scale |
+| --- | --- | --- | --- |
+| absence | 2.6 | 4.1 | 3.1 |
+| paradox | 0.0 | 0.0 | 0.5 |
+| the way | 0.6 | 0.5 | 1.5 |
+| echo | 1.0 | 1.0 | 2.0 |
+| chained and | 0.5 | 1.0 | 3.1 |
+| long (over 35 words) | 0.0 | 1.0 | 6.1 |
+
+1,955 words; sentence census: median 10, ninetieth percentile 29, longest 48, one sentence
+in a hundred and forty-five over forty words. The shelf's three run median 10 to 16, longest
+30 to 35. This is the first chapter drawn in this house whose sentence-length shape sits
+inside the shelf's on the middle and near it at the top; the two that remain over thirty-five
+words are the coat lifting (*It weighed what a coat weighs, and it swung, ...*, 48 words) and
+the second reading of the sheet.
+
+**The absence family did not move on either scene, the third scene running.** The
+batched ask for it (*Say what is there rather than what is not*) has now had every rewrite
+refused on draw1's refused scene and both of draw1b's, with the other five families moving
+under the same batch shape. Of the eight absence sentences the counter finds on the chapter,
+four are lines of speech (*Nothing at all for sitting down*, *So nobody stops*, *Nobody has
+to be any good at it*, *Grip, nothing*), where the absence is the fact being said and no
+rewrite can keep the fact and lose the word; the shelf's own absence sentences are narration.
+That is a conjecture from one chapter and a hand count, recorded as one (§199.5); the fix it
+points at (the family reads narration and not speech, on both sides of the ceiling) is not
+built on it.
+
+**The read.** The person is the readership's and the edge is his in the first paragraph
+(*he could read a mark scheme the way other people read a bus timetable*; the thesis, the
+postdoc in October, eleven pounds forty an hour). The arrival has the concept's look and it
+is the best arrival in twenty-five pilots: the colour flattening to grey-green, the bell
+behind the teeth, the clock gone and then the fire door, the scheme in ruled serif capitals
+with marks in a column *exactly as the department did it*. The first use is the deduction
+the concept promised and it is an act on the page (*REMAINING SEATED, NO MARKS AVAILABLE* read,
+and *Get up* shouted, cracked), and the threat kills the person who did what he was told,
+which every reader named. The sheet does work for the first time in this house: the coat that
+will not lift, CARRY 2 read *the way he read a student's working when the answer was wrong and
+the method was fine*, the coat lifting; then GRIP 0 and the chair sliding out of his hands
+*like a bar of soap goes*; the first-year the size of a door hitting the figure for six and a
+line arriving *after the fact, saying what he had been paid*. The column of people
+*committing an offence continuously, so that not one of them was ever the one who had
+stopped* is an invention with the rule inside it. The close is the concept's turn arriving
+early and small: the revised scheme with his method struck through and his number under it,
+and a new item, *VACATING THE ASSESSED POSITION, TEN MARKS*, which is a threat with a price on
+it and the first chapter close here that is an offer a reader can do arithmetic on.
+
+**What a reader will hit, by the reads' families.** *To nobody, in the voice of somebody
+establishing an alibi* and *nothing at all where a face goes* are the absence habit in
+narration. *Because that is what a body does* is the narrator's gloss addressed to nobody,
+read 17's question again, once. *Like a bar of soap goes* is a phrase no native hand writes,
+and it is the pass's: a *the way a bar of soap goes* simile said again without the words and
+kept because the counter found no shape in it; the pass can leave a sentence worse than the
+counter can see, and this is the first such sentence found. The status row has eight fields
+and five zeros, unglossed (READING, CALLING, SETTING, TIMING, STRIKING), though two of the
+eight do work on the page. He stands *at the back of the hall by the spare pens* and the
+scheme hangs *a pace in front of him* over *the square of floor where the front desk should
+have been*, which puts him at both ends of the hall in one paragraph. The setting's words are
+British (rota, resit, first-year, the rowing club fleece) and *invigilating* is explained only
+by its company. None of these is a sentence the counter finds, and the operator's read is
+what they answer to.
+
+**What the concept bought.** Every §198 field is on the page: the look (the grey-green, the
+serif), the threat's rule and its first reach in the first scene, the first use as an act, the
+pays field as a coat that lifts a coat. The turn arrives in chapter one rather than at the
+arc's end, which the outline placed; whether that spends the arc's middle early is scene 3's
+to show.
+
+**One draw, one description.** Nothing here is a treatment effect against pilot 24 or
+against draw1, and no bar is declared: the counts sit beside the shelf's, the read sits beside
+the reads' families, and the operator's read is the readout.

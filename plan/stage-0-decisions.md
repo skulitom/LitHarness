@@ -22314,3 +22314,42 @@ metric (§187).
 
 **Anti-scope.** The first chapter drawn under the family says what it moves, and one chapter is
 one description. A page under this ceiling is not good; it is merely not that.
+
+### 199.5 The batched pass's first live rows: a third of the spend, the long family moved, the absence family did not move once
+
+**Measured (`runs/ab/pilot25/draw1b/`, plan/serial-pilot-25.md §4, 2026-09-02).** The third
+version of the pass (§199.3) with the long family (§199.4) ran on one chapter in the third
+person under a fresh seed. Scene 1: nine calls, $1.57, seven sentences said again and four
+left; scene 2: eleven calls, $1.93, twelve said again and eight left. Beside pilot 24's draw3
+under the second version (twenty-six and thirty-five calls, $4.46 and $5.98): a third of the
+calls and the spend for more sentences said again and fewer left, with the transport's floor
+unchanged at about forty-six thousand tokens a call. The long family went from 6.3 and 10.9
+per thousand words to 1.1 and 1.0 (the shelf's rate is zero by construction), the chained
+*and* from 2.1 and 6.0 to 1.1 and 1.0, the located habit from 2.1 and 3.0 to 0.0 and 1.0, the
+echo from 1.1 and 3.0 to 1.1 and 1.0, the paradox to zero. The whole chapter counted beside
+the shelf's ceilings: absence 4.1 against 2.6, the located habit 0.5 against 0.6, the echo
+1.0 against 1.0, the chained *and* 1.0 against 0.5, long 1.0 against 0.0, and by the census
+(`tools/sentence_census.py`) a median sentence of 10 words and a longest of 48 against the
+shelf's 10 to 16 and 30 to 35: the first chapter here inside the shelf's shape on the middle
+of its sentences.
+
+**The absence family did not move on any of the three scenes the batched pass has run on**
+(draw1's refused scene 8.5 to 8.5; draw1b 3.2 to 3.2 and 5.0 to 5.0) while every other
+family moved under the same batch shape and the same acceptance rule. On draw1b's chapter
+four of the eight absence sentences the counter finds are lines of speech (*Nothing at all for
+sitting down*; *So nobody stops*), where the absence is the fact being said and no rewrite
+keeps the fact and loses the word, and the shelf's own absence sentences are narration. A
+hand count on one chapter is a CONJECTURE; the reading that follows from it (the family reads
+narration and not speech, on both sides of the ceiling, so the shelf's rate moves with it) is
+recorded and not built until the count is made by code over the shelf and every draw.
+
+**The pass can leave a sentence worse than the counter can see.** *It slid out between his
+fingers like a bar of soap goes* is a located-habit simile said again without the words and
+kept because the counter found no shape in it; no native hand writes it. First such sentence
+found; one on a chapter. The acceptance rule is the counter's and the counter has no ear,
+which is the price of a strip and is stated here rather than hidden.
+
+**What shipped.** Nothing; a record. **What was refused.** A speech exclusion built on a hand
+count of one chapter (measure first); an ear for the pass (a model asked whether a rewrite
+reads well is a judge, §61(5)). **Anti-scope.** One chapter, one seed; no treatment effect
+against draw3 or draw1, and no bar.
