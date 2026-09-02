@@ -2592,11 +2592,24 @@ def cmd_concept(args: argparse.Namespace) -> int:
         drawn: list[concept_mod.Concept] = []
         for _attempt in range(CONCEPT_DRAW_ATTEMPTS):
             result, refusal = _completion_call(request, calls=calls, spend=spend)
-            if result is None or not isinstance(result.parsed, Mapping):
-                print(
-                    f"litharness: {refusal or 'the concept came back unparsed'}", file=sys.stderr
-                )
+            if result is None:
+                print(f"litharness: {refusal}", file=sys.stderr)
                 return EXIT_FAULT
+            if not isinstance(result.parsed, Mapping):
+                # **An unparsed answer spends an attempt, and says what came back.** Two of the
+                # first six concept draws came back unparsed and the command exited with one
+                # line, so the operator's retry by hand was the only record; the loop is the
+                # retry, bounded by the same count as the name rail, and the answer's shape
+                # (its length against the bound, its first and last words) is on stderr for
+                # the next failure to be read from.
+                head, tail = result.text[:120].strip(), result.text[-120:].strip()
+                print(
+                    "litharness: the concept came back unparsed "
+                    f"({result.usage.output_tokens} output tokens against "
+                    f"{request.max_output_tokens}; starts {head!r}; ends {tail!r})",
+                    file=sys.stderr,
+                )
+                continue
             try:
                 drawn.append(concept_mod.Concept.from_payload(result.parsed))
             except concept_mod.MalformedConcept as error:
@@ -2610,6 +2623,12 @@ def cmd_concept(args: argparse.Namespace) -> int:
                 "system's own word for the machinery and not this book's",
                 file=sys.stderr,
             )
+        if not drawn:
+            print(
+                f"litharness: no concept parsed in {CONCEPT_DRAW_ATTEMPTS} draw(s)",
+                file=sys.stderr,
+            )
+            return EXIT_FAULT
         clean = [draw for draw in drawn if not draw.machinery_names()]
         concept = clean[0] if clean else drawn[-1]
         if kept_names := concept.machinery_names():

@@ -18,10 +18,11 @@ import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application import concept, export, outline, overview, world_agent
-from litharness.cli import EXIT_OK, main
+from litharness.cli import EXIT_FAULT, EXIT_OK, main
 from litharness.domain import house
 from litharness.domain import writers as writers_domain
 from litharness.domain.beats import arc_template, beats_for
+from litharness.domain.generation import CompletionResult, Usage
 from litharness.domain.plans import constraints_of, premise_of
 from litharness.domain.revision import new_book
 
@@ -252,14 +253,22 @@ def test_the_outline_plans_the_first_arc_against_the_concept_and_the_old_payload
         items: tuple = ()
 
     before = outline.render_outline_request(
-        "A premise.", beats, base=_Base()  # type: ignore[arg-type]
+        "A premise.",
+        beats,
+        base=_Base(),  # type: ignore[arg-type]
     )
     after = outline.render_outline_request(
-        "A premise.", beats, base=_Base(), concept=None  # type: ignore[arg-type]
+        "A premise.",
+        beats,
+        base=_Base(),
+        concept=None,  # type: ignore[arg-type]
     )
     assert before == after
     with_it = outline.render_outline_request(
-        "A premise.", beats, base=_Base(), concept=drawn  # type: ignore[arg-type]
+        "A premise.",
+        beats,
+        base=_Base(),
+        concept=drawn,  # type: ignore[arg-type]
     )
     payload = json.loads(with_it.prompt)
     assert payload["book_concept"]["first_arc"]["closes"].startswith("he takes it")
@@ -366,3 +375,68 @@ def test_a_book_created_without_a_concept_carries_none(tmp_path: Path) -> None:
         assert store.promises(book_id, branch_id, open_only=True) == []
     finally:
         store.close()
+
+
+# --- an unparsed answer spends an attempt ---------------------------------------------------
+
+
+def _scripted(*answers: dict[str, object] | None):
+    """A stand-in for the budget-checked call: each answer is a concept payload, or `None`
+    for an answer that came back as prose the schema parser refused."""
+    seen: list[object] = []
+
+    def call(request, *, calls, spend):
+        seen.append(request)
+        answer = answers[min(len(seen) - 1, len(answers) - 1)]
+        result = CompletionResult(
+            text="Sure, here is the concept in prose." if answer is None else json.dumps(answer),
+            provider="scripted",
+            model="scripted",
+            usage=Usage(output_tokens=3999),
+            parsed=answer,
+            schema_requested=True,
+        )
+        return result, ""
+
+    call.seen = seen  # type: ignore[attr-defined]
+    return call
+
+
+def test_an_unparsed_concept_answer_spends_an_attempt_and_the_next_draw_is_kept(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Two of the first six concept draws came back unparsed and the command exited on one
+    line; the loop is now the retry, and the answer's shape is on stderr for the next one."""
+    from litharness import cli
+
+    call = _scripted(None, _example())
+    monkeypatch.setattr(cli, "_completion_call", call)
+    db = tmp_path / "book.db"
+    out = tmp_path / "concept"
+    assert main(["--database", str(db), "init"]) == EXIT_OK
+    capsys.readouterr()
+    argv = ["--database", str(db), "concept", "--writer", "ferreira", "--scenes", "6"]
+    assert main([*argv, "--out", str(out)]) == EXIT_OK
+    err = capsys.readouterr().err
+    assert "came back unparsed" in err and "3999 output tokens" in err
+    assert "Sure, here is" in err, "the answer's first words are on stderr"
+    assert len(call.seen) == 2  # type: ignore[attr-defined]
+    assert (out / "concept.json").exists()
+
+
+def test_a_concept_that_never_parses_is_a_fault_after_the_bounded_draws(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from litharness import cli
+
+    call = _scripted(None)
+    monkeypatch.setattr(cli, "_completion_call", call)
+    db = tmp_path / "book.db"
+    assert main(["--database", str(db), "init"]) == EXIT_OK
+    capsys.readouterr()
+    argv = ["--database", str(db), "concept", "--writer", "ferreira", "--scenes", "6"]
+    assert main([*argv, "--out", str(tmp_path / "concept")]) == EXIT_FAULT
+    err = capsys.readouterr().err
+    assert len(call.seen) == cli.CONCEPT_DRAW_ATTEMPTS  # type: ignore[attr-defined]
+    assert f"no concept parsed in {cli.CONCEPT_DRAW_ATTEMPTS} draw(s)" in err
+    assert not (tmp_path / "concept" / "concept.json").exists()
