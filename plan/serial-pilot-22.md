@@ -1,6 +1,6 @@
 # Serial Pilot 22 — the first book drawn under a concept
 
-**Status: RUNNING, 2026-09-02.** The first draw under stage-0 §197's concept stage, for the
+**Status: READ at draw2, 2026-09-02; the operator's milestone.** The first draw under stage-0 §197's concept stage, for the
 loop the operator set on 2026-09-02 (`plan/serial-pilot-21.md` §5): the coordinator hand-reads
 each draw on both halves, routes its defects, makes the structural fix, redraws. This pilot
 answers draw 4's read (`serial-pilot-21.md` §5.4): no horizon a reader could feel, the listing
@@ -254,3 +254,101 @@ draw 3 the narrator his, draw 4 the listener theirs, and this one the book a hor
 with a manner and a choice with a victim, from a concept the stage invented under an empty
 brief. This is the draw to put in front of the operator beside draw 4, with the concept's text
 above it. Nothing here is evidence; the read is his.
+
+## 6. Draw2 — the system live
+
+**Arm draw2 (2026-09-02, `runs/ab/pilot22/draw2/`).** Draw1b's pipeline with §197.2's floor
+fix and nothing else, a fresh world: the seed took 785 seconds; `world check` clean;
+`world accept` finished both systems (Dispatch at a scale of seven, the Standing Order at two)
+and minted their digests; the fork the concept implies is declared (*the round*, at priority
+four: courier, handler or keeper, each opening one locked grant); the carried-over grant is
+declared under its own name (*billet*), so nothing is governed twice; the second system's
+sheet undeclared, as asked. Both scenes accepted first attempt, 2,041 words, the leak gate
+clean, eleven em dashes and five markup markers stripped, $3.91. The Architect's own summary
+named what it left open: the price of the three rounds, anything above priority five, and
+that the answer to Attempt 3 of 3 lands on Priya rather than on anything on Tobi's sheet. On
+the shelf at `book-library/failed-delivery-notice--c7497693/`.
+
+**The register, counted.** The voice holds and the far listener still gets the building
+explained (*Returns. That's the bit of the building where everything that didn't get delivered
+comes back to*; *the mezzanine. Which is the floor above us. Which is where the forks are*).
+Read 16's family: six tokens a reader elsewhere would stumble on (*divvy*, *jiffy bag*, *tote*,
+*the mushroom* for the stop button, *the day lot*, *Tobes*), with *nought* seven times as the
+sheet's own word on this floor. The confessional aside is ten, up from eight (*I want you to
+picture the type it was in* — *which I'd like on record as the single worst feeling of my life
+up to that point* — *I'm not proud of it. I've told you what I'm like* — *But here's the bit* —
+*That mattered later* — *I'll be honest with you, mate, I was fine*), and the listener has a
+biography again (*I've told you what I'm like*), which the dossier licenses. Definition by
+absence: sixteen tokens, about six in the tic form (*Not dark. Sort of the opposite*; *Not on
+the wall. Not on the bag*; *Not a scream*; *No flash, no sound*), and the chapter closes on a
+double not, the third draw running to end on one (*I hadn't said yes and I hadn't said no*).
+Similes thirteen and concrete (*like the noise you make when your foot goes through a step*;
+*like a man patting his pockets*; *holding it like a hot water bottle*); *the way X* five, all
+descriptive. The historic present runs longer than in any draw before it: scene 1's belt
+(*So there I am … Nat's laughing … Nat's already reading his out. He's got both hands up*) and
+scene 2's opening (*So I'm stood there*) before each settles into the past. Zero exclamation
+marks, six draws running; the shouting is Nat's, reported inside quotation marks.
+
+**The engagement half, on the fixed questions.**
+
+- *What makes a reader want chapter 2.* A grey box on the bench with GED MOSS where the name
+  goes and a ruled line with a cross at the start of it, and a man who has not said yes or no.
+  No win is paid in this chapter: every column is nought and the one number he has is
+  everybody's. The pull is the box and the zeroes, and it is heavier and quieter than
+  draw1b's two clocks and a victim; what the reader wants is for a number to move. A clock is
+  learned rather than stated: the card over Ged counted one to three in the time it took a
+  lad to do compressions, so the reader knows how fast three attempts go. Rivals: Nat, two
+  columns and telling everybody; Priya at two by the end of the shift.
+- *How far the book promises to go.* Felt as blank lines: *there was room after it, the
+  form's ruled for more, you can see where the next ones would sit*, which is the best image
+  for a horizon in six draws. The count (nine; Emeka Balogun at five in Lagos, seen by
+  nobody since the second week) is in canon again and again not on the page.
+- *What is mysterious about the system, and who wonders.* The card counting over a dying man
+  while a lad does compressions is the manner at its cruellest, and the day lot see it too
+  (*So it wasn't just me seeing it. That mattered later*). The name line is explained a second
+  time by a second writer (*My name at the top, which was the first time it had used it and
+  the last time for a long while*). The weight *in something that isn't kilos and isn't
+  pounds*. Nat's explanation (*somebody in an office has typed it wrong*) is the depot's false
+  belief the seed declared, held like a hot water bottle. Tobi reads everything out loud, which
+  is the dossier's trait made a habit, and it is how the reader hears the system.
+- *The twist on the standard shape.* The class as a missed-delivery card; the dead man's box
+  arriving down a chute nobody loaded.
+- *A laugh.* *That's not a name, that's a shelf*; *That's a lovely explanation, that. I'd have
+  signed for that one*; *somebody makes tea nobody drinks*; *no, the big one*.
+- *What he wants beyond the rung.* A name where the name goes: to be delivered to.
+
+**Two draws under one concept, side by side, and never a treatment effect.** Draw1b opened
+weeks after the minute with the routine established and reached the third attempt on a dead
+man's class; draw2 opened on the minute itself, with the death on the page and the first box
+arriving. The concept's first arc *opens* on the minute, which draw2 followed and draw1b did
+not; both are inside it. Draw1b is the busier chapter (two clocks, a win with its price, a
+victim); draw2 has the stronger system manner and the heavier close. Which opening the book
+should have is the operator's read.
+
+**What the live system changed on the page.** The printed line carries the system's columns
+with their ceilings, and three of the ceilings are nought because the seed locked those
+grants behind the round at priority four, so the line prints *Carry 0/0 | Hold 0/0*; the
+writer made the zeroes the beat (*nought, nought, nought over nought*), which is correct to
+the world and reads as the sheet's cruelty. The fork did not print, correctly: it opens at
+four and he stands at one. Two draws, the same concept, one with the system read back and one
+without, and the chapter without it was not the weaker one; what the system buys arrives
+later, at the fork and the beats.
+
+**Findings, and their routing.**
+
+1. **The name seam, a second time.** Two worlds, two writers, and both explained why the line
+   names a man the System never names. It is now a pattern and not a draw. The fix is a
+   per-subject heading the line prints where the name goes (a record beside canon's `is_a`,
+   read by `extraction.display_name` and mapped back to the subject by the parser, as a name
+   is), so the world can say the line prints the bay. **Held for the operator's read**: both
+   writers made the seam a mystery the book now owes, and whether the line should keep naming
+   him is a decision about the book, not about the machine.
+2. **The horizon's count** stays in canon for the third time. The outline placed neither
+   Emeka nor the nine; the seed declares both. Counted; a rule about it would be a clause.
+3. **The historic present** is longer under this writer than under barlow; the frame licenses
+   it and the anchors never do it. Counted.
+
+**The milestone.** Two chapters under one concept, one with the system live, are in front of
+the operator beside pilot 21's draw 4. No further arm until his read: the concept stage,
+which is what this pilot was for, has produced the two best chapters on the engagement half
+that this loop has drawn, and what it should draw next is his to say.
