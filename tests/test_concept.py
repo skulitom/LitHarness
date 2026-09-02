@@ -39,12 +39,19 @@ def _example() -> dict[str, object]:
     return {
         "person_before": "a second-year physics dropout stacking shelves on nights",
         "exception": "the only person the portal spell failed to kill, because his stats held",
+        "first_use": "he walks out of a spell that has killed everyone else who touched it",
         "want": "to stop being the one thing in any room that does not belong there",
         "system": {
             "name": "the Tally",
             "manner": "in a clerk's voice that counts out loud and apologises for nothing",
+            "look": "grey ledger lines on the inside of the eye, lit from behind",
             "steps": 12,
             "strongest_known": "the seventh step, held by three people on Earth",
+            "pays": "a step up is a night you do not have to run from anything",
+        },
+        "threat": {
+            "what": "the things that came through with the Tally and eat what cannot outrun them",
+            "first_reach": "the market on the far side, the first night he is out of the portal",
         },
         "turn": {
             "event": (
@@ -98,8 +105,10 @@ def test_the_schema_has_no_slot_for_an_opinion() -> None:
     assert set(properties) == {
         "person_before",
         "exception",
+        "first_use",
         "want",
         "system",
+        "threat",
         "turn",
         "second_system",
         "first_arc",

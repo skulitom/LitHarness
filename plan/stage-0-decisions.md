@@ -22033,3 +22033,47 @@ to the subject; it waits for draw2's read. The horizon's count (nine rungs; Cons
 five) is in canon and the outline did not place it; watched.
 
 **No bar.** Five draws are five descriptions; the operator's read is the milestone.
+
+## 198. The chapters ended worse off, and the concept now carries a power that works, a threat, a prize and a look
+
+**Measured first (reads 17 and 18, `plan/reader-read-17.md`, `plan/reader-read-18.md`,
+2026-09-02).** Seven chapters under three concepts. The register loop did what it could: read
+17's nine items fell to two at lower counts under a writer who tells it to nobody (pilot 23), and
+what survived two dossiers (the chained *and*, the absence tic, the *you*-simile, the explaining
+of a mechanic) is the model's first-person default. The operator was not hooked, and the reads
+say why. Every chapter this house had drawn ended with its person worse off or merely offered
+something — a figure he cannot pay, a letter, a dead man's class at attempt three, a sheet of
+noughts, a dead man's face — where the shelf's first chapters end with the person holding
+something enormous and unfair. Read 18's items are the same fault seen from four sides: the
+ladder reached the page as a number with nothing attached (*the number was going to go up*, a
+want in *rung* and *livery*), because the concept held the ladder's count and not its prize;
+the notice produced no image, because the concept asked how the system shows itself and the
+writers answered with its voice; the arrival of the System was met with a clipboard, because
+no field asked what kills people in this world; and the exception was a burden every time,
+because *one thing this person has that nobody else has* said nothing about it being a power,
+or working.
+
+**What shipped: four fields on the concept, material and not rules** (`application/concept.py`,
+`tests/test_concept.py`). `first_use`: the first time the exception works for the person,
+inside chapter one; the outline places it (`concept.FIRST_USE_RULE`). `threat`: what kills
+people in the world's first days and where it first reaches the person; the outline places the
+reach and puts what the threat does on the page first (`concept.THREAT_RULE`). `system.pays`:
+what a step up buys, in the words the person used before the system came, and the want is
+asked for in those words. `system.look`: what a reader sees when the system appears — colour,
+place, light, type. All four ride to the listing writer, the seed and the outline through the
+concept's one rendering; the concept task grows by three sentences (`concept writer` row in
+`tests/test_prompt_budget.py`, set at what is there) and speaks none of this house's machinery
+words. The operator's example premise still round-trips.
+
+**Refused, and why.** (a) A clause about power, awe or reaction on the house floor or the scene
+prompt: §187 measured that path. (b) Handing the power at the top as a listing's hook: §136's
+measurement (a keep-power in seven of eight listings under the accumulation clause) was of a
+*rule* producing a meta-ability; this is a field the writer fills with a power of the book's
+own and a first use the outline schedules, which is the shape both anchors have. (c) Deciding
+the person: first person is the operator's position (read 4 §3, §195.2); the flip is run as the
+A/B the harness was built for, both persons under one concept, and the read is his.
+
+**No bar.** Pilot 24 is the first draw under these fields; one draw is one draw.
+
+**Anti-scope.** No change to measurement; nothing in a concept reaches a judge or a reader pool;
+the reviser stays off.

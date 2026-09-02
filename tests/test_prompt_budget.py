@@ -61,13 +61,17 @@ _TWO_SYSTEM_CONCEPT = concept.Concept.from_payload(
     {
         "person_before": "a physics dropout on nights",
         "exception": "the one the portal failed to kill",
+        "first_use": "he walks out of it alive.",
         "want": "to belong in a room",
         "system": {
             "name": "the Tally",
             "manner": "in a clerk's voice.",
+            "look": "grey lines on the inside of the eye.",
             "steps": 12,
             "strongest_known": "the seventh step.",
+            "pays": "a night without running.",
         },
+        "threat": {"what": "what came through with it.", "first_reach": "the market, night one."},
         "turn": {"event": "the portal holds him eleven years.", "when": "before chapter one"},
         "second_system": {
             "name": "the Accord",
@@ -249,9 +253,12 @@ def _roles() -> dict[str, str]:
 #: diverge, the divergence is in the registered arm rather than in the role.
 BUDGET: dict[str, int] = {
     "title writer": 10,
-    # **The concept writer, new on 2026-09-02** (§197): eleven task sentences and the dossier.
-    # Set at what is there, like every row since §187.
-    "concept writer": 15,
+    # **The concept writer, new on 2026-09-02** (§197): eleven task sentences and the dossier,
+    # set at what is there, like every row since §187. **Raised 15 -> 18 the same day for §198**:
+    # the prize a step buys, the want in pre-system words, and the threat, each one sentence,
+    # after read 18 found the ladder reaching the page as a number going up for no reason and
+    # the arrival of the System met with a clipboard.
+    "concept writer": 18,
     # The plain seed's row plus the one second-system sentence.
     "architect seed, second system": 44,
     "title lookup": 6,

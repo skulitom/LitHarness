@@ -92,8 +92,10 @@ CONCEPT_SCHEMA: dict[str, Any] = {
     "required": [
         "person_before",
         "exception",
+        "first_use",
         "want",
         "system",
+        "threat",
         "turn",
         "second_system",
         "first_arc",
@@ -102,16 +104,28 @@ CONCEPT_SCHEMA: dict[str, Any] = {
     "properties": {
         "person_before": {"type": "string"},
         "exception": {"type": "string"},
+        "first_use": {"type": "string"},
         "want": {"type": "string"},
         "system": {
             "type": "object",
             "additionalProperties": False,
-            "required": ["name", "manner", "steps", "strongest_known"],
+            "required": ["name", "manner", "look", "steps", "strongest_known", "pays"],
             "properties": {
                 "name": {"type": "string"},
                 "manner": {"type": "string"},
+                "look": {"type": "string"},
                 "steps": {"type": "integer"},
                 "strongest_known": {"type": "string"},
+                "pays": {"type": "string"},
+            },
+        },
+        "threat": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["what", "first_reach"],
+            "properties": {
+                "what": {"type": "string"},
+                "first_reach": {"type": "string"},
             },
         },
         "turn": {
@@ -172,10 +186,27 @@ class SystemConcept:
     name: str
     #: How it shows itself when it speaks or appears: a manner, in one clause.
     manner: str
+    #: What a reader sees when it appears: colour, place, light, type (read 18 §2.2: a notice
+    #: given by analogy and negation produced no image).
+    look: str
     #: How many steps up it goes. The horizon the reader can feel, as a count.
     steps: int
     #: Where the strongest person anyone has heard of stands, as a count.
     strongest_known: str
+    #: What a step up buys a person, in the words they used before it came (read 18 §2.1: a
+    #: ladder with nothing attached reaches the page as a number going up for no reason).
+    pays: str
+
+
+@dataclass(frozen=True, slots=True)
+class Threat:
+    """What kills people in this world in its first days, and where it first reaches the person.
+
+    Read 18 §2.4: a world with no threat reacts to the end of the world with a clipboard.
+    """
+
+    what: str
+    first_reach: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -220,8 +251,12 @@ class Concept:
 
     person_before: str
     exception: str
+    #: The first time the exception works for them, inside chapter one (read 18 §3: every
+    #: chapter this house had drawn ended with its person worse off or merely offered something).
+    first_use: str
     want: str
     system: SystemConcept
+    threat: Threat
     turn: Turn
     first_arc: FirstArc
     debts: tuple[Debt, ...]
@@ -274,15 +309,23 @@ class Concept:
                     due_scene=due,
                 )
             )
+        threat = _mapping(payload, "threat")
         return cls(
             person_before=_text(payload, "person_before"),
             exception=_text(payload, "exception"),
+            first_use=_text(payload, "first_use"),
             want=_text(payload, "want"),
             system=SystemConcept(
                 name=_text(system, "name", "system.name"),
                 manner=_text(system, "manner", "system.manner"),
+                look=_text(system, "look", "system.look"),
                 steps=steps,
                 strongest_known=_text(system, "strongest_known", "system.strongest_known"),
+                pays=_text(system, "pays", "system.pays"),
+            ),
+            threat=Threat(
+                what=_text(threat, "what", "threat.what"),
+                first_reach=_text(threat, "first_reach", "threat.first_reach"),
             ),
             turn=Turn(event=_text(turn, "event", "turn.event"), when=when),
             first_arc=FirstArc(
@@ -311,13 +354,17 @@ class Concept:
         return {
             "person_before": self.person_before,
             "exception": self.exception,
+            "first_use": self.first_use,
             "want": self.want,
             "system": {
                 "name": self.system.name,
                 "manner": self.system.manner,
+                "look": self.system.look,
                 "steps": self.system.steps,
                 "strongest_known": self.system.strongest_known,
+                "pays": self.system.pays,
             },
+            "threat": {"what": self.threat.what, "first_reach": self.threat.first_reach},
             "turn": {"event": self.turn.event, "when": self.turn.when},
             "second_system": (
                 None
@@ -370,12 +417,17 @@ class Concept:
         lines = [
             f"Who they were the day before: {self.person_before}",
             f"What they alone have, from the first chapter: {self.exception}",
-            f"What they want past the next step up: {self.want}",
+            f"The first time it works, in chapter one: {self.first_use}",
+            f"What they want, in their own words: {self.want}",
             f"The system, {self.system.name}. How it shows itself: {self.system.manner}",
+            f"What it looks like: {self.system.look}",
             (
                 f"How far up it goes: {self.system.steps} steps. Where the strongest person "
                 f"anyone has heard of stands: {self.system.strongest_known}"
             ),
+            f"What a step up buys: {self.system.pays}",
+            f"What kills people here, in the first days: {self.threat.what}",
+            f"Where it first reaches them: {self.threat.first_reach}",
             f"The turn, {self.turn.when}: {self.turn.event}",
         ]
         if self.second_system is not None:
@@ -411,9 +463,12 @@ class Concept:
                 "closes": self.first_arc.closes,
             },
             "turn": {"event": self.turn.event, "when": self.turn.when},
+            "first_use": self.first_use,
+            "threat": {"what": self.threat.what, "first_reach": self.threat.first_reach},
             "horizon": {
                 "steps": self.system.steps,
                 "strongest_known": self.system.strongest_known,
+                "pays": self.system.pays,
             },
             "want": self.want,
         }
@@ -462,10 +517,23 @@ TURN_RULE = (
 )
 
 
+#: Read 18 §3: the power works on the page inside chapter one, and the threat is seen doing
+#: what it does before it reaches the person. Both are placements of material the concept
+#: already holds, and neither names an effect on a reader.
+FIRST_USE_RULE = (
+    "book_concept.first_use happens inside the first chapter's scenes, on the page and not "
+    "reported afterwards, and it works."
+)
+THREAT_RULE = (
+    "book_concept.threat.first_reach is placed where the concept says, and what the threat "
+    "does to people is on the page before it reaches the person."
+)
+
+
 def outline_rules(arc_index: int | None) -> list[str]:
     """The concept's rules for one outline call, by which arc it plans."""
     if arc_index is None or arc_index <= 1:
-        return [FIRST_ARC_RULE, TURN_RULE]
+        return [FIRST_ARC_RULE, FIRST_USE_RULE, THREAT_RULE, TURN_RULE]
     return [LATER_ARC_RULE, TURN_RULE]
 
 
@@ -480,13 +548,19 @@ _TASK = (
     "a friend, months on, to make them start it. Answer the fields asked for and nothing else.\n"
     "Whoever it happens to is somebody this shelf's reader has been: one plain clause of who "
     "they were the day before.\n"
-    "The exception is one thing this person has that nobody else in the world has, and it is "
-    "theirs from the first chapter.\n"
+    "The exception is one power this person has that nobody else in the world has, and the "
+    "first use is the first time it works for them, inside chapter one.\n"
+    "What they want is said in the words they had before any of this came.\n"
     "The turn is one event that changes what the book is about, and where it falls is one of "
     "the three places offered.\n"
     "The horizon is a count a reader can feel: how many steps up the system goes, and where "
     "the strongest person anyone has heard of stands.\n"
-    "The system shows itself in a manner of its own when it speaks, and it may want something.\n"
+    "A step up buys something a person can name in those same words, pay or safety or power "
+    "or respect, and the concept says which.\n"
+    "The system shows itself in a manner of its own when it speaks, it may want something, and "
+    "its look is what a reader sees when it appears: colour, place, light, type.\n"
+    "The threat is what kills people in this world in its first days, and where it first "
+    "reaches the person.\n"
     "A second system exists only where the turn puts the person under one, and then what "
     "carries over from the first is named.\n"
     "The first arc is three events: how chapter one opens, its middle, and how it closes, none "
@@ -562,8 +636,10 @@ __all__ = [
     "CONCEPT_PROFILE",
     "CONCEPT_SCHEMA",
     "FIRST_ARC_RULE",
+    "FIRST_USE_RULE",
     "INSIDE_FIRST_ARC",
     "LATER_ARC_RULE",
+    "THREAT_RULE",
     "TURN_RULE",
     "TURN_WHEN",
     "Concept",
@@ -572,6 +648,7 @@ __all__ = [
     "MalformedConcept",
     "SecondSystem",
     "SystemConcept",
+    "Threat",
     "Turn",
     "concept_of",
     "outline_rules",
