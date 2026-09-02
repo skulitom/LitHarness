@@ -26,11 +26,12 @@ handler was already writing — which is what §20.3's consumer-first sequencing
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from contextlib import suppress
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from hashlib import sha256
+from typing import Any
 
 import litharness_contracts as lc
 
@@ -511,14 +512,16 @@ def make_scene_draft_handler(
     # spend ledger, so the arm's cost was a floor. Cleared before each ladder run.
     tells_calls: list[CompletionResult] = []
 
-    def _say_again(request: CompletionRequest) -> str | None:
-        """One located sentence, said again; a failed call is a sentence left as drafted."""
+    def _say_again(request: CompletionRequest) -> Mapping[str, Any] | None:
+        """One family's located sentences, said again in a batch (§199.3); a failed call, or
+        an answer that is not the labelled object the schema asks for, leaves every sentence
+        in the batch as drafted."""
         try:
             answer, _resolution = registry.complete(request)
         except OperationalFailure:
             return None
         tells_calls.append(answer)
-        return answer.text
+        return answer.parsed if isinstance(answer.parsed, Mapping) else None
 
     budget_policy = budget or BudgetPolicy()
     revision_policy = reviser_policy or ReviserPolicy()

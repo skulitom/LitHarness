@@ -22228,3 +22228,48 @@ closed from any thread; the readers' order-control answers exempted from the cor
 audit by file and key; room for the Windows runners) went green on both its runs, held still
 for twenty minutes, and was merged to main, which had been red for exactly those three
 things since §199. Merged locally, the suite and the audit run on the result before the push.
+
+### 199.3 The pass paid the transport's floor once per sentence and lost its best family; the third version batches one request per family
+
+**Measured (`runs/ab/pilot24-third/draw3/`, plan/serial-pilot-24.md §7, 2026-09-02).** The
+second version of the pass, carrying §199.1's three fixes, ran on one chapter in the third
+person. Its decision rows, the first the pass has had, put the spend at sixty-one calls and
+$10.44 for sixteen sentences said again and twenty-two left, on a chapter whose two drafts
+were two calls and about a dollar and a half: 2,787,625 tokens over sixty-one calls is
+forty-six thousand a call against a prompt of about sixty words, which is the `claude -p`
+transport's per-call floor charged once per located sentence. The whole chapter, counted
+beside the shelf's ceilings: absence 3.1 against 2.6, paradox 0.5 against 0.0, the located
+habit 1.5 against 0.6, the echo 2.0 against 1.0, and the chained *and* 3.1 against 0.5, the
+family draw2's first version had moved to 0.5. Two rules could have held it there and the
+rows cannot tell them apart, since no answer is kept: both versions refused any answer with a
+newline in it while the family's ask asks for more than one sentence, and the second added
+that a rewrite may carry no family at all (§199.1), which a long compound sentence split in
+three rarely satisfies. Of the twenty sentences the counter still finds on the page, six carry
+two, three or four families at once, and a rewrite must carry none within twice the length
+plus four words. The residue is the long compound sentence.
+
+**What shipped.** `application/tells_pass.py` v3: one request per family per scene carrying
+every located sentence over the ceiling, labelled, each with the sentence before and after it
+for its facts, answered as JSON under a schema and checked by the locator one sentence at a
+time; the accepted ones put back from the end of the page forward; only the refused go out
+again, once. An answer on more than one line is joined on spaces before the check, so the
+newline rule is gone and the no-family rule stays, and the next chapter says which of the two
+held the chained *and* up. The pass sends only as many sentences as the ceiling asks, in
+reading order. `handlers._say_again` hands the pass the parsed object rather than the text,
+and a failed or unparsed call leaves every sentence in that batch as drafted.
+`tests/test_tells_pass.py` proves the batch shape, the retry of the refused only, the joined
+split answer, the stop at the ceiling, and the refusal of a rewrite that trades one family
+for another under the new shape. The budget's prompt rows are unchanged.
+
+**What was refused.** A third try per family: a sentence the locator still finds a shape in
+after two batched tries stays as drafted, since a third is a redraw by another name (§105).
+Handing the model the paragraph or the page: that seat is the reviser's, whose null is
+measured (§105, §187), and the pass's whole claim is that it is a strip that reaches inside a
+sentence. Raising a ceiling to meet the residue: the shelf's rate is the shelf's rate.
+Keeping the answers: the pass's raw answers would be the first model text this house stores
+that never reaches a page, and the question they would settle (which rule) is settled more
+cheaply by the next chapter's rows.
+
+**Anti-scope.** Nothing here says what v3 moves; the first chapter drawn under it will. The
+spend figure is a floor (serial pilot 12 §5). Three draws under one concept are three
+descriptions, and none is a treatment effect.

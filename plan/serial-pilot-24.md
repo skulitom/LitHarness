@@ -313,3 +313,93 @@ in the book in his back pocket*).
 **Two draws, one change, never a treatment effect.** The pass is the difference the counts
 show and the read feels; a second world, a second draft, and the seed's own choices are the
 rest. The operator's read is what it answers to.
+
+## 7. Draw3 in third person — the pass with §199.1's fixes, what it cost, and what it left
+
+**One arm, one change again.** Same concept, listing, writer, person and shelf as draw2; a
+fresh store; the pass carrying §199.1's three fixes (a rewrite is kept only if the locator
+finds no family in it at all, the located-habit ask names the words, the pass's calls land on
+a decision row with their spend). The readership step ran last against the rival pool. Folder
+`runs/ab/pilot24-third/draw3/`; the book on the shelf as *The Ratchet Counts Down* (the
+`--312e74d5` copy).
+
+**Counted, per scene, from the decision rows** (per thousand words, before and after the pass):
+
+| scene | absence | paradox | the way | echo | chained and | said again / left / calls | spend |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| scene 1 | 6.1 to 3.1 | 1.0 to 1.0 | 4.1 to 2.1 | 0.0 | 5.1 to 3.1 | 7 / 9 / 26 | $4.46, 1,188,737 tokens |
+| scene 2 | 4.0 to 3.0 | 1.0 to 0.0 | 3.0 to 1.0 | 7.0 to 4.0 | 7.0 to 3.0 | 9 / 13 / 35 | $5.98, 1,598,888 tokens |
+
+Each scene's own draft was one call of about seventy-five thousand tokens. The arm's floor
+was $17.92 over seventy-two invocations, four of four readers carrying on.
+
+**Counted on the whole chapter, beside the shelf and the earlier draws:**
+
+| family | shelf's ceiling | draw1, pass off | draw2, pass v1 | draw3, pass v2 |
+| --- | --- | --- | --- | --- |
+| absence | 2.6 | 4.4 | 2.7 | 3.1 |
+| paradox | 0.0 | 1.1 | 0.0 | 0.5 |
+| the way | 0.6 | 2.2 | 2.1 | 1.5 |
+| echo | 1.0 | 3.9 | 2.7 | 2.0 |
+| chained and | 0.5 | 7.2 | 0.5 | 3.1 |
+
+The ceilings are the highest rate any of the three placed openings the arm was shown reaches
+(*The Primal Hunter*, *Defiance of the Fall*, *Randidly Ghosthound*), read by the same
+counter. Three descriptions, never a treatment effect: the seed and the draft differ under
+every one.
+
+**Two things the rows say about the pass, both its own (stage-0 §199.3).** First, the spend:
+sixty-one calls for sixteen sentences said again, $10.44 on a chapter whose two drafts cost
+about a dollar and a half; the rows put the mean at forty-six thousand tokens a call against
+a prompt of sixty words, which is the transport's floor charged once per sentence. Second,
+the chained *and*, which draw2's pass had moved to the shelf's rate, sat at 3.1 here. Two
+rules could have held it there and the rows cannot tell them apart, since no answer is kept:
+both versions refused any answer with a newline in it while the family's ask asks for more
+than one sentence, and the second version added that a rewrite may carry no family at all,
+which a long compound sentence split in three rarely satisfies. The pass moved the absence,
+the located habit and the echo further than draw2 had and lost its best family. The third
+version (one request per family per scene, lines joined, the no-family rule kept, each
+sentence still verified alone) is what runs next, and the next chapter says which rule it was.
+
+**What is left on the page, located.** Twenty located sentences remain, and six of them carry
+two, three or four families at once: the return through the storm run (*He got them turned in
+the chamber under the apron and he took them back the way he had come, the man first with a
+fist in Cal's collar, the woman after, ...*, eighty words, eight *and*s), the garden gate
+(*Cal went in through the garden gate because the garden gate was the one that did not need a
+key from outside, and the store took him the way it took him every night ...*), the
+thing-in-the-coveralls passing close, and the chapter's last sentence. A rewrite must carry no
+family within twice the length plus four words, and a sentence that is four families long
+does not clear that in two tries. The residue of the pass is the long compound sentence, and
+the shelf writes short ones.
+
+**The read.** The person is right for the readership this time and the edge is his: a night
+stocker who has walked six years of the ground under the city and drawn it, *every foot of it
+walked on his own boots because that was the only kind of drawing worth anything*, and *He
+knew every place on it where the city was wrong.* The first use is a rescue and the skill is
+on the page as talk (*It's going to feel like it's closing. It isn't closing, it's a haunch,
+the crown stays up*), which is the §198 field doing what it was for. The arrival has a look
+(the struck-match smell, the chalk line at ankle height, the burnt capitals) and a rule the
+reader can see fail: the line stops the man in the dressing gown and does not stop the thing
+in Manny's coveralls. The second scene's invention is the chapter's best: Manny comes back up
+the drain and walks his circuit, *End cap. Cage. Dock. Cage.*, and Cal has timed that circuit
+for two years. The close is the concept's turn arriving as the system's own admission (*I HAVE
+COUNTED WHAT IS UNDER THIS CITY. CORRECTION. I HAVE COUNTED IT. I DO NOT HAVE THE SHAPE OF ONE
+OF THEM*) over the notebook open at the arch he drew wrong at nineteen, which is a hook with a
+prize in it. The readers' hopes and dreads both sit where the concept sits: the notebook as
+the engine, geometry over strength, the blank after CLASS filled by doing, and no tutorial
+dump, no quest log, no tower grind.
+
+**What a reader will hit, by the reads' own families.** The last sentence of the chapter ends
+on an absence (*and did not say anything at all*), and the absence family is at the shelf's
+rate only because the shelf's own rate is not low; *nameless, mouth closed*, *no breath in it
+that Cal could hear*, *waiting on nothing* are all on the page. *It was black in there in the
+way the store was never black* is the located habit and the absence in one sentence. *Every
+step of ladder above you is a thing that has to stop. Every step below you is a thing that
+does not* is an unattributed rule addressed to *you*, the read-17 question (*who is saying
+this?*) again. *The way water gets when it comes up instead of down* is the *you*-gloss with
+the pronoun taken out. *The thing he had been putting off since spring* points at nothing.
+*CORRECTION. FORTY-ONE* corrects a number to itself twice, a tic with no meaning behind it
+until the last exchange gives it one. The status row carries eight fields, five of them zero
+and none of them glossed (STEP BACK, CARRY, MUSTER, REACH, TAKING), which is the *hollows*
+item of read 19 five times over; HOLLOWS itself is glossed by the close. None of these is a
+sentence the counter finds, and the operator's read is what they answer to.
