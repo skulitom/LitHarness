@@ -24,6 +24,15 @@ whether the shape is gone is this module's answer and never the model's.
 Machine lines are never counted: the status line, the offer line, and a system's own
 capitals (*NO CLASS. GROUND.*) are the book speaking as a machine, and *nothing* in a notice is
 the notice's word.
+
+**The sixth family is a length, and its threshold is the shelf's** (§199.4). A census of
+sentence lengths on the three placed openings the ladder is shown found no sentence over
+thirty-five words and a median of ten to sixteen; ours ran to fifty and ninety words at the
+top with a median of seven, five to eight sentences per thousand words over the shelf's
+longest, and the pass's own residue was the long compound sentence carrying three or four
+families at once. A sentence longer than the longest the shelf writes is located like the
+rest; the threshold travels in the limits under `LONG_WORDS`, is read off the shelf by
+`ceilings`, and with no threshold the family locates nothing.
 """
 
 from __future__ import annotations
@@ -38,7 +47,10 @@ PARADOX = "paradox"
 THE_WAY = "the_way"
 ECHO = "echo"
 CHAINED_AND = "chained_and"
-FAMILIES: tuple[str, ...] = (ABSENCE, PARADOX, THE_WAY, ECHO, CHAINED_AND)
+LONG = "long"
+FAMILIES: tuple[str, ...] = (ABSENCE, PARADOX, THE_WAY, ECHO, CHAINED_AND, LONG)
+#: The limits key carrying the long family's threshold in words: the shelf's longest sentence.
+LONG_WORDS = "long_words"
 
 _SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
 _WORD = re.compile(r"[A-Za-z][A-Za-z']*")
@@ -92,7 +104,7 @@ def sentences_of(paragraph: str) -> list[str]:
     return [part.strip() for part in _SENTENCE_END.split(paragraph.strip()) if part.strip()]
 
 
-def _families_of(sentence: str) -> tuple[str, ...]:
+def _families_of(sentence: str, long_words: float | None = None) -> tuple[str, ...]:
     found: list[str] = []
     if _ABSENCE.search(sentence):
         found.append(ABSENCE)
@@ -104,6 +116,8 @@ def _families_of(sentence: str) -> tuple[str, ...]:
         found.append(ECHO)
     if len(_AND.findall(sentence)) >= CHAIN_ANDS:
         found.append(CHAINED_AND)
+    if long_words is not None and len(sentence.split()) > long_words:
+        found.append(LONG)
     return tuple(found)
 
 
@@ -133,16 +147,32 @@ _STOPWORDS = frozenset(
 )
 
 
-def locate(text: str) -> tuple[Located, ...]:
-    """Every sentence carrying a family, in reading order; one entry per family it carries."""
+def locate(text: str, *, long_words: float | None = None) -> tuple[Located, ...]:
+    """Every sentence carrying a family, in reading order; one entry per family it carries.
+
+    `long_words` is the long family's threshold; without one the family locates nothing.
+    """
     located: list[Located] = []
     for p_index, paragraph in enumerate(text.split("\n\n")):
         if not paragraph.strip() or is_machine_line(paragraph):
             continue
         for s_index, sentence in enumerate(sentences_of(paragraph)):
-            for family in _families_of(sentence):
+            for family in _families_of(sentence, long_words):
                 located.append(Located(family, p_index, s_index, sentence))
     return tuple(located)
+
+
+def longest_sentence(text: str) -> int:
+    """The longest counted sentence on the page, in words; zero with none."""
+    return max(
+        (
+            len(sentence.split())
+            for paragraph in text.split("\n\n")
+            if paragraph.strip() and not is_machine_line(paragraph)
+            for sentence in sentences_of(paragraph)
+        ),
+        default=0,
+    )
 
 
 def word_count(text: str) -> int:
@@ -153,10 +183,15 @@ def word_count(text: str) -> int:
     )
 
 
-def density(text: str, located: Sequence[Located] | None = None) -> dict[str, float]:
+def density(
+    text: str,
+    located: Sequence[Located] | None = None,
+    *,
+    long_words: float | None = None,
+) -> dict[str, float]:
     """Located sentences per thousand counted words, by family; every family present, zero
     where none."""
-    found = locate(text) if located is None else located
+    found = locate(text, long_words=long_words) if located is None else located
     words = word_count(text) or 1
     counts = dict.fromkeys(FAMILIES, 0)
     for item in found:
@@ -172,17 +207,23 @@ def ceilings(chapters: Iterable[str]) -> dict[str, float] | None:
     tell-heavy chapter runs at, family by family. `None` is no shelf, no ceiling, the ladder as
     it was.
     """
-    rates = [density(chapter) for chapter in chapters if chapter.strip()]
-    if not rates:
+    pages = [chapter for chapter in chapters if chapter.strip()]
+    if not pages:
         return None
-    return {family: max(rate[family] for rate in rates) for family in FAMILIES}
+    # The long family's threshold is the shelf's own longest sentence, so the shelf's rate
+    # for it is zero by construction and every sentence past it on a page is over.
+    longest = float(max(longest_sentence(page) for page in pages))
+    rates = [density(page, long_words=longest) for page in pages]
+    limits = {family: max(rate[family] for rate in rates) for family in FAMILIES}
+    limits[LONG_WORDS] = longest
+    return limits
 
 
 def over(text: str, limits: Mapping[str, float] | None) -> tuple[str, ...]:
     """The families whose density on this page outruns the shelf's; empty with no shelf."""
     if limits is None:
         return ()
-    rate = density(text)
+    rate = density(text, long_words=limits.get(LONG_WORDS))
     return tuple(family for family in FAMILIES if rate[family] > limits.get(family, 0.0))
 
 
@@ -207,6 +248,8 @@ __all__ = [
     "CHAIN_ANDS",
     "ECHO",
     "FAMILIES",
+    "LONG",
+    "LONG_WORDS",
     "PARADOX",
     "THE_WAY",
     "Located",
@@ -214,6 +257,7 @@ __all__ = [
     "density",
     "is_machine_line",
     "locate",
+    "longest_sentence",
     "over",
     "replace_sentence",
     "sentences_of",

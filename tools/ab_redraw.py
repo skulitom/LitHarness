@@ -567,9 +567,7 @@ def read_store(database: Path, chapter_scenes: int, library_root: Path) -> Store
         )
         branches = store.branches()
         if len(branches) != 1:
-            return StoreState(
-                exists=True, exceptions=exceptions, poisoned=poisoned, parked=parked
-            )
+            return StoreState(exists=True, exceptions=exceptions, poisoned=poisoned, parked=parked)
         book_id, branch_id, _ = branches[0]
         document = export_module.collect(
             store,
@@ -682,6 +680,34 @@ def decode_output(raw: bytes) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
 
+def tree_state(cwd: Path) -> dict[str, object]:
+    """The working tree the arm runs from: HEAD and the paths that differ from it.
+
+    **Why it is read twice** (stage-0 §199.4's caveat): every step re-imports the package
+    from the working tree, so an edit landing mid-arm changes the pipeline between one
+    step and the next with nothing in the folder to say so. The record carries the tree
+    at start and at finish; a difference between them is the confound named. Outside a
+    repository both halves are `None`.
+    """
+    try:
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=cwd, capture_output=True, text=True, timeout=30
+        )
+        status = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=all", "--", "src", "tools"],
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return {"head": None, "dirty": None}
+    if head.returncode != 0 or status.returncode != 0:
+        return {"head": None, "dirty": None}
+    dirty = sorted(line[3:].strip() for line in status.stdout.splitlines() if line.strip())
+    return {"head": head.stdout.strip(), "dirty": dirty}
+
+
 def subprocess_runner(label: str, argv: Sequence[str], cwd: Path) -> StepResult:
     started = datetime.now(tz=UTC)
     # argv is built in this file and handed to the OS as a list; nothing is shell-interpolated.
@@ -718,6 +744,9 @@ class ArmRun:
     stopped: str = ""
     state: StoreState = field(default_factory=StoreState)
     ticks: int = 0
+    #: The working tree at start and at finish (`tree_state`); a difference is a confound.
+    tree_at_start: dict[str, object] = field(default_factory=dict)
+    tree_at_finish: dict[str, object] = field(default_factory=dict)
 
 
 def run_arm(
@@ -735,7 +764,12 @@ def run_arm(
     somebody needs the command log of, and an exception that escaped with the accumulated
     steps inside it would leave an empty folder behind the failure.
     """
-    run = ArmRun(spec=spec, listing=listing, started_at=datetime.now(tz=UTC).isoformat())
+    run = ArmRun(
+        spec=spec,
+        listing=listing,
+        started_at=datetime.now(tz=UTC).isoformat(),
+        tree_at_start=tree_state(cwd),
+    )
 
     # sqlite cannot create intermediate directories, and the first live arm proved it: `init`
     # exited 2 on a database whose arm folder did not exist yet, then the folder appeared when
@@ -947,9 +981,7 @@ def write_folder(run: ArmRun, *, scorecard: dict[str, object], spend: dict[str, 
     (directory / "commands.log").write_text("\n".join(log) + "\n", encoding="utf-8", newline="\n")
     for result in run.steps:
         if result.label == "readers":
-            (directory / "readers.txt").write_text(
-                result.output, encoding="utf-8", newline="\n"
-            )
+            (directory / "readers.txt").write_text(result.output, encoding="utf-8", newline="\n")
 
     (directory / "spend.json").write_text(
         json.dumps(spend, indent=2) + "\n", encoding="utf-8", newline="\n"
@@ -985,6 +1017,13 @@ def write_folder(run: ArmRun, *, scorecard: dict[str, object], spend: dict[str, 
         "ceilings": {
             "max_cost_usd_per_day": run.spec.max_cost_usd_per_day,
             "max_tokens_per_day": run.spec.max_tokens_per_day,
+        },
+        "tree": {
+            "at_start": run.tree_at_start,
+            "at_finish": run.tree_at_finish or tree_state(REPO),
+            "changed_during_the_arm": bool(
+                run.tree_at_start and (run.tree_at_finish or tree_state(REPO)) != run.tree_at_start
+            ),
         },
         "steps": [
             {

@@ -99,3 +99,32 @@ def test_the_check_previews_what_acceptance_would_refuse_over_the_proposals() ->
     assert any("declares no depth" in reason for reason in report["would_not_finish"])
     complete = [_accepted(record) for record in gamesystem.records_for(_system())]
     assert world.check(complete)["would_not_finish"] == []
+
+
+def test_the_check_previews_the_breach_the_gate_would_refuse_on_the_world_alone() -> None:
+    """§200: pilot 25's seed declared a one-position shape grouped by subject and put one person
+    at a rung on each of two systems; check and accept passed it and the first scene was refused
+    for a breach that was in canon before it was drafted. The check now runs the gate's own
+    detectors over the proposals as accept would carry them; `ok` still does not move."""
+    from litharness.domain import worlds
+
+    def shape(group_key: str) -> list:
+        return [
+            worlds.world_record("ines", worlds.ENTITY_ROLE_PREDICATE, value="cast"),
+            worlds.world_record(
+                "one_position", worlds.TYPE_PREDICATE, value=worlds.CARDINALITY_CONSTRAINT
+            ),
+            worlds.world_record("one_position", worlds.PREDICATE_PREDICATE, value="wears"),
+            worlds.world_record("one_position", worlds.SCOPE_PREDICATE, value="cast"),
+            worlds.world_record("one_position", worlds.GROUP_KEY_PREDICATE, value=group_key),
+            worlds.world_record("one_position", worlds.MAXIMUM_PREDICATE, value=1),
+            worlds.world_record("ines", "wears", object_ref="lead_seal", value="left"),
+            worlds.world_record("ines", "wears", object_ref="brass_seal", value="right"),
+        ]
+
+    report = world.check(shape("subject,order_key"))
+    assert report["ok"], "a breach the gate would refuse is not a world contradicting itself"
+    [breach] = report["would_breach"]
+    assert breach.startswith("state.cardinality.v0:") and "brass_seal" in breach
+    assert world.check(shape("subject,value,order_key"))["would_breach"] == []
+    assert world.would_breach([]) == []

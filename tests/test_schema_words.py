@@ -216,8 +216,50 @@ def test_force_accepts_it_anyway(fake, tmp_path, capsys) -> None:  # type: ignor
 def test_an_ordinary_system_name_accepts(fake, tmp_path, capsys) -> None:  # type: ignore[no-untyped-def]
     """Pilot 15b's own name, so the gate is shown letting a real world through."""
     db = _seeded(tmp_path)
-    assert main(
-        ["--database", db, "world", "declare", "keeping", "is_a", "--value", "the Keeping"]
-    ) == EXIT_OK
+    assert (
+        main(["--database", db, "world", "declare", "keeping", "is_a", "--value", "the Keeping"])
+        == EXIT_OK
+    )
+    capsys.readouterr()
+    assert main(["--database", db, "world", "accept"]) == EXIT_OK
+
+
+def test_world_accept_refuses_a_breach_the_gate_would_refuse(fake, tmp_path, capsys) -> None:  # type: ignore[no-untyped-def]
+    """§200, through the command that accepted pilot 25's seed cleanly: one person holding two
+    of a thing the world admits one of, in two columns, under a shape grouped by subject.
+    Regrouped per column by `world declare`, the same world is accepted. (`wears` rather than
+    `stands_at`, so the chain rules stay out of the way; the ladder case is
+    `test_integrity.py`'s.)"""
+    db = _seeded(tmp_path)
+    for argv in (
+        ["ines", "entity_role", "--value", "cast"],
+        ["one_position", "type", "--value", "cardinality_constraint"],
+        ["one_position", "predicate", "--value", "wears"],
+        ["one_position", "scope", "--value", "cast"],
+        ["one_position", "group_key", "--value", "subject,order_key"],
+        ["one_position", "maximum", "--value", "1"],
+        ["ines", "wears", "--object", "lead_seal", "--value", "left"],
+        ["ines", "wears", "--object", "brass_seal", "--value", "right"],
+    ):
+        assert main(["--database", db, "world", "declare", *argv]) == EXIT_OK, argv
+    capsys.readouterr()
+    assert main(["--database", db, "world", "accept"]) == EXIT_FAULT
+    printed = capsys.readouterr().err
+    assert "state.cardinality.v0" in printed and "breach" in printed
+    assert (
+        main(
+            [
+                "--database",
+                db,
+                "world",
+                "declare",
+                "one_position",
+                "group_key",
+                "--value",
+                "subject,value,order_key",
+            ]
+        )
+        == EXIT_OK
+    )
     capsys.readouterr()
     assert main(["--database", db, "world", "accept"]) == EXIT_OK

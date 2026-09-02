@@ -262,9 +262,7 @@ def test_a_subject_that_is_two_things_at_once_is_not_contradicting_itself() -> N
     roles = [
         _accepted(worlds.world_record("nella_scur", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
         _accepted(
-            worlds.world_record(
-                "nella_scur", worlds.ENTITY_ROLE_PREDICATE, value="protagonist"
-            )
+            worlds.world_record("nella_scur", worlds.ENTITY_ROLE_PREDICATE, value="protagonist")
         ),
     ]
     assert worlds.ENTITY_ROLE_PREDICATE in MULTI_VALUED
@@ -301,17 +299,13 @@ def _seal_shape(*, excepts: str | None = None) -> list[lc.StateRecord]:
         accepted(worlds.world_record("one_seal", worlds.PREDICATE_PREDICATE, value="wears")),
         accepted(worlds.world_record("one_seal", worlds.SCOPE_PREDICATE, value="cast")),
         accepted(
-            worlds.world_record(
-                "one_seal", worlds.GROUP_KEY_PREDICATE, value="subject,order_key"
-            )
+            worlds.world_record("one_seal", worlds.GROUP_KEY_PREDICATE, value="subject,order_key")
         ),
         accepted(worlds.world_record("one_seal", worlds.MAXIMUM_PREDICATE, value=1)),
     ]
     if excepts is not None:
         rows.append(
-            accepted(
-                worlds.world_record("one_seal", worlds.EXCEPTS_PREDICATE, object_ref=excepts)
-            )
+            accepted(worlds.world_record("one_seal", worlds.EXCEPTS_PREDICATE, object_ref=excepts))
         )
     return rows
 
@@ -341,19 +335,13 @@ def test_the_declared_exception_reaches_the_live_detector_and_binds_nobody_else(
     """
     plain = subject_for("litrpg", records=[*_seal_shape(), *_wears_two("silas")])
     [before] = [
-        found
-        for found in run_detectors(plain)
-        if found.rule_or_critic_id == CARDINALITY_RULE
+        found for found in run_detectors(plain) if found.rule_or_critic_id == CARDINALITY_RULE
     ]
     assert before.blocks and "silas" in before.message
 
-    excepted = subject_for(
-        "litrpg", records=[*_seal_shape(excepts="silas"), *_wears_two("silas")]
-    )
+    excepted = subject_for("litrpg", records=[*_seal_shape(excepts="silas"), *_wears_two("silas")])
     assert not [
-        found
-        for found in run_detectors(excepted)
-        if found.rule_or_critic_id == CARDINALITY_RULE
+        found for found in run_detectors(excepted) if found.rule_or_critic_id == CARDINALITY_RULE
     ]
 
     somebody_else = subject_for(
@@ -397,10 +385,20 @@ def test_dict_values_compare_by_content_not_by_key_order() -> None:
 
 def test_two_proposals_disagreeing_is_what_proposals_are_for() -> None:
     records = [
-        record("rec-a", subject="rook", predicate="level", value=3,
-               authority=lc.StateAuthority.PROPOSED),
-        record("rec-b", subject="rook", predicate="level", value=4,
-               authority=lc.StateAuthority.PROPOSED),
+        record(
+            "rec-a",
+            subject="rook",
+            predicate="level",
+            value=3,
+            authority=lc.StateAuthority.PROPOSED,
+        ),
+        record(
+            "rec-b",
+            subject="rook",
+            predicate="level",
+            value=4,
+            authority=lc.StateAuthority.PROPOSED,
+        ),
     ]
     assert detect_contradictions(subject_for("litrpg", records=records)) == []
 
@@ -485,9 +483,7 @@ def test_the_fixture_really_does_carry_the_answer_key() -> None:
     """A guard on the guard above: if the fixture stopped annotating its defects, the scan
     would keep passing for the wrong reason and the property it protects would be gone."""
     notes = [
-        item.note
-        for item in load_state("litrpg").records
-        if item.note and "See f-" in item.note
+        item.note for item in load_state("litrpg").records if item.note and "See f-" in item.note
     ]
     assert len(notes) >= 5
 
@@ -544,7 +540,8 @@ def test_a_defect_on_another_scene_does_not_block_this_one(store: SqliteStore) -
         if item.logical_id and item.logical_id != planted.logical_id
     ]
     clean_node = next(
-        node for node in ("scene-1", "scene-2", "scene-3", "scene-4", "scene-5", "scene-6")
+        node
+        for node in ("scene-1", "scene-2", "scene-3", "scene-4", "scene-5", "scene-6")
         if node != planted.logical_id and node not in elsewhere
     )
     standing = store.findings(BOOK_ID, BRANCH_ID, logical_id=clean_node, open_only=True)
@@ -583,9 +580,7 @@ def test_dismissing_a_control_unblocks_the_node_it_landed_on(store: SqliteStore)
 
     for item in blocking:
         store.set_finding_status(item.finding_id, Status.ACCEPTED_INTENTIONAL)
-    remaining = [
-        item for item in store.findings(BOOK_ID, BRANCH_ID, open_only=True) if item.blocks
-    ]
+    remaining = [item for item in store.findings(BOOK_ID, BRANCH_ID, open_only=True) if item.blocks]
     assert remaining == []
 
 
@@ -850,3 +845,52 @@ def test_the_detector_is_in_the_loop_and_not_merely_written() -> None:
     exactly that shape, and would be invisible to every test that calls it directly.
     """
     assert detect_duplicate_scene in IN_PROCESS
+
+
+def _position_shape(group_key: str) -> list[lc.StateRecord]:
+    """A world that admits one `stands_at` per person, grouped as the world says."""
+    return [
+        _accepted(worlds.world_record("ines", worlds.ENTITY_ROLE_PREDICATE, value="cast")),
+        _accepted(
+            worlds.world_record(
+                "one_position", worlds.TYPE_PREDICATE, value=worlds.CARDINALITY_CONSTRAINT
+            )
+        ),
+        _accepted(
+            worlds.world_record("one_position", worlds.PREDICATE_PREDICATE, value="stands_at")
+        ),
+        _accepted(worlds.world_record("one_position", worlds.SCOPE_PREDICATE, value="cast")),
+        _accepted(worlds.world_record("one_position", worlds.GROUP_KEY_PREDICATE, value=group_key)),
+        _accepted(worlds.world_record("one_position", worlds.MAXIMUM_PREDICATE, value=1)),
+    ]
+
+
+def _on_two_ladders() -> list[lc.StateRecord]:
+    """Pilot 25's seed: one person at a rung on each of two systems, at one position."""
+    return [
+        _accepted(worlds.world_record("ines", "stands_at", object_ref="band_six", value="band")),
+        _accepted(
+            worlds.world_record("ines", "stands_at", object_ref="grade_moderator", value="grade")
+        ),
+    ]
+
+
+def test_a_position_shape_grouped_per_ladder_admits_one_rung_on_each_system() -> None:
+    """§200: a world with two systems means one position *per ladder*; grouped by subject alone
+    the same two records are a breach, which is what refused pilot 25's first scene."""
+    from litharness.domain.integrity import detect_cardinality_violations
+
+    by_subject = [*_position_shape("subject,order_key"), *_on_two_ladders()]
+    [breach] = detect_cardinality_violations(subject_for("litrpg", records=by_subject))
+    assert "band_six" in breach.message and "grade_moderator" in breach.message
+    per_ladder = [*_position_shape("subject,value,order_key"), *_on_two_ladders()]
+    assert detect_cardinality_violations(subject_for("litrpg", records=per_ladder)) == []
+    # Two rungs on one ladder are still two, under either grouping.
+    same_ladder = [
+        *_position_shape("subject,value,order_key"),
+        _accepted(worlds.world_record("ines", "stands_at", object_ref="band_six", value="band")),
+        _accepted(worlds.world_record("ines", "stands_at", object_ref="band_two", value="band")),
+    ]
+    [again] = detect_cardinality_violations(subject_for("litrpg", records=same_ladder))
+    assert "band_two" in again.message
+    assert "subject,value,order_key" in worlds.GROUP_KEYS

@@ -195,7 +195,9 @@ _SECOND_SYSTEM = (
     "that one too as a system of its own with its own ladder and grants, declare the sheet of "
     "the one system the book opens under and of no other, and declare what the concept says "
     "carries over as a grant of the second system with a name of its own, because a grant "
-    "governed by two systems is a contradiction the check refuses."
+    "governed by two systems is a contradiction the check refuses. A person may stand on "
+    "both ladders, so a shape that admits one stands_at per person is grouped by "
+    "subject,value,order_key, one rung per ladder, and never by subject,order_key alone."
 )
 
 _GROW = (

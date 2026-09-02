@@ -4401,6 +4401,23 @@ def cmd_world(args: argparse.Namespace) -> int:
                     file=sys.stderr,
                 )
                 return EXIT_FAULT
+            # **§200's refusal: what the drafting gate would refuse on this world alone.**
+            # Pilot 25's seed declared a one-position shape and then put one person at a
+            # rung on each of two systems; accept passed it and the first scene was refused
+            # for a breach that was in canon before it was drafted. The same detectors the
+            # gate runs are run over the proposals as they would be carried, and a breach is
+            # refused here where `world declare` can still fix it. Same `--force`.
+            breaches = world_mod.would_breach(in_force)
+            if breaches and not args.force:
+                for breach in breaches:
+                    print(f"litharness: {breach}", file=sys.stderr)
+                print(
+                    f"litharness: {len(proposals)} proposal(s) not accepted; {len(breaches)} "
+                    "breach(es) the drafting gate would refuse on this world before any scene. "
+                    "Fix with `world declare`, or --force to accept them anyway.",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
             moved = store.promote_state_records(
                 book_id,
                 branch_id,

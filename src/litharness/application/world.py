@@ -23,13 +23,15 @@ directly", preserved *through* the tool surface rather than by denying one.
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Mapping, Sequence
 from typing import Any
 
 import litharness_contracts as lc
 
-from litharness.domain import gamesystem, genre, schema_words, worlds
+from litharness.domain import gamesystem, genre, integrity, schema_words, worlds
 from litharness.domain import state as state_mod
+from litharness.domain.findings import DetectorInput
 
 #: Every view is addressable by name, so the CLI's subcommand table and this module cannot
 #: drift apart, and an agent can be told the list of views without a second source for it.
@@ -271,7 +273,7 @@ def vocabulary() -> dict[str, Any]:
             "a time is transiently incoherent by nature, so `world accept` is the only gate, "
             "and it refuses on a contradiction unless you pass --force.",
             "A `--value` that is a bare number is stored as a number: `--value 34`, not "
-            "`--value \"34\"`. `reveal_scene` is only read when it is a genuine integer.",
+            '`--value "34"`. `reveal_scene` is only read when it is a genuine integer.',
             "A question is two records and the pair is what makes it legal: `claim.content` "
             "with the answer, `asks` with the question, and `reveal_scene` with the scene the "
             "reader learns it. Declaring `asks` alone is reported until its answer lands.",
@@ -402,9 +404,7 @@ def ladders(records: Sequence[lc.StateRecord]) -> list[dict[str, Any]]:
     return out
 
 
-def abilities(
-    records: Sequence[lc.StateRecord], *, holder: str | None = None
-) -> dict[str, Any]:
+def abilities(records: Sequence[lc.StateRecord], *, holder: str | None = None) -> dict[str, Any]:
     """What this world says a person can do, and who holds what.
 
     `declared` minus what anybody holds is the headroom a book has left to give away, which is
@@ -435,12 +435,9 @@ def cast(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     """Who is in this world, by the role the world gave them, and who the protagonist is."""
     protagonist = worlds.protagonist_brief(records)
     return {
-        "protagonist": (
-            protagonist.to_jsonable() if protagonist is not None else None
-        ),
+        "protagonist": (protagonist.to_jsonable() if protagonist is not None else None),
         "roles": {
-            subject: list(roles)
-            for subject, roles in sorted(worlds.entity_roles(records).items())
+            subject: list(roles) for subject, roles in sorted(worlds.entity_roles(records).items())
         },
     }
 
@@ -468,9 +465,7 @@ def threads(records: Sequence[lc.StateRecord], *, at: str | None = None) -> dict
     }
 
 
-def presence(
-    records: Sequence[lc.StateRecord], scenes: Mapping[str, str]
-) -> dict[str, Any]:
+def presence(records: Sequence[lc.StateRecord], scenes: Mapping[str, str]) -> dict[str, Any]:
     """Which of this world's coined names have reached the page, and which have not.
 
     `scenes` is `{logical_id: prose}` for the scenes that have been drafted; an empty mapping
@@ -496,12 +491,8 @@ def presence(
         for term in (*worlds.ENTITY_ROLES, *worlds.NODE_TYPES)
         for word in term.casefold().split("_")
     )
-    names = tuple(
-        name for name in worlds.key_nouns(records) if name not in _SCHEMA_WORDS
-    )
-    drafted = {
-        logical_id: text.casefold() for logical_id, text in scenes.items() if text.strip()
-    }
+    names = tuple(name for name in worlds.key_nouns(records) if name not in _SCHEMA_WORDS)
+    drafted = {logical_id: text.casefold() for logical_id, text in scenes.items() if text.strip()}
     seen: dict[str, list[str]] = {}
     for name in names:
         where = [logical_id for logical_id, text in drafted.items() if name in text]
@@ -515,6 +506,29 @@ def presence(
         "never_said": absent,
         "share_present": round(len(seen) / len(names), 4) if names else None,
     }
+
+
+def would_breach(records: Sequence[lc.StateRecord]) -> list[str]:
+    """What the drafting gate would refuse on this world alone, before any scene (§200).
+
+    Pilot 25's seed declared a one-position shape on `stands_at` and then put a side
+    character at a rung on each of two systems; `check` and `accept` both passed it, and
+    the first scene was refused at the integrity gate for a breach that was in canon
+    before the scene was drafted, after the outline, the draft and the pass were paid
+    for. The same two detectors the gate runs, contradiction and cardinality, are run
+    here over the records as accept would carry them, and their messages are kept.
+    Nothing is minted and `ok` does not move; `world accept` refuses on this list the
+    way it refuses on `machinery_names`.
+    """
+    as_canon = tuple(
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in records
+    )
+    subject = DetectorInput(book_id="", branch_id="", logical_id="world", records=as_canon)
+    findings = integrity.detect_contradictions(subject) + integrity.detect_cardinality_violations(
+        subject
+    )
+    return sorted({f"{finding.rule_or_critic_id}: {finding.message}" for finding in findings})
 
 
 def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
@@ -595,6 +609,7 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
         "ok": not complaints,
         "gaps": gaps,
         "would_not_finish": list(would_not_finish),
+        "would_breach": would_breach(records),
         "machinery_names": list(schema_words.world_complaints(records)),
         "will_not_resolve": [
             warning for record in records for warning in worlds.slot_warnings(record)

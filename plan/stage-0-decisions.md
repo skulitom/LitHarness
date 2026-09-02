@@ -22273,3 +22273,44 @@ cheaply by the next chapter's rows.
 **Anti-scope.** Nothing here says what v3 moves; the first chapter drawn under it will. The
 spend figure is a floor (serial pilot 12 §5). Three draws under one concept are three
 descriptions, and none is a treatment effect.
+
+### 199.4 The shelf never writes a sentence past thirty-five words and ours run to ninety; the long sentence is the sixth located family
+
+**Measured (`tools/sentence_census.py`, 2026-09-02, no model).** A census of sentence lengths
+over the four placed openings and every chapter on the library shelf, with the tells module's
+own splitter and machine lines left out. The three openings the ladder is shown (*The Primal
+Hunter*, *Defiance of the Fall*, *Randidly Ghosthound*) have a longest sentence of 35, 30 and
+33 words, a median of 16, 11 and 10, and no sentence over 35 words at all (*The Gam3*, the
+fourth, runs to 53 and 2.9 such sentences per thousand words). Our seven chapters from pilots
+22 to 24 have a longest sentence of 50 to 92 words, a median of 7 to 12, and 4.8 to 8.3
+sentences per thousand words over 35, on every draw with the pass on or off. Two shapes in one:
+a top the shelf does not have, and a middle the shelf does not have either, since the median
+sits below the shelf's on every draw but one. The short end does not separate: narration
+sentences of five words or fewer are 9 to 33 percent of the shelf's and 19 to 43 percent of
+ours, overlapping ranges, so no ceiling can be read off the shelf for it. The pass's own
+residue on draw3 (§199.3) was six sentences carrying three or four families each, every one of
+them over 35 words: the long sentence is where the other families live.
+
+**What shipped.** `domain/tells.py`: a sixth family, `long`, a sentence longer than a threshold
+that travels in the limits under `long_words`; `ceilings` reads the threshold off the shelf as
+its longest counted sentence, so the shelf's own rate for the family is zero by construction
+and every sentence past it on a page is over; `locate` and `density` take the threshold and
+locate nothing for the family without one, so every existing call is unchanged;
+`longest_sentence` is the reading. `application/tells_pass.py`: the family's ask names the
+number (*Say it as two or more sentences, none longer than N words*) and the locator's check on
+the answer is the same as for every family. Tests in `tests/test_tells.py` and
+`tests/test_tells_pass.py`: the family is found only with a threshold, the shelf is never over
+its own longest, the ask carries the number and only for that family, and an answer that is
+still one long sentence is refused where two short ones are kept. The prompt budget's row for
+the rewriter is unchanged, since it is measured on the chained-*and* ask.
+
+**What was refused.** A short-sentence family: the ranges overlap and no bar survives its own
+range (§85). A fixed constant for the threshold: the shelf's longest is the shelf's number and
+moves when the shelf does, like the other five ceilings and the listing's sentence rail. A
+redraw rail on the scene for length: a scene is two thousand words and a redraw is a fresh set
+of the same defaults (§105); the pass's rewrite is the seat that reaches inside one sentence.
+A clause to the writer about sentence length: five clauses were measured moving no sentence
+metric (§187).
+
+**Anti-scope.** The first chapter drawn under the family says what it moves, and one chapter is
+one description. A page under this ceiling is not good; it is merely not that.

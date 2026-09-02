@@ -145,3 +145,32 @@ def test_the_rewrite_ask_names_the_sentences_and_no_rule_about_the_page() -> Non
     assert "Return only JSON" in system
     assert tells_pass.FAMILY_ASKS[tells.CHAINED_AND] in system
     assert tells_pass.FAMILY_ASKS[tells.ABSENCE] not in system, "one family's line, not all"
+
+
+def test_a_long_sentence_is_said_again_as_shorter_ones_and_kept_under_the_shelf_s_longest() -> None:
+    """§199.4: the ask names the shelf's number; an answer that is still one long sentence is
+    refused by the locator, and one that came back as two short ones is kept."""
+    long_one = (
+        "He got them turned in the chamber under the apron, took them back along the route "
+        "with the man first, the woman after, the kid in scrubs last, silent."
+    )
+    assert len(long_one.split()) > 20 and not tells.locate(long_one), "long and nothing else"
+    page = f"{PLAIN}\n\n{long_one} It was late."
+    limits = {**ZERO, tells.LONG_WORDS: 20.0}
+    still_long = (
+        "He got them turned in the chamber under the apron and took them back with the man "
+        "first, the woman after, the kid in scrubs last, silent, all of it."
+    )
+    assert len(still_long.split()) > 20
+    two = "He got them turned in the chamber under the apron. He took them back, the man first."
+    complete = _answering(_batch(still_long), _batch(two))
+    result = tells_pass.apply(page, limits=limits, complete=complete)
+    assert result.rewritten == 1 and result.left == 0 and result.calls == 2
+    assert result.before[tells.LONG] > 0.0 and result.after[tells.LONG] == 0.0
+    assert two in result.text and "It was late." in result.text
+    request = complete.seen[0]  # type: ignore[attr-defined]
+    assert "none longer than 20 words" in (request.system or "")
+    assert "{long_words}" not in (request.system or "")
+    assert tells_pass.rewrite_system(tells.CHAINED_AND) == tells_pass.rewrite_system(
+        tells.CHAINED_AND, long_words=20.0
+    ), "the number reaches only the long family's ask"

@@ -19,6 +19,11 @@ the em-dash strip, the markup strip — and this is that seat for the tells a st
 charged the harness tax on every one: sixty-one calls at about forty-six thousand tokens each,
 $10.44 on a $6.90 chapter. A family's located sentences now travel in one request and come back
 labelled, and only the ones the locator refuses go out again, once.
+
+**The long family** (§199.4) is the pass's own residue named: the sentences left after two
+tries were the long compound ones carrying three or four families at once, and the shelf's
+openings never pass thirty-five words. Its ask names the shelf's number and asks for more
+than one sentence; the locator's check on the answer is the same as for every family.
 """
 
 from __future__ import annotations
@@ -46,6 +51,7 @@ FAMILY_ASKS: Mapping[str, str] = {
     tells.THE_WAY: "Say it without the words 'the way'.",
     tells.ECHO: "Say the phrase once.",
     tells.CHAINED_AND: "Break it into more than one sentence, with at most one and in each.",
+    tells.LONG: "Say it as two or more sentences, none longer than {long_words} words.",
 }
 
 _SYSTEM = (
@@ -72,8 +78,11 @@ SCHEMA: dict[str, Any] = {
 }
 
 
-def rewrite_system(family: str) -> str:
-    return f"{_SYSTEM}\n{FAMILY_ASKS[family]}"
+def rewrite_system(family: str, *, long_words: float | None = None) -> str:
+    ask = FAMILY_ASKS[family]
+    if family == tells.LONG:
+        ask = ask.format(long_words=int(long_words or 0))
+    return f"{_SYSTEM}\n{ask}"
 
 
 @dataclass(frozen=True, slots=True)
@@ -86,7 +95,9 @@ class Item:
     after: str
 
 
-def render_rewrite_request(items: Sequence[Item], family: str) -> CompletionRequest:
+def render_rewrite_request(
+    items: Sequence[Item], family: str, *, long_words: float | None = None
+) -> CompletionRequest:
     """The family's located sentences, labelled, each with the sentence before and after it."""
     blocks = []
     for item in items:
@@ -99,7 +110,7 @@ def render_rewrite_request(items: Sequence[Item], family: str) -> CompletionRequ
         blocks.append(block)
     return CompletionRequest(
         prompt="\n\n".join(blocks),
-        system=rewrite_system(family),
+        system=rewrite_system(family, long_words=long_words),
         schema=SCHEMA,
         max_output_tokens=MAX_OUTPUT_TOKENS,
         profile=REWRITE_PROFILE,
@@ -141,7 +152,9 @@ class TellsResult:
         )
 
 
-def _acceptable(original: str, replacement: str | None) -> str | None:
+def _acceptable(
+    original: str, replacement: str | None, *, long_words: float | None = None
+) -> str | None:
     """The locator's verdict and two bounds; the accepted text, or `None`.
 
     A rewrite that came back on more than one line is joined on spaces, since the chained-and
@@ -156,7 +169,7 @@ def _acceptable(original: str, replacement: str | None) -> str | None:
     words, was = len(text.split()), len(original.split())
     if words > 2 * was + 4 or words * 3 < was:
         return None
-    return text if not tells.locate(text) else None
+    return text if not tells.locate(text, long_words=long_words) else None
 
 
 def _neighbours(text: str, located: tells.Located) -> tuple[str, str]:
@@ -168,11 +181,14 @@ def _neighbours(text: str, located: tells.Located) -> tuple[str, str]:
 
 def _needed(text: str, family: str, limits: Mapping[str, float]) -> list[tells.Located]:
     """The located sentences of a family, as many as the ceiling asks, in reading order."""
-    rate = tells.density(text)[family]
+    long_words = limits.get(tells.LONG_WORDS)
+    rate = tells.density(text, long_words=long_words)[family]
     ceiling = limits.get(family, 0.0)
     if rate <= ceiling:
         return []
-    found = [item for item in tells.locate(text) if item.family == family]
+    found = [
+        item for item in tells.locate(text, long_words=long_words) if item.family == family
+    ]
     words = tells.word_count(text) or 1
     allowed = int(ceiling * words / 1000.0)
     return found[: max(0, len(found) - allowed)]
@@ -192,7 +208,8 @@ def apply(
     end of the page forward so no index moves under another; what was refused goes out once
     more. With no shelf there is no ceiling and the text is returned as it was, with no call.
     """
-    before = tells.density(text)
+    long_words = limits.get(tells.LONG_WORDS) if limits is not None else None
+    before = tells.density(text, long_words=long_words)
     if limits is None:
         return TellsResult(text, before, before, 0, 0, 0)
     rewritten = left = calls = 0
@@ -206,7 +223,7 @@ def apply(
                 for index, located in enumerate(pending)
             ]
             calls += 1
-            answer = complete(render_rewrite_request(items, family))
+            answer = complete(render_rewrite_request(items, family, long_words=long_words))
             returned: dict[str, str] = {}
             if isinstance(answer, Mapping):
                 for entry in answer.get("sentences") or ():
@@ -215,7 +232,9 @@ def apply(
             accepted: list[tuple[tells.Located, str]] = []
             refused: list[tells.Located] = []
             for item in items:
-                kept = _acceptable(item.located.text, returned.get(item.label))
+                kept = _acceptable(
+                    item.located.text, returned.get(item.label), long_words=long_words
+                )
                 if kept is None:
                     refused.append(item.located)
                 else:
@@ -229,10 +248,14 @@ def apply(
             # a paragraph shift when an earlier sentence became two.
             still = {item.text for item in refused}
             pending = [
-                item for item in tells.locate(text) if item.family == family and item.text in still
+                item
+                for item in tells.locate(text, long_words=long_words)
+                if item.family == family and item.text in still
             ]
         left += len(pending)
-    return TellsResult(text, before, tells.density(text), rewritten, left, calls)
+    return TellsResult(
+        text, before, tells.density(text, long_words=long_words), rewritten, left, calls
+    )
 
 
 __all__ = [

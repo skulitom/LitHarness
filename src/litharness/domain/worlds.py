@@ -349,7 +349,15 @@ EXCEPTS_PREDICATE = "excepts"
 #: Group keys a shape may declare. Deliberately three, and deliberately not an expression
 #: language: `research/progression-generalization.md` §15.7 refuses a comparator DSL for the
 #: same reason a grouping DSL is refused here.
-GROUP_KEYS: tuple[str, ...] = ("subject", "subject,order_key", "object")
+#: `subject,value,order_key` groups a relation by the column it is a value of as well: a
+#: `stands_at` whose value names the ladder (*band*, *grade*) is one position per ladder
+#: per subject, which is what a world with two systems means by "one position" (§200).
+GROUP_KEYS: tuple[str, ...] = (
+    "subject",
+    "subject,order_key",
+    "subject,value,order_key",
+    "object",
+)
 
 # --- reified change roles -------------------------------------------------------------------
 
@@ -396,9 +404,7 @@ class IllegalWorld(Exception):
     """A world record set that this vocabulary cannot mean what it says."""
 
 
-def record_id_for(
-    subject: str, predicate: str, object_ref: str | None, value: object
-) -> str:
+def record_id_for(subject: str, predicate: str, object_ref: str | None, value: object) -> str:
     """Content-derived, and **edge-sensitive as well as value-sensitive**.
 
     `extraction.record_id_for` keys on `(subject, predicate, order_key, value)` and its docstring
@@ -408,9 +414,7 @@ def record_id_for(
     subject under one predicate — `ash trait → keen_scent` and `→ night_sight` — are two facts,
     and an id blind to `object_ref` would silently keep only the first.
     """
-    material = payload_digest(
-        {"s": subject, "p": predicate, "o": object_ref, "v": value}
-    )
+    material = payload_digest({"s": subject, "p": predicate, "o": object_ref, "v": value})
     return f"rec-w{sha256(material.encode()).hexdigest()[:24]}"
 
 
@@ -450,9 +454,7 @@ def world_record(
         predicate=predicate,
         value=value,
         object_ref=object_ref,
-        story_position=(
-            lc.StoryPosition(order_key=order_key) if order_key is not None else None
-        ),
+        story_position=(lc.StoryPosition(order_key=order_key) if order_key is not None else None),
         authority=authority,
         pov_visibility=list(pov_visibility),
         predicate_registry_version=REGISTRY_VERSION,
@@ -498,9 +500,7 @@ def entity_roles(records: Sequence[lc.StateRecord]) -> dict[str, tuple[str, ...]
 
 def entities_with_role(records: Sequence[lc.StateRecord], role: str) -> tuple[str, ...]:
     return tuple(
-        sorted(
-            subject for subject, roles in entity_roles(records).items() if role in roles
-        )
+        sorted(subject for subject, roles in entity_roles(records).items() if role in roles)
     )
 
 
@@ -529,8 +529,7 @@ def capabilities_of(records: Sequence[lc.StateRecord], subject: str) -> tuple[st
             {
                 record.object_ref
                 for record in records
-                if record.predicate == CAN_DO and record.object_ref
-                and record.subject == subject
+                if record.predicate == CAN_DO and record.object_ref and record.subject == subject
             }
         )
     )
@@ -556,11 +555,7 @@ def governed_by(records: Sequence[lc.StateRecord]) -> dict[str, str]:
 def governed(records: Sequence[lc.StateRecord], system: str) -> tuple[str, ...]:
     """What this system governs — its criteria and its capabilities together, sorted."""
     return tuple(
-        sorted(
-            subject
-            for subject, owner in governed_by(records).items()
-            if owner == system
-        )
+        sorted(subject for subject, owner in governed_by(records).items() if owner == system)
     )
 
 
@@ -577,8 +572,7 @@ def offered_by(records: Sequence[lc.StateRecord], fork: str) -> tuple[str, ...]:
             {
                 record.object_ref
                 for record in records
-                if record.predicate == OFFERS and record.object_ref
-                and record.subject == fork
+                if record.predicate == OFFERS and record.object_ref and record.subject == fork
             }
         )
     )
@@ -591,8 +585,7 @@ def granted_by(records: Sequence[lc.StateRecord], option: str) -> tuple[str, ...
             {
                 record.object_ref
                 for record in records
-                if record.predicate == GRANTS and record.object_ref
-                and record.subject == option
+                if record.predicate == GRANTS and record.object_ref and record.subject == option
             }
         )
     )
@@ -644,13 +637,7 @@ def nodes_of_type(records: Sequence[lc.StateRecord], node_type: str) -> tuple[st
 def rules(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
     """Subjects that state a world rule."""
     return tuple(
-        sorted(
-            {
-                record.subject
-                for record in records
-                if record.predicate == WORLD_RULE_PREDICATE
-            }
-        )
+        sorted({record.subject for record in records if record.predicate == WORLD_RULE_PREDICATE})
     )
 
 
@@ -1037,6 +1024,10 @@ def group_of(record: lc.StateRecord, group_key: str) -> str:
         return record.subject
     if group_key == "object":
         return record.object_ref or ""
+    if group_key == "subject,value,order_key":
+        column = str(record.value or "").strip().lower()
+        position = state_mod.order_key_of(record) or ""
+        return f"{record.subject}\x00{column}\x00{position}"
     return f"{record.subject}\x00{state_mod.order_key_of(record) or ''}"
 
 
@@ -1174,9 +1165,7 @@ def validate(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
     # `plan/world-architect.md` §2 keeps the channel that would answer it shut.
     declared_comparators = criteria(records)
     declared_ranks = {
-        rung
-        for criterion in declared_comparators
-        for rung in ladder_of(records, criterion)
+        rung for criterion in declared_comparators for rung in ladder_of(records, criterion)
     }
     for record in records:
         if record.predicate != STANDS_AT_PREDICATE or not record.object_ref:
@@ -1286,9 +1275,7 @@ def validate(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
             )
 
     for subject, parts in _cardinality_parts(records).items():
-        missing = sorted(
-            {PREDICATE_PREDICATE, GROUP_KEY_PREDICATE, MAXIMUM_PREDICATE} - parts
-        )
+        missing = sorted({PREDICATE_PREDICATE, GROUP_KEY_PREDICATE, MAXIMUM_PREDICATE} - parts)
         if missing:
             complaints.append(
                 f"cardinality shape {subject} is missing {', '.join(missing)}; an incomplete "
@@ -1506,9 +1493,7 @@ def ladder_of(records: Sequence[lc.StateRecord], criterion: str) -> tuple[str, .
     return tuple(chain)
 
 
-def rung_index(
-    records: Sequence[lc.StateRecord], criterion: str, rung: str
-) -> int | None:
+def rung_index(records: Sequence[lc.StateRecord], criterion: str, rung: str) -> int | None:
     """This rung's 1-based place in its criterion's chain, counting from the bottom.
 
     **This is the number.** The operator's direction is that a rank ladder *is* the number a
@@ -1591,9 +1576,7 @@ def standing_of(
         # `at`'s own space. So the `>=` below is a comparison inside one space by construction,
         # and stays a plain string compare.
         key = stated or ""
-        criterion = str(record.value or "").strip() or criterion_of_rung(
-            records, record.object_ref
-        )
+        criterion = str(record.value or "").strip() or criterion_of_rung(records, record.object_ref)
         if not criterion:
             continue
         held = latest.get(criterion)
@@ -1744,11 +1727,7 @@ def _node_sentence(
         # scene that has to show the difference would be written against the rule. Absent for
         # every shape that excepts nobody, which is every shape forged before this existed.
         excepted = sorted(
-            {
-                row.object_ref
-                for row in parts.get(EXCEPTS_PREDICATE, ())
-                if row.object_ref
-            }
+            {row.object_ref for row in parts.get(EXCEPTS_PREDICATE, ()) if row.object_ref}
         )
         unless = f", except for {', '.join(excepted)}" if excepted else ""
         return f"at most {limit} {name.replace('_', ' ')}{where} at one time{unless}"
@@ -1773,9 +1752,7 @@ def _node_sentence(
             target = row.object_ref or (str(row.value) if row.value is not None else "")
             if not target:
                 continue
-            detail = (
-                f" ({row.value})" if row.object_ref and row.value is not None else ""
-            )
+            detail = f" ({row.value})" if row.object_ref and row.value is not None else ""
             clauses.append(f"{_ROLE_PHRASE[role]} {target}{detail}")
     body = "; ".join(clauses) if clauses else "no roles recorded"
     return f"{subject} happened — {body}"
@@ -1876,9 +1853,7 @@ def _record_sentence(
     # writer as a position with no number, which is what it is. No verb about rising and no
     # adjective: where somebody stands is the same class of fact as what a rule costs.
     if record.predicate == STANDS_AT_PREDICATE and record.object_ref:
-        criterion = str(record.value or "").strip() or criterion_of_rung(
-            records, record.object_ref
-        )
+        criterion = str(record.value or "").strip() or criterion_of_rung(records, record.object_ref)
         chain = ladder_of(records, criterion) if criterion else ()
         index = chain.index(record.object_ref) + 1 if record.object_ref in chain else None
         where = f" ({index} of {len(chain)})" if index is not None else ""

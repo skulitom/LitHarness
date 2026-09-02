@@ -514,6 +514,10 @@ def test_the_folder_convention_records_the_listing_digest_and_the_boundary(
     assert record["spend"]["cost_usd"] == 4.16
     assert "never a treatment effect" in record["boundary"]
     assert json.loads((directory / "spend.json").read_text(encoding="utf-8"))["invocations"] == 3
+    # The working tree at start and at finish, so an edit landing mid-arm is a named
+    # confound and not a silent one; outside a repository both halves are None.
+    assert set(record["tree"]) == {"at_start", "at_finish", "changed_during_the_arm"}
+    assert set(record["tree"]["at_start"]) == {"head", "dirty"}
 
 
 def test_the_recorded_digest_is_what_the_sibling_refusal_reads(tmp_path: Path) -> None:

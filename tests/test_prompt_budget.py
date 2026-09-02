@@ -267,8 +267,12 @@ BUDGET: dict[str, int] = {
     # **The tells rewriter, new on 2026-09-02** (§199): the three lines every rewrite carries and
     # the one line for the family, four.
     "tells rewriter": 4,
-    # The plain seed's row plus the one second-system sentence.
-    "architect seed, second system": 44,
+    # The plain seed's row plus the one second-system sentence. **Raised 44 -> 45 on
+    # 2026-09-02 for §200**: one sentence saying a person may stand on both ladders, so a
+    # one-position shape is grouped per ladder, after pilot 25's seed put a side character
+    # at a rung on each system under a shape grouped by subject alone and the first scene
+    # was refused for it.
+    "architect seed, second system": 45,
     "title lookup": 6,
     # **Raised 24 -> 25 on 2026-08-29, deliberately and for one named sentence.** The house
     # genre had been living nowhere (`plan/house-genre-constraint.md`; pilot 13 §8.2), carried

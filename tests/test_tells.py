@@ -79,8 +79,10 @@ def test_density_is_per_thousand_counted_words_and_ceilings_are_the_shelf_s_high
 def test_over_names_only_the_families_past_the_shelf_and_nothing_with_no_shelf() -> None:
     page = "\n\n".join(NAMED.values())
     assert tells.over(page, None) == ()
-    # Every family: the paradox and the located habit both carry an echo as well.
-    assert set(tells.over(page, dict.fromkeys(tells.FAMILIES, 0.0))) == set(tells.FAMILIES)
+    # Every family: the paradox and the located habit both carry an echo as well, and with a
+    # threshold of five words every named sentence is long.
+    zero = {**dict.fromkeys(tells.FAMILIES, 0.0), tells.LONG_WORDS: 5.0}
+    assert set(tells.over(page, zero)) == set(tells.FAMILIES)
     generous = dict.fromkeys(tells.FAMILIES, 1000.0)
     assert tells.over(page, generous) == ()
 
@@ -93,3 +95,30 @@ def test_a_located_sentence_is_replaced_where_it_was_and_the_rest_is_untouched()
     assert replaced == f"{PLAIN}\n\nHe mapped the storm drains for a hobby. It was late."
     stale = tells.Located(tells.ABSENCE, 1, 0, "not the sentence that is there")
     assert tells.replace_sentence(text, stale, "anything") == text
+
+
+def test_a_sentence_past_the_shelf_s_longest_is_the_long_family_and_only_with_a_threshold() -> None:
+    """§199.4: the three placed openings never pass thirty-five words; ours ran to ninety. The
+    threshold is the shelf's own longest sentence, read off the shelf with the ceilings, and
+    with no threshold the family locates nothing."""
+    longer = (
+        "The plate came up with the bar and Ryan drove the whole way home because Nick was "
+        "still shaking too hard."
+    )
+    n = len(longer.split())
+    page = f"{PLAIN}\n\n{longer}"
+    assert tells.LONG not in {item.family for item in tells.locate(page)}
+    threshold = tells.longest_sentence(PLAIN)
+    found = [item for item in tells.locate(page, long_words=threshold) if item.family == tells.LONG]
+    assert [item.text for item in found] == [longer]
+    assert tells.density(page)[tells.LONG] == 0.0
+    assert tells.density(page, long_words=threshold)[tells.LONG] > 0.0
+    assert tells.longest_sentence(page) == n
+    assert tells.longest_sentence("[STATUS] " + " ".join(["WORD"] * 40)) == 0
+    limits = tells.ceilings([PLAIN, longer])
+    assert limits is not None
+    assert limits[tells.LONG_WORDS] == float(n)
+    assert limits[tells.LONG] == 0.0, "the shelf is never over its own longest"
+    past = " ".join(["word"] * (n + 1)) + "."
+    assert tells.over(f"{PLAIN}\n\n{past}", limits) == (tells.LONG,)
+    assert tells.over(page, limits) == ()
