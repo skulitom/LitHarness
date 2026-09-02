@@ -252,6 +252,7 @@ def test_the_recipe_is_the_hand_run_sequence_in_order(tmp_path: Path) -> None:
         "world accept",
         "tick",
         "library",
+        "readers",
     ]
     assert next(step for step in steps if step.label == "tick").repeat == spec.max_ticks
 
@@ -361,6 +362,7 @@ def test_the_arm_runs_the_recipe_and_stops_when_chapter_one_completes(tmp_path: 
         "tick 1/6",
         "tick 2/6",
         "library",
+        "readers",
     ]
 
 
@@ -503,6 +505,7 @@ def test_the_folder_convention_records_the_listing_digest_and_the_boundary(
         "commands.log",
         "spend.json",
         "shelf.txt",
+        "readers.txt",
     }
     record = json.loads((directory / "arm.json").read_text(encoding="utf-8"))
     assert record["listing"]["digest"] == listing.digest
@@ -1041,3 +1044,43 @@ def test_an_empty_concept_file_is_refused_rather_than_read_as_none(tmp_path: Pat
     with pytest.raises(ab_redraw.Refusal) as refusal:
         ab_redraw.read_listing(directory)
     assert "empty" in str(refusal.value)
+
+
+def test_the_readership_reads_chapter_one_last_and_a_refused_reading_stops_nothing(
+    tmp_path: Path,
+) -> None:
+    """Stage-0 §198.2: the simulated readership is part of every arm, as a reading recorded
+    beside the chapter and never a gate. It runs after the shelf on chapter one's last scene,
+    carries the rival pool when one is given, and a refused call leaves a line in the folder
+    rather than a halted book."""
+    rivals = tmp_path / "rivals.json"
+    rivals.write_text("[]", encoding="utf-8")
+    spec = _spec(tmp_path, rivals=rivals)
+    steps = ab_redraw.plan_steps(spec, ab_redraw.read_listing(spec.listing))
+    assert steps[-1].label == "readers"
+    assert steps[-2].label == "library"
+    readers = steps[-1].argv
+    assert readers[readers.index("--scene") + 1] == f"scene-{spec.chapter_scenes}"
+    assert readers[readers.index("--rivals") + 1] == str(rivals)
+
+    plain = ab_redraw.plan_steps(_spec(tmp_path), ab_redraw.read_listing(spec.listing))
+    assert "--rivals" not in plain[-1].argv
+
+    runner = FakeRunner(failures={"readers": 2}, output="carried on 0/4")
+    run = ab_redraw.run_arm(
+        spec,
+        ab_redraw.read_listing(spec.listing),
+        runner=runner,
+        probe=FakeProbe(
+            [ab_redraw.StoreState(exists=True, chapter_complete=True, scenes_drafted=2)]
+        ),
+        cwd=tmp_path,
+    )
+    assert run.stopped == ""
+    assert [label for label, _ in runner.calls][-1] == "readers"
+    directory = ab_redraw.write_folder(
+        run, scorecard={"status": "absent"}, spend={"invocations": 0, "tokens": 0, "cost_usd": 0}
+    )
+    assert (directory / "readers.txt").read_text(encoding="utf-8") == "carried on 0/4"
+    record = json.loads((directory / "arm.json").read_text(encoding="utf-8"))
+    assert record["rivals"] == str(rivals)

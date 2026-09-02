@@ -226,6 +226,10 @@ class ArmSpec:
     #: has its own slot; `--person first` is stage-0 §195's position, and first-versus-third
     #: on one settled listing is the arm that position exists to be measured by.
     person: str | None = None
+    #: The published books the simulated readership is offered instead of chapter one, as
+    #: `litharness readers --rivals` reads them (stage-0 §198.2). `None` is the no-competitor
+    #: control, which is what every reading before 2026-08-26 measured.
+    rivals: Path | None = None
     litharness: tuple[str, ...] = tuple(shlex.split(DEFAULT_LITHARNESS))
     scorecard: Path | None = None
     scorecard_command: str = DEFAULT_SCORECARD_COMMAND
@@ -494,6 +498,21 @@ def plan_steps(spec: ArmSpec, listing: Listing) -> list[Step]:
             note=f"paid; until chapter 1 ({spec.chapter_scenes} scene(s)) completes or the cap",
         ),
         Step("library", (*base, "library")),
+        # **The simulated readership on chapter one, after the shelf and last** (§198.2): a
+        # reading recorded beside the chapter and never a gate, so it follows the shelf and a
+        # refused call loses nothing a person reads. The scene is chapter one's last; the
+        # command stops the reader part-way through it and names a rival it has not opened.
+        Step(
+            "readers",
+            (
+                *base,
+                "readers",
+                "--scene",
+                f"scene-{spec.chapter_scenes}",
+                *(("--rivals", str(spec.rivals)) if spec.rivals else ()),
+            ),
+            note="paid; the readership's reading, recorded and never a gate",
+        ),
     ]
 
 
@@ -736,7 +755,10 @@ def run_arm(
                 continue
             result = runner(step.label, step.argv, cwd)
             run.steps.append(result)
-            if result.returncode != 0:
+            # A refused reading is recorded and does not stop the arm: the chapter is on the
+            # shelf already, and a reading that did not happen is a line in the folder,
+            # not a halted book (§198.2).
+            if result.returncode != 0 and step.label != "readers":
                 detail = (
                     ". `world check` exits 1 when the world contradicts itself by arithmetic. "
                     "The standing allowance is ONE re-seed on mechanical complaints and it is "
@@ -923,6 +945,11 @@ def write_folder(run: ArmRun, *, scorecard: dict[str, object], spend: dict[str, 
     if run.stopped:
         log.append(f"# STOPPED: {run.stopped}")
     (directory / "commands.log").write_text("\n".join(log) + "\n", encoding="utf-8", newline="\n")
+    for result in run.steps:
+        if result.label == "readers":
+            (directory / "readers.txt").write_text(
+                result.output, encoding="utf-8", newline="\n"
+            )
 
     (directory / "spend.json").write_text(
         json.dumps(spend, indent=2) + "\n", encoding="utf-8", newline="\n"
@@ -954,6 +981,7 @@ def write_folder(run: ArmRun, *, scorecard: dict[str, object], spend: dict[str, 
         "ticks": run.ticks,
         "extra_args": list(run.spec.extra_args),
         "person": run.spec.person,
+        "rivals": str(run.spec.rivals) if run.spec.rivals else None,
         "ceilings": {
             "max_cost_usd_per_day": run.spec.max_cost_usd_per_day,
             "max_tokens_per_day": run.spec.max_tokens_per_day,
@@ -1073,6 +1101,13 @@ def build_parser() -> argparse.ArgumentParser:
         "that is this flag is expressed here rather than through --extra-arg, because it is "
         "a flag of `new` and not of every invocation. Recorded in arm.json",
     )
+    parser.add_argument(
+        "--rivals",
+        type=Path,
+        default=None,
+        help="a JSON list of published books for the readership step (`readers --rivals`); "
+        "without it the readers are offered no named competitor, the control arm",
+    )
     parser.add_argument("--litharness", default=DEFAULT_LITHARNESS, help="how to invoke the CLI")
     parser.add_argument("--scorecard", type=Path, default=None, help="build 1's script, explicitly")
     parser.add_argument("--scorecard-command", default=DEFAULT_SCORECARD_COMMAND)
@@ -1103,6 +1138,7 @@ def spec_from(args: argparse.Namespace) -> ArmSpec:
         max_tokens_per_day=args.max_tokens_per_day,
         extra_args=tuple(args.extra_args),
         person=args.person,
+        rivals=args.rivals,
         litharness=tuple(shlex.split(args.litharness)),
         scorecard=args.scorecard,
         scorecard_command=args.scorecard_command,
