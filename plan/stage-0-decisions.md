@@ -22077,3 +22077,23 @@ A/B the harness was built for, both persons under one concept, and the read is h
 
 **Anti-scope.** No change to measurement; nothing in a concept reaches a judge or a reader pool;
 the reviser stays off.
+
+### 198.1 The first concept under the new fields named its system with a machinery word, and the concept stage gains the listing's rail
+
+**Measured (pilot 24, `plan/serial-pilot-24.md` §1 and §3, 2026-09-02).** The concept drawn
+under §198's fields called its system *the Standing*. `standing` is one of this house's
+machinery words (§120: it reached a chapter as a thing a girl could be hot at), and the
+listing loop's name rail (§178) fired on both listings drawn from it, three redraws each, and
+kept a listing naming it, because the name was upstream of every draw. `world accept` refuses
+a world-facing name built of a machinery word, so the arm would have stopped there or the
+Architect would have renamed the system under the listing's feet, as pilot 23's seed renamed
+*rung* to *grade*. The rail existed one stage too late.
+
+**What shipped.** `Concept.machinery_names` (identity on the declared system names, capitalised
+use in the rendered text, `domain/schema_words.py`'s own two checks) and a bounded redraw in
+`litharness concept` on that one predicate, keeping the first clean draw and saying so when
+none is (`test_a_concept_naming_its_system_with_a_machinery_word_is_caught`).
+The concept was redrawn; the two listings and the two arms run from the redraw.
+
+**Refused.** Editing the name by hand in the concept file: a concept is the writer's, and a
+hand-edited concept is a person authoring the book. No bar.

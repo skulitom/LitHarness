@@ -21,8 +21,8 @@ pair answers to, and his question of read 18 — what would hook him — is what
 
 Empty brief, no person asked (the person is the variable), the three exemplars' listings
 shown, `--scenes 6`. One call, no readers, no title. Settled at
-`runs/pilots/pilot24/concept.json` (gitignored) and copied byte for byte into both listing
-folders; recorded here verbatim:
+`runs/pilots/pilot24/concept.json` (gitignored); recorded here verbatim, and refused after the
+fact by the name rail (§1.1):
 
 > Who they were the day before: the overnight desk clerk at a self-storage yard, twenty-four,
 > who spent every shift timing himself picking practice locks he bought with his own money.
@@ -100,6 +100,49 @@ listing loop's rail refuses it only as a name, and the seed will call the ladder
 calls it. One thing to watch at the read: the price (*he will begin below every other person
 alive*) is the accumulation shape §136 measured as box-ticking when a rule produced it; here
 the writer chose it, and whether it reads as a real price is the read's to say.
+
+### 1.1 The first concept was refused after the fact, and this is the one that runs
+
+The concept above named its system *the Standing*, and `standing` is one of this house's
+machinery words (§120). Both listings drawn from it carried the name through three redraws
+each, because the name was upstream of every draw, and `world accept` would have refused the
+world or the Architect would have renamed the system under the listing's feet, as pilot 23's
+seed renamed *rung* to *grade*. The rail existed one stage too late; stage-0 §198.1 gives the
+concept stage the listing's own name rail, and the concept was redrawn under it. The first
+draw stays above as the description it is; the two listings drawn from it are at
+`runs/pilots/pilot24-first/` and `-third/` and are not run. The redraw, settled at
+`runs/pilots/pilot24b/concept.json` and copied byte for byte into both listing folders:
+
+> Who they were the day before: A twenty-four-year-old night-shift stocker at a big-box hardware store who had spent six years mapping the storm drains and utility tunnels under his city on foot, by hand, in one notebook.
+> What they alone have, from the first chapter: He is the only person on Earth the Ratchet will not issue a Class to; instead it registers every hollow he personally walked before Integration as ground he holds, and he alone can step back into any place his own feet have already been.
+> The first time it works, in chapter one: Cornered against the wire cage in the stockroom by the thing that came up the floor drain, he backs into the concrete wall instead of the door, and the wall takes him — he comes out standing in a culvert two miles away, in the dark, boots in water, the count still going in his ear.
+> What they want, in their own words: To finish the survey — every hollow under this city, drawn right, in one book with his name on the cover, so there is one true thing in the world that he made.
+> The system, the Ratchet. How it shows itself: It counts at you in the second person, flat and clerical, one short declarative at a time; it never answers a question, it corrects its own numbers aloud mid-sentence, and what it asks for is ground held and hollows surveyed — it pays for occupancy and for map.
+> What it looks like: A chalk-white line that draws itself along the nearest surface at ankle height wherever you are standing, with text burnt into that surface and lit from underneath — engraver's capitals, cold white, always low to the floor — and the air going to the smell of a struck match when it arrives.
+> How far up it goes: 12 steps. Where the strongest person anyone has heard of stands: Rumour on day nine puts the highest human alive at click 3; the Ratchet itself refers, twice, to a click-nine surveyor who seated the last world, and no one has ever seen them.
+> What a step up buys: A click buys safety: the Ratchet will not admit anything above your click onto ground you hold, so every step up is one more kind of thing that is no longer allowed to come up the drain at you.
+> What kills people here, in the first days: The drawn — anything alive inside an unmapped hollow at Integration (basements, culverts, elevator shafts, crawlspaces, parking decks) is pulled down through it and comes back up out of it Ratchet-made, still wearing what it wore, carrying a click of its own.
+> Where it first reaches them: Up the floor drain of his stockroom, twenty minutes before the end of his shift, wearing his shift manager's coveralls.
+> The turn, inside the first arc: The Ratchet stops issuing him clicks and starts asking him questions — it has no map of Earth, it cannot seat a city it has not surveyed, and his six years of notebooks are the only survey that exists; it names a price per page.
+> The first arc opens: 4:10 a.m. in the stockroom, arguing about a mis-stacked pallet with the 1974 sewer-plate schedule photocopied and taped inside his locker door, when a chalk-white line draws itself across the concrete at ankle height and begins to count — and the sheet it hands him has no Class on it, only a line that says GROUND HELD and a number he does not understand.
+> Its middle: He goes back underground on purpose for the first time and walks three people out of a flooded parking structure through a service run only he has ever walked, and the Ratchet pays him for it — his first click, bought with the hobby everyone at work made fun of.
+> It closes: He names his price for the first page of the notebook, holds his first city block, and watches the hollow count on his sheet tick from 4,118 down to 4,117 — and then, while he is still looking at it, up to 4,119.
+> What the book owes, and the scene each is due by:
+> - the rule of his own footsteps: the exact edge stated on the page — what counts as walked, and the first route that refuses him (by scene 3)
+> - the thing that came up the stockroom drain in his manager's coveralls: say plainly whether any of the man is still in there, and what it means that a drawn thing carries a click (by scene 4)
+> - why him and nobody else on Earth: the Ratchet says out loud what it picked him for (by scene 5)
+> - the hollow count on his sheet: show the number go the wrong way and name what is un-surveying the city behind him (by scene 6)
+
+**What the coordinator sees in it.** The four fields held on a second draw: a power a reader
+would want (every hollow his own feet have walked is ground he holds, and a wall will take him
+back to any of it), used inside chapter one as an escape from a thing that came up the floor
+drain wearing his shift manager's coveralls; a threat with a face; a prize that is safety by
+the click; a system with a look a reader could draw (a chalk-white line at ankle height, text
+burnt into the surface, the smell of a struck match); a want in his own words (*one true thing
+in the world that he made*); and a turn inside the first arc that makes his notebook the
+currency. No machinery word used as a name: the rail let it through on the first draw. Watched
+at the read: the arc's close puts a number on the sheet going the wrong way, which is the
+ledger's kind of promise and the outline's to keep.
 
 ## 2. What is refused before the draw
 
