@@ -12,16 +12,22 @@ from __future__ import annotations
 
 from litharness.application import overview
 
+
+def _sentence(words: int) -> str:
+    return " ".join(f"w{index}" for index in range(words)) + "."
+
+
 BLURBS = (
-    "A short one. Then a sentence of exactly nine words in a row here. Done.",
-    "Two sentences only, and the second of them runs to fourteen words before it stops at last.",
+    f"{_sentence(4)} {_sentence(9)} {_sentence(2)}",
+    f"{_sentence(6)} {_sentence(14)}",
 )
 
 
 def test_the_longest_sentence_is_counted_in_words_and_split_on_stops() -> None:
     assert overview.longest_sentence("One two three. Four five? Six!") == 3
     assert overview.longest_sentence("") == 0
-    assert overview.longest_sentence("No stop at the end at all") == 6
+    assert overview.longest_sentence("No stop at the end at all") == 7
+    assert overview.longest_sentence(BLURBS[0]) == 9
 
 
 def test_the_ceiling_is_the_shelf_s_longest_and_none_without_a_shelf() -> None:
@@ -31,8 +37,9 @@ def test_the_ceiling_is_the_shelf_s_longest_and_none_without_a_shelf() -> None:
 
 
 def test_a_listing_runs_too_long_only_against_a_ceiling() -> None:
-    long = "This sentence keeps going and going past fourteen words without ever once stopping."
+    long = f"{_sentence(3)} {_sentence(15)}"
     assert overview.longest_sentence(long) == 15
     assert overview.runs_too_long(long, ceiling=14)
     assert not overview.runs_too_long(long, ceiling=15)
-    assert not overview.runs_too_long(long, ceiling=None), "no shelf, no ceiling, the loop as it was"
+    # No shelf, no ceiling: the loop as it was.
+    assert not overview.runs_too_long(long, ceiling=None)
