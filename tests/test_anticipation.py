@@ -225,6 +225,13 @@ def test_the_selftest_passes() -> None:
 # ------------------------------------------------------------------------------ the arm texts
 
 
+def test_the_replay_cache_defaults_beside_the_result_and_not_into_the_working_directory() -> None:
+    """An 800-call run's cache must not land wherever the operator happened to be standing."""
+    assert anticipation.DEFAULT_CACHE.is_absolute()
+    assert anticipation.DEFAULT_CACHE.parent == anticipation.RESULTS
+    assert anticipation.DEFAULT_CACHE.name.endswith(".jsonl")
+
+
 def test_a_damaged_arm_keeps_the_paragraph_convention_the_stop_point_reads() -> None:
     """Found by the first dry run: `destake` rebuilt the text with single newlines and every
     damaged arm arrived at `stop_point` as one paragraph. The arm text must carry the same
