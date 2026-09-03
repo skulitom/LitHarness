@@ -59,7 +59,7 @@ class ManuscriptReader(BranchReader, Protocol):
 class ManuscriptWriter(Protocol):
     """The write side of the manuscript, and **there is no matching reader for every slot.**
 
-    `pre_revision_drafts` is a write-only capability at this boundary on purpose (§187): the
+    `pre_revision_drafts` is a write-only capability at this boundary on purpose (§188.4): the
     handler hands the store the text the reviser was given, and no protocol here offers a way
     to read it back. A workflow that coordinates through `ports.py` therefore cannot route a
     kept draft into a packet, a summary, a detector input or a prompt — which is §97.1's rule

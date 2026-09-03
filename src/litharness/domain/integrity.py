@@ -679,7 +679,11 @@ def run_detectors(subject: DetectorInput) -> list[Finding]:
 def gate_integrity(
     subject: DetectorInput, *, standing: Sequence[Finding] = ()
 ) -> tuple[GateOutcome, list[Finding]]:
-    """§4.2 ladder step 3. Returns the gate result and every finding that informed it.
+    """§4.2 ladder step 2. Returns the gate result and every finding that informed it.
+
+    PLAN.md §4.2 numbers the ladder shape, integrity, craft, budget; this module and the
+    handler said "step 3" for the integrity gate until 2026-09-03, counting from somewhere
+    the plan does not.
 
     `standing` is what an evaluator already recorded against this node — ContinuityEvaluation's
     pack, ingested as an artifact — and is filtered to this node by the caller. Passing it in
@@ -747,7 +751,7 @@ def gate_integrity(
 
 
 def gate_standing(findings: Sequence[Finding]) -> GateOutcome:
-    """§4.2 ladder step 3, run *before* the generation, over findings already on record.
+    """§4.2 ladder step 2, run *before* the generation, over findings already on record.
 
     Same filter as `gate_integrity` — status over severity, deterministic only — because a
     negative control must not block in front of the work either, and an uncalibrated critic
