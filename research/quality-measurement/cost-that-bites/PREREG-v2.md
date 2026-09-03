@@ -134,6 +134,22 @@ share paired the same way, the per-slot table (which is also precondition 3's in
 rate, and the between-seed spread of the three shuffles within each book — the last is new, and
 it says whether *disorder* or *a permutation* is what the number is about.
 
+**Every precondition reports its measured value and not only its verdict, pass or fail.** The
+result file carries the slot-A share beside the 0.40 floor and the surviving book count beside
+the floor of ten however they came out, and the findings quote both: a capacity precondition
+that fails at 0.39 and one that fails at 0.12 are different facts about the reader, and only
+the first says the design was nearly viable. A verdict without its number would make an
+UNREADABLE unreadable in turn.
+
+**And one conditionality is acknowledged rather than argued away.** Precondition 3 is measured
+on the same sessions whose intervals it gates, so the reading is conditional on a check drawn
+from its own sample. That is admissible here for two reasons and neither is that it is
+convenient: the check is registered before the spend, and it asks about the **reader** — which
+slot it reads — rather than about the contrast under test, which is the same separation that
+licenses seating the target in slot A at all. It remains a dependency in the design, it is
+recorded here so a later session does not have to rediscover it, and the honest way to remove
+it would be a capacity estimate from sessions this arm does not score.
+
 ## Cost, ceiling and the stop condition
 
 No dollar ceiling: the operator's direction of 2026-09-04 is that this is subscription quota
