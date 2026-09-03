@@ -173,7 +173,8 @@ def _jobs(store: SqliteStore, report: Report) -> None:
 
 def _outline(store: SqliteStore, report: Report, book_id: str, branch_id: str) -> None:
     plan = store.plan_revision(book_id, branch_id)
-    if not report.check(plan is not None, "the book has a plan revision"):
+    report.check(plan is not None, "the book has a plan revision")
+    if plan is None:
         return
     head = store.head(book_id, branch_id)
     if head is None:
@@ -274,6 +275,9 @@ def _sheet(store: SqliteStore, report: Report, book_id: str, branch_id: str) -> 
             "the world declared one, is the other family",
         )
         return
+    # `speaks_system_voice` is true only when `sheet_for` found a sheet, so this cannot fire;
+    # it is here for the type checker, which cannot see through that predicate.
+    assert sheet is not None
     report.note("status sheet", " | ".join(field.label for field in sheet.fields))
     line = graph_line_for(records)
     if line is not None:
@@ -330,7 +334,7 @@ def _disclosure(store: SqliteStore, report: Report, book_id: str, branch_id: str
     }
     drafted = {logical_id for logical_id, _ in scenes}
     last_key = max(
-        (keys[logical_id] for logical_id in drafted if keys.get(logical_id)), default=None
+        (key for logical_id in drafted if (key := keys.get(logical_id))), default=None
     )
     hidden = {record.subject for record in worlds.undisclosed_claims(records, at=last_key)}
 

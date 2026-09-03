@@ -715,9 +715,9 @@ HOUSE_RULES = f"{CLARITY}\n\n{READER}\n\n{ACCUMULATION}"
 #: The vocabulary this system uses for its own machinery. **Text that shapes prose a reader
 #: will read may not contain any of it**, and `tests/test_prompt_budget.py` is what enforces
 #: that. Twice measured: `standing` reached a chapter as *"hotter than a girl at her standing
-#: should be able to manage"* (§120), and the reader personas built to catch that were
-#: themselves written to read for *"what the next rung costs"*, so they rewarded the register
-#: they existed to detect.
+#: should be able to manage"* (§120, as §135 item 3 records it), and the reader personas
+#: built to catch that were themselves written to read for *"what the next rung costs"*, so
+#: they rewarded the register they existed to detect.
 #:
 #: Schema-filling and tool-teaching prompts are exempt and have to be: a call that fills
 #: `manifests_as` must name it, and a command list must name its commands. The boundary is
