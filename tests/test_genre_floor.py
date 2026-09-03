@@ -27,6 +27,7 @@ from litharness.domain.extraction import STATUS_PREDICATE
 from litharness.domain.plans import import_plan
 from litharness.domain.revision import import_manuscript
 from litharness.domain.state import import_state
+from tests.helpers import accepted
 
 START = 1_760_000_000.0
 
@@ -496,12 +497,11 @@ def test_a_seeded_book_is_not_reported_blocked(tmp_path, capsys) -> None:
 
 def _drawn(system) -> list[lc.StateRecord]:
     """Everything an Architect can declare of a system: no scale, no digest."""
-    import dataclasses
 
     from litharness.domain import gamesystem as gs
 
     return [
-        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        accepted(record)
         for record in gs.records_for(system)
         if record.predicate not in gs.CONFIGURATION_PREDICATES
     ]
@@ -558,7 +558,7 @@ def test_accept_finishes_a_drawn_system_whose_sheet_is_its_own(tmp_path, capsys)
     records = _drawn(system)
     sheet = gs.starting_sheet(system, "silas")
     records.extend(
-        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        accepted(record)
         for record in gs.records_for_sheet(sheet)
     )
     records.append(
@@ -596,14 +596,13 @@ def test_a_system_is_left_unfinished_rather_than_blocking_a_book_that_drafts(
     and reported it `blocked`. A fix that breaks a book to report a gap is not a fix, so the
     system is left unfinished and the operator is told which two things disagree.
     """
-    import dataclasses
 
     from litharness.cli import EXIT_OK, main
     from litharness.domain import gamesystem as gs
 
     records = _drawn(_weave())
     records.extend(
-        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        accepted(record)
         for record in (
             worlds.world_record("silas", "can_do", object_ref="seamsight", value=4),
             worlds.world_record(
@@ -648,12 +647,11 @@ def test_a_ceiling_key_on_the_snapshot_is_still_a_position_in_the_system() -> No
     accept` refused to finish both drawn systems and the chapter drafted under the legacy arm.
     A ceiling is a column's ceiling and not a column; a ceiling for a column the system does
     not have is still a different sheet."""
-    import dataclasses
 
     from litharness.domain import gamesystem as gs
 
     complete = [
-        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        accepted(record)
         for record in gs.records_for(_weave())
     ]
     position = {

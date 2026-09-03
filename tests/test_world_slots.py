@@ -38,28 +38,11 @@ from litharness.application import world as world_view
 from litharness.cli import EXIT_OK, main
 from litharness.domain import extraction, worlds
 from tests.conftest import FIXTURE_SHEET
+from tests.helpers import accepted
 
 
 def rec(subject: str, predicate: str, **kwargs: object) -> lc.StateRecord:
     return worlds.world_record(subject, predicate, **kwargs)  # type: ignore[arg-type]
-
-
-def accepted(record: lc.StateRecord) -> lc.StateRecord:
-    """The same record as canon. Three readers below filter to canon and would see nothing."""
-    return lc.StateRecord(
-        record_id=record.record_id,
-        kind=record.kind,
-        subject=record.subject,
-        predicate=record.predicate,
-        value=record.value,
-        object_ref=record.object_ref,
-        story_position=record.story_position,
-        authority=lc.StateAuthority.ACCEPTED_CANON,
-        pov_visibility=list(record.pov_visibility),
-        evidence=list(record.evidence),
-        predicate_registry_version=record.predicate_registry_version,
-        note=record.note,
-    )
 
 
 def sentences(records: Sequence[lc.StateRecord]) -> str:

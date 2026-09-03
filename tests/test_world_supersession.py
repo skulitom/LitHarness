@@ -45,6 +45,7 @@ from litharness.cli import EXIT_OK, main
 from litharness.domain import worlds
 from litharness.domain.findings import DetectorInput
 from litharness.domain.integrity import detect_contradictions, in_force, superseded
+from tests.helpers import accepted
 
 
 def record(subject: str, predicate: str, **kwargs: object) -> lc.StateRecord:
@@ -108,23 +109,6 @@ def test_a_protagonist_does_not_replace_being_cast() -> None:
     cast = record("dan", worlds.ENTITY_ROLE_PREDICATE, value="cast")
     lead = record("dan", worlds.ENTITY_ROLE_PREDICATE, value="protagonist")
     assert superseded([cast, lead], declared_at=times((cast, "10:00"), (lead, "10:05"))) == ()
-
-
-def accepted(record: lc.StateRecord) -> lc.StateRecord:
-    return lc.StateRecord(
-        record_id=record.record_id,
-        kind=record.kind,
-        subject=record.subject,
-        predicate=record.predicate,
-        value=record.value,
-        object_ref=record.object_ref,
-        story_position=record.story_position,
-        authority=lc.StateAuthority.ACCEPTED_CANON,
-        pov_visibility=list(record.pov_visibility),
-        evidence=list(record.evidence),
-        predicate_registry_version=record.predicate_registry_version,
-        note=record.note,
-    )
 
 
 def test_canon_holds_its_slot_against_a_proposal_written_after_it() -> None:

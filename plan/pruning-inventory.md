@@ -186,10 +186,10 @@ the homonyms it listed beside it.
   `test_gamesystem._canon`, `test_progression_gate._canonical`,
   `test_progression_prompt._accepted`; and inline in `test_genre_floor` (four sites),
   `test_outline`, `test_page_contract`. Disposition: `tests/helpers.py` with `accepted` and
-  `accepted_all`, the local definitions replaced by imports. Status: pending.
+  `accepted_all`, the local definitions replaced by imports. Status: landed, cut 3.
 - **The canon `world_record` shorthand** — `world_record(subject, predicate, authority=canon,
   **kwargs)` — in `test_packet_register.canon`, `test_display_names._canon`,
-  `test_extraction._canon`. Same helper file, `canon`. Status: pending.
+  `test_extraction._canon`. Same helper file, `canon`. Status: landed, cut 3.
 - **Homonyms that are different fixtures, refused:** `_canon` in `test_gamesystem` (a list),
   `test_progression_gate` and `test_two_systems` (whole seeds); `_record` in six modules (a
   dict, a relationship record, a snapshot with foreign evidence, a keyed snapshot, an event

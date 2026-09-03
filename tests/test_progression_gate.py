@@ -38,9 +38,6 @@ equality between two integers or an identity of a recorded string.
 
 from __future__ import annotations
 
-import dataclasses
-from collections.abc import Iterable
-
 import litharness_contracts as lc
 
 from litharness.adapters.sqlite_store import SqliteStore
@@ -72,6 +69,7 @@ from litharness.domain.progression import (
 )
 from litharness.domain.revision import new_book
 from litharness.domain.staging import with_bound
+from tests.helpers import accepted_all as _canonical
 
 # --------------------------------------------------------------------------- the fixtures
 #
@@ -106,15 +104,6 @@ def _system(**overrides: object) -> gamesystem.SystemDef:
     }
     base.update(overrides)
     return gamesystem.SystemDef(**base)  # type: ignore[arg-type]
-
-
-def _canonical(records: Iterable[lc.StateRecord]) -> list[lc.StateRecord]:
-    """`records_for` mints proposals; a beat reads canon only (§161.4). This is `world accept`
-    reduced to the one thing these assertions need from it."""
-    return [
-        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
-        for record in records
-    ]
 
 
 def _snapshot(
