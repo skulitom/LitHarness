@@ -433,3 +433,48 @@ def test_composing_the_example_performs_no_advancement() -> None:
     assert moved is not None and moved.now == 3
     assert records == before
     assert _sheet_of(_system()).magnitude("cold_seal") == 2
+
+
+# ------------------------------------------------------ §210: every column the move changes
+
+
+def _accepted(records: list[lc.StateRecord]) -> list[lc.StateRecord]:
+    import dataclasses
+
+    return [
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in records
+    ]
+
+
+def test_the_shown_line_carries_every_number_the_move_changes() -> None:
+    """§210: a rise that hands out a stock and a deepen that is paid in one each leave two
+    numbers different, and the writer copies the line, so the line carries both. The
+    named column is still the one the ask and the gate speak of."""
+    from tests.test_gamesystem import _stocked
+
+    system = _stocked()
+    opening = gamesystem.starting_sheet(system, "silas")
+    records = _accepted(
+        list(gamesystem.records_for(system)) + list(gamesystem.records_for_sheet(opening))
+    )
+    rise = Movable("First Seal", gamesystem.RANK_KEY)
+    assert rise in movables(records, character="silas", at="s1")
+    assert Movable("Threadpull", "threadpull") not in movables(
+        records, character="silas", at="s1"
+    ), "a move that cannot be paid is not offered, so the beat cannot name it"
+
+    risen = moved_example(records, rise, character="silas", at="s1")
+    assert risen is not None
+    assert (risen.name, risen.was, risen.now) == ("First Seal", 1, 2)
+    assert "Seal 2" in risen.line and "Marks 2" in risen.line
+
+    after_rise = gamesystem.rise(opening, at="s1").sheet
+    records += _accepted(list(gamesystem.records_for_sheet(after_rise, at="s1")))
+    deepen = Movable("Threadpull", "threadpull")
+    assert deepen in movables(records, character="silas", at="s2")
+    paid = moved_example(records, deepen, character="silas", at="s2")
+    assert paid is not None
+    assert (paid.was, paid.now) == (1, 2)
+    assert "Threadpull 2" in paid.line and "Marks 1" in paid.line
+    assert "Marks 2" not in paid.line

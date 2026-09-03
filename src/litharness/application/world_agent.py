@@ -174,7 +174,11 @@ _SYSTEM = (
     "three ways of taking it, which of the grants each way opens and which rung it opens at, "
     "and leave what any of them costs to the world. A way may say what it looks like "
     "(manifests_as) and what a person must already hold to be offered it (requires a "
-    "grant, at a depth), so the fork a person meets is the one their own record earned."
+    "grant, at a depth), so the fork a person meets is the one their own record earned.\n"
+    "Where the system hands out something to be spent on its grants, declare it as a grant "
+    "of its own that says per_rung how much every rung gives, and say on each grant it "
+    "buys what that grant costs in it; a grant the rungs hand out is never gained or "
+    "deepened, and a grant that costs it is not offered until it can be paid."
 )
 
 _SEED = (

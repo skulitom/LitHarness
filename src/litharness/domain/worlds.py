@@ -149,6 +149,15 @@ TAUGHT_BY = "taught_by"
 #: change its packet.
 COSTS = "costs"
 
+#: How much of a grant every rung hands out (§210). A grant carrying it is a stock: it
+#: opens at nothing, is never gained or deepened, rises by this much at every rise, and
+#: is what other grants are paid in — a `costs` record whose object is the stock and
+#: whose value is the whole number paid at every gain and deepen. That is the market's
+#: commonest written fall (*Free Stats 230 → 0*, the system-displays census) declared
+#: where it happens, so §113's *numbers go up* stays the rule and a spend is not a fight
+#: with the engine.
+PER_RUNG = "per_rung"
+
 #: A capability or a criterion belongs to a named system. An edge: the **governed thing is the
 #: subject and the system is the object**, the same direction as `RECOGNIZED_BY`, so the two can
 #: never invert against each other.
@@ -1842,6 +1851,22 @@ def _record_sentence(
         return f"{record.subject} took {record.object_ref}{of}, and cannot take another"
     if record.predicate == TAUGHT_BY and record.object_ref:
         return f"{record.subject} is taught by {record.object_ref}"
+    # **A price in a stock reads; prose about a price still does not** (§210). The prose
+    # shape stays unprojected for `COSTS`' recorded reason (every legacy world emits it
+    # for a rank); the priced shape is new, so a sentence for it changes no packet.
+    if (
+        record.predicate == COSTS
+        and record.object_ref
+        and isinstance(record.value, int)
+        and not isinstance(record.value, bool)
+    ):
+        return f"{record.subject} is paid for in {record.object_ref}, {record.value} each time"
+    if (
+        record.predicate == PER_RUNG
+        and isinstance(record.value, int)
+        and not isinstance(record.value, bool)
+    ):
+        return f"every rung hands out {record.value} {record.subject}"
     if record.predicate == PRICE_PREDICATE and value:
         return f"It costs {record.subject}: {value}"
     if record.predicate == ENTITY_ROLE_PREDICATE:
@@ -1930,6 +1955,7 @@ __all__ = [
     "NODE_TYPES",
     "OFFERS",
     "PERMITS",
+    "PER_RUNG",
     "PRECEDES_PREDICATE",
     "PREDICATE_PREDICATE",
     "PRICE_PREDICATE",

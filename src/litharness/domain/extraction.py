@@ -1876,6 +1876,7 @@ __all__ = [
     "movable_names",
     "movables",
     "moved_to",
+    "moved_values",
     "normalise_subject",
     "offered_choice",
     "offered_line",
@@ -2310,6 +2311,28 @@ def moved_to(
     at the scale's maximum and a rise at the top rung: there, having been offered is the proof
     that there is room.
     """
+    changed = moved_values(records, movable, character=character, at=at)
+    if changed is None:
+        return None
+    after = changed.get(movable.key)
+    return after if isinstance(after, int) and not isinstance(after, bool) else None
+
+
+def moved_values(
+    records: Sequence[lc.StateRecord],
+    movable: Movable,
+    *,
+    character: str | None = None,
+    at: str | None = None,
+) -> Mapping[str, int] | None:
+    """Every column the move that offered `movable` leaves changed, with what each then reads.
+
+    **`moved_to` for the whole line** (§210). A move that is paid in a stock the rungs hand
+    out changes two columns, and a rise that hands one out changes two; the writer copies the
+    line it is shown, so the line has to carry every number the move changes and not the one
+    the beat named. The named column is still the one the ask states and the gate checks. The
+    arms, the abstentions and the ceiling are `moved_to`'s, which reads its answer off this.
+    """
     standing = _standing_sheet(records, character=character, at=at)
     if standing is not None and at is not None:
         system, sheet = standing
@@ -2323,8 +2346,13 @@ def moved_to(
                 # caught because composing a prompt is not the place to discover that the two
                 # disagree, and a book that hits it draws the entering line it drew before.
                 return None
-            after = advanced.after.get(movable.key)
-            return after if isinstance(after, int) and not isinstance(after, bool) else None
+            return {
+                key: value
+                for key, value in advanced.after.items()
+                if value != advanced.before.get(key)
+                and isinstance(value, int)
+                and not isinstance(value, bool)
+            }
         return None
     folded = state_as_it_stands(records, at=at)
     if folded is None:
@@ -2335,7 +2363,7 @@ def moved_to(
     ceiling = folded[1].get(f"{movable.key}{MAX_SUFFIX}")
     if isinstance(ceiling, int) and not isinstance(ceiling, bool) and was + 1 > ceiling:
         return None
-    return was + 1
+    return {movable.key: was + 1}
 
 
 def _printing_system(

@@ -22879,3 +22879,67 @@ or does not enter. A default display for a book that declares none: no default v
 **Anti-scope.** Whether a numberless book's chapter reads as this genre's is the shelf's
 question and the operator's read; nothing here measures prose. Phase 4, moves and rules as
 declared shapes, follows, with its measurement first.
+
+## 210. Phase 4, first slice: a grant the rungs hand out and a grant paid in it, after a census found the market's written falls are mostly spends
+
+**Measured first** (`research/quality-measurement/system-displays/changes.py`, `changes.json`,
+FINDINGS). Over the 14,156 RoyalRoad chapters of the §202 census, 596 window fields are
+written as a change with an arrow: 570 rise, 22 fall, 4 stay. An end written with a sign
+(*171 → +29*) is an increment, and the first run's reading of sixteen of those as falls is
+recorded in the script. Twenty-two stories write a change this way and eight write a fall.
+The falls by kind: six are points spent to nothing (*Free Stats 230 → 0*, three stories), six
+are a pool or a derived figure going down (*HP 660 → 252*, two stories), ten are an attribute
+or a standing going down on its own (*Magic 23 → 20*, four stories). So *numbers go up*
+(§113) is the genre's rule and not a law, the commonest written fall is a spend, and a spend
+is a fall paired with a rise elsewhere on the window. The plan's phase 4 names three shapes
+(a signed change, a merge, growth); the census puts the spend first.
+
+**What shipped** (`domain/gamesystem.py`, `domain/worlds.py`, `domain/extraction.py`,
+`domain/progression.py`, `application/world.py`, `application/world_agent.py`). A grant may
+carry `per_rung`, how much of it every rung hands out; a grant with it is a stock: it opens
+at nothing (never an opener), is never gained or deepened (`legal_moves` skips it, `gain` and
+`deepen` refuse it), rises by that much at every rise, and is what other grants are paid in.
+A grant may carry a `price`, `(stock, amount)` pairs paid at every gain and every deepen; a
+move that cannot be paid is not offered and is refused if taken, with the reason in
+arithmetic (`_unpaid`, `_unmet`'s twin on the other side of the move). `_advanced` credits
+every stock on a rise and debits the price on a paid move, `moved` carries every column that
+changed, and every changed stock is written down as its own `can_do` edge beside the move,
+for `sheet_of`'s reason. Records: `per_rung` is a new vocabulary predicate (one line, one
+probe), and a price is a `costs` record whose object is the stock and whose value is the
+amount, so the prose shape of `costs` (a fact about the world) and the arithmetic shape
+(paid at a move) fill different slots and cannot be mistaken; the priced shape has a packet
+sentence and the prose shape still has none. The digest takes the stocks into its material
+only when a system has any, so every system on disk digests as it did. `check_draw` refuses
+what could not work: a price in a grant no rung hands out, a price in no grant, a price
+below one, a stock that needs something first, a stock behind a fork, a priced stock, a rung
+handing out less than nothing. `extraction.moved_values` is `moved_to` for the whole line,
+and `progression.moved_example` renders every column the move changes, since the writer
+copies the line it is shown; `name`, `was` and `now` stay the named column's, which is what
+the ask states and the gate checks. The seed asks for it in one sentence that names records
+and no slot (budget rows 45→46, 47→48).
+
+Tests (`tests/test_gamesystem.py`, `tests/test_progression_prompt.py`,
+`tests/test_world_slots.py`): a stock opens at nothing and is no move of its own; a rise
+hands it out and a paid deepen takes it back, both columns moving and both written; an unpaid
+move is neither offered nor taken; the two records round-trip and a system without them keeps
+its digest; the refusals; the shown line carries every number the move changes. Replay over
+the four stored books: identical.
+
+**What this does not yet do.** An attribute that falls on its own (the census's four
+stories: a drain, a curse, a level down) has no move: it is the next slice, a declared
+`change` with signed effects, and the `change` node type the vocabulary already carries is
+its home. A merge and system growth after it. A stock is credited a fixed amount per rung;
+a per-rung schedule waits for a book that declares one. The market's stat allocation puts a
+stock into an attribute by ones; here an attribute is a grant deepened at a price, which is
+that shape with the system's own words on it.
+
+**What was refused.** A points column welded in with a default name: a stock is a grant the
+book names, and a book with none is the book it was. A monotonic-shape detector on page
+values: the engine holds no rule that page numbers may not fall, only that its own moves go
+up, and a detector for a defect nobody has observed is welding. Debiting an ordinary held
+grant (a sacrifice of depth for depth): the market does not write it and the model would gain
+a move nothing asks for.
+
+**Anti-scope.** Whether a book with a stock reads as its genre is the shelf's question and the
+operator's read; nothing here measures prose. The reviser's containment band and the readout
+on request are as they were.

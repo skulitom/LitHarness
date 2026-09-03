@@ -269,7 +269,9 @@ BUDGET: dict[str, int] = {
     # a person meets is the one their own record earned (the choice display).
     # **Raised 46 -> 47 on 2026-09-03 for §208**: one sentence saying the line the
     # book prints when a standing changes may carry a second phrase for a grant gained.
-    "architect seed, second system": 47,
+    # **Raised 47 -> 48 on 2026-09-03 for §210**: one sentence saying the system may hand
+    # out something to be spent on its grants, as a grant of its own.
+    "architect seed, second system": 48,
     "title lookup": 6,
     # **Raised 24 -> 25 on 2026-08-29, deliberately and for one named sentence.** The house
     # genre had been living nowhere (`plan/house-genre-constraint.md`; pilot 13 §8.2), carried
@@ -404,7 +406,10 @@ BUDGET: dict[str, int] = {
     # a person meets is the one their own record earned (the choice display).
     # **Raised 44 -> 45 on 2026-09-03 for §208**: one sentence saying the line the
     # book prints when a standing changes may carry a second phrase for a grant gained.
-    "architect seed": 45,
+    # **Raised 45 -> 46 on 2026-09-03 for §210**: one sentence saying the system may hand
+    # out something to be spent on its grants, as a grant of its own, so a spend is a
+    # declared fall and not a fight with the engine.
+    "architect seed": 46,
     # **42 -> 43 on 2026-08-30, the §176 clause.** §163's note above says this row "stays
     # on 42", which was true of §163's seed-only raise and is not a rule: this row stands on the
     # whole house floor, so a floor clause lands here as surely as it lands on the scene writer.

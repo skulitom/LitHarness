@@ -177,13 +177,18 @@ def moved_example(
     was = values.get(target.key)
     if not isinstance(was, int) or isinstance(was, bool):
         return None
-    now = extraction_mod.moved_to(records, target, character=character, at=at)
-    if now is None or now == was:
+    # **Every column the move changes is shown moved** (§210): a rise that hands out a
+    # stock and a deepen that is paid in one each leave two numbers different, and the
+    # writer copies the line, so the line carries both. `name`, `was` and `now` stay the
+    # named column's, which is the one the ask states and the gate checks.
+    changed = extraction_mod.moved_values(records, target, character=character, at=at)
+    now = None if changed is None else changed.get(target.key)
+    if changed is None or now is None or now == was:
         return None
     return MovedLine(
         line=extraction_mod.render_status_line(
             subject,
-            {**values, target.key: now},
+            {**values, **changed},
             sheet=extraction_mod.sheet_for(records),
             records=records,
         ),

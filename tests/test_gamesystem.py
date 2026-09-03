@@ -921,3 +921,147 @@ def test_a_fork_none_of_whose_ways_is_offered_is_not_open_yet() -> None:
     assert gs.offer_line(system, system.choices[0]) == (
         "[OFFER] Hand — Kiln: opens Deepweave | Reed: opens Lanterncall"
     ), "without a sheet the line shows every way, as it always did"
+
+
+# --- §210: a grant the rungs hand out, and a grant that is paid in it ----------------------
+
+
+def _stocked() -> gs.SystemDef:
+    """The weave with a stock: every seal hands out two Marks, and Threadpull is paid one
+    Mark at every gain and deepen (§210). Six grants, one edge short of nothing."""
+    return _system(
+        abilities=(
+            gs.Ability("seamsight", "Seamsight"),
+            gs.Ability("threadpull", "Threadpull", price=(("marks", 1),)),
+            gs.Ability("stillwater", "Stillwater", needs=(gs.Need("seamsight", 2),)),
+            gs.Ability("lanterncall", "Lanterncall", needs=(gs.Need("threadpull"),)),
+            gs.Ability(
+                "deepweave",
+                "Deepweave",
+                needs=(gs.Need("first_seal"), gs.Need("stillwater")),
+            ),
+            gs.Ability("marks", "Marks", per_rung=2),
+        )
+    )
+
+
+def test_a_stock_opens_at_nothing_and_is_never_a_move_of_its_own() -> None:
+    """§210: a grant the rungs hand out is not an opener, and no gain or deepen names it."""
+    system = _stocked()
+    assert gs.check_draw(system) == ()
+    sheet = gs.starting_sheet(system, "silas")
+    assert sheet.magnitude("marks") == 0
+    assert sheet.magnitude("threadpull") == 1, "an opener is held from the start, unpaid"
+    assert all(move.ability_id != "marks" for move in gs.legal_moves(sheet))
+    with pytest.raises(gs.IllegalAdvance, match="handed out by the rungs"):
+        gs.gain(sheet, "marks", at="s1")
+    with pytest.raises(gs.IllegalAdvance, match="handed out by the rungs"):
+        gs.deepen(sheet, "marks", at="s1")
+
+
+def test_a_rise_hands_out_the_stock_and_a_paid_grant_takes_it_back() -> None:
+    """§210: the rise credits every stock and the paid move debits it; both columns move,
+    both are written down, and a move that cannot be paid is neither offered nor taken."""
+    system = _stocked()
+    start = gs.starting_sheet(system, "silas")
+    assert all(move.ability_id != "threadpull" for move in gs.legal_moves(start))
+    with pytest.raises(gs.IllegalAdvance, match="costs 1 marks, and silas has 0"):
+        gs.deepen(start, "threadpull", at="s1")
+
+    risen = gs.rise(start, at="s1")
+    assert risen.moved == (gs.RANK_KEY, "marks")
+    assert risen.sheet.magnitude("marks") == 2
+    credited = [
+        record
+        for record in risen.records
+        if record.predicate == worlds.CAN_DO and record.object_ref == "marks"
+    ]
+    assert [record.value for record in credited] == [2]
+
+    offered = [move for move in gs.legal_moves(risen.sheet) if move.ability_id == "threadpull"]
+    assert [move.kind for move in offered] == [gs.AdvanceKind.DEEPEN]
+    paid = gs.deepen(risen.sheet, "threadpull", at="s2")
+    assert paid.moved == ("marks", "threadpull")
+    assert (paid.sheet.magnitude("threadpull"), paid.sheet.magnitude("marks")) == (2, 1)
+    written = {
+        record.object_ref: record.value
+        for record in paid.records
+        if record.predicate == worlds.CAN_DO
+    }
+    assert written == {"threadpull": 2, "marks": 1}
+    assert gs.advance(paid.sheet, offered[0], at="s3").sheet.magnitude("marks") == 0
+    with pytest.raises(gs.IllegalAdvance, match="costs 1 marks"):
+        gs.deepen(gs.advance(paid.sheet, offered[0], at="s3").sheet, "threadpull", at="s4")
+
+
+def test_a_stock_and_a_price_round_trip_and_a_system_without_them_keeps_its_digest() -> None:
+    """§210: `per_rung` and a priced `costs` travel as records and read back; every system
+    written before this has the digest it had."""
+    plain = _system()
+    assert plain.digest == gs.systems_of(gs.records_for(plain))[0].digest
+    rich = _stocked()
+    [back] = gs.systems_of(gs.records_for(rich))
+    assert back == rich and back.digest == rich.digest and back.digest != plain.digest
+    assert back.ability("marks").per_rung == 2
+    assert back.ability("threadpull").price == (("marks", 1),)
+    assert back.ability("threadpull").costs is None, "a price is not prose about a price"
+    priced = [
+        record
+        for record in gs.records_for(rich)
+        if record.predicate == worlds.COSTS and record.subject == "threadpull"
+    ]
+    assert [(record.object_ref, record.value) for record in priced] == [("marks", 1)]
+
+
+def test_check_draw_refuses_a_stock_or_a_price_that_could_not_work() -> None:
+    """§210: every refusal is membership or arithmetic — a price in a grant no rung hands
+    out, a stock that needs or is gated or is priced, a rung handing out less than nothing."""
+
+    def abilities(**changes: gs.Ability) -> tuple[gs.Ability, ...]:
+        base = {ability.ability_id: ability for ability in _stocked().abilities}
+        base.update(changes)
+        return tuple(base.values())
+
+    unbacked = _system(
+        abilities=abilities(
+            threadpull=gs.Ability("threadpull", "Threadpull", price=(("seamsight", 1),))
+        )
+    )
+    assert any("no rung hands out" in why for why in gs.check_draw(unbacked))
+    unknown = _system(
+        abilities=abilities(threadpull=gs.Ability("threadpull", "Threadpull", price=(("coin", 1),)))
+    )
+    assert any("declares as no grant" in why for why in gs.check_draw(unknown))
+    free = _system(
+        abilities=abilities(
+            threadpull=gs.Ability("threadpull", "Threadpull", price=(("marks", 0),))
+        )
+    )
+    assert any("one or more" in why for why in gs.check_draw(free))
+    needy = _system(
+        abilities=abilities(
+            marks=gs.Ability("marks", "Marks", per_rung=2, needs=(gs.Need("seamsight"),))
+        )
+    )
+    assert any("nobody gains has no prerequisite" in why for why in gs.check_draw(needy))
+    priced_stock = _system(
+        abilities=abilities(marks=gs.Ability("marks", "Marks", per_rung=2, price=(("marks", 1),)))
+    )
+    assert any("never paid for" in why for why in gs.check_draw(priced_stock))
+    negative = _system(abilities=abilities(marks=gs.Ability("marks", "Marks", per_rung=-1)))
+    assert any("nothing or more" in why for why in gs.check_draw(negative))
+    gated = _system(
+        abilities=abilities(),
+        choices=(
+            gs.Choice(
+                "fork_hand",
+                "Hand",
+                options=(
+                    gs.Option("opt_kiln", "Kiln", grants=("marks",)),
+                    gs.Option("opt_reed", "Reed", grants=("lanterncall",)),
+                ),
+                opens_at="first_seal",
+            ),
+        ),
+    )
+    assert any("cannot be opened by a way" in why for why in gs.check_draw(gated))

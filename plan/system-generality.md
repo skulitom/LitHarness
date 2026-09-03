@@ -205,7 +205,7 @@ writer's furniture ask enumerates the views due at the position; extraction pars
 its tag and template. The choice display gains option text and conditional offers (an option
 `requires` a record on the chooser's own sheet), which is the class-advancement screen.
 
-### Phase 4 — moves and rules as declared shapes
+### Phase 4 — moves and rules as declared shapes (measured: the system-displays changes census, 570 of 596 written changes rise, the commonest fall a spend; first slice done: stage-0 §210, a grant the rungs hand out and a grant paid in it. Remaining: a declared change with signed effects for an attribute that falls on its own, the merge, growth)
 
 Beyond gain, deepen, rise and choose: a signed change (a loss, a level down, a spend of
 points), a merge (two capabilities into one, as a change that retires two and grants one),

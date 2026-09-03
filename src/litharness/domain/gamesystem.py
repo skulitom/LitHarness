@@ -256,10 +256,26 @@ class Ability:
     needs: tuple[Need, ...] = ()
     costs: str | None = None
     manifests_as: str | None = None
+    #: How much of this grant every rung hands out (§210). A grant with it is a **stock**: it
+    #: opens at nothing, is never gained or deepened, rises by this much at every rise, and is
+    #: what other grants are paid in. Zero, the default, is every grant written before this.
+    per_rung: int = 0
+    #: What taking this grant is paid in, as `(stock id, amount)` pairs (§210): paid at every
+    #: gain and every deepen, and a move that cannot be paid is not offered. Empty is every
+    #: grant written before this; prose about a price stays in `costs`, which is a fact about
+    #: the world and not arithmetic.
+    price: tuple[tuple[str, int], ...] = ()
 
     def __post_init__(self) -> None:
-        """Prerequisites are held in a canonical order. See `SystemDef.__post_init__`."""
+        """Prerequisites and prices are held in a canonical order. See
+        `SystemDef.__post_init__`."""
         object.__setattr__(self, "needs", tuple(sorted(self.needs, key=lambda need: need.ref)))
+        object.__setattr__(self, "price", tuple(sorted(self.price)))
+
+    @property
+    def is_stock(self) -> bool:
+        """Handed out by the rungs, and so never a move of its own (§210)."""
+        return self.per_rung > 0
 
 
 @dataclass(frozen=True, slots=True)
@@ -466,6 +482,19 @@ class SystemDef:
             if self.choices
             else {}
         )
+        # **The stocks join the material only when there are any** (§210), for the forks'
+        # reason above: a system with none digests as it always did.
+        stocks = (
+            {
+                "stocks": [
+                    [ability.ability_id, ability.per_rung, [list(pair) for pair in ability.price]]
+                    for ability in self.abilities
+                    if ability.per_rung or ability.price
+                ]
+            }
+            if any(ability.per_rung or ability.price for ability in self.abilities)
+            else {}
+        )
         material = payload_digest(
             {
                 "id": self.system_id,
@@ -485,6 +514,7 @@ class SystemDef:
                 ],
                 "scale": [self.scale.label, self.scale.maximum],
                 **forks,
+                **stocks,
             }
         )
         return f"sys-{sha256(material.encode()).hexdigest()[:24]}"
@@ -512,6 +542,11 @@ class SystemDef:
     @property
     def ability_ids(self) -> tuple[str, ...]:
         return tuple(ability.ability_id for ability in self.abilities)
+
+    @property
+    def stocks(self) -> tuple[str, ...]:
+        """The grants the rungs hand out, in id order (§210)."""
+        return tuple(ability.ability_id for ability in self.abilities if ability.is_stock)
 
     @property
     def rank_ids(self) -> tuple[str, ...]:
@@ -873,6 +908,54 @@ def check_draw(system: SystemDef) -> tuple[str, ...]:
     if _cycle(system):
         complaints.append("the prerequisites run in a cycle, so no order of gaining them exists")
 
+    # --- the stocks (§210)
+    #
+    # Membership and arithmetic, like everything above: a price in a grant no rung hands out
+    # could never be paid, a stock nobody gains has no prerequisite to meet and no fork to be
+    # opened by, and a rung hands out nothing or more. Nothing here asks whether a price is
+    # fair or a stock is generous.
+    stocks = set(system.stocks)
+    gates = system.gates
+    for ability in system.abilities:
+        if ability.per_rung < 0:
+            complaints.append(
+                f"{ability.ability_id} says every rung hands out {ability.per_rung} of it; a "
+                "rung hands out nothing or more"
+            )
+        if ability.is_stock:
+            if ability.needs:
+                complaints.append(
+                    f"{ability.ability_id} is handed out by the rungs and needs "
+                    f"{', '.join(need.ref for need in ability.needs)} first; a grant nobody "
+                    "gains has no prerequisite to meet"
+                )
+            if ability.ability_id in gates:
+                complaints.append(
+                    f"{ability.ability_id} is handed out by the rungs and sits behind the fork "
+                    f"{gates[ability.ability_id][0]}; a grant nobody gains cannot be opened by "
+                    "a way"
+                )
+            if ability.price:
+                complaints.append(
+                    f"{ability.ability_id} is handed out by the rungs and is priced; a grant "
+                    "nobody gains or deepens is never paid for"
+                )
+        for stock, amount in ability.price:
+            if stock not in known_abilities:
+                complaints.append(
+                    f"{ability.ability_id} is paid in {stock}, which this system declares as "
+                    "no grant"
+                )
+            elif stock not in stocks:
+                complaints.append(
+                    f"{ability.ability_id} is paid in {stock}, which no rung hands out, so it "
+                    "could never be paid"
+                )
+            if amount < 1:
+                complaints.append(
+                    f"{ability.ability_id} is paid {amount} {stock}; a price is one or more"
+                )
+
     # --- the forks
     #
     # **Every check is membership or arithmetic**, exactly as the ones above are. Nothing here asks
@@ -1031,6 +1114,10 @@ def _openers(system: SystemDef) -> tuple[str, ...]:
     for ability in system.abilities:
         if ability.ability_id in gated:
             continue
+        if ability.is_stock:
+            # Handed out by the rungs, and the first rung is stood on rather than risen to
+            # (§210): a stock opens at nothing and the first rise is the first hand-out.
+            continue
         if any(need.ref in set(system.ability_ids) for need in ability.needs):
             continue
         if any(need.ref != first for need in ability.needs if need.ref in set(system.rank_ids)):
@@ -1109,6 +1196,23 @@ def _unmet(sheet: CharacterSheet, what: str, needs: Sequence[Need]) -> tuple[str
     return tuple(unmet)
 
 
+def _unpaid(sheet: CharacterSheet, ability: Ability) -> tuple[str, ...]:
+    """What this sheet cannot pay of the grant's price, as reasons; empty means paid (§210).
+
+    The same arithmetic as `_unmet`, on the other side of the move: a need is what must already
+    be held, a price is what is taken. A move that cannot be paid is not offered, for the
+    reason a gated one is not — a schedule built on a label names moves the book cannot make.
+    """
+    unpaid: list[str] = []
+    for stock, amount in ability.price:
+        have = sheet.magnitude(stock)
+        if have < amount:
+            unpaid.append(
+                f"{ability.ability_id} costs {amount} {stock}, and {sheet.character} has {have}"
+            )
+    return tuple(unpaid)
+
+
 def legal_moves(sheet: CharacterSheet) -> tuple[Move, ...]:
     """Every advancement arithmetically available to this sheet, in declaration order.
 
@@ -1129,11 +1233,19 @@ def legal_moves(sheet: CharacterSheet) -> tuple[Move, ...]:
     moves: list[Move] = []
     system = sheet.system
     for ability in system.abilities:
+        if ability.is_stock:
+            # A stock moves with the rungs and with what is paid in it, never by a move of
+            # its own (§210); a beat can therefore never name one.
+            continue
         held = sheet.magnitude(ability.ability_id)
         if held == 0:
-            if sheet.unlocked(ability.ability_id) and not _needs_met(sheet, ability):
+            if (
+                sheet.unlocked(ability.ability_id)
+                and not _needs_met(sheet, ability)
+                and not _unpaid(sheet, ability)
+            ):
                 moves.append(Move(AdvanceKind.GAIN, ability_id=ability.ability_id))
-        elif held < system.scale.maximum:
+        elif held < system.scale.maximum and not _unpaid(sheet, ability):
             # **Deepening a held ability is never re-gated**, on `deepen`'s own rule: the gate is
             # the condition for having it at all, and re-asking would make a sheet's past illegal
             # whenever the world's declaration moved underneath it.
@@ -1239,7 +1351,7 @@ def _advanced(
             system=sheet.system,
             character=sheet.character,
             rank_id=rank_id,
-            magnitudes=sheet.magnitudes,
+            magnitudes=_credited(sheet),
             visible_to=sheet.visible_to,
             picks=sheet.picks,
         )
@@ -1259,10 +1371,7 @@ def _advanced(
             system=sheet.system,
             character=sheet.character,
             rank_id=sheet.rank_id,
-            magnitudes=tuple(
-                (held_id, magnitude if held_id == ability_id else value)
-                for held_id, value in sheet.magnitudes
-            ),
+            magnitudes=_paid(sheet, ability_id, magnitude),
             visible_to=sheet.visible_to,
             picks=sheet.picks,
         )
@@ -1327,6 +1436,22 @@ def _advanced(
     # completely illegible: the record set claimed to restate the sheet and did not. Writing the
     # one edge that moved says what actually happened, and the unchanged holdings keep the
     # position they were established at, which is what they mean.
+    # **Every stock the move changed is written down beside it** (§210): what a rise handed
+    # out and what a paid move took, one `can_do` edge each, for `sheet_of`'s reason — the
+    # snapshot is the printed form and the edges are what the world knows. A stock spent to
+    # nothing is written at 0, which `sheet_of` reads as held at nothing.
+    for stock in sheet.system.stocks:
+        if stock in moved:
+            records.append(
+                worlds_mod.world_record(
+                    sheet.character,
+                    worlds_mod.CAN_DO,
+                    value=after_sheet.magnitude(stock),
+                    object_ref=stock,
+                    order_key=at,
+                    pov_visibility=sheet.visible_to,
+                )
+            )
     records.append(_snapshot_record(after_sheet, at=at))
     return Advancement(
         kind=kind,
@@ -1338,9 +1463,40 @@ def _advanced(
     )
 
 
+def _credited(sheet: CharacterSheet) -> tuple[tuple[str, int], ...]:
+    """The magnitudes after a rise: every stock up by what a rung hands out (§210)."""
+    per_rung = {
+        ability.ability_id: ability.per_rung
+        for ability in sheet.system.abilities
+        if ability.is_stock
+    }
+    return tuple((held_id, value + per_rung.get(held_id, 0)) for held_id, value in sheet.magnitudes)
+
+
+def _paid(sheet: CharacterSheet, ability_id: str, magnitude: int) -> tuple[tuple[str, int], ...]:
+    """The magnitudes after a gain or a deepen: the grant at its new depth, and every stock it
+    is paid in down by its price (§210). `_unpaid` has already said the price can be met."""
+    debit = dict(sheet.system.ability(ability_id).price)
+    return tuple(
+        (held_id, magnitude if held_id == ability_id else value - debit.get(held_id, 0))
+        for held_id, value in sheet.magnitudes
+    )
+
+
+def _never_a_move(sheet: CharacterSheet, ability: Ability) -> None:
+    """A stock is handed out by the rungs and is never gained or deepened (§210)."""
+    if ability.is_stock:
+        raise IllegalAdvance(
+            f"{ability.ability_id} is handed out by the rungs, {ability.per_rung} at each, "
+            f"and is never gained or deepened; {sheet.character} has "
+            f"{sheet.magnitude(ability.ability_id)}"
+        )
+
+
 def gain(sheet: CharacterSheet, ability_id: str, *, at: str) -> Advancement:
     """Take an ability from 0 to 1. Raises `IllegalAdvance` when a prerequisite is unmet."""
     ability = sheet.system.ability(ability_id)
+    _never_a_move(sheet, ability)
     if sheet.holds(ability_id):
         raise IllegalAdvance(
             f"{sheet.character} already holds {ability_id} at {sheet.magnitude(ability_id)}"
@@ -1348,6 +1504,8 @@ def gain(sheet: CharacterSheet, ability_id: str, *, at: str) -> Advancement:
     unmet = _needs_met(sheet, ability)
     if unmet:
         raise IllegalAdvance("; ".join(unmet))
+    if unpaid := _unpaid(sheet, ability):
+        raise IllegalAdvance("; ".join(unpaid))
     return _advanced(sheet, AdvanceKind.GAIN, at=at, ability_id=ability_id, magnitude=1)
 
 
@@ -1358,7 +1516,8 @@ def deepen(sheet: CharacterSheet, ability_id: str, *, at: str) -> Advancement:
     having the ability at all, and re-asking would make a sheet's own past illegal whenever a
     world's declaration changed underneath it.
     """
-    sheet.system.ability(ability_id)
+    ability = sheet.system.ability(ability_id)
+    _never_a_move(sheet, ability)
     held = sheet.magnitude(ability_id)
     if held < 1:
         raise IllegalAdvance(
@@ -1368,6 +1527,8 @@ def deepen(sheet: CharacterSheet, ability_id: str, *, at: str) -> Advancement:
         raise IllegalAdvance(
             f"{sheet.character} holds {ability_id} at {held}, which is this system's maximum"
         )
+    if unpaid := _unpaid(sheet, ability):
+        raise IllegalAdvance("; ".join(unpaid))
     return _advanced(sheet, AdvanceKind.DEEPEN, at=at, ability_id=ability_id, magnitude=held + 1)
 
 
@@ -1544,6 +1705,21 @@ def records_for(system: SystemDef) -> tuple[lc.StateRecord, ...]:
         if ability.costs:
             records.append(
                 worlds_mod.world_record(ability.ability_id, worlds_mod.COSTS, value=ability.costs)
+            )
+        # **The stock and the price, as records the vocabulary names** (§210): `per_rung` on
+        # the stock, and a `costs` whose object is the stock and whose value is the amount on
+        # the grant paid in it. A grant with neither writes nothing here.
+        if ability.is_stock:
+            records.append(
+                worlds_mod.world_record(
+                    ability.ability_id, worlds_mod.PER_RUNG, value=ability.per_rung
+                )
+            )
+        for stock, amount in ability.price:
+            records.append(
+                worlds_mod.world_record(
+                    ability.ability_id, worlds_mod.COSTS, value=amount, object_ref=stock
+                )
             )
         if ability.manifests_as:
             records.append(
@@ -1777,6 +1953,8 @@ def _assemble(
             needs=_needs_of(records, ability_id),
             costs=_first_value(records, ability_id, worlds_mod.COSTS),
             manifests_as=_first_value(records, ability_id, worlds_mod.MANIFESTS_PREDICATE),
+            per_rung=_first_int(records, ability_id, worlds_mod.PER_RUNG),
+            price=_price_of(records, ability_id),
         )
         for ability_id in ability_ids
     )
@@ -2039,6 +2217,36 @@ def _first_value(records: Sequence[lc.StateRecord], subject: str, predicate: str
         ):
             return record.value
     return None
+
+
+def _first_int(records: Sequence[lc.StateRecord], subject: str, predicate: str) -> int:
+    """The first whole number a subject's records give the predicate, or 0 for none (§210)."""
+    for record in records:
+        if (
+            record.subject == subject
+            and record.predicate == predicate
+            and isinstance(record.value, int)
+            and not isinstance(record.value, bool)
+        ):
+            return record.value
+    return 0
+
+
+def _price_of(records: Sequence[lc.StateRecord], ability_id: str) -> tuple[tuple[str, int], ...]:
+    """What a grant is paid in: every `costs` record with a stock in the object slot and a
+    whole number in the value slot (§210). Prose about a price fills the value slot alone and
+    is `_first_value`'s, so the two shapes cannot be mistaken for one another."""
+    return tuple(
+        sorted(
+            (record.object_ref, record.value)
+            for record in records
+            if record.subject == ability_id
+            and record.predicate == worlds_mod.COSTS
+            and record.object_ref
+            and isinstance(record.value, int)
+            and not isinstance(record.value, bool)
+        )
+    )
 
 
 def _needs_of(records: Sequence[lc.StateRecord], ability_id: str) -> tuple[Need, ...]:

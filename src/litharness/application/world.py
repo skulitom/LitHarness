@@ -204,7 +204,16 @@ def vocabulary() -> dict[str, Any]:
                 "in the book they took it. Leave it off for a way already taken when the book "
                 "opens. A fork is taken once and nothing can take it back"
             ),
-            "costs": "what it takes; --value or --object",
+            "costs": (
+                "what it takes; --value plain words, or --object a grant every rung hands "
+                "out and --value the whole number of it paid each time this is gained or "
+                "deepened, in which case a grant that cannot be paid for is not offered"
+            ),
+            "per_rung": (
+                "how much of this grant every rung hands out; --value a whole number. A "
+                "grant with it opens at nothing, is never gained or deepened, and is what "
+                "other grants are paid in"
+            ),
             "taught_by": "who teaches it; --object the teacher",
             "comparator": (
                 "how a criterion judges; the criterion is the subject, --value one of "

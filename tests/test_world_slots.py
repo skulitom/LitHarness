@@ -187,6 +187,18 @@ def _costs() -> lc.StateRecord:
     forged emits it for a rank, so giving it a sentence would change all their packets."""
     record = rec("cap_read_grain", worlds.COSTS, value="a day of your voice")
     assert worlds.project([record]) == {}
+    # **The priced shape reads** (§210): a grant paid in a stock the rungs hand out fills
+    # both slots, and that record alone has a sentence; the prose shape still has none.
+    priced = rec("threadpull", worlds.COSTS, object_ref="marks", value=1)
+    assert "threadpull is paid for in marks, 1 each time" in sentences([priced])
+    return record
+
+
+def _per_rung() -> lc.StateRecord:
+    """§210: a grant every rung hands out. `gamesystem.systems_of` reads it onto the grant,
+    and the packet says so in words."""
+    record = rec("marks", worlds.PER_RUNG, value=2)
+    assert "every rung hands out 2 marks" in sentences([record])
     return record
 
 
@@ -388,6 +400,7 @@ _PROBES: dict[str, Callable[[], lc.StateRecord]] = {
     "can_do": _can_do,
     "requires": _requires,
     "costs": _costs,
+    "per_rung": _per_rung,
     "taught_by": _taught_by,
     "comparator": _comparator,
     "evaluates": _evaluates,
