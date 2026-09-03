@@ -32,7 +32,7 @@ pretend otherwise, and `parents` is deliberately not a list.
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable
 from dataclasses import dataclass, field, replace
 from hashlib import sha256
 from typing import Any
@@ -413,7 +413,3 @@ def append_scenes(revision: Revision, count: int) -> Revision:
         nodes=(*revision.nodes, *added),
         parent_revision_id=revision.revision_id,
     )
-
-
-def version_map(revision: Revision) -> Mapping[str, str]:
-    return revision.version_ids

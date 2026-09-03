@@ -58,7 +58,7 @@ class RosterStatus(enum.StrEnum):
     """Where a stored writer stands, and the gap between the members is a person.
 
     Lowercase values because every status column in this schema stores lowercase; `PROPOSED`
-    and `ACCEPTED` in `plan/handoff-writer-recruiter.md` are member names rather than column
+    and `ACCEPTED` in the recruiter brief (stage-0 §146) are member names rather than column
     values. The enum lives in the domain because the *rail* does — a Recruiter proposes and
     only an operator's decision row accepts — and an adapter that invented its own strings
     would be the place that rail could quietly lose a member.

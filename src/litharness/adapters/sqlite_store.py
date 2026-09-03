@@ -1423,16 +1423,6 @@ class SqliteStore:
                 self._insert_event(connection, event)
         return True
 
-    def finding_counts(self, book_id: str, branch_id: str) -> dict[str, int]:
-        return {
-            row["status"]: int(row["n"])
-            for row in self._connection.execute(
-                "SELECT status, COUNT(*) AS n FROM findings WHERE book_id = ? AND "
-                "branch_id = ? GROUP BY status",
-                (book_id, branch_id),
-            )
-        }
-
     # -- scene summaries --------------------------------------------------------
 
     # -- the simulated readership -------------------------------------------------------
@@ -2121,15 +2111,6 @@ class SqliteStore:
                 (closed.status.value, closed.resolution, closed.resolved_at, exception_id),
             )
         return closed
-
-    def exceptions_for_job(self, job_id: str) -> list[ExceptionRecord]:
-        return [
-            _exception_from_row(row)
-            for row in self._connection.execute(
-                "SELECT * FROM exceptions WHERE job_id = ? ORDER BY raised_at, rowid",
-                (job_id,),
-            )
-        ]
 
     # -- operator controls ----------------------------------------------------
 

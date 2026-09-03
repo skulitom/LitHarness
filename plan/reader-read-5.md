@@ -269,8 +269,8 @@ every time.
 The right-hand column counts **distinct listings** — a writer's final text per draw. Counting
 the two `ferreira` drafts that differ from their own revisions it is **9 of 9**, and that is the
 more interesting number: **the beat survives the revision step as well as the draw.** Say which
-one is meant wherever it is cited; [`handoff-writer-recruiter.md`](handoff-writer-recruiter.md)
-carries the seven.
+one is meant wherever it is cited; stage-0 §146.1 carries the seven, with the correction from
+eight.
 
 **`writers.py`'s own docstring already warned about the previous version of this defect.** The
 first cast named four real careers and *"each writer promptly set a book inside their own day

@@ -8,16 +8,16 @@ invariant, and `sqlite_store.py` is long enough already.
 
 **The one rail this module exists to hold.** `record_proposed_writer` has no parameter that
 could write `accepted`, `accept_writers` is the only path that can, and it takes a
-`PolicyDecision` it inserts in the same transaction. Rail 4 of
-`plan/handoff-writer-recruiter.md` — *no model hires* — is therefore a shape of the code and of
-the schema rather than a promise about how callers behave.
+`PolicyDecision` it inserts in the same transaction. The recruiter brief's rail — *no model
+hires* (stage-0 §146, standing on §61(5) and §105.1) — is therefore a shape of the code and
+of the schema rather than a promise about how callers behave.
 """
 
 from __future__ import annotations
 
 import json
 import sqlite3
-from collections.abc import Callable, Sequence
+from collections.abc import Sequence
 from typing import Any, Protocol
 
 from litharness.adapters.sqlite_errors import IntegrityFailure
@@ -39,8 +39,6 @@ class DecisionInserter(Protocol):
         decided_at: str,
     ) -> bool: ...
 
-
-RowFilter = Callable[[sqlite3.Row], bool]
 
 _COLUMNS = (
     "writer_id, name, dossier, interests_json, exemplar_digest, note, "

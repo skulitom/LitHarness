@@ -29,6 +29,7 @@ import inspect
 import pytest
 
 from litharness.domain import extraction, gamesystem, genre, house, worlds
+from tests.helpers import accepted as _accepted
 
 
 def _system(**overrides: object) -> gamesystem.SystemDef:
@@ -289,25 +290,6 @@ def test_a_pick_is_read_back_off_its_own_edge_and_only_where_the_book_has_reache
     everywhere = gamesystem.sheet_of(canon, "mira", system=system)
     assert everywhere is not None
     assert everywhere.picks == (("fork_hand", "opt_kiln"),)
-
-
-def _accepted(record):  # type: ignore[no-untyped-def]
-    import litharness_contracts as lc
-
-    return lc.StateRecord(
-        record_id=record.record_id,
-        kind=record.kind,
-        subject=record.subject,
-        predicate=record.predicate,
-        value=record.value,
-        object_ref=record.object_ref,
-        story_position=record.story_position,
-        authority=lc.StateAuthority.ACCEPTED_CANON,
-        pov_visibility=list(record.pov_visibility),
-        evidence=list(record.evidence),
-        predicate_registry_version=record.predicate_registry_version,
-        note=record.note,
-    )
 
 
 # --------------------------------------------------------------------------- what a draw may be

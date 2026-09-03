@@ -1,6 +1,6 @@
 """The Recruiter's containment, and the arm it was built to make measurable.
 
-`plan/handoff-writer-recruiter.md`. A Recruiter is **generative and upstream** — it proposes a
+Stage-0 §146's recruiter brief. A Recruiter is **generative and upstream** — it proposes a
 writer before any prose exists — so it needs containment rather than a validity licence, which
 is `plan/director-role.md`'s argument for the Director applied one role over. Containment here
 is four things, and each is a test below rather than a sentence in a docstring: an enumerated

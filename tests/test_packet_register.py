@@ -32,34 +32,15 @@ No model call, no network, no store: three renderers and one pure `assemble`.
 
 from __future__ import annotations
 
-import litharness_contracts as lc
-
 from litharness.domain import characters as characters_mod
 from litharness.domain import worlds
 from litharness.domain.context import CAST, FACTS, assemble
 from litharness.domain.revision import new_book
+from tests.helpers import canon
 
 #: What a fact line may not contain. The writer's output is the page; a fact is about the
 #: world. Both spellings, because the two renderers that carried the defect used both.
 PAGE_WORDS = ("on the page", "shows on the page")
-
-
-def canon(subject: str, predicate: str, **kwargs: object) -> lc.StateRecord:
-    record = worlds.world_record(subject, predicate, **kwargs)  # type: ignore[arg-type]
-    return lc.StateRecord(
-        record_id=record.record_id,
-        kind=record.kind,
-        subject=record.subject,
-        predicate=record.predicate,
-        value=record.value,
-        object_ref=record.object_ref,
-        story_position=record.story_position,
-        authority=lc.StateAuthority.ACCEPTED_CANON,
-        pov_visibility=list(record.pov_visibility),
-        evidence=list(record.evidence),
-        predicate_registry_version=record.predicate_registry_version,
-        note=record.note,
-    )
 
 
 #: A rule, a person and a thing, each with a declared form. Three subjects because the

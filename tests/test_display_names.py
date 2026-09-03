@@ -43,6 +43,7 @@ from litharness.domain.extraction import (
     sheet_for,
     system_voice_example,
 )
+from tests.helpers import canon as _canon
 
 #: Draw 3's own sheet, in draw 3's own words, so the shapes under test are the shapes that
 #: reached the reader rather than the default LitRPG line.
@@ -56,16 +57,6 @@ _SHEET = Sheet(
 )
 
 _VALUE: dict[str, object] = {"keeping": 1, "reach": 0, "marks": 1, "work": 0, "work_max": 1}
-
-
-def _canon(subject: str, predicate: str, value: object, **kwargs: object) -> lc.StateRecord:
-    return worlds.world_record(
-        subject,
-        predicate,
-        value=value,
-        authority=lc.StateAuthority.ACCEPTED_CANON,
-        **kwargs,  # type: ignore[arg-type]
-    )
 
 
 def _named(subject: str, name: str) -> list[lc.StateRecord]:

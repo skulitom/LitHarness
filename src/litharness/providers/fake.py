@@ -174,11 +174,6 @@ class FakeProvider:
     def set_responses(self, responses: list[ScriptedResponse]) -> None:
         self.responses = list(responses)
 
-    def append_responses(self, responses: list[ScriptedResponse]) -> None:
-        if self.responses is None:
-            self.responses = []
-        self.responses.extend(responses)
-
     def complete(self, request: CompletionRequest) -> CompletionResult:
         self.calls += 1
         if self.fail_with is not None:
