@@ -156,7 +156,9 @@ def vocabulary() -> dict[str, Any]:
             "type": (
                 "reifies a node; --value one of node_types, and only those. A change takes "
                 "--order-key for the scene it happens in (a scene key like s3), or none for "
-                "one already true when the book opens"
+                "one already true when the book opens. A change keyed at a scene that carries "
+                "a participant and a manifests_as line is a notice: that scene is asked to "
+                "print the line under the book's bracket, exactly once"
             ),
             "participant": (
                 "who a change happened to; the change (a subject of type change) is the "
@@ -174,7 +176,11 @@ def vocabulary() -> dict[str, Any]:
                 "a second-order effect of a rule; the rule is the subject, --object one of "
                 "consequence_domains, --value the consequence in plain words"
             ),
-            "manifests_as": "how it shows on the page; --value one line",
+            "manifests_as": (
+                "how it shows on the page; --value one line. On a change keyed at a scene "
+                "with a participant, the line the System prints where it happens, in its own "
+                "voice, under the label of the book's graph line"
+            ),
             "can_do": (
                 "a person holds a capability; --object the capability's id, and --value how "
                 "far they have taken it as a whole number. Leave the number off to say only "
@@ -284,13 +290,23 @@ def vocabulary() -> dict[str, Any]:
                 "declare exactly one or none: a "
                 "book that declares none, and a book that declares two, both print a generic "
                 "line written in nobody's vocabulary. A drawn system writes its own sheet "
-                "naming it under \"system\", and that sheet prints the system's grants as "
-                "they stand, so a grant declared after the seed is a column at once"
+                'naming it under "system", and that sheet prints the system\'s grants as '
+                "they stand, so a grant declared after the seed is a column at once. A sheet "
+                "naming a system may declare columns of its own beside the system's (a pool, "
+                "a currency, a class, an age): they print where declared, the system's "
+                "columns take the place of the first of theirs, and a snapshot that carries "
+                "the rung column is a position in the system whatever else it prints. An "
+                "owner's sheet is printed where a scene's plan names the owner: that scene "
+                "is asked to print the owner's line where the protagonist reads it"
             ),
             "status_snapshot": (
                 "where those columns stand; --value an object mapping each field name to "
                 "its number, or to what its kind asks for (an entity id for a name or an "
-                "ordinal, words for text, a list of [id, depth] for a set), and --order-key "
+                "ordinal, words for text, a list of [id, depth] for a set). A number column "
+                "never takes an id: the rung column of a drawn system takes the rung's place "
+                "in its ladder counted from one, and a grant held on the opening line is also "
+                "a can_do edge for the same person, because the line is the printed form and "
+                "the arithmetic reads the edges; accept refuses both mistakes. --order-key "
                 "zero-padded digits (0110, 0250) to "
                 "schedule a position the book reaches later. Leave the key off for the state "
                 "the book opens in, which `extraction.state_as_it_stands` then folds at every "
@@ -571,6 +587,83 @@ def would_breach(records: Sequence[lc.StateRecord]) -> list[str]:
     return sorted({f"{finding.rule_or_critic_id}: {finding.message}" for finding in findings})
 
 
+def snapshot_faults(records: Sequence[lc.StateRecord]) -> list[str]:
+    """What a declared status line says that the arithmetic cannot read (§213.1).
+
+    Pilot 25 draw 4's seed wrote a rung's id in the rank column (`rank: band_one`) and put
+    the stock's balance on the line with no `can_do` edge behind it; check and accept both
+    passed, and the chapter printed one unmoving line twice, because every reader of a
+    numeric column reads an integer (the moved-line example, the progression gate, the
+    counted names) and the arithmetic reads the edges (`gamesystem.sheet_of`). Two faults,
+    both previewed here over the proposals as accept would carry them and refused at
+    `world accept` where `world declare` can still fix them (§200's shape):
+
+    - a numeric column of the book's sheet holding a string, named with the number the rung
+      is when the string is a rung of a declared ladder;
+    - a held grant on the opening line (a positive number in a column that is a grant of a
+      declared system) with no un-keyed `can_do` edge for that subject, which is the edge
+      the opening sheet reads.
+
+    Nothing is minted and `ok` does not move; the list is its own key beside `would_breach`.
+    """
+    as_canon = [
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in extraction.readable(records)
+    ]
+    sheet = extraction.sheet_for(as_canon)
+    if sheet is None:
+        return []
+    numeric = {field_.name for field_ in sheet.fields if field_.numeric}
+    grants = {
+        ability_id
+        for system in gamesystem.systems_of(as_canon)
+        for ability_id in system.ability_ids
+    }
+    faults: set[str] = set()
+    for record in as_canon:
+        if record.predicate != extraction.STATUS_PREDICATE or not isinstance(record.value, Mapping):
+            continue
+        subject = record.subject
+        opening = state_mod.order_key_of(record) is None
+        for key, value in record.value.items():
+            if key not in numeric:
+                continue
+            if isinstance(value, str):
+                criterion = worlds.criterion_of_rung(as_canon, value)
+                chain = worlds.ladder_of(as_canon, criterion) if criterion else ()
+                place = (
+                    f"; the rung {value} is {chain.index(value) + 1} of {len(chain)}, and that "
+                    "number is what the column takes"
+                    if value in chain
+                    else ""
+                )
+                faults.add(
+                    f"{subject}'s status_snapshot puts {value!r} in the {key} column, which "
+                    f"takes a whole number{place}"
+                )
+                continue
+            if (
+                opening
+                and key in grants
+                and isinstance(value, int)
+                and not isinstance(value, bool)
+                and value > 0
+                and not any(
+                    other.predicate == worlds.CAN_DO
+                    and other.subject == subject
+                    and other.object_ref == key
+                    and state_mod.order_key_of(other) is None
+                    for other in as_canon
+                )
+            ):
+                faults.add(
+                    f"{subject}'s opening line says {key} {value} and the world holds no "
+                    f"can_do {key} for {subject} at the opening; the line is the printed form "
+                    "and the arithmetic reads the edges, so declare the edge"
+                )
+    return sorted(faults)
+
+
 def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     """What is wrong with this world by arithmetic, never by taste.
 
@@ -618,8 +711,13 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     `domain/schema_words.py` for this the same way it reads `validate` for that. The two lists
     are different questions and are kept as two.
     """
+    # **A sheet declaration the parser refuses is a complaint, and every reader below
+    # works on the records without it** (found by the fit census): before this, one such
+    # proposal took `check` and `accept` down with a traceback where a sentence was owed.
+    unreadable = extraction.unreadable_sheets(records)
+    records = [record for record in records if record.record_id not in unreadable]
     coverage = worlds.manifestation_coverage(records)
-    complaints = list(worlds.validate(records))
+    complaints = list(unreadable.values()) + list(worlds.validate(records))
     gaps: list[str] = []
     if not genre.has_starting_sheet(records):
         gaps.append(
@@ -671,6 +769,7 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
         "grown": grown,
         "would_not_finish": list(would_not_finish),
         "would_breach": would_breach(records),
+        "snapshot_faults": snapshot_faults(records),
         "machinery_names": list(schema_words.world_complaints(records)),
         "will_not_resolve": [
             warning for record in records for warning in worlds.slot_warnings(record)

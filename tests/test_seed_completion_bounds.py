@@ -164,3 +164,26 @@ def test_the_check_says_a_system_has_grown_and_complains_only_when_the_growth_is
         for complaint in report["complaints"]
     )
     assert not report["ok"]
+
+
+def test_the_check_previews_a_line_the_arithmetic_cannot_read_and_says_the_number() -> None:
+    """§213.1: a rung's id in the rank column is named with the number it is; a grant held on
+    the opening line with no edge behind it is named; a line with the number and the edge
+    is faultless."""
+    from litharness.domain import extraction
+
+    system = _system()
+    records = [_accepted(record) for record in gamesystem.records_for(system)]
+    named = worlds.world_record(
+        "kell", extraction.STATUS_PREDICATE, value={"rank": "r_first", "cap_read": 1}
+    )
+    report = world.check([*records, named])
+    faults = report["snapshot_faults"]
+    assert any("'r_first' in the rank column" in fault and "is 1 of 3" in fault for fault in faults)
+    assert any("no can_do cap_read for kell" in fault for fault in faults)
+    edge = worlds.world_record("kell", worlds.CAN_DO, object_ref="cap_read", value=1)
+    numbered = worlds.world_record(
+        "kell", extraction.STATUS_PREDICATE, value={"rank": 1, "cap_read": 1}
+    )
+    assert world.check([*records, numbered, edge])["snapshot_faults"] == []
+    assert world.check(records)["snapshot_faults"] == []

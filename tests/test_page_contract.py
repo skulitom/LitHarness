@@ -58,6 +58,7 @@ from litharness.domain.extraction import (
     system_voice_example,
 )
 from tests.conftest import FIXTURE_SHEET
+from tests.helpers import accepted
 
 
 def _snapshot(
@@ -525,7 +526,6 @@ def _weave_book(character: str = "silas") -> list[lc.StateRecord]:
     is what the render side does with a system, and reaching into the system's own test module
     for the fixture would let that subject move without these tests noticing.
     """
-    import dataclasses
 
     from litharness.domain import gamesystem as gs
 
@@ -556,7 +556,7 @@ def _weave_book(character: str = "silas") -> list[lc.StateRecord]:
     )
     sheet = gs.starting_sheet(system, character)
     return [
-        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        accepted(record)
         for record in (*gs.records_for(system), *gs.records_for_sheet(sheet))
     ]
 

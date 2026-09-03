@@ -35,6 +35,7 @@ import argparse
 import json
 import sys
 import tempfile
+from collections.abc import Sequence
 from pathlib import Path
 
 import litharness_contracts as lc
@@ -42,12 +43,12 @@ import litharness_contracts as lc
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.planner import packet_for
 from litharness.domain import state as state_mod
-from litharness.domain.beats import beats_for, template_for
+from litharness.domain.beats import Beat, beats_for, template_for
 from litharness.domain.context import FACTS, assemble, count_tokens
 from litharness.domain.extraction import has_story_vocabulary, stated_position
 from litharness.domain.findings import DetectorInput, Severity
 from litharness.domain.integrity import detect_contradictions
-from litharness.domain.revision import new_book
+from litharness.domain.revision import Revision, new_book
 from litharness.domain.state import import_state
 
 REPO = Path(__file__).resolve().parent.parent
@@ -145,7 +146,9 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def _report_packets(store, head, beats, seeded) -> int:
+def _report_packets(
+    store: SqliteStore, head: Revision, beats: Sequence[Beat], seeded: list[lc.StateRecord]
+) -> int:
     """Which interiority record reaches which scene — the two claims, as a grid."""
     print("\nwhat each scene's packet carries")
     print("-" * 78)
@@ -170,7 +173,13 @@ def _report_packets(store, head, beats, seeded) -> int:
     return failures
 
 
-def _report_before_and_after(store, head, beats, records, seeded) -> int:
+def _report_before_and_after(
+    store: SqliteStore,
+    head: Revision,
+    beats: Sequence[Beat],
+    records: list[lc.StateRecord],
+    seeded: list[lc.StateRecord],
+) -> int:
     """Scene 1's Established facts block with and without the cutoff.
 
     The "before" is not a reconstruction: it is `assemble` called the way `packet_for` called
@@ -209,7 +218,7 @@ def _report_before_and_after(store, head, beats, records, seeded) -> int:
     return len(leaked)
 
 
-def _report_contradictions(records) -> int:
+def _report_contradictions(records: list[lc.StateRecord]) -> int:
     """Several dated `wants` for one subject, against the detector that would block them."""
     findings = detect_contradictions(
         DetectorInput(
@@ -222,7 +231,7 @@ def _report_contradictions(records) -> int:
     blocking = [f for f in findings if f.severity in (Severity.MAJOR, Severity.CRITICAL)]
     print("\nthe contradiction detector over the whole seed")
     print("-" * 78)
-    groups = {}
+    groups: dict[tuple[str, str, str], list[str]] = {}
     for record in records:
         if not state_mod.is_canon(record):
             continue

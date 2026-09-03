@@ -669,6 +669,8 @@ def _scene_system(**conditionals: Any) -> str:
 #: inside `standing`'s, so their cost is measured over a base that already pays for the parent.
 _GAIN_LINE = "[ASSAY] Rook has learned Seamsight"
 _CHANGE_LINE = "[STATUS] Rook — Seal 2 | Windread 1"
+_NOTICE_LINE = "[ASSAY] The Assay has noticed you"
+_READOUT_LINE = "[STATUS] Dire Wolf — Level 24"
 
 _CONDITIONAL_ARMS: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
     "status_example": ({}, {"status_example": _STATUS_EXAMPLE}),
@@ -676,6 +678,8 @@ _CONDITIONAL_ARMS: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
     "offer_line": ({"status_example": _STATUS_EXAMPLE}, {"offer_line": _OFFER_LINE}),
     "gain_line": ({"status_example": _STATUS_EXAMPLE}, {"gain_line": _GAIN_LINE}),
     "change_line": ({"status_example": _STATUS_EXAMPLE}, {"change_line": _CHANGE_LINE}),
+    "notices": ({}, {"notices": (_NOTICE_LINE,)}),
+    "readouts": ({}, {"readouts": (_READOUT_LINE,)}),
     "exemplars": ({}, {"shelf": _SHELF}),
     "standing": ({}, {"standing": _STANDING}),
     "standing_line": ({"standing": _STANDING}, {"standing_line": _STANDING_LINE}),
@@ -705,6 +709,17 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
     # the line after a declared change where it lands on the person, and the line itself,
     # which is the book's own sheet rendered (`extraction.change_example`).
     "change_line": 2,
+    # **Joined 2026-09-03 at what is there** (§218): one sentence saying the book prints
+    # the System's line where a declared change lands on the person, and the line itself,
+    # which is the world's own words (`extraction.notice_lines`) under the book's own
+    # bracket. Measured with one line; a scene where several changes land costs one line
+    # each, which is what the market prints.
+    "notices": 2,
+    # **Joined 2026-09-03 at what is there** (§220): one sentence saying the book prints
+    # another owner's line where the scene's plan names them, and the line itself, which is
+    # the owner's own sheet rendered (`extraction.readout_lines`). Measured with one line; a
+    # scene naming several owners costs one line each.
+    "readouts": 2,
     # **Joined 2026-09-02 at what is there** (§196): the one sentence saying whose the shelf's
     # chapters are and that no name, place, thing or line of theirs may appear. The chapters
     # themselves are material in the prompt and are not demands.
@@ -753,7 +768,13 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
 #: book prints the line after a declared change where it lands on the person, and the line
 #: itself. Measured at 45 with every conditional present; the §208 gain line had landed under
 #: the slack this total carried, and this one does not.
-SCENE_MAXIMAL_BUDGET = 45
+#: **45 -> 47 on 2026-09-03 for the `notices` conditional** (§218): one sentence saying the
+#: book prints the System's line where a declared change lands on the person, and the line
+#: itself, measured with every conditional present and one notice.
+#: **47 -> 49 on 2026-09-03 for the `readouts` conditional** (§220): one sentence saying the
+#: book prints another owner's line where the plan names them, and the line itself, measured
+#: with every conditional present and one readout.
+SCENE_MAXIMAL_BUDGET = 49
 
 
 def test_the_scene_floor_row_is_what_the_planner_actually_assembles() -> None:
@@ -853,6 +874,8 @@ def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -
             shelf=_SHELF,
             gain_line=_GAIN_LINE,
             change_line=_CHANGE_LINE,
+            notices=(_NOTICE_LINE,),
+            readouts=(_READOUT_LINE,),
         )
     )
     assert len(counted) <= SCENE_MAXIMAL_BUDGET, (

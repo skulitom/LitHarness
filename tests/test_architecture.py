@@ -29,6 +29,12 @@ import pytest
 PACKAGE_ROOT = Path(__file__).parents[1] / "src" / "litharness"
 REPO_ROOT = Path(__file__).parents[1]
 
+#: The one page that says where each fact lives, which function reads it, and which test
+#: pins it (`docs/system-model.md`). It names symbols and tests in backticks exactly as the
+#: docstrings do, so it decays exactly as they do, and the two prose checks below read it
+#: beside the package: a map that names a function nobody has any more is worse than none.
+SYSTEM_MODEL = REPO_ROOT / "docs" / "system-model.md"
+
 #: The inward direction, and `application` is the row that carries the argument.
 #:
 #: It reaches persistence through `application/ports.py` and never imports `adapters`, and it
@@ -98,6 +104,25 @@ def _imports(path: Path, known_modules: set[str]) -> list[tuple[str, int]]:
     return found
 
 
+#: The seams `domain/extraction.py` (stage-0 §215) and `domain/gamesystem.py` (§216) were split
+#: along, as the arrows that may not point back. `extraction` re-exports every name the four
+#: modules below it define, so any of them importing `extraction` closes a cycle the moment it
+#: lands; `sheet` reads only `names`; `graphline` reads the sheet's refusal class and nothing
+#: above it; `moves` reads all three. `gamesystem` re-exports `systems` and `advancement` the
+#: same way, and all three sit under the five above, for the reason
+#: `tests/test_gamesystem.py::test_the_module_hands_out_columns_rather_than_sheet_fields` gives.
+_EXTRACTION_FAMILY = frozenset({"names", "sheet", "graphline", "moves", "extraction"})
+DOMAIN_SEAMS: dict[str, frozenset[str]] = {
+    "names": frozenset({"sheet", "graphline", "moves", "extraction", "gamesystem"}),
+    "sheet": frozenset({"graphline", "moves", "extraction"}),
+    "graphline": frozenset({"moves", "extraction"}),
+    "moves": frozenset({"extraction"}),
+    "systems": _EXTRACTION_FAMILY | {"advancement", "gamesystem"},
+    "advancement": _EXTRACTION_FAMILY | {"gamesystem"},
+    "gamesystem": _EXTRACTION_FAMILY,
+}
+
+
 def test_dependencies_only_point_outward_to_inward() -> None:
     modules = _modules()
     violations: list[str] = []
@@ -113,6 +138,23 @@ def test_dependencies_only_point_outward_to_inward() -> None:
                     f"{source}:{line} ({source_layer}) imports {target} ({target_layer})"
                 )
     assert not violations, "dependency boundary violations:\n" + "\n".join(violations)
+
+
+def test_the_extraction_seams_point_one_way() -> None:
+    """The cycle test would catch a back-arrow only once it closed a cycle; this names the
+    arrows before that, so a convenient `from litharness.domain.extraction import ...` inside
+    `sheet` or `moves` is refused with the seam it crosses rather than with a cycle report
+    that arrives one import later. The seams and their reasons are `DOMAIN_SEAMS`'s.
+    """
+    modules = _modules()
+    violations: list[str] = []
+    for source, forbidden in DOMAIN_SEAMS.items():
+        path = modules[f"litharness.domain.{source}"]
+        for target, line in _imports(path, set(modules)):
+            short = target.removeprefix("litharness.domain.")
+            if short in forbidden:
+                violations.append(f"domain/{source}.py:{line} imports {short}")
+    assert not violations, "a seam points the wrong way:\n" + "\n".join(violations)
 
 
 # --- the prose ------------------------------------------------------------------------
@@ -209,7 +251,7 @@ def test_every_symbol_the_prose_names_still_exists() -> None:
             )
     corpus = _repo_corpus()
     stale: list[str] = []
-    for path in sorted(PACKAGE_ROOT.rglob("*.py")):
+    for path in [*sorted(PACKAGE_ROOT.rglob("*.py")), SYSTEM_MODEL]:
         for name in sorted(set(_SYMBOLISH.findall(path.read_text(encoding="utf-8")))):
             head, tail = name.split(".")[0], name.split(".")[-1]
             if "_" not in name and "." not in name and not name[0].isupper():
@@ -217,7 +259,7 @@ def test_every_symbol_the_prose_names_still_exists() -> None:
             if head in contract_names or tail in contract_names or name in PROSE_ALLOWED:
                 continue
             if not re.search(rf"\b{re.escape(tail)}\b", corpus):
-                stale.append(f"{path.relative_to(PACKAGE_ROOT).as_posix()}: `{name}`")
+                stale.append(f"{path.relative_to(REPO_ROOT).as_posix()}: `{name}`")
     assert not stale, (
         "prose names symbols that no longer exist:\n"
         + "\n".join(stale)
@@ -230,13 +272,19 @@ def test_every_test_cited_as_evidence_exists() -> None:
     for every Stage 0 exit criterion. A citation that no longer resolves is a claim with its
     evidence removed, and it looks exactly like a claim with evidence.
 
-    Checked over `src/` and `plan/stage-0-decisions.md`, the two places that cite *this*
-    repo's tests. `PLAN.md` and the other companion docs also discuss siblings' suites, which
-    this repo cannot resolve and should not pretend to.
+    Checked over `src/`, `plan/stage-0-decisions.md` and `docs/system-model.md`, the three
+    places that cite *this* repo's tests; the map's whole purpose is to say which test pins
+    a fact, so a name there that resolves to nothing is the map lying. `PLAN.md` and the
+    other companion docs also discuss siblings' suites, which this repo cannot resolve and
+    should not pretend to.
     """
     tests_dir = REPO_ROOT / "tests"
     suite = "\n".join(path.read_text(encoding="utf-8") for path in tests_dir.rglob("*.py"))
-    sources = [*PACKAGE_ROOT.rglob("*.py"), REPO_ROOT / "plan" / "stage-0-decisions.md"]
+    sources = [
+        *PACKAGE_ROOT.rglob("*.py"),
+        REPO_ROOT / "plan" / "stage-0-decisions.md",
+        SYSTEM_MODEL,
+    ]
     stale: list[str] = []
     for path in sources:
         text = path.read_text(encoding="utf-8")

@@ -23093,3 +23093,592 @@ replay: no complaints, no growth, no gaps.
 
 **Correction in place** to §211 above. **Refused:** re-minting the digest at acceptance, for
 §211's reason (two canon values at one slot, no retraction).
+
+## 213. What a chapter prints under the general system: pilot 25 draw 4 took up every new shape at the seed and printed one unmoving line twice, because the seed wrote a rung's id where the line wanted its number
+
+**What was drawn** (`runs/ab/pilot25/draw4`, the operator's ask of 2026-09-03: *show me what
+a chapter prints under the general system*). The settled pilot 25 concept and listing, writer
+tanaka, the third person, three exemplars, the pipeline at 8a7df4a (§203 to §212.1), a fresh
+store, the tick cap at eight. One draw is one description; nothing here is a treatment.
+
+**What the seed declared, read off the store.** Two systems, as the concept names: the
+Invigilation, a ten-band ladder with eight grants, every grant priced in a stock the rungs
+hand out (*Marks*, four a band), a fork at band two with three ways; the Board, five seats,
+a stock of *Answers* two a seat, three priced grants. The sheet names its system and follows
+it. Five `type change` nodes with participants and effects: a coat that grants Reading, a
+withdrawal that takes it from another candidate, gloves, a pen, a seat on the Board. Every
+shape phase 3 and phase 4 built was used by the Architect on the first seed that could
+declare it, unprompted beyond the vocabulary and one seed sentence each.
+
+**What the chapter printed.** Two scenes, 977 and 948 words, each printing one status line:
+`[STATUS] Tom — Band band_one | Marks 2 | Reading 1`. Nothing moved in either. Scene 1's
+beat named *Two* (the rise, the only move the arithmetic offered), and the progression gate
+abstained: *the line standing at s1 prints no rank column*. The reason is one value in the
+seed's opening snapshot: `rank: band_one`, a rung's id where the rank column is a number.
+Every reader of that column reads an integer (the moved-line example, the gate, the counted
+names), so the rise's ask, example and check all abstained at once, and the writer was
+handed the entering line and copied it, twice; the id itself reached the page inside the
+line.
+
+**Three seed-side gaps, all visible before a word was drafted, none of them the writer's.**
+
+1. **The rung's id in the rank column.** The vocabulary's `status_snapshot` line asks for
+   *its number*; the Architect wrote the id it had just declared. Nothing checked the value
+   against the column's kind before acceptance. Fix: `world check` previews and `world
+   accept` refuses a canon snapshot whose numeric column holds a string, naming the number
+   the rung is (§200's shape: the check says, the accept refuses, the seed is told).
+2. **The stock's balance in the snapshot only.** The line says *Marks 2*; no `can_do marks`
+   edge was declared, so the sheet the arithmetic reads holds no marks, every priced grant
+   is unaffordable, and the beat can name nothing but the rise until the first rise credits
+   four. The snapshot is the printed form and the edges are what the world knows (`sheet_of`,
+   §160); a seed that states a holding on the line and not in the world has said two
+   things. Fix: the same check and refusal for a held numeric column in the opening
+   snapshot with no `can_do` edge behind it for a grant of the sheet's system.
+3. **Changes in the scheduled key space.** The five changes sit at `0100` to `0600`, the
+   snapshots the Architect scheduled sit at `0300` and `0400`, and by §165 a scheduled record
+   never folds into a scene; so the change line never fired and never will in this book.
+   The vocabulary line for `type` says a scene key; the Architect wrote the schedule space
+   it uses for everything else at the seed. Not fixed here: whether a scheduled change
+   should land in the scene whose ordinal it names is §165's question, and it is answered
+   by the book's plan and not by a key conversion.
+
+**What shipped.** Nothing in this entry; it is the reading. The two refusals above are
+§213.1's, landed after the arm finished so the tree did not change under a running arm
+(the harness records the tree at start and finish; it was 8a7df4a throughout).
+
+**Anti-scope.** Whether the chapter reads as its genre is the operator's read (read 20 is
+still outstanding on draw 3, and this draw is not a substitute for it); nothing here
+measures prose. The writer did what it was handed: the line it was shown, once per scene.
+
+### 213.1 The check previews and accept refuses a status line the arithmetic cannot read: a rung's id in a numeric column, and a held grant on the opening line with no edge behind it
+
+**What shipped** (`application/world.py`, `cli.py`). `world.snapshot_faults` reads every
+declared `status_snapshot` against the book's sheet as accept would carry it: a numeric column
+holding a string is a fault, named with the number the rung is when the string is a rung of a
+declared ladder (*'band_one' in the rank column, which takes a whole number; the rung band_one
+is 1 of 10*); a positive number on the opening line in a column that is a grant of a declared
+system, with no un-keyed `can_do` edge for that person, is a fault naming the edge to declare.
+`world check` carries the list under `snapshot_faults` and `world accept` refuses on it beside
+§200's breaches, with the same `--force`. The `status_snapshot` vocabulary line now says a
+number column never takes an id, that the rung column takes the rung's place counted from
+one, and that a grant held on the opening line is also a `can_do` edge. Run over draw 4's
+store the preview names exactly the two faults §213 read off the page. Test:
+`tests/test_seed_completion_bounds.py`, the id named with its number, the missing edge named,
+a line with the number and the edge faultless. Every stored book that was accepted before
+this still reads as it did; the refusal is at acceptance and nothing already canon is
+re-read by it.
+
+**What was refused.** Translating the id into its number at acceptance: a deterministic
+rewrite of the Architect's declaration by the machine, which is the two-writers hazard the
+`world accept` completion was built to avoid (§165.2). Minting the `can_do` edge from the
+line: the line is the printed form and the edges are what the world knows (§160), and a
+derivation in that direction is the one `sheet_of` refuses. Folding a scheduled change into
+the scene whose ordinal it names: §165's question, unchanged, and the third gap of §213
+stays open with its reason.
+
+**Anti-scope.** Nothing here measures prose; the redraw that follows is read for what it
+prints, on §213's terms, and is not a substitute for the operator's read 20.
+
+## 214. The pruning inventory found two dead scripts in a hundred and one, nine names nothing calls and two briefs already home, and the rest of what looked dead is in use
+
+**Measured first** (`plan/pruning-inventory.md`, on `2142d0f`, no model; the tally is the
+inventory's and is not restated elsewhere). Every module-level name under `src/litharness/`
+against every `.py` and `.md` in the tree: nine names with no reference but their own
+definition line (a type alias, two store methods, a property, a lease method, an alias, two
+text helpers, a fake-provider method). The brief's four named candidates all in use:
+`application/variation.py` already cut in `530f40e` with §105.5 as its null; the reviser
+reachable under `--revise` by §196's decision, with one docstring still describing the
+pre-§196 wiring; the six detector ids carried into the optional pack's live bundle and pinned
+by `tests/test_continuity_evaluator.py`; three change-role readers reading three facts
+(`characters`, `salience`, `gamesystem.changes_of`). Every script under `tools/` and
+`research/quality-measurement/` against the runbooks, the findings, the ledger, the tests and
+the research import graph: two of a hundred and one that nothing runs, reads or cites —
+`tools/variation_repair_comparison.py`, which imports the two modules `530f40e` deleted and
+cannot run, and `research/quality-measurement/blurb_defects.py`, run once on 2026-08-26
+(`results/blurb-defects.json`) and never cited. Three older handoffs against the ledger: two
+with every row at home (§140 to §143; §146 and §151) and one that owns a table nothing else
+records. One helper written eleven times under six names, and the homonyms beside it distinct
+fixtures. Two restated counts, one already drifted from the home that the same sentence named
+as canonical. Twenty-five local branches on `main` by patch identity, two holding a patch,
+three worktrees stale — reported, not touched.
+
+**What shipped**, one commit per cut, each after the suite, ruff, mypy, `git diff --check` and
+`tools/replay_books.py` (`2142d0f`, the replay the generality track ran by hand, as a script:
+a read-only copy through the backup API, `known` rebuilt as the records that preceded each
+scene's accepting revision, record ids then fields, and the derived lines at every scene
+position for `--baseline`; the four stored books 8/8 identical before and after every cut, no
+derived line moved). Cut 1: the two counts struck in place in `PLAN.md`. Cut 2:
+`handoff-reader-perception.md` and `handoff-writer-recruiter.md` deleted, ten pointers
+repointed to §143.2, §146 and `plan/writer-roster.md` §5. Cut 3: `tests/helpers.py` holding
+`accepted`, `accepted_all` and `canon`, every local name kept so no call site or cited test
+name moved. Cut 4, this entry's commit: the two scripts deleted; the result file of the
+counter's one run stays as the record of it. Cut 5 follows: the nine names and the stale
+docstring, which is not behaviour and gets no entry. The inventory and the replay script stay
+as the track's deliverables.
+
+**What was refused, and why.** `handoff-listing-loop.md`: its eleven-round listing table has
+no other home and `domain/voice.py` cites the file for it. `blurb_perception.py`,
+`idiom_fit.py`, `number_context_run.py`, `register_census_run.py`, and the registered blurb,
+brief-capability, causal-salience and voice-descriptor arms: each is named by an entry, a
+registration or a results file as the instrument behind a number, and a refuted arm's code is
+not deleted for being refuted (the brief's own rule; archival waits on a FINDINGS.md that
+records the refutation where the code lives). `schedule-library.ps1`, the two census tools and
+the two pilot scripts: cited and runnable. The dated test totals in PLAN.md §17 and §20 and
+the sibling repositories' counts: records of a date, not claims. The `_system`, `_record` and
+`_canon` homonyms: different fixtures, and `tests/test_gamesystem.py` says why one is not
+shared. Worktrees and branches: a session may be sitting in one, so the list is the operator's
+(`claude/ox-alpha-trial-7f3a21` and `origin/claude/adoring-chatterjee-b5f092` each hold one
+unmerged patch).
+
+**Anti-scope.** No prompt, gate, line or stored book changed, and the replay is the proof. No
+research claim is promoted or demoted; a result file that lost its writer keeps its digest and
+its date. Nothing here measures prose.
+
+### 214.1 The track closed: five cuts, the brief deleted, and the checks on the final tree
+
+**The commits**, on `claude/intelligent-feynman-119bfa`: `2142d0f` the replay script;
+`fdd5ee3` the inventory; `2f61d4c` cut 1; `05ef950` cut 2; `fb0c58c` cut 3; `64d0b9b` the
+merge of `main` (§213) that put this entry after it; `a4fb566` cut 4 (§214); `7a0df15` cut 5;
+and the commit carrying this sub-entry, which deletes `plan/handoff-pruning.md`.
+
+**The checks on the final tree.** `uv run pytest`: 3748 passed, 20 skipped in 175.02s (0:02:55). `uv run mypy`: no issues.
+`uv run ruff check .`: clean. `git diff --check`: clean. `tools/replay_books.py --baseline`
+against the baseline taken at `2142d0f`: 8/8 identical, no derived line moved. Every cut
+commit carried the same checks at module grain and the replay at book grain.
+
+**Two things the checks caught on the way, recorded so the next session does not pay for
+them.** Formatting an explicit list of test files that were not format-clean reflowed six of
+them well beyond the edit (§205's lesson again, one step removed); cut 3 was redone from
+`HEAD` with import sorting only. A regex that removed a method by name ran past the end of
+its class when the method was the last one, into the next class's header; ruff caught it
+before any test ran, and the block was removed by exact text instead.
+
+**Anti-scope.** Nothing in this sub-entry is a new decision; it closes §214.
+
+## 215. `extraction.py` held five subjects in one file, and four of them moved out byte for byte behind re-exports
+
+**Measured first** (`plan/maintainability-survey.md`, 2026-09-03, taken at d88114b; the tables
+are regenerated by `tools/maintainability_survey.py` and this entry restates only what it
+acted on). `domain/extraction.py` was the second-largest module in the package, with no
+section markers, nine public names defined after its `__all__` and never added to it, and
+five subjects appended in the order the generality track needed them: the sheet and its
+declaration readers, the graph line's declaration, the writer-facing example lines, subjects
+and positions, extraction proper, then the snapshot fold and the move vocabulary. Coupling by
+private helper (`sections --coupling`): three helpers were used across subjects (`_canon_of`
+from three, `_folds_into` from two, `_status_lines` from one) and every other private name
+stayed with its own. Two tests reach a private reader through the module
+(`extraction._printing_system`, `extraction._named_moves`) and one cites
+`extraction._already_canon` in prose.
+
+**What shipped.** Four modules below `extraction`, one subject each, in the dependency order
+`names` → `sheet` → `graphline` → `moves` → `extraction`, with `gamesystem` below all five:
+
+- `domain/names.py`: `normalise_subject`, `humanise_subject`, `display_name` (§169).
+- `domain/sheet.py`: `Sheet`, `SheetField`, `MalformedSheet`, the declaration readers
+  (`sheet_for`, `parse_sheet`, `implied_sheet`, `sheet_from_line`, `sheet_from_value`,
+  `declaration_from_snapshots`), the snapshot fold (`snapshot_at`, `state_as_it_stands`), the
+  printed line (`render_status_line`, `system_voice_example`), `speaks_system_voice`,
+  `impossible_fields`, `label_for`, and the three predicates the sheet is declared and
+  written under.
+- `domain/graphline.py`: `GraphLine`, `GraphEdge`, `MalformedGraphLine`, `parse_graph_line`,
+  `graph_line_for`, `graph_line_fault`, the tag bounds, `GRAPH_REGISTRY_VERSION`.
+- `domain/moves.py`: `Movable`, `movables`, `movable_names`, `moved_values`, `moved_to`,
+  `counted_names`, `offered_choice`, `offered_line`, and the example lines
+  (`progression_target`, `standing_target`, `standing_example`, `change_example`,
+  `gain_example`).
+
+`extraction.py` keeps what mints a record from prose (`extract_state`, `extract_graph_facts`,
+`promotions`, `record_id_for`, `graph_record_id_for`), the position readers
+(`attested_position`, `stated_position`, `has_story_vocabulary`, the registry versions) and
+`CONFIGURATION_PREDICATES`, and re-exports every name the four modules define, the two private
+readers the tests reach included, so no import anywhere in `src/`, `tests/`, `tools/` or
+`research/` changed. Its `__all__` now lists the nine public names that had been left out.
+The module docstrings of the four new modules are new text; every moved definition kept its
+docstring whole.
+
+**Byte identity, and how it was checked.** A script compared every top-level definition's
+source segment, decorators included, between d88114b and the split: 82 definitions, 79
+identical to the byte, 3 differing in one docstring sentence each where "this module" would
+have named the wrong module after the move (`sheet_from_value`, `snapshot_at`,
+`counted_names`), plus the same one-line correction in two `#:` blocks
+(`GRAPH_REGISTRY_VERSION`, `OWN_POSITION_VERSIONS`); no code differed. The four stored books
+replayed identically before and after (`tools/replay_books.py` at 2142d0f, run with `--out`
+before and `--baseline` after: eight of eight scenes, every derived line, "nothing moved").
+The prompt-budget rows (`tests/test_prompt_budget.py`) and the golden fixtures are unchanged;
+full suite, `ruff check`, `mypy` and `git diff --check` green at the split's commit, on the
+branch rebased onto main at 8bd290b.
+
+**A cost, recorded against this track.** The rerun of the full suite for this entry was
+launched on the strength of two hand-over messages without re-reading the process list at
+the moment of launch, and ran beside a paid arm whose guard had started it a minute earlier
+(`tools/ab_redraw.py`, pilot 25 draw 5). The arm's health probe failed before its first paid
+call, so the cost was four minutes and a relaunch on a fresh store, at no spend. `CLAUDE.md` already says
+the transport fails under box load rather than under its own concurrency; the rule this adds
+for a session is that the check is the process list itself, read immediately before the
+launch, never a message that the box is free.
+
+**What was pinned.** `tests/test_architecture.py::test_the_extraction_seams_point_one_way`
+refuses an arrow from any of the five modules to one above it and from `gamesystem` to any of
+them; `tools/check.py` maps each new module to the test modules that read it, so a touch of
+`sheet.py` runs `tests/test_extraction.py` and its neighbours rather than falling to the quick
+lane (`tests/test_check_tool.py::test_a_split_seam_module_maps_to_the_tests_that_read_it`);
+`docs/system-model.md` names the new homes.
+
+**What was refused.** Renaming any name, public or private: a vocabulary predicate reaches
+stored books and Architect prompts, and a private one is reached by tests. Shortening a
+docstring. Making `extraction` a bare facade: it is still the home of the one thing that
+mints a record from prose, and the module docstring's argument stays with it. Re-exporting
+through a module `__getattr__` (untyped at every call site) or a bottom-of-file import (a
+cycle the architecture test refuses).
+
+**Anti-scope.** No prompt string, gate verdict, rendered line or stored book changed, and
+nothing here is a quality claim. `gamesystem.py` is the survey's other candidate; §7b of the
+survey records why its split needs the old module to become the top of its own chain and is
+taken as its own slice.
+
+## 216. `gamesystem.py` was one hub with eight marked sections, and it split into the definition, the arithmetic and the readers with the old module kept as the reader and the import site
+
+**Measured first** (`plan/maintainability-survey.md` §7b, `sections --matrix` on the file at
+d88114b). The module's eight `# ---` sections referenced each other along one axis: every later
+section named the definition (the reading section thirteen times, advancing ten), and the
+definition named one drawing helper back (`SystemDef` uses `_option_material`), so the
+definition and the draw check could not be parted. Advancing needed one name from writing
+(`_snapshot_record`); reading needed `records_for` and `check_draw`; advancing and reading
+named nothing of each other. Three tests read the module as a module rather than through a
+name: two walk `gamesystem.__all__` for banned words, one reads the file for an `extraction`
+import, and one reads `inspect.getsource` for a `def best` and its kin. The old module could
+not stay the bottom of its own chain and also re-export the modules above it without an
+import cycle, so the split had to leave `gamesystem` at the top.
+
+**What shipped.** Three modules, in the dependency order `systems` → `advancement` →
+`gamesystem`, all three below the five of §215:
+
+- `domain/systems.py`: the vocabulary and draw bounds, `SystemDef` and its parts, one position
+  in it (`CharacterSheet`, `Move`, `Change`, `Furniture`, `Advancement`), the draw check and
+  `starting_sheet`, and writing it down (`records_for`, `records_for_sheet`).
+- `domain/advancement.py`: `legal_moves`, `offered_options`, `pending_choices`, `offer_line`,
+  and the four moves through `advance`.
+- `domain/gamesystem.py`: its module docstring with a layout paragraph, reading it back
+  (`systems_of`, `sheet_of`, `changes_of`, `growth`, `unfinished_systems`,
+  `completion_records`, `drawn_digests`, `drawn_grants`) and a re-export of every name the
+  other two define, so `gamesystem.legal_moves` is still where every caller reads it. Its
+  `__all__` gains the two public names that had been left out (`LABEL_CHARS`,
+  `offered_options`).
+
+Each new module's imports were computed from the names its code references rather than
+written by hand, and lint confirmed nothing undefined and nothing unused.
+
+**Byte identity, and how it was checked.** The same comparison as §215, definition by
+definition against the file at the parent commit: 72 definitions, 72 identical to the byte,
+no docstring edited. The four stored books replayed identically (`tools/replay_books.py`,
+`--baseline` against the report taken before §215: eight of eight scenes, every derived line,
+nothing moved). The prompt-budget rows and the golden fixtures are unchanged; full suite,
+`ruff check`, `mypy` and `git diff --check` green at the commit that carries this entry.
+
+**What was pinned.** `tests/test_architecture.py::test_the_extraction_seams_point_one_way` now
+carries the two new modules in `DOMAIN_SEAMS`, so neither may import the extraction family and
+neither `systems` nor `advancement` may import a module above it;
+`tests/test_choice_points.py::test_nothing_in_this_module_ranks_an_option` reads the source of
+all three modules rather than the hub's alone, so the promise it makes did not shrink with the
+file; `tools/check.py` maps both new modules to the tests that read them; the map names the
+new homes.
+
+**What was refused.** A bare facade named `gamesystem` with the readers moved out under a
+fourth name: the readers are the module's top subject and the name callers already use, so it
+keeps them. Renaming anything. Moving `_snapshot_record` into `advancement` to make writing
+independent of it: it is one of three families `records_for_sheet` writes as one fact (its
+docstring's argument), and the arrow from `advancement` down to `systems` costs nothing.
+
+**Anti-scope.** No behaviour, prompt string, gate verdict, rendered line or stored book changed.
+The survey names no further split candidate under this brief: `cli.py` is one handler per
+subcommand, `worlds.py`'s sections reference the vocabulary and little else, and
+`planner.py` is one subject.
+
+### 216.1 Close the maintainability track: the brief is deleted, and where each of its results lives
+
+`plan/handoff-maintainability.md` asked for a survey, a map, splits with re-exports, one home
+for the test helpers, type coverage outside `src/`, a slow lane, and pointers on stale
+citations, and said it would be deleted in the last commit with its results pointed at from
+here. This sub-entry is that pointer; nothing in it is a new decision.
+
+- **The survey** is `plan/maintainability-survey.md`, regenerated table by table from
+  `tools/maintainability_survey.py`; its two box-window measurements (§3a, §7c) were taken on
+  2026-09-03 and say so.
+- **The map** is `docs/system-model.md`, read by both prose checks in
+  `tests/test_architecture.py` so a symbol or test it names cannot stop existing in silence.
+- **The splits** are §215 (`extraction` into `names`, `sheet`, `graphline`, `moves`) and §216
+  (`gamesystem` into `systems`, `advancement`, with the readers kept), each with its byte
+  check and its replay result in the entry.
+- **The test helpers** were consolidated by the pruning track (§214), not here; the survey's §6
+  records that most of the brief's "duplicates" were homonyms and names the one real family.
+- **Type coverage.** `tools/` joined `[tool.mypy] files` after fifteen errors in four scripts
+  were fixed with annotations and `Optional` narrowing that change no behaviour; the research
+  scripts were measured (seventy-five errors in twenty-four of eighty-two files, most of them
+  registered arms) and refused, with the per-file table in the survey's §7c.
+- **The slow lane** already existed: every test over two seconds carries `intensive`, and
+  `tools/check.py quick` is the lane; both lane durations are in the survey's §3a, and no
+  second marker was added.
+- **Stale citations.** Fifty sites were read; six pointed at the wrong entry and were corrected
+  in the citing docstrings, one line each (survey §5), with the ledger untouched. The survey
+  also records that six ledger entries repeat a §120 attribution whose measurement §135 item 3
+  holds, which is the ledger's to correct in place and is left to the operator.
+
+**Refused, and left for whoever picks it up.** The twenty-seven numeric constants with no
+reason beside them (survey §4): a reason would have been this track's guess. A `slow` marker
+beside `intensive`. Any rename. Typing the research scripts.
+
+**Final checks** at the closing commit: full suite, `ruff check .`, `uv run mypy` (now over
+`src` and `tools`), `git diff --check`, and `tools/replay_books.py` against the baseline taken
+before §215 ran: identical.
+
+## 217. The fit census: declared shape by shape, the house expresses seven in ten of the market's furniture features and three of sixty whole stories, and the gaps rank with the System's own voice first
+
+**What it answers.** The operator's question of 2026-09-03 (`plan/system-generality.md` §1):
+*will our system be able to fit any possible LitRPG story out there, and any future potential
+LitRPG?* The generality track closed its five phases against this house's own defects (§202
+to §212.1); this census measures the vocabulary against the market's furniture, by declaring
+rather than by arguing, and names every gap by the share of stories it blocks
+(`plan/handoff-market-fit.md`, which the last slice of this track deletes).
+
+**Measured first** (`research/quality-measurement/system-fit/`: `PREREG.md`, `sample.py`,
+`sample.json`, `shapes.jsonl`, `census.py`, `census.json`, `FINDINGS.md`; no model). One
+pass over the cached LitRPG shards (14,156 chapters, 608 stories, 301 that print a window),
+sixty of the window-printing stories drawn by seed, each story's furniture read by one reader
+into a shape in the house vocabulary (fields of kinds on owners, moves, displays, rules; labels
+only from the eighty the displays census already publishes, nothing quoted), the four shelf
+anchors beside them; every shape translated by clauses fixed before the sample was read into
+a `world declare` sequence, run through `world check` and `world accept` on a fresh store (a
+second round where growth needs one), every owner's line rendered, and the outcome read off
+the store's own sentences. **Three of the sixty market shapes declare cleanly, four with a
+workaround, fifty-three carry a feature nothing declares**; feature by feature, 844 of 1,224
+are clean (69 percent), 144 a workaround, 78 refused, 158 missing. The gaps by share of the
+sixty: a notice for anything but a gain or a rise (the System speaking, a welcome, a warning,
+a quest given, a title, a zone) 49 of 60; a plain column beside a system's grants (a pool, a
+currency, a class, an age on the same line) 30, every shape that took the system route; a
+quest card 27; another subject's sheet read where the protagonist reads it 23 (§209's owed
+readout); a menu, a store, a board 21; a rise by accumulation 19; a percent 18 (a
+workaround); a skill list with no prerequisite among its members 16 (refused: *a list rather
+than a graph*); a window wider than the nine columns the line prints 15 (a quarter of the
+shapes); more than eight grants 15 (two rounds); a paragraph on a screen 15; a list whose
+members carry a rank or a second number 13; grants held with no depth anywhere 13 (refused:
+*declares no depth*); an item's box 11; a derived figure 10; a class, title, race or item that
+moves a number 9; fewer than five grants 9; a pool's refill 8. The store refused every one of
+the thirty system shapes before its mixed-columns branch, so that count is the clause's and
+the store's sentence for it was read on the probe, not in the sample (FINDINGS says so in
+place). The four anchors: every one not expressible, three on the System's own voice, one on
+a party screen, and the widest on twelve gaps at once.
+
+**What shipped.** The census and its files, the reader's three amendments recorded in the
+registration before any declaration ran (a tier with a number after it as two fields, a
+decimal as text, a choice screen whose option count is never shown as two ways), and three
+defects the declaring found in the house, each fixed and replayed identical on the four
+stored books with `tools/replay_books.py --baseline` (8/8, nothing moved):
+`genre.system_gap` counted an owner's sheet (§206) as a second book sheet and told the book
+to retract one (`test_an_owner_s_sheet_is_not_a_second_book_sheet_for_the_system_gap`);
+after §211 the floor compared a snapshot's keys to a grown system's exactly and blocked the
+book at the first grant declared after the seed, while the following sheet printed `?` for
+every grown column (`test_a_snapshot_lacking_a_grant_declared_since_the_seed_is_still_a_position`,
+`test_a_sheet_following_its_system_hides_a_column_the_snapshot_never_held`); and a
+`status_sheet` declaration the parser refuses took `world accept` down with a traceback
+through §213.1's preview and the floor, where `declare` now says it cannot be read, `check`
+lists it as a complaint over the readable records, and `accept` refuses it without `--force`
+(`test_an_unreadable_sheet_is_a_complaint_and_a_refusal_never_a_traceback`,
+`test_unreadable_sheets_names_the_declaration_the_parser_refuses_and_readable_drops_it`).
+
+**What was refused.** A bar of any kind: the shares are a distribution and the four
+attainability checks were not run because nothing here is a bar. A model reading the dumps:
+one reader, named as the caveat it is. A translator that invents what the furniture does not
+show (a prerequisite to get a flat list past completion, a depth to mint a scale, a fifth
+grant): the census declares what the story prints and the store answers; the drawn profile's
+rules (five to eight grants, a graph not a list, a depth somewhere) block the system route in
+every shape that took it, and whether a *declared* system may be a list, held-or-not or three
+grants wide is a decision for its own entry, not one this census makes. Any change to how the
+corpus is used: shapes crossed to the census, no text did, and the dumps stay outside the
+tree.
+
+**Anti-scope.** Nothing here measures prose; whether a declared shape produces a chapter that
+reads as its genre is the shelf's question and the operator's read. The slices follow in rank
+order, the notice first, each with its own entry and its own replay.
+
+
+## 218. The System's own voice, the first fit slice: a change keyed at a scene with a participant and a line is printed by that scene under the book's bracket, after the census found a notice for something other than a gain or a rise in four market stories of five
+
+**Measured first** (§217, `research/quality-measurement/system-fit/FINDINGS.md`). Forty-nine
+of the sixty sampled market stories print a bracketed line for something other than a gain
+or a rise: the System speaking, a welcome, a warning, a quest given, a title, a zone entered,
+a kill log, a timer; three of the four shelf anchors do the same. This house printed a line
+for a gain (§208) and a line for a rise (§113) and nothing else. The declared shape already
+existed: a `change` node with a `manifests_as` line, which §212 found in eight stores as
+story beats with no role, written by the Architect from the vocabulary alone. What was
+missing was the ask.
+
+**What shipped** (`domain/extraction.py`, `application/planner.py`, `application/world.py`).
+`extraction.notice_lines(records, character=, at=)`: every canon `change` keyed at the scene
+being drafted (a scene key; a scheduled key never lands, §165), carrying a `participant` edge
+to the person and a `manifests_as` line, rendered as the line under the label of the book's
+graph line, in id order; `()` for a book with no graph line (its System is quiet, §208's
+rule), for another scene or another person, and for a change with no participant or no line.
+`render_prompt` takes `notices` and prints them under one sentence (*Where the world says
+this to them, the book prints this line, exactly once, and they read it on the page*),
+outside the status branch, since a numberless book with a ladder still has a System that
+speaks; the planner passes the lines at every scene. The vocabulary's `type` and
+`manifests_as` lines say that a change keyed at a scene with a participant and a line is a
+notice the scene is asked to print. Budget: the conditional row `notices` at 2 (measured with
+one line; a scene where several changes land costs one line each, which is what the market
+prints) and the maximal scene prompt 45 to 47, with the reasons where the numbers live.
+Tests: `test_the_notice_for_a_declared_change_is_asked_for_in_the_scene_it_lands_in`,
+`test_the_prompt_prints_the_system_s_line_where_the_world_speaks` (`tests/test_planner.py`),
+and the rows in `tests/test_prompt_budget.py`. Replay over the four stored books against
+main's baseline: identical (8/8), and every prompt on disk is what it was, since no stored
+change carries a participant.
+
+**What this does not do.** No gate checks that the scene printed the line (§212's rule: not
+ahead of an observation). Nothing reads the line back: the change is canon already and the
+line is furniture the reader watches. A quest card (§217's third gap) is announced as a
+notice and its counters are paired columns; a card of its own waits for a book that needs
+it. A change nobody is a participant in prints nothing: in this house a line is read by
+somebody on the page, and the participant is who.
+
+**What was refused.** A notice module, or a closed list of event kinds (welcome, warning,
+zone, quest): the kinds are the book's own words on a change, and a list would be the next
+book's wall (§205's lesson). A default bracket or a default phrase: none; a book that
+declares no graph line prints no notice. Printing the stored books' role-less changes: those
+are story beats in prose and were never furniture. A second bracket tag for the System's
+voice: the graph line's label is the book's one bracket, and a second would be the sheet's
+mistake again (§207).
+
+**Anti-scope.** Whether a book whose System speaks reads as its genre is the shelf's question
+and the operator's read; nothing here measures prose. The next slice is §217's second gap,
+plain columns beside a system's grants.
+
+
+## 219. Plain columns beside a system's grants, the second fit slice: a snapshot that carries the rung is a position in its system whatever else it prints, so a pool, a currency, a class or an age may share the line with the grants
+
+**Measured first** (§217, `research/quality-measurement/system-fit/FINDINGS.md`). Every one
+of the thirty sampled market stories that declares a system prints something else on the
+same line as its grants: a paired pool (health, mana, stamina), a currency, a class or a
+race, an age, an experience counter. The floor (`genre._is_position_in`) compared a
+snapshot's keys with the system's columns exactly (§160's ratchet, read with §197.2's
+ceilings stripped), and `world accept` left such a system unfinished on purpose rather than
+block the book (§165.2): the book drafted under its plain sheet and no beat spoke its system.
+The probe that fixed the census's clause reproduced the sentence on a sheet of a level, a
+paired pool, a currency and five grants; in the sample itself the store refused every system
+shape on an earlier clause first (a flat list, held-or-not grants), so this gap's count of
+thirty is the clause's, and the slice is measured on the probe's shape, now a test.
+
+**What shipped** (`domain/genre.py`, `domain/extraction.py`, `application/world.py`).
+`_is_position_in`: a canon snapshot carrying the rung column is a position in the system; a
+grant it lacks stands at nothing (§211) and a column the system does not have is the book's
+own. `_following`: a sheet naming its system keeps every declared field that is not the
+system's, with its kind and its place, and the system's columns in the system's order take
+the place of the first declared field that is one of them; a sheet declaring exactly the
+system's columns, which is every drawn seed, resolves as it did. `_system_prints_the_line`:
+the system's columns among the printed ones rather than the whole of them, so the beats
+still come from the system when the line prints more. `system_gap`'s sentence names the rung
+column as what a position needs. The vocabulary's `status_sheet` line says a sheet naming a
+system may declare columns of its own and where they print. `world accept` finishes such a
+system; the *left unfinished on purpose* branch is reached only by a sheet with no rung
+column, Serial Pilot 15's shape, which it still refuses to break. Tests:
+`test_a_sheet_with_columns_of_its_own_beside_a_system_s_is_finished_at_accept_and_drafts`
+(`tests/test_genre_floor.py`; the ceiling test's last two clauses reversed in place with the
+reason, and the growth test's extra-column clause with them) and
+`test_a_following_sheet_keeps_the_book_s_own_columns_around_the_system_s_block`
+(`tests/test_extraction.py`). The census's `mixed_columns` clause is retired in `census.py`
+with the amendment recorded in `PREREG.md`; `census.json` stays §217's record. Replay over
+the four stored books against main's baseline: identical (8/8).
+
+**What this does not do.** A plain column is the page's: the system arm names none of them
+as a move, and a pool that refills or an experience counter that rises to a level is still a
+rule the vocabulary does not carry (§217's sixth and eighteenth gaps). Nothing here changes
+what the drawn seed declares. The market's line order (pools before grants) is the book's
+declaration to make: the system's block sits where the first of its columns is declared.
+
+**What was refused.** Keeping the exact rule and asking books to declare pools as stocks: a
+pool of three hundred is past the scale's 99 and a currency is not a grant. A second sheet
+for the plain columns: two book sheets abstain (§205) and one line is what the genre prints.
+A model choosing the column order: the declaration is the order (§61(5)).
+
+**Anti-scope.** Whether a book whose line carries its pools beside its grants reads as its
+genre is the shelf's question and the operator's read; nothing here measures prose. The next
+slice is the readout on request (§217's fourth gap); the quest card, the third, is announced
+as a notice under §218 and a card of its own waits for a book that needs one.
+
+
+## 220. The readout on request, the third fit slice: another owner's line is printed where the scene's plan names the owner, which closes the item §209 owed
+
+**Measured first** (§217, `research/quality-measurement/system-fit/FINDINGS.md`). Twenty-three
+of the sixty sampled market stories print another subject's sheet where the protagonist
+reads it: a creature's level and health through an Identify, an appraisal of a rival, a
+follower's standing, a kill log with levels on both sides; one shelf anchor does the same.
+Since §206 every such sheet is declarable (a `status_sheet` with an `owner`, its own
+snapshot, its own columns) and the extractor reads its line back, and §209 left the ask owed:
+*with owners in place it is a furniture ask and not a model change, and it waits for a book
+that needs it*. The census is that book, twenty-three times over.
+
+**What shipped** (`domain/extraction.py`, `application/planner.py`, `application/world.py`).
+`extraction.readout_lines(records, plan=, at=, protagonist=)`: every owner a canon
+`status_sheet` names (a subject id, or every subject of the role it names) other than the
+protagonist, whose display name the scene's plan text names as a word, rendered through its
+own sheet from its own canon snapshots folded at the position (`_folded_before`); `()` for a
+scene with no plan text or no position, and for every book whose plans name no owner, which
+is every book on disk. The trigger is the plan's naming and nothing a model ranks (§61(5)):
+the plan says who is in the scene, and an owner in the scene is an owner whose line is
+read. `render_prompt` takes `readouts` and prints them under one sentence (*Where they read
+another's sheet, the book prints this line, exactly once, and it is read on the page*); the
+planner passes them at every scene off the composed plan text. The vocabulary's
+`status_sheet` line says where an owner's sheet is printed. Budget: the conditional row
+`readouts` at 2 and the maximal scene prompt 47 to 49, with the reasons where the numbers
+live. Tests: `test_another_owner_s_line_is_asked_for_where_the_plan_names_them`,
+`test_the_prompt_prints_another_owner_s_line_where_the_plan_names_them`
+(`tests/test_planner.py`) and the rows in `tests/test_prompt_budget.py`. Replay over the four
+stored books against main's baseline: identical (8/8).
+
+**What this does not do.** No gate checks that the line was printed (§212's rule). A readout
+is the owner's line as canon holds it; an appraisal that the market writes as *estimated*
+or as a range is the same line with the book's own labels, and a hidden level (the market's
+question marks) is a column the snapshot does not hold, which the sheet hides (§203). An
+owner the plan does not name prints nothing, so a scene that meets a creature its plan never
+mentions asks for no readout: the plan is the book's own statement of who is there, and a
+second trigger (a name in the drafted prose) would be a reader of the draft, which is the
+step §61(5) closed.
+
+**What was refused.** Printing every owner's line at every scene: ten creatures declared is
+ten lines a scene. A model deciding who is in the scene: the plan is the book's declaration.
+A second bracket tag for a readout: the owner's sheet prints as the owner's own
+`[STATUS]` line, which is what §206 built and the extractor reads.
+
+**Anti-scope.** Whether a book whose protagonist reads another's sheet on the page reads as
+its genre is the shelf's question and the operator's read; nothing here measures prose. The
+gaps below this one in §217's ranking (another screen, a rise by accumulation, a percent, a
+flat skill list, the box view) stay recorded with their shares and their reasons, and the
+track closes with this slice and the brief's deletion.
+
+
+### 220.1 The track closed: the census, three slices, three defects, and the brief deleted
+
+**The commits**, on `claude/handoff-market-fit-plan-6f4026`: `9490336` the census scaffolding
+and the owner-sheet fix; `49d5fe6` the growth fix; `3d63bbe` the acceptance-refusal reading;
+`c857710` the census and the unreadable-sheet fix (§217); `b9576f5` the notice (§218);
+`327d4d6` plain columns beside a system's grants (§219); `b3073bc` the rename mypy asked for
+on the merge; `4b0e0e7` the readout on request (§220); and the commit carrying this
+sub-entry, which deletes `plan/handoff-market-fit.md` (its deliverables live in
+`research/quality-measurement/system-fit/` and `plan/system-generality.md` §5). Each slice
+was replayed identical on the four stored books with `tools/replay_books.py --baseline`, and
+the full suite, mypy, ruff and the replay ran on the merged tree in the coordinating session's
+lock windows (§217 to §219 at `8c024b8`).
+
+**What the track leaves recorded and not built**, by §217's ranking: the quest card (rank
+3) is announced as a notice under §218 and its counters are paired columns; another screen
+(rank 5: a menu, a store, a board) is several displays the census does not separate, the
+store the commonest; a rise by accumulation, a percent kind, the box view for a window wider
+than nine columns, a list whose members carry a rank, a derived figure, a class or item that
+moves a number, and a pool's refill each keep their share in `FINDINGS.md` and their reason
+in §217. The draw's own rules (a graph rather than a list, a depth somewhere, five to eight
+grants) refused every hand-declared system in the sample at completion, and whether a
+*declared* system may be a list, held-or-not or three grants wide is a decision for its own
+entry, with the census's numbers beside it: sixteen of twenty-seven grant-bearing stories
+show no prerequisite, fifteen no depth, thirteen fewer than five grants.
+
+**Anti-scope.** Nothing in this sub-entry is a new decision; it closes §217's track. Whether
+any of the three slices reads as the genre on the page is the shelf's question and the
+operator's read, and no chapter was drawn under them here.

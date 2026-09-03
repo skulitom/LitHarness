@@ -15,8 +15,8 @@ And the distinction the operator asked to be recorded explicitly:
 
 ## What this changes, and what it does not
 
-`plan/handoff-reader-perception.md` boundary 5 said a model asked to judge its own phrasing
-is the wrong instrument; six prompt rewrites of the same judgment question proved it. The
+The reader-perception handoff (2026-08-26; stage-0 §143.2) said a model asked to judge its own
+phrasing is the wrong instrument; six prompt rewrites of the same judgment question proved it. The
 generalisation this programme works under: **the unit of search is the mechanism, not the
 question wording.** A seventh phrasing of "which is better" is not a new mechanism; a system
 in which the model does something checkable — writes, detects against visible references,

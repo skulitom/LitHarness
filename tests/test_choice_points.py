@@ -29,6 +29,7 @@ import inspect
 import pytest
 
 from litharness.domain import extraction, gamesystem, genre, house, worlds
+from tests.helpers import accepted as _accepted
 
 
 def _system(**overrides: object) -> gamesystem.SystemDef:
@@ -291,25 +292,6 @@ def test_a_pick_is_read_back_off_its_own_edge_and_only_where_the_book_has_reache
     assert everywhere.picks == (("fork_hand", "opt_kiln"),)
 
 
-def _accepted(record):  # type: ignore[no-untyped-def]
-    import litharness_contracts as lc
-
-    return lc.StateRecord(
-        record_id=record.record_id,
-        kind=record.kind,
-        subject=record.subject,
-        predicate=record.predicate,
-        value=record.value,
-        object_ref=record.object_ref,
-        story_position=record.story_position,
-        authority=lc.StateAuthority.ACCEPTED_CANON,
-        pov_visibility=list(record.pov_visibility),
-        evidence=list(record.evidence),
-        predicate_registry_version=record.predicate_registry_version,
-        note=record.note,
-    )
-
-
 # --------------------------------------------------------------------------- what a draw may be
 
 
@@ -464,9 +446,15 @@ def test_nothing_in_this_module_ranks_an_option() -> None:
     forbidden = ("best", "score", "rank_option", "prefer", "recommend", "suggest", "optimal")
     for name in gamesystem.__all__:
         assert not any(word in name.lower() for word in forbidden), name
-    source = inspect.getsource(gamesystem)
-    for word in ("def best", "def score", "def prefer", "def recommend"):
-        assert word not in source
+    # The three modules the game system lives in since stage-0 §216: `gamesystem` re-exports
+    # the other two, so a helper added to either would surface in `__all__` above, and its
+    # source is read here so a private one cannot hide either.
+    from litharness.domain import advancement, systems
+
+    for module in (gamesystem, systems, advancement):
+        source = inspect.getsource(module)
+        for word in ("def best", "def score", "def prefer", "def recommend"):
+            assert word not in source, module.__name__
 
 
 def test_the_progression_beat_never_names_a_fork() -> None:

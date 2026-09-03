@@ -467,8 +467,8 @@ def _resolve_writer(
 ) -> tuple[writers_domain.Writer | None, str]:
     """The writer a `--writer` name means, or `None` and the reason it is nobody.
 
-    **The accepted roster first, then the compiled cast**, which is
-    `plan/handoff-writer-recruiter.md`'s word — but the order is safe only because the two
+    **The accepted roster first, then the compiled cast**, which is the recruiter brief's word
+    (stage-0 §146) — but the order is safe only because the two
     namespaces cannot overlap. `writers.RESERVED_NAMES` refuses a stored row named after a cast
     writer or a probe, so for every name that can legitimately exist both orders return the same
     writer. The order then costs nothing and buys what the brief wanted: an accepted recruit is
@@ -4322,6 +4322,21 @@ def cmd_world(args: argparse.Namespace) -> int:
             # so `carried` is still only ever a subset of the proposals.
             replaced = integrity.superseded(records, declared_at=declared_at)
             carried = [record for record in proposals if record.record_id not in set(replaced)]
+            # **A sheet the parser cannot read is refused outright, with no --force** (found
+            # by the fit census): forced into canon it would take the floor, the packet and
+            # every later `check` down with the traceback `accept` itself used to raise here.
+            # The repair is a declaration in the same slot, which replaces it.
+            unreadable = extraction.unreadable_sheets(in_force)
+            if unreadable:
+                for sentence in unreadable.values():
+                    print(f"litharness: {sentence}", file=sys.stderr)
+                print(
+                    f"litharness: {len(proposals)} proposal(s) not accepted; "
+                    f"{len(unreadable)} status_sheet declaration(s) cannot be read. Declare "
+                    "the sheet again with `world declare` to replace it.",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
             complaints = worlds_domain.validate(in_force)
             if complaints and not args.force:
                 for complaint in complaints:
@@ -4366,6 +4381,20 @@ def cmd_world(args: argparse.Namespace) -> int:
                     f"litharness: {len(proposals)} proposal(s) not accepted; {len(breaches)} "
                     "breach(es) the drafting gate would refuse on this world before any scene. "
                     "Fix with `world declare`, or --force to accept them anyway.",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+            # **§213.1's refusal: a line the arithmetic cannot read.** Pilot 25 draw 4's seed
+            # put a rung's id in the rank column and a stock's balance on the line with no
+            # edge behind it; the chapter printed one unmoving line twice. Same `--force`.
+            faults = world_mod.snapshot_faults(in_force)
+            if faults and not args.force:
+                for fault in faults:
+                    print(f"litharness: {fault}", file=sys.stderr)
+                print(
+                    f"litharness: {len(proposals)} proposal(s) not accepted; {len(faults)} "
+                    "status line fault(s) the arithmetic could not read. Fix with `world "
+                    "declare`, or --force to accept them anyway.",
                     file=sys.stderr,
                 )
                 return EXIT_FAULT
@@ -4476,6 +4505,10 @@ def cmd_world(args: argparse.Namespace) -> int:
             # Serial Pilot 12's read eleven complaints naming standings and diagnosed the CLI.
             # Both were told something true under a heading that made it sound temporary.
             warnings = worlds_domain.slot_warnings(record)
+            # A sheet declaration the parser refuses is said at declare time as well: it is
+            # neither transient nor permanent, since a declaration in the same slot replaces
+            # it, so it gets its own key rather than either list above.
+            unreadable_lines = list(extraction.unreadable_sheets([record]).values())
             written = store.record_state_records(book_id, branch_id, [record], created_at=stamp)
             payload: Any = {
                 "record_id": record.record_id,
@@ -4484,6 +4517,7 @@ def cmd_world(args: argparse.Namespace) -> int:
                 "says": state_mod.describe(record),
                 "not_yet_coherent": new_complaints,
                 "will_not_resolve": list(warnings),
+                "cannot_be_read": unreadable_lines,
             }
             if args.json:
                 print(json.dumps(payload, ensure_ascii=False, indent=2))
@@ -4494,6 +4528,8 @@ def cmd_world(args: argparse.Namespace) -> int:
                     print(f"  ! not yet coherent: {complaint}", file=sys.stderr)
                 for warning in warnings:
                     print(f"  !! will not resolve: {warning}", file=sys.stderr)
+                for sentence in unreadable_lines:
+                    print(f"  !! cannot be read: {sentence}", file=sys.stderr)
             return EXIT_OK
     finally:
         store.close()

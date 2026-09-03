@@ -13,11 +13,10 @@ differently named system beside it.
 
 from __future__ import annotations
 
-import dataclasses
-
 import litharness_contracts as lc
 
 from litharness.domain import extraction, gamesystem
+from tests.helpers import accepted as _accepted
 
 
 def _weave() -> gamesystem.SystemDef:
@@ -74,10 +73,6 @@ def _accord() -> gamesystem.SystemDef:
         ),
         scale=gamesystem.Scale("Depth", 9),
     )
-
-
-def _accepted(record: lc.StateRecord) -> lc.StateRecord:
-    return dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
 
 
 def _canon(*, second: bool, second_prints: bool = False) -> list[lc.StateRecord]:

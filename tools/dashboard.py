@@ -117,8 +117,14 @@ def first_person(text: str) -> str:
     """
     text = _OBJECT.sub(lambda m: f"{m.group(1)} me", text)
     for pattern, replacement in _FLIPS:
-        text = pattern.sub(lambda m, r=replacement: _match_case(m.group(0), r), text)
+        text = pattern.sub(partial(_flip, replacement), text)
     return text
+
+
+def _flip(replacement: str, match: re.Match[str]) -> str:
+    """One flipped word, cased like the word it replaces; a named function because a lambda
+    with a default argument is one mypy cannot type."""
+    return _match_case(match.group(0), replacement)
 
 
 def _match_case(original: str, replacement: str) -> str:

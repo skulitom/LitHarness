@@ -55,30 +55,6 @@ def content_hash(text: str) -> str:
     return sha256(canonicalize(text).encode("utf-8")).hexdigest()
 
 
-def excerpt_hash(text: str, start: int, end: int) -> str:
-    """Content hash of ``text[start:end]``, with the text canonicalized first.
-
-    Slicing a non-canonical text would produce offsets that do not survive a round
-    trip through storage, so the canonical form is taken before slicing rather than
-    after.
-    """
-    canonical = canonicalize(text)
-    if not 0 <= start <= end <= len(canonical):
-        raise ValueError(
-            f"span {start}..{end} is outside the canonical text of length {len(canonical)}"
-        )
-    return content_hash(canonical[start:end])
-
-
-def slice_canonical(text: str, start: int, end: int) -> str:
-    canonical = canonicalize(text)
-    if not 0 <= start <= end <= len(canonical):
-        raise ValueError(
-            f"span {start}..{end} is outside the canonical text of length {len(canonical)}"
-        )
-    return canonical[start:end]
-
-
 #: Fraction of a passage's words behind the stop point. **Frozen at §124's value and it is the
 #: same number for the same reason**: `research/quality-measurement/anticipation.py` registered
 #: 0.6 before any call was made, and a reader stopped at a different place is a reader answering

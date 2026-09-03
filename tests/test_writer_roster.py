@@ -1,6 +1,6 @@
 """The roster as records: what a machine may write, and what only a decision may.
 
-`plan/handoff-writer-recruiter.md`. The roster was four dossiers compiled into
+Stage-0 §146's recruiter brief. The roster was four dossiers compiled into
 `domain/writers.py` and nothing could grow it. Making it a table opens exactly one new way for
 this project to go wrong — a machine that proposes a writer could end up casting one — so the
 tests below are mostly about the gap between `proposed` and `accepted` and about the things that
