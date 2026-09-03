@@ -119,3 +119,19 @@ quarter of the bracketing stories pass eight on a sample of their chapters; and 
 slow, a name a chapter at most, which is a grant declared as the book goes rather than a
 second draw. A floor on what the genre names, since a skill written without brackets is
 invisible here and the shards are slices. No bar.
+
+## How often the furniture says a thing changed into another (`evolution.py`, `evolution.json`, 2026-09-03)
+
+Phase 4 names a merge, two capabilities into one; the genre writes that and its cousins as a
+notice. Over the same chapters' 64,613 furniture lines, a plain gain verb (*acquired*,
+*learned*, *obtained*, *unlocked*) stands on 1,156 lines in 132 stories. A change of kind
+stands in 80 stories: *upgrade* in 35 (168 lines), *replace*, *becomes*, *turned into* in 39
+(76), *transform* or *mutate* in 18 (47), *merge* or *fuse* in 17 (24), *evolve* in 16 (71).
+A loss (*lost*, *removed*, *revoked*, *stripped*, *drained*, *cursed*) stands in 34 stories
+on 79 lines.
+
+The reading for the merge: a change of kind is the second commonest thing the genre's
+furniture announces after the gain itself, in three of every five stories that announce a
+gain at all, and a loss is written by one story in eighteen. The verb families are read by
+word and a line saying *upgrade available* counts beside one saying a skill upgraded, so
+these are ceilings on the exact shape and floors on the family. No bar.

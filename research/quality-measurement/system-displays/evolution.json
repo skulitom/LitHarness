@@ -1,0 +1,25 @@
+{
+  "chapters_read": 14156,
+  "stories_read": 608,
+  "furniture_lines": 64613,
+  "lines_by_family": {
+    "gain_plain": 1156,
+    "transform": 47,
+    "replace": 76,
+    "lost_removed": 79,
+    "upgrade": 168,
+    "merge_fuse": 24,
+    "evolve": 71
+  },
+  "stories_by_family": {
+    "gain_plain": 132,
+    "transform": 18,
+    "replace": 39,
+    "lost_removed": 34,
+    "upgrade": 35,
+    "merge_fuse": 17,
+    "evolve": 16
+  },
+  "stories_with_any_change_verb": 80,
+  "stories_with_plain_gain": 132
+}
