@@ -38,6 +38,14 @@ UNREADABLE, and nothing is substituted, retried or filled.*
 | sham | 60 of 80 | 0.750 |
 | **shuffled** | **59 of 80** | **0.738** |
 
+**Which kind of failure they were cannot be recovered, and it is not that nobody looked.**
+`elicit._call_cli` reported every non-zero exit as the one string `cli_error` and discarded the
+call's stdout and stderr at the moment it failed, so `failure_reasons` was a bucket by
+construction; a usage limit and a crashed binary are the same row here, and they argue in
+opposite directions about how many workers an arm may use. Stage-0 §224 records that, fixes it
+forward, and leaves these sixty unclassified, because the information no longer exists and a
+reading invented for them now would be worth less than the gap.
+
 **The failures are one contiguous transport stop, not a reader refusing.** Every session from
 181 to 240 failed — feeds 15 through 19 entire, the books `fitness-15` … `fitness-19`, lost
 wholesale — plus exactly one earlier casualty at session 125 (feed 10, the shuffled copy at
