@@ -4369,6 +4369,20 @@ def cmd_world(args: argparse.Namespace) -> int:
                     file=sys.stderr,
                 )
                 return EXIT_FAULT
+            # **§213.1's refusal: a line the arithmetic cannot read.** Pilot 25 draw 4's seed
+            # put a rung's id in the rank column and a stock's balance on the line with no
+            # edge behind it; the chapter printed one unmoving line twice. Same `--force`.
+            faults = world_mod.snapshot_faults(in_force)
+            if faults and not args.force:
+                for fault in faults:
+                    print(f"litharness: {fault}", file=sys.stderr)
+                print(
+                    f"litharness: {len(proposals)} proposal(s) not accepted; {len(faults)} "
+                    "status line fault(s) the arithmetic could not read. Fix with `world "
+                    "declare`, or --force to accept them anyway.",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
             moved = store.promote_state_records(
                 book_id,
                 branch_id,
