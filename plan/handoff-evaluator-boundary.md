@@ -245,6 +245,20 @@ for n in (8, 10, 12, 16, 20, 24, 30, 40):
   `test_listing_loop.py`, `test_prompt_budget.py`, `test_house_genre_promise.py`,
   `test_readership_prior_life.py`, `test_library.py`, `test_check_tool.py`, `test_store.py`.
 - `uv run ruff check .` and `uv run mypy` (src and tools): clean.
-- `uv run python tools/check.py handoff` (the full suite with coverage, the wheel, the leak
-  audit) waits on the box lock, which the reader-sims arm held past its estimate at the time
-  of writing; the result and the commit hashes are appended below when it runs.
+- `uv run python tools/check.py handoff`, run 2026-09-03 at 23:06 local under the box lock
+  (taken and released by this session, announced to the coordinator both ways): ruff, mypy,
+  `git diff --check` and `uv lock --check` clean; **3,799 passed, 20 skipped**, coverage
+  88.54% against the 85% floor; the wheel built. Its last step, the corpus leak audit,
+  **exits 1 — and it exits 1 on `main` too, with byte-identical output**, so the failure
+  predates this branch.
+- **The audit's finding, verified and not fixed here.** It names one path,
+  `research/quality-measurement/system-fit/census.json` (committed by `c857710`, §217's
+  census), for 35 excerpt-sized strings, the longest 316 words at
+  `.shapes[42].check.gaps[0]`. The text is this system's **own** complaint prose — the
+  unfinished-system gap sentence `gamesystem` writes — concatenated per shape, not third-party
+  corpus text, so the audit is measuring length rather than provenance here. It is another
+  track's file and the repair is an exemption in a leak audit, which
+  `tests/test_corpus_leak_audit.py` calls "a dangerous thing to add"; the coordinator and the
+  operator own that call, and this session refuses to widen a leak rail to make its own check
+  green.
+- Commit: `1bc0004`, pushed to `origin/claude/litharness-evaluator-boundary-073f5a`.
