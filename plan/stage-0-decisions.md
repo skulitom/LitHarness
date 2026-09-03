@@ -22627,3 +22627,46 @@ label the sheet never declared (a column the writer invented reaches no record).
 **Anti-scope.** The line's shape is still one tag, one subject, one row of pairs, and its
 values are still digits; phase 2 is where a value may be a name. The wanting §160 put on the
 line as zeros rides the `[OFFER]` line, which is unchanged.
+
+## 204. Phase 2 of the general system: a sheet's column has a kind, and a sheet may belong to a place
+
+**Measured first (`research/quality-measurement/system-displays/field_labels.py`,
+2026-09-03, no model).** Over every LitRPG chapter in the shards, 301 stories print windows
+and their windows carry 19,628 label-value fields: a bare number 47 percent, a number with
+words beside it 24, a name or text 9, a current/maximum pair 7, a list 6, a change written
+with an arrow 3, a blank 3, a percentage 1. By label, once per story: the attributes lead
+(*strength* in a third of the window stories, then *intelligence*, *agility*, *dexterity*,
+*wisdom*, *endurance*, *vitality*, *constitution*, *perception*, *charisma*, *luck*), *level*
+in a fifth, the paired resources (*health*, *mana*, *stamina*, *hp*, *mp*, *experience*), and
+then the fields whose values are not numbers: *name*, *class*, *skills*, *skill*, *rank*,
+*reward*, *warning*. Before this entry a column on our sheet could only be a number (the
+parser read digits and nothing else, §160.3), so a class, a title, a skill list, or a rung's
+name had no column to stand in.
+
+**What shipped** (`domain/extraction.py`, `application/world.py`). `SheetField` carries a
+`kind`: `number` (the default, and the only kind any sheet on disk has, so every book on
+disk renders and reads as it did), `ordinal` (a rung id, printing as the rung's name, which
+is §160.3's split resolved by declaration), `name` (an entity id printing as its name: a
+class, a title), `text` (a line as written), and `set` (entity ids each with an optional
+depth: a skill list, *Cold Seal 2, Seamsight*). A paired column is a number. The line prints
+a typed value through `display_name` and reads it back to the id canon holds for that name;
+a name the book does not know reaches no record, as an undeclared column does; a set's
+members carry their depths; an empty set is unheld and, shown, prints *none*. Pairs are now
+split on the declared labels themselves, longest first, so a two-word label reads. The
+strict pattern accepts a typed column's words. `counted_names` (the quantities a beat may
+move) keeps to the numeric columns. The owner half: nothing in the line, the reader or the
+extractor asks that a snapshot's subject be a person, and the test pins a place's sheet
+rendering and reading back onto the place; which sheet the writer is asked to print is still
+the protagonist tie-break (§170), and one sheet per book is still the rule until phase 3.
+The vocabulary lines for `status_sheet` and `status_snapshot` name the kinds. Tests in
+`tests/test_extraction.py`: the kinds and their refusals, the round trip of typed values, the
+unknown name skipped, the two-word label, the numeric-only counted names, the place's sheet.
+
+**What was refused.** Declaring the drawn profile's rung column as `ordinal` here: the market's
+*rank* is a number in most windows, §113's counters read the rung's index, and the concept
+stage's *steps* are counted, so a drawn system keeps its number and a declared sheet may
+choose the name. A percentage kind: a number with a unit is a number, and the unit is the
+label's. Several sheets per book: that is the display model's (phase 3).
+
+**Anti-scope.** The books on disk are unchanged by construction (no sheet on disk declares a
+kind). Nothing here ranks a column or a value.

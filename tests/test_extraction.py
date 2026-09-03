@@ -11,6 +11,7 @@ exists because the tempting implementation is one line and this one is forty.
 
 from __future__ import annotations
 
+import dataclasses
 import json
 
 import litharness_contracts as lc
@@ -32,6 +33,8 @@ from litharness.domain.extraction import (
     Sheet,
     SheetField,
     attested_position,
+    counted_names,
+    display_name,
     extract_graph_facts,
     extract_state,
     graph_line_for,
@@ -914,3 +917,162 @@ def test_a_projected_line_in_a_scene_becomes_a_record_completed_from_what_stood_
         version_id="v",
     )
     assert completed.value == {"rank": 1, "pace": 2, "weight": 0}
+
+
+# -- §204: typed columns, and a sheet on any owner ----------------------------------------
+
+
+def _typed_sheet() -> Sheet:
+    return Sheet(
+        (
+            SheetField("rank", "Band", kind="ordinal"),
+            SheetField("role", "Class", kind="name"),
+            SheetField("skills", "Skills", kind="set"),
+            SheetField("pace", "Pace"),
+            SheetField("note", "Note", kind="text"),
+        ),
+        show_unheld=False,
+    )
+
+
+def _named_canon() -> list[lc.StateRecord]:
+    def named(subject: str, name: str, role: str = "cast") -> list[lc.StateRecord]:
+        return [
+            worlds.world_record(
+                subject, "is_a", value=name, authority=lc.StateAuthority.ACCEPTED_CANON
+            ),
+            worlds.world_record(
+                subject,
+                worlds.ENTITY_ROLE_PREDICATE,
+                value=role,
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            ),
+        ]
+
+    return [
+        *named("kellow", "Kellow", "protagonist"),
+        *named("band_two", "Band Two"),
+        *named("marker", "Marker"),
+        *named("cold_seal", "Cold Seal", "capability"),
+        *named("seamsight", "Seamsight", "capability"),
+        *named("hall_c", "Hall C", "place"),
+    ]
+
+
+def test_a_typed_column_is_declared_by_kind_and_a_number_is_the_kind_when_none_is_given() -> None:
+    declared = parse_sheet(
+        {
+            "fields": [
+                {"name": "rank", "label": "Band", "kind": "ordinal"},
+                {"name": "role", "label": "Class", "kind": "name"},
+                {"name": "pace", "label": "Pace"},
+            ]
+        }
+    )
+    assert [f.kind for f in declared.fields] == ["ordinal", "name", "number"]
+    with pytest.raises(MalformedSheet):
+        parse_sheet({"fields": [{"name": "x", "label": "X", "kind": "colour"}]})
+    with pytest.raises(MalformedSheet):
+        parse_sheet({"fields": [{"name": "x", "label": "X", "kind": "name", "paired": True}]})
+    assert all(f.kind == "number" for f in DEFAULT_SHEET.fields)
+
+
+def test_typed_values_print_as_the_book_names_them_and_read_back_as_ids() -> None:
+    """§204: a rung and a class print as their names and read back as the ids canon holds;
+    a set prints its members with their depths; words print as written."""
+    canon = _named_canon()
+    value = {
+        "rank": "band_two",
+        "role": "marker",
+        "skills": [["cold_seal", 2], ["seamsight"]],
+        "pace": 0,
+        "note": "held over",
+    }
+    line = render_status_line("kellow", value, sheet=_typed_sheet(), records=canon)
+    assert line == (
+        "[STATUS] Kellow — Band Band Two | Class Marker | Skills Cold Seal 2, Seamsight | "
+        "Note held over"
+    )
+    ids = {display_name(canon, s).casefold(): s for s in {r.subject for r in canon}}
+    [(subject, read, _)] = _typed_sheet().read(line, ids=ids)
+    assert subject == "Kellow"
+    assert read == {
+        "rank": "band_two",
+        "role": "marker",
+        "skills": [["cold_seal", 2], ["seamsight"]],
+        "note": "held over",
+    }
+    # A name the book does not know reaches no record; the rest of the line still reads.
+    [(_, partial, _)] = _typed_sheet().read("[STATUS] Kellow — Band Nine | Pace 3", ids=ids)
+    assert partial == {"pace": 3}
+    # An empty set is unheld and hidden; shown, it prints as none.
+    empty = {**value, "skills": []}
+    assert "Skills" not in _typed_sheet().render("Kellow", empty)
+    shown = dataclasses.replace(_typed_sheet(), show_unheld=True)
+    assert "Skills none" in shown.render("Kellow", empty)
+
+
+def test_a_two_word_label_splits_its_pair_where_the_label_ends() -> None:
+    sheet = Sheet(
+        (SheetField("rank", "Band"), SheetField("cold_seal", "Cold Seal", kind="name")),
+        show_unheld=True,
+    )
+    ids = {"warden": "warden"}
+    [(_, read, _)] = sheet.read("[STATUS] K — Band 1 | Cold Seal Warden", ids=ids)
+    assert read == {"rank": 1, "cold_seal": "warden"}
+    assert sheet.pattern.search("[STATUS] K — Band 1 | Cold Seal Warden") is not None
+
+
+def test_only_numeric_columns_are_counted_names_the_beat_may_move() -> None:
+    canon = [
+        *_named_canon(),
+        worlds.world_record(
+            "kellow",
+            SHEET_PREDICATE,
+            value={
+                "fields": [
+                    {"name": "rank", "label": "Band", "kind": "ordinal"},
+                    {"name": "pace", "label": "Pace"},
+                    {"name": "role", "label": "Class", "kind": "name"},
+                ]
+            },
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        worlds.world_record(
+            "kellow",
+            STATUS_PREDICATE,
+            value={"rank": "band_two", "pace": 2, "role": "marker"},
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    ]
+    assert counted_names(canon) == ("Pace",)
+
+
+def test_a_sheet_may_belong_to_a_place_and_its_line_reads_back() -> None:
+    """§204's owner half: nothing in the line or the reader asks that the subject be a person;
+    a place's snapshot renders under the book's sheet and is read back onto the place."""
+    canon = [
+        *_named_canon(),
+        worlds.world_record(
+            "hall_c",
+            SHEET_PREDICATE,
+            value={
+                "fields": [{"name": "held", "label": "Held"}, {"name": "open", "label": "Open"}]
+            },
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    ]
+    line = render_status_line(
+        "hall_c", {"held": 41, "open": 0}, sheet=sheet_for(canon), records=canon
+    )
+    assert line == "[STATUS] Hall C — Held 41 | Open 0"
+    [record] = extract_state(
+        line,
+        known=[*state_of("litrpg").records, *canon],
+        project_id="p",
+        book_id="b",
+        branch_id="br",
+        logical_id="scene-1",
+        version_id="v",
+    )
+    assert record.subject == "hall_c" and record.value == {"held": 41, "open": 0}

@@ -175,7 +175,7 @@ effect moves to the `[OFFER]` line, where the operator says the genre keeps it. 
 round trip for a projected line; a book on disk unchanged; a snapshot read back through an
 omitted column. §-entry: what the three pilot-25 chapters print under it.
 
-### Phase 2 — typed attributes on any owner
+### Phase 2 — typed attributes on any owner (done: stage-0 §204; several sheets per book wait for phase 3)
 
 A sheet field gains a `type`: `number` (today, the default), `paired` (today), `ordinal` (the
 value is a rung of a declared ladder and prints as its name, which is §160.3's split resolved

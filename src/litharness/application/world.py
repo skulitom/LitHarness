@@ -244,16 +244,23 @@ def vocabulary() -> dict[str, Any]:
             "status_sheet": (
                 "the columns this book's own status line prints; --value an object "
                 '{"fields": [{"name": <the key a snapshot fills>, "label": <what the line '
-                'prints>, "paired": true|false}], "show_unheld": true|false}, and a paired '
+                'prints>, "paired": true|false, "kind": number|ordinal|name|text|set}], '
+                '"show_unheld": true|false}. A number is the kind when none is given; an '
+                "ordinal holds a rung id and prints its name, a name holds an entity id and "
+                "prints its name (a class, a title), text holds words, a set holds entity ids "
+                "each with an optional depth (a skill list). A paired "
                 "field prints current/maximum and adds a <name>_max key; with show_unheld "
-                "false the line prints its first column and the columns above zero only. "
+                "false the line prints its first column and the columns with something in "
+                "them only. "
                 "Declare exactly one or none: a "
                 "book that declares none, and a book that declares two, both print a generic "
                 "line written in nobody's vocabulary"
             ),
             "status_snapshot": (
-                "where those columns stand, as numbers; --value an object mapping each field "
-                "name to its number, and --order-key zero-padded digits (0110, 0250) to "
+                "where those columns stand; --value an object mapping each field name to "
+                "its number, or to what its kind asks for (an entity id for a name or an "
+                "ordinal, words for text, a list of [id, depth] for a set), and --order-key "
+                "zero-padded digits (0110, 0250) to "
                 "schedule a position the book reaches later. Leave the key off for the state "
                 "the book opens in, which `extraction.state_as_it_stands` then folds at every "
                 "scene. A scheduled snapshot is kept and is never folded into a scene, so "

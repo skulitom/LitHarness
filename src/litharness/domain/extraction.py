@@ -69,7 +69,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from functools import cache
 from hashlib import sha256
@@ -149,6 +149,25 @@ class SheetField:
     name: str
     label: str
     paired: bool = False
+    #: What the column's value is (§204): a `number` (the default, and the only kind a
+    #: sheet on disk has), an `ordinal` (a rung id, printing as the rung's name), a
+    #: `name` (an entity id, printing as its name: a class, a title), `text` (a line as
+    #: written), or a `set` (entity ids with an optional depth each: a skill list).
+    kind: str = "number"
+
+    def __post_init__(self) -> None:
+        if self.kind not in FIELD_KINDS:
+            raise MalformedSheet(f"field {self.name!r} has no kind {self.kind!r}")
+        if self.paired and self.kind != "number":
+            raise MalformedSheet(f"field {self.name!r}: only a number is paired")
+
+    @property
+    def numeric(self) -> bool:
+        return self.kind == "number"
+
+
+#: The kinds a column may declare. A number is what every sheet on disk has.
+FIELD_KINDS: tuple[str, ...] = ("number", "ordinal", "name", "text", "set")
 
 
 @dataclass(frozen=True, slots=True)
@@ -227,51 +246,85 @@ class Sheet:
         kept: list[SheetField] = []
         for index, field_ in enumerate(self.fields):
             keys = [field_.name] + ([f"{field_.name}{MAX_SUFFIX}"] if field_.paired else [])
-            held = any(value.get(key) is None or _above_zero(value.get(key)) for key in keys)
+            held = any(value.get(key) is None or _held(value.get(key)) for key in keys)
             if index == 0 or held:
                 kept.append(field_)
         return tuple(kept)
 
-    def render(self, subject: str, value: Mapping[str, object]) -> str:
-        """The line for one snapshot, projected: label-value pairs in declared order."""
+    def render(
+        self,
+        subject: str,
+        value: Mapping[str, object],
+        *,
+        resolve: Callable[[str], str] | None = None,
+    ) -> str:
+        """The line for one snapshot, projected: label-value pairs in declared order.
+
+        `resolve` turns an entity id into what the page prints for it (`display_name`
+        over the book's records); without one an id prints as itself.
+        """
+        name = resolve or (lambda entity: entity)
         parts = []
         for field_ in self.shown(value):
             current = value.get(field_.name, "?")
             if field_.paired:
                 ceiling = value.get(f"{field_.name}{MAX_SUFFIX}", "?")
                 parts.append(f"{field_.label} {current}/{ceiling}")
-            else:
+            elif field_.numeric or current == "?":
                 parts.append(f"{field_.label} {current}")
+            else:
+                parts.append(f"{field_.label} {_render_typed(field_, current, name)}")
         return f"[STATUS] {subject} — " + " | ".join(parts)
 
-    def read(self, text: str) -> list[tuple[str, dict[str, int], tuple[int, int]]]:
+    def read(
+        self, text: str, *, ids: Mapping[str, str] | None = None
+    ) -> list[tuple[str, dict[str, object], tuple[int, int]]]:
         """Every status line in `text`, tolerant of omitted columns (§203).
 
-        A line is the tag, a subject, an em dash and pairs separated by `|`; each pair
-        is a declared label and a number (or two, for a paired column). Pairs whose
-        label the sheet never declared are skipped, so a column the writer invented
-        reaches no record, and a line with no readable pair is not a line. The value
-        is partial where columns were omitted, which the snapshot fold
+        A line is the tag, a subject, an em dash and pairs separated by `|`. A pair is a
+        declared label followed by its value: a number (or two, for a paired column)
+        for a numeric column, and for a typed column (§204) a name the book knows,
+        words, or a list. Pairs are split on the declared labels themselves, longest
+        first, so a two-word label reads. Pairs whose label the sheet never declared
+        are skipped, so a column the writer invented reaches no record; a name the
+        book does not know is skipped the same way; a line with no readable pair is
+        not a line. `ids` maps a printed name (casefolded) back to its entity id. The
+        value is partial where columns were omitted, which the snapshot fold
         (`state_as_it_stands`) already expects (§161).
         """
-        found: list[tuple[str, dict[str, int], tuple[int, int]]] = []
-        by_label = {field_.label.casefold(): field_ for field_ in self.fields}
+        found: list[tuple[str, dict[str, object], tuple[int, int]]] = []
+        labels = sorted(self.fields, key=lambda field_: -len(field_.label))
         for match in _LINE.finditer(text):
-            value: dict[str, int] = {}
+            value: dict[str, object] = {}
             for pair in match.group("pairs").split("|"):
-                read = _PAIR.match(pair.strip())
-                if read is None:
-                    continue
-                field_ = by_label.get(read.group("label").strip().casefold())
+                pair = pair.strip()
+                field_ = next(
+                    (
+                        candidate
+                        for candidate in labels
+                        if pair[: len(candidate.label)].casefold() == candidate.label.casefold()
+                        and pair[len(candidate.label) : len(candidate.label) + 1].isspace()
+                    ),
+                    None,
+                )
                 if field_ is None:
                     continue
-                if field_.paired:
-                    if read.group("ceiling") is None:
+                rest = pair[len(field_.label) :].strip()
+                if field_.numeric:
+                    numbers = _NUMBERS.match(rest)
+                    if numbers is None:
                         continue
-                    value[field_.name] = int(read.group("current"))
-                    value[f"{field_.name}{MAX_SUFFIX}"] = int(read.group("ceiling"))
-                elif read.group("ceiling") is None:
-                    value[field_.name] = int(read.group("current"))
+                    if field_.paired:
+                        if numbers.group("ceiling") is None:
+                            continue
+                        value[field_.name] = int(numbers.group("current"))
+                        value[f"{field_.name}{MAX_SUFFIX}"] = int(numbers.group("ceiling"))
+                    elif numbers.group("ceiling") is None:
+                        value[field_.name] = int(numbers.group("current"))
+                    continue
+                typed = _read_typed(field_, rest, ids or {})
+                if typed is not None:
+                    value[field_.name] = typed
             if value:
                 found.append((match.group("subject"), value, match.span()))
         return found
@@ -281,12 +334,63 @@ def _above_zero(value: object) -> bool:
     return isinstance(value, int | float) and not isinstance(value, bool) and value > 0
 
 
+def _held(value: object) -> bool:
+    """Whether a column has something in it: a number above zero, a name, words, or a
+    set with a member (§204)."""
+    if isinstance(value, str | list | tuple):
+        return bool(value)
+    return _above_zero(value)
+
+
+def _render_typed(field_: SheetField, value: object, name: Callable[[str], str]) -> str:
+    if field_.kind == "text":
+        return str(value)
+    if field_.kind == "set":
+        members = value if isinstance(value, list | tuple) else [value]
+        printed = []
+        for member in members:
+            if isinstance(member, list | tuple) and member:
+                entity, depth = str(member[0]), (member[1] if len(member) > 1 else None)
+                printed.append(f"{name(entity)} {depth}" if depth is not None else name(entity))
+            else:
+                printed.append(name(str(member)))
+        return ", ".join(printed) if printed else "none"
+    return name(str(value))
+
+
+def _read_typed(field_: SheetField, rest: str, ids: Mapping[str, str]) -> object | None:
+    """A typed column's value read off the page: an id the book knows for a name or a rung
+    (else nothing), the words for text, and for a set each member resolved the same way
+    with its depth kept."""
+    if not rest:
+        return None
+    if field_.kind == "text":
+        return rest
+    if field_.kind == "set":
+        if rest.casefold() == "none":
+            return []
+        members: list[object] = []
+        for item in rest.split(","):
+            item = item.strip()
+            depth_match = _TRAILING_NUMBER.match(item)
+            depth = int(depth_match.group("depth")) if depth_match else None
+            printed = depth_match.group("name") if depth_match else item
+            entity = ids.get(printed.strip().casefold())
+            if entity is None:
+                continue
+            members.append([entity, depth] if depth is not None else [entity])
+        return members
+    return ids.get(rest.casefold())
+
+
 #: A status line's frame: the tag, the subject up to the em dash, and the rest as pairs.
 _LINE = re.compile(
     r"^\[STATUS\][^\S\n]*(?P<subject>[^\n|]+?)[^\S\n]*—[^\S\n]*(?P<pairs>[^\n]+)$", re.MULTILINE
 )
-#: One pair: a label, then a number, then optionally a slash and its ceiling.
-_PAIR = re.compile(r"^(?P<label>[^\d|]+?)[^\S\n]+(?P<current>\d+)(?:/(?P<ceiling>\d+))?$")
+#: A numeric column's value: a number, then optionally a slash and its ceiling.
+_NUMBERS = re.compile(r"^(?P<current>\d+)(?:/(?P<ceiling>\d+))?$")
+#: A set member with a depth after its name: *Seamsight 2*.
+_TRAILING_NUMBER = re.compile(r"^(?P<name>.+?)[^\S\n]+(?P<depth>\d+)$")
 
 
 @cache
@@ -297,6 +401,8 @@ def _compile_pattern(fields: tuple[SheetField, ...]) -> re.Pattern[str]:
     columns = [
         rf"{re.escape(field_.label)}[^\S\n]+(?P<{field_.name}>\d+)"
         + (rf"/(?P<{field_.name}{MAX_SUFFIX}>\d+)" if field_.paired else "")
+        if field_.numeric
+        else rf"{re.escape(field_.label)}[^\S\n]+(?P<{field_.name}>[^|\n]+?)"
         for field_ in fields
     ]
     return re.compile(
@@ -549,7 +655,10 @@ def parse_sheet(value: object) -> Sheet:
             raise MalformedSheet(f"field name {name!r} is not usable as a value key")
         if not isinstance(label, str) or not label.strip():
             raise MalformedSheet(f"field {name!r} needs a label the line can print")
-        fields.append(SheetField(name, label.strip(), bool(entry.get("paired", False))))
+        kind = entry.get("kind", "number")
+        if not isinstance(kind, str):
+            raise MalformedSheet(f"field {name!r}: kind must be one of {FIELD_KINDS}")
+        fields.append(SheetField(name, label.strip(), bool(entry.get("paired", False)), kind))
     show_unheld = value.get("show_unheld", True)
     if not isinstance(show_unheld, bool):
         raise MalformedSheet("show_unheld must be true or false when given")
@@ -720,7 +829,11 @@ def render_status_line(
     and gets the book's own spelling; one holding none gets the humanised id, which is still
     never the id.
     """
-    return sheet.render(display_name(records, subject), value)
+    return sheet.render(
+        display_name(records, subject),
+        value,
+        resolve=lambda entity: display_name(records, entity),
+    )
 
 
 def progression_target(records: Sequence[lc.StateRecord], *, at: str | None = None) -> str | None:
@@ -1390,7 +1503,8 @@ def extract_state(
     # **Read tolerantly, so a projected line is a partial snapshot** (§203). The strict
     # `pattern` needs every column; a line printing only the held columns folds forward
     # onto the columns it left out, which is what `state_as_it_stands` already does.
-    for read_subject, read, span in sheet.read(text):
+    ids = {display_name(known, subject).casefold(): subject for subject in subjects}
+    for read_subject, read, span in sheet.read(text, ids=ids):
         subject = normalise_subject(read_subject)
         # A name canon has never used is a claim about someone new, which is a proposal
         # rather than a reading of what the book already established.
@@ -1847,7 +1961,9 @@ def _counted(records: Sequence[lc.StateRecord], *, at: str | None = None) -> tup
     return tuple(
         Movable(field_.label, field_.name)
         for field_ in sheet_for(records).fields
-        if field_.name in held and field_.label.casefold() not in house_mod.MACHINERY_WORDS
+        if field_.numeric
+        and field_.name in held
+        and field_.label.casefold() not in house_mod.MACHINERY_WORDS
     )
 
 
