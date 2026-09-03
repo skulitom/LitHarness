@@ -23682,3 +23682,75 @@ show no prerequisite, fifteen no depth, thirteen fewer than five grants.
 **Anti-scope.** Nothing in this sub-entry is a new decision; it closes §217's track. Whether
 any of the three slices reads as the genre on the page is the shelf's question and the
 operator's read, and no chapter was drawn under them here.
+
+## 222. A costed reader was pointed at the shuffle and the arm came back unreadable by one session, and what it did measure is that the reader's positional lean eats three quarters of the design
+
+**Registered before spend** (`research/quality-measurement/cost-that-bites/PREREG.md`, the
+frozen constants in `cost_that_bites.py`, digest `2659023acf6197e3`), as the first experiment
+of `plan/handoff-reader-sims.md`. The question §199.1 left owed: the `readers` lanes carry on
+four of four whether a chapter is in order or not because continuing costs them nothing, so
+put the same manipulation to the one reader whose continuing costs something it can run out of
+(`fcr.v0`, §122) and ask whether the stop point moves. `FINDINGS.md` beside the registration
+owns every number; this entry records the decision and the two corrections the run forced.
+
+**Measured first, and the screen is why the arm was affordable.** Twenty-four sessions on two
+feeds, all scorable, zero transport failures, `fp5` PASS at 0.206, $7.57 — which priced a
+session at $0.32 and put the registered 240-session arm inside its $80 ceiling. The screen
+bought a seat attempt and no effect, exactly as registered.
+
+**The arm ran, and the answer is UNREADABLE.** 240 sessions, 179 scorable, 60 transport
+failures every one `cli_error`, $48.87 (cumulative cache $56.44). The registered precondition
+is a 75% scorable floor per version; `intact` and `sham` sit at exactly 0.750 and `shuffled` at
+**0.738**. The failures are one contiguous transport stop — sessions 181 to 240, the books
+`fitness-15` through `fitness-19` lost whole — plus a single earlier casualty at feed 10, and
+that one session is the entire difference between the floor and the answer. **No session was
+bought to lift it.** The intervals were computed and seen before the write-up, the runbook's
+transport recovery would have re-issued the failed cells for about a fifth of the ceiling, and
+neither is a licence to buy one cell after seeing which way a number pointed; the refusal is
+recorded here because the temptation was real and the arm is worth less than the rule.
+
+**What the arm did measure, and it is the entry's contribution.** The reader is not a fixed
+pattern: `fp5` 0.189 against a 0.05 floor, switch rate 0.436, no named pattern, the full eight
+reads bought in almost every session. And its read share by slot is **0.622 / 0.190 / 0.105 /
+0.082** across A to D. The rotation control holds — the target sits in one slot across a
+session's three versions, so a paired difference cannot be a slot difference — but it cannot
+put capacity where the reader is not looking: per rotation the paired `intact − shuffled`
+means run +0.286 at slot A and +0.020, −0.017, +0.058 at B, C and D, with the target never
+read at all in 9 of 15 and 8 of 15 triples at C and D, and 21 of 59 triples returning a
+difference of exactly zero. **Three of the four rotations cannot carry the measurement**, so
+any pooled statistic on this design is one rotation's observation wearing four rotations' n.
+
+**The correction that follows, in place: the arm's own attainability table overstated its
+power.** `attainability.json` simulated a content-driven Dirichlet allocator and a mixture of
+fixed patterns, neither carrying a positional lean, and concluded that 80 paired sessions in
+20 clusters find a one-read-in-eight shift every time. The seated reader spends 62% of its
+reads on one slot, so the effective unit is the (feed, rotation-A) cell and this substrate
+holds at most 20 of them. That is §94.7's lesson arriving by a second road — the BCR sized its
+controls from a reader nobody is and needed 2.7x the declared count; this table sized its power
+from a reader nobody is and needs a different **unit**, not a bigger one. The registration's
+sizing paragraph is corrected by `FINDINGS.md` rather than rewritten, so what was declared
+before the spend stays legible beside what the spend found.
+
+**What shipped.** `research/quality-measurement/cost_that_bites.py` (the frozen registration,
+the whole-book shuffle seeded from the text, the standing whitespace sham, the paired plan over
+`feed_battery`'s own seating, a ceiling read between sessions, and a `--dry-elicitor` leg that
+runs the plan through a real Elicitor on synthetic answers so a first paid session is never
+also a first integration test); `tests/test_cost_that_bites.py`; the registration, the
+attainability table, both result files, the raw records and `FINDINGS.md` under
+`research/quality-measurement/cost-that-bites/`. Nothing under `src/litharness/` changed.
+
+**What was refused.** No effect read from an unreadable arm, and no interval quoted as a
+reading. No bar over any quantity: the four attainability checks have been run on no effect
+size here, and the one power argument the registration made is corrected rather than relied
+on. No reader retuned (§89, §97.1). No skim-derived number — `fp6` was not run. No D1P family
+(§104): those need a seated reader and about $16 of generation before a dose exists, and the
+shuffle is the manipulation the ledger already owns. And no claim about any of the twenty
+books: the arm measures an allocation, and it did not measure it well enough to say anything
+about prose.
+
+**Anti-scope.** This decides nothing about whether a costed reader can read order — the
+question stands open in both directions and closes for no one. It licenses no instrument,
+promotes no mechanism, and moves no licence: `fcr.v0` remains unseated for any book-level
+claim, the editorial control plane stays inert, and the three remaining experiments of the
+handoff (order recovery, the anticipation run, and the architecture proposal that only a
+surviving signal would earn) are untouched by it.

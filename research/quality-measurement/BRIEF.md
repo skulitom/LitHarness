@@ -306,6 +306,15 @@ predictive distribution over the text. Zero.
 - **Refuting is worth as much as confirming.** Four proxies were refuted in an afternoon and
   the project counts that as its best day of quality work. A proposal that fails fast and
   cheaply beats one that might work but takes a month to find out.
+- **Size the batch against the reader you will actually seat, and check the *unit* before the
+  count.** Twice now a sizing table has simulated a reader nobody is. §94.7: the BCR drew
+  twelve independent coins per session where the real reader committed to one allocation, and
+  the corrected batch was 2.7x the declared one. [cost-that-bites](cost-that-bites/FINDINGS.md)
+  (stage-0 §222): the table simulated allocators with no positional lean, the seated reader
+  spent 62% of its reads on one slot of four, and three of the four rotations then had no
+  capacity to register the manipulation at all — so the correction was the unit, not the count,
+  and a pooled statistic there would have been one rotation's observation wearing four
+  rotations' n. Simulate the lean you have measured, or state that you have not measured one.
 
 ## 6. Six questions before a number is allowed to refuse anything
 
