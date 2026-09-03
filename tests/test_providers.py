@@ -48,6 +48,7 @@ from litharness.providers.registry import (
     assert_no_billing_reachable,
     in_test_mode,
 )
+from tests.conftest import FIXTURE_SHEET
 
 SCHEMA = {
     "type": "object",
@@ -696,14 +697,13 @@ def test_the_real_runner_decodes_utf8_rather_than_the_host_locale() -> None:
     host. Measured on a real `claude -p` draft: the em dash the generator wrote arrived as
     `â€”`, the three UTF-8 bytes of U+2014 read one at a time.
 
-    **The em dash is not incidental.** `extraction.STATUS_PATTERN` matches on U+2014
+    **The em dash is not incidental.** the line's own pattern matches on U+2014
     exactly, so a mangled dash means the status line does not parse and `extract_state`
     reads nothing — every scene a CLI provider drafts would establish no state, silently,
     which is the exact failure `extraction.py` warns about. The assertion below therefore
     checks the parser rather than the codepoint: a test that only compared strings would
     pass on a repair that fixed the dash and broke the pipe.
     """
-    from litharness.domain.extraction import STATUS_PATTERN
     from litharness.providers.cli import subprocess_runner
 
     line = "[STATUS] rook — Level 1 | HP 12/18 | MP 4/4 | Gold 25"
@@ -718,7 +718,7 @@ def test_the_real_runner_decodes_utf8_rather_than_the_host_locale() -> None:
 
     assert result.returncode == 0, result.stderr
     assert "—" in result.stdout, f"em dash did not survive the pipe: {result.stdout!r}"
-    assert STATUS_PATTERN.search(result.stdout), (
+    assert FIXTURE_SHEET.pattern.search(result.stdout), (
         "a status line written by a CLI provider does not parse; extraction would read "
         f"nothing from every scene it drafts. Got {result.stdout!r}"
     )

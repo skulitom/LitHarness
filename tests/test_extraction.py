@@ -22,13 +22,9 @@ from hypothesis import strategies as st
 from litharness.adapters.contracts_fixtures import fixture_manuscript, fixture_state
 from litharness.domain import worlds
 from litharness.domain.extraction import (
-    DEFAULT_SHEET,
     MAX_SUFFIX,
     SHEET_PREDICATE,
-    STATUS_FIELDS,
-    STATUS_PATTERN,
     STATUS_PREDICATE,
-    STATUS_TEMPLATE,
     MalformedSheet,
     Sheet,
     SheetField,
@@ -50,6 +46,7 @@ from litharness.domain.extraction import (
 from litharness.domain.findings import DetectorInput, Severity
 from litharness.domain.integrity import detect_contradictions
 from litharness.domain.text import content_hash
+from tests.conftest import FIXTURE_SHEET
 
 
 def state_of(fixture_id: str) -> lc.StateSnapshot:
@@ -68,15 +65,25 @@ def scenes_of(fixture_id: str) -> dict[str, str]:
 
 
 def extract(fixture_id: str, logical_id: str, text: str, known=None):
-    return extract_state(
-        text,
-        known=known if known is not None else state_of(fixture_id).records,
-        project_id="p",
-        book_id="b",
-        branch_id="br",
-        logical_id=logical_id,
-        version_id="v",
+    """The status records read out of `text`. Since §205 an undeclared book's first line also
+    mints its sheet declaration; these tests read the snapshot, so the helper filters."""
+    return _statuses(
+        extract_state(
+            text,
+            known=known if known is not None else state_of(fixture_id).records,
+            project_id="p",
+            book_id="b",
+            branch_id="br",
+            logical_id=logical_id,
+            version_id="v",
+        )
     )
+
+
+def _statuses(records):
+    """The status records only: since §205 an undeclared book's first line also mints its
+    sheet declaration, and these tests read the snapshot."""
+    return tuple(record for record in records if record.predicate == STATUS_PREDICATE)
 
 
 # -- the order key, which is the sharpest constraint -----------------------------------
@@ -157,15 +164,17 @@ def test_repair_reextracts_an_unchanged_fact_against_the_new_node_version() -> N
     text = scenes_of("litrpg")["scene-1"]
     [first] = extract("litrpg", "scene-1", text, known=others)
 
-    [reanchored] = extract_state(
-        text,
-        known=(*others, first),
-        project_id="p",
-        book_id="b",
-        branch_id="br",
-        logical_id="scene-1",
-        version_id="v-after-repair",
-        replacing_logical_id="scene-1",
+    [reanchored] = _statuses(
+        extract_state(
+            text,
+            known=(*others, first),
+            project_id="p",
+            book_id="b",
+            branch_id="br",
+            logical_id="scene-1",
+            version_id="v-after-repair",
+            replacing_logical_id="scene-1",
+        )
     )
 
     assert reanchored.record_id == first.record_id
@@ -306,15 +315,17 @@ def test_a_book_with_no_snapshot_extracts_nothing_until_the_plan_says_where() ->
 
     assert extract("litrpg", "scene-1", text, known=canon) == ()
 
-    [record] = extract_state(
-        text,
-        known=canon,
-        project_id="p",
-        book_id="b",
-        branch_id="br",
-        logical_id="scene-1",
-        version_id="v",
-        stated_order_key="s1",
+    [record] = _statuses(
+        extract_state(
+            text,
+            known=canon,
+            project_id="p",
+            book_id="b",
+            branch_id="br",
+            logical_id="scene-1",
+            version_id="v",
+            stated_order_key="s1",
+        )
     )
     assert record.story_position.order_key == "s1"
     assert record.value["gold"] == 45
@@ -347,15 +358,17 @@ def test_the_book_wins_wherever_it_has_spoken() -> None:
     known = state_of("litrpg").records
     others = [record for record in known if record.predicate != STATUS_PREDICATE]
 
-    [record] = extract_state(
-        scenes_of("litrpg")["scene-4"],
-        known=others,
-        project_id="p",
-        book_id="b",
-        branch_id="br",
-        logical_id="scene-4",
-        version_id="v",
-        stated_order_key="s9",
+    [record] = _statuses(
+        extract_state(
+            scenes_of("litrpg")["scene-4"],
+            known=others,
+            project_id="p",
+            book_id="b",
+            branch_id="br",
+            logical_id="scene-4",
+            version_id="v",
+            stated_order_key="s9",
+        )
     )
 
     assert record.story_position.order_key == "s4"
@@ -375,15 +388,17 @@ def test_a_record_says_whether_the_book_or_the_plan_placed_it() -> None:
             authority=lc.StateAuthority.ACCEPTED_CANON,
         ),
     )
-    [minted] = extract_state(
-        "[STATUS] Rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45",
-        known=canon,
-        project_id="p",
-        book_id="b",
-        branch_id="br",
-        logical_id="scene-1",
-        version_id="v",
-        stated_order_key="s1",
+    [minted] = _statuses(
+        extract_state(
+            "[STATUS] Rook — Level 3 | HP 24/30 | MP 8/10 | Gold 45",
+            known=canon,
+            project_id="p",
+            book_id="b",
+            branch_id="br",
+            logical_id="scene-1",
+            version_id="v",
+            stated_order_key="s1",
+        )
     )
     others = [r for r in state_of("litrpg").records if r.predicate != STATUS_PREDICATE]
     [attested] = extract("litrpg", "scene-1", scenes_of("litrpg")["scene-1"], known=others)
@@ -397,7 +412,7 @@ def test_a_record_says_whether_the_book_or_the_plan_placed_it() -> None:
 
 def test_the_shape_the_prompt_asks_for_is_the_shape_the_parser_accepts() -> None:
     """The test that makes the instruction safe to write, and the failure it rules out is
-    silent: a prompt asking for a form `STATUS_PATTERN` does not match produces prose that
+    silent: a prompt asking for a form the line's own pattern does not match produces prose that
     reads correctly to a human and extracts nothing — and a scene establishing no state is
     indistinguishable from a scene whose state nobody could read. No gate catches that.
 
@@ -406,11 +421,18 @@ def test_the_shape_the_prompt_asks_for_is_the_shape_the_parser_accepts() -> None
     line = render_status_line(
         "Rook", {"level": 4, "hp": 27, "hp_max": 34, "mp": 6, "mp_max": 10, "gold": 33}
     )
-    match = STATUS_PATTERN.search(line)
+    match = FIXTURE_SHEET.pattern.search(line)
 
     assert match is not None, f"the extractor cannot read the line it asks for: {line!r}"
     assert match.group("subject") == "Rook"
-    assert [match.group(field) for field in STATUS_FIELDS] == ["4", "27", "34", "6", "10", "33"]
+    assert [match.group(field) for field in FIXTURE_SHEET.value_keys] == [
+        "4",
+        "27",
+        "34",
+        "6",
+        "10",
+        "33",
+    ]
 
 
 def test_a_rendered_line_round_trips_through_extraction_itself() -> None:
@@ -500,7 +522,7 @@ _LABELS = st.text(
 def test_a_declared_sheet_round_trips(fields, data) -> None:
     """The property the two literals used to hold by hand.
 
-    `STATUS_TEMPLATE` and `STATUS_PATTERN` were separate strings a human had to keep in
+    the line's own template and the line's own pattern were separate strings a human had to keep in
     agreement, and the failure when they drift is silent: a prompt asking for a form the parser
     does not accept yields prose that reads correctly and extracts nothing. Deriving both from
     one field list turns that from a discipline into a property, so this asserts it for *any*
@@ -524,11 +546,11 @@ def test_the_default_sheet_reproduces_the_line_this_module_shipped_with() -> Non
     """Both golden fixtures and every store already on disk declare no sheet, so the default
     has to be the old constants exactly — untouched by construction rather than by a
     compatibility branch."""
-    assert STATUS_TEMPLATE == (
+    assert FIXTURE_SHEET.template == (
         "[STATUS] {subject} — Level {level} | HP {hp}/{hp_max} | MP {mp}/{mp_max} | Gold {gold}"
     )
-    assert STATUS_FIELDS == ("level", "hp", "hp_max", "mp", "mp_max", "gold")
-    assert sheet_for(state_of("litrpg").records) is DEFAULT_SHEET
+    assert FIXTURE_SHEET.value_keys == ("level", "hp", "hp_max", "mp", "mp_max", "gold")
+    assert sheet_for(state_of("litrpg").records) == FIXTURE_SHEET
 
 
 def test_a_book_reads_the_sheet_it_declared_and_not_the_default_one() -> None:
@@ -556,13 +578,14 @@ def test_a_book_reads_the_sheet_it_declared_and_not_the_default_one() -> None:
 
     assert line == "[STATUS] Silas — Loop 2 | Day 1"
     assert [(r.subject, r.value) for r in extracted] == [("silas", {"loop": 2, "day": 1})]
-    assert STATUS_PATTERN.search(line) is None, "the default line must not read this book"
+    assert FIXTURE_SHEET.pattern.search(line) is None, "the default line must not read this book"
 
 
-def test_two_sheet_declarations_abstain_to_the_default() -> None:
+def test_two_sheet_declarations_fall_back_to_the_columns_the_snapshots_hold() -> None:
     """Two declarations are the book disagreeing with itself about its own vocabulary, and
     picking either would be this module choosing which of the author's answers is real — the
-    same abstention `attested_position` makes."""
+    same abstention `attested_position` makes. Since §205 the abstention is to the book's own
+    snapshots (as an undeclared book reads), and to no line at all where there are none."""
     first = _sheet_record([{"name": "loop", "label": "Loop"}])
     second = lc.StateRecord(
         record_id="rec-sheet-2",
@@ -575,7 +598,15 @@ def test_two_sheet_declarations_abstain_to_the_default() -> None:
         evidence=[],
     )
 
-    assert sheet_for([first, second]) is DEFAULT_SHEET
+    assert sheet_for([first, second]) is None, "no snapshot, no line"
+    held = worlds.world_record(
+        "silas",
+        STATUS_PREDICATE,
+        value={"loop": 2, "day": 1},
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+    )
+    fallback = sheet_for([first, second, held])
+    assert fallback is not None and fallback.value_keys == ("loop", "day")
 
 
 @pytest.mark.parametrize(
@@ -859,7 +890,7 @@ def test_a_sheet_declared_without_the_flag_shows_every_column_as_it_always_did()
     assert hidden.render("Silas", {"loop": 2, "day": 0}) == "[STATUS] Silas — Loop 2"
     with pytest.raises(MalformedSheet):
         parse_sheet({"fields": [{"name": "loop", "label": "Loop"}], "show_unheld": "no"})
-    assert DEFAULT_SHEET.show_unheld is True
+    assert FIXTURE_SHEET.show_unheld is True
     assert render_status_line(
         "Mara", {"level": 1, "hp": 10, "hp_max": 10, "mp": 1, "mp_max": 1, "gold": 0}
     ) == ("[STATUS] Mara — Level 1 | HP 10/10 | MP 1/1 | Gold 0")
@@ -890,14 +921,16 @@ def test_a_projected_line_in_a_scene_becomes_a_record_completed_from_what_stood_
         authority=lc.StateAuthority.ACCEPTED_CANON,
     )
     known = [*state_of("litrpg").records, sheet_record, person]
-    [record] = extract_state(
-        "[STATUS] Kellow — Band 1 | Pace 2",
-        known=known,
-        project_id="p",
-        book_id="b",
-        branch_id="br",
-        logical_id="scene-1",
-        version_id="v",
+    [record] = _statuses(
+        extract_state(
+            "[STATUS] Kellow — Band 1 | Pace 2",
+            known=known,
+            project_id="p",
+            book_id="b",
+            branch_id="br",
+            logical_id="scene-1",
+            version_id="v",
+        )
     )
     assert record.subject == "kellow" and record.value == {"rank": 1, "pace": 2}
     # With the opening state on record, the same line mints the whole state as it stands.
@@ -974,7 +1007,7 @@ def test_a_typed_column_is_declared_by_kind_and_a_number_is_the_kind_when_none_i
         parse_sheet({"fields": [{"name": "x", "label": "X", "kind": "colour"}]})
     with pytest.raises(MalformedSheet):
         parse_sheet({"fields": [{"name": "x", "label": "X", "kind": "name", "paired": True}]})
-    assert all(f.kind == "number" for f in DEFAULT_SHEET.fields)
+    assert all(f.kind == "number" for f in FIXTURE_SHEET.fields)
 
 
 def test_typed_values_print_as_the_book_names_them_and_read_back_as_ids() -> None:
@@ -1066,13 +1099,77 @@ def test_a_sheet_may_belong_to_a_place_and_its_line_reads_back() -> None:
         "hall_c", {"held": 41, "open": 0}, sheet=sheet_for(canon), records=canon
     )
     assert line == "[STATUS] Hall C — Held 41 | Open 0"
-    [record] = extract_state(
-        line,
-        known=[*state_of("litrpg").records, *canon],
+    [record] = _statuses(
+        extract_state(
+            line,
+            known=[*state_of("litrpg").records, *canon],
+            project_id="p",
+            book_id="b",
+            branch_id="br",
+            logical_id="scene-1",
+            version_id="v",
+        )
+    )
+    assert record.subject == "hall_c" and record.value == {"held": 41, "open": 0}
+
+
+# -- §205: no default vocabulary; an undeclared book's own evidence declares its sheet -----
+
+
+def test_an_undeclared_book_s_first_line_declares_its_sheet_in_the_order_it_printed() -> None:
+    """The store writes a snapshot's keys sorted, so the order a book prints its columns in
+    would be lost without a declaration; the first line an undeclared book prints is read
+    as its declaration, canon, in the page's own order."""
+    canon = [
+        worlds.world_record(
+            "kellow",
+            worlds.ENTITY_ROLE_PREDICATE,
+            value="protagonist",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+    ]
+    records = extract_state(
+        "[STATUS] Kellow — Reach 3 | Band 1 | Carry 2/5",
+        known=canon,
         project_id="p",
         book_id="b",
         branch_id="br",
         logical_id="scene-1",
         version_id="v",
+        stated_order_key="s1",
     )
-    assert record.subject == "hall_c" and record.value == {"held": 41, "open": 0}
+    by_predicate = {record.predicate: record for record in records}
+    assert set(by_predicate) == {STATUS_PREDICATE, SHEET_PREDICATE}
+    assert by_predicate[STATUS_PREDICATE].value == {
+        "reach": 3,
+        "band": 1,
+        "carry": 2,
+        "carry_max": 5,
+    }
+    declared = parse_sheet(by_predicate[SHEET_PREDICATE].value)
+    assert declared.value_keys == ("reach", "band", "carry", "carry_max")
+    assert [f.label for f in declared.fields] == ["Reach", "Band", "Carry"]
+    assert declared.fields[2].paired
+    # Read against its own declaration, the next scene's line needs no teaching.
+    later = extract_state(
+        "[STATUS] Kellow — Reach 4 | Band 1 | Carry 2/5",
+        known=[*canon, *records],
+        project_id="p",
+        book_id="b",
+        branch_id="br",
+        logical_id="scene-2",
+        version_id="v",
+        stated_order_key="s2",
+    )
+    assert [record.predicate for record in later] == [STATUS_PREDICATE]
+
+
+def test_an_imported_book_with_snapshots_and_no_declaration_is_declared_from_its_first() -> None:
+    from litharness.domain.extraction import declaration_from_snapshots
+
+    records = state_of("litrpg").records
+    declaration = declaration_from_snapshots(records)
+    assert declaration is not None and declaration.predicate == SHEET_PREDICATE
+    assert parse_sheet(declaration.value) == FIXTURE_SHEET, "the file's own order"
+    assert declaration_from_snapshots([*records, declaration]) is None, "declared already"
+    assert declaration_from_snapshots([]) is None

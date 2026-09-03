@@ -117,8 +117,14 @@ def test_two_declared_systems_and_the_one_printing_the_line_is_the_one_read() ->
     assert extraction.movable_names(canon, character="mira", at="s3")
 
 
-def test_two_systems_both_printing_are_two_answers_and_the_arms_abstain() -> None:
+def test_two_systems_both_declaring_a_sheet_print_the_one_the_person_stands_in() -> None:
+    """Both systems declare a sheet, and the book's own snapshots settle which is live (§205):
+    Mira stands in the Weave, so the Weave prints and the Accord does not. Before the default
+    sheet retired, two declarations abstained to the default and neither printed, which the
+    arms read as two answers; the answer is one, and it is the snapshot's."""
     canon = _canon(second=True, second_prints=True)
-    assert extraction._printing_system(canon, canon) is None
-    assert extraction.offered_choice(canon, character="mira", at="s3") is None
-    assert extraction.offered_line(canon, character="mira", at="s3") is None
+    printing = extraction._printing_system(canon, canon)
+    assert printing is not None and printing.system_id == "sys_weave"
+    assert extraction.offered_choice(canon, character="mira", at="s3") == ("Hand", ("Kiln", "Reed"))
+    live = extraction.sheet_for(canon)
+    assert live is not None and set(live.value_keys) == set(printing.value_keys)

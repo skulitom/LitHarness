@@ -287,7 +287,7 @@ def render_prompt(
     system's own to compare.
 
     **It is the book's own current line rather than a template with placeholders, and that is
-    a measurement.** Shown `STATUS_TEMPLATE` with its `{subject}` slot intact, one of three
+    a measurement.** Shown the line's own template with its `{subject}` slot intact, one of three
     local models wrote the placeholder out verbatim. The line still matched the parser — a
     brace-wrapped word is a perfectly good subject — and still extracted nothing, because
     `{subject}` is no name canon knows: a scene that looks right, parses right, and
@@ -497,8 +497,8 @@ def render_prompt(
         )
         if standing_line:
             # **A filled example, never a template with braces**, and that is a measurement
-            # rather than a preference — `system_voice_example`'s. Shown `STATUS_TEMPLATE` with
-            # its `{subject}` slot intact, a model wrote the placeholder out verbatim; the line
+            # rather than a preference — `system_voice_example`'s. Shown the line's own template
+            # with its `{subject}` slot intact, a model wrote the placeholder out verbatim; the line
             # matched the pattern, named a subject canon has never heard of, and extraction
             # yielded nothing. `extraction.standing_example` renders this one with the book's own
             # label, the book's own phrase for a change of standing and the rung the standing
@@ -1084,10 +1084,9 @@ def make_plan_selector(
             # on this tick to stop. `plan_progress` reports the same refusal with the same
             # reason, so `status` says why the board is not moving instead of showing a book
             # that looks finished.
-            if (
-                (policy or DraftPolicy()).require_starting_sheet
-                and genre_block(book_records) is not None
-            ):
+            if (policy or DraftPolicy()).require_starting_sheet and genre_block(
+                book_records
+            ) is not None:
                 continue
 
             pov = worlds.protagonist_brief(book_records)

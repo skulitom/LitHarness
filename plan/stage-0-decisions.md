@@ -22670,3 +22670,55 @@ label's. Several sheets per book: that is the display model's (phase 3).
 
 **Anti-scope.** The books on disk are unchanged by construction (no sheet on disk declares a
 kind). Nothing here ranks a column or a value.
+
+## 205. Phase 3, first slice: the default sheet retires, and a book's own evidence declares its columns in the order it printed them
+
+**The decision it executes.** The operator's, 2026-09-03: *Level | HP | MP | Gold* was wrong
+because it was not general, and HP, MP and Gold are barely used in the genre besides. The
+field census (§204) puts *hp* in a tenth of the window stories and *mp* in a fraction of a
+tenth; *gold* does not make the top forty.
+
+**Measured first.** Replayed over the four stored books (`runs/ab/pilot25/draw1b`, `draw2`,
+`draw3`, `runs/ab/pilot24-third/draw3`), the reader without the default reads every one of the
+eight accepted scenes' lines to exactly the snapshot the store holds, and each book's own
+declared sheet is the one found. The two golden fixtures, which declare nothing, imply
+`Level | HP | MP | Gold` from their own snapshots in the file's order, so they render and read
+as they did. One thing the default had been quietly doing was found by its removal: the store
+wrote a snapshot's value with its keys sorted, so an undeclared book's column order survived
+only because the default fixed the order for the one vocabulary it knew; without it the two
+golden fixtures rendered *Gold 45 | HP 24/30 | Level 3 | MP 8/10* out of a store.
+
+**What shipped** (`domain/extraction.py`, `domain/worlds.py`, `adapters/sqlite_store.py`,
+`cli.py`, `tests/conftest.py`). The four constants (`DEFAULT_SHEET`, `STATUS_PATTERN`,
+`STATUS_TEMPLATE`, `STATUS_FIELDS`) are gone from the package; the fixtures' vocabulary lives
+in the tests as `FIXTURE_SHEET`, which is where a fixture's words belong. `sheet_for` returns
+the one declaration, else the columns the book's snapshots imply, else `None`; with two
+declarations the book's own snapshots settle which is live (the declaration whose every column
+the snapshots hold, when exactly one does), and `genre.system_gap` still reports the pair.
+`render_status_line` takes no default: the sheet given, the book's, or the one the snapshot
+itself implies (`sheet_from_value`), and a value with no numeric key renders the tag and the
+subject alone. An undeclared book's first printed line teaches its sheet (`sheet_from_line`,
+labels to keys, a slash to a pair) **and declares it**: `extract_state` mints a canon
+`status_sheet` record from that line beside the snapshot, so every later scene is read
+against the book's own order; an imported book with snapshots and no declaration is declared
+from its first snapshot in the file's order (`declaration_from_snapshots`, at `import` and
+`new --state`, and in the planner tests' fixture helper, which mirrors `import`). The store
+keeps a state record's key order (the record id is content-derived elsewhere and does not
+depend on that text). `speaks_system_voice` is a snapshot and a readable sheet; a book with
+no sheet prints no status line and is read for none, and its graph line still runs. Tests:
+the first line declares in its own order and the next scene needs no teaching; an import is
+declared from its first snapshot; two declarations fall to the snapshots' columns and to no
+line where there are none; the fixtures' order survives a store; the beat names only what the
+live line or the graph line prints; two systems both declaring a sheet print the one the
+person stands in.
+
+**What was refused.** A replacement default under another name. A tolerant reader that
+accepts a column the sheet never declared. Sorting kept in the store for the sake of byte
+identity of stored JSON: nothing reads that text for identity, and the order is a fact about
+the book. Two repo-wide reformats ran by accident from a chained command with an empty file
+list and were reverted whole before anything was committed; the lesson (guard a computed
+file list, never format a tree) is in the working notes and not in any file here.
+
+**Anti-scope.** Views, several sheets per book, the choice display and the notice are the
+next slices of phase 3. The books on disk are unchanged by construction, and the replay says
+so.

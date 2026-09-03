@@ -634,7 +634,10 @@ def test_state_lists_what_the_book_believes_in_story_order(db, capsys) -> None:
     ledger = [line for line in out.splitlines() if "status_snapshot" in line]
     assert [line.split()[0] for line in ledger] == ["s1", "s2", "s3", "s4", "s5", "s6"]
     assert "gold=45" in ledger[0] and "gold=0" in ledger[-1]
-    assert "19 record(s)" in out
+    # Nineteen the fixture holds, and the twentieth is the sheet the import declared from the
+    # fixture's first snapshot, in the file's own order (§205).
+    assert "20 record(s)" in out
+    assert "status_sheet" in out
     # The fixture's own note on its planted ledger defect, printed with the record it is
     # about. An operator reading this column is exactly who §8.3 planted it for.
     assert "the ledger-correct value is 20" in out

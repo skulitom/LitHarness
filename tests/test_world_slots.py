@@ -37,6 +37,7 @@ import pytest
 from litharness.application import world as world_view
 from litharness.cli import EXIT_OK, main
 from litharness.domain import extraction, worlds
+from tests.conftest import FIXTURE_SHEET
 
 
 def rec(subject: str, predicate: str, **kwargs: object) -> lc.StateRecord:
@@ -78,9 +79,7 @@ _CRITERION = [
     rec("crit_seal", worlds.TYPE_PREDICATE, value=worlds.CRITERION),
     rec("crit_seal", worlds.COMPARATOR_PREDICATE, value="ordinal"),
 ]
-_LADDER = rec(
-    "first_seal", worlds.PRECEDES_PREDICATE, object_ref="second_seal", value="crit_seal"
-)
+_LADDER = rec("first_seal", worlds.PRECEDES_PREDICATE, object_ref="second_seal", value="crit_seal")
 _CLAIM = rec("q_who_pays", worlds.CLAIM_CONTENT, value="the assay house pays, and always has")
 
 
@@ -170,9 +169,7 @@ def _chose() -> lc.StateRecord:
     """`stands_at`'s shape: the thing reached in the edge, the fork it was reached on in the
     value, and the position in the key — because a world may run several forks and an unscoped
     pick would splice two of them, which is `precedes`' own recorded reason."""
-    record = rec(
-        "kell", worlds.CHOSE, object_ref="opt_kiln", value="fork_hand", order_key="0250"
-    )
+    record = rec("kell", worlds.CHOSE, object_ref="opt_kiln", value="fork_hand", order_key="0250")
     assert "kell took opt_kiln of fork_hand, and cannot take another" in sentences([record])
     return record
 
@@ -321,7 +318,7 @@ def _status_sheet() -> lc.StateRecord:
     record = rec("sera", extraction.SHEET_PREDICATE, value=_SHEET_VALUE)
     sheet = extraction.sheet_for([accepted(record)])
     assert sheet.value_keys == ("attunement", "threads", "threads_max")
-    assert sheet != extraction.DEFAULT_SHEET
+    assert sheet != FIXTURE_SHEET
     return record
 
 
@@ -649,8 +646,18 @@ def test_repositioning_a_declared_fact_does_not_land_and_says_so(fake, tmp_path,
         assert (
             main(
                 [
-                    "--database", db, "world", "declare", "kell", "stands_at",
-                    "--object", "second_seal", "--value", "crit_seal", "--order-key", key,
+                    "--database",
+                    db,
+                    "world",
+                    "declare",
+                    "kell",
+                    "stands_at",
+                    "--object",
+                    "second_seal",
+                    "--value",
+                    "crit_seal",
+                    "--order-key",
+                    key,
                 ]
             )
             == EXIT_OK
@@ -725,7 +732,7 @@ def test_the_predicates_the_vocabulary_names_are_the_ones_that_clear_the_floor(
     `world_agent`'s prompt calls the list of every predicate the world's language admits. This
     drives the documented shapes through the real CLI and asserts the book ends up rendering
     **its own** columns — the counterfactual that makes the omission a finding rather than a
-    theory, since a book that declares no sheet is not sheetless but on `DEFAULT_SHEET`.
+    theory, since a book that declares no sheet is not sheetless but on the retired default sheet.
     """
     db = seeded(tmp_path)
     capsys.readouterr()
@@ -741,6 +748,7 @@ def test_the_predicates_the_vocabulary_names_are_the_ones_that_clear_the_floor(
         ],
     ):
         assert main(["--database", db, *argv]) == EXIT_OK
+
     def floor_gap_open() -> bool:
         capsys.readouterr()
         assert main(["--database", db, "world", "check", "--json"]) == EXIT_OK

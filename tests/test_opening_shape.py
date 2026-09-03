@@ -24,6 +24,7 @@ from litharness.cli import EXIT_OK, main
 from litharness.domain import beats as beats_domain
 from litharness.domain import context as context_domain
 from litharness.domain import extraction, gamesystem, genre, house, plans, reviser
+from tests.conftest import FIXTURE_SHEET
 
 # ------------------------------------------------------------------------- the opening beats
 
@@ -111,7 +112,7 @@ def test_the_offer_line_is_read_off_canon_with_every_guard_the_offer_beat_has() 
     ]
     assert extraction.offered_line(unreached, character="mira", at="s1") is None
     # The status line is the one parsed surface: an offer line mints no record.
-    assert extraction.STATUS_PATTERN.search("[OFFER] Hand — Kiln: opens Kiln Hand") is None
+    assert FIXTURE_SHEET.pattern.search("[OFFER] Hand — Kiln: opens Kiln Hand") is None
 
 
 _BEAT = beats_domain.Beat(
@@ -169,8 +170,18 @@ def test_a_book_created_without_first_person_seeds_only_its_premise(
 ) -> None:
     db = tmp_path / "book.db"
     assert main(["--database", str(db), "init"]) == EXIT_OK
-    args = ["new", "Plain", "--premise", "A cook reads her own sheet.", "--scenes", "6",
-            "--book", "b", "--branch", "main"]
+    args = [
+        "new",
+        "Plain",
+        "--premise",
+        "A cook reads her own sheet.",
+        "--scenes",
+        "6",
+        "--book",
+        "b",
+        "--branch",
+        "main",
+    ]
     if person is not None:
         args += ["--person", person]
     assert main(["--database", str(db), *args]) == EXIT_OK
@@ -183,10 +194,24 @@ def test_a_first_person_book_carries_the_constraint_as_a_locked_plan_item(tmp_pa
     db = tmp_path / "book.db"
     assert main(["--database", str(db), "init"]) == EXIT_OK
     assert (
-        main([
-            "--database", str(db), "new", "Mine", "--premise", "A cook reads her own sheet.",
-            "--scenes", "6", "--book", "b", "--branch", "main", "--person", "first",
-        ])
+        main(
+            [
+                "--database",
+                str(db),
+                "new",
+                "Mine",
+                "--premise",
+                "A cook reads her own sheet.",
+                "--scenes",
+                "6",
+                "--book",
+                "b",
+                "--branch",
+                "main",
+                "--person",
+                "first",
+            ]
+        )
         == EXIT_OK
     )
     with SqliteStore.open(db) as store:

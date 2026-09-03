@@ -50,8 +50,8 @@ It says so now, and is refused. That is §8.3's fourth promotion clause and §17
 rather than by adding a detector.
 
 **The instruction was measured against real models, and the first version failed one of
-three.** Shown `STATUS_TEMPLATE` with its `{subject}` slot intact, one local model wrote the
-placeholder out verbatim — a line that matched `STATUS_PATTERN`, named a subject canon has
+three.** Shown the line's own template with its `{subject}` slot intact, one local model wrote the
+placeholder out verbatim — a line that matched the line's own pattern, named a subject canon has
 never heard of, and extracted nothing. Showing the book's own line instead took it to three of
 three. `tests/test_planner.py` keeps that measurement runnable; it is the only test in this
 project that can check the instruction at all, because every other one runs on a provider that
@@ -180,8 +180,10 @@ class Sheet:
     a book with no combat had to borrow a combat sheet to be read back at all. Declaring the
     sheet in canon moves that choice to where the rest of the book's facts live.
 
-    `DEFAULT_SHEET` reproduces the old constants exactly, so a book that declares nothing —
-    which is both golden fixtures and every store written before this — is untouched by
+    The default sheet that used to stand in for an undeclared book is retired (§205): a book
+    that declares nothing prints the columns its own snapshots hold, so both golden fixtures
+    and every store written before this — whose snapshots imply exactly the old constants'
+    columns — are untouched by
     construction rather than by a compatibility branch.
 
     The template and the pattern are derived from **one** field list, which is what keeps the
@@ -204,6 +206,21 @@ class Sheet:
         seen = list(self.value_keys)
         if len(set(seen)) != len(seen):
             raise MalformedSheet(f"a sheet may not repeat a value key: {sorted(seen)}")
+
+    def declaration(self) -> dict[str, object]:
+        """This sheet as a `status_sheet` record's value."""
+        fields: list[dict[str, object]] = []
+        for field_ in self.fields:
+            entry: dict[str, object] = {"name": field_.name, "label": field_.label}
+            if field_.paired:
+                entry["paired"] = True
+            if field_.kind != "number":
+                entry["kind"] = field_.kind
+            fields.append(entry)
+        declared: dict[str, object] = {"fields": fields}
+        if not self.show_unheld:
+            declared["show_unheld"] = False
+        return declared
 
     @property
     def value_keys(self) -> tuple[str, ...]:
@@ -412,23 +429,103 @@ def _compile_pattern(fields: tuple[SheetField, ...]) -> re.Pattern[str]:
     )
 
 
-#: The sheet a book gets when it declares none: the LitRPG line this module shipped with.
-#: Kept as the default because changing what an undeclared book means would rewrite the
-#: reading of every store already on disk.
-DEFAULT_SHEET = Sheet(
-    (
-        SheetField("level", "Level"),
-        SheetField("hp", "HP", paired=True),
-        SheetField("mp", "MP", paired=True),
-        SheetField("gold", "Gold"),
-    )
-)
+def sheet_from_line(text: str) -> Sheet | None:
+    """The sheet the first status line in `text` teaches: its labels become keys (lowercased,
+    spaces to underscores), a slash makes a column paired. `None` with no readable line.
 
-#: Back-compatible names for the default sheet's three parts. Every caller that predates
-#: per-book sheets keeps working, and the round-trip test still pins them.
-STATUS_PATTERN = DEFAULT_SHEET.pattern
-STATUS_TEMPLATE = DEFAULT_SHEET.template
-STATUS_FIELDS = DEFAULT_SHEET.value_keys
+    **An undeclared book's first line is its declaration** (§205). Before the default
+    retired, a book with no declared sheet and no snapshot yet was read against the shipped
+    vocabulary and a first line in any other words read as nothing; now the line's own words
+    are the columns, which is what `implied_sheet` already does once a snapshot stands. The
+    key rule is `label_for`'s inverse for the labels that rule produces.
+    """
+    for match in _LINE.finditer(text):
+        fields: list[SheetField] = []
+        seen: set[str] = set()
+        for pair in match.group("pairs").split("|"):
+            pair = pair.strip()
+            read = _LOOSE_PAIR.match(pair)
+            if read is None:
+                continue
+            key = re.sub(r"[^a-z0-9_]+", "_", read.group("label").strip().casefold()).strip("_")
+            if not key or not key.isidentifier() or key in seen:
+                continue
+            seen.add(key)
+            fields.append(
+                SheetField(
+                    key, read.group("label").strip(), paired=read.group("ceiling") is not None
+                )
+            )
+        if fields:
+            return Sheet(tuple(fields))
+    return None
+
+
+#: A pair as a first line writes it: words, then a number, optionally over a ceiling.
+_LOOSE_PAIR = re.compile(r"^(?P<label>[^\d|]+?)[^\S\n]+(?P<current>\d+)(?:/(?P<ceiling>\d+))?$")
+
+
+def declaration_from_snapshots(
+    records: Sequence[lc.StateRecord],
+) -> lc.StateRecord | None:
+    """A `status_sheet` declaration for a book that holds snapshots and declares none: the
+    first canon snapshot's columns, in the order that snapshot holds them. `None` where a
+    declaration already stands or nothing implies one.
+
+    **Why the order has to be declared** (§205). The store writes a snapshot's value with
+    its keys sorted, so a book that never declared its sheet reads back with its columns
+    in alphabetical order rather than the order it printed them in; the retired default
+    used to fix the order for the one vocabulary it knew. An imported book's first
+    snapshot, as the file holds it, is the book's own order, and this turns it into the
+    declaration `sheet_for` reads first. Canon, because the snapshot it is derived from
+    is; the subject is the snapshot's.
+    """
+    if any(
+        record.predicate == SHEET_PREDICATE and state_mod.is_canon(record) for record in records
+    ):
+        return None
+    for record in records:
+        if (
+            record.predicate == STATUS_PREDICATE
+            and state_mod.is_canon(record)
+            and isinstance(record.value, Mapping)
+        ):
+            sheet = sheet_from_value(record.value)
+            if sheet is None:
+                continue
+            return worlds_mod.world_record(
+                record.subject,
+                SHEET_PREDICATE,
+                value=sheet.declaration(),
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            )
+    return None
+
+
+def sheet_from_value(value: Mapping[str, object]) -> Sheet | None:
+    """The sheet one snapshot implies on its own: its numeric keys in order, a `_max` key
+    pairing its column, labels by `label_for`. `None` for a snapshot with no numeric key.
+
+    **No default vocabulary** (§205). The line this module shipped with, `Level | HP |
+    MP | Gold`, was a vocabulary welded in, and three of its four words are barely used
+    in the genre; a book that declares nothing and holds nothing prints nothing, and a
+    book that holds a snapshot prints the columns that snapshot holds.
+    """
+    keys = [
+        key
+        for key, held in value.items()
+        if isinstance(key, str)
+        and key.isidentifier()
+        and isinstance(held, int)
+        and not isinstance(held, bool)
+    ]
+    known = set(keys)
+    fields = tuple(
+        SheetField(key, label_for(key), paired=f"{key}{MAX_SUFFIX}" in known)
+        for key in keys
+        if not (key.endswith(MAX_SUFFIX) and key[: -len(MAX_SUFFIX)] in known)
+    )
+    return Sheet(fields) if fields else None
 
 
 #: What a bracket tag can be. Placed numbers, stated as placed — see `GraphLine.__post_init__`
@@ -671,7 +768,7 @@ def label_for(key: str) -> str:
     Short keys uppercase and longer ones title-case, which is a rule rather than a lookup and
     happens to be the genre's own convention: `hp` and `mp` are initialisms and so are `str`,
     `dex` and `int`, while `attunement` and `soul_thread` are words. It reproduces
-    `DEFAULT_SHEET`'s four labels exactly from its four keys, which is what lets a derived
+    the retired default sheet's four labels exactly from its four keys, which is what lets a derived
     sheet be the same object for a book that used the default.
     """
     return key.upper() if len(key) <= 3 else key.replace("_", " ").title()
@@ -681,7 +778,7 @@ def implied_sheet(records: Sequence[lc.StateRecord]) -> Sheet | None:
     """The column form this book's own snapshots imply, or `None` where they imply none.
 
     **This exists because the fallback was printing the operator's explicit not-this into
-    every book's drafting prompt** (§161). `DEFAULT_SHEET` is `Level | HP | MP | Gold`, and
+    every book's drafting prompt** (§161). The retired default was `Level | HP | MP | Gold`, and
     the progression direction of 2026-08-21 is explicit that the model is abilities in a
     graph and ranks with names and **not** HP/MP/Gold. A book that seeds
     `{"attunement": 1, "threads": 2, "threads_max": 3}` and declares no sheet was shown
@@ -729,7 +826,7 @@ def implied_sheet(records: Sequence[lc.StateRecord]) -> Sheet | None:
     return Sheet(fields) if fields else None
 
 
-def sheet_for(records: Sequence[lc.StateRecord]) -> Sheet:
+def sheet_for(records: Sequence[lc.StateRecord]) -> Sheet | None:
     """The sheet this book declared, the one its own snapshots imply, or the default.
 
     **Abstains when the book says more than one thing**, exactly as `attested_position` does:
@@ -737,19 +834,17 @@ def sheet_for(records: Sequence[lc.StateRecord]) -> Sheet:
     would be this module choosing which of the author's answers is real.
 
     **A book that declared nothing is now read rather than assumed** (§161, and
-    `implied_sheet` carries the measurement). The old fallback was `DEFAULT_SHEET`
+    `implied_sheet` carries the measurement). The old fallback was the retired default sheet
     unconditionally, which imposed `Level | HP | MP | Gold` on every book that had not
     declared — and since the declaring vocabulary was undocumented, that was all of them. The
     columns come off the book's own snapshots instead, so the line a writer is shown is the
     line their book actually counts by.
 
-    **`DEFAULT_SHEET` survives as the answer for a book whose keys are its keys, and that is
-    what keeps every store on disk readable.** A snapshot holding exactly the default's six
-    value keys returns the default object itself rather than a derivation of it, so its
-    canonical column order is preserved rather than reconstructed from whatever order a
-    particular record's mapping happened to iterate in. Both golden fixtures are that book;
-    so is every store written before this function read anything. The default also remains
-    the answer for a book with no readable snapshot at all, which is a book
+    **No default survives (§205).** A book with one declaration prints that; a book with none
+    prints the columns its own snapshots imply (`implied_sheet`), which for both golden
+    fixtures and every store written before this function read anything is exactly the
+    `Level | HP | MP | Gold` the retired default carried, in the same canonical order; a book
+    with no readable snapshot at all has no sheet and prints no line, which is a book
     `speaks_system_voice` refuses and the genre floor blocks, so nothing is ever asked to
     print it.
     """
@@ -760,12 +855,21 @@ def sheet_for(records: Sequence[lc.StateRecord]) -> Sheet:
     ]
     if len(declared) == 1:
         return parse_sheet(declared[0].value)
-    if len(declared) > 1:
-        return DEFAULT_SHEET
+    # Two declarations are a disagreement about the book's own vocabulary, which
+    # `genre.system_gap` reports for the Architect to settle. Until it is, the book's own
+    # snapshots settle which one is live (§205): the declaration whose every column the
+    # snapshots hold prints, when exactly one does; otherwise the columns the snapshots
+    # hold print, as an undeclared book's do. The retired default used to stand here.
     implied = implied_sheet(records)
-    if implied is None or set(implied.value_keys) == set(DEFAULT_SHEET.value_keys):
-        return DEFAULT_SHEET
-    return implied
+    if implied is None:
+        return None
+    held = set(implied.value_keys)
+    live = [
+        sheet
+        for sheet in (parse_sheet(record.value) for record in declared)
+        if set(sheet.value_keys) <= held
+    ]
+    return live[0] if len(live) == 1 else implied
 
 
 def impossible_fields(value: Mapping[str, object]) -> tuple[str, ...]:
@@ -809,7 +913,7 @@ def render_status_line(
     subject: str,
     value: Mapping[str, object],
     *,
-    sheet: Sheet = DEFAULT_SHEET,
+    sheet: Sheet | None = None,
     records: Sequence[lc.StateRecord] = (),
 ) -> str:
     """A status line for a subject and a snapshot value — the inverse of `sheet.pattern`.
@@ -829,7 +933,12 @@ def render_status_line(
     and gets the book's own spelling; one holding none gets the humanised id, which is still
     never the id.
     """
-    return sheet.render(
+    # **No default** (§205): the sheet is the one given, the book's own, or the one this
+    # snapshot implies; a value with no numeric key renders the tag and the subject alone.
+    chosen = sheet or (sheet_for(records) if records else None) or sheet_from_value(value)
+    if chosen is None:
+        return f"[STATUS] {display_name(records, subject)} — "
+    return chosen.render(
         display_name(records, subject),
         value,
         resolve=lambda entity: display_name(records, entity),
@@ -1003,7 +1112,7 @@ def speaks_system_voice(records: Sequence[lc.StateRecord]) -> bool:
     answers True while the ask stays silent is the exact disagreement
     `genre.has_starting_sheet` delegates here to rule out.
     """
-    return any(
+    return sheet_for(records) is not None and any(
         record.predicate == STATUS_PREDICATE
         and state_mod.is_canon(record)
         and isinstance(record.value, Mapping)
@@ -1497,13 +1606,31 @@ def extract_state(
     subjects = {record.subject for record in known if state_mod.is_canon(record)}
     # The book's own line, not this module's. A book that declared `Loop | Day` writes and is
     # read in `Loop | Day`; one that declared nothing gets exactly what it always got.
+    # The book's own line: declared, implied by its snapshots, or taught by the first line
+    # this scene prints (§205). A book with none of the three prints no status line and is
+    # read for none; the graph line below is its own declaration and still runs.
     sheet = sheet_for(known)
+    taught = sheet is None
+    if taught:
+        sheet = sheet_from_line(text)
+    if sheet is None:
+        return extract_graph_facts(
+            text,
+            known=known,
+            project_id=project_id,
+            book_id=book_id,
+            branch_id=branch_id,
+            logical_id=logical_id,
+            version_id=version_id,
+            order_key=order_key,
+        )
 
     extracted: list[lc.StateRecord] = []
     # **Read tolerantly, so a projected line is a partial snapshot** (§203). The strict
     # `pattern` needs every column; a line printing only the held columns folds forward
     # onto the columns it left out, which is what `state_as_it_stands` already does.
     ids = {display_name(known, subject).casefold(): subject for subject in subjects}
+    declared = False
     for read_subject, read, span in sheet.read(text, ids=ids):
         subject = normalise_subject(read_subject)
         # A name canon has never used is a claim about someone new, which is a proposal
@@ -1517,6 +1644,20 @@ def extract_state(
         # values winning: the writer's *carry these values forward unchanged* applied on this
         # side, and the same fold `state_as_it_stands` renders from.
         value = {**_folded_before(known, subject, order_key), **read}
+        if taught and not declared:
+            # **The first line an undeclared book prints is its declaration** (§205):
+            # the columns in the order the page carries them, canon because the prose
+            # was accepted, so every later scene is read against the book's own order
+            # rather than the store's sorted keys.
+            declared = True
+            extracted.append(
+                worlds_mod.world_record(
+                    subject,
+                    SHEET_PREDICATE,
+                    value=sheet.declaration(),
+                    authority=lc.StateAuthority.ACCEPTED_CANON,
+                )
+            )
         # Already established, identically, at this position: the record adds nothing, and
         # writing it anyway costs a permanent duplicate in every later context packet.
         if _already_canon(
@@ -1633,7 +1774,6 @@ def _already_canon(
 
 __all__ = [
     "CONFIGURATION_PREDICATES",
-    "DEFAULT_SHEET",
     "GRAPH_REGISTRY_VERSION",
     "LABEL_CHARS",
     "LABEL_WORDS",
@@ -1642,7 +1782,6 @@ __all__ = [
     "PLANNED_POSITION_VERSION",
     "REGISTRY_VERSION",
     "SHEET_PREDICATE",
-    "STATUS_PATTERN",
     "STATUS_PREDICATE",
     "GraphEdge",
     "GraphLine",
@@ -1653,6 +1792,7 @@ __all__ = [
     "SheetField",
     "attested_position",
     "counted_names",
+    "declaration_from_snapshots",
     "display_name",
     "extract_graph_facts",
     "extract_state",
@@ -1673,6 +1813,8 @@ __all__ = [
     "promotions",
     "record_id_for",
     "sheet_for",
+    "sheet_from_line",
+    "sheet_from_value",
     "snapshot_at",
     "standing_example",
     "standing_target",
@@ -1685,11 +1827,11 @@ def system_voice_example(
 ) -> str | None:
     """The book's own current status line, to show a generator what to write — or None.
 
-    **A filled example rather than `STATUS_TEMPLATE`, and that is a measurement rather than a
+    **A filled example rather than the line's own template, and that is a measurement rather than a
     preference.** The instruction first showed the template with its `{subject}` placeholder
     intact, and three local models were asked to draft against it: two substituted the
     character's name and one wrote `[STATUS] {subject} — Level 3 | ...` verbatim. That line
-    *matches* `STATUS_PATTERN` — a brace-wrapped word is a perfectly good subject — so nothing
+    *matches* the line's own pattern — a brace-wrapped word is a perfectly good subject — so nothing
     rejected it, and `{subject}` is not a name canon knows, so extraction yielded nothing. A
     scene that looks right, parses right, and establishes nothing: the exact silence this
     module's docstring says no gate catches.
@@ -1958,9 +2100,12 @@ def _counted(records: Sequence[lc.StateRecord], *, at: str | None = None) -> tup
     if standing is None:
         return ()
     held = set(standing[1])
+    sheet = sheet_for(records)
+    if sheet is None:
+        return ()
     return tuple(
         Movable(field_.label, field_.name)
-        for field_ in sheet_for(records).fields
+        for field_ in sheet.fields
         if field_.numeric
         and field_.name in held
         and field_.label.casefold() not in house_mod.MACHINERY_WORDS
@@ -2160,7 +2305,8 @@ def _system_prints_the_line(
     disagreement, so this guard and that gap close together: the beats come from the system
     precisely when the book is a position in it.
     """
-    return {field_.name for field_ in sheet_for(records).fields} == set(system.value_keys)
+    sheet = sheet_for(records)
+    return sheet is not None and {field_.name for field_ in sheet.fields} == set(system.value_keys)
 
 
 def _named_moves(

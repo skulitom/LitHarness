@@ -93,7 +93,7 @@ def vocabulary() -> dict[str, Any]:
 
     **What the omission cost is a default rather than a silence, and that is the sharper
     finding.** A book that declares no `status_sheet` does not go without one: it gets
-    `extraction.DEFAULT_SHEET`, whose labels reach the *writer* through
+    the retired default sheet, whose labels reach the *writer* through
     `system_voice_example` as the example line to imitate. So the operator's stated not-this
     was arriving as what a book gets for declaring nothing, and the only escape was the
     predicate nobody was told about. This is `worlds.py`'s "absence is free" — true of the

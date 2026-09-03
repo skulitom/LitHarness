@@ -117,10 +117,16 @@ def _fixture(store: SqliteStore, name: str) -> tuple[str, str]:
         lc.StateSnapshot, json.loads(fixture_state(name).read_text(encoding="utf-8"))
     )
     state = import_state(state_snapshot, book_id=revision.book_id, branch_id=revision.branch_id)
+    # As `cli import` does since §205: a book that holds snapshots and declares no sheet is
+    # declared from its first snapshot, in the file's own order.
+    from litharness.domain import extraction as extraction_domain
+
+    declaration = extraction_domain.declaration_from_snapshots(state.records)
+    records = [*state.records, declaration] if declaration is not None else list(state.records)
     store.record_state_records(
         revision.book_id,
         revision.branch_id,
-        state.records,
+        records,
         created_at="2026-08-13T00:00:00Z",
         source_revision_id=state.source_revision_id,
     )
@@ -145,9 +151,9 @@ def test_raw_reader_rows_do_not_enter_a_scene_prompt(store: SqliteStore) -> None
 
     # The golden mystery is not a house book; this test is about reader-row leakage into the
     # prompt, not the genre floor.
-    job = make_plan_selector(
-        outline=False, policy=DraftPolicy(require_starting_sheet=False)
-    )(store, "worker-a", START, 300.0)
+    job = make_plan_selector(outline=False, policy=DraftPolicy(require_starting_sheet=False))(
+        store, "worker-a", START, 300.0
+    )
 
     assert job is not None
     rendered = f"{job.payload.get('system', '')}\n{job.payload.get('prompt', '')}"
@@ -1032,9 +1038,9 @@ def test_the_default_selector_queues_the_prompt_it_always_queued(store: SqliteSt
 
     # The golden mystery is not a house book; this test is about the default's no-cue
     # control, not the genre floor.
-    make_plan_selector(
-        project_id=PROJECT_ID, policy=DraftPolicy(require_starting_sheet=False)
-    )(store, "worker-a", START, 300.0)
+    make_plan_selector(project_id=PROJECT_ID, policy=DraftPolicy(require_starting_sheet=False))(
+        store, "worker-a", START, 300.0
+    )
 
     [job] = [
         unit for unit in store.jobs_by_status(JobStatus.QUEUED) if unit.job_kind == SCENE_DRAFT
@@ -1347,7 +1353,7 @@ def test_a_real_model_writes_a_line_this_extractor_can_read(store: SqliteStore) 
     instruction produces a line the extractor accepts — and the failure is silent, because a
     scene whose state nobody could read is indistinguishable from one that established none.
 
-    It found a real defect. Shown `STATUS_TEMPLATE` with its `{subject}` slot intact, one of
+    It found a real defect. Shown the line's own template with its `{subject}` slot intact, one of
     the three local models this once ran against wrote `[STATUS] {subject} — Level 3 | ...`
     out verbatim: the line matched the parser, extracted nothing, and no gate objected.
     Showing the book's own current line instead fixed it.
@@ -1695,7 +1701,7 @@ def test_an_autonomous_run_extracts_nothing_from_a_fixture_book(
     Extraction runs on every accepted scene now, so a six-scene autonomous run is where a
     careless pattern would surface as canon nobody authored. It holds today for a reason
     worth stating rather than assuming: ``FakeProvider`` echoes ``[fake:<digest>] ...`` and
-    ``STATUS_PATTERN`` anchors on ``^\[STATUS\]``, so the echo never matches -- not "the
+    the line's own pattern anchors on ``^\[STATUS\]``, so the echo never matches -- not "the
     fake emits no bracket lines", which is false. ``FakeProvider`` ignores prompts entirely,
     so a ``render_prompt`` change cannot move this either.
     """

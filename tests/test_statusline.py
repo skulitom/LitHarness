@@ -15,7 +15,7 @@ from litharness.application.statusline import (
     status_table_classed,
     status_table_inline,
 )
-from litharness.domain.extraction import DEFAULT_SHEET
+from tests.conftest import FIXTURE_SHEET
 
 LINE = "[STATUS] Mira Kell — Hold 3 | Carried 2/3 | Mending 4"
 
@@ -70,7 +70,7 @@ def test_a_line_canon_would_refuse_still_draws() -> None:
     wants numbers; this module knows the shape. A renderer that drew only accepted lines would
     leave the reader looking at raw text for a reason invisible from the page."""
     line = "[STATUS] Mira Kell — Hold three | Carried 2/3"
-    assert DEFAULT_SHEET.pattern.search(line) is None
+    assert FIXTURE_SHEET.pattern.search(line) is None
     assert parse_status_line(line) is not None
 
 

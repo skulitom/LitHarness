@@ -506,18 +506,14 @@ def _resolve_writer(
                     "The compiled controls the roster is read against must not be shadowed; "
                     "rename or discard the stored row"
                 )
-            if any(
-                row["status"] == writers_domain.RosterStatus.ACCEPTED.value for row in rows
-            ):
+            if any(row["status"] == writers_domain.RosterStatus.ACCEPTED.value for row in rows):
                 return store.accepted_writer(wanted), ""
             # **A refused writer is excluded here exactly as a proposed one is, but it must not
             # be told the same thing.** The acceptance sentence points at a command that cannot
             # work on it — `roster refuse` is terminal and `roster accept` skips a refused row —
             # so an operator following that advice gets "no proposed writer named" and no idea
             # why. A changed mind is a new proposal, and that is what this says (stage-0 §149).
-            if all(
-                row["status"] == writers_domain.RosterStatus.REFUSED.value for row in rows
-            ):
+            if all(row["status"] == writers_domain.RosterStatus.REFUSED.value for row in rows):
                 return None, (
                     f"litharness: writer {wanted!r} was refused, and a refusal is terminal. "
                     "There is no un-refuse: declare the dossier again to propose it afresh, "
@@ -610,10 +606,7 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
         baseline = experimental_mechanism(registered_at=_stamp(_now()))
         store.register_reader_mechanism(baseline)
         reader_mechanism = store.current_reader_mechanism(baseline.mechanism_id)
-        if (
-            reader_mechanism is not None
-            and reader_mechanism.spec_digest != baseline.spec_digest
-        ):
+        if reader_mechanism is not None and reader_mechanism.spec_digest != baseline.spec_digest:
             raise SystemExit(
                 "litharness: the current reader mechanism uses a specification this "
                 "installation does not implement"
@@ -762,9 +755,7 @@ def cmd_status(args: argparse.Namespace) -> int:
         shape = SerialShape(args.chapter_scenes, args.arc_chapters)
         blocked = []
         for book_id, branch_id, _ in store.branches():
-            progress = plan_progress(
-                store, book_id, branch_id, policy=policy, serial_shape=shape
-            )
+            progress = plan_progress(store, book_id, branch_id, policy=policy, serial_shape=shape)
             if progress.blocked_reason is not None:
                 blocked.append(
                     status_module.BlockedBook(book_id, branch_id, progress.blocked_reason)
@@ -1902,9 +1893,7 @@ def cmd_readers(args: argparse.Namespace) -> int:
                 print("reader.anticipation.v0: unregistered")
             else:
                 evidence = (
-                    f" evidence={mechanism.evidence_digest}"
-                    if mechanism.evidence_digest
-                    else ""
+                    f" evidence={mechanism.evidence_digest}" if mechanism.evidence_digest else ""
                 )
                 print(
                     f"{mechanism.mechanism_id}: {mechanism.status.value} "
@@ -1930,9 +1919,7 @@ def cmd_readers(args: argparse.Namespace) -> int:
                 )
             for intervention in interventions:
                 routed = (
-                    f" directive={intervention.directive_id}"
-                    if intervention.directive_id
-                    else ""
+                    f" directive={intervention.directive_id}" if intervention.directive_id else ""
                 )
                 print(
                     f"  intervention {intervention.intervention_id} "
@@ -2167,9 +2154,7 @@ def _listing_title(
     title = ""
     availability: titles.Availability | None = None
     for _ in range(max(1, attempts)):
-        request = overview_mod.render_title_request(
-            listing, writer, tuple(abandoned), machinery
-        )
+        request = overview_mod.render_title_request(listing, writer, tuple(abandoned), machinery)
         result, refusal = _completion_call(request, calls=calls, spend=spend)
         if result is None:
             print(f"  title: {refusal}", file=sys.stderr)
@@ -2315,9 +2300,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
                 return EXIT_FAULT
             drawn.append(drafted.text.strip())
             machinery = schema_words.named_in(drawn[-1])
-            chained = overview_mod.chains_too_hard(
-                drawn[-1], ceiling=LISTING_COORDINATOR_CEILING
-            )
+            chained = overview_mod.chains_too_hard(drawn[-1], ceiling=LISTING_COORDINATOR_CEILING)
             too_long = overview_mod.runs_too_long(drawn[-1], ceiling=length_ceiling)
             if not chained and not machinery and not too_long:
                 break
@@ -3210,11 +3193,7 @@ def cmd_prompts(args: argparse.Namespace) -> int:
     # an inspection command that has never touched a database leave one behind in whatever
     # directory it was run from.
     wanted = (getattr(args, "writer", "") or "").strip() or "ferreira"
-    store = (
-        _store(args)
-        if wanted not in writers_domain.CAST and args.database.exists()
-        else None
-    )
+    store = _store(args) if wanted not in writers_domain.CAST and args.database.exists() else None
     try:
         writer, reason = _installed_writer(args, wanted, store)
     finally:
@@ -3549,13 +3528,9 @@ def cmd_roster(args: argparse.Namespace) -> int:
     store = _roster_store(args)
     try:
         if args.view == "show":
-            status = (
-                writers_domain.RosterStatus(args.status) if args.status else None
-            )
+            status = writers_domain.RosterStatus(args.status) if args.status else None
             rows = store.roster_rows(name=args.name, status=status)
-            payload = roster_mod.show(
-                rows, store.roster_rows(), with_dossier=args.dossier
-            )
+            payload = roster_mod.show(rows, store.roster_rows(), with_dossier=args.dossier)
             _say(json.dumps(payload, ensure_ascii=False, indent=2))
             return EXIT_OK
 
@@ -3571,13 +3546,11 @@ def cmd_roster(args: argparse.Namespace) -> int:
                     file=sys.stderr,
                 )
                 return EXIT_FAULT
-            dossier = (
-                _read_text(args.dossier_file) if args.dossier_file else (args.dossier or "")
-            )
+            dossier = _read_text(args.dossier_file) if args.dossier_file else (args.dossier or "")
             if not dossier.strip():
                 print(
                     "litharness: a writer with no dossier is not a writer. Pass --dossier "
-                    'with the paragraph in one quoted argument; `litharness roster check '
+                    "with the paragraph in one quoted argument; `litharness roster check "
                     '--dossier "..."` reads it back to you first and costs nothing',
                     file=sys.stderr,
                 )
@@ -3600,9 +3573,7 @@ def cmd_roster(args: argparse.Namespace) -> int:
                         file=sys.stderr,
                     )
                     return EXIT_FAULT
-            specialization = args.specialization or os.environ.get(
-                RECRUIT_SHELF_ENV, ""
-            ).strip()
+            specialization = args.specialization or os.environ.get(RECRUIT_SHELF_ENV, "").strip()
             shape = args.shape or os.environ.get(RECRUIT_SHAPE_ENV, "").strip()
             if not specialization or not shape:
                 print(
@@ -3704,9 +3675,7 @@ def cmd_roster(args: argparse.Namespace) -> int:
             if not wanted or row["name"] in wanted or row["writer_id"] in wanted
         ]
         missing = sorted(
-            wanted
-            - {row["name"] for row in proposed}
-            - {row["writer_id"] for row in proposed}
+            wanted - {row["name"] for row in proposed} - {row["writer_id"] for row in proposed}
         )
         if missing:
             print(
@@ -3750,11 +3719,7 @@ def cmd_roster(args: argparse.Namespace) -> int:
         by_name: dict[str, list[str]] = {}
         for name, writer_id in admitted:
             by_name.setdefault(name, []).append(writer_id)
-        contested = {
-            name
-            for name, ids in by_name.items()
-            if len(ids) > 1 or name in on_roster
-        }
+        contested = {name for name, ids in by_name.items() if len(ids) > 1 or name in on_roster}
         for name in sorted(contested):
             ids = by_name[name]
             held = on_roster.get(name)
@@ -3796,9 +3761,7 @@ def cmd_roster(args: argparse.Namespace) -> int:
             ),
         )
         moved = (
-            store.accept_writers(
-                [wid for _, wid in admitted], decision=decision, accepted_at=stamp
-            )
+            store.accept_writers([wid for _, wid in admitted], decision=decision, accepted_at=stamp)
             if admitted
             else 0
         )
@@ -3849,15 +3812,9 @@ def cmd_roster_refuse(args: argparse.Namespace) -> int:
 
         proposed = store.roster_rows(status=writers_domain.RosterStatus.PROPOSED)
         wanted = set(args.names)
-        rows = [
-            row
-            for row in proposed
-            if row["name"] in wanted or row["writer_id"] in wanted
-        ]
+        rows = [row for row in proposed if row["name"] in wanted or row["writer_id"] in wanted]
         missing = sorted(
-            wanted
-            - {row["name"] for row in proposed}
-            - {row["writer_id"] for row in proposed}
+            wanted - {row["name"] for row in proposed} - {row["writer_id"] for row in proposed}
         )
         if missing:
             print(
@@ -3967,9 +3924,7 @@ def cmd_recruit(args: argparse.Namespace) -> int:
     try:
         store = _roster_store(args)
         before = {row["writer_id"] for row in store.roster_rows()}
-        standing = [
-            row["name"] for row in store.roster_rows(specialization=args.specialization)
-        ]
+        standing = [row["name"] for row in store.roster_rows(specialization=args.specialization)]
         if standing:
             print(f"  {len(standing)} already on this shelf: {', '.join(standing)}")
 
@@ -3988,9 +3943,7 @@ def cmd_recruit(args: argparse.Namespace) -> int:
             print(f"litharness: {refusal}", file=sys.stderr)
             return EXIT_FAULT
 
-        declared = [
-            row for row in store.roster_rows() if row["writer_id"] not in before
-        ]
+        declared = [row for row in store.roster_rows() if row["writer_id"] not in before]
         gate = GateOutcome(
             gate=GateKind.SHAPE,
             rule_or_critic_id=request.profile,
@@ -4196,8 +4149,7 @@ def cmd_revoice(args: argparse.Namespace) -> int:
             detail=(
                 f"{name} re-minted as {child.writer_id} from {parent.writer_id}, aimed by "
                 f"{descriptor.descriptor_id}, exemplar {digest}, "
-                f"{len(dossier.split())} words, proposed"
-                + ("" if fresh else "; already on record")
+                f"{len(dossier.split())} words, proposed" + ("" if fresh else "; already on record")
             ),
         )
         store.record_decision(
@@ -4263,9 +4215,7 @@ def _finish_drawn_systems(
     floor's and `genre` is what owns it — `gamesystem` cannot import it without closing a cycle.
     """
     canon = [
-        record
-        for record in store.state_records(book_id, branch_id)
-        if state_mod.is_canon(record)
+        record for record in store.state_records(book_id, branch_id) if state_mod.is_canon(record)
     ]
     completions, unfinished = gamesystem.completion_records(canon)
     if not completions:
@@ -4275,7 +4225,8 @@ def _finish_drawn_systems(
         for record in completions
     ]
     if genre.has_starting_sheet(canon) and not genre.has_starting_sheet([*canon, *finished]):
-        printed = ", ".join(field_.name for field_ in extraction.sheet_for(canon).fields)
+        current = extraction.sheet_for(canon)
+        printed = ", ".join(field_.name for field_ in current.fields) if current else ""
         columns = ", ".join(
             key
             for system in gamesystem.systems_of([*canon, *finished])
@@ -4913,6 +4864,9 @@ def cmd_new(args: argparse.Namespace) -> int:
             ],
         )
         if records:
+            declaration = extraction.declaration_from_snapshots(records)
+            if declaration is not None:
+                records = [*records, declaration]
             store.record_state_records(book_id, branch_id, records, created_at=stamp)
         for promise in promise_rows:
             store.record_promise(book_id, branch_id, promise)
@@ -5461,6 +5415,11 @@ def cmd_import(args: argparse.Namespace) -> int:
                 ],
             )
         if state_records:
+            # An imported book that holds snapshots and declares no sheet gets its
+            # declaration from its first snapshot, in the file's own order (§205).
+            declaration = extraction.declaration_from_snapshots(state_records)
+            if declaration is not None:
+                state_records = [*state_records, declaration]
             store.record_state_records(
                 revision.book_id,
                 revision.branch_id,
@@ -6632,9 +6591,7 @@ def build_parser() -> argparse.ArgumentParser:
         "reader-mechanism",
         help="inspect or change the evidence-gated chapter-reader mechanism",
     )
-    mechanism_actions = mechanism.add_subparsers(
-        dest="mechanism_action", required=True
-    )
+    mechanism_actions = mechanism.add_subparsers(dest="mechanism_action", required=True)
     mechanism_status = mechanism_actions.add_parser(
         "status", help="show the current version and its qualification evidence"
     )

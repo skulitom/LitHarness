@@ -52,7 +52,7 @@ from litharness.domain import house, voice
 from litharness.domain.directors import prose_axes_named
 from litharness.domain.draft import strip_em_dash
 from litharness.domain.events import EventType
-from litharness.domain.extraction import STATUS_PATTERN, STATUS_TEMPLATE
+from tests.conftest import FIXTURE_SHEET
 from tests.test_draft import START, conductor_for, registry_with, seeded
 
 #: The registered mark, read from its one home for `strip_em_dash`'s own reason.
@@ -248,12 +248,14 @@ def test_a_status_line_still_parses_after_the_strip() -> None:
     with no alternation. A scene whose panel renders and whose state does not extract is
     indistinguishable from a scene that established nothing.
     """
-    line = STATUS_TEMPLATE.format(subject="Theo", level=3, hp=10, hp_max=12, mp=1, mp_max=4, gold=7)
+    line = FIXTURE_SHEET.template.format(
+        subject="Theo", level=3, hp=10, hp_max=12, mp=1, mp_max=4, gold=7
+    )
     scene = f"He put it down {MARK} and looked.\n\n{line}\n\nThe room went quiet."
     stripped, removed = strip_em_dash(scene)
 
     assert removed == 1, "the prose mark goes and the machine's separator does not"
-    match = STATUS_PATTERN.search(stripped)
+    match = FIXTURE_SHEET.pattern.search(stripped)
     assert match is not None
     assert match.group("subject") == "Theo"
     assert match.group("level") == "3"

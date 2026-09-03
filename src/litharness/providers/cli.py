@@ -79,7 +79,7 @@ def subprocess_runner(
     on the way in. Measured on a real `claude -p` draft: the em dash the generator wrote came
     back as `â€"`, the three UTF-8 bytes of U+2014 reinterpreted one at a time.
 
-    That is worse than cosmetic here, because `STATUS_PATTERN` matches on U+2014 exactly. A
+    That is worse than cosmetic here, because the line's own pattern matches on U+2014 exactly. A
     mangled dash means the status line does not parse, which means `extract_state` reads
     **nothing** from any scene a CLI provider wrote — the silent shape `extraction.py`'s
     docstring names, where a scene that established no state is indistinguishable from one

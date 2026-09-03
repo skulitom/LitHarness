@@ -16,9 +16,12 @@ os.environ.setdefault("LITHARNESS_ENV", "test")
 # This conftest loads before any test module, so this one insert lets every test importorskip
 # a research module without repeating the path arithmetic; the importorskip calls stay in the
 # test files on purpose, because they name the reason a module might be absent.
-if str(
-    _research_dir := Path(__file__).resolve().parent.parent / "research" / "quality-measurement"
-) not in sys.path:  # inserted once, even if conftest is re-imported
+if (
+    str(
+        _research_dir := Path(__file__).resolve().parent.parent / "research" / "quality-measurement"
+    )
+    not in sys.path
+):  # inserted once, even if conftest is re-imported
     sys.path.insert(0, str(_research_dir))
 
 from litharness.domain.nodes import Node, NodeKind
@@ -129,3 +132,19 @@ def build_patch(
         idempotency_key=f"idem-{logical_id}-{len(ops)}",
         licensed_by_finding_id=licensed_by,
     )
+
+
+# --- the golden fixtures' sheet ---------------------------------------------------------------
+from litharness.domain.extraction import Sheet, SheetField  # noqa: E402
+
+#: The line the two golden fixtures print, `Level | HP | MP | Gold`, as the tests' own
+#: vocabulary rather than the package's: the package shipped it as a default until stage-0
+#: §205 retired every default vocabulary, and the fixtures' snapshots imply exactly this sheet.
+FIXTURE_SHEET = Sheet(
+    (
+        SheetField("level", "Level"),
+        SheetField("hp", "HP", paired=True),
+        SheetField("mp", "MP", paired=True),
+        SheetField("gold", "Gold"),
+    )
+)

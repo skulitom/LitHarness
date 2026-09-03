@@ -8,7 +8,7 @@ talking looked like a paragraph with pipes in it. Operator read 10 named it.
 
 **This is a rendering module and holds no contract.** The `.txt` outputs and the writer's
 instruction are untouched, and `domain/extraction.py` remains the only parser whose reading of
-the line means anything: `STATUS_PATTERN` is what canon is built from, and it is stricter than
+the line means anything: the line's own pattern is what canon is built from, and it is stricter than
 this — it knows the book's declared field labels and requires their values to be numbers. The
 pattern here knows only the shape, because a renderer that could not draw a panel for a line
 canon had not accepted would leave the reader looking at the raw text for a reason invisible
@@ -33,7 +33,7 @@ import re
 from dataclasses import dataclass
 
 #: The shape, and only the shape. The subject runs to a dash because that is how both the
-#: genre and `domain.extraction.STATUS_TEMPLATE` write it; the en dash is accepted beside the
+#: genre and the line's own template write it; the en dash is accepted beside the
 #: em dash because a model that reaches for one reaches for the other. Both are written as
 #: escapes rather than as themselves, so nobody has to tell three dashes apart in a diff.
 _STATUS_LINE = re.compile(
@@ -87,8 +87,7 @@ def parse_status_line(line: str) -> StatusLine | None:
 #: `color-mix` is declared after a plain `currentColor` border rather than instead of it, so a
 #: renderer that does not know the function still draws the panel, just at full contrast.
 _EDGE = (
-    "border:1px solid currentColor;"
-    "border-color:color-mix(in srgb,currentColor 26%,transparent);"
+    "border:1px solid currentColor;border-color:color-mix(in srgb,currentColor 26%,transparent);"
 )
 _PANEL = (
     "border-collapse:collapse;width:100%;max-width:22em;margin:1.6em 0;text-indent:0;"
@@ -98,8 +97,7 @@ _PANEL = (
 _NAME = _EDGE + "text-align:left;padding:.45em .8em;font-weight:700;letter-spacing:.05em;"
 _LABEL = _EDGE + "text-align:left;padding:.38em .8em;font-weight:400;"
 _VALUE = (
-    _EDGE + "text-align:right;padding:.38em .8em;font-weight:700;"
-    "font-variant-numeric:tabular-nums;"
+    _EDGE + "text-align:right;padding:.38em .8em;font-weight:700;font-variant-numeric:tabular-nums;"
 )
 
 

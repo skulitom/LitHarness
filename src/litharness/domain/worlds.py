@@ -24,8 +24,9 @@ there, plus the three things that vocabulary is worthless without:
 **Absence is free, and that is enforced rather than intended.** Nothing here requires a world to
 declare a system, a ladder, a sheet, a number, or combat. `project` returns an empty mapping for
 records it does not recognise, so a book that declares none of this is untouched by construction
-rather than by a compatibility branch — the idiom `domain/extraction.py`'s `DEFAULT_SHEET` states
-and `test_a_world_that_declares_nothing_projects_nothing` pins.
+rather than by a compatibility branch — the idiom `domain/extraction.py`'s sheet reading states
+(a book prints what its own snapshots hold, and no default since §205) and
+`test_a_world_that_declares_nothing_projects_nothing` pins.
 
 **The vocabulary is the research's, spelled as it spells it.** `evaluation.subject`,
 `claim.content`, `disclosed_to`, `precedes`, `group_key` and the rest come from

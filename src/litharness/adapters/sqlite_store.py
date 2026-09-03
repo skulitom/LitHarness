@@ -503,9 +503,7 @@ class SqliteStore:
                     int(node.tombstoned),
                     node.tombstone_reason,
                     node.block_kind.value if node.block_kind else None,
-                    json.dumps(node.block_payload, sort_keys=True)
-                    if node.block_payload
-                    else None,
+                    json.dumps(node.block_payload, sort_keys=True) if node.block_payload else None,
                 ),
             )
             connection.execute(
@@ -1158,12 +1156,14 @@ class SqliteStore:
                 record.kind.value,
                 record.subject,
                 record.predicate,
-                None
-                if record.value is None
-                else json.dumps(record.value, sort_keys=True, ensure_ascii=False),
+                # **Key order is kept** (§205): a snapshot's columns are the order the book
+                # printed them in, and sorting the value here was where an undeclared book's
+                # column order used to be lost. The record id is content-derived elsewhere
+                # and does not depend on this text.
+                None if record.value is None else json.dumps(record.value, ensure_ascii=False),
                 position,
                 record.authority.value,
-                json.dumps(lc.to_jsonable(record), sort_keys=True, ensure_ascii=False),
+                json.dumps(lc.to_jsonable(record), ensure_ascii=False),
                 source_revision_id,
                 created_at,
             ),
@@ -1588,7 +1588,7 @@ class SqliteStore:
         pool: str | None = None,
     ) -> list[dict[str, Any]]:
         """Every recorded read on this branch, newest first."""
-        sql = ("SELECT * FROM reader_reads WHERE book_id = ? AND branch_id = ?")
+        sql = "SELECT * FROM reader_reads WHERE book_id = ? AND branch_id = ?"
         params: list[Any] = [book_id, branch_id]
         if logical_id is not None:
             sql += " AND logical_id = ?"
@@ -1808,9 +1808,7 @@ class SqliteStore:
             )
             return cursor.rowcount > 0
 
-    def promises(
-        self, book_id: str, branch_id: str, *, open_only: bool = False
-    ) -> list[Promise]:
+    def promises(self, book_id: str, branch_id: str, *, open_only: bool = False) -> list[Promise]:
         """The ledger for one book, due-soonest first.
 
         Ordered by `due_key` with NULLs last and `promise_id` as the tiebreak, matching
@@ -1959,9 +1957,7 @@ class SqliteStore:
         accepted_at: str,
     ) -> int:
         """Put proposed writers on the roster as one decision. Returns how many moved."""
-        return self._roster.accept_writers(
-            writer_ids, decision=decision, accepted_at=accepted_at
-        )
+        return self._roster.accept_writers(writer_ids, decision=decision, accepted_at=accepted_at)
 
     def refuse_writers(
         self,
@@ -1971,9 +1967,7 @@ class SqliteStore:
         refused_at: str,
     ) -> int:
         """Turn proposed writers down as one decision. Returns how many moved."""
-        return self._roster.refuse_writers(
-            writer_ids, decision=decision, refused_at=refused_at
-        )
+        return self._roster.refuse_writers(writer_ids, decision=decision, refused_at=refused_at)
 
     # --- drawn exemplar passages -------------------------------------------------------
     #
@@ -2015,19 +2009,13 @@ class SqliteStore:
         one live machine directive per book at a time, so the inbox cannot fill with machine
         direction and bury what a person dropped in it.
         """
-        sql = (
-            "SELECT * FROM directives WHERE book_id = ? AND branch_id = ? "
-            "AND author LIKE ?"
-        )
+        sql = "SELECT * FROM directives WHERE book_id = ? AND branch_id = ? AND author LIKE ?"
         params: list[object] = [book_id, branch_id, f"{DIRECTOR_AUTHOR_PREFIX}%"]
         if live_only:
             sql += " AND status = ?"
             params.append(DirectiveStatus.RECEIVED.value)
         sql += " ORDER BY rowid"
-        return [
-            _directive_from_row(row)
-            for row in self._connection.execute(sql, params)
-        ]
+        return [_directive_from_row(row) for row in self._connection.execute(sql, params)]
 
     def plan_epoch(self, book_id: str, branch_id: str) -> int:
         return self._jobs.plan_epoch(book_id, branch_id)

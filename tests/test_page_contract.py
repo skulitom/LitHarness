@@ -11,7 +11,7 @@ snapshots that disagree at one position — the shape `integrity.detect_contradi
 on. `test_the_status_line_is_asked_for_exactly_once` is the assertion that keeps the
 placement without buying a contradiction with it.
 
-**The example is the book's own vocabulary.** `DEFAULT_SHEET` is `Level | HP | MP | Gold`,
+**The example is the book's own vocabulary.** the retired default sheet is `Level | HP | MP | Gold`,
 which is the operator's explicit not-this, and `render_status_line` fills absent keys with
 `?` — so a book seeding three quantities of its own and declaring no sheet was shown four
 clichés and four question marks.
@@ -47,7 +47,6 @@ import pytest
 from litharness.application import planner
 from litharness.domain import genre, house, worlds
 from litharness.domain.extraction import (
-    DEFAULT_SHEET,
     SHEET_PREDICATE,
     STATUS_PREDICATE,
     counted_names,
@@ -58,6 +57,7 @@ from litharness.domain.extraction import (
     state_as_it_stands,
     system_voice_example,
 )
+from tests.conftest import FIXTURE_SHEET
 
 
 def _snapshot(
@@ -92,7 +92,7 @@ _APPRENTICE = {"keeping": 0, "marks": 0}
 #: three quantities, none of them a cliché, one of them paired.
 _OWN_VOCABULARY = {"attunement": 1, "threads": 2, "threads_max": 3}
 
-#: `DEFAULT_SHEET`'s own six value keys, which is what both golden fixtures hold and what
+#: the retired default sheet's own six value keys, which is what both golden fixtures hold and what
 #: every store written before §161 holds.
 _DEFAULT_SHAPED = {"level": 1, "hp": 10, "hp_max": 10, "mp": 4, "mp_max": 4, "gold": 11}
 
@@ -103,7 +103,7 @@ _DEFAULT_SHAPED = {"level": 1, "hp": 10, "hp_max": 10, "mp": 4, "mp_max": 4, "go
 def test_a_book_that_declared_no_sheet_is_shown_the_columns_it_actually_counts() -> None:
     """The §161 defect, in the form it reached the writer's prompt.
 
-    Before this, `sheet_for` fell back to `DEFAULT_SHEET` for any book that declared no
+    Before this, `sheet_for` fell back to the retired default sheet for any book that declared no
     sheet, and the declaring vocabulary was undocumented — so this was every book. The line
     below is what the writer was handed: the book's own three quantities gone, four clichés
     in their place, and a question mark where each number should have been.
@@ -114,7 +114,7 @@ def test_a_book_that_declared_no_sheet_is_shown_the_columns_it_actually_counts()
     """
     records = [_snapshot("sera", dict(_OWN_VOCABULARY))]
 
-    was = render_status_line("sera", _OWN_VOCABULARY, sheet=DEFAULT_SHEET)
+    was = render_status_line("sera", _OWN_VOCABULARY, sheet=FIXTURE_SHEET)
     assert was == "[STATUS] Sera — Level ? | HP ?/? | MP ?/? | Gold ?"
 
     line = system_voice_example(records)
@@ -131,10 +131,15 @@ def test_a_book_whose_keys_are_the_defaults_keys_still_gets_the_default_object()
     any one record that happens to hold its keys. Returning the object itself is what keeps
     a store written before §161 parsing exactly as it did.
     """
-    assert sheet_for([_snapshot("rook", dict(_DEFAULT_SHAPED))]) is DEFAULT_SHEET
-    # Order deliberately scrambled: the answer is the same object either way.
+    assert sheet_for([_snapshot("rook", dict(_DEFAULT_SHAPED))]) == FIXTURE_SHEET
+    # Order deliberately scrambled: since §205 there is no default object to return, so the
+    # columns are the snapshot's own, in its own order; the set is the fixture's. A book that
+    # cares about its order declares it (`declaration_from_snapshots` does so at import).
     scrambled = {key: _DEFAULT_SHAPED[key] for key in reversed(list(_DEFAULT_SHAPED))}
-    assert sheet_for([_snapshot("rook", scrambled)]) is DEFAULT_SHEET
+    implied = sheet_for([_snapshot("rook", scrambled)])
+    assert implied is not None
+    assert set(implied.fields) == set(FIXTURE_SHEET.fields)
+    assert implied.value_keys != FIXTURE_SHEET.value_keys, "the order is the snapshot's own"
 
 
 def test_a_book_with_no_readable_snapshot_falls_back_and_is_never_asked_to_print() -> None:
@@ -145,7 +150,7 @@ def test_a_book_with_no_readable_snapshot_falls_back_and_is_never_asked_to_print
     from it and the genre floor blocks it before a packet is built.
     """
     assert implied_sheet([]) is None
-    assert sheet_for([]) is DEFAULT_SHEET
+    assert sheet_for([]) is None
     assert system_voice_example([]) is None
     assert genre.genre_block([]) is not None
 
@@ -194,9 +199,7 @@ def test_an_advancement_that_restates_nothing_still_renders_a_whole_sheet() -> N
         # Scene 2 moved one number and restated nothing else.
         _snapshot("sera", {"attunement": 2}, order_key="s2"),
     ]
-    assert system_voice_example(records, at="s2") == (
-        "[STATUS] Sera — Attunement 2 | Threads 2/3"
-    )
+    assert system_voice_example(records, at="s2") == ("[STATUS] Sera — Attunement 2 | Threads 2/3")
     assert counted_names(records, at="s2") == ("Attunement", "Threads")
 
 
@@ -292,9 +295,10 @@ def test_a_declared_protagonist_who_holds_no_sheet_leaves_the_line_where_it_was(
 def test_a_label_is_derived_by_a_rule_and_the_rule_is_the_genres_own() -> None:
     """Short keys are initialisms and longer ones are words.
 
-    The rule has to reproduce `DEFAULT_SHEET`'s four labels from its four keys, because that
-    is what lets a derived sheet and the default be the same statement for a book that used
-    it — and it happens to be right for the stat abbreviations the genre actually writes.
+    The rule has to reproduce the retired default sheet's four labels from its four keys,
+    because that is what lets a derived sheet and the default be the same statement for a
+    book that used it — and it happens to be right for the stat abbreviations the genre
+    actually writes.
     """
     assert [label_for(key) for key in ("level", "hp", "mp", "gold")] == [
         "Level",
@@ -614,10 +618,23 @@ def test_the_beat_stays_on_the_books_own_columns_when_the_system_prints_another_
             authority=lc.StateAuthority.ACCEPTED_CANON,
         ),
     ]
-    # Two sheets, so `sheet_for` abstains to the default and the system's columns are not the
-    # ones printed. The beat falls to the book's own line rather than to the system's names.
-    assert "Seamsight" not in movable_names(records, character="silas")
-    assert movable_names(records, character="silas") == counted_names(records)
+    # Two sheets: since §205 there is no default to abstain to, so the book's own snapshots
+    # settle which declaration is live — here the system's, since the seeded sheet holds its
+    # columns — and the beat may name what that line prints. The guard survives by
+    # construction: every movable name is a column the live line prints, or a rung the graph
+    # line prints, and the hand-declared `Standing` column, which nothing holds, is named by
+    # neither.
+    from litharness.domain import gamesystem
+    from litharness.domain.extraction import sheet_for
+
+    live = sheet_for(records)
+    assert live is not None and "rung" not in live.value_keys
+    printed = {field_.label for field_ in live.fields} | {
+        rank.name for system in gamesystem.systems_of(records) for rank in system.ranks
+    }
+    moved = movable_names(records, character="silas")
+    assert moved and set(moved) <= printed
+    assert "Standing" not in moved and "Standing" not in counted_names(records)
 
 
 def test_a_proposed_system_is_not_a_system_the_beat_may_schedule_against() -> None:
