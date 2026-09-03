@@ -23845,8 +23845,13 @@ failures every one `cli_error`, $48.87 (cumulative cache $56.44). The registered
 is a 75% scorable floor per version; `intact` and `sham` sit at exactly 0.750 and `shuffled` at
 **0.738**. The failures are one contiguous transport stop — sessions 181 to 240, the books
 `fitness-15` through `fitness-19` lost whole — plus a single earlier casualty at feed 10, and
-that one session is the entire difference between the floor and the answer. **No session was
-bought to lift it.** The intervals were computed and seen before the write-up, the runbook's
+that one session is the entire difference between the floor and the answer. **Which kind of
+failure those sixty were cannot be recovered, and nobody failed to look**: the transport
+discarded each call's stdout and stderr at the moment it failed and reported every non-zero
+exit as the one string `cli_error`, so the bucket is a property of the instrument rather than
+of the analysis — §224 records that, fixes it forward, and leaves these sixty unclassified
+because the information to classify them no longer exists. **No session was bought to lift the
+floor, either.** The intervals were computed and seen before the write-up, the runbook's
 transport recovery would have re-issued the failed cells for about a fifth of the ceiling, and
 neither is a licence to buy one cell after seeing which way a number pointed; the refusal is
 recorded here because the temptation was real and the arm is worth less than the rule.
