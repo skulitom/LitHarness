@@ -23335,3 +23335,61 @@ cycle the architecture test refuses).
 nothing here is a quality claim. `gamesystem.py` is the survey's other candidate; §7b of the
 survey records why its split needs the old module to become the top of its own chain and is
 taken as its own slice.
+
+## 216. `gamesystem.py` was one hub with eight marked sections, and it split into the definition, the arithmetic and the readers with the old module kept as the reader and the import site
+
+**Measured first** (`plan/maintainability-survey.md` §7b, `sections --matrix` on the file at
+d88114b). The module's eight `# ---` sections referenced each other along one axis: every later
+section named the definition (the reading section thirteen times, advancing ten), and the
+definition named one drawing helper back (`SystemDef` uses `_option_material`), so the
+definition and the draw check could not be parted. Advancing needed one name from writing
+(`_snapshot_record`); reading needed `records_for` and `check_draw`; advancing and reading
+named nothing of each other. Three tests read the module as a module rather than through a
+name: two walk `gamesystem.__all__` for banned words, one reads the file for an `extraction`
+import, and one reads `inspect.getsource` for a `def best` and its kin. The old module could
+not stay the bottom of its own chain and also re-export the modules above it without an
+import cycle, so the split had to leave `gamesystem` at the top.
+
+**What shipped.** Three modules, in the dependency order `systems` → `advancement` →
+`gamesystem`, all three below the five of §215:
+
+- `domain/systems.py`: the vocabulary and draw bounds, `SystemDef` and its parts, one position
+  in it (`CharacterSheet`, `Move`, `Change`, `Furniture`, `Advancement`), the draw check and
+  `starting_sheet`, and writing it down (`records_for`, `records_for_sheet`).
+- `domain/advancement.py`: `legal_moves`, `offered_options`, `pending_choices`, `offer_line`,
+  and the four moves through `advance`.
+- `domain/gamesystem.py`: its module docstring with a layout paragraph, reading it back
+  (`systems_of`, `sheet_of`, `changes_of`, `growth`, `unfinished_systems`,
+  `completion_records`, `drawn_digests`, `drawn_grants`) and a re-export of every name the
+  other two define, so `gamesystem.legal_moves` is still where every caller reads it. Its
+  `__all__` gains the two public names that had been left out (`LABEL_CHARS`,
+  `offered_options`).
+
+Each new module's imports were computed from the names its code references rather than
+written by hand, and lint confirmed nothing undefined and nothing unused.
+
+**Byte identity, and how it was checked.** The same comparison as §215, definition by
+definition against the file at the parent commit: 72 definitions, 72 identical to the byte,
+no docstring edited. The four stored books replayed identically (`tools/replay_books.py`,
+`--baseline` against the report taken before §215: eight of eight scenes, every derived line,
+nothing moved). The prompt-budget rows and the golden fixtures are unchanged; full suite,
+`ruff check`, `mypy` and `git diff --check` green at the commit that carries this entry.
+
+**What was pinned.** `tests/test_architecture.py::test_the_extraction_seams_point_one_way` now
+carries the two new modules in `DOMAIN_SEAMS`, so neither may import the extraction family and
+neither `systems` nor `advancement` may import a module above it;
+`tests/test_choice_points.py::test_nothing_in_this_module_ranks_an_option` reads the source of
+all three modules rather than the hub's alone, so the promise it makes did not shrink with the
+file; `tools/check.py` maps both new modules to the tests that read them; the map names the
+new homes.
+
+**What was refused.** A bare facade named `gamesystem` with the readers moved out under a
+fourth name: the readers are the module's top subject and the name callers already use, so it
+keeps them. Renaming anything. Moving `_snapshot_record` into `advancement` to make writing
+independent of it: it is one of three families `records_for_sheet` writes as one fact (its
+docstring's argument), and the arrow from `advancement` down to `systems` costs nothing.
+
+**Anti-scope.** No behaviour, prompt string, gate verdict, rendered line or stored book changed.
+The survey names no further split candidate under this brief: `cli.py` is one handler per
+subcommand, `worlds.py`'s sections reference the vocabulary and little else, and
+`planner.py` is one subject.

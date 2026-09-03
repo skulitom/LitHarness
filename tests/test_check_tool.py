@@ -50,6 +50,8 @@ def test_a_split_seam_module_maps_to_the_tests_that_read_it() -> None:
         ("src/litharness/domain/sheet.py", "tests/test_extraction.py"),
         ("src/litharness/domain/graphline.py", "tests/test_extraction.py"),
         ("src/litharness/domain/moves.py", "tests/test_choice_points.py"),
+        ("src/litharness/domain/systems.py", "tests/test_gamesystem.py"),
+        ("src/litharness/domain/advancement.py", "tests/test_gamesystem.py"),
     ):
         selection = check.select_changed([module])
 

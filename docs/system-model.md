@@ -24,7 +24,10 @@ back into rows. Every table below is one stop on that path.
 **Where a name lives versus where it is imported.** `domain/extraction.py` was split on
 2026-09-03 into `names`, `sheet`, `graphline` and `moves` beneath it (stage-0 §215), and it
 re-exports every name they define, so an import site may still read `extraction.sheet_for`;
-the tables name the module that is the fact's home. `gamesystem` sits below all five.
+the tables name the module that is the fact's home. `gamesystem` was split the same way
+(stage-0 §216): `systems` holds the definition and how it is written down, `advancement` the
+arithmetic, and `gamesystem` keeps the readers and re-exports the rest; all three sit below the
+five above.
 
 ## The world's vocabulary
 
@@ -39,11 +42,11 @@ the tables name the module that is the fact's home. `gamesystem` sits below all 
 
 | Fact | Home | The one reader | Written by | Pinned by |
 | --- | --- | --- | --- | --- |
-| What a system is: ranks, abilities and their needs, forks and their ways, the scale, the columns | `gamesystem.SystemDef` and its parts (`Rank`, `Ability`, `Need`, `Choice`, `Option`, `Scale`, `Column`) | `gamesystem.systems_of` | `gamesystem.records_for` (§163.2: the scale and digest are minted, never declared by hand) | `test_gamesystem.py::test_a_system_read_back_out_of_canon_is_the_system_that_was_drawn` (the round trip, by equality) |
-| What a legal draw is: the ability, rank, option and scale bounds | the bound constants in `domain/gamesystem.py` (`MIN_ABILITIES` through `MAX_SCALE_MAXIMUM`), each with its reason | `gamesystem.check_draw` (complaints about coherence, never a score: §61(5), §105.1) | — | `test_check_draw_never_ranks_and_the_module_exposes_no_score`; `test_seed_completion_bounds.py::test_the_seed_states_the_ability_bound_the_completion_enforces` |
-| Where a person starts | `gamesystem.starting_sheet` (derived: the first rung and its openers) | the seed and `completion_records` at `world accept` (§165.2) | — | `test_accepting_a_drawn_system_mints_the_scale_its_own_numbers_imply` |
-| Where a person stands now | `gamesystem.CharacterSheet` | `gamesystem.sheet_of`: from the `stands_at`, `can_do` and `chose` edges, never from the snapshot; canon only; one order-key space (§167) | `gamesystem.records_for_sheet`, which writes the edges and the snapshot as one fact | `test_the_sheets_keys_are_the_systems_own_and_the_declaration_matches_them`; `test_no_number_describes_the_person` |
-| What a person may do next, and what it costs | `gamesystem.legal_moves` (declaration order), `pending_choices`, `offered_options` | `moves.movables` (below) | `gamesystem.advance` and the four moves it dispatches, all through one private builder so the four cannot drift | `test_choice_points.py::test_nothing_in_this_module_ranks_an_option`; `test_a_rise_moves_the_rung_column_and_nothing_else` |
+| What a system is: ranks, abilities and their needs, forks and their ways, the scale, the columns | `systems.SystemDef` and its parts (`Rank`, `Ability`, `Need`, `Choice`, `Option`, `Scale`, `Column`) | `gamesystem.systems_of` | `systems.records_for` (§163.2: the scale and digest are minted, never declared by hand) | `test_gamesystem.py::test_a_system_read_back_out_of_canon_is_the_system_that_was_drawn` (the round trip, by equality) |
+| What a legal draw is: the ability, rank, option and scale bounds | the bound constants in `domain/gamesystem.py` (`MIN_ABILITIES` through `MAX_SCALE_MAXIMUM`), each with its reason | `systems.check_draw` (complaints about coherence, never a score: §61(5), §105.1) | — | `test_check_draw_never_ranks_and_the_module_exposes_no_score`; `test_seed_completion_bounds.py::test_the_seed_states_the_ability_bound_the_completion_enforces` |
+| Where a person starts | `systems.starting_sheet` (derived: the first rung and its openers) | the seed and `completion_records` at `world accept` (§165.2) | — | `test_accepting_a_drawn_system_mints_the_scale_its_own_numbers_imply` |
+| Where a person stands now | `systems.CharacterSheet` | `gamesystem.sheet_of`: from the `stands_at`, `can_do` and `chose` edges, never from the snapshot; canon only; one order-key space (§167) | `systems.records_for_sheet`, which writes the edges and the snapshot as one fact | `test_the_sheets_keys_are_the_systems_own_and_the_declaration_matches_them`; `test_no_number_describes_the_person` |
+| What a person may do next, and what it costs | `advancement.legal_moves` (declaration order), `pending_choices`, `offered_options` | `moves.movables` (below) | `advancement.advance` and the four moves it dispatches, all through one private builder so the four cannot drift | `test_choice_points.py::test_nothing_in_this_module_ranks_an_option`; `test_a_rise_moves_the_rung_column_and_nothing_else` |
 | A system that grew after the seed | `gamesystem.growth`, `unfinished_systems` (§211, §212.1) | `application/world.py::check` and the Architect's `grow` step | the Architect | `test_seed_completion_bounds.py::test_the_check_says_a_system_has_grown_and_complains_only_when_the_growth_is_broken` |
 
 ## The sheet, the snapshot, and the printed line
@@ -55,7 +58,7 @@ the tables name the module that is the fact's home. `gamesystem` sits below all 
 | The line as the page prints it | `sheet.render_status_line` → `Sheet.render`, projecting to the held columns (§203) | `sheet.system_voice_example` is the filled line the writer is shown | — | `test_extraction.py::test_a_rendered_line_round_trips_through_extraction_itself`, `test_a_sheet_declared_without_the_flag_shows_every_column_as_it_always_did` |
 | What a subject is called on the page | `names.display_name` (§169: the book's own `is_a` first, the humanised id last, the raw id never) | every renderer above, through `Sheet.render`'s `resolve` | canon `is_a` rows | `test_display_names.py::test_the_status_line_never_prints_a_raw_subject_id`, `test_the_printed_name_reads_back_as_the_subject_it_stands_for`, `test_a_subject_id_that_cannot_round_trip_is_still_never_raw` |
 | The graph line (the world announcing a rung or a gain in its own words) | `graphline.GraphLine`, declared under `worlds.GRAPH_LINE_PREDICATE` | `graphline.graph_line_for` (no default: a book that declares none has no line) | the Architect | `test_extraction.py::test_a_declared_graph_line_round_trips`, `test_a_printed_rung_on_a_declared_ladder_is_canon_at_that_position` |
-| The fork line | `gamesystem.offer_line` under `OFFER_TAG` | `moves.offered_line`, with every guard `moves.offered_choice` has | — | `test_two_systems.py::test_two_declared_systems_and_the_one_printing_the_line_is_the_one_read`; the prompt-budget row `offer_line` |
+| The fork line | `advancement.offer_line` under `OFFER_TAG` | `moves.offered_line`, with every guard `moves.offered_choice` has | — | `test_two_systems.py::test_two_declared_systems_and_the_one_printing_the_line_is_the_one_read`; the prompt-budget row `offer_line` |
 
 ## Positions
 

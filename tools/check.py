@@ -72,6 +72,17 @@ _SOURCE_TESTS: Final = {
         "tests/test_progression_prompt.py",
         "tests/test_two_systems.py",
     ),
+    # The two modules split out of `domain/gamesystem.py` (stage-0 §216), by the same rule.
+    "src/litharness/domain/systems.py": (
+        "tests/test_gamesystem.py",
+        "tests/test_seed_completion_bounds.py",
+        "tests/test_two_systems.py",
+    ),
+    "src/litharness/domain/advancement.py": (
+        "tests/test_choice_points.py",
+        "tests/test_gamesystem.py",
+        "tests/test_progression_prompt.py",
+    ),
     "tools/check.py": ("tests/test_check_tool.py",),
 }
 
