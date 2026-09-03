@@ -23149,3 +23149,32 @@ line.
 **Anti-scope.** Whether the chapter reads as its genre is the operator's read (read 20 is
 still outstanding on draw 3, and this draw is not a substitute for it); nothing here
 measures prose. The writer did what it was handed: the line it was shown, once per scene.
+
+### 213.1 The check previews and accept refuses a status line the arithmetic cannot read: a rung's id in a numeric column, and a held grant on the opening line with no edge behind it
+
+**What shipped** (`application/world.py`, `cli.py`). `world.snapshot_faults` reads every
+declared `status_snapshot` against the book's sheet as accept would carry it: a numeric column
+holding a string is a fault, named with the number the rung is when the string is a rung of a
+declared ladder (*'band_one' in the rank column, which takes a whole number; the rung band_one
+is 1 of 10*); a positive number on the opening line in a column that is a grant of a declared
+system, with no un-keyed `can_do` edge for that person, is a fault naming the edge to declare.
+`world check` carries the list under `snapshot_faults` and `world accept` refuses on it beside
+§200's breaches, with the same `--force`. The `status_snapshot` vocabulary line now says a
+number column never takes an id, that the rung column takes the rung's place counted from
+one, and that a grant held on the opening line is also a `can_do` edge. Run over draw 4's
+store the preview names exactly the two faults §213 read off the page. Test:
+`tests/test_seed_completion_bounds.py`, the id named with its number, the missing edge named,
+a line with the number and the edge faultless. Every stored book that was accepted before
+this still reads as it did; the refusal is at acceptance and nothing already canon is
+re-read by it.
+
+**What was refused.** Translating the id into its number at acceptance: a deterministic
+rewrite of the Architect's declaration by the machine, which is the two-writers hazard the
+`world accept` completion was built to avoid (§165.2). Minting the `can_do` edge from the
+line: the line is the printed form and the edges are what the world knows (§160), and a
+derivation in that direction is the one `sheet_of` refuses. Folding a scheduled change into
+the scene whose ordinal it names: §165's question, unchanged, and the third gap of §213
+stays open with its reason.
+
+**Anti-scope.** Nothing here measures prose; the redraw that follows is read for what it
+prints, on §213's terms, and is not a substitute for the operator's read 20.
