@@ -22507,3 +22507,37 @@ ask for after reading the log.
 
 **Anti-scope.** The check reads only the two deterministic detectors; nothing here judges a
 world. One arm, one seed, one breach: what the fixed seed draws is the next arm's to show.
+
+## 201. Two of the three shelf openings print no status window in chapter one, and the third prints no zeros; ours prints eight fields twice with six at zero
+
+**Measured (`book-library/`, the three placed openings the ladder is shown, 2026-09-03, no
+model).** *The Primal Hunter*'s chapter one carries no status window and no line of a sheet
+(zero colon-delimited lines); *Defiance of the Fall*'s carries none (one); *Randidly
+Ghosthound*'s carries one window of fourteen fields (Class, Level, Health, Mana, Stamina, and
+nine attributes), every one with a value and none of them zero (Class *---*, Level *N/A*,
+attributes 2 to 4). Pilot 25's three draws print the `[STATUS]` line twice each: eight fields,
+of which five (draw1b), six (draw2) and six (draw3) stand at zero, and the zero fields are
+unglossed on the page (GRIP, CALLING, SETTING, TIMING, STRIKING; HOLDING, STRIKING, KEEPING,
+WITHDRAWING, SETTING; WEIGHT, RECALL, STRIKE, COVER, MARGIN, WITHDRAWAL). Pilot 24's three
+draws did the same (§199.3's read: *eight fields, five of them zero and none of them
+glossed*). The operator's reads named it as *hollows* (read 19) and as the over-explained
+mechanic beside the unexplained one (reads 17 and 18).
+
+**The standing decision it sits against.** §160 shipped `SystemDef.columns` printing every
+declared ability including the unheld ones, with the operator's *"i wonder what I would
+pick"* beside it, as the awe mechanism: the unheld abilities sit on the line at zero from page
+one so a reader can want one, and §161's fork lights exactly one branch. That decision was
+made on a sheet the reader had a reason to read; the census says the shelf's chapter ones
+either show no sheet or show one whose every field has a value, and the reads since name the
+zeros as the thing that does not read.
+
+**What shipped.** Nothing. A census and a question, for the operator's read of pilot 25, since
+the decision it sits against is his: keep the awe line as it is; print an unheld field the
+first time the book offers it and not before; print only the fields the scene has named or
+moved; or gloss each field once, on its first print, in the system's own voice. Each is a
+change to `extraction.render_status_line` or to the genre floor's ask, and none is made here.
+
+**Anti-scope.** Three openings and six draws are a census, not a bar; the shelf's chapter
+ones are chapter ones, and the window Randidly prints is a sheet with values because his
+system had already spent them. Nothing here says the awe line is wrong; it says what the
+shelf does and what ours does, side by side.
