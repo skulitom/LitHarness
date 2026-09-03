@@ -60,8 +60,27 @@ narrow patterns and undercount notices written in other words. Field reading spl
 its label marks and reads a change at its end; a window laid out as a table with no labels
 reads as zero fields. Nothing here is about quality.
 
+## The fields the windows carry (`field_labels.py`, `field_labels.json`, 2026-09-03)
+
+Over every LitRPG chapter in the shards (14,156), 301 stories print at least one window and
+their windows carry 19,628 label-value fields. By value kind, pooled: a bare number 47 percent,
+a number with words beside it 24 percent (*17 (due to ...)*, *5 (+2)*), a name or text 9
+percent, a current/maximum pair 7 percent, a list 6 percent, a change written with an arrow
+3 percent, a blank or placeholder 3 percent, a percentage 1 percent. By label, counted once
+per story: the attributes lead (*strength* in a third of the window stories, then
+*intelligence*, *agility*, *dexterity*, *wisdom*, *endurance*, *vitality*, *constitution*,
+*perception*, *charisma*, *luck*), *level* in a fifth, the paired resources (*health*,
+*mana*, *stamina*, *hp*, *mp*, *experience*) in a tenth to a sixth, and then the fields
+whose values are not numbers: *name*, *class*, *skills*, *skill*, *rank*, *reward*,
+*warning*. *Free points* appears in one story in twenty-five.
+
+The reading for phase 2: the types the plan names are the market's (number, paired, name,
+text, list, and percent as a number with a unit); a name-valued field is common enough
+(*class*, *name*, *rank*, *skill*) that a sheet must be able to carry one; and the market's
+*rank* is a number where ours is a rung with a name, so the ordinal type prints a name the
+market mostly does not, which is a difference to keep in view rather than a defect. No bar.
+
 ## What is owed
 
-A reading of *which* fields the market's windows carry (level, class, a named ladder, a list
-of skills) is the next census, for phase 2's types; this one counted fields without reading
-their labels.
+Owners: this census does not read whose window a window is (a person, a place, an item), so
+phase 2's owner generalisation rests on the plan's reasoning and not on a count.

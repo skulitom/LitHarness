@@ -1,0 +1,811 @@
+{
+  "chapters_read": 14156,
+  "stories_with_windows": 301,
+  "fields_seen": 19628,
+  "value_kinds": {
+    "number": 9268,
+    "number_with_text": 4772,
+    "name_or_text": 1685,
+    "paired": 1307,
+    "list": 1212,
+    "change": 592,
+    "blank": 541,
+    "percent": 251
+  },
+  "labels_by_stories": [
+    {
+      "label": "strength",
+      "stories": 97,
+      "share_of_window_stories": 0.322,
+      "kinds": {
+        "number": 544,
+        "number_with_text": 118,
+        "change": 92,
+        "blank": 19
+      }
+    },
+    {
+      "label": "level",
+      "stories": 66,
+      "share_of_window_stories": 0.219,
+      "kinds": {
+        "number": 445,
+        "number_with_text": 167,
+        "blank": 50,
+        "change": 28
+      }
+    },
+    {
+      "label": "intelligence",
+      "stories": 65,
+      "share_of_window_stories": 0.216,
+      "kinds": {
+        "number": 365,
+        "number_with_text": 69,
+        "change": 29,
+        "blank": 1
+      }
+    },
+    {
+      "label": "agility",
+      "stories": 54,
+      "share_of_window_stories": 0.179,
+      "kinds": {
+        "number": 344,
+        "number_with_text": 71,
+        "change": 53
+      }
+    },
+    {
+      "label": "dexterity",
+      "stories": 52,
+      "share_of_window_stories": 0.173,
+      "kinds": {
+        "number": 202,
+        "number_with_text": 44,
+        "change": 27,
+        "paired": 14
+      }
+    },
+    {
+      "label": "health",
+      "stories": 50,
+      "share_of_window_stories": 0.166,
+      "kinds": {
+        "paired": 256,
+        "number": 135,
+        "percent": 64,
+        "number_with_text": 21
+      }
+    },
+    {
+      "label": "mana",
+      "stories": 50,
+      "share_of_window_stories": 0.166,
+      "kinds": {
+        "paired": 194,
+        "number": 100,
+        "number_with_text": 23,
+        "percent": 7
+      }
+    },
+    {
+      "label": "wisdom",
+      "stories": 41,
+      "share_of_window_stories": 0.136,
+      "kinds": {
+        "number": 294,
+        "change": 25,
+        "number_with_text": 19
+      }
+    },
+    {
+      "label": "endurance",
+      "stories": 34,
+      "share_of_window_stories": 0.113,
+      "kinds": {
+        "number": 269,
+        "number_with_text": 46,
+        "change": 29,
+        "name_or_text": 1
+      }
+    },
+    {
+      "label": "stamina",
+      "stories": 33,
+      "share_of_window_stories": 0.11,
+      "kinds": {
+        "paired": 87,
+        "number": 61,
+        "percent": 20,
+        "number_with_text": 16
+      }
+    },
+    {
+      "label": "hp",
+      "stories": 31,
+      "share_of_window_stories": 0.103,
+      "kinds": {
+        "paired": 113,
+        "number_with_text": 75,
+        "number": 61,
+        "list": 12
+      }
+    },
+    {
+      "label": "vitality",
+      "stories": 30,
+      "share_of_window_stories": 0.1,
+      "kinds": {
+        "number": 234,
+        "number_with_text": 44,
+        "change": 16,
+        "paired": 12
+      }
+    },
+    {
+      "label": "constitution",
+      "stories": 28,
+      "share_of_window_stories": 0.093,
+      "kinds": {
+        "number": 82,
+        "number_with_text": 30,
+        "change": 8,
+        "list": 1
+      }
+    },
+    {
+      "label": "mp",
+      "stories": 27,
+      "share_of_window_stories": 0.09,
+      "kinds": {
+        "number": 52,
+        "paired": 44,
+        "number_with_text": 44,
+        "blank": 6
+      }
+    },
+    {
+      "label": "age",
+      "stories": 26,
+      "share_of_window_stories": 0.086,
+      "kinds": {
+        "number": 94,
+        "number_with_text": 28
+      }
+    },
+    {
+      "label": "perception",
+      "stories": 26,
+      "share_of_window_stories": 0.086,
+      "kinds": {
+        "number": 129,
+        "number_with_text": 27,
+        "blank": 13,
+        "change": 2
+      }
+    },
+    {
+      "label": "charisma",
+      "stories": 23,
+      "share_of_window_stories": 0.076,
+      "kinds": {
+        "number": 243,
+        "number_with_text": 32,
+        "change": 21,
+        "name_or_text": 1
+      }
+    },
+    {
+      "label": "reward",
+      "stories": 22,
+      "share_of_window_stories": 0.073,
+      "kinds": {
+        "name_or_text": 32,
+        "number_with_text": 21,
+        "list": 11
+      }
+    },
+    {
+      "label": "str",
+      "stories": 21,
+      "share_of_window_stories": 0.07,
+      "kinds": {
+        "number": 63,
+        "number_with_text": 13
+      }
+    },
+    {
+      "label": "name",
+      "stories": 21,
+      "share_of_window_stories": 0.07,
+      "kinds": {
+        "name_or_text": 89,
+        "number_with_text": 16,
+        "blank": 1
+      }
+    },
+    {
+      "label": "luck",
+      "stories": 21,
+      "share_of_window_stories": 0.07,
+      "kinds": {
+        "number": 72,
+        "number_with_text": 12
+      }
+    },
+    {
+      "label": "int",
+      "stories": 18,
+      "share_of_window_stories": 0.06,
+      "kinds": {
+        "number": 53,
+        "number_with_text": 12,
+        "blank": 1
+      }
+    },
+    {
+      "label": "class",
+      "stories": 17,
+      "share_of_window_stories": 0.056,
+      "kinds": {
+        "number_with_text": 38,
+        "name_or_text": 16
+      }
+    },
+    {
+      "label": "speed",
+      "stories": 17,
+      "share_of_window_stories": 0.056,
+      "kinds": {
+        "number": 84,
+        "number_with_text": 59,
+        "change": 5,
+        "blank": 3
+      }
+    },
+    {
+      "label": "skills",
+      "stories": 16,
+      "share_of_window_stories": 0.053,
+      "kinds": {
+        "number_with_text": 15,
+        "name_or_text": 13,
+        "list": 8,
+        "paired": 5
+      }
+    },
+    {
+      "label": "willpower",
+      "stories": 15,
+      "share_of_window_stories": 0.05,
+      "kinds": {
+        "number": 67,
+        "number_with_text": 22,
+        "paired": 19,
+        "change": 3
+      }
+    },
+    {
+      "label": "magic",
+      "stories": 13,
+      "share_of_window_stories": 0.043,
+      "kinds": {
+        "number": 69,
+        "number_with_text": 19,
+        "paired": 17,
+        "change": 15
+      }
+    },
+    {
+      "label": "experience",
+      "stories": 13,
+      "share_of_window_stories": 0.043,
+      "kinds": {
+        "paired": 83,
+        "number": 28,
+        "percent": 6,
+        "number_with_text": 2
+      }
+    },
+    {
+      "label": "free points",
+      "stories": 12,
+      "share_of_window_stories": 0.04,
+      "kinds": {
+        "number": 41,
+        "number_with_text": 4,
+        "blank": 1
+      }
+    },
+    {
+      "label": "durability",
+      "stories": 12,
+      "share_of_window_stories": 0.04,
+      "kinds": {
+        "paired": 36,
+        "change": 25,
+        "number": 11,
+        "number_with_text": 11
+      }
+    },
+    {
+      "label": "duration",
+      "stories": 12,
+      "share_of_window_stories": 0.04,
+      "kinds": {
+        "number_with_text": 17
+      }
+    },
+    {
+      "label": "cost",
+      "stories": 12,
+      "share_of_window_stories": 0.04,
+      "kinds": {
+        "number_with_text": 45
+      }
+    },
+    {
+      "label": "wis",
+      "stories": 11,
+      "share_of_window_stories": 0.037,
+      "kinds": {
+        "number": 20,
+        "number_with_text": 2
+      }
+    },
+    {
+      "label": "skill",
+      "stories": 11,
+      "share_of_window_stories": 0.037,
+      "kinds": {
+        "number_with_text": 33,
+        "name_or_text": 28,
+        "number": 3
+      }
+    },
+    {
+      "label": "rank",
+      "stories": 10,
+      "share_of_window_stories": 0.033,
+      "kinds": {
+        "number": 36,
+        "number_with_text": 8,
+        "blank": 4,
+        "name_or_text": 2
+      }
+    },
+    {
+      "label": "spirit",
+      "stories": 10,
+      "share_of_window_stories": 0.033,
+      "kinds": {
+        "number": 42,
+        "number_with_text": 8
+      }
+    },
+    {
+      "label": "warning",
+      "stories": 10,
+      "share_of_window_stories": 0.033,
+      "kinds": {
+        "name_or_text": 18,
+        "number_with_text": 2
+      }
+    },
+    {
+      "label": "soul",
+      "stories": 10,
+      "share_of_window_stories": 0.033,
+      "kinds": {
+        "number": 37,
+        "number_with_text": 23,
+        "paired": 19,
+        "change": 5
+      }
+    },
+    {
+      "label": "dex",
+      "stories": 9,
+      "share_of_window_stories": 0.03,
+      "kinds": {
+        "number": 16,
+        "number_with_text": 5
+      }
+    },
+    {
+      "label": "cooldown",
+      "stories": 9,
+      "share_of_window_stories": 0.03,
+      "kinds": {
+        "number_with_text": 21,
+        "name_or_text": 1
+      }
+    },
+    {
+      "label": "exp",
+      "stories": 9,
+      "share_of_window_stories": 0.03,
+      "kinds": {
+        "paired": 51,
+        "number": 4,
+        "number_with_text": 2
+      }
+    },
+    {
+      "label": "damage",
+      "stories": 9,
+      "share_of_window_stories": 0.03,
+      "kinds": {
+        "number": 49,
+        "number_with_text": 15,
+        "change": 6,
+        "name_or_text": 1
+      }
+    },
+    {
+      "label": "vit",
+      "stories": 8,
+      "share_of_window_stories": 0.027,
+      "kinds": {
+        "number": 33,
+        "number_with_text": 6,
+        "paired": 3
+      }
+    },
+    {
+      "label": "con",
+      "stories": 8,
+      "share_of_window_stories": 0.027,
+      "kinds": {
+        "number": 21,
+        "number_with_text": 1
+      }
+    },
+    {
+      "label": "agi",
+      "stories": 8,
+      "share_of_window_stories": 0.027,
+      "kinds": {
+        "number": 40,
+        "number_with_text": 4
+      }
+    },
+    {
+      "label": "xp",
+      "stories": 8,
+      "share_of_window_stories": 0.027,
+      "kinds": {
+        "paired": 22,
+        "number_with_text": 21,
+        "blank": 4,
+        "number": 2
+      }
+    },
+    {
+      "label": "defense",
+      "stories": 8,
+      "share_of_window_stories": 0.027,
+      "kinds": {
+        "number": 73,
+        "number_with_text": 8
+      }
+    },
+    {
+      "label": "cha",
+      "stories": 7,
+      "share_of_window_stories": 0.023,
+      "kinds": {
+        "number": 11,
+        "number_with_text": 5
+      }
+    },
+    {
+      "label": "attributes",
+      "stories": 7,
+      "share_of_window_stories": 0.023,
+      "kinds": {
+        "name_or_text": 23,
+        "number_with_text": 3,
+        "list": 2,
+        "number": 1
+      }
+    },
+    {
+      "label": "rewards",
+      "stories": 7,
+      "share_of_window_stories": 0.023,
+      "kinds": {
+        "name_or_text": 11,
+        "list": 5,
+        "number_with_text": 1
+      }
+    },
+    {
+      "label": "tier",
+      "stories": 7,
+      "share_of_window_stories": 0.023,
+      "kinds": {
+        "number": 97,
+        "number_with_text": 3,
+        "list": 2,
+        "blank": 1
+      }
+    },
+    {
+      "label": "status",
+      "stories": 7,
+      "share_of_window_stories": 0.023,
+      "kinds": {
+        "name_or_text": 11
+      }
+    },
+    {
+      "label": "toughness",
+      "stories": 7,
+      "share_of_window_stories": 0.023,
+      "kinds": {
+        "number": 32,
+        "number_with_text": 8
+      }
+    },
+    {
+      "label": "weight",
+      "stories": 7,
+      "share_of_window_stories": 0.023,
+      "kinds": {
+        "number_with_text": 22,
+        "number": 3
+      }
+    },
+    {
+      "label": "race",
+      "stories": 7,
+      "share_of_window_stories": 0.023,
+      "kinds": {
+        "name_or_text": 37,
+        "number_with_text": 7
+      }
+    },
+    {
+      "label": "location",
+      "stories": 6,
+      "share_of_window_stories": 0.02,
+      "kinds": {
+        "name_or_text": 5,
+        "number_with_text": 3,
+        "list": 1
+      }
+    },
+    {
+      "label": "end",
+      "stories": 6,
+      "share_of_window_stories": 0.02,
+      "kinds": {
+        "number_with_text": 6,
+        "number": 5
+      }
+    },
+    {
+      "label": "effect",
+      "stories": 6,
+      "share_of_window_stories": 0.02,
+      "kinds": {
+        "name_or_text": 10,
+        "number_with_text": 4,
+        "list": 1
+      }
+    },
+    {
+      "label": "quest complete",
+      "stories": 6,
+      "share_of_window_stories": 0.02,
+      "kinds": {
+        "name_or_text": 9,
+        "number_with_text": 2
+      }
+    },
+    {
+      "label": "gold",
+      "stories": 6,
+      "share_of_window_stories": 0.02,
+      "kinds": {
+        "number": 19,
+        "number_with_text": 1
+      }
+    },
+    {
+      "label": "will",
+      "stories": 6,
+      "share_of_window_stories": 0.02,
+      "kinds": {
+        "number": 33,
+        "paired": 13,
+        "number_with_text": 4
+      }
+    },
+    {
+      "label": "range",
+      "stories": 6,
+      "share_of_window_stories": 0.02,
+      "kinds": {
+        "number_with_text": 10,
+        "list": 1
+      }
+    },
+    {
+      "label": "time limit",
+      "stories": 6,
+      "share_of_window_stories": 0.02,
+      "kinds": {
+        "number_with_text": 13
+      }
+    },
+    {
+      "label": "mind",
+      "stories": 6,
+      "share_of_window_stories": 0.02,
+      "kinds": {
+        "number": 17,
+        "number_with_text": 2
+      }
+    },
+    {
+      "label": "energy",
+      "stories": 6,
+      "share_of_window_stories": 0.02,
+      "kinds": {
+        "paired": 48,
+        "number": 35,
+        "blank": 25,
+        "number_with_text": 3
+      }
+    },
+    {
+      "label": "power",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "number": 53,
+        "change": 7,
+        "number_with_text": 3,
+        "percent": 1
+      }
+    },
+    {
+      "label": "fortitude",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "number": 75,
+        "change": 37,
+        "number_with_text": 2
+      }
+    },
+    {
+      "label": "per",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "number": 13,
+        "number_with_text": 2
+      }
+    },
+    {
+      "label": "time remaining",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "list": 3,
+        "number_with_text": 3
+      }
+    },
+    {
+      "label": "resilience",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "number": 25,
+        "name_or_text": 1,
+        "number_with_text": 1
+      }
+    },
+    {
+      "label": "body",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "number": 13,
+        "number_with_text": 2,
+        "name_or_text": 1
+      }
+    },
+    {
+      "label": "description",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "name_or_text": 11,
+        "list": 4,
+        "number_with_text": 2
+      }
+    },
+    {
+      "label": "error",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "name_or_text": 5,
+        "number_with_text": 1
+      }
+    },
+    {
+      "label": "experience gained",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "number_with_text": 46,
+        "blank": 1
+      }
+    },
+    {
+      "label": "objective",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "number_with_text": 3,
+        "name_or_text": 1,
+        "blank": 1,
+        "list": 1
+      }
+    },
+    {
+      "label": "ability",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "name_or_text": 12,
+        "number_with_text": 8,
+        "blank": 5
+      }
+    },
+    {
+      "label": "title",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "name_or_text": 8,
+        "number_with_text": 2
+      }
+    },
+    {
+      "label": "mana cost",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "number_with_text": 10,
+        "number": 6
+      }
+    },
+    {
+      "label": "requirements",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "number_with_text": 7,
+        "name_or_text": 2,
+        "list": 1
+      }
+    },
+    {
+      "label": "quest",
+      "stories": 5,
+      "share_of_window_stories": 0.017,
+      "kinds": {
+        "name_or_text": 24,
+        "list": 3,
+        "number_with_text": 1
+      }
+    }
+  ]
+}
