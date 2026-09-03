@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from collections.abc import Callable, Sequence
+from collections.abc import Sequence
 from typing import Any, Protocol
 
 from litharness.adapters.sqlite_errors import IntegrityFailure
@@ -39,8 +39,6 @@ class DecisionInserter(Protocol):
         decided_at: str,
     ) -> bool: ...
 
-
-RowFilter = Callable[[sqlite3.Row], bool]
 
 _COLUMNS = (
     "writer_id, name, dossier, interests_json, exemplar_digest, note, "

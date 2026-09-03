@@ -67,14 +67,6 @@ class TickResult:
     ingested: int = 0
     events: tuple[Event, ...] = ()
 
-    @property
-    def did_work(self) -> bool:
-        return self.outcome in {
-            TickOutcome.RAN_JOB,
-            TickOutcome.JOB_FAILED,
-            TickOutcome.JOB_PARKED,
-        }
-
 
 class JobHandler(Protocol):
     """Execute one unit and return events not already committed with its artifact.

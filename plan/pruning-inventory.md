@@ -35,14 +35,14 @@ count) and `git status` per worktree. Category 5: the helper bodies read, not th
 
 | name | where | evidence | what would notice | disposition | status |
 | --- | --- | --- | --- | --- | --- |
-| `RowFilter` (type alias) | `adapters/sqlite_roster.py:43` | defined, never used; `Callable[[sqlite3.Row], bool]` appears nowhere else | nothing; ruff and mypy pass either way | cut | pending |
-| `SqliteStore.finding_counts` | `adapters/sqlite_store.py:1426` | not in `application/ports.py`, no caller, no test | nothing; `tests/test_store.py` covers the store's other finding methods | cut | pending |
-| `SqliteStore.exceptions_for_job` | `adapters/sqlite_store.py:2125` | not in `ports.py`, no caller, no test; `exceptions` reads `open_exceptions` | nothing | cut | pending |
-| `TickResult.did_work` | `application/conductor.py:71` | property never read; `cli.py` reads `outcome` directly | nothing | cut | pending |
-| `Job.renew` | `domain/jobs.py:169` | lease renewal never called; leases are claimed with a duration and reclaimed on expiry, and `assert_held_by` is the check that runs | nothing; `tests/test_domain.py` covers claim, release and expiry | cut | pending |
-| `version_map` | `domain/revision.py:418` | one-line alias of `Revision.version_ids` | nothing | cut | pending |
-| `excerpt_hash`, `slice_canonical` | `domain/text.py:58`, `:73` | every span site hashes `content_hash(text[start:end])` on node content that is canonical by construction (`Node.__post_init__`) | nothing | cut | pending |
-| `FakeProvider.append_responses` | `providers/fake.py:177` | no test or tool appends a response after construction | nothing | cut | pending |
+| `RowFilter` (type alias) | `adapters/sqlite_roster.py:43` | defined, never used; `Callable[[sqlite3.Row], bool]` appears nowhere else | nothing; ruff and mypy pass either way | cut | landed, cut 5 |
+| `SqliteStore.finding_counts` | `adapters/sqlite_store.py:1426` | not in `application/ports.py`, no caller, no test | nothing; `tests/test_store.py` covers the store's other finding methods | cut | landed, cut 5 |
+| `SqliteStore.exceptions_for_job` | `adapters/sqlite_store.py:2125` | not in `ports.py`, no caller, no test; `exceptions` reads `open_exceptions` | nothing | cut | landed, cut 5 |
+| `TickResult.did_work` | `application/conductor.py:71` | property never read; `cli.py` reads `outcome` directly | nothing | cut | landed, cut 5 |
+| `Job.renew` | `domain/jobs.py:169` | lease renewal never called; leases are claimed with a duration and reclaimed on expiry, and `assert_held_by` is the check that runs | nothing; `tests/test_domain.py` covers claim, release and expiry | cut | landed, cut 5 |
+| `version_map` | `domain/revision.py:418` | one-line alias of `Revision.version_ids` | nothing | cut | landed, cut 5 |
+| `excerpt_hash`, `slice_canonical` | `domain/text.py:58`, `:73` | every span site hashes `content_hash(text[start:end])` on node content that is canonical by construction (`Node.__post_init__`) | nothing | cut | landed, cut 5 |
+| `FakeProvider.append_responses` | `providers/fake.py:177` | no test or tool appends a response after construction | nothing | cut | landed, cut 5 |
 
 One commit, no ledger entry: none of these is behaviour a reader of a book could notice, and
 the commit message says so.
@@ -62,7 +62,7 @@ the commit message says so.
   says *"`litharness run` passes `revise=not args.no_revise`, so production has the stage and
   `--no-revise` is the control"*, which §196 reversed (`cli.py:672-676` passes
   `revise=bool(getattr(args, "revise", False))`). Disposition: correct the docstring in the
-  category 1a commit; refuse the cut.
+  category 1a commit (landed, cut 5); refuse the cut.
 - **`GAME_SYSTEM_DETECTOR_IDS`** (`application/evaluation.py:29`): the id vocabulary of the
   optional six-rule pack. `live_bundle_for` writes the ids into the ContinuityEvaluation
   bundle, `tests/test_continuity_evaluator.py` pins that bundle, `README.md` documents
