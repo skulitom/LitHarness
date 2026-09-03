@@ -23682,3 +23682,133 @@ show no prerequisite, fifteen no depth, thirteen fewer than five grants.
 **Anti-scope.** Nothing in this sub-entry is a new decision; it closes §217's track. Whether
 any of the three slices reads as the genre on the page is the shelf's question and the
 operator's read, and no chapter was drawn under them here.
+
+## 221. The evaluator is the product and the launch is its test: a readership port behind a domain-pack seam, and a release queue the tool never posts from
+
+The operator's direction, 2026-09-03, in four decisions, with the same-day addendum *"the
+record is the distribution artifact"*. **Nothing here is a measurement.** This entry records
+what the project is for and where the existing bars sit under it, in §126's manner; it
+declares no bar, promotes no claim past CONJECTURE, and changes no number. What was built is
+recorded under "What shipped" with its tests, and what was moved kept its bytes.
+
+**Measured first: what the repository already held, by reading it** — an eleven-module
+inventory, classified by one pass and contested by another, in `plan/handoff-evaluator-boundary.md`
+until this entry lands. The stopped-part-way read (`domain/text.stop_point`, §124, pinned to
+its research twin by `test_the_package_and_the_registered_probe_cut_in_the_same_place`); two
+disjoint rosters with nobody in both (`application/readers.py`); behaviour-not-verdict schemas
+with no verdict slot (§89, §97.4); the E6 frame; the validity rails as research code —
+positional rate and VOID, recognition with its `unprobed` class, the sham floor, the label
+shuffle, under-run — at the path the backtest's registration names; content-addressed records
+and the CONJECTURE-to-QUALIFIED vocabulary. And what bound all of it to one genre: the
+reader's framing sentence was a literal inside `Reader.system` (*"You read a lot of LitRPG and
+progression fantasy"*), the eight readers and the no-taste roster were constants of an
+application module, the rival rule carried its genre set inside it, and the registered
+mechanism `reader.anticipation.v0` hashed that roster into its spec digest through a module
+import. There was no port, no seam, no release unit (§62's absence, still true after the
+library grew its pastable copy), and no registration for the launch.
+
+**The four decisions.**
+
+1. **The product is the instrument, not the book.** The reusable asset is the
+   simulated-readership evaluator: stopped part-way, two disjoint rosters, behaviour and never
+   a verdict, the validity rails, content-addressed records. Every pipeline that generates
+   text for an audience has the problem §89 measured and most do not know it. Made
+   domain-agnostic, that evaluator is the deliverable other systems can call; LitRPG serial
+   fiction is its first domain pack and its flagship demonstration, not the definition of the
+   tool.
+2. **The Royal Road launch is the instrument's out-of-sample test and nothing else.** §123's
+   backtest post-dicts on held-out pairs; the launch asks whether the sim predicts on a book
+   it has never had readers for. A well-predicted mid-performing serial is a strong result for
+   the instrument; a badly-predicted hit is a weak one. The book's rank is not this
+   programme's success criterion. Registered at `research/launch-outsample/PREREG.md`
+   (REGISTRATION; no call, no post, no fetch).
+3. **Publication becomes a staged, operator-gated release queue.** This partially reverses
+   §62: what is reversed is the absence of a release unit and a per-chapter record. What it
+   keeps, and says it keeps: **the tool never posts.** Posting is an operator act, recorded
+   after the fact under the operator's name. Royal Road's Terms prohibit automated systems
+   and scripts accessing the service unless expressly permitted, and the repository builds no
+   such path; express written permission, if the operator obtains it, is a new entry.
+4. **Real-reader data keeps exactly §126's role.** It grades the instrument, never a
+   manuscript. Nothing from the launch feeds generation, planning, selection, calibration or
+   any gate. §126 is not amended and needs nothing changed.
+
+**What shipped, slice 1 — the boundary.** `domain/audience.py`: `Reader` with an explicit
+`framing`, the two pool names, `pool` over any roster, `roster_digest`, and the three specs
+the port takes (`StopRule`, `AudienceSpec`, `CurrencySpec`). `packs/__init__.py`: the
+`DomainPack` protocol and the `Pack` value; `packs/litrpg`: the house's readers, no-taste
+roster, framing sentence and genre set with their bytes unchanged, pointing at `house.READER`
+and `house.ACCUMULATION` as tier 3 (§129); `packs/plain`: no genre, no rival, no essay,
+the default stop point. `application/instrument.py`: the `Instrument` protocol,
+`SimulatedReadership` over a `TextGenerator` and the installed packs, the content-addressed
+`Readout` — schema, pack id and digest, transport and model, stop rule, audience, currency,
+passage and stopped-passage hashes, every reader's act in the schema's word and the BCR's with
+the reader's own sentence, a validity block naming every rail and what it did or did not do,
+the transport failures — and `report`, the Markdown a downstream pipeline pastes into a README
+or model card, made of the record and nothing else. The record refuses a verdict slot at any
+depth at construction. The rival rule takes its genre set (`rivals.admit` with `genres`); the
+readers' aggregates take their roster; the editorial control plane takes the steering roster
+it always hashed (`mechanism_spec_digest`, `reader_jobs_for_checkpoint`,
+`make_reader_observation_handler` gain a `roster`; the digest is the same bytes for the same
+readers, so every stored `spec_digest` and frozen job still validates); `cli.py` composes the
+LitRPG pack in. `tests/test_architecture.py` gains the `packs` layer and
+`test_the_application_reaches_a_pack_only_through_its_protocol`. Tests in
+`tests/test_instrument.py`: a non-fiction passage written for the test through the plain pack
+on the fake provider (`test_a_non_fiction_passage_reads_through_the_plain_pack_on_the_fake_provider`),
+the validity block (`test_the_validity_block_names_every_rail_and_says_what_it_did_not_do`),
+the refusal (`test_a_record_refuses_a_verdict_slot_added_later`), the report
+(`test_the_report_carries_the_record_hash_and_nothing_the_record_does_not`), and the
+byte-identity of the house's readers
+(`test_the_litrpg_readers_render_the_system_text_the_pipeline_has_always_rendered`). Tests
+elsewhere were edited only to point at moved names and to pass the roster the functions used
+to reach for implicitly; no assertion changed, and `tests/test_corpus_leak_audit.py` is
+untouched.
+
+**What shipped, slice 2 — the launch as a test, and the queue.**
+`research/launch-outsample/PREREG.md` at REGISTRATION: the outcome the sim can see
+(per-chapter continuation from the author dashboard; views, rank and rating declared as
+discovery and not outcomes), the commit-before-chapter-1 rule with the driver's refusal by
+timestamp, operator-exported weekly snapshots hashed on ingest, the attainability table at
+each window size from a free permutation run, the exposure floor and its
+INSUFFICIENT_EXPOSURE verdict, the constancy and label-shuffle VOIDs, and the empty slots
+named. Migration 039 `release_queue` — named so because `RELEASE` is a SQLite keyword —
+with `domain/release.py` (four states; an operator's name on every state past `staged`; the
+AI-Generated tag a required field, not a default; the author-note disclosure naming the
+repository), `adapters/sqlite_release.py`, `application/release.py`, and
+`litharness release stage | approve | record-posted | withdraw | show`.
+`library.write_release_copy` writes the staged chapter under its fragment hash into a folder
+no republish touches, so what was approved is what gets pasted
+(`test_a_republish_never_touches_the_staged_copy`,
+`test_approval_refuses_when_the_book_moved_under_the_entry`,
+`test_the_ai_generated_tag_is_required_not_defaulted`, `test_the_command_line_has_no_post`).
+
+**What was refused, with the reason.** No research module moved into `src/`: `analysis.py`
+has no corpus dependency and could move, but the backtest's registration names its path and
+the pilot was a paid call (K1a); the port carries the rails' vocabulary and reaches their
+arithmetic later through an adapter, never a copy. No convenience score: a consumer wanting
+one number gets the continue/abandon/return distribution and its flags. No edit to the
+backtest's registration; its cost correction is the operator's. `house.READER` and
+`house.ACCUMULATION` not moved: `HOUSE_RULES` reaches every writer prompt byte for byte and a
+move would change every stored policy digest for nothing. `recruiter.py` and `roster.py` not
+moved: the writer side of the house, inventoried only. No `release post`, and no prediction
+driver: the registration names the refusal it must implement. No CLI surface for the port:
+`litharness readers` is untouched on a LitRPG book.
+
+**Held as CONJECTURE, not built** (the handoff's "Not this session"): an MCP surface exposing
+read and validity behind the spend rails; a second, non-fiction pack with its own rival
+source; the backtest's number and the launch's number side by side in the BRIEF's house form;
+a public index of validity reports keyed by record hash; a `packs/` contribution guide.
+
+**Questions left for the operator**, unanswered in the handoff: the backtest's full-stage
+cost against its registered ceiling under K1a (raise naming the number, re-size n, or stage
+the confirmatory set); whether to seek Royal Road's express written permission for an
+automated queue, posting staying an operator act until then; which non-fiction domain the
+second pack targets, so its rival source can be chosen without touching RS1.
+
+**Anti-scope.** No bar over continuation, prediction or anything else: the registration's
+attainability table describes what each window size can detect and is not a target. No claim
+that the instrument predicts anything; the launch registration is the test and it has not
+run. No reader signal into generation (§126), no verdict slot anywhere (§97.4), no human
+judgment solicited (§95), no corpus text on the generation side (RS1 — the general test's
+passage was written for it). The serial's only acquisition loop is the platform's own —
+listing, cover, cadence, follows — plus the author-note disclosure; no comment, review,
+rating or message is ever authored by the system.

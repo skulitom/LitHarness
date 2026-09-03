@@ -35,11 +35,18 @@ the writer (§128, `application/readers.py`), so a rival in front of one would p
 published prose one hop from a prompt. `readers.render_start_request` and `render_choice_request`
 already refuse a steering reader; that refusal is now load-bearing for RS1 as well as for the
 pool split.
+
+**The genre set left this module on 2026-09-03 (stage-0 §221).** It was the one LitRPG fact
+in an otherwise general rule — a rating floor, a count floor, a following floor are somebody
+else's record of what readers did whatever the shelf — and it now lives with the readership it
+describes, in `packs/litrpg`. `admit` takes the set as an argument, so a pack for another shelf
+admits its rivals under the same evidence rule with its own labels, and a pack with no shelf
+(`packs/plain`) admits none.
 """
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass
 from hashlib import sha256
 from typing import Any
@@ -84,23 +91,6 @@ MIN_DECIMALS = 2
 #: prints the percentile a run's floor corresponds to, so the number here is checkable against
 #: the distribution it was chosen from rather than asserted.
 MIN_FOLLOWERS = 1000
-
-#: The genres this project's readership reads, which is the same ground `writers.CAST` covers.
-#: Membership is checked rather than inferred, and a refusal names the set so an operator can see
-#: what to widen. Deliberately not a taxonomy: it is a list of the labels this market uses for
-#: the books these readers read, and it has no meaning outside that.
-GENRES: frozenset[str] = frozenset(
-    {
-        "litrpg",
-        "progression fantasy",
-        "portal fantasy",
-        "isekai",
-        "cultivation",
-        "system apocalypse",
-        "reincarnation",
-        "dungeon core",
-    }
-)
 
 
 class IllegalRival(ValueError):
@@ -182,7 +172,7 @@ def _count(value: Any, title: str) -> int | None:
         raise IllegalRival(f"{title!r} carries an unreadable count: {value!r}") from error
 
 
-def admit(row: Mapping[str, Any]) -> Rival:
+def admit(row: Mapping[str, Any], *, genres: Collection[str]) -> Rival:
     """One admitted rival, or `IllegalRival` naming exactly what failed.
 
     **Two ways to prove a book, and a row needs one of them.** A star average above `MIN_RATING`
@@ -190,6 +180,11 @@ def admit(row: Mapping[str, Any]) -> Rival:
     `MIN_DECIMALS`), or a following above `MIN_FOLLOWERS`. The first is what the operator asked
     for and the second is what the corpus has; both are somebody else's record of what readers
     did, and neither is a judgment made here.
+
+    `genres` is the shelf this readership reads — the pack's labels, `packs/litrpg.GENRES` for
+    the house's own — and a rival filed outside it is refused because a reader who does not read
+    that genre would pass on it for the wrong reason. An empty set admits nothing, which is what
+    a pack with no shelf declares rather than a gap.
 
     Every check is arithmetic or membership over a supplied record. There is no call in this
     module and nothing that could become one.
@@ -199,9 +194,11 @@ def admit(row: Mapping[str, Any]) -> Rival:
     genre = str(row.get("genre") or "").strip().casefold()
     if not title or not listing:
         raise IllegalRival("a rival needs a title and a listing; a blank page tempts nobody")
-    if genre not in GENRES:
+    if not genres:
+        raise IllegalRival(f"{title!r} was offered to a readership that admits no rival")
+    if genre not in genres:
         raise IllegalRival(
-            f"{title!r} is filed as {genre!r}, which is not one of {', '.join(sorted(GENRES))}. "
+            f"{title!r} is filed as {genre!r}, which is not one of {', '.join(sorted(genres))}. "
             "A reader who does not read that genre would pass on it for the wrong reason"
         )
 
@@ -246,9 +243,11 @@ def admit(row: Mapping[str, Any]) -> Rival:
     )
 
 
-def admit_all(rows: Sequence[Mapping[str, Any]]) -> tuple[Rival, ...]:
+def admit_all(
+    rows: Sequence[Mapping[str, Any]], *, genres: Collection[str]
+) -> tuple[Rival, ...]:
     """Every row, admitted in order. One bad row refuses the pool rather than shrinking it."""
-    return tuple(admit(row) for row in rows)
+    return tuple(admit(row, genres=genres) for row in rows)
 
 
 def draw(pool: Sequence[Rival], key: str) -> Rival:
@@ -287,7 +286,6 @@ def ours_first(key: str) -> bool:
 
 
 __all__ = [
-    "GENRES",
     "MIN_DECIMALS",
     "MIN_FOLLOWERS",
     "MIN_RATING",

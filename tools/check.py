@@ -44,6 +44,31 @@ _SOURCE_TESTS: Final = {
     ),
     "src/litharness/adapters/sqlite_store.py": ("tests/test_store.py",),
     "src/litharness/application/ports.py": ("tests/test_architecture.py",),
+    # The evaluator boundary (stage-0 §221): the port, the audience value, the pack seam and
+    # the two packs have no test file of their own name — `packs/litrpg/__init__.py` would
+    # look for `test___init__.py` — and the tests that read them are the port's, the readers'
+    # and the architecture's.
+    "src/litharness/application/instrument.py": (
+        "tests/test_instrument.py",
+        "tests/test_architecture.py",
+    ),
+    "src/litharness/domain/audience.py": (
+        "tests/test_instrument.py",
+        "tests/test_reader_futures.py",
+    ),
+    "src/litharness/packs/__init__.py": (
+        "tests/test_instrument.py",
+        "tests/test_architecture.py",
+    ),
+    "src/litharness/packs/litrpg/__init__.py": (
+        "tests/test_instrument.py",
+        "tests/test_reader_futures.py",
+        "tests/test_editorial.py",
+        "tests/test_prompt_budget.py",
+    ),
+    "src/litharness/packs/plain/__init__.py": ("tests/test_instrument.py",),
+    # The release queue (§221, slice 2): the repository has no test of its own name.
+    "src/litharness/adapters/sqlite_release.py": ("tests/test_release.py",),
     # `_matching_test` would look for `tests/test_world.py`, which does not exist, and send
     # every touch of the Architect's view layer to a full run. The slot suite is the one that
     # grades it: it reads `vocabulary` line by line against the readers in `domain/worlds.py`.

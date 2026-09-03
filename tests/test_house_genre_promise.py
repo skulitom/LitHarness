@@ -28,6 +28,7 @@ import pytest
 from litharness.application import overview, readers, recruiter
 from litharness.domain import genre, house
 from litharness.domain import writers as writers_domain
+from litharness.packs import litrpg
 
 #: The demand §183 added, held by its two operative halves rather than by the whole sentence, so
 #: a later rewording of its terminator does not have to edit an assertion about the constraint.
@@ -82,8 +83,8 @@ def _every_prompt() -> dict[str, str]:
     """Every surface §97.1 reaches: what writes a book and what reads one back."""
     return {
         **_writing_roles(),
-        "measurement reader": readers.pool(readers.MEASUREMENT)[0].system(),
-        "steering reader": readers.pool(readers.STEERING)[0].system(),
+        "measurement reader": litrpg.pool(readers.MEASUREMENT)[0].system(),
+        "steering reader": litrpg.pool(readers.STEERING)[0].system(),
     }
 
 

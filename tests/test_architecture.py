@@ -48,15 +48,26 @@ SYSTEM_MODEL = REPO_ROOT / "docs" / "system-model.md"
 #: Dropping `providers` here is what makes `TextGenerator` load-bearing rather than decorative.
 #: `cli` is the composition root and still binds the concrete registry, which is the one place
 #: that should.
+#:
+#: **`packs` sits between `domain` and `application` (stage-0 §221).** A domain pack declares
+#: an audience — readers, a genre set, a stop rule, the tier-3 essays — and imports the domain
+#: and nothing above it. `application` may import the seam (`litharness.packs`: the protocol
+#: and the value type) and never a concrete pack; that second half is
+#: `test_the_application_reaches_a_pack_only_through_its_protocol`, because this table cannot
+#: tell `litharness.packs` from `litharness.packs.litrpg`. `cli` composes the house's pack in.
 ALLOWED_DEPENDENCIES = {
     "domain": frozenset({"domain"}),
+    "packs": frozenset({"domain", "packs"}),
     "providers": frozenset({"domain", "providers"}),
     "adapters": frozenset({"domain", "adapters"}),
-    "application": frozenset({"domain", "application"}),
+    "application": frozenset({"domain", "packs", "application"}),
     "entrypoint": frozenset(
-        {"domain", "providers", "adapters", "application", "entrypoint"}
+        {"domain", "packs", "providers", "adapters", "application", "entrypoint"}
     ),
 }
+
+#: The seam's own module, the only `packs` name `application` may import.
+PACK_SEAM = "litharness.packs"
 
 
 def _module_name(path: Path) -> str:
@@ -138,6 +149,35 @@ def test_dependencies_only_point_outward_to_inward() -> None:
                     f"{source}:{line} ({source_layer}) imports {target} ({target_layer})"
                 )
     assert not violations, "dependency boundary violations:\n" + "\n".join(violations)
+
+
+def test_the_application_reaches_a_pack_only_through_its_protocol() -> None:
+    """`application` may import `litharness.packs` — the `DomainPack` protocol, the `Pack`
+    value and `select` — and never `litharness.packs.litrpg` or any other concrete pack.
+
+    The layer table above admits `packs` for `application` as a whole because it works on the
+    second path component; this is the half it cannot express. The reason is the seam's whole
+    point (stage-0 §221): an application module that named the LitRPG pack would make every
+    caller of the evaluator carry the house's readership, and the port would be a fiction tool
+    with a protocol in front of it. The composition root and the tests name packs; nothing
+    under `application/` does, and a pack imports nothing above the domain.
+    """
+    modules = _modules()
+    violations: list[str] = []
+    for source, path in sorted(modules.items()):
+        if _layer(source) != "application":
+            continue
+        for target, line in _imports(path, set(modules)):
+            if target.startswith(PACK_SEAM + "."):
+                violations.append(f"{source}:{line} imports {target}")
+    assert not violations, "application names a concrete pack:\n" + "\n".join(violations)
+    packs = [name for name in modules if name.startswith(PACK_SEAM + ".")]
+    assert packs, "no pack is installed; this check would pass vacuously"
+    for source in packs:
+        for target, line in _imports(modules[source], set(modules)):
+            assert _layer(target) in {"domain", "packs"}, (
+                f"{source}:{line} imports {target}, which is above the domain"
+            )
 
 
 def test_the_extraction_seams_point_one_way() -> None:

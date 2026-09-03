@@ -37,11 +37,13 @@ sys.path.insert(0, str(HERE.parent.parent / "src"))
 import corpus_io  # noqa: E402
 
 from litharness.domain import rivals as rivals_mod  # noqa: E402
+from litharness.packs import litrpg as litrpg_pack  # noqa: E402
 
 DERIVED = HERE / "derived"
 
-#: RoyalRoad's own tags, mapped onto the genre labels `domain/rivals.GENRES` admits. A tag this
-#: does not name is not a genre this readership reads, which is a refusal rather than a gap.
+#: RoyalRoad's own tags, mapped onto the genre labels `packs/litrpg.GENRES` admits (the set
+#: moved out of `domain/rivals.py` under stage-0 §221). A tag this does not name is not a genre
+#: this readership reads, which is a refusal rather than a gap.
 TAG_GENRE: dict[str, str] = {
     "litrpg": "litrpg",
     "gamelit": "litrpg",
@@ -147,7 +149,7 @@ def build(
                 continue
             if not skip_admit:
                 try:
-                    rivals_mod.admit(candidate)
+                    rivals_mod.admit(candidate, genres=litrpg_pack.GENRES)
                 except rivals_mod.IllegalRival:
                     continue
             rows.append(candidate)

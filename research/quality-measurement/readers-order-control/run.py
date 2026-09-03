@@ -22,6 +22,7 @@ from pathlib import Path
 from litharness.application import readers
 from litharness.domain import rivals as rivals_mod
 from litharness.domain import text as text_mod
+from litharness.packs import litrpg as litrpg_pack
 from litharness.providers import build_default_registry
 
 HERE = Path(__file__).resolve().parent
@@ -110,7 +111,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     chapter = CHAPTER.read_text(encoding="utf-8")
     built = build(chapter)
-    pool = rivals_mod.admit_all(json.loads(RIVALS.read_text(encoding="utf-8")))
+    pool = rivals_mod.admit_all(
+        json.loads(RIVALS.read_text(encoding="utf-8")), genres=litrpg_pack.GENRES
+    )
     rival = rivals_mod.draw(pool, "readers-order-control")
     for name, copy in built.items():
         passage_words = len(copy["passage"].split())
@@ -128,7 +131,7 @@ def main(argv: list[str] | None = None) -> int:
     rows: list[dict[str, object]] = []
     with raw.open("a", encoding="utf-8") as sink:
         for name, copy in built.items():
-            for reader in readers.READERS:
+            for reader in litrpg_pack.READERS:
                 if reader.pool == readers.MEASUREMENT:
                     request = readers.render_choice_request(reader, copy["passage"], rival.title)
                 else:

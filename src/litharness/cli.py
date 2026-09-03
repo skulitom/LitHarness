@@ -48,6 +48,7 @@ from litharness.application import export as export_module
 from litharness.application import library as library_module
 from litharness.application import overview as overview_mod
 from litharness.application import readers as readers_mod
+from litharness.application import release as release_mod
 from litharness.application import roster as roster_mod
 from litharness.application import status as status_module
 from litharness.application import world as world_mod
@@ -117,6 +118,7 @@ from litharness.domain import (
     propagation,
     schema_words,
 )
+from litharness.domain import release as release_domain
 from litharness.domain import rivals as rivals_mod
 from litharness.domain import state as state_mod
 from litharness.domain import text as text_mod
@@ -185,6 +187,7 @@ from litharness.domain.salience import (
 )
 from litharness.domain.serials import SerialShape, arcs_of, beats_for_serial
 from litharness.domain.state import import_state
+from litharness.packs import litrpg as litrpg_pack
 from litharness.providers import ProviderRegistry, build_default_registry
 from litharness.providers.cli import subprocess_runner
 
@@ -457,7 +460,7 @@ def _rivals(args: argparse.Namespace) -> tuple[rivals_mod.Rival, ...]:
     if not isinstance(rows, list):
         raise SystemExit(f"litharness: {path} is not a list of rivals")
     try:
-        return rivals_mod.admit_all(rows)
+        return rivals_mod.admit_all(rows, genres=litrpg_pack.GENRES)
     except rivals_mod.IllegalRival as error:
         raise SystemExit(f"litharness: {path}: {error}") from error
 
@@ -603,7 +606,9 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
     evaluator: Evaluator = evaluators[0] if len(evaluators) == 1 else CompositeEvaluator(evaluators)
     reader_mechanism = None
     if args.reader_checkpoints:
-        baseline = experimental_mechanism(registered_at=_stamp(_now()))
+        baseline = experimental_mechanism(
+            registered_at=_stamp(_now()), roster=litrpg_pack.LITRPG.steering
+        )
         store.register_reader_mechanism(baseline)
         reader_mechanism = store.current_reader_mechanism(baseline.mechanism_id)
         if reader_mechanism is not None and reader_mechanism.spec_digest != baseline.spec_digest:
@@ -669,6 +674,9 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
                 schedule_summary=True,
                 reader_mechanism=reader_mechanism,
                 reader_shape=SerialShape(args.chapter_scenes, args.arc_chapters),
+                # The house's steering readers, named here and nowhere in `application`: the
+                # pack is composed in at the root (stage-0 §221).
+                reader_roster=litrpg_pack.LITRPG.steering,
                 # **The reviser is off unless asked for** (§196, the operator's drop after the
                 # keep/modify/drop milestone): two settled-listing A/Bs found no sentence win
                 # the battery would accept, at 109% of the writer's cost, and reads 13 to 15
@@ -677,7 +685,11 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
                 shelf=_selected_shelf(args),
             ),
             READER_OBSERVE: make_reader_observation_handler(
-                registry, store, args.project, budget=_budget(args)
+                registry,
+                store,
+                args.project,
+                roster=litrpg_pack.LITRPG.steering,
+                budget=_budget(args),
             ),
             EDITORIAL_INTERPRET: make_editorial_interpret_handler(
                 registry, store, args.project, budget=_budget(args)
@@ -1754,7 +1766,9 @@ def cmd_reader_mechanism(args: argparse.Namespace) -> int:
             return EXIT_OK
 
         if current is None:
-            baseline = experimental_mechanism(registered_at=stamp)
+            baseline = experimental_mechanism(
+                registered_at=stamp, roster=litrpg_pack.LITRPG.steering
+            )
             store.register_reader_mechanism(baseline)
             current = baseline
 
@@ -1765,7 +1779,9 @@ def cmd_reader_mechanism(args: argparse.Namespace) -> int:
             if not isinstance(raw, dict):
                 raise ValueError("qualification evidence must be one JSON object")
             evidence = QualificationEvidence.from_payload(raw)
-            evidence.validate_for(MECHANISM_ID, mechanism_spec_digest())
+            evidence.validate_for(
+                MECHANISM_ID, mechanism_spec_digest(litrpg_pack.LITRPG.steering)
+            )
             if evidence.candidate_version_id != current.version_id:
                 raise ValueError("qualification evidence does not address the current candidate")
             qualified = ReaderMechanism(
@@ -2002,7 +2018,7 @@ def cmd_readers(args: argparse.Namespace) -> int:
 
         choices: dict[str, Any] = {}
         wishes: dict[str, Any] = {}
-        for reader in readers_mod.READERS:
+        for reader in litrpg_pack.READERS:
             memory = readers_mod.prior_reading_memory(
                 previous_reads,
                 reader.reader_id,
@@ -2065,8 +2081,12 @@ def cmd_readers(args: argparse.Namespace) -> int:
                     dreading=[str(x) for x in (parsed.get("dreading") or [])],
                 )
 
-        reading = readers_mod.Reading.of(choices)
-        wanting = readers_mod.Anticipation.of(wishes)
+        reading = readers_mod.Reading.of(
+            choices, roster=litrpg_pack.pool(readers_mod.MEASUREMENT)
+        )
+        wanting = readers_mod.Anticipation.of(
+            wishes, roster=litrpg_pack.pool(readers_mod.STEERING)
+        )
         gates = (
             GateOutcome(
                 gate=GateKind.SHAPE,
@@ -2363,14 +2383,16 @@ def cmd_listing(args: argparse.Namespace) -> int:
         # The steering lane. A reader who does not answer is skipped rather than counted as
         # wanting nothing: `Anticipation.of` reads only what came back.
         wishes: dict[str, Any] = {}
-        for reader in readers_mod.pool(readers_mod.STEERING):
+        for reader in litrpg_pack.pool(readers_mod.STEERING):
             request = readers_mod.render_appetite_request(reader, listing)
             result, refusal = _completion_call(request, calls=calls, spend=spend)
             if result is not None and isinstance(result.parsed, Mapping):
                 wishes[reader.reader_id] = result.parsed
             elif refusal:
                 print(f"  {reader.reader_id}: {refusal}", file=sys.stderr)
-        wanted = readers_mod.Anticipation.of(wishes)
+        wanted = readers_mod.Anticipation.of(
+            wishes, roster=litrpg_pack.pool(readers_mod.STEERING)
+        )
         first = listing
 
         title, availability, abandoned = _listing_title(
@@ -2390,7 +2412,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
         pool_of_rivals = _rivals(args)
         choices: dict[str, Any] = {}
         picks: list[dict[str, Any]] = []
-        for reader in readers_mod.pool(readers_mod.MEASUREMENT):
+        for reader in litrpg_pack.pool(readers_mod.MEASUREMENT):
             if pool_of_rivals:
                 # **The pairing with an external label on it.** A different competitor per
                 # reader, so one screen measures this listing against several published books
@@ -2420,7 +2442,9 @@ def cmd_listing(args: argparse.Namespace) -> int:
                     "because": str(result.parsed.get("because") or "").strip(),
                 }
             )
-        browsing = readers_mod.Browsing.of(choices)
+        browsing = readers_mod.Browsing.of(
+            choices, roster=litrpg_pack.pool(readers_mod.MEASUREMENT)
+        )
         paired = readers_mod.Pairing.of(picks)
 
         gate = GateOutcome(
@@ -3345,8 +3369,8 @@ def cmd_prompts(args: argparse.Namespace) -> int:
         rule_or_critic_id="continuity.specimen.v0",
         logical_id="scene-1",
     )
-    measurement = readers_mod.pool(readers_mod.MEASUREMENT)[0]
-    steering = readers_mod.pool(readers_mod.STEERING)[0]
+    measurement = litrpg_pack.pool(readers_mod.MEASUREMENT)[0]
+    steering = litrpg_pack.pool(readers_mod.STEERING)[0]
     roles: dict[str, CompletionRequest] = {
         "listing": overview_mod.render_overview_request(
             premise,
@@ -5604,6 +5628,92 @@ def cmd_library(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_release(args: argparse.Namespace) -> int:
+    """The release queue: stage a chapter's copy, approve it, record the post, withdraw it.
+
+    **There is no `post` here and there will not be one** (stage-0 §221, keeping §62's one
+    settled sentence: the tool never posts). Royal Road's Terms prohibit automated systems and
+    scripts accessing the service unless expressly permitted; the operator pastes the approved
+    copy by hand and then tells this command so, under their own name. `approve` and
+    `record-posted` refuse without `--by`.
+    """
+    store = _store(args)
+    stamp = _stamp(_now())
+    try:
+        book_id, branch_id = (
+            export_module.resolve_branch(store, args.book, args.branch)
+            if args.release_action in {"stage", "show"}
+            else (None, None)
+        )
+        if args.release_action == "stage":
+            assert book_id is not None and branch_id is not None
+            note = _read_text(args.note_file) if args.note_file else None
+            entry, (html_copy, text_copy) = release_mod.stage_chapter(
+                store,
+                book_id=book_id,
+                branch_id=branch_id,
+                chapter_number=args.chapter,
+                scenes_per_chapter=args.chapter_scenes,
+                scheduled_slot=args.slot,
+                tags=args.tag,
+                root=_library_root(args),
+                generated_at=stamp,
+                staged_at=stamp,
+                note=note,
+            )
+            print(f"{entry.release_id}  {entry.chapter_stem}  staged for {entry.scheduled_slot}")
+            print(f"  fragment {entry.fragment_sha256}")
+            print(f"  paste from {html_copy} (or {text_copy.name})")
+            return EXIT_OK
+        if args.release_action == "approve":
+            entry = release_mod.approve(
+                store,
+                args.release_id,
+                by=args.by,
+                at=stamp,
+                scenes_per_chapter=args.chapter_scenes,
+                generated_at=stamp,
+            )
+            print(f"{entry.release_id}  {entry.chapter_stem}  approved by {entry.approved_by}")
+            return EXIT_OK
+        if args.release_action == "record-posted":
+            entry = release_mod.record_posted(
+                store, args.release_id, by=args.by, at=args.at or stamp
+            )
+            print(
+                f"{entry.release_id}  {entry.chapter_stem}  posted by {entry.posted_by} "
+                f"at {entry.posted_at}"
+            )
+            return EXIT_OK
+        if args.release_action == "withdraw":
+            entry = release_mod.withdraw(
+                store, args.release_id, by=args.by, at=stamp, reason=args.reason
+            )
+            print(f"{entry.release_id}  {entry.chapter_stem}  withdrawn: {entry.withdrawn_reason}")
+            return EXIT_OK
+        if args.release_action == "show":
+            assert book_id is not None and branch_id is not None
+            entries = release_mod.show(store, book_id=book_id, branch_id=branch_id)
+            if args.json:
+                _say(json.dumps([entry.to_jsonable() for entry in entries], indent=2))
+                return EXIT_OK
+            if not entries:
+                print("(nothing staged)")
+            for entry in entries:
+                who = entry.posted_by or entry.approved_by or entry.withdrawn_by or "-"
+                print(
+                    f"{entry.release_id}  {entry.chapter_stem:10} {entry.status.value:9} "
+                    f"slot {entry.scheduled_slot}  fragment {entry.fragment_sha256[:12]}  {who}"
+                )
+            return EXIT_OK
+        raise ValueError(f"unknown release action {args.release_action}")
+    except release_domain.IllegalRelease as error:
+        print(f"litharness: {error}", file=sys.stderr)
+        return EXIT_FAULT
+    finally:
+        store.close()
+
+
 def cmd_export(args: argparse.Namespace) -> int:
     """A reading copy of the book as it stands, and its listing beside it.
 
@@ -6688,6 +6798,61 @@ def build_parser() -> argparse.ArgumentParser:
         "changed rendering: the files are derived, so the fix is to derive them again",
     )
     library_cmd.set_defaults(func=cmd_library)
+
+    release_cmd = sub.add_parser(
+        "release",
+        help="the operator-gated release queue: stage, approve, record-posted, withdraw, show. "
+        "There is no post (stage-0 §221): the tool never posts",
+    )
+    release_actions = release_cmd.add_subparsers(dest="release_action", required=True)
+    release_stage = release_actions.add_parser(
+        "stage", help="stage one pastable chapter's copy under its hash"
+    )
+    release_stage.add_argument("--chapter", type=int, required=True, help="the chapter number")
+    release_stage.add_argument(
+        "--slot",
+        required=True,
+        help="when the operator means to post it, in their own words (an ISO date is best)",
+    )
+    release_stage.add_argument(
+        "--tag",
+        action="append",
+        required=True,
+        help=f"a platform tag; repeat for each. {release_domain.AI_GENERATED_TAG} is required "
+        "and is not added for you: the platform requires it and the operator states it",
+    )
+    release_stage.add_argument(
+        "--note-file",
+        type=Path,
+        help="an author note to carry instead of the disclosure template (the disclosure "
+        "still has to be in it; read the template first)",
+    )
+    release_stage.add_argument("--book")
+    release_stage.add_argument("--branch")
+    release_stage.set_defaults(func=cmd_release)
+    release_approve = release_actions.add_parser(
+        "approve", help="approve a staged copy, if the book still renders it"
+    )
+    release_approve.add_argument("release_id")
+    release_approve.add_argument("--by", required=True, help="the operator's name")
+    release_approve.set_defaults(func=cmd_release)
+    release_posted = release_actions.add_parser(
+        "record-posted", help="record that the operator pasted the approved copy"
+    )
+    release_posted.add_argument("release_id")
+    release_posted.add_argument("--by", required=True, help="the operator's name")
+    release_posted.add_argument("--at", help="when it was posted (ISO); now if omitted")
+    release_posted.set_defaults(func=cmd_release)
+    release_withdraw = release_actions.add_parser("withdraw", help="take an entry off the queue")
+    release_withdraw.add_argument("release_id")
+    release_withdraw.add_argument("--by", required=True, help="the operator's name")
+    release_withdraw.add_argument("--reason", required=True)
+    release_withdraw.set_defaults(func=cmd_release)
+    release_show = release_actions.add_parser("show", help="the queue for this book")
+    release_show.add_argument("--json", action="store_true")
+    release_show.add_argument("--book")
+    release_show.add_argument("--branch")
+    release_show.set_defaults(func=cmd_release)
 
     propagate = sub.add_parser(
         "propagate", help="what a change reaches beyond what it edits, from a ChangeSet"

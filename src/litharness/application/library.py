@@ -58,6 +58,12 @@ one, measured on a simulated readership — which is what keeps the gate from be
 since a bar needing real readers would have required publishing to learn whether to.)*
 These files are for reading, and pasting
 one anywhere is an operator decision that condition already governs.
+
+**The release unit arrived on 2026-09-03 (stage-0 §221), and it is a queue, not a poster.**
+`domain/release.py` and `application/release.py` hold it; what this module adds for it is
+`write_release_copy`, which writes a staged chapter's two copies under the fragment's hash into
+`release/`, a folder no republish touches — so the file an operator pastes from is the copy the
+queue approved. Still nothing here posts, and §62's sentence stands.
 """
 
 from __future__ import annotations
@@ -73,6 +79,7 @@ from litharness.application.export import NOT_DRAFTED, BookExport, collect, read
 from litharness.application.ports import ExportStore
 from litharness.application.statusline import status_block
 from litharness.domain.nodes import Node, NodeKind
+from litharness.domain.text import content_hash
 
 #: The folder name, resolved **beside the database it is derived from** rather than against
 #: the working directory (`root_for`). That is what lets publishing be on by default without
@@ -514,6 +521,35 @@ def _write(path: Path, text: str) -> None:
 _CHAPTER_FILE = re.compile(r"Chapter\d+\.(?:html|txt)")
 _VOLUME_DIR = re.compile(r"Volume\d+")
 
+#: Where the release queue's copies go, beside `chapters/` and never inside it. `chapters/` is
+#: rewritten on every republish and its stale files are removed; a queued copy has to outlive
+#: that, because what was approved is what gets pasted (stage-0 §221). Nothing in this module
+#: deletes from here.
+RELEASE_DIRNAME = "release"
+
+
+def write_release_copy(
+    shelf: Path, chapter: Chapter, *, fragment_sha256: str
+) -> tuple[Path, Path]:
+    """Write one chapter's two pastable copies under the fragment's hash, for the queue.
+
+    `Chapter3-1a2b3c4d5e6f.html` and `.txt`: the stem an operator already knows, then twelve
+    hex characters of the hash the queue's entry carries, so the file an operator pastes from
+    is the copy that was approved and not whichever one the last tick wrote. Content-addressed
+    means idempotent: staging the same copy twice writes the same bytes to the same path.
+    """
+    if content_hash(chapter.fragment) != fragment_sha256:
+        raise ValueError(
+            f"{chapter.stem} renders at {content_hash(chapter.fragment)[:12]}, not the "
+            f"{fragment_sha256[:12]} the queue was told"
+        )
+    folder = shelf / RELEASE_DIRNAME
+    stem = f"{chapter.stem}-{fragment_sha256[:12]}"
+    html_copy, text_copy = folder / f"{stem}.html", folder / f"{stem}.txt"
+    _write(html_copy, chapter.fragment)
+    _write(text_copy, chapter.plain)
+    return html_copy, text_copy
+
 
 def _remove_generated_files(folder: Path, keep: set[str], pattern: re.Pattern[str]) -> None:
     if not folder.is_dir():
@@ -856,6 +892,7 @@ __all__ = [
     "NOTES_FILENAME",
     "NOTES_TEMPLATE",
     "NOT_DRAFTED",
+    "RELEASE_DIRNAME",
     "SHELF_MARKER_FILENAME",
     "STATE_FILENAME",
     "Chapter",
@@ -871,4 +908,5 @@ __all__ = [
     "shelf_slug",
     "slugify",
     "volumes_for",
+    "write_release_copy",
 ]

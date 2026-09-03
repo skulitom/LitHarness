@@ -32,6 +32,7 @@ import pytest
 from litharness.application import overview, readers
 from litharness.domain import house
 from litharness.domain import writers as writers_domain
+from litharness.packs import litrpg
 
 #: The demand §174 added, held by its operative words so a later rewording of its cost half does
 #: not have to edit an assertion about the whole sentence.
@@ -66,8 +67,8 @@ def _reader_facing() -> dict[str, str]:
         "house floor": house.HOUSE_RULES,
         "listing task": overview._TASK,
         "title task": overview._TITLE_TASK,
-        "measurement reader": readers.pool(readers.MEASUREMENT)[0].system(),
-        "steering reader": readers.pool(readers.STEERING)[0].system(),
+        "measurement reader": litrpg.pool(readers.MEASUREMENT)[0].system(),
+        "steering reader": litrpg.pool(readers.STEERING)[0].system(),
     }
 
 

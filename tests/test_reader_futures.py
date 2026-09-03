@@ -29,8 +29,14 @@ from litharness.domain import rivals
 from litharness.domain.revision import new_book
 from litharness.domain.serials import SerialShape
 from litharness.domain.text import STOP_FRACTION, stop_point
+from litharness.packs import litrpg
 
 PASSAGE = "\n\n".join(f"Paragraph {index} carrying a few words of prose." for index in range(1, 9))
+
+#: The house's readers, by the name they moved to (stage-0 §221). Every reader below is the
+#: one the pipeline has rendered since 2026-08-25; the pack is where they live now.
+MEASURING = litrpg.pool(readers.MEASUREMENT)
+STEERING = litrpg.pool(readers.STEERING)
 
 
 # --- the reader is stopped part-way ----------------------------------------------------
@@ -146,7 +152,7 @@ def test_the_blurb_stage_asks_the_same_three_things_as_the_chapter_stage() -> No
 
 
 def test_a_steering_reader_is_asked_where_it_got_to_and_not_what_it_thinks() -> None:
-    reader = readers.pool(readers.STEERING)[0]
+    reader = STEERING[0]
     prompt = readers.render_anticipation_request(reader, PASSAGE).prompt
     assert "That is as far as you have got" in prompt
     assert "hoping for and dreading" in prompt
@@ -183,7 +189,7 @@ def test_a_book_nobody_read_records_an_empty_observation() -> None:
 
 def test_a_pre_migration_row_still_round_trips_as_observation() -> None:
     carried = readers.Anticipation.of(
-        {readers.pool(readers.STEERING)[0].reader_id: {"hoping_for": ["a real cost"]}}
+        {STEERING[0].reader_id: {"hoping_for": ["a real cost"]}}, roster=STEERING
     )
     assert carried.hoping_for == ("a real cost",)
     assert carried.answered == 1
@@ -203,12 +209,12 @@ GOOD = {
 
 
 def test_a_rival_must_be_rated_above_four_by_more_than_a_handful() -> None:
-    admitted = rivals.admit(GOOD)
+    admitted = litrpg.LITRPG.admit_rival(GOOD)
     assert admitted.rating == 4.36
     with pytest.raises(rivals.IllegalRival, match="not above"):
-        rivals.admit(GOOD | {"rating": 4.0})
+        litrpg.LITRPG.admit_rival(GOOD | {"rating": 4.0})
     with pytest.raises(rivals.IllegalRival, match="floor"):
-        rivals.admit(GOOD | {"ratings": 3})
+        litrpg.LITRPG.admit_rival(GOOD | {"ratings": 3})
 
 
 def test_a_round_rating_with_no_count_is_refused_and_an_imprecise_one_is_not() -> None:
@@ -217,19 +223,19 @@ def test_a_round_rating_with_no_count_is_refused_and_an_imprecise_one_is_not() -
     Only used where a count is absent, because it is a proxy and the count is the thing.
     """
     countless = {key: value for key, value in GOOD.items() if key != "ratings"}
-    assert rivals.admit(countless).ratings is None
+    assert litrpg.LITRPG.admit_rival(countless).ratings is None
     with pytest.raises(rivals.IllegalRival, match="decimal"):
-        rivals.admit(countless | {"rating": 4.5})
+        litrpg.LITRPG.admit_rival(countless | {"rating": 4.5})
 
 
 def test_a_rival_outside_this_readership_s_genres_is_refused() -> None:
     with pytest.raises(rivals.IllegalRival, match="not one of"):
-        rivals.admit(GOOD | {"genre": "cosy mystery"})
+        litrpg.LITRPG.admit_rival(GOOD | {"genre": "cosy mystery"})
 
 
 def test_a_reader_is_never_told_what_the_rival_scored() -> None:
     """A reader told a book is rated 4.36 has been told the answer."""
-    shown = rivals.admit(GOOD).render()
+    shown = litrpg.LITRPG.admit_rival(GOOD).render()
     assert "4.36" not in shown
     assert "812" not in shown
     assert shown.startswith("The Deep Ledger")
@@ -238,7 +244,8 @@ def test_a_reader_is_never_told_what_the_rival_scored() -> None:
 def test_the_draw_rotates_by_reader_and_replays_identically() -> None:
     """A different competitor per reader, so one screen samples the market rather than a book."""
     pool = rivals.admit_all(
-        [GOOD | {"title": f"Book {index}", "listing": f"Blurb {index}"} for index in range(8)]
+        [GOOD | {"title": f"Book {index}", "listing": f"Blurb {index}"} for index in range(8)],
+        genres=litrpg.GENRES,
     )
     drawn = {rivals.draw(pool, f"scene-1|{reader}").title for reader in ("a", "b", "c", "d")}
     assert len(drawn) > 1
@@ -254,7 +261,7 @@ def test_an_empty_pool_is_refused_rather_than_quietly_skipped() -> None:
 
 
 def test_the_browsing_reader_sees_both_blurbs_unlabelled_and_swapped() -> None:
-    reader = readers.pool(readers.MEASUREMENT)[0]
+    reader = MEASURING[0]
     mine, other = "a locksmith and a locked door", "a courier and a deep stair"
     leading = readers.render_pick_request(reader, mine, other, True).prompt
     trailing = readers.render_pick_request(reader, mine, other, False).prompt
@@ -269,7 +276,7 @@ def test_the_browsing_reader_sees_both_blurbs_unlabelled_and_swapped() -> None:
 
 def test_the_continuation_names_the_other_book_and_does_not_show_it() -> None:
     """The operator's correction: a blurb on the page has already been read for free."""
-    reader = readers.pool(readers.MEASUREMENT)[0]
+    reader = MEASURING[0]
     prompt = readers.render_choice_request(reader, PASSAGE, "The Deep Ledger").prompt
     assert "The Deep Ledger" in prompt
     assert "A courier finds the stairs" not in prompt
@@ -287,7 +294,7 @@ def test_leaving_for_the_other_book_is_an_act_the_reader_can_name() -> None:
 
 def test_the_no_rival_arm_is_what_it_always_was() -> None:
     """The control has to be the same code path, or the comparison is between two scripts."""
-    reader = readers.pool(readers.MEASUREMENT)[0]
+    reader = MEASURING[0]
     solo = readers.render_choice_request(reader, PASSAGE)
     assert solo.schema is readers.CHOICE_SCHEMA
     assert "cannot do both" not in solo.prompt
@@ -295,7 +302,7 @@ def test_the_no_rival_arm_is_what_it_always_was() -> None:
 
 def test_a_steering_reader_may_not_be_shown_a_rival() -> None:
     """A rival is published prose and a steering reader's words reach a writer. RS1."""
-    steering = readers.pool(readers.STEERING)[0]
+    steering = STEERING[0]
     with pytest.raises(ValueError):
         readers.render_choice_request(steering, PASSAGE, "The Deep Ledger")
     with pytest.raises(ValueError):
