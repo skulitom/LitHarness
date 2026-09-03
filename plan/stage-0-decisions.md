@@ -22459,3 +22459,51 @@ generalised; a census of the shelf's own first status windows precedes any rail.
 
 **Anti-scope.** Three draws under one concept are three descriptions and none a treatment
 effect; no bar is declared; the operator's read of the three is the readout.
+
+## 200. A world can breach its own shape before any scene, and the check now says so; one position per ladder
+
+*(Claimed 2026-09-02 and cited by §199.5 to §199.8; the append that should have landed it beside them failed silently in a chained command and was found on 2026-09-03, so it sits here, after them.)*
+
+**Measured (`runs/ab/pilot25/draw1/`, plan/serial-pilot-25.md §3, 2026-09-02).** Pilot 25's
+first arm seeded its world in 1,099 seconds ($4.58), passed `world check` and `world accept`,
+drew the outline, drafted scene 1, ran the pass on it (eleven calls, $2.08), and was refused at
+the integrity gate: `state.cardinality.v0`, *one_position admits at most 1 stands_at per
+subject,order_key; ines has 2: band_six, grade_moderator*. Both records were the seed's. The
+Architect had declared a one-position shape on `stands_at` grouped by subject (its own
+manifestation reads *one assessed space, one invigilator position*) and then, following the
+concept's two systems, put a side character at a rung on each ladder. The check runs
+`worlds.validate` and previews the completion (§197.1) but not the two detectors the drafting
+gate runs, so the breach was in canon before the outline was paid for and was found after
+the draft and the pass were. The tick exited with the job failed on its first attempt and the
+harness stopped; $2.65 was spent on a scene no draft could have passed. Separately, the
+group keys a shape may declare were three (`subject`, `subject,order_key`, `object`), none of
+which can say *one rung per ladder*, which is what a world with two systems means by one
+position and what the concept stage (§197) asks worlds to hold.
+
+**What shipped.** `application/world.would_breach`: the gate's contradiction and cardinality
+detectors run over the proposals as accept would carry them, their messages kept; `check`
+reports them under `would_breach` without moving `ok` (the invariant of §163 and §197.1), and
+`world accept` refuses on the list with the same `--force` as the name refusal (§178), so a
+breach is met where `world declare` can still fix it and before a scene is drafted.
+`domain/worlds.GROUP_KEYS` gains `subject,value,order_key`, grouping a relation by the column
+it is a value of, so a `stands_at` whose value names the ladder (*band*, *grade*) is one
+position per ladder per subject; the vocabulary lists it. The seed's second-system sentence
+says a person may stand on both ladders and a one-position shape is grouped per ladder (the
+budget row rises 44 to 45, reason in place). Tests: the per-ladder grouping admits one rung
+on each system and still refuses two on one (`tests/test_integrity.py`); the check previews
+the breach on proposals and not on the regrouped shape, and `ok` stays
+(`tests/test_seed_completion_bounds.py`); accept refuses through the command and admits the
+same world regrouped (`tests/test_schema_words.py`).
+
+**What was refused.** Regrouping a declared shape for the Architect at accept: a shape is the
+world's own declaration and a silent edit to it is the hidden change §149 was written
+against; the seed is told, the check reports, and the Architect or the operator declares.
+Running the tells pass after the integrity gate to save its spend on a refused draft: the
+pass changes sentences and extraction reads the page, so the gate must read what the pass
+left, and the spend here was the seed's breach reaching the tick, which the check now stops.
+Continuing the harness past a failed first attempt: the arm stops where the pipeline first
+refuses, and the folder says why; a retry the pipeline would have made is the operator's to
+ask for after reading the log.
+
+**Anti-scope.** The check reads only the two deterministic detectors; nothing here judges a
+world. One arm, one seed, one breach: what the fixed seed draws is the next arm's to show.

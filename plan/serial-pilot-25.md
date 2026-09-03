@@ -175,6 +175,44 @@ gets* inside one paragraph, where the shelf's blurbs hold one tense. Neither was
 rail asks, and a redraw on my reading would be a selection (§105).
 
 
+## 3. Draw1 stopped at the first scene, and the batched pass had its first live row
+
+**What ran** (`runs/ab/pilot25/draw1/`, 2026-09-02 21:54 to 22:16 UTC). Init, `new` under the
+settled listing and concept, the seed (1,099 seconds, $4.58, both systems declared, the
+Invigilation's sheet with Band as its rank column), `world check` and `world accept` clean,
+the outline, then tick 1: scene 1 drafted (one call, $0.57), the pass on it, and the
+integrity gate refusing the draft: `state.cardinality.v0`, *one_position admits at most 1
+stands_at per subject,order_key; ines has 2: band_six, grade_moderator*. Both records are the
+seed's: the Architect declared a one-position shape on `stands_at` grouped by subject, meant
+for exam spaces (*one assessed space, one invigilator position, one Chaperone, one scheme*),
+and then put a side character at a rung on each of the two systems. Nothing had drafted a
+breach; the seed had, and the check did not run the detector the gate runs. The tick exited
+with the job failed on its first attempt and the harness stopped; $7.23 spent, of which the
+outline, the draft and the pass ($2.65) went to a scene nothing could have passed. The fix
+is stage-0 §200 (the check previews what the gate would refuse, accept refuses on it, and a
+shape may group one position per ladder). The arm is re-run fresh as `draw1b`.
+
+**The pass's first live row under the third version, and the long family with it.** The
+package on disk changed after the arm started (§199.4's long family landed before tick 1,
+and the harness re-imports at every step; the experiment note names it), so the row is the
+sixth family's first as well as the batching's:
+
+| scene | absence | paradox | the way | echo | chained and | long | said again / left / calls | spend |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| scene 1, refused | 8.5 to 8.5 | 1.1 to 0.0 | 2.1 to 1.1 | 4.2 to 3.2 | 5.3 to 3.2 | 11.6 to 6.4 | 7 / 20 / 11 | $2.08, 514,934 tokens |
+
+Beside pilot 24's draw3 (twenty-six calls and $4.46 on its first scene): eleven calls and
+$2.08, so the batching halved the spend and the calls, with the harness tax still forty-seven
+thousand tokens a call. The long family was found at 11.6 per thousand on a page whose shelf
+runs at zero and the pass moved half of it. The absence family did not move at all on a page
+running at three times the shelf's rate, and twenty of twenty-seven located sentences were
+left after two batched tries. No answer is kept (§199.3), so why the absence batch refused
+every one of its sentences is not on the record; the next chapter's rows are where it can be
+read, and if it holds, the family's ask or the batch's shape is the next thing to look at.
+
+**Not read.** The refused draft is not on the shelf and is not read here: a scene the gate
+refused is not a chapter, and the arm that is read is the one that lands.
+
 ## 4. Draw1b — the chapter, its counts, and the read
 
 **What ran** (`runs/ab/pilot25/draw1b/`, 2026-09-02 22:31 to 22:56 UTC, tree 150d467 clean
