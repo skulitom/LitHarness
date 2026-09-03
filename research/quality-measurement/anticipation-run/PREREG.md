@@ -93,3 +93,26 @@ workers beside five other sessions, and because `claude -p` degrades under load 
 failing loudly (`CLAUDE.md`). A parallel run pays a cache write per concurrent call where a
 sequential one shares a read, so the quota cost per call is expected to be somewhat higher; the
 ledger reports `equivalent_usd` either way.
+
+## Addendum, 2026-09-04: the ceiling moves into the unit the design is written in
+
+**Measured before the restart, from the 32 cells the first launches bought**: $0.0395 a call,
+so the registered 800 calls project to **$31.57 against the $30 ceiling above**. The run would
+have stopped at roughly 760 calls and stamped itself partial — losing the last cells to an
+estimate that came in 5% low rather than to anything about the design.
+
+**The ceiling is therefore restated as the registered plan itself: 800 bought calls**, read
+between arms exactly as the dollar ceiling was, with a stopped run still keeping every cell
+bought and still stamped partial. This buys nothing the registration did not already specify —
+800 calls is the shape declared in `plan/anticipation-probe-validity.md` §5 and at the top of
+this file — and it removes a truncation that was an artifact of pricing rather than of method.
+
+**What is honestly more than was registered**: about $1.57 of subscription-equivalent quota.
+That is covered by the operator's direction of 2026-09-04, relayed by the coordinating session,
+that no dollar cap is required for this window because the constraint is quota rather than
+money and the window is to be used. The ledger still reports `equivalent_usd`, so the burn stays
+on the record; what it no longer does is decide when to stop.
+
+**What does not change**: the arms, the panel, the passages, K, the probe's bytes, the schema,
+the scorers, and all four kill conditions. `registration_digest()` is untouched, because none of
+those constants moved.
