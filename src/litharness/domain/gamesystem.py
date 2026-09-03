@@ -746,6 +746,24 @@ class Move:
 
 
 @dataclass(frozen=True, slots=True)
+class Change:
+    """One declared change of kind (§212): what happened to whom, where, and what each grant
+    stands at for them afterwards.
+
+    **Absolute values, never deltas.** *Seamsight 0, Windread 1* is what an evolution leaves,
+    a merge retires two and grants one, a curse puts a grant lower than it stood; each is a
+    statement about the sheet afterwards, which is the one shape `sheet_of` can fold beside a
+    `can_do` edge without a second arithmetic. `at` is the change's position, the `type`
+    record's order key; `None` is a change already true when the book opens.
+    """
+
+    change_id: str
+    participant: str
+    at: str | None
+    effects: tuple[tuple[str, int], ...]
+
+
+@dataclass(frozen=True, slots=True)
 class Furniture:
     """What the page must show when the sheet changes, as data.
 
@@ -1660,7 +1678,15 @@ def records_for(system: SystemDef) -> tuple[lc.StateRecord, ...]:
             MAGNITUDE_SCALE,
             value={"label": system.scale.label, "maximum": system.scale.maximum},
         ),
-        worlds_mod.world_record(system.system_id, SYSTEM_DIGEST, value=system.digest),
+        # **The digest and the grants it was drawn with** (§212.1). The digest alone was
+        # the record until pilot 25's fork system reported as grown with nothing declared
+        # since its seed: the digest's own material had moved with the code, so a digest
+        # is not an identity across versions and growth is a question about grants.
+        worlds_mod.world_record(
+            system.system_id,
+            SYSTEM_DIGEST,
+            value={"digest": system.digest, "grants": list(system.ability_ids)},
+        ),
         # **The system writes its own status line down, in the same function that writes the
         # system.** Leaving this to the seed path was the first design and it was wrong for the
         # reason `sheet_declaration` records: `extraction.sheet_for` abstains to the default
@@ -2042,33 +2068,62 @@ def _choices_of(
 
 def drawn_digests(records: Sequence[lc.StateRecord]) -> dict[str, str]:
     """Each system's digest as it was drawn, off the `system_digest` record acceptance
-    minted (§211). A system with none was never completed and is `unfinished_systems`'."""
-    return {
-        record.subject: record.value
-        for record in records
-        if record.predicate == SYSTEM_DIGEST and isinstance(record.value, str)
-    }
+    minted (§211): the string a seed wrote before §212.1, or the `digest` of the object a
+    seed writes since. A system with none was never completed and is `unfinished_systems`'."""
+    found: dict[str, str] = {}
+    for record in records:
+        if record.predicate != SYSTEM_DIGEST:
+            continue
+        if isinstance(record.value, str):
+            found[record.subject] = record.value
+        elif isinstance(record.value, Mapping) and isinstance(record.value.get("digest"), str):
+            found[record.subject] = record.value["digest"]
+    return found
 
 
-def growth(records: Sequence[lc.StateRecord]) -> tuple[tuple[SystemDef, tuple[str, ...]], ...]:
-    """Every system that differs from the one drawn, with what is wrong with it now, if
-    anything (§211).
+def drawn_grants(records: Sequence[lc.StateRecord]) -> dict[str, tuple[str, ...]]:
+    """Each system's grants as it was drawn (§212.1), off the `system_digest` record of a
+    seed written since that entry; a seed that wrote the digest alone recorded no grant list
+    and is absent here, so nothing is guessed about what it drew."""
+    found: dict[str, tuple[str, ...]] = {}
+    for record in records:
+        if record.predicate != SYSTEM_DIGEST or not isinstance(record.value, Mapping):
+            continue
+        grants = record.value.get("grants")
+        if isinstance(grants, list) and all(isinstance(item, str) for item in grants):
+            found[record.subject] = tuple(sorted(grants))
+    return found
 
-    **Growth is reported, never refused, and the drawn digest is left as it was.** A grant
-    declared after the seed is what a book handing things out looks like, and a second
+
+def growth(
+    records: Sequence[lc.StateRecord],
+) -> tuple[tuple[SystemDef, tuple[str, ...], tuple[str, ...]], ...]:
+    """Every system whose grants differ from the ones drawn, with the grants added since and
+    what is wrong with it now, if anything (§211, corrected by §212.1).
+
+    **Growth is a grant set and not a digest.** The first reading compared the live digest
+    with the drawn one, and on pilot 25's stored book reported its fork system as grown with
+    not one record declared since the seed: the digest's own material had moved with the
+    code (a fork's ways joined it after that seed), so a digest identifies a system within
+    one version and not across them. What growth is about is the grants, and the seed now
+    writes the list it drew beside the digest; a system whose seed wrote the digest alone
+    is left out rather than guessed at.
+
+    **Reported, never refused, and the drawn record is left as it was.** A grant declared
+    after the seed is what a book handing things out looks like, and a second
     `system_digest` record beside the first would be two canon values at one slot — the
-    contradiction detector's own shape, with no retraction to clear it. So the record says
-    what was drawn, `systems_of` says what stands, and a reader asks the difference here.
-    The complaints are `check_draw`'s with the draw's count bound off, since the bound is on
-    the draw; a grown system that runs its prerequisites in a cycle is still broken.
+    contradiction detector's own shape, with no retraction to clear it. The complaints are
+    `check_draw`'s with the draw's count bound off, since the bound is on the draw; a grown
+    system that runs its prerequisites in a cycle is still broken.
     """
-    drawn = drawn_digests(records)
-    found: list[tuple[SystemDef, tuple[str, ...]]] = []
+    drawn = drawn_grants(records)
+    found: list[tuple[SystemDef, tuple[str, ...], tuple[str, ...]]] = []
     for system in systems_of(records):
         was = drawn.get(system.system_id)
-        if was is None or was == system.digest:
+        if was is None or was == tuple(sorted(system.ability_ids)):
             continue
-        found.append((system, check_draw(system, drawn=False)))
+        added = tuple(sorted(set(system.ability_ids) - set(was)))
+        found.append((system, added, check_draw(system, drawn=False)))
     return tuple(found)
 
 
@@ -2314,6 +2369,53 @@ def _needs_of(records: Sequence[lc.StateRecord], ability_id: str) -> tuple[Need,
     return tuple(sorted(needs, key=lambda need: need.ref))
 
 
+def changes_of(
+    records: Sequence[lc.StateRecord], character: str, *, system: SystemDef
+) -> tuple[Change, ...]:
+    """Every canon change declared as happening to `character` with an effect on one of this
+    system's grants, in position order (§212).
+
+    A change is a subject of `type change` (the node the vocabulary has carried since the
+    research ontology, and the Architect has used as a story event with no roles); one with a
+    `participant` edge to this person and an `effect` edge naming a grant of this system with
+    a whole number is one the sheet reads. Effects on grants this system does not declare are
+    left to `worlds.validate`, which complains about a role pointing at an undeclared
+    subject; a value that is not a whole number is `slot_warnings`' to name.
+    """
+    canon = [record for record in records if state_mod.is_canon(record)]
+    anchors = {
+        record.subject: record
+        for record in canon
+        if record.predicate == worlds_mod.TYPE_PREDICATE
+        and str(record.value or "").strip() == worlds_mod.CHANGE
+    }
+    grants = set(system.ability_ids)
+    found: list[Change] = []
+    for change_id in sorted(anchors):
+        rows = [record for record in canon if record.subject == change_id]
+        if not any(
+            record.predicate == worlds_mod.PARTICIPANT_ROLE and record.object_ref == character
+            for record in rows
+        ):
+            continue
+        effects = tuple(
+            sorted(
+                (record.object_ref, record.value)
+                for record in rows
+                if record.predicate == worlds_mod.EFFECT_ROLE
+                and record.object_ref in grants
+                and isinstance(record.value, int)
+                and not isinstance(record.value, bool)
+            )
+        )
+        if not effects:
+            continue
+        found.append(
+            Change(change_id, character, state_mod.order_key_of(anchors[change_id]), effects)
+        )
+    return tuple(sorted(found, key=lambda change: change.at or ""))
+
+
 def sheet_of(
     records: Sequence[lc.StateRecord],
     character: str,
@@ -2370,6 +2472,19 @@ def sheet_of(
     rank_id = max(standings, key=lambda record: state_mod.order_key_of(record) or "").object_ref
     assert rank_id is not None
 
+    # **A declared change is read beside the edges, and the latest statement wins** (§212).
+    # A `can_do` edge and a change's effect are both statements of what a grant stands at
+    # from a position on; folding them into one timeline keyed by position is what keeps the
+    # sheet one arithmetic. At one position the change wins, because it is the reified
+    # occurrence and the edge is its bare consequence.
+    declared = [
+        (change.at, ability_id, magnitude)
+        for change in changes_of(records, character, system=system)
+        for ability_id, magnitude in change.effects
+        if at is None
+        or change.at is None
+        or (state_mod.comparable(change.at, at) and change.at <= at)
+    ]
     magnitudes: list[tuple[str, int]] = []
     visible: set[str] = set()
     for ability_id in system.ability_ids:
@@ -2382,13 +2497,25 @@ def sheet_of(
             and state_mod.is_canon(record)
             and within(record)
         ]
-        if not holdings:
+        changed = [
+            (key or "", magnitude)
+            for key, changed_id, magnitude in declared
+            if changed_id == ability_id
+        ]
+        if not holdings and not changed:
             magnitudes.append((ability_id, 0))
             continue
-        latest = max(holdings, key=lambda record: state_mod.order_key_of(record) or "")
-        visible.update(latest.pov_visibility)
-        value = latest.value
-        magnitude = value if isinstance(value, int) and not isinstance(value, bool) else 1
+        magnitude = 0
+        if holdings:
+            latest = max(holdings, key=lambda record: state_mod.order_key_of(record) or "")
+            visible.update(latest.pov_visibility)
+            value = latest.value
+            magnitude = value if isinstance(value, int) and not isinstance(value, bool) else 1
+        if changed:
+            change_key, change_magnitude = max(changed, key=lambda item: item[0])
+            edge_key = state_mod.order_key_of(latest) or "" if holdings else ""
+            if not holdings or change_key >= edge_key:
+                magnitude = change_magnitude
         magnitudes.append((ability_id, max(0, magnitude)))
 
     # **The picks, read off the same edges under the same cutoff.** A `chose` is a fact about the
@@ -2445,6 +2572,7 @@ __all__ = [
     "Ability",
     "AdvanceKind",
     "Advancement",
+    "Change",
     "CharacterSheet",
     "Choice",
     "Column",
@@ -2458,11 +2586,13 @@ __all__ = [
     "Scale",
     "SystemDef",
     "advance",
+    "changes_of",
     "check_draw",
     "choose",
     "completion_records",
     "deepen",
     "drawn_digests",
+    "drawn_grants",
     "gain",
     "growth",
     "legal_moves",

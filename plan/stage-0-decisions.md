@@ -22973,8 +22973,10 @@ and nothing is re-minted or retracted. A drawn system's `sheet_declaration` name
 sheet written before this names none and keeps its fields, so the four stored books replay
 identical. `check_draw(system, drawn=)`: the five-to-eight count is a bound on the draw and
 not on the book, and everything else (a cycle, a duplicate, a bad label, the stocks) holds
-at every size. `gamesystem.growth` names every system whose digest differs from the drawn
-one, with `check_draw`'s complaints on it with the count off; `world check` reports growth
+at every size. `gamesystem.growth` names every system ~~whose digest differs from the drawn
+one~~ **whose grants differ from the ones drawn (§212.1: the digest moved with the code and
+reported growth where none was; the seed now records the grants it drew)**, with
+`check_draw`'s complaints on it with the count off; `world check` reports growth
 under `grown` (*the_weave has grown since it was drawn and now declares 6 grants; its sheet
 follows it*) and a broken grown graph as a complaint that moves `ok`. The drawn digest stays
 the record of what was drawn, since a second `system_digest` beside it would be two canon
@@ -23006,3 +23008,88 @@ draw's.
 **Anti-scope.** Whether a book whose system grows reads as its genre is the shelf's question
 and the operator's read; nothing here measures prose. The reviser and the readout on request
 are as they were.
+
+## 212. Phase 4, third slice: a change of kind is one declared change whose effects the sheet folds and whose scene is asked to print the line after it, after a census found it the genre's second commonest notice
+
+**Measured first** (`research/quality-measurement/system-displays/evolution.py`,
+`evolution.json`, FINDINGS). Over the §202 chapters' 64,613 furniture lines, a plain gain
+verb (*acquired*, *learned*, *obtained*, *unlocked*) stands on 1,156 lines in 132 of 608
+stories. A change of kind stands in 80: *upgrade* in 35 stories, *replace*, *becomes*,
+*turned into* in 39, *transform* or *mutate* in 18, *merge* or *fuse* in 17, *evolve* in
+16. A loss (*lost*, *removed*, *revoked*, *stripped*, *drained*, *cursed*) stands in 34
+stories on 79 lines. So a skill becoming another is the second commonest thing the genre's
+furniture announces, in three of every five stories that announce a gain at all; the verb
+families are read by word, so these are ceilings on the exact shape and floors on the family.
+This closes phase 4's list (`plan/system-generality.md` §4): the spend (§210), growth
+(§211), and now the merge and the fall as one shape.
+
+**What the vocabulary already had, found by reading the stores.** The `change` node type has
+carried `participant` and `effect` roles since the research ontology, the packet folds them
+into one sentence (*the_turn happened — with silas; results in windread (1)*), and the
+salience battery reads them as story events. Eight pilot stores hold `type change` records,
+every one a story beat with `manifests_as` prose and no role at all (`beat_open`,
+`wheel_turns_again`, `the_change`), because the vocabulary never told an Architect the roles
+existed and nothing moved a number on them. Nothing here is a new node.
+
+**What shipped** (`domain/worlds.py`, `domain/gamesystem.py`, `domain/extraction.py`,
+`application/planner.py`, `application/world.py`). `gamesystem.Change` and `changes_of`:
+a canon change with a `participant` edge to a person and `effect` edges naming grants of
+the system they stand in, each with the whole number the grant stands at afterwards (0 for
+gone), at the position of its `type` record. Absolute values, never deltas: an evolution is
+two effects, the old at 0 and the new at 1; a merge retires two and grants one; a curse puts
+a grant lower than it stood. `sheet_of` folds them beside the `can_do` edges into one
+timeline keyed by position, the latest statement winning and the change winning a tie, so
+the sheet stays one arithmetic; a change in the scheduled key space never lands in a scene
+(§165, unchanged). `extraction.change_example` is the ask: the scene a change lands in, when
+no canon snapshot stands at or past it, is handed the line after it, rendered off the folded
+sheet, under one sentence in `render_prompt` (*Where this happens to them, the book prints
+this line, exactly once*); the scene before it and every scene after the book has printed
+the state are handed nothing. The vocabulary documents `participant` and `effect` (with
+probes) and says a change takes `--order-key` for the scene it happens in; `slot_warnings`
+names an `effect` whose value is no whole number. Budget: the conditional row `change_line`
+at 2 and the maximal scene prompt 44→45, with the reason written where the numbers live.
+
+Tests (`tests/test_gamesystem.py`, `tests/test_progression_prompt.py`,
+`tests/test_world_slots.py`, `tests/test_prompt_budget.py`): the change is read; the sheet
+shows the old grant at 0 and the new at 1 from the change's scene on and not before; a later
+edge wins over an earlier change; a scheduled change never lands; the change's scene is
+shown the line after it and no other scene is; the rendered sentence. Replay over the four
+stored books: identical, since no store declares an effect.
+
+**What this does not do.** No gate checks that the scene printed the change's line; the
+progression gate checks the beat's named column, and a change lands where the plan put it
+rather than where the schedule rotates. If a drawn chapter prints the old state over a
+declared change, that is the first observation for a gate, and it is not built ahead of it.
+A grant that evolves is declared as growth (§211) plus a change; nothing renames a column
+in place. The grow ask says nothing new: a change is declared as any node is, and the
+vocabulary is where the slots are taught.
+
+**What was refused.** A delta on an effect (*seamsight −1*): a second arithmetic beside the
+sheet's, and a delta from a state the Architect cannot see. A new node type for a
+capability change: the `change` node is the ontology's own and the Architect already uses
+it. Writing the effects into `can_do` edges at acceptance: a change is one occurrence and
+the edges would be a second statement of it that nothing could retract.
+
+**Anti-scope.** Whether a book whose skill evolves reads as its genre is the shelf's question
+and the operator's read; nothing here measures prose.
+
+### 212.1 Growth is a grant set and not a digest: pilot 25's stored book reported its fork system grown with nothing declared since its seed
+
+**Measured.** Running the new `world check` on `runs/ab/pilot25/draw3/serial.db` reported
+*invigilation has grown since it was drawn and now declares 7 grants; its sheet follows
+it*. Every record of its seven grants dates from the seed's minute and its sheet was minted
+before a sheet could follow a system (no `system` key), so both halves of the sentence were
+false. The book's other system, `board`, with no fork, kept its drawn digest; `invigilation`
+carries a fork, and the digest's fork material moved with the code after that seed — the
+drift the digest docstring warned of, arriving through a reader written the same day.
+
+**What shipped.** The seed writes the grants it drew beside the digest (`system_digest`'s
+value is now an object with `digest` and `grants`; a string is every seed before this and
+still reads as a digest). `gamesystem.growth` compares grant sets and names the grants
+added; a system whose seed recorded no grant list is left out rather than guessed at, so
+every stored book reports no growth now. The `world check` sentence says whether the sheet
+follows the system or was minted before it could. `check` on the two stored books used for
+replay: no complaints, no growth, no gaps.
+
+**Correction in place** to §211 above. **Refused:** re-minting the digest at acceptance, for
+§211's reason (two canon values at one slot, no retraction).

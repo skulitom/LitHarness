@@ -1158,6 +1158,42 @@ def standing_example(records: Sequence[lc.StateRecord], *, at: str | None = None
     return line.render(subjects[0], phrase, rung)
 
 
+def change_example(
+    records: Sequence[lc.StateRecord], *, character: str | None, at: str | None
+) -> str | None:
+    """The line the book prints where a declared change lands on this person, or `None`.
+
+    **The ask for a change of kind** (§212): a change declared at a scene position, with an
+    effect on a grant of the system this person stands in, and not yet printed — no canon
+    snapshot at or after it — is shown to that scene as the line after it, rendered off the
+    sheet `sheet_of` already folds the change into. `None` where no system prints the line,
+    where nothing stands declared here, and where the book has already printed a state at or
+    past the change; a change in the scheduled key space (`0350`) never lands in a scene,
+    which is §165's rule for every scheduled record and is not changed here.
+    """
+    if character is None or at is None:
+        return None
+    standing = _standing_sheet(records, character=character, at=at)
+    if standing is None:
+        return None
+    system, sheet = standing
+    printed = snapshot_at(records, at=at)
+    last = state_mod.order_key_of(printed) if printed is not None else None
+    pending = [
+        change
+        for change in gamesystem_mod.changes_of(_canon_of(records), character, system=system)
+        if change.at is not None
+        and state_mod.comparable(change.at, at)
+        and change.at <= at
+        and (last is None or (state_mod.comparable(last, change.at) and last < change.at))
+    ]
+    if not pending:
+        return None
+    return render_status_line(
+        character, sheet.snapshot(), sheet=sheet_for(records), records=records
+    )
+
+
 def gain_example(
     records: Sequence[lc.StateRecord], *, at: str | None = None, ability_id: str
 ) -> str | None:
@@ -1905,6 +1941,7 @@ __all__ = [
     "Sheet",
     "SheetField",
     "attested_position",
+    "change_example",
     "counted_names",
     "declaration_from_snapshots",
     "display_name",

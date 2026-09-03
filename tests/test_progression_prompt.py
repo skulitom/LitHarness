@@ -38,6 +38,8 @@ equality between two integers or an identity of a rendered string.
 
 from __future__ import annotations
 
+import dataclasses
+
 import litharness_contracts as lc
 
 from litharness.application import planner
@@ -478,3 +480,37 @@ def test_the_shown_line_carries_every_number_the_move_changes() -> None:
     assert (paid.was, paid.now) == (1, 2)
     assert "Threadpull 2" in paid.line and "Marks 1" in paid.line
     assert "Marks 2" not in paid.line
+
+
+# ---------------------------------------------------- §212: the change of kind, asked for
+
+
+def test_the_scene_a_change_lands_in_is_shown_the_line_after_it_and_no_other_scene_is() -> None:
+    """§212: the change's scene is handed the line after the change, filled; the scene
+    before it is handed nothing; once the book has printed a state at the change's position
+    the ask stops."""
+    from litharness.domain.extraction import change_example
+    from tests.test_gamesystem import _evolved, _grown, _seeded, _system
+
+    records = _evolved(_grown(_seeded(_system())))
+    assert change_example(records, character="silas", at="s1") is None
+    line = change_example(records, character="silas", at="s2")
+    assert line is not None
+    assert "Windread 1" in line and "Seamsight" not in line
+    assert change_example(records, character=None, at="s2") is None
+
+    [system] = gamesystem.systems_of(records)
+    after = gamesystem.sheet_of(records, "silas", system=system, at="s2")
+    assert after is not None
+    printed = records + [
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in gamesystem.records_for_sheet(after, at="s2")
+    ]
+    assert change_example(printed, character="silas", at="s2") is None
+    assert change_example(printed, character="silas", at="s3") is None
+
+    system_text = _rendered(status_example=system_voice_example(records, at="s2"), change_line=line)
+    assert (
+        " Where this happens to them, the book prints this line, exactly once, and they read "
+        f"it on the page:\n{line}"
+    ) in system_text

@@ -150,7 +150,8 @@ def test_the_check_says_a_system_has_grown_and_complains_only_when_the_growth_is
     ]
     report = world.check(grown)
     assert report["grown"] == [
-        "sys_weave has grown since it was drawn and now declares 6 grants; its sheet follows it"
+        "sys_weave has grown since it was drawn and now declares 6 grants, 1 of them since: "
+        "cap_wind; its sheet follows it"
     ]
     assert not any("grown:" in complaint for complaint in report["complaints"])
     cyclic = [

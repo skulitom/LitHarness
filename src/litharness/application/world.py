@@ -29,7 +29,7 @@ from typing import Any
 
 import litharness_contracts as lc
 
-from litharness.domain import gamesystem, genre, integrity, schema_words, worlds
+from litharness.domain import extraction, gamesystem, genre, integrity, schema_words, worlds
 from litharness.domain import state as state_mod
 from litharness.domain.findings import DetectorInput
 
@@ -153,7 +153,22 @@ def vocabulary() -> dict[str, Any]:
         "group_keys": list(worlds.GROUP_KEYS),
         "predicates": {
             "entity_role": "what kind of thing this is; --value one of entity_roles",
-            "type": "reifies a node; --value one of node_types, and only those",
+            "type": (
+                "reifies a node; --value one of node_types, and only those. A change takes "
+                "--order-key for the scene it happens in (a scene key like s3), or none for "
+                "one already true when the book opens"
+            ),
+            "participant": (
+                "who a change happened to; the change (a subject of type change) is the "
+                "subject, --object the person, a declared subject of this world"
+            ),
+            "effect": (
+                "what a change did to a grant; the change is the subject, --object the "
+                "grant, --value the whole number it stands at for the participant "
+                "afterwards, 0 for gone. A skill that evolves into another is a change with "
+                "two effects, the old at 0 and the new at 1; the sheet reads it from the "
+                "change's scene on, and that scene is asked to print the line after it"
+            ),
             "world_rule": "a rule this world runs on; --value the rule in plain words",
             "consequence": (
                 "a second-order effect of a rule; the rule is the subject, --object one of "
@@ -634,10 +649,19 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     # and moves nothing; a cycle or a duplicate in the grown graph is the world contradicting
     # itself, which is `validate`'s class and moves `ok`.
     grown: list[str] = []
-    for system, wrong in gamesystem.growth(records):
+    sheet = extraction.sheet_for(records)
+    for system, added, wrong in gamesystem.growth(records):
+        follows = sheet is not None and sheet.system == system.system_id
+        since = f", {len(added)} of them since: {', '.join(added)}" if added else ""
         grown.append(
             f"{system.system_id} has grown since it was drawn and now declares "
-            f"{len(system.abilities)} grants; its sheet follows it"
+            f"{len(system.abilities)} grants{since}; "
+            + (
+                "its sheet follows it"
+                if follows
+                else "its sheet was minted before a sheet could follow its system and prints "
+                "the columns it was drawn with, so a grant declared since is not a column"
+            )
         )
         complaints.extend(f"{system.system_id}, grown: {why}" for why in wrong)
     return {

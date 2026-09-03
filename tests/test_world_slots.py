@@ -202,6 +202,26 @@ def _per_rung() -> lc.StateRecord:
     return record
 
 
+def _participant() -> lc.StateRecord:
+    """§212: who a change happened to; `gamesystem.changes_of` reads it beside the effects."""
+    record = rec("the_turn", worlds.PARTICIPANT_ROLE, object_ref="kell")
+    anchor = rec("the_turn", worlds.TYPE_PREDICATE, value=worlds.CHANGE)
+    assert "with kell" in sentences([anchor, record])
+    return record
+
+
+def _effect() -> lc.StateRecord:
+    """§212: what a change did to a grant, the whole number it stands at afterwards; the
+    packet says it, the game system reads it, and a value that is no number is warned about."""
+    record = rec("the_turn", worlds.EFFECT_ROLE, object_ref="cap_read_grain", value=0)
+    anchor = rec("the_turn", worlds.TYPE_PREDICATE, value=worlds.CHANGE)
+    assert "results in cap_read_grain (0)" in sentences([anchor, record])
+    assert worlds.slot_warnings(record) == ()
+    wrong = rec("the_turn", worlds.EFFECT_ROLE, object_ref="cap_read_grain", value="gone")
+    assert any("whole number" in warning for warning in worlds.slot_warnings(wrong))
+    return record
+
+
 def _taught_by() -> lc.StateRecord:
     record = rec("cap_read_grain", worlds.TAUGHT_BY, object_ref="mistress_ovin")
     assert "cap_read_grain is taught by mistress_ovin" in sentences([record])
@@ -400,6 +420,8 @@ _PROBES: dict[str, Callable[[], lc.StateRecord]] = {
     "can_do": _can_do,
     "requires": _requires,
     "costs": _costs,
+    "participant": _participant,
+    "effect": _effect,
     "per_rung": _per_rung,
     "taught_by": _taught_by,
     "comparator": _comparator,

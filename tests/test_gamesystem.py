@@ -1134,9 +1134,23 @@ def test_a_grown_grant_is_offered_and_printed_and_the_count_bound_is_the_draws()
     )
     assert "Windread 1" in line
 
-    [(found, wrong)] = gs.growth(grown)
-    assert found.system_id == "the_weave" and wrong == ()
+    [(found, added, wrong)] = gs.growth(grown)
+    assert found.system_id == "the_weave" and added == ("windread",) and wrong == ()
     assert gs.growth(_seeded(_system())) == ()
+
+    # **A seed that wrote the digest alone reports no growth, whatever its digest says now**
+    # (§212.1): pilot 25's fork system carried a digest the code had since moved from, and
+    # was reported grown with nothing declared. The drawn grant list is the identity.
+    stale = [
+        dataclasses.replace(record, value="sys-stale")
+        if record.predicate == gs.SYSTEM_DIGEST
+        else record
+        for record in grown
+    ]
+    assert gs.drawn_digests(stale) == {"the_weave": "sys-stale"}
+    assert gs.drawn_grants(stale) == {}
+    assert gs.growth(stale) == ()
+    assert gs.drawn_grants(grown)["the_weave"] == tuple(sorted(_system().ability_ids))
 
     extras = tuple(
         gs.Ability(f"extra_{index}", f"Extra {word}")
@@ -1145,3 +1159,67 @@ def test_a_grown_grant_is_offered_and_printed_and_the_count_bound_is_the_draws()
     nine = _system(abilities=(*_system().abilities, *extras))
     assert any("5 to 8" in why for why in gs.check_draw(nine))
     assert not any("5 to 8" in why for why in gs.check_draw(nine, drawn=False))
+
+
+# --- §212: a change of kind, declared once and folded by the sheet ------------------------
+
+
+def _evolved(records: list[lc.StateRecord], *, at: str | None = "s2") -> list[lc.StateRecord]:
+    """The grown weave with Seamsight evolving into Windread at `at`, declared the way the
+    vocabulary teaches it: a change with a participant and two effects, the old at 0 and
+    the new at 1."""
+    return records + _canon(
+        [
+            worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast"),
+            worlds.world_record(
+                "the_turn", worlds.TYPE_PREDICATE, value=worlds.CHANGE, order_key=at
+            ),
+            worlds.world_record("the_turn", worlds.PARTICIPANT_ROLE, object_ref="silas"),
+            worlds.world_record(
+                "the_turn", worlds.EFFECT_ROLE, object_ref="seamsight", value=0
+            ),
+            worlds.world_record(
+                "the_turn", worlds.EFFECT_ROLE, object_ref="windread", value=1
+            ),
+            worlds.world_record(
+                "the_turn",
+                worlds.MANIFESTS_PREDICATE,
+                value="the seam closes and the wind opens",
+            ),
+        ]
+    )
+
+
+def test_a_declared_change_is_read_and_the_sheet_folds_it_from_its_scene_on() -> None:
+    """§212: `changes_of` reads the change; `sheet_of` shows the old grant at 0 and the new
+    at 1 from the change's position on and not before; a later edge wins over an earlier
+    change; a change in the scheduled key space never lands in a scene (§165)."""
+    records = _evolved(_grown(_seeded(_system())))
+    [system] = gs.systems_of(records)
+    [change] = gs.changes_of(records, "silas", system=system)
+    assert change == gs.Change("the_turn", "silas", "s2", (("seamsight", 0), ("windread", 1)))
+    assert gs.changes_of(records, "nobody", system=system) == ()
+
+    before = gs.sheet_of(records, "silas", system=system, at="s1")
+    after = gs.sheet_of(records, "silas", system=system, at="s2")
+    assert before is not None and after is not None
+    assert (before.magnitude("seamsight"), before.magnitude("windread")) == (1, 0)
+    assert (after.magnitude("seamsight"), after.magnitude("windread")) == (0, 1)
+    whole = gs.sheet_of(records, "silas", system=system)
+    assert whole is not None and whole.magnitude("windread") == 1
+
+    later = records + _canon(
+        [
+            worlds.world_record(
+                "silas", worlds.CAN_DO, object_ref="seamsight", value=2, order_key="s3"
+            )
+        ]
+    )
+    at_three = gs.sheet_of(later, "silas", system=system, at="s3")
+    assert at_three is not None and at_three.magnitude("seamsight") == 2
+    still_two = gs.sheet_of(later, "silas", system=system, at="s2")
+    assert still_two is not None and still_two.magnitude("seamsight") == 0
+
+    scheduled = _evolved(_grown(_seeded(_system())), at="0350")
+    at_two = gs.sheet_of(scheduled, "silas", system=system, at="s2")
+    assert at_two is not None and at_two.magnitude("windread") == 0

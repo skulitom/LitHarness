@@ -94,6 +94,7 @@ from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
 from litharness.domain.extraction import (
     Movable,
+    change_example,
     gain_example,
     graph_line_for,
     movable_names,
@@ -284,6 +285,7 @@ def render_prompt(
     offer_line: str | None = None,
     shelf: Shelf | None = None,
     gain_line: str | None = None,
+    change_line: str | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -494,6 +496,16 @@ def render_prompt(
                 " Where they gain it, the book prints this line, exactly once, and they read "
                 "it on the page:\n"
                 f"{gain_line}"
+            )
+        if change_line:
+            # **The change of kind** (§212): where a declared change lands on the person at
+            # this position — a grant evolving, merging, or going — the line after it, shown
+            # filled as the moved line is, and printed once. What the change is stands in the
+            # packet as the world's own sentence; this is the furniture the reader watches.
+            system += (
+                " Where this happens to them, the book prints this line, exactly once, and "
+                "they read it on the page:\n"
+                f"{change_line}"
             )
         if progression:
             # **The instruction above defaults to stasis, and a model with no reason to
@@ -1340,6 +1352,9 @@ def make_plan_selector(
                     writer=writer,
                     offer_line=offered_line(records, character=pov_id, at=beat.story_order_key),
                     gain_line=beat_gain,
+                    change_line=change_example(
+                        records, character=pov_id, at=beat.story_order_key
+                    ),
                     shelf=shelf,
                 )
                 payload: dict[str, object] = {

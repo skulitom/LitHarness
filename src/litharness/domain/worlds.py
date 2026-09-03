@@ -387,6 +387,19 @@ CHANGE_ROLES: tuple[str, ...] = (
     "produces",
 )
 
+#: The two roles the game system reads off a change (§212). A `participant` edge says who a
+#: change happened to; an `effect` edge with a grant in the object slot and a whole number in
+#: the value slot says what that grant stands at for them afterwards, 0 for gone. That is the
+#: market's second commonest notice after the gain itself — a skill evolving, upgrading,
+#: merging into another (the system-displays evolution census) — and its loss, declared as
+#: one occurrence the sheet folds and the scene it lands in is asked to print. The roles
+#: were in `CHANGE_ROLES` from the start and read by the packet and the salience battery;
+#: what was missing was a reader that moved a number, and the vocabulary line telling an
+#: Architect the slots exist. Every change declared before this carries neither and reads
+#: as it did.
+PARTICIPANT_ROLE = "participant"
+EFFECT_ROLE = "effect"
+
 #: Composite subjects and what they make reachable. A bond's abilities need not be the union of
 #: its members' — `permits` is where that is said.
 MEMBER = "member"
@@ -1361,6 +1374,16 @@ def slot_warnings(record: lc.StateRecord) -> tuple[str, ...]:
                 "replacing this, so both edges survive `world accept`."
             )
 
+    if record.predicate == EFFECT_ROLE and record.value is not None:
+        wrong_kind = not isinstance(record.value, int) or isinstance(record.value, bool)
+        if wrong_kind:
+            warnings.append(
+                f"effect: --value carries {record.value!r}, and that slot is the whole number "
+                f"the grant stands at for the participant afterwards (0 for gone). Nothing "
+                f"moves a sheet on this record as written; a corrected one fills a different "
+                "slot rather than replacing it, so both survive `world accept`."
+            )
+
     key = state_mod.order_key_of(record)
     if key is not None and state_mod.key_space(key) is None:
         warnings.append(
@@ -1936,6 +1959,7 @@ __all__ = [
     "CRITERION",
     "DISCLOSED_TO",
     "EDGE_PREDICATE",
+    "EFFECT_ROLE",
     "ENTITY_ROLES",
     "ENTITY_ROLE_PREDICATE",
     "EVALUATES_PREDICATE",
@@ -1954,6 +1978,7 @@ __all__ = [
     "MEMBER",
     "NODE_TYPES",
     "OFFERS",
+    "PARTICIPANT_ROLE",
     "PERMITS",
     "PER_RUNG",
     "PRECEDES_PREDICATE",

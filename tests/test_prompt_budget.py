@@ -668,12 +668,14 @@ def _scene_system(**conditionals: Any) -> str:
 #: nested: `progression` renders only inside `status_example`'s branch and `standing_line` only
 #: inside `standing`'s, so their cost is measured over a base that already pays for the parent.
 _GAIN_LINE = "[ASSAY] Rook has learned Seamsight"
+_CHANGE_LINE = "[STATUS] Rook — Seal 2 | Windread 1"
 
 _CONDITIONAL_ARMS: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
     "status_example": ({}, {"status_example": _STATUS_EXAMPLE}),
     "progression": ({"status_example": _STATUS_EXAMPLE}, {"progression": _PROGRESSION}),
     "offer_line": ({"status_example": _STATUS_EXAMPLE}, {"offer_line": _OFFER_LINE}),
     "gain_line": ({"status_example": _STATUS_EXAMPLE}, {"gain_line": _GAIN_LINE}),
+    "change_line": ({"status_example": _STATUS_EXAMPLE}, {"change_line": _CHANGE_LINE}),
     "exemplars": ({}, {"shelf": _SHELF}),
     "standing": ({}, {"standing": _STANDING}),
     "standing_line": ({"standing": _STANDING}, {"standing_line": _STANDING_LINE}),
@@ -699,6 +701,10 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
     # its gain line where a grant is gained, and the line itself, which is the book's own
     # words (`extraction.gain_example`) and not a demand about prose.
     "gain_line": 2,
+    # **Joined 2026-09-03 at what is there** (§212): one sentence saying the book prints
+    # the line after a declared change where it lands on the person, and the line itself,
+    # which is the book's own sheet rendered (`extraction.change_example`).
+    "change_line": 2,
     # **Joined 2026-09-02 at what is there** (§196): the one sentence saying whose the shelf's
     # chapters are and that no name, place, thing or line of theirs may appear. The chapters
     # themselves are material in the prompt and are not demands.
@@ -742,7 +748,12 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
 #:
 #: **43 -> 44 on 2026-09-02 for the `exemplars` conditional** (§196): one sentence in the system
 #: when a shelf is shown, and the shelf's chapters in the prompt where nothing here counts them.
-SCENE_MAXIMAL_BUDGET = 44
+#:
+#: **44 -> 45 on 2026-09-03 for the `change_line` conditional** (§212): one sentence saying the
+#: book prints the line after a declared change where it lands on the person, and the line
+#: itself. Measured at 45 with every conditional present; the §208 gain line had landed under
+#: the slack this total carried, and this one does not.
+SCENE_MAXIMAL_BUDGET = 45
 
 
 def test_the_scene_floor_row_is_what_the_planner_actually_assembles() -> None:
@@ -841,6 +852,7 @@ def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -
             offer_line=_OFFER_LINE,
             shelf=_SHELF,
             gain_line=_GAIN_LINE,
+            change_line=_CHANGE_LINE,
         )
     )
     assert len(counted) <= SCENE_MAXIMAL_BUDGET, (
