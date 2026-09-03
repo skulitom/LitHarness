@@ -462,10 +462,21 @@ def selftest() -> int:
 
 
 def _arm_text(name: str, text: str) -> str:
+    """The passage under one arm, in the paragraph convention `stop_point` reads.
+
+    **Found by the first dry run before any call (2026-09-03).** `ablate`'s sentence-level
+    transforms (`destake`, `deplete_matched`) rebuild the text with single newlines between
+    paragraphs, `stop_point` splits on blank lines, and so every damaged arm arrived as one
+    paragraph and raised "needs at least two paragraphs to leave a future" — the paid run
+    would have died on its second cell. The paragraphs are the same paragraphs; only the
+    separator is put back to the convention the original carries, so the registered stop
+    rule (the boundary nearest 60% of the words) reads every arm at its own 60% as §124
+    says. The original is returned byte-identical.
+    """
     if name == "original":
         return text
     transform = getattr(ablate, name)
-    return transform(text, 1.0)
+    return "\n\n".join(ablate.paragraphs(transform(text, 1.0)))
 
 
 def load_passages(path: Path = SCENES, *, min_words: int = 500) -> list[tuple[str, str]]:
@@ -485,6 +496,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--model", default="claude-haiku-4-5")
     parser.add_argument("--cache", default="anticipation-raw.jsonl")
     parser.add_argument("--out", default="anticipation.json")
+    parser.add_argument(
+        "--ceiling-usd",
+        type=float,
+        default=30.0,
+        help="subscription-equivalent ceiling, read between cells and stopped at; a stopped "
+        "run keeps every cell bought and is stamped partial",
+    )
     parser.add_argument("--yes", action="store_true")
     args = parser.parse_args(argv)
 
@@ -520,9 +538,15 @@ def main(argv: list[str] | None = None) -> int:
     from elicit import Elicitor  # imported here so the free legs never touch it
 
     cells: list[dict[str, Any]] = []
+    stopped_at_ceiling = False
     with Elicitor(Path(args.cache), model=args.model, spot_model=None) as elicitor:
         for passage_id, text in passages:
             for arm in ARMS:
+                # The ceiling is read from the cache's own usage between arms — a stopped
+                # run keeps every cell bought, replays them free, and says it stopped.
+                if float(elicitor.spend()["equivalent_usd"]) >= args.ceiling_usd:
+                    stopped_at_ceiling = True
+                    break
                 transformed = _arm_text(arm, text)
                 shown = stop_point(transformed)
                 for persona in personas.GENRE_PANEL:
@@ -553,7 +577,19 @@ def main(argv: list[str] | None = None) -> int:
                             ],
                         }
                     )
+            if stopped_at_ceiling:
+                break
         spend = elicitor.spend()
+        ledger = {
+            "ceiling_usd": args.ceiling_usd,
+            "stopped_at_ceiling": stopped_at_ceiling,
+            "cells_planned": len(passages) * len(ARMS) * len(personas.GENRE_PANEL),
+            "cells_run": len(cells),
+            "api_calls": elicitor.api_calls,
+            "replayed": elicitor.replayed,
+            "transport_failures": elicitor.transport_failures,
+            "failure_reasons": dict(elicitor.failure_reasons),
+        }
 
     scored = [
         CellScore(**{
@@ -571,8 +607,14 @@ def main(argv: list[str] | None = None) -> int:
         "registration_digest": registration_digest(),
         "model": args.model,
         "spend": spend,
+        "ledger": ledger,
         "cells": cells,
         "kills": kills(scored),
+        "warnings": (
+            ["stopped at the ceiling: the plan is not covered and the kill table is partial"]
+            if stopped_at_ceiling
+            else []
+        ),
     }
     out = RESULTS / args.out
     out.parent.mkdir(parents=True, exist_ok=True)
