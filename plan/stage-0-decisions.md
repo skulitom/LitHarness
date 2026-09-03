@@ -23375,3 +23375,55 @@ mistake again (§207).
 **Anti-scope.** Whether a book whose System speaks reads as its genre is the shelf's question
 and the operator's read; nothing here measures prose. The next slice is §217's second gap,
 plain columns beside a system's grants.
+
+
+## 219. Plain columns beside a system's grants, the second fit slice: a snapshot that carries the rung is a position in its system whatever else it prints, so a pool, a currency, a class or an age may share the line with the grants
+
+**Measured first** (§217, `research/quality-measurement/system-fit/FINDINGS.md`). Every one
+of the thirty sampled market stories that declares a system prints something else on the
+same line as its grants: a paired pool (health, mana, stamina), a currency, a class or a
+race, an age, an experience counter. The floor (`genre._is_position_in`) compared a
+snapshot's keys with the system's columns exactly (§160's ratchet, read with §197.2's
+ceilings stripped), and `world accept` left such a system unfinished on purpose rather than
+block the book (§165.2): the book drafted under its plain sheet and no beat spoke its system.
+The probe that fixed the census's clause reproduced the sentence on a sheet of a level, a
+paired pool, a currency and five grants; in the sample itself the store refused every system
+shape on an earlier clause first (a flat list, held-or-not grants), so this gap's count of
+thirty is the clause's, and the slice is measured on the probe's shape, now a test.
+
+**What shipped** (`domain/genre.py`, `domain/extraction.py`, `application/world.py`).
+`_is_position_in`: a canon snapshot carrying the rung column is a position in the system; a
+grant it lacks stands at nothing (§211) and a column the system does not have is the book's
+own. `_following`: a sheet naming its system keeps every declared field that is not the
+system's, with its kind and its place, and the system's columns in the system's order take
+the place of the first declared field that is one of them; a sheet declaring exactly the
+system's columns, which is every drawn seed, resolves as it did. `_system_prints_the_line`:
+the system's columns among the printed ones rather than the whole of them, so the beats
+still come from the system when the line prints more. `system_gap`'s sentence names the rung
+column as what a position needs. The vocabulary's `status_sheet` line says a sheet naming a
+system may declare columns of its own and where they print. `world accept` finishes such a
+system; the *left unfinished on purpose* branch is reached only by a sheet with no rung
+column, Serial Pilot 15's shape, which it still refuses to break. Tests:
+`test_a_sheet_with_columns_of_its_own_beside_a_system_s_is_finished_at_accept_and_drafts`
+(`tests/test_genre_floor.py`; the ceiling test's last two clauses reversed in place with the
+reason, and the growth test's extra-column clause with them) and
+`test_a_following_sheet_keeps_the_book_s_own_columns_around_the_system_s_block`
+(`tests/test_extraction.py`). The census's `mixed_columns` clause is retired in `census.py`
+with the amendment recorded in `PREREG.md`; `census.json` stays §217's record. Replay over
+the four stored books against main's baseline: identical (8/8).
+
+**What this does not do.** A plain column is the page's: the system arm names none of them
+as a move, and a pool that refills or an experience counter that rises to a level is still a
+rule the vocabulary does not carry (§217's sixth and eighteenth gaps). Nothing here changes
+what the drawn seed declares. The market's line order (pools before grants) is the book's
+declaration to make: the system's block sits where the first of its columns is declared.
+
+**What was refused.** Keeping the exact rule and asking books to declare pools as stocks: a
+pool of three hundred is past the scale's 99 and a currency is not a grant. A second sheet
+for the plain columns: two book sheets abstain (§205) and one line is what the genre prints.
+A model choosing the column order: the declaration is the order (§61(5)).
+
+**Anti-scope.** Whether a book whose line carries its pools beside its grants reads as its
+genre is the shelf's question and the operator's read; nothing here measures prose. The next
+slice is the readout on request (§217's fourth gap); the quest card, the third, is announced
+as a notice under §218 and a card of its own waits for a book that needs one.

@@ -47,7 +47,6 @@ import litharness_contracts as lc
 from litharness.domain import gamesystem as gamesystem_mod
 from litharness.domain import state as state_mod
 from litharness.domain.extraction import (
-    MAX_SUFFIX,
     SHEET_PREDICATE,
     STATUS_PREDICATE,
     speaks_system_voice,
@@ -145,37 +144,23 @@ def _canon_snapshots(records: Sequence[lc.StateRecord]) -> tuple[Mapping[str, ob
 def _is_position_in(records: Sequence[lc.StateRecord], system: gamesystem_mod.SystemDef) -> bool:
     """Whether some canon snapshot is a position in this system.
 
-    **Compared by value keys and not by numbers.** Which rung somebody stands on and how far
-    they have taken a capacity are facts about the book that this module has no business
-    checking; what it checks is that the sheet and the system are speaking about the same
-    columns. A snapshot whose keys are the system's is renderable through the system's own line;
-    one whose keys are not will render the wrong labels, or `?` where a value is missing, which
-    is the defect Track 2 measured on the default sheet and the one this floor exists to catch a
-    generation earlier.
+    **A snapshot that carries the rung is a position in the system, whatever else it
+    prints** (§219). The rule was an exact comparison of the snapshot's keys with the
+    system's columns (§160's ratchet, read with §197.2's ceilings stripped): a sheet with a
+    column the system does not have was a different book's sheet, and `world accept` left the
+    system unfinished on purpose rather than block the book (§165.2). The fit census (§217)
+    measured what that rule refuses: every one of the thirty sampled market stories that
+    declares a system prints a pool, a currency, a class or an age on the same line as its
+    grants, so the rule refused the genre's own window. Now the rung column is what makes a
+    snapshot a position: a grant the snapshot lacks stands at nothing (§211's growth), and a
+    column the system does not have is the book's own, printed where the sheet declares it.
+
+    What is still refused is the shape §165.2 was written for, Serial Pilot 15's sheet of
+    `rung`, `reach`, `carried` and `standing` beside a system whose rung column is `rank`: a
+    snapshot with no rung column stands nowhere in the system, and finishing the system would
+    still take that book from drafting to blocked, so it is still left unfinished.
     """
-    wanted = set(system.value_keys)
-    # **A ceiling is a column's ceiling and not a column** (§197.2). Pilot 22's seed put
-    # a bearing_max key beside bearing — the printed form of *Bearing 0/1*, which the declared
-    # sheet's own `paired` flag renders — and an exact key comparison read that sheet as a
-    # different book's, so `world accept` refused to finish both drawn systems and the
-    # chapter drafted with no system read back. A ceiling for a column the system does not
-    # have is still a different sheet.
-    for snapshot in _canon_snapshots(records):
-        keys = {
-            key
-            for key in snapshot
-            if not (key.endswith(MAX_SUFFIX) and key[: -len(MAX_SUFFIX)] in wanted)
-        }
-        # **A column the snapshot lacks is a grant nobody holds yet** (§211, and the fit
-        # census's probes, `research/quality-measurement/system-fit/`): a system grows after
-        # the seed, and an exact comparison took every book on it from drafting to blocked
-        # at the first grant declared since, until somebody re-seeded the snapshot by hand.
-        # A snapshot carrying the rung and only the system's columns is a position in it;
-        # an extra column is still a different sheet, and one without the rung stands
-        # nowhere.
-        if gamesystem_mod.RANK_KEY in keys and keys <= wanted:
-            return True
-    return False
+    return any(gamesystem_mod.RANK_KEY in snapshot for snapshot in _canon_snapshots(records))
 
 
 def system_gap(records: Sequence[lc.StateRecord]) -> str | None:
@@ -265,7 +250,9 @@ def system_gap(records: Sequence[lc.StateRecord]) -> str | None:
         )
     return (
         f"this book declares the system {system.system_id}, whose columns are "
-        f"{', '.join(system.value_keys)}, and no canon {STATUS_PREDICATE} carries those keys; "
+        f"{', '.join(system.value_keys)}, and no canon {STATUS_PREDICATE} carries its rung "
+        f"column ({gamesystem_mod.RANK_KEY}); a snapshot that prints the rung is a position in "
+        "the system whatever else it prints, and one that does not stands nowhere in it, so "
         "the sheet and the system are describing different books."
     )
 

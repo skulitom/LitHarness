@@ -1353,6 +1353,39 @@ def test_unreadable_sheets_names_the_declaration_the_parser_refuses_and_readable
     assert readable([bad, good]) == [good]
 
 
+def test_a_following_sheet_keeps_the_book_s_own_columns_around_the_system_s_block() -> None:
+    """§219: a sheet naming its system may declare columns of its own; they keep their kinds and
+    their places, the system's columns take the place of the first declared field that is one
+    of them, and a sheet declaring exactly the system's columns resolves as it did (§211)."""
+    from tests.test_gamesystem import _seeded, _system
+
+    seeded = _seeded(_system())
+    system = _system()
+    plain_first = worlds.world_record(
+        "silas",
+        SHEET_PREDICATE,
+        value={
+            "fields": [
+                {"name": "hp", "label": "HP", "paired": True},
+                {"name": "rank", "label": "Seal"},
+                {"name": "seamsight", "label": "Seamsight"},
+                {"name": "gold", "label": "Gold"},
+                {"name": "class", "label": "Class", "kind": "name"},
+            ],
+            "show_unheld": False,
+            "system": "the_weave",
+        },
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+    )
+    records = [record for record in seeded if record.predicate != SHEET_PREDICATE] + [plain_first]
+    sheet = sheet_for(records)
+    assert sheet is not None
+    assert sheet.value_keys == ("hp", "hp_max", *system.value_keys, "gold", "class")
+    assert [field_.kind for field_ in sheet.fields][-1] == "name"
+    drawn = sheet_for(seeded)
+    assert drawn is not None and drawn.value_keys == system.value_keys
+
+
 def test_a_sheet_following_its_system_hides_a_column_the_snapshot_never_held() -> None:
     """§211's sheet follows its system as it grows, and §203's projection printed `?` for
     every grant declared after the snapshot, since a column the snapshot lacks is shown on

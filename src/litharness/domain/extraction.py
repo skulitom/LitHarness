@@ -954,15 +954,23 @@ def sheet_for(records: Sequence[lc.StateRecord], *, subject: str | None = None) 
 
 
 def _following(sheet: Sheet, records: Sequence[lc.StateRecord]) -> Sheet:
-    """A sheet that names its system, with that system's columns as they stand (§211).
+    """A sheet that names its system, with that system's columns as they stand (§211) and the
+    book's own columns around them (§219).
 
     **The seed's declaration is not a second answer to which columns the book has.** A drawn
-    system writes its own `status_sheet` (`gamesystem.records_for`), and until this the
+    system writes its own `status_sheet` (`gamesystem.records_for`), and until §211 the
     fields in that record were fixed at the seed while the system could go on being declared
     into: a grant `governed_by` the system after the seed joined `systems_of` and not the
     sheet, the two disagreed, `_system_prints_the_line` abstained, and the book's beats fell
     silently to the legacy arm. A sheet that names its system is a projection of the system's
     columns, so the one place a grant is declared is the one place a column comes from.
+
+    **A column the system does not have is the book's own and stays where the sheet declares
+    it** (§219, the fit census's second gap): the system's columns, in the system's order,
+    take the place of the first declared field that is one of them, every other declared field
+    that is one of them is dropped (the system is the one answer to those), and every field
+    that is not is kept with its kind and its place. A sheet declaring exactly the system's
+    columns, which is every drawn seed, resolves to the system's columns as it did.
 
     Canon only, for `sheet_of`'s reason; a system the world began and cannot read back leaves
     the declared fields as they are, so an unfinished system is reported and not guessed at.
@@ -971,13 +979,27 @@ def _following(sheet: Sheet, records: Sequence[lc.StateRecord]) -> Sheet:
     if sheet.system is None:
         return sheet
     for system in gamesystem_mod.systems_of(_canon_of(records)):
-        if system.system_id == sheet.system:
-            return Sheet(
-                tuple(SheetField(column.name, column.label) for column in system.columns),
-                show_unheld=sheet.show_unheld,
-                owner=sheet.owner,
-                system=sheet.system,
-            )
+        if system.system_id != sheet.system:
+            continue
+        keys = set(system.value_keys)
+        block = [SheetField(column.name, column.label) for column in system.columns]
+        fields: list[SheetField] = []
+        placed = False
+        for field_ in sheet.fields:
+            if field_.name in keys:
+                if not placed:
+                    fields.extend(block)
+                    placed = True
+                continue
+            fields.append(field_)
+        if not placed:
+            fields.extend(block)
+        return Sheet(
+            tuple(fields),
+            show_unheld=sheet.show_unheld,
+            owner=sheet.owner,
+            system=sheet.system,
+        )
     return sheet
 
 
@@ -2585,8 +2607,11 @@ def _system_prints_the_line(
     disagreement, so this guard and that gap close together: the beats come from the system
     precisely when the book is a position in it.
     """
+    # **The system's columns among the printed ones, not the whole of them** (§219): a line
+    # that prints a pool or a currency beside the grants still prints the grants, and the
+    # beats come from the system precisely when the line carries its columns.
     sheet = sheet_for(records)
-    return sheet is not None and {field_.name for field_ in sheet.fields} == set(system.value_keys)
+    return sheet is not None and set(system.value_keys) <= {field_.name for field_ in sheet.fields}
 
 
 def _named_moves(

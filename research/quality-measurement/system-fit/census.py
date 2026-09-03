@@ -438,8 +438,11 @@ class Translator:
             declaration: dict[str, Any] = {"fields": fields, "show_unheld": False}
             if self.system_needed and not plain_columns:
                 declaration["system"] = self.system_id
-            if self.system_needed and plain_columns:
-                self.feature("plain columns beside a system's grants", "refused", "mixed_columns")
+            # Until §219 the translator tagged a plain column beside a system's grants as
+            # refused from its own clause, since the store refused every such shape on an
+            # earlier clause first (FINDINGS); since §219 the store accepts it, so the store
+            # answers and the clause tags nothing. `census.json` is §217's record and keeps
+            # the clause's count.
             self.book.declare("hero", "status_sheet", declaration)
             self.book.declare("hero", "status_snapshot", snapshot)
             self.book.subjects.append("hero")
