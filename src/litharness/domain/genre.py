@@ -193,10 +193,17 @@ def system_gap(records: Sequence[lc.StateRecord]) -> str | None:
     true one on a channel nobody watches. `gamesystem.unfinished_systems` tells the two apart
     in the reader's own terms, so `check` and `accept` now name the same missing piece.
     """
+    # **An owner's sheet is not a second book sheet** (§206, found by the fit census's
+    # probes, `research/quality-measurement/system-fit/`): a creature's, a place's or an
+    # item's sheet carries `owner` and never competes for the book's line, so counting it
+    # here told a book with its own sheet and one creature's that it had declared two and
+    # must retract one, on every `world check` after §206 and on nothing before it.
     sheets = sum(
         1
         for record in records
-        if record.predicate == SHEET_PREDICATE and state_mod.is_canon(record)
+        if record.predicate == SHEET_PREDICATE
+        and state_mod.is_canon(record)
+        and not (isinstance(record.value, Mapping) and record.value.get("owner"))
     )
     if sheets > 1:
         return (

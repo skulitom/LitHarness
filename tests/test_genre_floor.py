@@ -700,3 +700,39 @@ def test_a_numberless_book_with_a_ladder_and_its_line_clears_the_floor() -> None
     reason = genre.genre_block(no_line)
     assert reason is not None and genre.NO_SHEET in reason
     assert "starting sheet" in genre.NO_SHEET and "declared ladder" in genre.NO_SHEET
+
+
+# --- §206's owner sheets against §160's two-sheet gap ---------------------------------------
+
+
+def test_an_owner_s_sheet_is_not_a_second_book_sheet_for_the_system_gap() -> None:
+    """§206 gave a sheet an owner and `system_gap` went on counting every canon declaration,
+    so a book with its own sheet and a creature's was told it had declared two and must
+    retract one. Found by the fit census's probes (`research/quality-measurement/system-fit`):
+    an owner's sheet never competes for the book's line, so it is not the pair the gap names;
+    two sheets with no owner still are."""
+    counter = iter(range(100))
+
+    def canon(subject: str, predicate: str, value: object) -> lc.StateRecord:
+        return lc.StateRecord(
+            record_id=f"owner-sheet-{next(counter)}",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject=subject,
+            predicate=predicate,
+            value=value,
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+
+    records = [
+        canon("mara", "status_sheet", {"fields": [{"name": "level", "label": "Level"}]}),
+        canon("mara", STATUS_PREDICATE, {"level": 3}),
+        canon(
+            "wolf",
+            "status_sheet",
+            {"fields": [{"name": "level", "label": "Level"}], "owner": "creature"},
+        ),
+        canon("wolf", STATUS_PREDICATE, {"level": 24}),
+    ]
+    assert "status_sheet records" not in (genre.system_gap(records) or "")
+    two = [*records, canon("mara", "status_sheet", {"fields": [{"name": "hp", "label": "HP"}]})]
+    assert "2 canon status_sheet records" in (genre.system_gap(two) or "")
