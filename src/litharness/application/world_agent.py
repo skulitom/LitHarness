@@ -216,7 +216,9 @@ _GROW = (
     "`litharness world presence` shows which of this world's own names have reached the page and "
     "which never have; a name that stays unsaid for long is either a thing the book owes the "
     "reader or a thing the world does not need. Declare what the chapter made true, and what it "
-    "now needs next. Then say, in two or three sentences, what changed and what you are watching."
+    "now needs next. A grant the system hands out that the seed did not declare is declared "
+    "the way the seed declared its grants, governed_by the system, and the line follows it. "
+    "Then say, in two or three sentences, what changed and what you are watching."
 )
 
 

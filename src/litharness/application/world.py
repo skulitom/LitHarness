@@ -268,7 +268,9 @@ def vocabulary() -> dict[str, Any]:
                 "sheet is the book's, the one its protagonist prints. Of the book's own, "
                 "declare exactly one or none: a "
                 "book that declares none, and a book that declares two, both print a generic "
-                "line written in nobody's vocabulary"
+                "line written in nobody's vocabulary. A drawn system writes its own sheet "
+                "naming it under \"system\", and that sheet prints the system's grants as "
+                "they stand, so a grant declared after the seed is a column at once"
             ),
             "status_snapshot": (
                 "where those columns stand; --value an object mapping each field name to "
@@ -627,10 +629,22 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     # would carry it, and only its reasons are kept; nothing is minted here and `ok` does
     # not move, for the invariant above.
     _, would_not_finish = gamesystem.completion_records(records)
+    # **A system that has grown since it was drawn is said, and a grown system that is
+    # broken is a complaint** (§211). Growth is what a book handing things out looks like
+    # and moves nothing; a cycle or a duplicate in the grown graph is the world contradicting
+    # itself, which is `validate`'s class and moves `ok`.
+    grown: list[str] = []
+    for system, wrong in gamesystem.growth(records):
+        grown.append(
+            f"{system.system_id} has grown since it was drawn and now declares "
+            f"{len(system.abilities)} grants; its sheet follows it"
+        )
+        complaints.extend(f"{system.system_id}, grown: {why}" for why in wrong)
     return {
         "complaints": complaints,
         "ok": not complaints,
         "gaps": gaps,
+        "grown": grown,
         "would_not_finish": list(would_not_finish),
         "would_breach": would_breach(records),
         "machinery_names": list(schema_words.world_complaints(records)),

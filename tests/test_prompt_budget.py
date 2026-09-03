@@ -418,7 +418,10 @@ BUDGET: dict[str, int] = {
     #
     # **44 -> 39 on 2026-08-30** (§187), the same five demands off the same floor. Inert here for
     # the seed's reason and for §181's exception too: the grow call declares as the seed does.
-    "architect grow": 39,
+    # **Raised 39 -> 40 on 2026-09-03 for §211**: one sentence saying a grant the system
+    # hands out after the seed is declared the way the seed declared its grants, because the
+    # sheet now follows the system and a grown system is what a book handing things out is.
+    "architect grow": 40,
     # **28 -> 29 and 32 -> 33 on 2026-08-30, the §176 clause.** These two rows are the
     # ones the raise is actually for: the drafting call is where comparisons are written, so
     # this is the one place the demand is neither inert nor a delimiter. The four-demand gap

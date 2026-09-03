@@ -1065,3 +1065,83 @@ def test_check_draw_refuses_a_stock_or_a_price_that_could_not_work() -> None:
         ),
     )
     assert any("cannot be opened by a way" in why for why in gs.check_draw(gated))
+
+
+# --- §211: a system grows after the seed, and the sheet it minted follows it --------------
+
+
+def _grown(records: list[lc.StateRecord]) -> list[lc.StateRecord]:
+    """The weave with a sixth grant declared after the seed, the way the grow step declares
+    one: a capability, its name, its system, and what it needs first."""
+    return records + _canon(
+        [
+            worlds.world_record("windread", worlds.ENTITY_ROLE_PREDICATE, value="capability"),
+            worlds.world_record("windread", "is_a", value="Windread"),
+            worlds.world_record("windread", worlds.GOVERNED_BY, object_ref="the_weave"),
+            worlds.world_record("windread", worlds.REQUIRES, object_ref="seamsight"),
+        ]
+    )
+
+
+def test_the_sheet_a_system_minted_follows_the_system_as_it_grows() -> None:
+    """§211: a grant declared after the seed is a column the moment it is declared; the
+    seed's own sheet record is untouched, and a sheet naming no system keeps its fields
+    whatever the world goes on to declare (every sheet written before this)."""
+    from litharness.domain import extraction
+
+    seeded = _seeded(_system())
+    before = extraction.sheet_for(seeded)
+    assert before is not None and before.system == "the_weave"
+    assert "windread" not in before.value_keys
+
+    grown = _grown(seeded)
+    [system] = gs.systems_of(grown)
+    assert "windread" in system.ability_ids
+    after = extraction.sheet_for(grown)
+    assert after is not None
+    assert after.value_keys == system.value_keys and "windread" in after.value_keys
+    assert after.show_unheld is False and after.system == "the_weave"
+    minted = [record for record in grown if record.predicate == extraction.SHEET_PREDICATE]
+    assert minted == [record for record in seeded if record.predicate == extraction.SHEET_PREDICATE]
+
+    [record] = minted
+    assert isinstance(record.value, dict)
+    legacy_value = {key: value for key, value in record.value.items() if key != "system"}
+    legacy = [r for r in grown if r.predicate != extraction.SHEET_PREDICATE] + [
+        dataclasses.replace(record, value=legacy_value)
+    ]
+    kept = extraction.sheet_for(legacy)
+    assert kept is not None and kept.system is None
+    assert kept.value_keys == before.value_keys
+
+
+def test_a_grown_grant_is_offered_and_printed_and_the_count_bound_is_the_draws() -> None:
+    """§211: the beat vocabulary offers the new grant once its need is met, the line prints
+    it once held, `growth` names the system and finds nothing wrong with it, and the five to
+    eight bound holds on the draw and not on the book."""
+    from litharness.domain import extraction
+
+    grown = _grown(_seeded(_system()))
+    assert extraction.Movable("Windread", "windread") in extraction.movables(
+        grown, character="silas", at="s1"
+    )
+    [system] = gs.systems_of(grown)
+    sheet = gs.sheet_of(grown, "silas", system=system, at="s1")
+    assert sheet is not None
+    gained = gs.gain(sheet, "windread", at="s1")
+    line = extraction.render_status_line(
+        "silas", gained.after, sheet=extraction.sheet_for(grown), records=grown
+    )
+    assert "Windread 1" in line
+
+    [(found, wrong)] = gs.growth(grown)
+    assert found.system_id == "the_weave" and wrong == ()
+    assert gs.growth(_seeded(_system())) == ()
+
+    extras = tuple(
+        gs.Ability(f"extra_{index}", f"Extra {word}")
+        for index, word in enumerate(("One", "Two", "Three", "Four"))
+    )
+    nine = _system(abilities=(*_system().abilities, *extras))
+    assert any("5 to 8" in why for why in gs.check_draw(nine))
+    assert not any("5 to 8" in why for why in gs.check_draw(nine, drawn=False))

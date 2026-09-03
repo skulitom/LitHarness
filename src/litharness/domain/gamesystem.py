@@ -612,6 +612,10 @@ class SystemDef:
             # one field in fifteen at zero (the system-displays census); the wanting §160
             # put on the line as zeros rides the `[OFFER]` line instead.
             "show_unheld": False,
+            # **The sheet names its system and follows it** (§211): a grant declared after
+            # the seed is a column the moment it is declared, read by `extraction.sheet_for`
+            # off the system as it stands rather than off this record's fields.
+            "system": self.system_id,
         }
 
 
@@ -797,7 +801,7 @@ def _option_material(option: Option) -> list[object]:
     return material
 
 
-def check_draw(system: SystemDef) -> tuple[str, ...]:
+def check_draw(system: SystemDef, *, drawn: bool = True) -> tuple[str, ...]:
     """Deterministic complaints about a drawn system's own coherence. Empty means nothing to say.
 
     **Every check is membership or arithmetic**, exactly as `worlds.validate`'s are, and for the
@@ -849,7 +853,13 @@ def check_draw(system: SystemDef) -> tuple[str, ...]:
         )
 
     # --- the graph
-    if not MIN_ABILITIES <= len(system.abilities) <= MAX_ABILITIES:
+    #
+    # **The count is a bound on the draw and not on the book** (§211). A system is drawn once,
+    # with five to eight grants, and then grows as the book hands things out: the market's
+    # bracketing stories carry more than eight named things in a quarter of cases on a sample
+    # of their chapters alone (the system-displays growth census). Everything else here holds
+    # at every size, because a cycle or a duplicate is as broken at twenty grants as at six.
+    if drawn and not MIN_ABILITIES <= len(system.abilities) <= MAX_ABILITIES:
         complaints.append(
             f"this system declares {len(system.abilities)} abilities; a drawn system carries "
             f"{MIN_ABILITIES} to {MAX_ABILITIES}, the upper bound being the number of columns a "
@@ -2030,6 +2040,38 @@ def _choices_of(
     return tuple(found)
 
 
+def drawn_digests(records: Sequence[lc.StateRecord]) -> dict[str, str]:
+    """Each system's digest as it was drawn, off the `system_digest` record acceptance
+    minted (§211). A system with none was never completed and is `unfinished_systems`'."""
+    return {
+        record.subject: record.value
+        for record in records
+        if record.predicate == SYSTEM_DIGEST and isinstance(record.value, str)
+    }
+
+
+def growth(records: Sequence[lc.StateRecord]) -> tuple[tuple[SystemDef, tuple[str, ...]], ...]:
+    """Every system that differs from the one drawn, with what is wrong with it now, if
+    anything (§211).
+
+    **Growth is reported, never refused, and the drawn digest is left as it was.** A grant
+    declared after the seed is what a book handing things out looks like, and a second
+    `system_digest` record beside the first would be two canon values at one slot — the
+    contradiction detector's own shape, with no retraction to clear it. So the record says
+    what was drawn, `systems_of` says what stands, and a reader asks the difference here.
+    The complaints are `check_draw`'s with the draw's count bound off, since the bound is on
+    the draw; a grown system that runs its prerequisites in a cycle is still broken.
+    """
+    drawn = drawn_digests(records)
+    found: list[tuple[SystemDef, tuple[str, ...]]] = []
+    for system in systems_of(records):
+        was = drawn.get(system.system_id)
+        if was is None or was == system.digest:
+            continue
+        found.append((system, check_draw(system, drawn=False)))
+    return tuple(found)
+
+
 def unfinished_systems(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
     """Each system these records began and `systems_of` cannot read back, with what it lacks.
 
@@ -2420,7 +2462,9 @@ __all__ = [
     "choose",
     "completion_records",
     "deepen",
+    "drawn_digests",
     "gain",
+    "growth",
     "legal_moves",
     "offer_line",
     "pending_choices",

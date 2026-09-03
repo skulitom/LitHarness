@@ -22943,3 +22943,66 @@ a move nothing asks for.
 **Anti-scope.** Whether a book with a stock reads as its genre is the shelf's question and the
 operator's read; nothing here measures prose. The reviser's containment band and the readout
 on request are as they were.
+
+## 211. Phase 4, second slice: a system grows after the seed and the sheet it minted follows it, after a census found a quarter of the genre's bracketing stories past eight named things on a sample alone
+
+**Measured first** (`research/quality-measurement/system-displays/growth.py`, `growth.json`,
+FINDINGS). Over the §202 chapters, 172 of 608 stories write bracketed names on furniture
+lines (*[Basic Archery]*, the genre's way of handing out a skill, a title or a class).
+Distinct names per story in the sampled slice alone: a quarter carry one, half four, three
+quarters eight, a tenth fifteen or more, one eighty-two; 41 stories, a quarter of those that
+bracket, carry more than eight. Names per sampled chapter are mostly none and rarely above
+one. So the seed's five to eight grants is an opening and not a lifetime, and growth is a
+name a chapter at most, a grant declared as the book goes rather than a second draw. A floor,
+since a skill written without brackets is invisible to it and the shards are slices.
+
+**What the engine did with growth before this, found by reading it.** Acceptance completes a
+system once (`completion_records` skips a system that already carries its scale), so a grant
+declared `governed_by` the system after the seed was never refused and never re-checked: it
+joined `systems_of` at once and not the `status_sheet` the seed minted, the two disagreed,
+`_system_prints_the_line` abstained, and the book's beats fell to the legacy arm with no
+word said. The drawn `system_digest` was written at the seed and read by nothing. Growth was
+not refused; it was silently disconnected.
+
+**What shipped** (`domain/extraction.py`, `domain/gamesystem.py`, `application/world.py`,
+`application/world_agent.py`). A sheet may name its system (`Sheet.system`, the declaration
+key `system`), and a sheet that names one prints that system's columns as they stand
+(`sheet_for` → `_following`): a grant declared after the seed is a column the moment the
+world declares it, the seed's record is not a second answer to which columns the book has,
+and nothing is re-minted or retracted. A drawn system's `sheet_declaration` names it; every
+sheet written before this names none and keeps its fields, so the four stored books replay
+identical. `check_draw(system, drawn=)`: the five-to-eight count is a bound on the draw and
+not on the book, and everything else (a cycle, a duplicate, a bad label, the stocks) holds
+at every size. `gamesystem.growth` names every system whose digest differs from the drawn
+one, with `check_draw`'s complaints on it with the count off; `world check` reports growth
+under `grown` (*the_weave has grown since it was drawn and now declares 6 grants; its sheet
+follows it*) and a broken grown graph as a complaint that moves `ok`. The drawn digest stays
+the record of what was drawn, since a second `system_digest` beside it would be two canon
+values at one slot with no retraction to clear it. The grow ask says, in one sentence, that a
+grant the system hands out after the seed is declared the way the seed declared its grants
+(budget row 39→40). The `status_sheet` vocabulary line says a drawn system's sheet names it.
+
+Tests (`tests/test_gamesystem.py`, `tests/test_seed_completion_bounds.py`,
+`tests/test_extraction.py`): the minted sheet follows the grown system and a sheet naming no
+system keeps its columns; the beat vocabulary offers the new grant once its need is met and
+the line prints it once held; `growth` names the system and finds nothing wrong; the draw's
+bound refuses nine and the book's does not; the check reports growth and complains only when
+the grown graph runs in a cycle; a sheet naming its system round-trips.
+
+**What this does not yet do.** A grant that *changes* rather than joins (a skill evolving
+into a rarer one, two merging into one) has no move; that is the merge slice, a declared
+`change` that retires and grants, and the same node carries an attribute that falls on its
+own (the census's four stories). A grown system's line prints every held column, and a book
+that holds thirty prints thirty; the market's widest window carries nineteen fields and the
+box view (phase 3's unbuilt display) is where that is answered, not here.
+
+**What was refused.** Re-minting the sheet at acceptance: two canon `status_sheet` records
+make `sheet_for` abstain and there is no retraction. A digest chain: two `system_digest`
+values at one slot are the contradiction detector's own shape. A lifetime count bound: any
+number would be decoration (§114.6's word), the line's width is the display's question, and
+the reasons a draw is bounded (a seed that declares twenty grants declares a list) are the
+draw's.
+
+**Anti-scope.** Whether a book whose system grows reads as its genre is the shelf's question
+and the operator's read; nothing here measures prose. The reviser and the readout on request
+are as they were.

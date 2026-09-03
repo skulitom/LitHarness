@@ -1331,3 +1331,13 @@ def test_the_gain_line_is_the_graph_line_s_can_do_phrase_filled_with_the_book_s_
         )
     ]
     assert gain_example(standing_only, ability_id="cold_seal") is None
+
+
+def test_a_sheet_naming_its_system_round_trips_the_name() -> None:
+    """§211: a sheet may name the system whose columns it prints; a sheet naming none
+    declares nothing about one, so every declaration written before this is unchanged."""
+    named = Sheet((SheetField("rank", "Seal"),), show_unheld=False, system="the_weave")
+    assert parse_sheet(named.declaration()) == named
+    plain = Sheet((SheetField("rank", "Seal"),))
+    assert "system" not in plain.declaration()
+    assert parse_sheet(plain.declaration()).system is None

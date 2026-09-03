@@ -204,6 +204,12 @@ class Sheet:
     #: one sheet per owner, so a place or a creature carries columns of its own beside
     #: the person's; `sheet_for(records, subject=...)` is how a line finds its columns.
     owner: str | None = None
+    #: The system whose columns this sheet prints (§211). A sheet that names one is a
+    #: projection of that system's columns as they stand, so a grant declared after the seed
+    #: is a column the moment the world declares it, and the seed's declaration is not a
+    #: second answer to which columns the book has. `None`, the default, is every sheet
+    #: written before this: its fields are its own and stay as declared.
+    system: str | None = None
 
     def __post_init__(self) -> None:
         if not self.fields:
@@ -227,6 +233,8 @@ class Sheet:
             declared["show_unheld"] = False
         if self.owner is not None:
             declared["owner"] = self.owner
+        if self.system is not None:
+            declared["system"] = self.system
         return declared
 
     @property
@@ -774,7 +782,15 @@ def parse_sheet(value: object) -> Sheet:
     owner = value.get("owner")
     if owner is not None and (not isinstance(owner, str) or not owner.strip()):
         raise MalformedSheet("owner must be a subject id or a role when given")
-    return Sheet(tuple(fields), show_unheld=show_unheld, owner=owner.strip() if owner else None)
+    system = value.get("system")
+    if system is not None and (not isinstance(system, str) or not system.strip()):
+        raise MalformedSheet("system must be a subject id when given")
+    return Sheet(
+        tuple(fields),
+        show_unheld=show_unheld,
+        owner=owner.strip() if owner else None,
+        system=system.strip() if system else None,
+    )
 
 
 def label_for(key: str) -> str:
@@ -864,7 +880,7 @@ def sheet_for(records: Sequence[lc.StateRecord], *, subject: str | None = None) 
     print it.
     """
     parsed = [
-        parse_sheet(record.value)
+        _following(parse_sheet(record.value), records)
         for record in records
         if record.predicate == SHEET_PREDICATE and state_mod.is_canon(record)
     ]
@@ -894,6 +910,34 @@ def sheet_for(records: Sequence[lc.StateRecord], *, subject: str | None = None) 
     held = set(implied.value_keys)
     live = [sheet for sheet in declared if set(sheet.value_keys) <= held]
     return live[0] if len(live) == 1 else implied
+
+
+def _following(sheet: Sheet, records: Sequence[lc.StateRecord]) -> Sheet:
+    """A sheet that names its system, with that system's columns as they stand (§211).
+
+    **The seed's declaration is not a second answer to which columns the book has.** A drawn
+    system writes its own `status_sheet` (`gamesystem.records_for`), and until this the
+    fields in that record were fixed at the seed while the system could go on being declared
+    into: a grant `governed_by` the system after the seed joined `systems_of` and not the
+    sheet, the two disagreed, `_system_prints_the_line` abstained, and the book's beats fell
+    silently to the legacy arm. A sheet that names its system is a projection of the system's
+    columns, so the one place a grant is declared is the one place a column comes from.
+
+    Canon only, for `sheet_of`'s reason; a system the world began and cannot read back leaves
+    the declared fields as they are, so an unfinished system is reported and not guessed at.
+    A sheet naming no system is returned untouched, which is every sheet written before this.
+    """
+    if sheet.system is None:
+        return sheet
+    for system in gamesystem_mod.systems_of(_canon_of(records)):
+        if system.system_id == sheet.system:
+            return Sheet(
+                tuple(SheetField(column.name, column.label) for column in system.columns),
+                show_unheld=sheet.show_unheld,
+                owner=sheet.owner,
+                system=sheet.system,
+            )
+    return sheet
 
 
 def impossible_fields(value: Mapping[str, object]) -> tuple[str, ...]:

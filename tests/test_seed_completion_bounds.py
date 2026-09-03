@@ -16,7 +16,7 @@ import pytest
 from test_choice_points import _accepted, _system
 
 from litharness.application import world, world_agent
-from litharness.domain import gamesystem, genre, house
+from litharness.domain import gamesystem, genre, house, worlds
 
 _NUMBER_WORDS = {5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten"}
 
@@ -128,3 +128,38 @@ def test_the_check_previews_the_breach_the_gate_would_refuse_on_the_world_alone(
     assert breach.startswith("state.cardinality.v0:") and "brass_seal" in breach
     assert world.check(shape("subject,value,order_key"))["would_breach"] == []
     assert world.would_breach([]) == []
+
+
+def test_the_check_says_a_system_has_grown_and_complains_only_when_the_growth_is_broken() -> None:
+    """§211: growth is reported under `grown` and moves nothing; a grown graph whose
+    prerequisites run in a cycle is a complaint; a book whose system is as drawn reports
+    no growth."""
+    records = [_accepted(record) for record in gamesystem.records_for(_system())]
+    assert world.check(records)["grown"] == []
+    grown = [
+        *records,
+        *(
+            _accepted(record)
+            for record in (
+                worlds.world_record("cap_wind", worlds.ENTITY_ROLE_PREDICATE, value="capability"),
+                worlds.world_record("cap_wind", "is_a", value="Windread"),
+                worlds.world_record("cap_wind", worlds.GOVERNED_BY, object_ref="sys_weave"),
+                worlds.world_record("cap_wind", worlds.REQUIRES, object_ref="cap_read"),
+            )
+        ),
+    ]
+    report = world.check(grown)
+    assert report["grown"] == [
+        "sys_weave has grown since it was drawn and now declares 6 grants; its sheet follows it"
+    ]
+    assert not any("grown:" in complaint for complaint in report["complaints"])
+    cyclic = [
+        *grown,
+        _accepted(worlds.world_record("cap_read", worlds.REQUIRES, object_ref="cap_wind")),
+    ]
+    report = world.check(cyclic)
+    assert any(
+        "sys_weave, grown: the prerequisites run in a cycle" in complaint
+        for complaint in report["complaints"]
+    )
+    assert not report["ok"]
