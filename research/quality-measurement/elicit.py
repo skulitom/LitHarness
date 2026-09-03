@@ -354,6 +354,35 @@ def _is_transport_failure(stop_reason: str) -> bool:
     return stop_reason.startswith(_TRANSPORT_FAILURES)
 
 
+#: Characters of stderr kept in a failure's reason. Long enough to tell a usage limit from a
+#: crash, short enough that the reasons Counter stays a small table rather than one key per call.
+_CLI_STDERR_CHARS = 60
+
+
+def _cli_failure_reason(completed: subprocess.CompletedProcess[str]) -> str:
+    """`cli_error` with the exit code and a bounded first line of stderr.
+
+    **The prefix stays `cli_error` on purpose**: `_is_transport_failure` matches on it with
+    `startswith`, so a richer reason is still counted, still uncached and still re-issued by a
+    resume exactly as before. What changes is only what a run can say afterwards about *why*
+    its calls failed — a usage limit and a crashed binary were one bucket until this existed,
+    and stage-0 §222 records the block of sixty that could not be told apart.
+    """
+    if completed.returncode == 0:
+        return "cli_error"
+    first = next(
+        (line.strip() for line in (completed.stderr or "").splitlines() if line.strip()), ""
+    )
+    if not first:
+        # Some failures say nothing on stderr and put the message in the JSON envelope on
+        # stdout; a bounded look there beats reporting a bare exit code.
+        first = next(
+            (line.strip() for line in (completed.stdout or "").splitlines() if line.strip()), ""
+        )
+    snippet = " ".join(first.split())[:_CLI_STDERR_CHARS]
+    return f"cli_error:rc={completed.returncode}" + (f":{snippet}" if snippet else "")
+
+
 def _synthetic_text(key: str, tag: dict[str, Any]) -> str:
     """A dry run's stand-in answer: deterministic, and deliberately carrying **no signal**.
 
@@ -968,7 +997,16 @@ class Elicitor:
                 self.failure_reasons[record["stop_reason"]] += 1
             return record
 
-        text, stop_reason, usage = "", "cli_error", {}
+        # **A failed call says why, and until 2026-09-04 it did not.** Any non-zero return
+        # code became the single bucket `cli_error` while stdout and stderr were dropped on
+        # the floor, so a rate-limit rejection and a crashed CLI were the same string. That
+        # cost a diagnosis: the cost-that-bites arm took 60 contiguous `cli_error`s at the end
+        # of a run (stage-0 §222) and nothing on disk could say which they were, though the two
+        # argue in opposite directions about how many workers an arm may use. The exit code and
+        # the first line of stderr now ride in the `failure_reasons` key. **Nothing cached
+        # changes**: a transport failure is never persisted (`_is_transport_failure`), so this
+        # touches no record, no cache key and no replay — only the counter a run reports.
+        text, stop_reason, usage = "", _cli_failure_reason(completed), {}
         if completed.returncode == 0:
             try:
                 envelope = json.loads(completed.stdout)

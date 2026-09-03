@@ -23951,3 +23951,47 @@ money would buy the same refusal.
 **Anti-scope.** Nothing here measures prose; the drafted scene was refused and not read, and
 whether any of this reads as the genre is the operator's question. The chapter under the general
 system that §213 promised is still owed, and it is owed on a seed whose sheet belongs to somebody.
+
+## 224. The transport discarded why a call failed, so the sixty failures that voided an arm cannot be told from a crash
+
+**Measured, on the artifacts §222 already committed.** The cost-that-bites arm took 60
+transport failures, every one reported as `cli_error`, in one contiguous block at the end of
+the run. Asked which kind they were, the repository cannot answer, and the reason is in the
+transport rather than in the analysis: `elicit._call_cli` initialises
+`stop_reason` to the bare string `cli_error` and replaces it only when the process exits zero,
+so **every non-zero exit becomes one bucket**, and `completed.stdout` and `completed.stderr`
+are never read on that path. The `failure_reasons` Counter a run reports is therefore a bucket
+**by construction**. The raw cache cannot fill the gap either — a transport failure is
+deliberately never persisted, which is right (§94's rule: caching a hiccup bakes it into every
+future replay) and leaves nothing on disk to look at afterwards.
+
+**Why the distinction is worth code.** The two families argue in opposite directions about how
+an arm may be run. A usage-limit rejection says the account is out of room and that more
+concurrency buys more failures; a crashed or unreachable binary says nothing about worker count
+at all. On 2026-09-03 both were live on the same box: Opus `-p` hung past its 120-second probe
+from about 15:00 until 23:19 while Haiku answered in about five seconds throughout — the
+coordinating session's probes at 15:19 and 15:22 measured exactly that — so the premium pool
+went and the general pool did not. Under that reading the arm's 60 Haiku failures at 18:05 are
+a **separate and still unexplained event**, and the evidence that would have identified them
+was thrown away at the moment each call failed.
+
+**What shipped.** `elicit._cli_failure_reason`: the exit code and a whitespace-collapsed first
+line of stderr — or of stdout when stderr is silent, since some failures put their message in
+the envelope — bounded to 60 characters so the reasons table stays a table rather than growing
+one key per call. **The `cli_error` prefix is kept deliberately**: `_is_transport_failure`
+matches it with `startswith`, so a richer reason is still counted as a failure, still left
+uncached, and still re-issued by a resume exactly as before. `tests/test_elicit_failures.py`
+pins all of it, including that a usage limit and a crash now differ and that both still read as
+transport failures.
+
+**What was refused.** No change to how the argv is built: `CLI_HARDENING` is untouched, the
+call still carries `--setting-sources user` and the `claudeMdExcludes` setting and still never
+`--bare` (§109), and the diff contains no line that constructs a request. No retry and no
+caching of failures — the recorded rule stands and this entry only makes the counter legible.
+No re-reading of §222: its 60 failures stay unclassified, because the information to classify
+them does not exist and inventing a reading for them now would be worse than the gap.
+
+**Anti-scope.** Nothing under `src/litharness/` changed and no instrument's registration,
+measurable or cache key moved: a failure was never a record, so nothing that was ever persisted
+is affected and every existing replay is byte-identical. This entry buys one diagnosis for the
+next block of failures and none for the last.
