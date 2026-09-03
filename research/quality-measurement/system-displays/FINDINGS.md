@@ -84,3 +84,22 @@ market mostly does not, which is a difference to keep in view rather than a defe
 
 Owners: this census does not read whose window a window is (a person, a place, an item), so
 phase 2's owner generalisation rests on the plan's reasoning and not on a count.
+
+## Which way the written changes go (`changes.py`, `changes.json`, 2026-09-03)
+
+Phase 4 of the plan asks whether a book's numbers may fall. Over the same 14,156 chapters,
+596 window fields are written as a change with an arrow; 570 rise, 22 fall, 4 stay. An end
+written with a sign (*171 → +29*) is an increment and counts by its sign; the first run read
+sixteen of those as falls and the script now reads the sign. Twenty-two stories write a change
+this way and eight of them write a fall.
+
+The falls, read by label and value only: six are points spent to nothing (*Free Stats 230 →
+0*, *Unused Points 32 → 0*, *Stat bonus 3 → 0*; three stories), six are a pool or a derived
+figure going down (*HP 660 → 252*, *MP 220 → 192*, *Armor 1920 → 1454*; two stories), and
+ten are an attribute or a standing going down (*Magic 23 → 20*, *Strength 12 → 10*, *Essence
+10 → 7*, *Supreme blood influence 82% → 51*; four stories).
+
+The reading for phase 4: numbers go up is the genre's rule and not a law. Written falls are
+one change in twenty-seven, and the commonest is a spend, which is a fall paired with a rise
+somewhere else on the window. An attribute that falls on its own is written by four stories in
+twenty-two, so a book that wants one declares it. Nothing here is about quality, and no bar.

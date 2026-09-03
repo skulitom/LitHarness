@@ -1,0 +1,216 @@
+{
+  "chapters_read": 14156,
+  "changes": {
+    "up": 570,
+    "down": 22,
+    "same": 4
+  },
+  "stories_with_changes": 22,
+  "stories_with_falls": 8,
+  "labels_falling_most": [
+    [
+      "free stats",
+      {
+        "up": 21,
+        "down": 4
+      }
+    ],
+    [
+      "magic",
+      {
+        "up": 12,
+        "down": 3
+      }
+    ],
+    [
+      "mp",
+      {
+        "down": 2
+      }
+    ],
+    [
+      "strength",
+      {
+        "up": 90,
+        "down": 2
+      }
+    ],
+    [
+      "vitality",
+      {
+        "up": 14,
+        "down": 2
+      }
+    ],
+    [
+      "hp",
+      {
+        "up": 1,
+        "down": 1
+      }
+    ],
+    [
+      "sp",
+      {
+        "up": 1,
+        "down": 1
+      }
+    ],
+    [
+      "unused points",
+      {
+        "up": 4,
+        "down": 1
+      }
+    ],
+    [
+      "supreme blood influence",
+      {
+        "down": 1
+      }
+    ],
+    [
+      "status change",
+      {
+        "down": 1
+      }
+    ],
+    [
+      "essence",
+      {
+        "up": 2,
+        "down": 1
+      }
+    ],
+    [
+      "armor",
+      {
+        "down": 1
+      }
+    ],
+    [
+      "physical mitigation",
+      {
+        "down": 1
+      }
+    ],
+    [
+      "stat bonus",
+      {
+        "down": 1
+      }
+    ]
+  ],
+  "falls": [
+    {
+      "work": "109427",
+      "label": "Unused Points",
+      "value": "32 \u2192 0"
+    },
+    {
+      "work": "109427",
+      "label": "HP",
+      "value": "660 \u2192 252"
+    },
+    {
+      "work": "109427",
+      "label": "SP",
+      "value": "410 \u2192 359"
+    },
+    {
+      "work": "109427",
+      "label": "MP",
+      "value": "160 \u2192 150"
+    },
+    {
+      "work": "109427",
+      "label": "MP",
+      "value": "220 \u2192 192"
+    },
+    {
+      "work": "109390",
+      "label": "Supreme blood influence",
+      "value": "82% -> 51"
+    },
+    {
+      "work": "109196",
+      "label": "Magic",
+      "value": "23 -> 20"
+    },
+    {
+      "work": "109196",
+      "label": "Strength",
+      "value": "12 -> 10"
+    },
+    {
+      "work": "109196",
+      "label": "Vitality",
+      "value": "8 -> 7"
+    },
+    {
+      "work": "109196",
+      "label": "Magic",
+      "value": "28 -> 25"
+    },
+    {
+      "work": "109196",
+      "label": "Strength",
+      "value": "17 -> 15"
+    },
+    {
+      "work": "109196",
+      "label": "Vitality",
+      "value": "13 -> 10"
+    },
+    {
+      "work": "109196",
+      "label": "Magic",
+      "value": "34 -> 30"
+    },
+    {
+      "work": "108855",
+      "label": "Status change",
+      "value": "50 -> 31"
+    },
+    {
+      "work": "108458",
+      "label": "Essence",
+      "value": "10 \u2192 7"
+    },
+    {
+      "work": "49173",
+      "label": "Armor",
+      "value": "1920\u21921454"
+    },
+    {
+      "work": "49173",
+      "label": "Physical mitigation",
+      "value": "95%\u219293.56"
+    },
+    {
+      "work": "48119",
+      "label": "Stat bonus",
+      "value": "3 \u2192 0"
+    },
+    {
+      "work": "47558",
+      "label": "Free Stats",
+      "value": "15 \u2192 0"
+    },
+    {
+      "work": "47558",
+      "label": "Free Stats",
+      "value": "10 \u2192 0"
+    },
+    {
+      "work": "47558",
+      "label": "Free Stats",
+      "value": "10 \u2192 0"
+    },
+    {
+      "work": "47558",
+      "label": "Free Stats",
+      "value": "230 \u2192 0"
+    }
+  ]
+}
