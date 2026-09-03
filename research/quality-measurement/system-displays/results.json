@@ -1,0 +1,172 @@
+{
+  "registered": "778ab1f52f9622e4f0596c9aed8dbfe6741721f4a09d828f2d02881ad3b70c3c",
+  "run_at": "2026-09-03T09:48:15.140785+00:00",
+  "classifier": "progression_cadence v2",
+  "chapters_read": 14156,
+  "stories_with_three_chapters": 462,
+  "summary": {
+    "pooled": {
+      "chapters": 1386,
+      "stories": 462,
+      "share_any_display": 0.359,
+      "share_with_window": 0.227,
+      "share_with_choice_screen": 0.002,
+      "windows_per_chapter": 0.55,
+      "fields_per_window": {
+        "n": 768,
+        "median": 2.0,
+        "q1": 1.0,
+        "q3": 4.0,
+        "max": 19.0,
+        "mean": 3.14
+      },
+      "share_fields_zero_or_blank": 0.065,
+      "share_windows_with_any_zero": 0.165,
+      "notices_per_1k_words": {
+        "level_up": 0.0,
+        "capability": 0.01,
+        "stat_delta": 0.01,
+        "other": 0.49
+      },
+      "options_per_choice_screen": {
+        "n": 3,
+        "median": 3.0,
+        "q1": 1.0,
+        "q3": 6.0,
+        "max": 6.0,
+        "mean": 3.33
+      },
+      "item_boxes_per_chapter": 0.026,
+      "quest_cards_per_chapter": 0.023
+    },
+    "position_1": {
+      "chapters": 462,
+      "stories": 462,
+      "share_any_display": 0.314,
+      "share_with_window": 0.195,
+      "share_with_choice_screen": 0.002,
+      "windows_per_chapter": 0.46,
+      "fields_per_window": {
+        "n": 211,
+        "median": 2.0,
+        "q1": 1.0,
+        "q3": 4.0,
+        "max": 19.0,
+        "mean": 3.12
+      },
+      "share_fields_zero_or_blank": 0.058,
+      "share_windows_with_any_zero": 0.161,
+      "notices_per_1k_words": {
+        "level_up": 0.0,
+        "capability": 0.0,
+        "stat_delta": 0.0,
+        "other": 0.43
+      },
+      "options_per_choice_screen": {
+        "n": 1,
+        "median": 6.0,
+        "q1": 6.0,
+        "q3": 6.0,
+        "max": 6.0,
+        "mean": 6.0
+      },
+      "item_boxes_per_chapter": 0.006,
+      "quest_cards_per_chapter": 0.015
+    },
+    "position_2": {
+      "chapters": 462,
+      "stories": 462,
+      "share_any_display": 0.368,
+      "share_with_window": 0.242,
+      "share_with_choice_screen": 0.002,
+      "windows_per_chapter": 0.6,
+      "fields_per_window": {
+        "n": 276,
+        "median": 2.0,
+        "q1": 1.0,
+        "q3": 4.0,
+        "max": 18.0,
+        "mean": 3.15
+      },
+      "share_fields_zero_or_blank": 0.071,
+      "share_windows_with_any_zero": 0.185,
+      "notices_per_1k_words": {
+        "level_up": 0.0,
+        "capability": 0.0,
+        "stat_delta": 0.02,
+        "other": 0.53
+      },
+      "options_per_choice_screen": {
+        "n": 1,
+        "median": 3.0,
+        "q1": 3.0,
+        "q3": 3.0,
+        "max": 3.0,
+        "mean": 3.0
+      },
+      "item_boxes_per_chapter": 0.03,
+      "quest_cards_per_chapter": 0.032
+    },
+    "position_3": {
+      "chapters": 462,
+      "stories": 462,
+      "share_any_display": 0.394,
+      "share_with_window": 0.245,
+      "share_with_choice_screen": 0.002,
+      "windows_per_chapter": 0.61,
+      "fields_per_window": {
+        "n": 281,
+        "median": 2.0,
+        "q1": 1.0,
+        "q3": 4.0,
+        "max": 13.0,
+        "mean": 3.16
+      },
+      "share_fields_zero_or_blank": 0.065,
+      "share_windows_with_any_zero": 0.149,
+      "notices_per_1k_words": {
+        "level_up": 0.0,
+        "capability": 0.01,
+        "stat_delta": 0.01,
+        "other": 0.5
+      },
+      "options_per_choice_screen": {
+        "n": 1,
+        "median": 1.0,
+        "q1": 1.0,
+        "q3": 1.0,
+        "max": 1.0,
+        "mean": 1.0
+      },
+      "item_boxes_per_chapter": 0.041,
+      "quest_cards_per_chapter": 0.022
+    },
+    "true_opening": {
+      "chapters": 51,
+      "stories": 43,
+      "share_any_display": 0.314,
+      "share_with_window": 0.137,
+      "share_with_choice_screen": 0.0,
+      "windows_per_chapter": 0.24,
+      "fields_per_window": {
+        "n": 12,
+        "median": 2.5,
+        "q1": 2.0,
+        "q3": 5.0,
+        "max": 7.0,
+        "mean": 3.5
+      },
+      "share_fields_zero_or_blank": 0.071,
+      "share_windows_with_any_zero": 0.25,
+      "notices_per_1k_words": {
+        "level_up": 0.01,
+        "capability": 0.01,
+        "stat_delta": 0.01,
+        "other": 0.63
+      },
+      "options_per_choice_screen": {},
+      "item_boxes_per_chapter": 0.0,
+      "quest_cards_per_chapter": 0.0
+    }
+  }
+}

@@ -22541,3 +22541,42 @@ change to `extraction.render_status_line` or to the genre floor's ask, and none 
 ones are chapter ones, and the window Randidly prints is a sheet with values because his
 system had already spent them. Nothing here says the awe line is wrong; it says what the
 shelf does and what ours does, side by side.
+
+## 202. The system layer is made general, and the market's early chapters were censused first: two fields to a window, one in fifteen at zero, no choice screens, and two thirds print nothing
+
+**The decision (the operator, 2026-09-03).** *"We definitely shouldn't have one specific
+LitRPG system. Let's set out a plan and work on making it general."* And, on the sheet this
+house shipped with: *Level | HP | MP | Gold* was wrong because it was not general, and those
+three are barely used in the genre besides. The plan is `plan/system-generality.md` §4: five
+phases (the line as a declared projection of the snapshot; typed attributes on any owner;
+displays as declared views with `DEFAULT_SHEET` retiring; moves and rules as declared shapes;
+the floor generalised), each with its measurement first, its tests, and the check that every
+book on disk reads identically after it. The target is no default vocabulary at all, and
+`SystemDef` survives as one profile of the general model until the phase that generalises it.
+
+**Measured first (`research/quality-measurement/system-displays/`, 2026-09-03, no model).**
+Over the cached LitRPG shards, each story's three earliest sampled chapters by release date
+(462 stories, 1,386 chapters; the shards hold an arbitrary slice of each fiction, so these are
+early-sampled chapters and not openings, as the pre-registration's amendment says; the 51
+chapters whose own first lines say chapter one agree on every reading and are too few to
+carry it alone). Any display on the page in 31 percent of the earliest chapters and 39 percent
+of the third; a window in 20 to 25 percent; a window carries a median of two fields and three
+in four carry four or fewer, the largest nineteen; 6.5 percent of window fields stand at zero
+or blank and one window in six carries any; three choice screens in 1,386 chapters; notices at
+half a line per thousand words. By the table fixed before the run: phase 1 hides unheld
+columns by default (below the one-in-five line); a first window is small, and a list-shaped
+field's print rule is bounded by nineteen; the choice display is not a first-chapter object;
+and the floor must not require a line in chapter one, since two thirds of the earliest
+chapters print nothing.
+
+**What shipped.** The plan, the pre-registration with its amendment, `system_displays.py`,
+the rows (counts and identifiers only), the results and the findings. No code on the drafting
+side changed in this entry.
+
+**What was refused.** Reading chapter one off the metadata (the shards carry no chapter
+index and the title field is the fiction's); a chapter-one reading from the 43 stories whose
+text carries the heading (below the two hundred the amendment required); a bar of any kind.
+
+**Anti-scope.** A census of typography: a system written into prose without furniture is
+invisible to it, so every share is a floor on what the genre displays. Which fields the
+market's windows carry is the next census and phase 2's.

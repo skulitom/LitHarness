@@ -1,0 +1,67 @@
+# Findings — the market's system displays in its early chapters
+
+House form: the claim, the number beside it, and the caveat travelling with the claim.
+`PREREG.md` owns the design and the reading fixed before the run, with its amendment; this
+file owns the reading. Status: **OBSERVED**, 2026-09-03, one run over the cached LitRPG shards
+(14,156 chapters read, 462 stories with three or more chapters present, 1,386 rows: each
+story's three earliest sampled chapters by release date). Raw rows in `rows.jsonl` (counts
+and identifiers, no text), the summary in `results.json`, the run's log beside them. No model.
+Nothing here promotes a claim past OBSERVED.
+
+## The table
+
+| group | chapters | any display | a window | fields per window (median, q3, max) | fields at zero or blank | windows with any zero | choice screens |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| earliest sampled (position 1) | 462 | 0.31 | 0.20 | 2, 4, 19 | 0.058 | 0.16 | 0.002 |
+| position 2 | 462 | 0.37 | 0.24 | 2, 4, 18 | 0.071 | 0.19 | 0.002 |
+| position 3 | 462 | 0.39 | 0.25 | 2, 4, 13 | 0.065 | 0.15 | 0.002 |
+| pooled | 1,386 | 0.36 | 0.23 | 2, 4, 19 | 0.065 | 0.17 | 0.002 |
+| true openings (own heading) | 51 | 0.31 | 0.14 | 2.5, 5, 7 | 0.071 | 0.25 | 0.0 |
+
+Notices (a furniture line outside a window) run at about half a line per thousand words,
+almost all in the *other* family; the cadence census's level-up, capability and stat-delta
+families each sit at or under one per hundred thousand words in these chapters. Item boxes and
+quest cards, by the heuristic, at two to four in a hundred chapters.
+
+## The reading, by the table fixed before the run
+
+**Phase 1's default: unheld columns are hidden.** Fields at zero or blank are 6.5 percent of
+window fields pooled and 5.8 percent in the earliest sampled chapters, below the one-in-five
+line the pre-registration set for hiding; one window in six carries any zero at all. A row of
+eight fields with five or six at zero (stage-0 §201's census of ours) is a shape the market's
+windows do not have.
+
+**Phase 2's expectation of a first window: small.** The median window carries two fields and
+three in four carry four or fewer; the largest in the early chapters carries nineteen. The
+budgeted print rule for a list-shaped field is bounded by that maximum, and the ordinary case
+is a line, not a screen.
+
+**Phase 3's question: a choice display is not a first-chapter object.** Three choice screens in
+1,386 early chapters, none among the true openings.
+
+**Phase 5's floor: a line must not be required in chapter one.** Sixty-nine percent of the
+earliest sampled chapters, and sixty-nine percent of the true openings, print no display at
+all; the share with no display is above the one-half line the pre-registration set.
+
+## The true openings, and what they cannot carry
+
+Chapters whose own first lines say chapter one or a prologue: 51 rows from 43 stories, below
+the two hundred stories the amendment required for the chapter-one readings to be taken from
+that subset. So the readings above are taken from the early slice, as the amendment says, and
+the true-opening row is shown beside them: it does not disagree on any reading (no display for
+most, small windows, no choice screens, few zeros).
+
+## What it cannot show
+
+The classifier reads typography; a system written into prose without furniture is invisible
+to it, so every share is a floor on what the genre displays. The early slice is each story's
+earliest *sampled* chapters and not its opening. The notice families are the cadence census's
+narrow patterns and undercount notices written in other words. Field reading splits a line at
+its label marks and reads a change at its end; a window laid out as a table with no labels
+reads as zero fields. Nothing here is about quality.
+
+## What is owed
+
+A reading of *which* fields the market's windows carry (level, class, a named ladder, a list
+of skills) is the next census, for phase 2's types; this one counted fields without reading
+their labels.
