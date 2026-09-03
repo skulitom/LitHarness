@@ -102,6 +102,7 @@ from litharness.domain.extraction import (
     offered_choice,
     offered_line,
     progression_target,
+    readout_lines,
     standing_example,
     standing_target,
     stated_position,
@@ -288,6 +289,7 @@ def render_prompt(
     gain_line: str | None = None,
     change_line: str | None = None,
     notices: tuple[str, ...] = (),
+    readouts: tuple[str, ...] = (),
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -533,6 +535,16 @@ def render_prompt(
         system += (
             " Where the world says this to them, the book prints this line, exactly once, and "
             "they read it on the page:\n" + "\n".join(notices)
+        )
+    if readouts:
+        # **The readout on request** (§220, §209's owed item): where the scene's plan names
+        # another owner of a sheet — a creature, a rival, a follower, a place — the book
+        # prints that owner's line, once, where the protagonist reads it. The trigger is the
+        # plan's naming and nothing a model ranks; `extraction.readout_lines` is the one
+        # reader of it, and the line is rendered through the owner's own sheet (§206).
+        system += (
+            " Where they read another's sheet, the book prints this line, exactly once, and it "
+            "is read on the page:\n" + "\n".join(readouts)
         )
     if standing:
         # **The numeric block's wording, reused deliberately** (`plan/stage-0-decisions.md`
@@ -1368,6 +1380,9 @@ def make_plan_selector(
                     gain_line=beat_gain,
                     change_line=change_example(records, character=pov_id, at=beat.story_order_key),
                     notices=notice_lines(records, character=pov_id, at=beat.story_order_key),
+                    readouts=readout_lines(
+                        records, plan=base_plan, at=beat.story_order_key, protagonist=pov_id
+                    ),
                     shelf=shelf,
                 )
                 payload: dict[str, object] = {

@@ -245,8 +245,9 @@ The ranked gaps, and what each is in this note's terms:
    it: a snapshot that carries the rung is a position in its system whatever else it prints.
 3. **The quest card**: the notice's twin with counters; a change the System announces, its
    counters paired columns already. Not earned separately until the notice has been drawn.
-4. **The readout on request** (§209's owed item): every fact declarable since §206, nothing
-   asked for.
+4. **The readout on request** (§209's owed item): every fact declarable since §206; §220 asks
+   the scene whose plan names an owner to print that owner's line where the protagonist
+   reads it.
 5. **Another screen**: a menu, a store, a board; several displays the census does not
    separate.
 

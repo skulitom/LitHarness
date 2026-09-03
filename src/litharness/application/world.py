@@ -295,7 +295,9 @@ def vocabulary() -> dict[str, Any]:
                 "naming a system may declare columns of its own beside the system's (a pool, "
                 "a currency, a class, an age): they print where declared, the system's "
                 "columns take the place of the first of theirs, and a snapshot that carries "
-                "the rung column is a position in the system whatever else it prints"
+                "the rung column is a position in the system whatever else it prints. An "
+                "owner's sheet is printed where a scene's plan names the owner: that scene "
+                "is asked to print the owner's line where the protagonist reads it"
             ),
             "status_snapshot": (
                 "where those columns stand; --value an object mapping each field name to "

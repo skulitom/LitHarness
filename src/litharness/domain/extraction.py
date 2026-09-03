@@ -1351,6 +1351,60 @@ def notice_lines(
     return tuple(found)
 
 
+def readout_lines(
+    records: Sequence[lc.StateRecord],
+    *,
+    plan: str | None,
+    at: str | None,
+    protagonist: str | None,
+) -> tuple[str, ...]:
+    """Another owner's line, where the scene's plan names the owner (§220).
+
+    **§209's owed item, and the fit census's fourth gap** (§217): twenty-three of sixty market
+    stories print another subject's sheet where the protagonist reads it — a creature's level
+    and health, an appraisal of a rival, a follower's standing — and since §206 every such
+    sheet is declarable and none was ever asked for. The ask needs a trigger that is the
+    book's and not a model's (§61(5)): the scene's plan names who is in it, so an owner named
+    in the plan is an owner whose line the scene prints, once, where the protagonist reads it.
+
+    An owner is a subject named by a canon `status_sheet`'s `owner`, or every subject of the
+    role it names; the protagonist is never a readout (their line is the status line). The
+    owner's state is folded at `at` from their own canon snapshots (`_folded_before`), and
+    rendered through their own sheet. `()` for a scene with no plan text or no position, and
+    for every book whose plans name no owner, which is every book on disk.
+    """
+    if not plan or at is None:
+        return ()
+    known = readable(records)
+    canon = _canon_of(known)
+    roles = worlds_mod.entity_roles(canon)
+    owners: set[str] = set()
+    for record in canon:
+        if record.predicate != SHEET_PREDICATE or not isinstance(record.value, Mapping):
+            continue
+        owner = record.value.get("owner")
+        if not isinstance(owner, str) or not owner.strip():
+            continue
+        owner = owner.strip()
+        if owner in worlds_mod.ENTITY_ROLES:
+            owners.update(subject for subject, held in roles.items() if owner in held)
+        else:
+            owners.add(owner)
+    text = plan.casefold()
+    found: list[str] = []
+    for subject in sorted(owners):
+        if subject == protagonist:
+            continue
+        name = display_name(known, subject).casefold()
+        if not re.search(r"(?<!\w)" + re.escape(name) + r"(?!\w)", text):
+            continue
+        value = _folded_before(known, subject, at)
+        if not value:
+            continue
+        found.append(render_status_line(subject, value, records=known))
+    return tuple(found)
+
+
 def _canon_of(records: Sequence[lc.StateRecord]) -> list[lc.StateRecord]:
     return [record for record in records if state_mod.is_canon(record)]
 
