@@ -171,3 +171,22 @@ the pilot's 19/20 decided rate the run as-built lands at ~190 decided and return
 `insufficient_n` structurally. Any relaunch must first add the top-up rule (run pairs until
 200 decide or the pool exhausts, which PREREG's own attrition sentence anticipates). Not
 fixed in code yet — recorded here so a resume cannot happen without it.
+
+## Re-anchoring, 2026-09-03: the handoff's "calibration pilot" has already run, and nothing was bought here
+
+`plan/handoff-reader-sims.md` (third experiment) asked for "the calibration pilot of the
+backtest (§123), as registered, with the distributional half only", believing it registered
+and never run. The repository disagrees and the repository wins: stage (b) ran twice under the
+operator's go (2026-08-30 and 2026-08-31, both recorded above), its descriptive result is on
+the record (15 of 19 decided pairs, bootstrap lower bound 0.579, the sham corner void, C4 under
+the primary effect), stage (c) started and was **paused by the operator's own decision** at
+5,627 cache records with the assembly defect above unfixed, and the programme never had an
+individual-level half to leave out — that half is closed twice in stage-0 §106.
+
+So the session working the handoff bought no call in this programme and changed no line of its
+driver. The pilot is the bounded result the handoff asked for, and the two things that would
+make stage (c) resumable — the top-up rule and the operator's quota decision — are the
+operator's, not a worktree session's. What the handoff's reader-simulation track takes from
+here is the descriptive pilot number as a *candidate* and nothing more (PREREG §8's gate on
+(c) is unchanged), and the arms it did buy are recorded under
+`research/quality-measurement/cost-that-bites/`, `reassembly-reads/` and `anticipation-run/`.

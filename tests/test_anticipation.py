@@ -220,3 +220,26 @@ def test_the_kill_table_reads_unreadable_with_no_scorable_cells() -> None:
 
 def test_the_selftest_passes() -> None:
     assert anticipation.selftest() == 0
+
+
+# ------------------------------------------------------------------------------ the arm texts
+
+
+def test_a_damaged_arm_keeps_the_paragraph_convention_the_stop_point_reads() -> None:
+    """Found by the first dry run: `destake` rebuilt the text with single newlines and every
+    damaged arm arrived at `stop_point` as one paragraph. The arm text must carry the same
+    paragraph breaks as the original so the registered cut falls at its own 60%."""
+    paragraphs = [
+        "Marrow counted the forged seals twice and the count came out the same.",
+        "The gate inspector was due at dawn, and failure meant the debtor cells.",
+        "Rain moved in from the harbour while the lamps were lit one by one.",
+        "Nobody on the wall spoke, and the seals stayed in the drawer.",
+    ]
+    text = "\n\n".join(paragraphs)
+    assert anticipation._arm_text("original", text) == text
+    for arm in anticipation.ARMS[1:]:
+        shown = anticipation._arm_text(arm, text)
+        assert "\n\n" in shown, arm
+        # Never a single-newline text: the stop point would see one paragraph and raise.
+        assert not any("\n" in part for part in shown.split("\n\n")), arm
+        anticipation.stop_point(shown)
