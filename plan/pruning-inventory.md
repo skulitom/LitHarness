@@ -206,8 +206,8 @@ the homonyms it listed beside it.
 
 | where | what it says | canonical home | disposition | status |
 | --- | --- | --- | --- | --- |
-| `PLAN.md:659` | *787 tests passing + 8 opt-in live (2026-08-17 …)* in the current-state table for this repository | the suite | cut: strike in place, keep the pointer to the suite | pending |
-| `PLAN.md:1964` | *the refutation ledger … canonical for the count, now stands at twenty dead* | `BRIEF.md` §2, which says twenty-one: the restatement has already drifted | cut: strike the number, keep the pointer | pending |
+| `PLAN.md:659` | *787 tests passing + 8 opt-in live (2026-08-17 …)* in the current-state table for this repository | the suite | cut: strike in place, keep the pointer to the suite | landed, cut 1 |
+| `PLAN.md:1964` | *the refutation ledger … canonical for the count, now stands at twenty dead* | `BRIEF.md` §2, which says twenty-one: the restatement has already drifted | cut: strike the number, keep the pointer | landed, cut 1 |
 | `PLAN.md:1338`, `:2095`, `:2152` | *268 tests*, *119 passing tests*, *271 collected, 268 passing + 3 opt-in live* in the Stage 0 exit records | the suite, at those dates | refused: dated records of an exit, not current claims | refused |
 | `PLAN.md:660-665`, `:2101`, `:2108`; `plan/litrpg-rules-pack.md:3` | sibling repositories' test totals (BookWorldState, RevisionBench, MirrorBench, ContinuityEvaluation) in a dated inspection table and a build spec's status line | those repositories' suites | refused: not this repository's to keep current, and `test_architecture` deliberately does not resolve them | refused |
 | `PLAN.md:891`, `plan/promise-payoff-development.md:79` | *twenty-one proxies* in prose | `BRIEF.md` §2 | refused: prose in dated text, and the number matches the home today | refused |
