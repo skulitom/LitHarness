@@ -1114,6 +1114,41 @@ def standing_example(records: Sequence[lc.StateRecord], *, at: str | None = None
     return line.render(subjects[0], phrase, rung)
 
 
+def gain_example(
+    records: Sequence[lc.StateRecord], *, at: str | None = None, ability_id: str
+) -> str | None:
+    """The graph line filled for a grant gained: the protagonist, the book's phrase for
+    `can_do`, and the grant, all in the names the book prints (§208). `None` for a book
+    whose line declares no such phrase, that has no protagonist, or that declares no
+    such grant.
+
+    `standing_example`'s twin for the second thing the genre prints a line for. The
+    market's notices (*you have learned*, *skill gained*) run at half a line per
+    thousand words in its early chapters (the system-displays census), and until now
+    a book could declare the phrase and never be asked to print it. The reader reads
+    it back as a proposed `can_do` edge (`extract_graph_facts`), which the sheet's own
+    record of the gain already makes canon, so the line is furniture the reader
+    watches and never the record of truth.
+    """
+    line = graph_line_for(records)
+    if line is None:
+        return None
+    phrase = next(
+        (edge.phrase for edge in line.edges if edge.predicate == worlds_mod.CAN_DO),
+        None,
+    )
+    if phrase is None:
+        return None
+    canon = _canon_of(records)
+    subjects = worlds_mod.entities_with_role(canon, "protagonist")
+    if not subjects or ability_id not in {record.subject for record in canon}:
+        return None
+    del at  # The line names no position; the gain is the scene's.
+    return line.render(
+        display_name(records, subjects[0]), phrase, display_name(records, ability_id)
+    )
+
+
 def _canon_of(records: Sequence[lc.StateRecord]) -> list[lc.StateRecord]:
     return [record for record in records if state_mod.is_canon(record)]
 
@@ -1831,6 +1866,7 @@ __all__ = [
     "display_name",
     "extract_graph_facts",
     "extract_state",
+    "gain_example",
     "graph_line_fault",
     "graph_line_for",
     "graph_record_id_for",

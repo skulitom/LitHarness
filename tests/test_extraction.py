@@ -1285,3 +1285,49 @@ def test_the_creature_s_role_sheet_reads_a_creature_s_line() -> None:
         )
     )
     assert record.subject == "chaperone" and record.value == {"reach": 2}
+
+
+# -- §208: the notice -----------------------------------------------------------------------
+
+
+def test_the_gain_line_is_the_graph_line_s_can_do_phrase_filled_with_the_book_s_names() -> None:
+    """§208: a book may declare a phrase for a grant gained beside the one for a standing, and
+    the writer is shown it filled, protagonist and grant in the names the book prints; a line
+    with no such phrase yields nothing, and so does a grant the book never declared."""
+    from litharness.domain.extraction import gain_example
+
+    canon = [
+        *_named_canon(),
+        worlds.world_record(
+            "book",
+            worlds.GRAPH_LINE_PREDICATE,
+            value={
+                "label": "INVIGILATION",
+                "edges": [
+                    {"phrase": "IS NOW ASSESSED AT", "predicate": worlds.STANDS_AT_PREDICATE},
+                    {"phrase": "HAS BEEN AWARDED", "predicate": worlds.CAN_DO},
+                ],
+            },
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    ]
+    assert gain_example(canon, ability_id="cold_seal") == (
+        "[INVIGILATION] Kellow HAS BEEN AWARDED Cold Seal"
+    )
+    assert gain_example(canon, ability_id="nothing_declared") is None
+    standing_only = [
+        record for record in canon if record.predicate != worlds.GRAPH_LINE_PREDICATE
+    ] + [
+        worlds.world_record(
+            "book",
+            worlds.GRAPH_LINE_PREDICATE,
+            value={
+                "label": "INVIGILATION",
+                "edges": [
+                    {"phrase": "IS NOW ASSESSED AT", "predicate": worlds.STANDS_AT_PREDICATE}
+                ],
+            },
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+    ]
+    assert gain_example(standing_only, ability_id="cold_seal") is None

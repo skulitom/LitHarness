@@ -39,9 +39,12 @@ books both finish rather than the first one starving the second.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from hashlib import sha256
+
+import litharness_contracts as lc
 
 from litharness.application import exemplars as exemplars_mod
 from litharness.application.conductor import WorkSelector
@@ -90,6 +93,8 @@ from litharness.domain.directives import Directive, DirectiveStatus
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
 from litharness.domain.extraction import (
+    Movable,
+    gain_example,
     graph_line_for,
     movable_names,
     offered_choice,
@@ -245,6 +250,21 @@ def beat_job_id(book_id: str, branch_id: str, logical_id: str, template_id: str,
     return f"beat-{sha256(material.encode()).hexdigest()[:24]}"
 
 
+def gain_line_for(
+    records: Sequence[lc.StateRecord],
+    target: Movable | None,
+    moved: progression.MovedLine | None,
+    *,
+    at: str | None,
+) -> str | None:
+    """The notice for this scene, or `None`: the beat names a grant the person did not
+    hold and now holds (a gain, not a deepening or a rise), and the book's graph line
+    has a phrase for `can_do` (§208)."""
+    if target is None or moved is None or moved.was != 0 or moved.now < 1:
+        return None
+    return gain_example(records, at=at, ability_id=target.key)
+
+
 def render_prompt(
     beat: Beat,
     *,
@@ -263,6 +283,7 @@ def render_prompt(
     point_of_view: str | None = None,
     offer_line: str | None = None,
     shelf: Shelf | None = None,
+    gain_line: str | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -464,6 +485,15 @@ def render_prompt(
                 " Where this fork is put in front of the person, the book prints this line, "
                 "exactly once, and they read it on the page:\n"
                 f"{offer_line}"
+            )
+        if gain_line:
+            # **The notice** (§208): where the beat names a grant gained and the book's
+            # graph line has a phrase for it, the line is shown filled, as the standing
+            # line is on a rise. Furniture the reader watches; the sheet is the record.
+            system += (
+                " Where they gain it, the book prints this line, exactly once, and they read "
+                "it on the page:\n"
+                f"{gain_line}"
             )
         if progression:
             # **The instruction above defaults to stasis, and a model with no reason to
@@ -1217,6 +1247,7 @@ def make_plan_selector(
                 beat_moved = progression.moved_example(
                     records, beat_target, character=pov_id, at=beat.story_order_key
                 )
+                beat_gain = gain_line_for(records, beat_target, beat_moved, at=beat.story_order_key)
                 system, prompt = render_prompt(
                     beat,
                     book_title=_book_title(head),
@@ -1308,6 +1339,7 @@ def make_plan_selector(
                     point_of_view=pov_id,
                     writer=writer,
                     offer_line=offered_line(records, character=pov_id, at=beat.story_order_key),
+                    gain_line=beat_gain,
                     shelf=shelf,
                 )
                 payload: dict[str, object] = {

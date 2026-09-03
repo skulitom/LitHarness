@@ -119,9 +119,7 @@ def _roles() -> dict[str, str]:
         # **The seed with a second system, which only a two-system concept renders.** One
         # sentence over the plain seed row, and a row of its own so the number is visible.
         "architect seed, second system": (
-            world_agent.render_seed_request(
-                "a listing", WRITER, concept=_TWO_SYSTEM_CONCEPT
-            ).system
+            world_agent.render_seed_request("a listing", WRITER, concept=_TWO_SYSTEM_CONCEPT).system
             or ""
         ),
         "title writer": overview.title_system(WRITER),
@@ -153,14 +151,10 @@ def _roles() -> dict[str, str]:
             recruiter.render_recruit_request("cozy-fantasy", shape="single-image").system or ""
         ),
         "recruiter, several with beat": (
-            recruiter.render_recruit_request(
-                "cozy-fantasy", shape="several-with-beat"
-            ).system
-            or ""
+            recruiter.render_recruit_request("cozy-fantasy", shape="several-with-beat").system or ""
         ),
         "recruiter, several no beat": (
-            recruiter.render_recruit_request("cozy-fantasy", shape="several-no-beat").system
-            or ""
+            recruiter.render_recruit_request("cozy-fantasy", shape="several-no-beat").system or ""
         ),
         # **Two rows, and both are deliberately floorless**, which is why they are small. A
         # passage nobody reads becomes the paragraph that rides the system message of every
@@ -171,9 +165,7 @@ def _roles() -> dict[str, str]:
             revoice.render_exemplar_request(WRITER, descriptor=DESCRIPTOR).system or ""
         ),
         "revoice rewrite": (
-            revoice.render_rewrite_request(
-                dossier=WRITER.dossier, exemplar="A passage."
-            ).system
+            revoice.render_rewrite_request(dossier=WRITER.dossier, exemplar="A passage.").system
             or ""
         ),
         # **The one row that stands on `CLARITY` and on neither rule below it** (§185, §129's
@@ -275,7 +267,9 @@ BUDGET: dict[str, int] = {
     # **Raised 45 -> 46 on 2026-09-03 for §207**: one sentence saying a way at a fork
     # may say what it looks like and what a person must hold to be offered it, so the fork
     # a person meets is the one their own record earned (the choice display).
-    "architect seed, second system": 46,
+    # **Raised 46 -> 47 on 2026-09-03 for §208**: one sentence saying the line the
+    # book prints when a standing changes may carry a second phrase for a grant gained.
+    "architect seed, second system": 47,
     "title lookup": 6,
     # **Raised 24 -> 25 on 2026-08-29, deliberately and for one named sentence.** The house
     # genre had been living nowhere (`plan/house-genre-constraint.md`; pilot 13 §8.2), carried
@@ -371,7 +365,7 @@ BUDGET: dict[str, int] = {
     # that is the honest price: a demand the seed cannot use, against a rule the roles that write
     # prose need in the one place that does not drift.
     #
-# **Raised 45 -> 46 on 2026-08-30 for one `house.CLARITY` clause** (§176), and this is the
+    # **Raised 45 -> 46 on 2026-08-30 for one `house.CLARITY` clause** (§176), and this is the
     # first raise since §171 predicted its own successor's cost. It predicted four numbers; the
     # true count is six, corrected in place at §171.4 — the floor plus **five** rows carry the
     # whole of `HOUSE_RULES` and every one of them sat at zero headroom. The occupant is a
@@ -408,7 +402,9 @@ BUDGET: dict[str, int] = {
     # **Raised 43 -> 44 on 2026-09-03 for §207**: one sentence saying a way at a fork
     # may say what it looks like and what a person must hold to be offered it, so the fork
     # a person meets is the one their own record earned (the choice display).
-    "architect seed": 44,
+    # **Raised 44 -> 45 on 2026-09-03 for §208**: one sentence saying the line the
+    # book prints when a standing changes may carry a second phrase for a grant gained.
+    "architect seed": 45,
     # **42 -> 43 on 2026-08-30, the §176 clause.** §163's note above says this row "stays
     # on 42", which was true of §163's seed-only raise and is not a rule: this row stands on the
     # whole house floor, so a floor clause lands here as surely as it lands on the scene writer.
@@ -642,8 +638,12 @@ _SHELF = exemplars.Shelf(
     root=Path(),
     exemplars=(
         exemplars.Exemplar(
-            name="Placed", title="Placed", chapter="One opening.", blurb=None,
-            digest="0" * 16, words=2,
+            name="Placed",
+            title="Placed",
+            chapter="One opening.",
+            blurb=None,
+            digest="0" * 16,
+            words=2,
         ),
     ),
 )
@@ -652,19 +652,20 @@ _CRITERIA = "- guild_rank: outranks — courier then gate-runner then warden"
 
 def _scene_system(**conditionals: Any) -> str:
     """The system message the planner actually assembles, through the live path."""
-    system, _prompt = planner.render_prompt(
-        _BEAT, book_title=None, packet=_PACKET, **conditionals
-    )
+    system, _prompt = planner.render_prompt(_BEAT, book_title=None, packet=_PACKET, **conditionals)
     return system
 
 
 #: Each block against the smallest prompt that can carry it, because two of the branches are
 #: nested: `progression` renders only inside `status_example`'s branch and `standing_line` only
 #: inside `standing`'s, so their cost is measured over a base that already pays for the parent.
+_GAIN_LINE = "[ASSAY] Rook has learned Seamsight"
+
 _CONDITIONAL_ARMS: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
     "status_example": ({}, {"status_example": _STATUS_EXAMPLE}),
     "progression": ({"status_example": _STATUS_EXAMPLE}, {"progression": _PROGRESSION}),
     "offer_line": ({"status_example": _STATUS_EXAMPLE}, {"offer_line": _OFFER_LINE}),
+    "gain_line": ({"status_example": _STATUS_EXAMPLE}, {"gain_line": _GAIN_LINE}),
     "exemplars": ({}, {"shelf": _SHELF}),
     "standing": ({}, {"standing": _STANDING}),
     "standing_line": ({"standing": _STANDING}, {"standing_line": _STANDING_LINE}),
@@ -686,6 +687,10 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
     # each opens are the book's own words (`gamesystem.offer_line`), so the payload line is
     # furniture and not a demand about prose.
     "offer_line": 2,
+    # **Joined 2026-09-03 at what is there** (§208): one sentence saying the book prints
+    # its gain line where a grant is gained, and the line itself, which is the book's own
+    # words (`extraction.gain_example`) and not a demand about prose.
+    "gain_line": 2,
     # **Joined 2026-09-02 at what is there** (§196): the one sentence saying whose the shelf's
     # chapters are and that no name, place, thing or line of theirs may appear. The chapters
     # themselves are material in the prompt and are not demands.
@@ -827,6 +832,7 @@ def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -
             criteria=_CRITERIA,
             offer_line=_OFFER_LINE,
             shelf=_SHELF,
+            gain_line=_GAIN_LINE,
         )
     )
     assert len(counted) <= SCENE_MAXIMAL_BUDGET, (

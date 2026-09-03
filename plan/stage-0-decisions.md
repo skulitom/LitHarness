@@ -22802,3 +22802,41 @@ bracket tag for the same fact would be the sheet's mistake (§160.3's reasoning)
 **Anti-scope.** Whether a way's line and its gate reach the page as a scene the reader
 weighs is the next chapter's to show; nothing here measures prose. The view node and the
 notice remain phase 3's.
+
+## 208. Phase 3, fourth slice: the notice. The graph line may carry a phrase for a grant gained, and the writer is shown it filled where the beat names a gain
+
+**What it answers.** The market's notices (*you have learned*, *skill gained*) run at about
+half a line per thousand words in its early chapters (§202's census, the *other* family
+almost entirely), and a book here could declare the phrase (`graph_line` takes an edge for
+any predicate) and never be asked to print it: the only filled graph line the writer saw was
+the standing's (`standing_example`), on a rise. A gain reached the page as a column moving on
+the status row and nothing else.
+
+**What shipped** (`domain/extraction.py`, `application/planner.py`,
+`application/world_agent.py`). `extraction.gain_example`: the graph line's phrase for
+`can_do`, rendered with the protagonist and the grant in the names the book prints
+(`display_name`), or `None` for a line without such a phrase, a book without a protagonist,
+or a grant the book never declared; `standing_example`'s twin. `planner.gain_line_for`: the
+notice for a scene where the beat's move is a gain (the person did not hold the grant and
+now holds it; a deepening or a rise is not one), and `render_prompt` takes `gain_line`,
+showing it after the offer line: *Where they gain it, the book prints this line, exactly
+once, and they read it on the page*. The reader already reads such a line back as a proposed
+`can_do` edge (`extract_graph_facts`), which the sheet's own record of the gain makes canon,
+so the line is furniture the reader watches and never the record of truth. The seed's system
+sentence says the graph line may carry a second phrase, in the system's words, for a grant
+gained; the two seed budget rows rise by one with the reason in place, and the scene prompt
+gains a `gain_line` conditional row measured at what it is (two: one sentence and the line).
+Tests: `gain_example` fills the book's names and abstains without the phrase or the grant
+(`tests/test_extraction.py`); the notice is asked for on a gain and not on a deepening, and
+prints in the prompt where given (`tests/test_planner.py`). The four stored books replay
+identically.
+
+**What was refused.** A notice tag of its own: the graph line is the book's declared surface
+for a change in its graph, a gain is such a change, and a second bracket tag for it would be
+the sheet's mistake again. A notice on every move kind: a deepening prints as the row
+moving, and a rise prints as the standing line already; the gain was the one change with no
+line. A phrase supplied by this house when the world declares none: no default vocabulary.
+
+**Anti-scope.** Whether a book's writer prints the notice where asked is the next chapter's
+to show; nothing here measures prose. The view node and the readout on request remain the
+last of phase 3.

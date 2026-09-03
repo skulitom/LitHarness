@@ -2222,3 +2222,77 @@ def test_a_book_with_no_ladder_renders_the_prompt_it_rendered_before(
         standing_line=standing_example(records),
     )
     assert passed == absent
+
+
+# --- §208: the notice ---------------------------------------------------------------------------
+
+
+def test_the_notice_is_asked_for_where_the_beat_names_a_gain_and_not_a_deepening() -> None:
+    """§208: a beat that names a grant the person did not hold and now holds is a gain, and the
+    writer is shown the book's own gain line filled; a deepening (2 to 3) or a rise names no
+    grant gained, and a book whose graph line has no `can_do` phrase is asked for nothing."""
+    from litharness.application.planner import gain_line_for
+    from litharness.domain import progression
+    from litharness.domain.extraction import Movable
+
+    records = [
+        *_ladder_records(),
+        worlds.world_record(
+            "seamsight", "is_a", value="Seamsight", authority=lc.StateAuthority.ACCEPTED_CANON
+        ),
+        worlds.world_record(
+            "seamsight",
+            worlds.ENTITY_ROLE_PREDICATE,
+            value="capability",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    ]
+    with_phrase = [
+        record for record in records if record.predicate != worlds.GRAPH_LINE_PREDICATE
+    ] + [
+        worlds.world_record(
+            "book",
+            worlds.GRAPH_LINE_PREDICATE,
+            value={
+                "label": "ASSAY",
+                "edges": [
+                    {"phrase": "now stands at", "predicate": worlds.STANDS_AT_PREDICATE},
+                    {"phrase": "has learned", "predicate": worlds.CAN_DO},
+                ],
+            },
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+    ]
+    target = Movable("Seamsight", "seamsight")
+    gained = progression.MovedLine(
+        line="[STATUS] Rook — Seamsight 1", name="Seamsight", was=0, now=1
+    )
+    deepened = progression.MovedLine(
+        line="[STATUS] Rook — Seamsight 3", name="Seamsight", was=2, now=3
+    )
+    assert (
+        gain_line_for(with_phrase, target, gained, at="s2") == "[ASSAY] Rook has learned Seamsight"
+    )
+    assert gain_line_for(with_phrase, target, deepened, at="s2") is None
+    assert gain_line_for(records, target, gained, at="s2") is None, "no phrase, no notice"
+    assert gain_line_for(with_phrase, None, gained, at="s2") is None
+
+
+def test_the_prompt_prints_the_notice_where_the_book_prints_it(store: SqliteStore) -> None:
+    book_id, branch_id = _book_zero(store)
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[0]
+    packet = packet_for(store, head, beat)
+    status = "[STATUS] Rook — Level 4 | HP 24/30 | MP 8/10 | Gold 45"
+    system, _ = render_prompt(
+        beat,
+        book_title=None,
+        packet=packet,
+        status_example=status,
+        gain_line="[ASSAY] Rook has learned Seamsight",
+    )
+    assert "Where they gain it, the book prints this line, exactly once" in system
+    assert "[ASSAY] Rook has learned Seamsight" in system
+    without, _ = render_prompt(beat, book_title=None, packet=packet, status_example=status)
+    assert "Where they gain it" not in without
