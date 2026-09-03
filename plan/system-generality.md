@@ -228,7 +228,7 @@ Genre modules (a quest module, an inventory module, a notification module). A mo
 ranks or prefers displays. Any change to how the corpus is used. The reviser.
 
 
-## 5. The fit census, and the gaps it ranks (2026-09-03, stage-0 §217)
+## 5. The fit census, and the gaps it ranks (2026-09-03, stage-0 §217; the track closed at §220.1, its brief deleted)
 
 With the five phases closed, the question §1 opened was measured instead of argued:
 `research/quality-measurement/system-fit/` declares sixty sampled market stories' shapes,
