@@ -467,8 +467,8 @@ def _resolve_writer(
 ) -> tuple[writers_domain.Writer | None, str]:
     """The writer a `--writer` name means, or `None` and the reason it is nobody.
 
-    **The accepted roster first, then the compiled cast**, which is
-    `plan/handoff-writer-recruiter.md`'s word — but the order is safe only because the two
+    **The accepted roster first, then the compiled cast**, which is the recruiter brief's word
+    (stage-0 §146) — but the order is safe only because the two
     namespaces cannot overlap. `writers.RESERVED_NAMES` refuses a stored row named after a cast
     writer or a probe, so for every name that can legitimately exist both orders return the same
     writer. The order then costs nothing and buys what the brief wanted: an accepted recruit is
@@ -4366,6 +4366,20 @@ def cmd_world(args: argparse.Namespace) -> int:
                     f"litharness: {len(proposals)} proposal(s) not accepted; {len(breaches)} "
                     "breach(es) the drafting gate would refuse on this world before any scene. "
                     "Fix with `world declare`, or --force to accept them anyway.",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
+            # **§213.1's refusal: a line the arithmetic cannot read.** Pilot 25 draw 4's seed
+            # put a rung's id in the rank column and a stock's balance on the line with no
+            # edge behind it; the chapter printed one unmoving line twice. Same `--force`.
+            faults = world_mod.snapshot_faults(in_force)
+            if faults and not args.force:
+                for fault in faults:
+                    print(f"litharness: {fault}", file=sys.stderr)
+                print(
+                    f"litharness: {len(proposals)} proposal(s) not accepted; {len(faults)} "
+                    "status line fault(s) the arithmetic could not read. Fix with `world "
+                    "declare`, or --force to accept them anyway.",
                     file=sys.stderr,
                 )
                 return EXIT_FAULT

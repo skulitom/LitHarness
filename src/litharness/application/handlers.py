@@ -496,8 +496,9 @@ def make_scene_draft_handler(
     A floor defaults on so a path that forgets it fails closed (`require_starting_sheet` says
     so in as many words); a **spend** defaults off, because a call site that forgot to think
     about a second model call per scene should get the book it already had rather than a bill
-    it did not ask for. `litharness run` passes `revise=not args.no_revise`, so production has
-    the stage and `--no-revise` is the control.
+    it did not ask for. Since §196 the CLI passes `revise` only when `--revise` is given, so
+    production runs without the stage and `--revise` is the arm that keeps it reachable;
+    `--no-revise` still parses and does nothing.
     """
     # **The shelf's own rate of each regular tell, read once** (stage-0 §199): the highest
     # density any placed opening reaches, family by family, is what a draft is held to.

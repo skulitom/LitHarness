@@ -10,14 +10,15 @@ which of two words it wanted — and the payload it produced still names each fi
 *string*. A hint string is not a shape: it cannot say whether a flag repeats, whether it is
 required, or what a whole assembled command looks like, and an agent that has to compose a
 command out of five hints composes it wrong and then learns the interface by writing records.
-`plan/handoff-writer-recruiter.md` says the write-only-interface lesson has now been paid for
-three times, so here each field is an object with a type, a repeat flag, its constraints and an
-example, and the whole command line is shown once, assembled.
+The recruiter brief (stage-0 §146) said the write-only-interface lesson had by then been paid
+for three times, so here each field is an object with a type, a repeat flag, its constraints
+and an example, and the whole command line is shown once, assembled.
 
 **Nothing here ranks, compares, or prefers.** There is no view that orders writers by anything
 but their names, no "best dossier", and no output line that names two writer ids together;
-`plan/handoff-writer-recruiter.md`'s rail 4 and §61(5)/§105.1 are why. What the census below
-reports about a dossier is arithmetic over its own text and is never a verdict about it.
+the recruiter brief's rail — *no model hires* — and §61(5)/§105.1 are why (stage-0 §146).
+What the census below reports about a dossier is arithmetic over its own text and is never a
+verdict about it.
 """
 
 from __future__ import annotations

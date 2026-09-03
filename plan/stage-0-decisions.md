@@ -23093,3 +23093,164 @@ replay: no complaints, no growth, no gaps.
 
 **Correction in place** to §211 above. **Refused:** re-minting the digest at acceptance, for
 §211's reason (two canon values at one slot, no retraction).
+
+## 213. What a chapter prints under the general system: pilot 25 draw 4 took up every new shape at the seed and printed one unmoving line twice, because the seed wrote a rung's id where the line wanted its number
+
+**What was drawn** (`runs/ab/pilot25/draw4`, the operator's ask of 2026-09-03: *show me what
+a chapter prints under the general system*). The settled pilot 25 concept and listing, writer
+tanaka, the third person, three exemplars, the pipeline at 8a7df4a (§203 to §212.1), a fresh
+store, the tick cap at eight. One draw is one description; nothing here is a treatment.
+
+**What the seed declared, read off the store.** Two systems, as the concept names: the
+Invigilation, a ten-band ladder with eight grants, every grant priced in a stock the rungs
+hand out (*Marks*, four a band), a fork at band two with three ways; the Board, five seats,
+a stock of *Answers* two a seat, three priced grants. The sheet names its system and follows
+it. Five `type change` nodes with participants and effects: a coat that grants Reading, a
+withdrawal that takes it from another candidate, gloves, a pen, a seat on the Board. Every
+shape phase 3 and phase 4 built was used by the Architect on the first seed that could
+declare it, unprompted beyond the vocabulary and one seed sentence each.
+
+**What the chapter printed.** Two scenes, 977 and 948 words, each printing one status line:
+`[STATUS] Tom — Band band_one | Marks 2 | Reading 1`. Nothing moved in either. Scene 1's
+beat named *Two* (the rise, the only move the arithmetic offered), and the progression gate
+abstained: *the line standing at s1 prints no rank column*. The reason is one value in the
+seed's opening snapshot: `rank: band_one`, a rung's id where the rank column is a number.
+Every reader of that column reads an integer (the moved-line example, the gate, the counted
+names), so the rise's ask, example and check all abstained at once, and the writer was
+handed the entering line and copied it, twice; the id itself reached the page inside the
+line.
+
+**Three seed-side gaps, all visible before a word was drafted, none of them the writer's.**
+
+1. **The rung's id in the rank column.** The vocabulary's `status_snapshot` line asks for
+   *its number*; the Architect wrote the id it had just declared. Nothing checked the value
+   against the column's kind before acceptance. Fix: `world check` previews and `world
+   accept` refuses a canon snapshot whose numeric column holds a string, naming the number
+   the rung is (§200's shape: the check says, the accept refuses, the seed is told).
+2. **The stock's balance in the snapshot only.** The line says *Marks 2*; no `can_do marks`
+   edge was declared, so the sheet the arithmetic reads holds no marks, every priced grant
+   is unaffordable, and the beat can name nothing but the rise until the first rise credits
+   four. The snapshot is the printed form and the edges are what the world knows (`sheet_of`,
+   §160); a seed that states a holding on the line and not in the world has said two
+   things. Fix: the same check and refusal for a held numeric column in the opening
+   snapshot with no `can_do` edge behind it for a grant of the sheet's system.
+3. **Changes in the scheduled key space.** The five changes sit at `0100` to `0600`, the
+   snapshots the Architect scheduled sit at `0300` and `0400`, and by §165 a scheduled record
+   never folds into a scene; so the change line never fired and never will in this book.
+   The vocabulary line for `type` says a scene key; the Architect wrote the schedule space
+   it uses for everything else at the seed. Not fixed here: whether a scheduled change
+   should land in the scene whose ordinal it names is §165's question, and it is answered
+   by the book's plan and not by a key conversion.
+
+**What shipped.** Nothing in this entry; it is the reading. The two refusals above are
+§213.1's, landed after the arm finished so the tree did not change under a running arm
+(the harness records the tree at start and finish; it was 8a7df4a throughout).
+
+**Anti-scope.** Whether the chapter reads as its genre is the operator's read (read 20 is
+still outstanding on draw 3, and this draw is not a substitute for it); nothing here
+measures prose. The writer did what it was handed: the line it was shown, once per scene.
+
+### 213.1 The check previews and accept refuses a status line the arithmetic cannot read: a rung's id in a numeric column, and a held grant on the opening line with no edge behind it
+
+**What shipped** (`application/world.py`, `cli.py`). `world.snapshot_faults` reads every
+declared `status_snapshot` against the book's sheet as accept would carry it: a numeric column
+holding a string is a fault, named with the number the rung is when the string is a rung of a
+declared ladder (*'band_one' in the rank column, which takes a whole number; the rung band_one
+is 1 of 10*); a positive number on the opening line in a column that is a grant of a declared
+system, with no un-keyed `can_do` edge for that person, is a fault naming the edge to declare.
+`world check` carries the list under `snapshot_faults` and `world accept` refuses on it beside
+§200's breaches, with the same `--force`. The `status_snapshot` vocabulary line now says a
+number column never takes an id, that the rung column takes the rung's place counted from
+one, and that a grant held on the opening line is also a `can_do` edge. Run over draw 4's
+store the preview names exactly the two faults §213 read off the page. Test:
+`tests/test_seed_completion_bounds.py`, the id named with its number, the missing edge named,
+a line with the number and the edge faultless. Every stored book that was accepted before
+this still reads as it did; the refusal is at acceptance and nothing already canon is
+re-read by it.
+
+**What was refused.** Translating the id into its number at acceptance: a deterministic
+rewrite of the Architect's declaration by the machine, which is the two-writers hazard the
+`world accept` completion was built to avoid (§165.2). Minting the `can_do` edge from the
+line: the line is the printed form and the edges are what the world knows (§160), and a
+derivation in that direction is the one `sheet_of` refuses. Folding a scheduled change into
+the scene whose ordinal it names: §165's question, unchanged, and the third gap of §213
+stays open with its reason.
+
+**Anti-scope.** Nothing here measures prose; the redraw that follows is read for what it
+prints, on §213's terms, and is not a substitute for the operator's read 20.
+
+## 214. The pruning inventory found two dead scripts in a hundred and one, nine names nothing calls and two briefs already home, and the rest of what looked dead is in use
+
+**Measured first** (`plan/pruning-inventory.md`, on `2142d0f`, no model; the tally is the
+inventory's and is not restated elsewhere). Every module-level name under `src/litharness/`
+against every `.py` and `.md` in the tree: nine names with no reference but their own
+definition line (a type alias, two store methods, a property, a lease method, an alias, two
+text helpers, a fake-provider method). The brief's four named candidates all in use:
+`application/variation.py` already cut in `530f40e` with §105.5 as its null; the reviser
+reachable under `--revise` by §196's decision, with one docstring still describing the
+pre-§196 wiring; the six detector ids carried into the optional pack's live bundle and pinned
+by `tests/test_continuity_evaluator.py`; three change-role readers reading three facts
+(`characters`, `salience`, `gamesystem.changes_of`). Every script under `tools/` and
+`research/quality-measurement/` against the runbooks, the findings, the ledger, the tests and
+the research import graph: two of a hundred and one that nothing runs, reads or cites —
+`tools/variation_repair_comparison.py`, which imports the two modules `530f40e` deleted and
+cannot run, and `research/quality-measurement/blurb_defects.py`, run once on 2026-08-26
+(`results/blurb-defects.json`) and never cited. Three older handoffs against the ledger: two
+with every row at home (§140 to §143; §146 and §151) and one that owns a table nothing else
+records. One helper written eleven times under six names, and the homonyms beside it distinct
+fixtures. Two restated counts, one already drifted from the home that the same sentence named
+as canonical. Twenty-five local branches on `main` by patch identity, two holding a patch,
+three worktrees stale — reported, not touched.
+
+**What shipped**, one commit per cut, each after the suite, ruff, mypy, `git diff --check` and
+`tools/replay_books.py` (`2142d0f`, the replay the generality track ran by hand, as a script:
+a read-only copy through the backup API, `known` rebuilt as the records that preceded each
+scene's accepting revision, record ids then fields, and the derived lines at every scene
+position for `--baseline`; the four stored books 8/8 identical before and after every cut, no
+derived line moved). Cut 1: the two counts struck in place in `PLAN.md`. Cut 2:
+`handoff-reader-perception.md` and `handoff-writer-recruiter.md` deleted, ten pointers
+repointed to §143.2, §146 and `plan/writer-roster.md` §5. Cut 3: `tests/helpers.py` holding
+`accepted`, `accepted_all` and `canon`, every local name kept so no call site or cited test
+name moved. Cut 4, this entry's commit: the two scripts deleted; the result file of the
+counter's one run stays as the record of it. Cut 5 follows: the nine names and the stale
+docstring, which is not behaviour and gets no entry. The inventory and the replay script stay
+as the track's deliverables.
+
+**What was refused, and why.** `handoff-listing-loop.md`: its eleven-round listing table has
+no other home and `domain/voice.py` cites the file for it. `blurb_perception.py`,
+`idiom_fit.py`, `number_context_run.py`, `register_census_run.py`, and the registered blurb,
+brief-capability, causal-salience and voice-descriptor arms: each is named by an entry, a
+registration or a results file as the instrument behind a number, and a refuted arm's code is
+not deleted for being refuted (the brief's own rule; archival waits on a FINDINGS.md that
+records the refutation where the code lives). `schedule-library.ps1`, the two census tools and
+the two pilot scripts: cited and runnable. The dated test totals in PLAN.md §17 and §20 and
+the sibling repositories' counts: records of a date, not claims. The `_system`, `_record` and
+`_canon` homonyms: different fixtures, and `tests/test_gamesystem.py` says why one is not
+shared. Worktrees and branches: a session may be sitting in one, so the list is the operator's
+(`claude/ox-alpha-trial-7f3a21` and `origin/claude/adoring-chatterjee-b5f092` each hold one
+unmerged patch).
+
+**Anti-scope.** No prompt, gate, line or stored book changed, and the replay is the proof. No
+research claim is promoted or demoted; a result file that lost its writer keeps its digest and
+its date. Nothing here measures prose.
+
+### 214.1 The track closed: five cuts, the brief deleted, and the checks on the final tree
+
+**The commits**, on `claude/intelligent-feynman-119bfa`: `2142d0f` the replay script;
+`fdd5ee3` the inventory; `2f61d4c` cut 1; `05ef950` cut 2; `fb0c58c` cut 3; `64d0b9b` the
+merge of `main` (§213) that put this entry after it; `a4fb566` cut 4 (§214); `7a0df15` cut 5;
+and the commit carrying this sub-entry, which deletes `plan/handoff-pruning.md`.
+
+**The checks on the final tree.** `uv run pytest`: 3748 passed, 20 skipped in 175.02s (0:02:55). `uv run mypy`: no issues.
+`uv run ruff check .`: clean. `git diff --check`: clean. `tools/replay_books.py --baseline`
+against the baseline taken at `2142d0f`: 8/8 identical, no derived line moved. Every cut
+commit carried the same checks at module grain and the replay at book grain.
+
+**Two things the checks caught on the way, recorded so the next session does not pay for
+them.** Formatting an explicit list of test files that were not format-clean reflowed six of
+them well beyond the edit (§205's lesson again, one step removed); cut 3 was redone from
+`HEAD` with import sorting only. A regex that removed a method by name ran past the end of
+its class when the method was the last one, into the next class's header; ruff caught it
+before any test ran, and the block was removed by exact text instead.
+
+**Anti-scope.** Nothing in this sub-entry is a new decision; it closes §214.

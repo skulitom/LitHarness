@@ -47,6 +47,7 @@ from litharness.domain.findings import DetectorInput, Severity
 from litharness.domain.integrity import detect_contradictions
 from litharness.domain.text import content_hash
 from tests.conftest import FIXTURE_SHEET
+from tests.helpers import canon as _canon
 
 
 def state_of(fixture_id: str) -> lc.StateSnapshot:
@@ -634,12 +635,6 @@ def test_a_malformed_sheet_declaration_is_refused_rather_than_defaulted(value) -
 
 
 # --- the number comes off the page (plan/stage-0-decisions.md §113) ---------------------------
-
-
-def _canon(subject: str, predicate: str, **kwargs) -> lc.StateRecord:  # type: ignore[no-untyped-def]
-    return worlds.world_record(
-        subject, predicate, authority=lc.StateAuthority.ACCEPTED_CANON, **kwargs
-    )
 
 
 def _ladder_world() -> list[lc.StateRecord]:

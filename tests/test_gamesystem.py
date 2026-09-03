@@ -28,6 +28,7 @@ import pytest
 
 from litharness.domain import gamesystem as gs
 from litharness.domain import genre, worlds
+from tests.helpers import accepted_all as _canon
 
 
 def _system(**overrides: object) -> gs.SystemDef:
@@ -62,13 +63,6 @@ def _system(**overrides: object) -> gs.SystemDef:
     }
     base.update(overrides)
     return gs.SystemDef(**base)  # type: ignore[arg-type]
-
-
-def _canon(records: list[lc.StateRecord]) -> list[lc.StateRecord]:
-    return [
-        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
-        for record in records
-    ]
 
 
 def _seeded(system: gs.SystemDef, character: str = "silas") -> list[lc.StateRecord]:

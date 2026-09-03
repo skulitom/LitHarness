@@ -71,6 +71,7 @@ from litharness.domain.integrity import (
 from litharness.domain.patch import Veto
 from litharness.domain.policy import REGENERABLE, RETRYABLE, GateKind, Outcome, decide
 from tests.conftest import BOOK_ID, BRANCH_ID
+from tests.helpers import accepted as _accepted
 from tests.test_state import load_state, record
 
 
@@ -236,11 +237,6 @@ def test_contradictory_records_at_one_story_position_are_a_finding() -> None:
     assert found.blocks
     assert found.deterministic
     assert "rook level holds 2 different values" in found.message
-
-
-def _accepted(built: lc.StateRecord) -> lc.StateRecord:
-    """`world_record` proposes; canon is what a policy decision makes of it."""
-    return replace(built, authority=lc.StateAuthority.ACCEPTED_CANON)
 
 
 def test_a_subject_that_is_two_things_at_once_is_not_contradicting_itself() -> None:

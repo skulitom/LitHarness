@@ -457,3 +457,17 @@ the others reach for (a rule, its cost, its revision). What the loop bought: the
 chapter in this house at the shelf's absence rate after the pass, and the pass at a third of
 its first spend. What it did not buy: the long sentence, still three times a chapter, and
 the status row's zeros. The operator's read is the readout.
+
+## 7. Draw4 — the general system, and the seed's id in the rank column
+
+Drawn 2026-09-03 at 8a7df4a (stage-0 §203 to §212.1) on the operator's ask to see what a
+chapter prints under the general system; the reading is stage-0 §213 and this section only
+points at it. The seed took up every new shape unprompted: two systems, every grant priced in
+a stock the rungs hand out, a fork at band two, five declared changes. The chapter printed one
+line per scene, `[STATUS] Tom — Band band_one | Marks 2 | Reading 1`, twice, nothing moving:
+the seed wrote the rung's id where the rank column takes a number, so the rise's ask, example
+and gate all abstained (*the line standing at s1 prints no rank column*), and the stock's
+balance stood in the snapshot and not in a `can_do` edge, so the arithmetic offered nothing but
+the rise. The changes sit in the scheduled key space and never fold into a scene (§165).
+Spend $11.66 over 31 calls; the chapter is on the shelf as `marks-for-moving` and in
+`runs/ab/pilot25/draw4`. Not a substitute for the operator's read 20 of draw 3.

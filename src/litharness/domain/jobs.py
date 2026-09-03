@@ -166,11 +166,6 @@ class Job:
             )
         return replace(self, lease_holder=holder, lease_expires_at=now + duration)
 
-    def renew(self, holder: str, now: float, duration: float) -> Job:
-        if self.lease_holder != holder:
-            raise LeaseError(f"job {self.job_id} is not held by {holder}")
-        return replace(self, lease_expires_at=now + duration)
-
     def released(self) -> Job:
         return replace(self, lease_holder=None, lease_expires_at=None)
 

@@ -33,6 +33,7 @@ from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.revision import Revision, build_revision, node_version_id
 from litharness.domain.text import content_hash
 from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
+from tests.helpers import accepted as canon
 
 PREMISE_ITEM = lc.PlanItem(
     logical_id="plan-premise",
@@ -41,24 +42,6 @@ PREMISE_ITEM = lc.PlanItem(
     authority=lc.PlanAuthority.INTENDED,
     locked=True,
 )
-
-
-def canon(record: lc.StateRecord) -> lc.StateRecord:
-    """The same record, accepted. `world_record` proposes; canon is what a decision makes."""
-    return lc.StateRecord(
-        record_id=record.record_id,
-        kind=record.kind,
-        subject=record.subject,
-        predicate=record.predicate,
-        value=record.value,
-        object_ref=record.object_ref,
-        story_position=record.story_position,
-        authority=lc.StateAuthority.ACCEPTED_CANON,
-        pov_visibility=list(record.pov_visibility),
-        evidence=list(record.evidence),
-        predicate_registry_version=record.predicate_registry_version,
-        note=record.note,
-    )
 
 
 def edge(subject: str, predicate: str, target: str, value: object = None, key: str = "s1"):

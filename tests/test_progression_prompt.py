@@ -53,6 +53,7 @@ from litharness.domain.extraction import (
     system_voice_example,
 )
 from litharness.domain.progression import gate_progression, moved_example, named_target
+from tests.helpers import accepted_all as _accepted
 from tests.test_progression_gate import (
     _canon,
     _plan,
@@ -438,15 +439,6 @@ def test_composing_the_example_performs_no_advancement() -> None:
 
 
 # ------------------------------------------------------ §210: every column the move changes
-
-
-def _accepted(records: list[lc.StateRecord]) -> list[lc.StateRecord]:
-    import dataclasses
-
-    return [
-        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
-        for record in records
-    ]
 
 
 def test_the_shown_line_carries_every_number_the_move_changes() -> None:

@@ -44,6 +44,7 @@ from litharness.domain.plan_refinement import PlanProposalError
 from litharness.domain.plans import scene_plan_for, scene_plan_id_for
 from litharness.domain.revision import new_book
 from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
+from tests.helpers import accepted
 
 START = 1_760_000_000.0
 PREMISE = "A courier in a debt-ledger city must clear a guild debt before it compounds."
@@ -354,7 +355,7 @@ def test_the_handler_reads_the_protagonist_off_the_canon_it_already_read(
         BOOK_ID,
         BRANCH_ID,
         [
-            replace(built, authority=lc.StateAuthority.ACCEPTED_CANON)
+            accepted(built)
             for built in (
                 worlds.world_record("silas", worlds.ENTITY_ROLE_PREDICATE, value="cast"),
                 worlds.world_record(
