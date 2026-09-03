@@ -1,0 +1,1624 @@
+{
+  "ledger": {
+    "api_calls": 194,
+    "ceiling_usd": 10.0,
+    "failure_reasons": {},
+    "replayed": 0,
+    "seconds": 999.6,
+    "sessions_planned": 24,
+    "sessions_run": 24,
+    "spend": {
+      "cache_read": 4409617,
+      "cache_write": 2542822,
+      "equivalent_usd": 7.572,
+      "input": 1010995,
+      "output": 206883
+    },
+    "stopped_at_ceiling": false,
+    "transport_failures": 0
+  },
+  "model": "claude-haiku-4-5",
+  "plan": {
+    "feeds": 2,
+    "max_calls": 576,
+    "sessions": 24
+  },
+  "reading": {
+    "abandonment_step": {
+      "intact_minus_sham": {
+        "above_zero": false,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 2,
+        "high": 0.0,
+        "low": -0.75,
+        "observations": 8,
+        "point": -0.375
+      },
+      "intact_minus_shuffled": {
+        "above_zero": false,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 2,
+        "high": 1.5,
+        "low": -4.25,
+        "observations": 8,
+        "point": -1.375
+      },
+      "sham_minus_shuffled": {
+        "above_zero": false,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 2,
+        "high": 1.5,
+        "low": -3.5,
+        "observations": 8,
+        "point": -1.0
+      }
+    },
+    "complete_clusters": 2,
+    "complete_triples": 8,
+    "decision": "NULL",
+    "first_read_on_target": {
+      "intact_minus_sham": {
+        "above_zero": true,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 2,
+        "high": 0.25,
+        "low": 0.25,
+        "observations": 8,
+        "point": 0.25
+      },
+      "intact_minus_shuffled": {
+        "above_zero": true,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 2,
+        "high": 0.25,
+        "low": 0.25,
+        "observations": 8,
+        "point": 0.25
+      },
+      "sham_minus_shuffled": {
+        "above_zero": false,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 2,
+        "high": 0.0,
+        "low": 0.0,
+        "observations": 8,
+        "point": 0.0
+      }
+    },
+    "fp5": {
+      "floor": 0.05,
+      "mean_read_switch_rate": 0.503968253968254,
+      "named_pattern": null,
+      "per_slot_sd": {
+        "A": 0.3282051313990139,
+        "B": 0.23979582413637363,
+        "C": 0.1250973968626608,
+        "D": 0.131795177532646
+      },
+      "statistic": 0.20622338248267358,
+      "unscorable": 0,
+      "verdict": "PASS"
+    },
+    "per_version": {
+      "intact": {
+        "all_skim_sessions": 0,
+        "exit_notes": {},
+        "first_read_on_target_share": 0.375,
+        "mean_abandonment_step": 2.0,
+        "mean_skim_rate": 0.0375,
+        "mean_target_read_share": 0.25223214285714285,
+        "scorable": 8,
+        "scorable_share": 1.0,
+        "sessions": 8,
+        "target_never_read": 4
+      },
+      "sham": {
+        "all_skim_sessions": 0,
+        "exit_notes": {},
+        "first_read_on_target_share": 0.125,
+        "mean_abandonment_step": 2.375,
+        "mean_skim_rate": 0.0,
+        "mean_target_read_share": 0.203125,
+        "scorable": 8,
+        "scorable_share": 1.0,
+        "sessions": 8,
+        "target_never_read": 3
+      },
+      "shuffled": {
+        "all_skim_sessions": 0,
+        "exit_notes": {},
+        "first_read_on_target_share": 0.125,
+        "mean_abandonment_step": 3.375,
+        "mean_skim_rate": 0.0,
+        "mean_target_read_share": 0.171875,
+        "scorable": 8,
+        "scorable_share": 1.0,
+        "sessions": 8,
+        "target_never_read": 2
+      }
+    },
+    "positional": {
+      "A": {
+        "mean": 0.5238095238095238,
+        "per_session": [
+          0.75,
+          0.125,
+          0.875,
+          0.125,
+          0.75,
+          0.125,
+          1.0,
+          0.875,
+          0.25,
+          0.375,
+          1.0,
+          0.875,
+          0.25,
+          1.0,
+          0.5714285714285714,
+          0.75,
+          0.125,
+          0.25,
+          0.375,
+          1.0,
+          0.25,
+          0.25,
+          0.375,
+          0.25
+        ]
+      },
+      "B": {
+        "mean": 0.2663690476190476,
+        "per_session": [
+          0.25,
+          0.875,
+          0.125,
+          0.875,
+          0.25,
+          0.375,
+          0.0,
+          0.125,
+          0.25,
+          0.125,
+          0.0,
+          0.125,
+          0.25,
+          0.0,
+          0.14285714285714285,
+          0.25,
+          0.75,
+          0.25,
+          0.375,
+          0.0,
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ]
+      },
+      "C": {
+        "mean": 0.09970238095238095,
+        "per_session": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.25,
+          0.25,
+          0.0,
+          0.0,
+          0.25,
+          0.0,
+          0.14285714285714285,
+          0.0,
+          0.0,
+          0.25,
+          0.125,
+          0.0,
+          0.25,
+          0.375,
+          0.25,
+          0.25
+        ]
+      },
+      "D": {
+        "mean": 0.11011904761904762,
+        "per_session": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.5,
+          0.0,
+          0.0,
+          0.25,
+          0.25,
+          0.0,
+          0.0,
+          0.25,
+          0.0,
+          0.14285714285714285,
+          0.0,
+          0.125,
+          0.25,
+          0.125,
+          0.0,
+          0.25,
+          0.125,
+          0.125,
+          0.25
+        ]
+      }
+    },
+    "readable_versions": true,
+    "scorable_floor": 0.75,
+    "target_read_share": {
+      "intact_minus_sham": {
+        "above_zero": false,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 2,
+        "high": 0.125,
+        "low": -0.026785714285714288,
+        "observations": 8,
+        "point": 0.049107142857142856
+      },
+      "intact_minus_shuffled": {
+        "above_zero": false,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 2,
+        "high": 0.3125,
+        "low": -0.1517857142857143,
+        "observations": 8,
+        "point": 0.08035714285714285
+      },
+      "sham_minus_shuffled": {
+        "above_zero": false,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 2,
+        "high": 0.1875,
+        "low": -0.125,
+        "observations": 8,
+        "point": 0.03125
+      }
+    }
+  },
+  "registration": {
+    "alpha": 0.1,
+    "attainability_seed": 20260903,
+    "ceiling_arm_usd": 80.0,
+    "ceiling_screen_usd": 10.0,
+    "cluster": "feed",
+    "decision": {
+      "INVERTED": "the intact - shuffled interval lies strictly below zero; reported as what it is, never read as a preference for disorder",
+      "MOVES_WITH_EDITEDNESS": "intact - shuffled lies above zero and sham - shuffled does not: the reader moves for surface damage as much as for order",
+      "MOVES_WITH_ORDER": "the intact - shuffled interval and the sham - shuffled interval both lie strictly above zero",
+      "NULL": "the intact - shuffled interval contains zero: the stop point does not move under the shuffle at this n; the direction closes for this reader",
+      "UNREADABLE": "fp5 not PASS, or a version under the scorable floor, or fewer than two feeds with a complete scorable triple"
+    },
+    "instrument": "fcr.v0",
+    "instrument_registration_digest": "4c5f695bd0c16a03",
+    "not_run": {
+      "D1P": "the platform-prior families need a seated reader and $16 of generation before any dose exists; the shuffle is the owned manipulation",
+      "fp6": "the skim-price control is not run; no skim-derived number is read"
+    },
+    "primary": "target_read_share, paired per (feed, rotation): intact - shuffled",
+    "reader_model": "claude-haiku-4-5",
+    "replicates": 1,
+    "rotations": 4,
+    "scorable_floor": 0.75,
+    "screen_feeds": 2,
+    "secondary": "abandonment_step, first full read on the target, paired the same way",
+    "sham": "ablate.rewhitespace",
+    "sham_reading": "sham - shuffled, per sham and never pooled",
+    "sham_strength": 1.0,
+    "shuffle_salt": "cost-that-bites/shuffle",
+    "transport": "cli",
+    "version": "cost-that-bites.v0",
+    "versions": [
+      "intact",
+      "shuffled",
+      "sham"
+    ],
+    "workers": 3
+  },
+  "registration_digest": "2659023acf6197e3",
+  "rows": [
+    {
+      "feed_index": 0,
+      "pair_key": "00:0",
+      "rotation": 0,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ]
+        ],
+        "arm": "intact",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-00-intact",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 0,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-00",
+      "version": "intact"
+    },
+    {
+      "feed_index": 0,
+      "pair_key": "00:1",
+      "rotation": 1,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ]
+        ],
+        "arm": "intact",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-00-intact",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 1,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-00",
+      "version": "intact"
+    },
+    {
+      "feed_index": 0,
+      "pair_key": "00:2",
+      "rotation": 2,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ]
+        ],
+        "arm": "intact",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-00-intact",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 2,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-00",
+      "version": "intact"
+    },
+    {
+      "feed_index": 0,
+      "pair_key": "00:3",
+      "rotation": 3,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ]
+        ],
+        "arm": "intact",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-00-intact",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 3,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-00",
+      "version": "intact"
+    },
+    {
+      "feed_index": 0,
+      "pair_key": "00:0",
+      "rotation": 0,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ]
+        ],
+        "arm": "sham",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-00-sham",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 0,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-00",
+      "version": "sham"
+    },
+    {
+      "feed_index": 0,
+      "pair_key": "00:1",
+      "rotation": 1,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ]
+        ],
+        "arm": "sham",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-00-sham",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 1,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-00",
+      "version": "sham"
+    },
+    {
+      "feed_index": 0,
+      "pair_key": "00:2",
+      "rotation": 2,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ]
+        ],
+        "arm": "sham",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-00-sham",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 2,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-00",
+      "version": "sham"
+    },
+    {
+      "feed_index": 0,
+      "pair_key": "00:3",
+      "rotation": 3,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ]
+        ],
+        "arm": "sham",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-00-sham",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 3,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-00",
+      "version": "sham"
+    },
+    {
+      "feed_index": 0,
+      "pair_key": "00:0",
+      "rotation": 0,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ]
+        ],
+        "arm": "shuffled",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-00-shuffled",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 0,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-00",
+      "version": "shuffled"
+    },
+    {
+      "feed_index": 0,
+      "pair_key": "00:1",
+      "rotation": 1,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "C"
+          ]
+        ],
+        "arm": "shuffled",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-00-shuffled",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 1,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-00",
+      "version": "shuffled"
+    },
+    {
+      "feed_index": 0,
+      "pair_key": "00:2",
+      "rotation": 2,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ]
+        ],
+        "arm": "shuffled",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-00-shuffled",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 2,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-00",
+      "version": "shuffled"
+    },
+    {
+      "feed_index": 0,
+      "pair_key": "00:3",
+      "rotation": 3,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ]
+        ],
+        "arm": "shuffled",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-00-shuffled",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 3,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-00",
+      "version": "shuffled"
+    },
+    {
+      "feed_index": 1,
+      "pair_key": "01:0",
+      "rotation": 0,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ]
+        ],
+        "arm": "intact",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-01-intact",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 0,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-01",
+      "version": "intact"
+    },
+    {
+      "feed_index": 1,
+      "pair_key": "01:1",
+      "rotation": 1,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ]
+        ],
+        "arm": "intact",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-01-intact",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 1,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-01",
+      "version": "intact"
+    },
+    {
+      "feed_index": 1,
+      "pair_key": "01:2",
+      "rotation": 2,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "skim",
+            "B"
+          ],
+          [
+            "skim",
+            "C"
+          ],
+          [
+            "skim",
+            "D"
+          ]
+        ],
+        "arm": "intact",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-01-intact",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 2,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-01",
+      "version": "intact"
+    },
+    {
+      "feed_index": 1,
+      "pair_key": "01:3",
+      "rotation": 3,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ]
+        ],
+        "arm": "intact",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-01-intact",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 3,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-01",
+      "version": "intact"
+    },
+    {
+      "feed_index": 1,
+      "pair_key": "01:0",
+      "rotation": 0,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ]
+        ],
+        "arm": "sham",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-01-sham",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 0,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-01",
+      "version": "sham"
+    },
+    {
+      "feed_index": 1,
+      "pair_key": "01:1",
+      "rotation": 1,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ]
+        ],
+        "arm": "sham",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-01-sham",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 1,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-01",
+      "version": "sham"
+    },
+    {
+      "feed_index": 1,
+      "pair_key": "01:2",
+      "rotation": 2,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "B"
+          ]
+        ],
+        "arm": "sham",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-01-sham",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 2,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-01",
+      "version": "sham"
+    },
+    {
+      "feed_index": 1,
+      "pair_key": "01:3",
+      "rotation": 3,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ]
+        ],
+        "arm": "sham",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-01-sham",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 3,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-01",
+      "version": "sham"
+    },
+    {
+      "feed_index": 1,
+      "pair_key": "01:0",
+      "rotation": 0,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ]
+        ],
+        "arm": "shuffled",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-01-shuffled",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 0,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-01",
+      "version": "shuffled"
+    },
+    {
+      "feed_index": 1,
+      "pair_key": "01:1",
+      "rotation": 1,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "C"
+          ]
+        ],
+        "arm": "shuffled",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-01-shuffled",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 1,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-01",
+      "version": "shuffled"
+    },
+    {
+      "feed_index": 1,
+      "pair_key": "01:2",
+      "rotation": 2,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ]
+        ],
+        "arm": "shuffled",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-01-shuffled",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 2,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-01",
+      "version": "shuffled"
+    },
+    {
+      "feed_index": 1,
+      "pair_key": "01:3",
+      "rotation": 3,
+      "session": {
+        "actions": [
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "A"
+          ],
+          [
+            "read",
+            "D"
+          ],
+          [
+            "read",
+            "B"
+          ],
+          [
+            "read",
+            "C"
+          ],
+          [
+            "read",
+            "D"
+          ]
+        ],
+        "arm": "shuffled",
+        "dose": 0.0,
+        "exit_note": "",
+        "feed_id": "ctb-01-shuffled",
+        "model": "claude-haiku-4-5",
+        "read_cost": 3,
+        "replicate": 0,
+        "rotation": 3,
+        "skim_cost": 1,
+        "unanswered": 0
+      },
+      "target_name": "fitness-01",
+      "version": "shuffled"
+    }
+  ],
+  "study": "cost-that-bites.v0/screen",
+  "transport": "cli",
+  "warnings": []
+}
