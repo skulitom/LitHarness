@@ -610,7 +610,8 @@ def render_pick_request(
     **This is the first pairing in this project that carries a label, and the label is not
     ours.** The rival cleared `rivals.admit` — a real book, rated above four stars by more than
     a handful of people, in a genre this reader reads — so the answer comes from what a market
-    did rather than from anybody's opinion. §87-§89 spent three entries without one.
+    did rather than from anybody's opinion. §87.2 ran §79's conversion-labelled pairs, a label
+    a reader produced; what is new here is a market-admitted rival against our own text.
 
     What it is for is a **screen and not a score** (`plan/reader-calibration.md`): a readership
     that cannot pick the published book out of this pair has no resolution, and every number it

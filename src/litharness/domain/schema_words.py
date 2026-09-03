@@ -93,7 +93,8 @@ def taken_as_a_name(name: str) -> tuple[str, ...]:
 
     Articles, brackets, digits and punctuation come off first, so `[LADDER]` and `the Ladder`
     answer the same as `Ladder`. Case is ignored because a name is a name however it is typed:
-    pilot 15c's lowercase criterion `standing` is §120's measured defect exactly.
+    pilot 15c's lowercase criterion `standing` is the defect §135 item 3 records against §120,
+    and the one §178 counted when it shipped this module.
     """
     words = [word.casefold() for word in _WORD.findall(name)]
     kept = [word for word in words if word not in _ARTICLES] or words
