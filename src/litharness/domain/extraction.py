@@ -199,6 +199,11 @@ class Sheet:
     #: fifteen at zero and a row with six zeros a shape the genre's windows do not have.
     #: The first column always prints, so a line is never empty and a ladder's rung stays.
     show_unheld: bool = True
+    #: Whose sheet this is (§206): a subject id, a role (`place`, `creature`, `cast`), or
+    #: `None` for the book's own sheet, the one its protagonist prints. A book may declare
+    #: one sheet per owner, so a place or a creature carries columns of its own beside
+    #: the person's; `sheet_for(records, subject=...)` is how a line finds its columns.
+    owner: str | None = None
 
     def __post_init__(self) -> None:
         if not self.fields:
@@ -220,6 +225,8 @@ class Sheet:
         declared: dict[str, object] = {"fields": fields}
         if not self.show_unheld:
             declared["show_unheld"] = False
+        if self.owner is not None:
+            declared["owner"] = self.owner
         return declared
 
     @property
@@ -398,6 +405,11 @@ def _read_typed(field_: SheetField, rest: str, ids: Mapping[str, str]) -> object
             members.append([entity, depth] if depth is not None else [entity])
         return members
     return ids.get(rest.casefold())
+
+
+def _status_lines(text: str) -> list[tuple[str, tuple[int, int]]]:
+    """Every status line in `text`, as its printed subject and its span."""
+    return [(match.group("subject"), match.span()) for match in _LINE.finditer(text)]
 
 
 #: A status line's frame: the tag, the subject up to the em dash, and the rest as pairs.
@@ -759,7 +771,10 @@ def parse_sheet(value: object) -> Sheet:
     show_unheld = value.get("show_unheld", True)
     if not isinstance(show_unheld, bool):
         raise MalformedSheet("show_unheld must be true or false when given")
-    return Sheet(tuple(fields), show_unheld=show_unheld)
+    owner = value.get("owner")
+    if owner is not None and (not isinstance(owner, str) or not owner.strip()):
+        raise MalformedSheet("owner must be a subject id or a role when given")
+    return Sheet(tuple(fields), show_unheld=show_unheld, owner=owner.strip() if owner else None)
 
 
 def label_for(key: str) -> str:
@@ -826,7 +841,7 @@ def implied_sheet(records: Sequence[lc.StateRecord]) -> Sheet | None:
     return Sheet(fields) if fields else None
 
 
-def sheet_for(records: Sequence[lc.StateRecord]) -> Sheet | None:
+def sheet_for(records: Sequence[lc.StateRecord], *, subject: str | None = None) -> Sheet | None:
     """The sheet this book declared, the one its own snapshots imply, or the default.
 
     **Abstains when the book says more than one thing**, exactly as `attested_position` does:
@@ -848,13 +863,26 @@ def sheet_for(records: Sequence[lc.StateRecord]) -> Sheet | None:
     `speaks_system_voice` refuses and the genre floor blocks, so nothing is ever asked to
     print it.
     """
-    declared = [
-        record
+    parsed = [
+        parse_sheet(record.value)
         for record in records
         if record.predicate == SHEET_PREDICATE and state_mod.is_canon(record)
     ]
+    # **A sheet with an owner is that owner's and nobody else's** (§206). Asked for a
+    # subject, the declaration naming that subject wins, then one naming one of its
+    # roles, then the book's own sheet; asked for the book, only the sheets with no
+    # owner compete, so a place's columns never become the person's line.
+    if subject is not None:
+        for sheet in parsed:
+            if sheet.owner == subject:
+                return sheet
+        roles = set(worlds_mod.entity_roles(_canon_of(records)).get(subject, ()))
+        for sheet in parsed:
+            if sheet.owner is not None and sheet.owner in roles:
+                return sheet
+    declared = [sheet for sheet in parsed if sheet.owner is None]
     if len(declared) == 1:
-        return parse_sheet(declared[0].value)
+        return declared[0]
     # Two declarations are a disagreement about the book's own vocabulary, which
     # `genre.system_gap` reports for the Architect to settle. Until it is, the book's own
     # snapshots settle which one is live (§205): the declaration whose every column the
@@ -864,11 +892,7 @@ def sheet_for(records: Sequence[lc.StateRecord]) -> Sheet | None:
     if implied is None:
         return None
     held = set(implied.value_keys)
-    live = [
-        sheet
-        for sheet in (parse_sheet(record.value) for record in declared)
-        if set(sheet.value_keys) <= held
-    ]
+    live = [sheet for sheet in declared if set(sheet.value_keys) <= held]
     return live[0] if len(live) == 1 else implied
 
 
@@ -935,7 +959,11 @@ def render_status_line(
     """
     # **No default** (§205): the sheet is the one given, the book's own, or the one this
     # snapshot implies; a value with no numeric key renders the tag and the subject alone.
-    chosen = sheet or (sheet_for(records) if records else None) or sheet_from_value(value)
+    chosen = (
+        sheet
+        or (sheet_for(records, subject=subject) if records else None)
+        or sheet_from_value(value)
+    )
     if chosen is None:
         return f"[STATUS] {display_name(records, subject)} — "
     return chosen.render(
@@ -1631,12 +1659,19 @@ def extract_state(
     # onto the columns it left out, which is what `state_as_it_stands` already does.
     ids = {display_name(known, subject).casefold(): subject for subject in subjects}
     declared = False
-    for read_subject, read, span in sheet.read(text, ids=ids):
+    for read_subject, span in _status_lines(text):
         subject = normalise_subject(read_subject)
         # A name canon has never used is a claim about someone new, which is a proposal
         # rather than a reading of what the book already established.
         if subject not in subjects:
             continue
+        # **Each line is read with its owner's columns** (§206): a place's line with the
+        # place's sheet, the person's with the book's. A taught sheet is the book's.
+        own = sheet if taught else (sheet_for(known, subject=subject) or sheet)
+        found = own.read(text[span[0] : span[1]], ids=ids)
+        if not found:
+            continue
+        read = found[0][1]
         # **The record is the whole state, the line is its projection.** A partial record at
         # a position where a fuller one stands reads as a contradiction to the integrity
         # detector (two values for one fact at one position), so the columns the line left

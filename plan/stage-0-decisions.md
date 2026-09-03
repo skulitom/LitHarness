@@ -22722,3 +22722,39 @@ file list, never format a tree) is in the working notes and not in any file here
 **Anti-scope.** Views, several sheets per book, the choice display and the notice are the
 next slices of phase 3. The books on disk are unchanged by construction, and the replay says
 so.
+
+## 206. Phase 3, second slice: a sheet declaration names its owner, so a book carries a person's sheet and a place's or a creature's at once
+
+**What it answers.** The plan's phase 3 (`plan/system-generality.md` §4) and the genre's
+table (§2 there): a dungeon core, a settlement, a pet, an item and a monster read through an
+Identify all carry a sheet that is not the person's, and until now a book had one sheet and
+it was the protagonist's (§170's tie-break decided whose line printed; the sheet was the
+book's). The field census (§204) does not read whose window a window is, so this slice
+rests on the plan's reasoning and not on a count, and the entry says so.
+
+**What shipped** (`domain/extraction.py`, `application/world.py`). A `status_sheet`
+declaration may carry an `owner`: a subject id, or a role (`place`, `creature`, `cast`).
+`Sheet.owner` holds it and the declaration round-trips it. `sheet_for(records,
+subject=...)`: asked for a subject, the declaration naming that subject wins, then one naming
+one of its roles, then the book's own sheet; asked for the book, only the sheets with no
+owner compete, so a place's columns never become the person's line, and the two-declaration
+tie-break (§205) runs over the book's own sheets only. `render_status_line` asks for the
+subject's sheet. `extract_state` reads each line with its owner's columns: the line's subject
+is read first, its sheet chosen, and the pairs parsed against it, so a place's line reads
+onto the place with the place's keys and a person's line with the book's, and a line that
+prints another owner's columns under the wrong subject reads as nothing. A taught sheet
+(§205's first line) is the book's. The vocabulary line for `status_sheet` names the owner and
+says the one-or-none rule is for the book's own sheets. Tests in `tests/test_extraction.py`:
+the owner's, the role's and the book's sheets chosen in that order; two owners' lines in one
+scene minted onto their owners; a crossed line reading as nothing; a creature's role sheet
+reading a creature's line. The four stored books replay identically (eight of eight).
+
+**What was refused.** Reading the owner off the subject's role when no sheet names it (a
+place with no declared sheet holds no line, rather than borrowing the person's). Printing more
+than the protagonist's line unasked: which lines a scene is asked to print is the writer's
+furniture ask, unchanged here, and a second owner's line is drafted when the world's records
+make it furniture, which is the next slice's question.
+
+**Anti-scope.** No view node yet: a sheet with an owner is a declaration on the existing
+predicate, chosen at read time. The notice, the readout on request, the box, and the choice
+display's option text and conditional offers remain phase 3's.

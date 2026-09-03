@@ -245,14 +245,17 @@ def vocabulary() -> dict[str, Any]:
                 "the columns this book's own status line prints; --value an object "
                 '{"fields": [{"name": <the key a snapshot fills>, "label": <what the line '
                 'prints>, "paired": true|false, "kind": number|ordinal|name|text|set}], '
-                '"show_unheld": true|false}. A number is the kind when none is given; an '
+                '"show_unheld": true|false, "owner": <a subject id or a role>}. A number is '
+                "the kind when none is given; an "
                 "ordinal holds a rung id and prints its name, a name holds an entity id and "
                 "prints its name (a class, a title), text holds words, a set holds entity ids "
                 "each with an optional depth (a skill list). A paired "
                 "field prints current/maximum and adds a <name>_max key; with show_unheld "
                 "false the line prints its first column and the columns with something in "
-                "them only. "
-                "Declare exactly one or none: a "
+                "them only. An owner makes the sheet that subject's, or every subject of "
+                "that role's (a place, a creature), beside the book's own; without one the "
+                "sheet is the book's, the one its protagonist prints. Of the book's own, "
+                "declare exactly one or none: a "
                 "book that declares none, and a book that declares two, both print a generic "
                 "line written in nobody's vocabulary"
             ),

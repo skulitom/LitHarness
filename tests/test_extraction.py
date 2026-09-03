@@ -1173,3 +1173,115 @@ def test_an_imported_book_with_snapshots_and_no_declaration_is_declared_from_its
     assert parse_sheet(declaration.value) == FIXTURE_SHEET, "the file's own order"
     assert declaration_from_snapshots([*records, declaration]) is None, "declared already"
     assert declaration_from_snapshots([]) is None
+
+
+# -- §206: a sheet declaration names its owner ----------------------------------------------
+
+
+def _owned_book() -> list[lc.StateRecord]:
+    """The person's sheet (the book's own), a place's sheet by subject, and a creature's by role."""
+    canon = _named_canon()
+    return [
+        *canon,
+        worlds.world_record(
+            "kellow",
+            SHEET_PREDICATE,
+            value={
+                "fields": [{"name": "rank", "label": "Band"}, {"name": "pace", "label": "Pace"}]
+            },
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        worlds.world_record(
+            "hall_c",
+            SHEET_PREDICATE,
+            value={
+                "fields": [{"name": "held", "label": "Held"}, {"name": "open", "label": "Open"}],
+                "owner": "hall_c",
+            },
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        worlds.world_record(
+            "chaperone",
+            SHEET_PREDICATE,
+            value={"fields": [{"name": "reach", "label": "Reach"}], "owner": "creature"},
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+        worlds.world_record(
+            "chaperone", "is_a", value="Chaperone", authority=lc.StateAuthority.ACCEPTED_CANON
+        ),
+        worlds.world_record(
+            "chaperone",
+            worlds.ENTITY_ROLE_PREDICATE,
+            value="creature",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    ]
+
+
+def test_a_sheet_with_an_owner_is_that_owner_s_and_the_book_s_own_is_untouched() -> None:
+    """§206: asked for the book, only the sheets with no owner compete, so a place's columns
+    never become the person's line; asked for a subject, its own declaration wins, then one
+    naming its role, then the book's."""
+    records = _owned_book()
+    book = sheet_for(records)
+    assert book is not None and book.value_keys == ("rank", "pace") and book.owner is None
+    assert sheet_for(records, subject="kellow") == book
+    place = sheet_for(records, subject="hall_c")
+    assert place is not None and place.value_keys == ("held", "open") and place.owner == "hall_c"
+    creature = sheet_for(records, subject="chaperone")
+    assert creature is not None and creature.owner == "creature"
+    assert sheet_for(records, subject="somebody_else") == book, "no owner of its own: the book's"
+    assert parse_sheet(place.declaration()).owner == "hall_c", "the owner round-trips"
+
+
+def test_each_line_is_read_with_its_owner_s_columns_and_printed_with_them() -> None:
+    records = [*state_of("litrpg").records, *_owned_book()]
+    place_line = render_status_line("hall_c", {"held": 41, "open": 0}, records=records)
+    person_line = render_status_line("kellow", {"rank": 1, "pace": 2}, records=records)
+    assert place_line == "[STATUS] Hall C — Held 41 | Open 0"
+    assert person_line == "[STATUS] Kellow — Band 1 | Pace 2"
+    scene = f"He counted the hall.\n{place_line}\nHe counted himself.\n{person_line}\n"
+    minted = _statuses(
+        extract_state(
+            scene,
+            known=records,
+            project_id="p",
+            book_id="b",
+            branch_id="br",
+            logical_id="scene-1",
+            version_id="v",
+        )
+    )
+    assert {record.subject: record.value for record in minted} == {
+        "hall_c": {"held": 41, "open": 0},
+        "kellow": {"rank": 1, "pace": 2},
+    }
+    # The place's columns do not read onto the person, and the person's not onto the place.
+    crossed = _statuses(
+        extract_state(
+            "[STATUS] Kellow — Held 3",
+            known=records,
+            project_id="p",
+            book_id="b",
+            branch_id="br",
+            logical_id="scene-1",
+            version_id="v",
+        )
+    )
+    assert crossed == ()
+
+
+def test_the_creature_s_role_sheet_reads_a_creature_s_line() -> None:
+    records = [*state_of("litrpg").records, *_owned_book()]
+    [record] = _statuses(
+        extract_state(
+            "[STATUS] Chaperone — Reach 2",
+            known=records,
+            project_id="p",
+            book_id="b",
+            branch_id="br",
+            logical_id="scene-1",
+            version_id="v",
+        )
+    )
+    assert record.subject == "chaperone" and record.value == {"reach": 2}
