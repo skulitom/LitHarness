@@ -23093,3 +23093,59 @@ replay: no complaints, no growth, no gaps.
 
 **Correction in place** to §211 above. **Refused:** re-minting the digest at acceptance, for
 §211's reason (two canon values at one slot, no retraction).
+
+## 213. What a chapter prints under the general system: pilot 25 draw 4 took up every new shape at the seed and printed one unmoving line twice, because the seed wrote a rung's id where the line wanted its number
+
+**What was drawn** (`runs/ab/pilot25/draw4`, the operator's ask of 2026-09-03: *show me what
+a chapter prints under the general system*). The settled pilot 25 concept and listing, writer
+tanaka, the third person, three exemplars, the pipeline at 8a7df4a (§203 to §212.1), a fresh
+store, the tick cap at eight. One draw is one description; nothing here is a treatment.
+
+**What the seed declared, read off the store.** Two systems, as the concept names: the
+Invigilation, a ten-band ladder with eight grants, every grant priced in a stock the rungs
+hand out (*Marks*, four a band), a fork at band two with three ways; the Board, five seats,
+a stock of *Answers* two a seat, three priced grants. The sheet names its system and follows
+it. Five `type change` nodes with participants and effects: a coat that grants Reading, a
+withdrawal that takes it from another candidate, gloves, a pen, a seat on the Board. Every
+shape phase 3 and phase 4 built was used by the Architect on the first seed that could
+declare it, unprompted beyond the vocabulary and one seed sentence each.
+
+**What the chapter printed.** Two scenes, 977 and 948 words, each printing one status line:
+`[STATUS] Tom — Band band_one | Marks 2 | Reading 1`. Nothing moved in either. Scene 1's
+beat named *Two* (the rise, the only move the arithmetic offered), and the progression gate
+abstained: *the line standing at s1 prints no rank column*. The reason is one value in the
+seed's opening snapshot: `rank: band_one`, a rung's id where the rank column is a number.
+Every reader of that column reads an integer (the moved-line example, the gate, the counted
+names), so the rise's ask, example and check all abstained at once, and the writer was
+handed the entering line and copied it, twice; the id itself reached the page inside the
+line.
+
+**Three seed-side gaps, all visible before a word was drafted, none of them the writer's.**
+
+1. **The rung's id in the rank column.** The vocabulary's `status_snapshot` line asks for
+   *its number*; the Architect wrote the id it had just declared. Nothing checked the value
+   against the column's kind before acceptance. Fix: `world check` previews and `world
+   accept` refuses a canon snapshot whose numeric column holds a string, naming the number
+   the rung is (§200's shape: the check says, the accept refuses, the seed is told).
+2. **The stock's balance in the snapshot only.** The line says *Marks 2*; no `can_do marks`
+   edge was declared, so the sheet the arithmetic reads holds no marks, every priced grant
+   is unaffordable, and the beat can name nothing but the rise until the first rise credits
+   four. The snapshot is the printed form and the edges are what the world knows (`sheet_of`,
+   §160); a seed that states a holding on the line and not in the world has said two
+   things. Fix: the same check and refusal for a held numeric column in the opening
+   snapshot with no `can_do` edge behind it for a grant of the sheet's system.
+3. **Changes in the scheduled key space.** The five changes sit at `0100` to `0600`, the
+   snapshots the Architect scheduled sit at `0300` and `0400`, and by §165 a scheduled record
+   never folds into a scene; so the change line never fired and never will in this book.
+   The vocabulary line for `type` says a scene key; the Architect wrote the schedule space
+   it uses for everything else at the seed. Not fixed here: whether a scheduled change
+   should land in the scene whose ordinal it names is §165's question, and it is answered
+   by the book's plan and not by a key conversion.
+
+**What shipped.** Nothing in this entry; it is the reading. The two refusals above are
+§213.1's, landed after the arm finished so the tree did not change under a running arm
+(the harness records the tree at start and finish; it was 8a7df4a throughout).
+
+**Anti-scope.** Whether the chapter reads as its genre is the operator's read (read 20 is
+still outstanding on draw 3, and this draw is not a substitute for it); nothing here
+measures prose. The writer did what it was handed: the line it was shown, once per scene.
