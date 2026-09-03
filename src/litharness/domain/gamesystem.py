@@ -294,10 +294,19 @@ class Option:
     name: str
     grants: tuple[str, ...] = ()
     costs: str | None = None
+    #: What taking this way looks like or does, one line in the world's register (§207):
+    #: the market's advancement screens describe each way, and a way with no line is a
+    #: name. Optional, so every fork written before this reads as it did.
+    manifests_as: str | None = None
+    #: What a person must hold for this way to be offered to them at all (§207): the
+    #: same `Need` an ability carries, so a way conditioned on what the person has done
+    #: is declared with the vocabulary the graph already has. Empty is offered to all.
+    needs: tuple[Need, ...] = ()
 
     def __post_init__(self) -> None:
-        """Grants are held in a canonical order. See `SystemDef.__post_init__`."""
+        """Grants and needs are held in a canonical order. See `SystemDef.__post_init__`."""
         object.__setattr__(self, "grants", tuple(sorted(self.grants)))
+        object.__setattr__(self, "needs", tuple(sorted(self.needs, key=lambda need: need.ref)))
 
 
 @dataclass(frozen=True, slots=True)
@@ -449,10 +458,7 @@ class SystemDef:
                         choice.choice_id,
                         choice.name,
                         choice.opens_at,
-                        [
-                            [option.option_id, option.name, list(option.grants), option.costs]
-                            for option in choice.options
-                        ],
+                        [_option_material(option) for option in choice.options],
                     ]
                     for choice in self.choices
                 ]
@@ -746,6 +752,16 @@ class Advancement:
 # --------------------------------------------------------------------------- drawing a system
 
 
+def _option_material(option: Option) -> list[object]:
+    """A way's digest material: the four fields every way has, then what it looks like and
+    needs only where a way has them, so a fork written before §207 keeps its digest."""
+    material: list[object] = [option.option_id, option.name, list(option.grants), option.costs]
+    if option.manifests_as or option.needs:
+        material.append(option.manifests_as)
+        material.append([[need.ref, need.threshold] for need in option.needs])
+    return material
+
+
 def check_draw(system: SystemDef) -> tuple[str, ...]:
     """Deterministic complaints about a drawn system's own coherence. Empty means nothing to say.
 
@@ -907,6 +923,18 @@ def check_draw(system: SystemDef) -> tuple[str, ...]:
                     "in two places at once"
                 )
             seen_options[option.option_id] = choice.choice_id
+            for need in option.needs:
+                if need.ref in known_ranks:
+                    if need.threshold != 1:
+                        complaints.append(
+                            f"the way {option.option_id} needs the rung {need.ref} at "
+                            f"{need.threshold}; a rung is a position and has no depth to reach"
+                        )
+                elif need.ref not in known_abilities:
+                    complaints.append(
+                        f"the way {option.option_id} needs {need.ref}, which this system "
+                        "declares neither as an ability nor as a rung"
+                    )
             if not option.grants:
                 complaints.append(
                     f"{option.option_id} opens nothing, so taking it forecloses nothing and the "
@@ -1041,6 +1069,15 @@ def starting_sheet(
 # --------------------------------------------------------------------------- advancing a sheet
 
 
+def offered_options(sheet: CharacterSheet, choice: Choice) -> tuple[Option, ...]:
+    """The ways of a fork this person may be offered: those whose needs the sheet meets
+    (§207). A way with no needs is offered to everyone who reached the fork; a fork none
+    of whose ways is offered is not open to this person yet."""
+    return tuple(
+        option for option in choice.options if not _unmet(sheet, option.option_id, option.needs)
+    )
+
+
 def _needs_met(sheet: CharacterSheet, ability: Ability) -> tuple[str, ...]:
     """Which of an ability's prerequisites this sheet does not meet, as reasons. Empty means met.
 
@@ -1048,20 +1085,25 @@ def _needs_met(sheet: CharacterSheet, ability: Ability) -> tuple[str, ...]:
     the "decoration" that entry refused; here the comparison is what decides whether a move is
     legal, so the number does work before it is ever printed.
     """
+    return _unmet(sheet, ability.ability_id, ability.needs)
+
+
+def _unmet(sheet: CharacterSheet, what: str, needs: Sequence[Need]) -> tuple[str, ...]:
+    """The needs of `what` this sheet does not meet, as reasons; an ability's or a way's."""
     unmet: list[str] = []
     system = sheet.system
-    for need in ability.needs:
+    for need in needs:
         if need.ref in set(system.rank_ids):
             if system.rank_index(sheet.rank_id) < system.rank_index(need.ref):
                 unmet.append(
-                    f"{ability.ability_id} needs the rung {need.ref}, and {sheet.character} "
+                    f"{what} needs the rung {need.ref}, and {sheet.character} "
                     f"stands at {sheet.rank_id}"
                 )
             continue
         have = sheet.magnitude(need.ref)
         if have < need.threshold:
             unmet.append(
-                f"{ability.ability_id} needs {need.ref} at {need.threshold}, and "
+                f"{what} needs {need.ref} at {need.threshold}, and "
                 f"{sheet.character} has it at {have}"
             )
     return tuple(unmet)
@@ -1119,6 +1161,8 @@ def _open_choices(sheet: CharacterSheet) -> tuple[Choice, ...]:
                 and system.rank_index(choice.opens_at) <= standing
             )
         )
+        # A fork none of whose ways this person may be offered is not open to them (§207).
+        and offered_options(sheet, choice)
     )
 
 
@@ -1130,7 +1174,7 @@ def _open_choices(sheet: CharacterSheet) -> tuple[Choice, ...]:
 OFFER_TAG = "[OFFER]"
 
 
-def offer_line(system: SystemDef, choice: Choice) -> str:
+def offer_line(system: SystemDef, choice: Choice, *, sheet: CharacterSheet | None = None) -> str:
     """The fork as the book prints it: the fork's name, then each way and what it opens.
 
     **Every word on the line is the book's own** — the fork's name, the ways' names, the
@@ -1142,11 +1186,15 @@ def offer_line(system: SystemDef, choice: Choice) -> str:
     """
     by_id = {ability.ability_id: ability.name for ability in system.abilities}
     ways = []
-    for option in choice.options:
+    # With a sheet, only the ways offered to that person print (§207); without one, all.
+    options = offered_options(sheet, choice) if sheet is not None else choice.options
+    for option in options:
         opens = ", ".join(by_id.get(ability_id, ability_id) for ability_id in option.grants)
         way = f"{option.name}: opens {opens}" if opens else option.name
         if option.costs:
             way = f"{way}, costs {option.costs}"
+        if option.manifests_as:
+            way = f"{way}; {option.manifests_as}"
         ways.append(way)
     return f"{OFFER_TAG} {choice.name} — " + " | ".join(ways)
 
@@ -1367,6 +1415,8 @@ def choose(sheet: CharacterSheet, choice_id: str, option_id: str, *, at: str) ->
             f"{choice_id} opens at {choice.opens_at}, and {sheet.character} stands at "
             f"{sheet.rank_id}"
         )
+    if unmet := _unmet(sheet, option_id, option.needs):
+        raise IllegalAdvance("; ".join(unmet))
     return _advanced(
         sheet,
         AdvanceKind.CHOOSE,
@@ -1543,6 +1593,23 @@ def records_for(system: SystemDef) -> tuple[lc.StateRecord, ...]:
                 )
             )
             records.append(worlds_mod.world_record(option.option_id, "is_a", value=option.name))
+            if option.manifests_as:
+                records.append(
+                    worlds_mod.world_record(
+                        option.option_id,
+                        worlds_mod.MANIFESTS_PREDICATE,
+                        value=option.manifests_as,
+                    )
+                )
+            for need in option.needs:
+                records.append(
+                    worlds_mod.world_record(
+                        option.option_id,
+                        worlds_mod.REQUIRES,
+                        object_ref=need.ref,
+                        value=need.threshold if need.threshold != 1 else None,
+                    )
+                )
             if option.costs:
                 records.append(
                     worlds_mod.world_record(option.option_id, worlds_mod.COSTS, value=option.costs)
@@ -1768,6 +1835,10 @@ def _choices_of(
                         name=names.get(option_id, option_id),
                         grants=worlds_mod.granted_by(records, option_id),
                         costs=_first_value(records, option_id, worlds_mod.COSTS),
+                        manifests_as=_first_value(
+                            records, option_id, worlds_mod.MANIFESTS_PREDICATE
+                        ),
+                        needs=_needs_of(records, option_id),
                     )
                     for option_id in option_ids
                 ),

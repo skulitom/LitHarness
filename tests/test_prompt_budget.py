@@ -272,7 +272,10 @@ BUDGET: dict[str, int] = {
     # one-position shape is grouped per ladder, after pilot 25's seed put a side character
     # at a rung on each system under a shape grouped by subject alone and the first scene
     # was refused for it.
-    "architect seed, second system": 45,
+    # **Raised 45 -> 46 on 2026-09-03 for §207**: one sentence saying a way at a fork
+    # may say what it looks like and what a person must hold to be offered it, so the fork
+    # a person meets is the one their own record earned (the choice display).
+    "architect seed, second system": 46,
     "title lookup": 6,
     # **Raised 24 -> 25 on 2026-08-29, deliberately and for one named sentence.** The house
     # genre had been living nowhere (`plan/house-genre-constraint.md`; pilot 13 §8.2), carried
@@ -402,7 +405,10 @@ BUDGET: dict[str, int] = {
     # and is recorded rather than smoothed. `_SYSTEM`'s own naming rule is untouched and still
     # asks for short plain words, so the seed is not left silent on the subject; what it no
     # longer carries is a prohibition on where a word was borrowed from.
-    "architect seed": 43,
+    # **Raised 43 -> 44 on 2026-09-03 for §207**: one sentence saying a way at a fork
+    # may say what it looks like and what a person must hold to be offered it, so the fork
+    # a person meets is the one their own record earned (the choice display).
+    "architect seed": 44,
     # **42 -> 43 on 2026-08-30, the §176 clause.** §163's note above says this row "stays
     # on 42", which was true of §163's seed-only raise and is not a rule: this row stands on the
     # whole house floor, so a floor clause lands here as surely as it lands on the scene writer.

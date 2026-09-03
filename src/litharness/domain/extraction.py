@@ -2429,10 +2429,12 @@ def offered_choice(
     if not pending:
         return None
     choice = pending[0]
-    names = (choice.name, *(option.name for option in choice.options))
+    # The ways this person is offered (§207), not every way the fork has.
+    options = gamesystem_mod.offered_options(sheet, choice)
+    names = (choice.name, *(option.name for option in options))
     if any(not name.strip() or name.casefold() in house_mod.MACHINERY_WORDS for name in names):
         return None
-    return choice.name, tuple(option.name for option in choice.options)
+    return choice.name, tuple(option.name for option in options)
 
 
 def offered_line(
@@ -2458,4 +2460,4 @@ def offered_line(
     pending = gamesystem_mod.pending_choices(sheet)
     if not pending:
         return None
-    return gamesystem_mod.offer_line(system, pending[0])
+    return gamesystem_mod.offer_line(system, pending[0], sheet=sheet)

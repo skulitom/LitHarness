@@ -190,7 +190,7 @@ rule (what moved, what the scene named, the first few) instead of a higher cap. 
 numbers-go-up counters and the `stands_at` chain are unchanged: an ordinal field prints the
 same rung they count.
 
-### Phase 3 — displays as declared views (two slices done: stage-0 §205, the default sheet retired and a book's own evidence declaring its columns; §206, a sheet declaration naming its owner so a book carries several sheets. The view node, the notice, the readout on request and the choice display's option text and conditional offers remain)
+### Phase 3 — displays as declared views (three slices done: stage-0 §205, the default sheet retired and a book's own evidence declaring its columns; §206, a sheet declaration naming its owner so a book carries several sheets; §207, the choice display, a way saying what it looks like and what it needs. The view node, the notice and the readout on request remain)
 
 The vocabulary's `view` node type gets an owner. A view is a subject with `type view`, a tag
 (`is_a`), a voice (`manifests_as`), a field list with per-field show rules, a trigger (on a

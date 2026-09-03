@@ -171,7 +171,9 @@ _SYSTEM = (
     "system with more is refused at acceptance.\n"
     "Somewhere up that ladder the system puts a fork nobody takes twice: declare it, the two or "
     "three ways of taking it, which of the grants each way opens and which rung it opens at, "
-    "and leave what any of them costs to the world."
+    "and leave what any of them costs to the world. A way may say what it looks like "
+    "(manifests_as) and what a person must already hold to be offered it (requires a "
+    "grant, at a depth), so the fork a person meets is the one their own record earned."
 )
 
 _SEED = (

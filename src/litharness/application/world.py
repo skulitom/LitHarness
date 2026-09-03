@@ -194,7 +194,9 @@ def vocabulary() -> dict[str, Any]:
                 "what taking one way opens; the way is the subject, --object a capability the "
                 "system declares. Until somebody takes that way they cannot reach it at all, "
                 "which is what makes the fork a choice rather than a label — so no capability "
-                "may be granted by two ways, and a way that grants nothing forecloses nothing"
+                "may be granted by two ways, and a way that grants nothing forecloses nothing. A "
+                "way may manifests_as one line and may requires a capability at a depth, in "
+                "which case only a person holding it is offered that way"
             ),
             "chose": (
                 "which way one person took; the person is the subject, --object the way, "

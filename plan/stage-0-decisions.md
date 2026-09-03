@@ -22758,3 +22758,47 @@ make it furniture, which is the next slice's question.
 **Anti-scope.** No view node yet: a sheet with an owner is a declaration on the existing
 predicate, chosen at read time. The notice, the readout on request, the box, and the choice
 display's option text and conditional offers remain phase 3's.
+
+## 207. Phase 3, third slice: the choice display. A way at a fork says what it looks like and what it needs, and is offered only to the person who earned it
+
+**What it answers.** The operator, 2026-09-03: *"skills readers want to pick in the story
+there are usually screens with e.g. pick skill for class advancement (and it's something
+related to the class)"*; and the awe §160 had put on the line as zeros, which §203 took off
+the line, was to ride the `[OFFER]` line instead. A fork until now offered every way to
+everyone who reached its rung, and a way was a name with what it opened and what it cost.
+
+**Measured first.** The market census (§202) found three choice screens in 1,386 early
+chapters, so the display is not a first-chapter object and its cadence stays the fork's
+(§161: a fork opens because the person got to the rung). The field census (§204) found
+*class* and *skill* named in windows as text where they appear, which is the one line a way
+now carries.
+
+**What shipped** (`domain/gamesystem.py`, `domain/extraction.py`, `application/world_agent.py`,
+`application/world.py`). `Option` carries `manifests_as` (one line in the world's register)
+and `needs` (the same `Need` an ability carries: a capability at a depth, or a rung). Both
+travel as records the vocabulary already had, `manifests_as` and `requires`, and read back
+(`records_for`, `_choices_of`); a fork written before this reads back unchanged and keeps its
+digest, since a way's text and needs join the digest material only where a way has them.
+`check_draw` refuses a way that needs something the system declares nowhere, or a rung at a
+depth. `offered_options(sheet, choice)` is the ways whose needs the sheet meets; a fork none of
+whose ways is offered is not open to that person yet (`_open_choices`); `choose` refuses a way
+the person was not offered; `offered_choice` and the offer line print the offered ways, and a
+way prints with its line after what it opens and costs (*Reed: opens Lanterncall; a reed
+whistle grows in the palm*). Without a sheet the line still shows every way, as it did. The
+seed's fork sentence and the vocabulary line for `grants` say a way may say what it looks
+like and require a capability at a depth; the two seed budget rows rise by one with the
+reason in place. Tests in `tests/test_gamesystem.py`: text and needs round-trip and a plain
+fork keeps its digest; a gated way is offered only when its need is met, refused before, and
+offered once the depth is reached; a fork with every way gated is not open, and the line
+without a sheet shows every way.
+
+**What was refused.** A way offered on story position (a screen appears because the book got
+to a scene): a fork opens because the person got to the rung and now because the person holds
+what the way needs, both facts about the person. A way described by a model at draw time as a
+recommendation: the line's order is id order and nothing here ranks (§61(5)). A separate
+"screen" line with a tag of its own: the offer line is the choice display, and a second
+bracket tag for the same fact would be the sheet's mistake (§160.3's reasoning) once more.
+
+**Anti-scope.** Whether a way's line and its gate reach the page as a scene the reader
+weighs is the next chapter's to show; nothing here measures prose. The view node and the
+notice remain phase 3's.

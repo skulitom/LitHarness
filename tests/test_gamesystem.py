@@ -816,3 +816,108 @@ def test_a_drawn_system_declares_that_unheld_columns_do_not_print() -> None:
     assert sheet.read(line)[0][1] == {k: v for k, v in starting.snapshot().items() if v}
     without_flag = {"fields": declared["fields"]}
     assert extraction.parse_sheet(without_flag).show_unheld is True
+
+
+# ----------------------------------------------------------------- §207: the choice display
+
+
+def _forked(*, text: bool = False, gated: bool = False) -> gs.SystemDef:
+    """The weave with one fork at the first seal: Kiln opens Deepweave, Reed opens Lanterncall.
+    With `text`, each way says what it looks like; with `gated`, Kiln needs Seamsight at 2."""
+    kiln = gs.Option(
+        "opt_kiln",
+        "Kiln",
+        grants=("deepweave",),
+        manifests_as="the left glove goes stiff and warm" if text else None,
+        needs=(gs.Need("seamsight", 2),) if gated else (),
+    )
+    reed = gs.Option(
+        "opt_reed",
+        "Reed",
+        grants=("lanterncall",),
+        manifests_as="a reed whistle grows in the palm" if text else None,
+    )
+    return _system(
+        choices=(gs.Choice("fork_hand", "Hand", options=(kiln, reed), opens_at="first_seal"),)
+    )
+
+
+def test_a_way_s_text_and_needs_round_trip_and_a_fork_without_them_keeps_its_digest() -> None:
+    """§207: what a way looks like and what it needs travel as records the vocabulary already
+    has (`manifests_as`, `requires`); a fork written before this reads back unchanged and its
+    digest is the digest it had."""
+    plain = _forked()
+    assert plain.digest == gs.systems_of(gs.records_for(plain))[0].digest
+    material_before = plain.digest
+    assert _forked().digest == material_before, "the digest is stable without text or needs"
+    rich = _forked(text=True, gated=True)
+    [back] = gs.systems_of(gs.records_for(rich))
+    assert back == rich and back.digest == rich.digest and back.digest != plain.digest
+    kiln = back.choice("fork_hand").option("opt_kiln")
+    assert kiln.manifests_as == "the left glove goes stiff and warm"
+    assert kiln.needs == (gs.Need("seamsight", 2),)
+    assert gs.check_draw(rich) == ()
+    bad = _system(
+        choices=(
+            gs.Choice(
+                "fork_hand",
+                "Hand",
+                options=(
+                    gs.Option(
+                        "opt_kiln", "Kiln", grants=("deepweave",), needs=(gs.Need("nothing"),)
+                    ),
+                    gs.Option("opt_reed", "Reed", grants=("lanterncall",)),
+                ),
+                opens_at="first_seal",
+            ),
+        )
+    )
+    assert any("needs nothing" in complaint for complaint in gs.check_draw(bad))
+
+
+def test_a_gated_way_is_offered_only_to_a_person_who_meets_its_need() -> None:
+    """§207: the fork a person meets is the one their own record earned. Kiln needs Seamsight
+    at 2; a person at the first seal with Seamsight at 1 is offered Reed alone, is refused
+    Kiln, and once Seamsight reaches 2 is offered both."""
+    system = _forked(text=True, gated=True)
+    at_seal = gs.rise(gs.starting_sheet(system, "silas"), at="s1").sheet
+    assert at_seal.magnitude("seamsight") == 1
+    [fork] = gs.pending_choices(at_seal)
+    assert [option.name for option in gs.offered_options(at_seal, fork)] == ["Reed"]
+    line = gs.offer_line(system, fork, sheet=at_seal)
+    assert line == "[OFFER] Hand — Reed: opens Lanterncall; a reed whistle grows in the palm"
+    with pytest.raises(gs.IllegalAdvance, match="needs seamsight at 2"):
+        gs.choose(at_seal, "fork_hand", "opt_kiln", at="s2")
+    deeper = gs.deepen(at_seal, "seamsight", at="s2").sheet
+    assert [option.name for option in gs.offered_options(deeper, fork)] == ["Kiln", "Reed"]
+    assert "Kiln: opens Deepweave; the left glove" in gs.offer_line(system, fork, sheet=deeper)
+    taken = gs.choose(deeper, "fork_hand", "opt_kiln", at="s3").sheet
+    assert taken.took("fork_hand") == "opt_kiln"
+
+
+def test_a_fork_none_of_whose_ways_is_offered_is_not_open_yet() -> None:
+    system = _system(
+        choices=(
+            gs.Choice(
+                "fork_hand",
+                "Hand",
+                options=(
+                    gs.Option(
+                        "opt_kiln", "Kiln", grants=("deepweave",), needs=(gs.Need("seamsight", 3),)
+                    ),
+                    gs.Option(
+                        "opt_reed",
+                        "Reed",
+                        grants=("lanterncall",),
+                        needs=(gs.Need("threadpull", 3),),
+                    ),
+                ),
+                opens_at="first_seal",
+            ),
+        )
+    )
+    at_seal = gs.rise(gs.starting_sheet(system, "silas"), at="s1").sheet
+    assert gs.pending_choices(at_seal) == ()
+    assert gs.offer_line(system, system.choices[0]) == (
+        "[OFFER] Hand — Kiln: opens Deepweave | Reed: opens Lanterncall"
+    ), "without a sheet the line shows every way, as it always did"
