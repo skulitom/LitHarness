@@ -156,7 +156,9 @@ def vocabulary() -> dict[str, Any]:
             "type": (
                 "reifies a node; --value one of node_types, and only those. A change takes "
                 "--order-key for the scene it happens in (a scene key like s3), or none for "
-                "one already true when the book opens"
+                "one already true when the book opens. A change keyed at a scene that carries "
+                "a participant and a manifests_as line is a notice: that scene is asked to "
+                "print the line under the book's bracket, exactly once"
             ),
             "participant": (
                 "who a change happened to; the change (a subject of type change) is the "
@@ -174,7 +176,11 @@ def vocabulary() -> dict[str, Any]:
                 "a second-order effect of a rule; the rule is the subject, --object one of "
                 "consequence_domains, --value the consequence in plain words"
             ),
-            "manifests_as": "how it shows on the page; --value one line",
+            "manifests_as": (
+                "how it shows on the page; --value one line. On a change keyed at a scene "
+                "with a participant, the line the System prints where it happens, in its own "
+                "voice, under the label of the book's graph line"
+            ),
             "can_do": (
                 "a person holds a capability; --object the capability's id, and --value how "
                 "far they have taken it as a whole number. Leave the number off to say only "
@@ -284,8 +290,12 @@ def vocabulary() -> dict[str, Any]:
                 "declare exactly one or none: a "
                 "book that declares none, and a book that declares two, both print a generic "
                 "line written in nobody's vocabulary. A drawn system writes its own sheet "
-                "naming it under \"system\", and that sheet prints the system's grants as "
-                "they stand, so a grant declared after the seed is a column at once"
+                'naming it under "system", and that sheet prints the system\'s grants as '
+                "they stand, so a grant declared after the seed is a column at once. A sheet "
+                "naming a system may declare columns of its own beside the system's (a pool, "
+                "a currency, a class, an age): they print where declared, the system's "
+                "columns take the place of the first of theirs, and a snapshot that carries "
+                "the rung column is a position in the system whatever else it prints"
             ),
             "status_snapshot": (
                 "where those columns stand; --value an object mapping each field name to "
@@ -596,7 +606,7 @@ def snapshot_faults(records: Sequence[lc.StateRecord]) -> list[str]:
     """
     as_canon = [
         dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
-        for record in records
+        for record in extraction.readable(records)
     ]
     sheet = extraction.sheet_for(as_canon)
     if sheet is None:
@@ -699,8 +709,13 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     `domain/schema_words.py` for this the same way it reads `validate` for that. The two lists
     are different questions and are kept as two.
     """
+    # **A sheet declaration the parser refuses is a complaint, and every reader below
+    # works on the records without it** (found by the fit census): before this, one such
+    # proposal took `check` and `accept` down with a traceback where a sentence was owed.
+    unreadable = extraction.unreadable_sheets(records)
+    records = [record for record in records if record.record_id not in unreadable]
     coverage = worlds.manifestation_coverage(records)
-    complaints = list(worlds.validate(records))
+    complaints = list(unreadable.values()) + list(worlds.validate(records))
     gaps: list[str] = []
     if not genre.has_starting_sheet(records):
         gaps.append(

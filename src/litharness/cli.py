@@ -4322,6 +4322,21 @@ def cmd_world(args: argparse.Namespace) -> int:
             # so `carried` is still only ever a subset of the proposals.
             replaced = integrity.superseded(records, declared_at=declared_at)
             carried = [record for record in proposals if record.record_id not in set(replaced)]
+            # **A sheet the parser cannot read is refused outright, with no --force** (found
+            # by the fit census): forced into canon it would take the floor, the packet and
+            # every later `check` down with the traceback `accept` itself used to raise here.
+            # The repair is a declaration in the same slot, which replaces it.
+            unreadable = extraction.unreadable_sheets(in_force)
+            if unreadable:
+                for sentence in unreadable.values():
+                    print(f"litharness: {sentence}", file=sys.stderr)
+                print(
+                    f"litharness: {len(proposals)} proposal(s) not accepted; "
+                    f"{len(unreadable)} status_sheet declaration(s) cannot be read. Declare "
+                    "the sheet again with `world declare` to replace it.",
+                    file=sys.stderr,
+                )
+                return EXIT_FAULT
             complaints = worlds_domain.validate(in_force)
             if complaints and not args.force:
                 for complaint in complaints:
@@ -4490,6 +4505,10 @@ def cmd_world(args: argparse.Namespace) -> int:
             # Serial Pilot 12's read eleven complaints naming standings and diagnosed the CLI.
             # Both were told something true under a heading that made it sound temporary.
             warnings = worlds_domain.slot_warnings(record)
+            # A sheet declaration the parser refuses is said at declare time as well: it is
+            # neither transient nor permanent, since a declaration in the same slot replaces
+            # it, so it gets its own key rather than either list above.
+            unreadable_lines = list(extraction.unreadable_sheets([record]).values())
             written = store.record_state_records(book_id, branch_id, [record], created_at=stamp)
             payload: Any = {
                 "record_id": record.record_id,
@@ -4498,6 +4517,7 @@ def cmd_world(args: argparse.Namespace) -> int:
                 "says": state_mod.describe(record),
                 "not_yet_coherent": new_complaints,
                 "will_not_resolve": list(warnings),
+                "cannot_be_read": unreadable_lines,
             }
             if args.json:
                 print(json.dumps(payload, ensure_ascii=False, indent=2))
@@ -4508,6 +4528,8 @@ def cmd_world(args: argparse.Namespace) -> int:
                     print(f"  ! not yet coherent: {complaint}", file=sys.stderr)
                 for warning in warnings:
                     print(f"  !! will not resolve: {warning}", file=sys.stderr)
+                for sentence in unreadable_lines:
+                    print(f"  !! cannot be read: {sentence}", file=sys.stderr)
             return EXIT_OK
     finally:
         store.close()

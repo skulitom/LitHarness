@@ -557,10 +557,7 @@ def test_accept_finishes_a_drawn_system_whose_sheet_is_its_own(tmp_path, capsys)
     system = _weave()
     records = _drawn(system)
     sheet = gs.starting_sheet(system, "silas")
-    records.extend(
-        accepted(record)
-        for record in gs.records_for_sheet(sheet)
-    )
+    records.extend(accepted(record) for record in gs.records_for_sheet(sheet))
     records.append(
         dataclasses.replace(
             worlds.world_record("silas", "can_do", object_ref="seamsight", value=3),
@@ -650,10 +647,7 @@ def test_a_ceiling_key_on_the_snapshot_is_still_a_position_in_the_system() -> No
 
     from litharness.domain import gamesystem as gs
 
-    complete = [
-        accepted(record)
-        for record in gs.records_for(_weave())
-    ]
+    complete = [accepted(record) for record in gs.records_for(_weave())]
     position = {
         "rank": 1,
         "seamsight": 1,
@@ -675,8 +669,12 @@ def test_a_ceiling_key_on_the_snapshot_is_still_a_position_in_the_system() -> No
 
     assert genre.has_starting_sheet([*complete, sheet(position)])
     assert genre.has_starting_sheet([*complete, sheet({**position, "seamsight_max": 3})])
-    assert not genre.has_starting_sheet([*complete, sheet({**position, "glow_max": 3})])
-    assert not genre.has_starting_sheet([*complete, sheet({**position, "glow": 3})])
+    # **Reversed by §219** (the fit census's second gap): a column the system does not have is
+    # the book's own, so a snapshot carrying the rung and a `glow` is a position in the
+    # system; what stands nowhere is a snapshot with no rung column at all.
+    assert genre.has_starting_sheet([*complete, sheet({**position, "glow_max": 3})])
+    assert genre.has_starting_sheet([*complete, sheet({**position, "glow": 3})])
+    assert not genre.has_starting_sheet([*complete, sheet({"rung": 1, "glow": 3})])
 
 
 # --- §209: the floor asks for a display, not a numeric sheet -------------------------------
@@ -698,3 +696,163 @@ def test_a_numberless_book_with_a_ladder_and_its_line_clears_the_floor() -> None
     reason = genre.genre_block(no_line)
     assert reason is not None and genre.NO_SHEET in reason
     assert "starting sheet" in genre.NO_SHEET and "declared ladder" in genre.NO_SHEET
+
+
+# --- §206's owner sheets against §160's two-sheet gap ---------------------------------------
+
+
+def test_an_owner_s_sheet_is_not_a_second_book_sheet_for_the_system_gap() -> None:
+    """§206 gave a sheet an owner and `system_gap` went on counting every canon declaration,
+    so a book with its own sheet and a creature's was told it had declared two and must
+    retract one. Found by the fit census's probes (`research/quality-measurement/system-fit`):
+    an owner's sheet never competes for the book's line, so it is not the pair the gap names;
+    two sheets with no owner still are."""
+    counter = iter(range(100))
+
+    def canon(subject: str, predicate: str, value: object) -> lc.StateRecord:
+        return lc.StateRecord(
+            record_id=f"owner-sheet-{next(counter)}",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject=subject,
+            predicate=predicate,
+            value=value,
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+
+    records = [
+        canon("mara", "status_sheet", {"fields": [{"name": "level", "label": "Level"}]}),
+        canon("mara", STATUS_PREDICATE, {"level": 3}),
+        canon(
+            "wolf",
+            "status_sheet",
+            {"fields": [{"name": "level", "label": "Level"}], "owner": "creature"},
+        ),
+        canon("wolf", STATUS_PREDICATE, {"level": 24}),
+    ]
+    assert "status_sheet records" not in (genre.system_gap(records) or "")
+    two = [*records, canon("mara", "status_sheet", {"fields": [{"name": "hp", "label": "HP"}]})]
+    assert "2 canon status_sheet records" in (genre.system_gap(two) or "")
+
+
+def test_a_snapshot_lacking_a_grant_declared_since_the_seed_is_still_a_position() -> None:
+    """§211 let a system grow after the seed and the floor went on comparing key sets
+    exactly, so the first grant declared after the seed took every book on that system from
+    drafting to blocked until somebody re-seeded the snapshot by hand. Found by the fit
+    census's probes (`research/quality-measurement/system-fit`). A snapshot carrying the rung
+    and only the system's columns is a position in it, and the columns it lacks stand at
+    nothing; a snapshot without the rung stands nowhere (and since §219 an extra column is
+    the book's own rather than a different sheet)."""
+    import dataclasses
+
+    from litharness.domain import gamesystem as gs
+
+    complete = [
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in gs.records_for(_weave())
+    ]
+
+    def sheet(value: dict[str, int]) -> lc.StateRecord:
+        return lc.StateRecord(
+            record_id="seed",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject="silas",
+            predicate=STATUS_PREDICATE,
+            value=value,
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+
+    assert genre.has_starting_sheet([*complete, sheet({"rank": 1, "seamsight": 1})])
+    assert genre.has_starting_sheet([*complete, sheet({"rank": 1})])
+    assert not genre.has_starting_sheet([*complete, sheet({"seamsight": 1})])
+    # §219 reversed the last clause of this test: a column the system does not have is the
+    # book's own, so a snapshot with the rung and a `glow` is a position in the system.
+    assert genre.has_starting_sheet([*complete, sheet({"rank": 1, "glow": 3})])
+
+
+# --- §219: plain columns beside a system's grants --------------------------------------------
+
+
+def test_a_sheet_with_columns_of_its_own_beside_a_system_s_is_finished_at_accept_and_drafts(
+    tmp_path, capsys
+) -> None:
+    """§219, the fit census's second gap: every sampled market story that declares a system
+    prints a pool, a currency, a class or an age on the same line as its grants, and the floor
+    read such a sheet as a different book's, so `world accept` left the system unfinished on
+    purpose (§165.2). Now a sheet naming its system may carry columns of its own: the snapshot
+    that prints the rung is a position in the system, accept finishes the system, the book
+    drafts, the line prints the book's columns where declared with the system's block in place
+    of the first of theirs, and the beats still come from the system."""
+    import dataclasses
+
+    from litharness.cli import EXIT_OK, main
+    from litharness.domain import extraction
+    from litharness.domain import gamesystem as gs
+
+    system = _weave()
+    records = [record for record in _drawn(system) if record.predicate != "status_sheet"]
+    mixed = {
+        "fields": [
+            {"name": "hp", "label": "HP", "paired": True},
+            {"name": "gold", "label": "Gold"},
+            {"name": "rank", "label": "Seal"},
+            *[{"name": ability.ability_id, "label": ability.name} for ability in system.abilities],
+        ],
+        "show_unheld": False,
+        "system": "the_weave",
+    }
+    records.append(accepted(worlds.world_record("silas", "status_sheet", value=mixed)))
+    records.extend(
+        accepted(record)
+        for record in gs.records_for_sheet(gs.starting_sheet(system, "silas"))
+        if record.predicate != STATUS_PREDICATE
+    )
+    records.append(
+        accepted(
+            worlds.world_record(
+                "silas",
+                STATUS_PREDICATE,
+                value={"rank": 1, "seamsight": 1, "hp": 20, "hp_max": 20, "gold": 45},
+            )
+        )
+    )
+    records.append(
+        dataclasses.replace(
+            worlds.world_record("silas", "can_do", object_ref="seamsight", value=3),
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+    )
+    db = tmp_path / "mixed.db"
+    book_id, branch_id = _seed_world(db, records)
+    capsys.readouterr()
+
+    assert main(["--database", str(db), "world", "accept"]) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "minted to finish a drawn system" in out
+    assert "left unfinished on purpose" not in out
+
+    store = SqliteStore.open(db)
+    try:
+        canon = store.state_records(book_id, branch_id)
+        assert len(gs.systems_of(canon)) == 1
+        assert genre.system_gap(canon) is None
+        assert genre.genre_block(canon) is None
+        sheet = extraction.sheet_for(canon)
+        assert sheet is not None
+        assert sheet.value_keys == (
+            "hp",
+            "hp_max",
+            "gold",
+            "rank",
+            "deepweave",
+            "lanterncall",
+            "seamsight",
+            "stillwater",
+            "threadpull",
+        )
+        line = extraction.system_voice_example(canon)
+        assert line is not None
+        assert "HP 20/20" in line and "Gold 45" in line and "Seamsight 1" in line
+        names = extraction.movable_names(canon, character="silas", at="s1")
+        assert "Threadpull" in names and "HP" not in names and "Gold" not in names
+    finally:
+        store.close()

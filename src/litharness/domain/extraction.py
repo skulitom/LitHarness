@@ -106,6 +106,7 @@ from litharness.domain.moves import (
     movables,
     moved_to,
     moved_values,
+    notice_lines,
     offered_choice,
     offered_line,
     progression_target,
@@ -135,6 +136,7 @@ from litharness.domain.sheet import (
     impossible_fields,
     label_for,
     parse_sheet,
+    readable,
     render_status_line,
     sheet_for,
     sheet_from_line,
@@ -143,6 +145,7 @@ from litharness.domain.sheet import (
     speaks_system_voice,
     state_as_it_stands,
     system_voice_example,
+    unreadable_sheets,
 )
 from litharness.domain.text import content_hash
 
@@ -783,12 +786,14 @@ __all__ = [
     "moved_to",
     "moved_values",
     "normalise_subject",
+    "notice_lines",
     "offered_choice",
     "offered_line",
     "parse_graph_line",
     "parse_sheet",
     "progression_target",
     "promotions",
+    "readable",
     "record_id_for",
     "render_status_line",
     "sheet_for",
@@ -798,7 +803,8 @@ __all__ = [
     "speaks_system_voice",
     "standing_example",
     "standing_target",
-    "state_as_it_stands",
+        "state_as_it_stands",
     "stated_position",
     "system_voice_example",
+    "unreadable_sheets",
 ]

@@ -243,6 +243,65 @@ def gain_example(
         display_name(records, subjects[0]), phrase, display_name(records, ability_id)
     )
 
+
+def notice_lines(
+    records: Sequence[lc.StateRecord], *, character: str | None, at: str | None
+) -> tuple[str, ...]:
+    """The lines the System prints where a declared change lands on this person at this
+    scene, in the book's own bracket (§218).
+
+    **The gap the fit census ranked first** (`research/quality-measurement/system-fit/`,
+    §217): four market stories in five print a bracketed line for something other than a
+    gain or a rise — the System speaking, a welcome, a warning, a quest given, a title, a
+    zone entered — and this house printed a line for a gain (§208) and a line for a rise
+    (§113) and nothing else. The declared shape already existed: a `change` node with a
+    `manifests_as` line, which the Architect has written as story beats since the research
+    ontology (§212 found eight stores holding them). What was missing was the ask.
+
+    A change keyed at `at` (a scene key; a scheduled key never lands, §165), with a
+    `participant` edge to `character` and a `manifests_as` line, renders as `[LABEL] line`
+    under the label of the book's graph line, in id order. `()` where the book declares no
+    graph line (its System is quiet, §208's rule), where nothing is keyed here, and for a
+    change with no participant or no line — which is every change the stored books hold, so
+    every prompt drafted before this is the prompt it was. No default phrase and no default
+    bracket: the words and the tag are the book's own.
+    """
+    if character is None or at is None:
+        return ()
+    line = graph_line_for(records)
+    if line is None:
+        return ()
+    canon = _canon_of(records)
+    anchors = sorted(
+        record.subject
+        for record in canon
+        if record.predicate == worlds_mod.TYPE_PREDICATE
+        and str(record.value or "").strip() == worlds_mod.CHANGE
+        and state_mod.order_key_of(record) == at
+    )
+    found: list[str] = []
+    for change_id in anchors:
+        rows = [record for record in canon if record.subject == change_id]
+        if not any(
+            record.predicate == worlds_mod.PARTICIPANT_ROLE and record.object_ref == character
+            for record in rows
+        ):
+            continue
+        said = next(
+            (
+                record.value.strip()
+                for record in rows
+                if record.predicate == worlds_mod.MANIFESTS_PREDICATE
+                and isinstance(record.value, str)
+                and record.value.strip()
+            ),
+            None,
+        )
+        if said is None:
+            continue
+        found.append(f"[{line.label}] {said}")
+    return tuple(found)
+
 @dataclass(frozen=True, slots=True)
 class Movable:
     """One quantity a scheduled beat may name, and the snapshot key that quantity moves.
@@ -518,8 +577,11 @@ def _system_prints_the_line(
     disagreement, so this guard and that gap close together: the beats come from the system
     precisely when the book is a position in it.
     """
+    # **The system's columns among the printed ones, not the whole of them** (§219): a line
+    # that prints a pool or a currency beside the grants still prints the grants, and the
+    # beats come from the system precisely when the line carries its columns.
     sheet = sheet_for(records)
-    return sheet is not None and {field_.name for field_ in sheet.fields} == set(system.value_keys)
+    return sheet is not None and set(system.value_keys) <= {field_.name for field_ in sheet.fields}
 
 def _named_moves(
     system: gamesystem_mod.SystemDef, moves: Sequence[gamesystem_mod.Move]

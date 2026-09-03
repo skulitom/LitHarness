@@ -1,6 +1,6 @@
 # Will the system layer fit any LitRPG story, and any future one?
 
-Status: **design note and plan, 2026-09-03**; the operator decided the same morning that the layer is made general (§4). Written first for his question
+Status: **design note and plan, 2026-09-03**; the operator decided the same morning that the layer is made general (§4); the five phases closed the same day and §5 records the fit census that measures what they left. Written first for his question
 (*"we should keep our system flexible ... most LitRPG doesn't list skills at zero ... will our
 system be able to fit any possible LitRPG story out there, and any future potential LitRPG?"*).
 Nothing here is built. The counts this note relies on live where they were made (stage-0 §201
@@ -226,3 +226,32 @@ must not break.
 
 Genre modules (a quest module, an inventory module, a notification module). A model that
 ranks or prefers displays. Any change to how the corpus is used. The reviser.
+
+
+## 5. The fit census, and the gaps it ranks (2026-09-03, stage-0 §217)
+
+With the five phases closed, the question §1 opened was measured instead of argued:
+`research/quality-measurement/system-fit/` declares sixty sampled market stories' shapes,
+and the four shelf anchors', into fresh stores through the world CLI and reads the house's
+own answer. `FINDINGS.md` there owns the numbers; the reading is that the house declares most
+of what a window holds and almost every story also prints a line the house has no word for.
+The ranked gaps, and what each is in this note's terms:
+
+1. **The notice** for anything but a gain or a rise: the System speaking, a welcome, a
+   warning, a quest given, a title, a zone. A `change` node with a `manifests_as` line is the
+   declared shape; §218 asks the scene it lands in to print it under the book's bracket.
+2. **Plain columns beside a system's grants**: a pool, a currency, a class or an age on the
+   line with the grants. Refused on purpose at completion (§165.2's branch); §219 reverses
+   it: a snapshot that carries the rung is a position in its system whatever else it prints.
+3. **The quest card**: the notice's twin with counters; a change the System announces, its
+   counters paired columns already. Not earned separately until the notice has been drawn.
+4. **The readout on request** (§209's owed item): every fact declarable since §206, nothing
+   asked for.
+5. **Another screen**: a menu, a store, a board; several displays the census does not
+   separate.
+
+Below these, the draw's own rules (five to eight grants, a graph not a list, a depth
+somewhere) refuse every hand-declared system in the sample at completion; whether a declared
+system may be a list, held-or-not or three grants wide is a decision for its own entry. §2's
+table above is the design-time reading; the census is the measurement, and where they
+disagree the census wins.

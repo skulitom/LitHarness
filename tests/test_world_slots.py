@@ -794,3 +794,60 @@ def test_the_vocabulary_an_architect_reads_names_the_domain_and_the_criterion(
     assert "consequence_domains" in predicates["consequence"]
     assert "--value the criterion" in predicates["precedes"]
     assert "comparator" in predicates
+
+
+def test_an_unreadable_sheet_is_a_complaint_and_a_refusal_never_a_traceback(
+    fake, tmp_path, capsys
+) -> None:  # type: ignore[no-untyped-def]
+    """Found by the fit census (`research/quality-measurement/system-fit/`): a `status_sheet`
+    declared through `world declare` with a repeated value key took `world accept` down with
+    a `MalformedSheet` traceback (through §213.1's preview, and the floor after it). The
+    parser's refusal is right (`MalformedSheet`'s docstring); what was owed was a sentence.
+    Now `declare` says the sheet cannot be read, `check` lists it as a complaint and still
+    answers, `accept` refuses it without `--force`, and a declaration in the same slot
+    replaces it and accepts."""
+    from litharness.cli import EXIT_FAULT
+
+    db = seeded(tmp_path)
+    capsys.readouterr()
+    broken = (
+        '{"fields": [{"name": "mp", "label": "MP", "paired": true}, '
+        '{"name": "mp_max", "label": "Ceiling"}]}'
+    )
+    assert (
+        main(
+            [
+                "--database",
+                db,
+                "world",
+                "declare",
+                "sera",
+                "status_sheet",
+                "--value",
+                broken,
+                "--json",
+            ]
+        )
+        == EXIT_OK
+    )
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["cannot_be_read"] and "repeat a value key" in payload["cannot_be_read"][0]
+
+    assert main(["--database", db, "world", "check"]) == EXIT_FAULT
+    check = json.loads(capsys.readouterr().out)
+    assert any("cannot be read" in complaint for complaint in check["complaints"])
+    assert check["ok"] is False
+
+    assert main(["--database", db, "world", "accept"]) == EXIT_FAULT
+    err = capsys.readouterr().err
+    assert "cannot be read" in err and "not accepted" in err
+
+    fixed = '{"fields": [{"name": "mp", "label": "MP", "paired": true}]}'
+    assert (
+        main(["--database", db, "world", "declare", "sera", "status_sheet", "--value", fixed])
+        == EXIT_OK
+    )
+    capsys.readouterr()
+    assert main(["--database", db, "world", "accept"]) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "accepted 1" in out and "left proposed" in out

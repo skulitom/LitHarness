@@ -191,7 +191,15 @@ class Sheet:
         kept: list[SheetField] = []
         for index, field_ in enumerate(self.fields):
             keys = [field_.name] + ([f"{field_.name}{MAX_SUFFIX}"] if field_.paired else [])
-            held = any(value.get(key) is None or _held(value.get(key)) for key in keys)
+            # A column the snapshot never held stays visible as `?` on a sheet whose
+            # columns are its own; on a sheet that follows its system (§211) such a
+            # column is a grant declared after the snapshot, which nobody holds yet, and
+            # it is hidden like any unheld one. The fit census's probes found the line
+            # printing `?` for every grant a system had grown by.
+            held = any(
+                (value.get(key) is None and self.system is None) or _held(value.get(key))
+                for key in keys
+            )
             if index == 0 or held:
                 kept.append(field_)
         return tuple(kept)
@@ -553,6 +561,39 @@ def implied_sheet(records: Sequence[lc.StateRecord]) -> Sheet | None:
     )
     return Sheet(fields) if fields else None
 
+
+def unreadable_sheets(records: Sequence[lc.StateRecord]) -> dict[str, str]:
+    """Every `status_sheet` declaration this module cannot build a line from, by record id,
+    with the sentence that says why.
+
+    **Found by the fit census (`research/quality-measurement/system-fit/`), which declared a
+    sheet repeating a value key through `world declare`:** `world accept` read it through
+    `sheet_for` and fell over with a traceback, on the §213.1 preview and again at the
+    floor, and `world check` would have done the same once the sheet was canon. `MalformedSheet`
+    is raised on purpose (its docstring: a declaration that silently fell back looked like a
+    book that established nothing), and `cmd_new` catches it; the declare path had no catch.
+    This names the records so `check` can complain, `accept` can refuse, and every reader can
+    leave them aside rather than crash. A later declaration in the same slot replaces one.
+    """
+    found: dict[str, str] = {}
+    for record in records:
+        if record.predicate != SHEET_PREDICATE:
+            continue
+        try:
+            parse_sheet(record.value)
+        except MalformedSheet as error:
+            found[record.record_id] = (
+                f"{record.subject}'s {SHEET_PREDICATE} cannot be read, so no line can be "
+                f"rendered or read back from it: {error}. Declare the sheet again to replace it"
+            )
+    return found
+
+
+def readable(records: Sequence[lc.StateRecord]) -> list[lc.StateRecord]:
+    """`records` without the sheet declarations `unreadable_sheets` names."""
+    unreadable = unreadable_sheets(records)
+    return [record for record in records if record.record_id not in unreadable]
+
 def sheet_for(records: Sequence[lc.StateRecord], *, subject: str | None = None) -> Sheet | None:
     """The sheet this book declared, the one its own snapshots imply, or the default.
 
@@ -608,15 +649,23 @@ def sheet_for(records: Sequence[lc.StateRecord], *, subject: str | None = None) 
     return live[0] if len(live) == 1 else implied
 
 def _following(sheet: Sheet, records: Sequence[lc.StateRecord]) -> Sheet:
-    """A sheet that names its system, with that system's columns as they stand (§211).
+    """A sheet that names its system, with that system's columns as they stand (§211) and the
+    book's own columns around them (§219).
 
     **The seed's declaration is not a second answer to which columns the book has.** A drawn
-    system writes its own `status_sheet` (`gamesystem.records_for`), and until this the
+    system writes its own `status_sheet` (`gamesystem.records_for`), and until §211 the
     fields in that record were fixed at the seed while the system could go on being declared
     into: a grant `governed_by` the system after the seed joined `systems_of` and not the
     sheet, the two disagreed, `_system_prints_the_line` abstained, and the book's beats fell
     silently to the legacy arm. A sheet that names its system is a projection of the system's
     columns, so the one place a grant is declared is the one place a column comes from.
+
+    **A column the system does not have is the book's own and stays where the sheet declares
+    it** (§219, the fit census's second gap): the system's columns, in the system's order,
+    take the place of the first declared field that is one of them, every other declared field
+    that is one of them is dropped (the system is the one answer to those), and every field
+    that is not is kept with its kind and its place. A sheet declaring exactly the system's
+    columns, which is every drawn seed, resolves to the system's columns as it did.
 
     Canon only, for `sheet_of`'s reason; a system the world began and cannot read back leaves
     the declared fields as they are, so an unfinished system is reported and not guessed at.
@@ -625,13 +674,27 @@ def _following(sheet: Sheet, records: Sequence[lc.StateRecord]) -> Sheet:
     if sheet.system is None:
         return sheet
     for system in gamesystem_mod.systems_of(_canon_of(records)):
-        if system.system_id == sheet.system:
-            return Sheet(
-                tuple(SheetField(column.name, column.label) for column in system.columns),
-                show_unheld=sheet.show_unheld,
-                owner=sheet.owner,
-                system=sheet.system,
-            )
+        if system.system_id != sheet.system:
+            continue
+        keys = set(system.value_keys)
+        block = [SheetField(column.name, column.label) for column in system.columns]
+        fields: list[SheetField] = []
+        placed = False
+        for field_ in sheet.fields:
+            if field_.name in keys:
+                if not placed:
+                    fields.extend(block)
+                    placed = True
+                continue
+            fields.append(field_)
+        if not placed:
+            fields.extend(block)
+        return Sheet(
+            tuple(fields),
+            show_unheld=sheet.show_unheld,
+            owner=sheet.owner,
+            system=sheet.system,
+        )
     return sheet
 
 def impossible_fields(value: Mapping[str, object]) -> tuple[str, ...]:
