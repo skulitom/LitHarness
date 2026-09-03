@@ -23393,3 +23393,40 @@ docstring's argument), and the arrow from `advancement` down to `systems` costs 
 The survey names no further split candidate under this brief: `cli.py` is one handler per
 subcommand, `worlds.py`'s sections reference the vocabulary and little else, and
 `planner.py` is one subject.
+
+### 216.1 Close the maintainability track: the brief is deleted, and where each of its results lives
+
+`plan/handoff-maintainability.md` asked for a survey, a map, splits with re-exports, one home
+for the test helpers, type coverage outside `src/`, a slow lane, and pointers on stale
+citations, and said it would be deleted in the last commit with its results pointed at from
+here. This sub-entry is that pointer; nothing in it is a new decision.
+
+- **The survey** is `plan/maintainability-survey.md`, regenerated table by table from
+  `tools/maintainability_survey.py`; its two box-window measurements (§3a, §7c) were taken on
+  2026-09-03 and say so.
+- **The map** is `docs/system-model.md`, read by both prose checks in
+  `tests/test_architecture.py` so a symbol or test it names cannot stop existing in silence.
+- **The splits** are §215 (`extraction` into `names`, `sheet`, `graphline`, `moves`) and §216
+  (`gamesystem` into `systems`, `advancement`, with the readers kept), each with its byte
+  check and its replay result in the entry.
+- **The test helpers** were consolidated by the pruning track (§214), not here; the survey's §6
+  records that most of the brief's "duplicates" were homonyms and names the one real family.
+- **Type coverage.** `tools/` joined `[tool.mypy] files` after fifteen errors in four scripts
+  were fixed with annotations and `Optional` narrowing that change no behaviour; the research
+  scripts were measured (seventy-five errors in twenty-four of eighty-two files, most of them
+  registered arms) and refused, with the per-file table in the survey's §7c.
+- **The slow lane** already existed: every test over two seconds carries `intensive`, and
+  `tools/check.py quick` is the lane; both lane durations are in the survey's §3a, and no
+  second marker was added.
+- **Stale citations.** Fifty sites were read; six pointed at the wrong entry and were corrected
+  in the citing docstrings, one line each (survey §5), with the ledger untouched. The survey
+  also records that six ledger entries repeat a §120 attribution whose measurement §135 item 3
+  holds, which is the ledger's to correct in place and is left to the operator.
+
+**Refused, and left for whoever picks it up.** The twenty-seven numeric constants with no
+reason beside them (survey §4): a reason would have been this track's guess. A `slow` marker
+beside `intensive`. Any rename. Typing the research scripts.
+
+**Final checks** at the closing commit: full suite, `ruff check .`, `uv run mypy` (now over
+`src` and `tools`), `git diff --check`, and `tools/replay_books.py` against the baseline taken
+before §215 ran: identical.

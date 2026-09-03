@@ -9,7 +9,7 @@ ledger as they land. It replaces nothing: `CONTRIBUTING.md` still owns the depen
 direction, the suite owns the test count, and the ledger owns decisions.
 
 Two measurements needed the box to itself and were taken in the session's box window after
-the survey was first written; they are in §3 and §7, marked with the run they came from.
+the survey was first written; they are in §3a and §7c, marked with the run they came from.
 
 ## 1. Module size and shape
 
@@ -226,8 +226,97 @@ cycle test is what would notice a wrong arrow among them, and the seams are stat
 
 ### 3a. Durations
 
-*Pending the box window: `uv run pytest --durations=0 --junitxml=FILE`, then
-`uv run python tools/maintainability_survey.py durations FILE --top 20`. Recorded below once run.*
+Measured in the session's box window on 2026-09-03, on the branch after the survey's first
+three commits, with `uv run pytest -n auto --dist loadscope --junitxml=FILE` (the `full` lane
+of `tools/check.py`) and then `uv run python tools/maintainability_survey.py durations FILE
+--top 25 --slow 2`. **The brief's premise that the full suite takes on the order of ten
+minutes on this box is not what the box does today:** the full lane's wall time was 57
+seconds, and the summed per-test time in the table below is what a serial run would cost.
+Under CI's Windows runners the same suite has taken five to fifteen minutes (the comment in
+`.github/workflows/ci.yml`), which is where the premise came from.
+
+3763 test cases in 161 modules; 338s of test time summed over cases (wall time is lower under xdist and is recorded beside this table).
+
+#### Slowest tests
+
+| seconds | module | test |
+| --- | --- | --- |
+| 28.5 | test_architecture | test_every_symbol_the_prose_names_still_exists |
+| 21.9 | test_feed_controls | test_sessions_needed_uniform_rates_never_fall_and_biased_045_never_leads |
+| 6.2 | test_bt_analysis | test_a_fair_coin_null_vector_clears_half_rarely_well_under_three_alpha |
+| 5.9 | test_feed_controls | test_sessions_needed_states_its_shape_and_repeats_exactly_under_a_seed |
+| 5.8 | test_feed_battery | test_attainability_prints_every_candidate_count_and_the_none_refusal_paragraph |
+| 4.2 | test_force_harness | test_min_refuting_n_is_derived_and_needs_the_attainable_guard |
+| 2.5 | test_bcr | test_the_instruments_own_selftest_passes |
+| 1.8 | test_planner | test_two_books_both_finish_and_neither_starves |
+| 1.8 | test_planner | test_a_book_that_makes_no_progress_is_loud_not_quiet |
+| 1.6 | test_forensics | test_the_statement_that_steered_the_draft_prints_verbatim |
+| 1.5 | test_forensics | test_prompt_inspection_can_show_the_exact_stored_scene_request |
+| 1.5 | test_forensics | test_events_json_carries_the_payload_the_text_had_to_truncate |
+| 1.4 | test_domain | test_canonicalization_is_idempotent |
+| 1.4 | test_planner | test_every_acceptance_carries_a_recorded_policy_decision |
+| 1.4 | test_library | test_a_tick_publishes_without_being_asked_and_writes_beside_the_database |
+| 1.4 | test_planner | test_ticking_a_finished_book_enqueues_nothing |
+| 1.3 | test_world_supersession | test_the_views_read_the_accepted_world_and_show_reads_everything |
+| 1.3 | test_forensics | test_the_dossier_joins_the_decision_the_job_and_the_gate_ladder |
+| 1.2 | test_planner | test_a_fixture_book_reaches_six_accepted_scenes_with_no_human_in_the_loop[litrpg] |
+| 1.2 | test_planner | test_a_clean_book_is_not_refused_by_the_new_gate |
+| 1.1 | test_library | test_changing_release_window_repackages_an_unchanged_serial_and_removes_stale_volumes |
+| 1.1 | test_forensics | test_the_dossier_names_the_draft_the_reviser_replaced_and_carries_it_for_a_diff |
+| 1.1 | test_forensics | test_a_scene_no_decision_explains_says_so_and_exits_non_zero |
+| 1.1 | test_context_cutoff | test_a_book_whose_story_positions_somebody_else_chose_gets_no_cutoff[litrpg] |
+| 1.1 | test_progression_gate | test_the_ask_is_recorded_where_it_is_composed |
+
+#### Test time per module (top)
+
+| module | tests | seconds | slowest | share |
+| --- | --- | --- | --- | --- |
+| test_architecture | 7 | 29.9 | 28.5 | 9% |
+| test_planner | 81 | 29.5 | 1.8 | 9% |
+| test_feed_controls | 27 | 27.8 | 21.9 | 8% |
+| test_cli | 55 | 20.9 | 1.0 | 6% |
+| test_outline | 77 | 19.1 | 1.1 | 6% |
+| test_forensics | 21 | 18.2 | 1.6 | 5% |
+| test_store | 42 | 12.9 | 1.0 | 4% |
+| test_library | 30 | 10.3 | 1.4 | 3% |
+| test_draft | 57 | 10.0 | 0.8 | 3% |
+| test_roster_cli | 29 | 8.9 | 0.8 | 3% |
+| test_promises | 42 | 8.8 | 0.6 | 3% |
+| test_export | 20 | 7.9 | 0.8 | 2% |
+| test_reviser | 44 | 7.8 | 0.8 | 2% |
+| test_bt_analysis | 39 | 6.7 | 6.2 | 2% |
+| test_conductor | 15 | 6.4 | 1.0 | 2% |
+| test_feed_battery | 13 | 6.1 | 5.8 | 2% |
+| test_writer_roster | 18 | 6.1 | 1.0 | 2% |
+| test_genre_floor | 25 | 4.9 | 0.8 | 1% |
+| test_force_harness | 23 | 4.4 | 4.2 | 1% |
+| test_context_cutoff | 15 | 4.2 | 1.1 | 1% |
+| test_roster_installation | 7 | 3.8 | 0.9 | 1% |
+| test_revoice_cli | 13 | 3.7 | 0.9 | 1% |
+| test_budget | 17 | 3.7 | 0.6 | 1% |
+| test_directives | 15 | 3.6 | 1.0 | 1% |
+| test_repair_workflow | 12 | 3.6 | 0.4 | 1% |
+
+7 tests take 2s or longer and hold 75s (22%) of the summed time.
+
+**Where the time is.** The two slowest tests are repository-wide scans and simulations that
+already carry `@pytest.mark.intensive`, and so do all seven tests over two seconds: the
+`intensive` marker (`pyproject.toml`) and the `quick` lane (`tools/check.py quick`, which runs
+`-m "not intensive"`) are the slow marker and the slow lane the brief asks for, under the
+name the repository gave them first. The rest of the summed time is spread thin: after those
+seven, no test takes two seconds, and the modules with the most time (`test_planner`,
+`test_cli`, `test_outline`, `test_forensics`) hold it in dozens of one-second store-backed
+tests each.
+
+**The two lane durations.** Full lane (`-n auto`): 57 s wall, 3,763 tests, 20 skipped.
+Quick lane (`-m "not intensive" -n auto`): 36 s wall, the same suite less the eleven intensive
+tests. A research arm can run beside the quick lane with the same margin the coordinator's
+rota already gives a module run; what the box rule protects against is the paid arm and the
+GPU job, not this suite.
+
+**What was not done, and why.** No `slow` marker was added: the tests it would mark are the
+tests `intensive` marks, and a second name for one set is a second answer to which tests are
+slow. No test was weakened or deleted.
 
 ### 3b. Which tests touch a store, the filesystem or a subprocess
 
@@ -772,6 +861,9 @@ identity, `extract_state`, `extract_graph_facts`, `promotions`, and every re-exp
 below imports `extraction`, so the old module stays the top and every import elsewhere is
 unchanged.
 
+**Landed** as stage-0 §215 in this track: the four modules, the seam test, the check-tool
+rows and the map's new homes, with the replay identical and every definition compared.
+
 ### 7b. `gamesystem.py` is one hub and a split needs a facade
 
 `uv run python tools/maintainability_survey.py sections --matrix src/litharness/domain/gamesystem.py`:
@@ -827,15 +919,35 @@ re-export hub without an import cycle. Three tests read the module as a module:
 refuse an `extraction` import, and `tests/test_choice_points.py` reads `inspect.getsource` of
 `gamesystem` for `def best` and its kin. A facade keeps all three green only if its `__all__`
 is the union and its file text still contains no `extraction` import, which a facade of
-imports does. It is the second split, taken after the first replays clean, and its ledger
-entry says what moved.
+imports does.
+
+**Landed** as stage-0 §216, with one refinement the matrix licensed: the readers stayed in
+`gamesystem.py` as its top subject rather than moving out under a fourth name, so the old
+module is a reader and the import site rather than a bare facade. `systems.py` holds the
+definition, the position, the draw check and the writing; `advancement.py` the arithmetic.
+All 72 definitions compared identical, no docstring edited; the ranking test reads all three
+modules' source and the seam test carries both new modules.
 
 ### 7c. Type coverage outside `src/`
 
-*Pending the box window: `uv run mypy tools/ research/quality-measurement/*.py` against the
-`[tool.mypy]` settings, error count per file. Recorded below once run.*
+Measured on 2026-09-03 with `MYPYPATH=src uv run mypy --ignore-missing-imports FILE` per
+file, under the package's `[tool.mypy]` settings (`strict`, `warn_unreachable`). Two things
+made a single run over the directories useless as a measurement and are recorded so the next
+session does not repeat them: given explicit paths, mypy resolves `litharness` from the
+installed package rather than from `src/` and reports every import as untyped (the package
+ships no `py.typed`), so `MYPYPATH=src` or a `files` entry for `src` is required; and one
+`[syntax]` error inside `.venv` stops mypy before it checks anything, so the directories must
+be passed file by file or with the offending site-package excluded.
+
+| Where | Files | Clean | Errors (files) | Cost |
+| --- | --- | --- | --- | --- |
+| `tools/` | 9 (8 after `variation_repair_comparison.py`, which imported two modules that no longer exist, was cut by §214) | `ab_redraw.py`, `check.py`, `sentence_census.py`, `tells_census.py` | 15 in 4: `maintainability_survey.py` 2, `dashboard.py` 1, `interiority_packet_proof.py` 4, `serial_pilot_check.py` 8; all annotation or `Optional` narrowing, none a behaviour change | an hour; done in this track, and `tools` joined `[tool.mypy] files` |
+| `research/quality-measurement/` | 82 | 59 | 75 in 24: `voice_descriptors.py` 18, `blurb_tribunal.py` 7, `elicitation_study.py` 5, `blurb_rewrite.py` 5, `surprisal.py` 4, `blurb_defects.py` 4, `architect_register.py` 4, `register_halflife.py` 3, `cdg_battery.py` 3, and fifteen files with one or two each (two of them stopped at an import before checking); the kinds are missing annotations and `Optional` narrowing, plus optional dependencies (`datasets`, `anthropic`, `torch`) the package deliberately does not install | more than a morning, and most of the files are registered arms whose behaviour may not move under a typing pass; refused here and recorded |
+
+`research/` stays outside `[tool.mypy]`; a session that wants one arm typed types that file and
+runs it the same way.
 
 ### 7d. The slow lane
 
-Decided on the durations in §3a: the tests marked `slow` and the two lane durations are
-recorded there.
+Decided on the durations in §3a: the slow tests were already marked `intensive` and the quick
+lane already exists; both lane durations are recorded there, and no second marker was added.
