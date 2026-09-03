@@ -97,7 +97,7 @@ has one importer, the `reader-evidence-audit` command, and its own test). Nothin
 | `schedule-library.ps1` | the ledger only (§63's entry, line 7085); its own header says when it is for and that you probably do not need it | keep; a README line would advertise what the header argues against | refused |
 | `sentence_census.py`, `tells_census.py` | §199's *Measured (`tools/sentence_census.py` …)* and §199.6; they import `exemplars.load_shelf` and `domain.tells` and run | keep: the instruments behind recorded numbers | refused |
 | `serial-pilot-setup.ps1`, `serial_pilot_check.py` | `plan/serial-pilot-1..6.md`, three ledger entries; `serial_pilot_check` imports only live modules and `setup` uses only live verbs | keep | refused |
-| `variation_repair_comparison.py` | `plan/variation-session.md` only; imports `litharness.application.variation` and `litharness.domain.variation`, both deleted in `530f40e`, so it cannot run; its numbers are `plan/variation-comparison.json`, cited by §105.5 | cut, with a ledger entry (a research surface, dead since 2026-08-24) | pending |
+| `variation_repair_comparison.py` | `plan/variation-session.md` only; imports `litharness.application.variation` and `litharness.domain.variation`, both deleted in `530f40e`, so it cannot run; its numbers are `plan/variation-comparison.json`, cited by §105.5 | cut, with a ledger entry (a research surface, dead since 2026-08-24) | landed, cut 4 (§214) |
 
 ### 2b. `research/quality-measurement/` (90 modules including the census subdirectories)
 
@@ -113,7 +113,7 @@ rest:
 | `rival_pool.py` | builds the `--rivals` pool README's `ab_redraw` recipe reads | keep | — |
 | `scorecard.py` | `ab_redraw`'s scorecard; three test modules | keep | — |
 | `blurb_perception.py` | the three quote-a-span probes §143.2 records as blind; `results/blurb-perception.json`; named by `plan/blurb-shelf-validity.md:32` (its transport class is reused) and `blurb_shelf.py:97` | keep: cited, and the brief refuses deleting a refuted arm's code | refused |
-| `blurb_defects.py` | ran once (`results/blurb-defects.json`, 2026-08-26); cited by no document, test, entry or module; nobody read the result | cut, with the ledger entry of 2a; the result file stays as the record of the run | pending |
+| `blurb_defects.py` | ran once (`results/blurb-defects.json`, 2026-08-26); cited by no document, test, entry or module; nobody read the result | cut, with the ledger entry of 2a; the result file stays as the record of the run | landed, cut 4 (§214) |
 
 The sibling research directories are outside the brief's category (`research/loop/` four
 modules and no `.md`, `progression-clause/` two, `structural-instrumentation/` one,

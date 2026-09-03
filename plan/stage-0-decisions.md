@@ -23178,3 +23178,58 @@ stays open with its reason.
 
 **Anti-scope.** Nothing here measures prose; the redraw that follows is read for what it
 prints, on §213's terms, and is not a substitute for the operator's read 20.
+
+## 214. The pruning inventory found two dead scripts in a hundred and one, nine names nothing calls and two briefs already home, and the rest of what looked dead is in use
+
+**Measured first** (`plan/pruning-inventory.md`, on `2142d0f`, no model; the tally is the
+inventory's and is not restated elsewhere). Every module-level name under `src/litharness/`
+against every `.py` and `.md` in the tree: nine names with no reference but their own
+definition line (a type alias, two store methods, a property, a lease method, an alias, two
+text helpers, a fake-provider method). The brief's four named candidates all in use:
+`application/variation.py` already cut in `530f40e` with §105.5 as its null; the reviser
+reachable under `--revise` by §196's decision, with one docstring still describing the
+pre-§196 wiring; the six detector ids carried into the optional pack's live bundle and pinned
+by `tests/test_continuity_evaluator.py`; three change-role readers reading three facts
+(`characters`, `salience`, `gamesystem.changes_of`). Every script under `tools/` and
+`research/quality-measurement/` against the runbooks, the findings, the ledger, the tests and
+the research import graph: two of a hundred and one that nothing runs, reads or cites —
+`tools/variation_repair_comparison.py`, which imports the two modules `530f40e` deleted and
+cannot run, and `research/quality-measurement/blurb_defects.py`, run once on 2026-08-26
+(`results/blurb-defects.json`) and never cited. Three older handoffs against the ledger: two
+with every row at home (§140 to §143; §146 and §151) and one that owns a table nothing else
+records. One helper written eleven times under six names, and the homonyms beside it distinct
+fixtures. Two restated counts, one already drifted from the home that the same sentence named
+as canonical. Twenty-five local branches on `main` by patch identity, two holding a patch,
+three worktrees stale — reported, not touched.
+
+**What shipped**, one commit per cut, each after the suite, ruff, mypy, `git diff --check` and
+`tools/replay_books.py` (`2142d0f`, the replay the generality track ran by hand, as a script:
+a read-only copy through the backup API, `known` rebuilt as the records that preceded each
+scene's accepting revision, record ids then fields, and the derived lines at every scene
+position for `--baseline`; the four stored books 8/8 identical before and after every cut, no
+derived line moved). Cut 1: the two counts struck in place in `PLAN.md`. Cut 2:
+`handoff-reader-perception.md` and `handoff-writer-recruiter.md` deleted, ten pointers
+repointed to §143.2, §146 and `plan/writer-roster.md` §5. Cut 3: `tests/helpers.py` holding
+`accepted`, `accepted_all` and `canon`, every local name kept so no call site or cited test
+name moved. Cut 4, this entry's commit: the two scripts deleted; the result file of the
+counter's one run stays as the record of it. Cut 5 follows: the nine names and the stale
+docstring, which is not behaviour and gets no entry. The inventory and the replay script stay
+as the track's deliverables.
+
+**What was refused, and why.** `handoff-listing-loop.md`: its eleven-round listing table has
+no other home and `domain/voice.py` cites the file for it. `blurb_perception.py`,
+`idiom_fit.py`, `number_context_run.py`, `register_census_run.py`, and the registered blurb,
+brief-capability, causal-salience and voice-descriptor arms: each is named by an entry, a
+registration or a results file as the instrument behind a number, and a refuted arm's code is
+not deleted for being refuted (the brief's own rule; archival waits on a FINDINGS.md that
+records the refutation where the code lives). `schedule-library.ps1`, the two census tools and
+the two pilot scripts: cited and runnable. The dated test totals in PLAN.md §17 and §20 and
+the sibling repositories' counts: records of a date, not claims. The `_system`, `_record` and
+`_canon` homonyms: different fixtures, and `tests/test_gamesystem.py` says why one is not
+shared. Worktrees and branches: a session may be sitting in one, so the list is the operator's
+(`claude/ox-alpha-trial-7f3a21` and `origin/claude/adoring-chatterjee-b5f092` each hold one
+unmerged patch).
+
+**Anti-scope.** No prompt, gate, line or stored book changed, and the replay is the proof. No
+research claim is promoted or demoted; a result file that lost its writer keeps its digest and
+its date. Nothing here measures prose.
