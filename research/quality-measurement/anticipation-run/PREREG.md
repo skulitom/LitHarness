@@ -60,3 +60,14 @@ stop point at its own 60%.
 Nothing here feeds a prompt (§97.1). No bar over any rate. No reader is retuned. A pass makes
 the probe a candidate for the reader-architecture proposal the handoff's fifth item asks for,
 and a candidate only.
+
+## Addendum, 2026-09-03: a second plumbing defect found before spend
+
+`--out` was resolved under `results/` at the write and `--cache` was handed to `Path()` bare,
+so the replay cache of an 800-call run would have landed in whatever directory the run was
+launched from while its result file landed under `results/`. Nothing would have failed; the
+substrate of a paid run would simply have been somewhere nobody would look for it, which is
+the `toll.db` shape `RUNBOOK.md` opens with. The default is now the absolute
+`DEFAULT_CACHE = results/anticipation-raw.jsonl`, an explicitly passed `--cache` is taken as
+typed, and `tests/test_anticipation.py` pins it. No cache existed when this was found, so no
+record was invalidated and no measurable moved.

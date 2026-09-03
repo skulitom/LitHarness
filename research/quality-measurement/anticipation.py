@@ -46,6 +46,14 @@ import personas  # noqa: E402
 RESULTS = HERE / "results"
 SCENES = HERE / "corpora" / "toll-scenes.json"
 
+#: Where the paid run's replay cache lands by default. **Absolute, and `--out` is why the bug
+#: it fixes was invisible**: `--out` is resolved under `RESULTS` at the write while `--cache`
+#: was handed to `Path()` bare, so the cache of an 800-call run would have landed in whatever
+#: directory the operator happened to be standing in while the result file landed under
+#: `results/`. That is the `toll.db` shape the runbook records — the substrate of a paid run
+#: living somewhere nobody would look for it. An explicitly passed `--cache` is taken as typed.
+DEFAULT_CACHE = RESULTS / "anticipation-raw.jsonl"
+
 # ---------------------------------------------------------------- the registration, frozen
 
 ANTICIPATION_VERSION = "anticipation.v0"
@@ -494,7 +502,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--run", action="store_true")
     parser.add_argument("--model", default="claude-haiku-4-5")
-    parser.add_argument("--cache", default="anticipation-raw.jsonl")
+    parser.add_argument("--cache", default=str(DEFAULT_CACHE))
     parser.add_argument("--out", default="anticipation.json")
     parser.add_argument(
         "--ceiling-usd",
