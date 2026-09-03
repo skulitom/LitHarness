@@ -1,6 +1,6 @@
 # Serial pilot 25 — a second writer's concept in the third person, under the batched pass
 
-Status: **draw2 read; draw3 running under the pass's fourth version (stage-0 §199.7)** (2026-09-03). Draw1 stopped at scene 1 for a seed breach (stage-0 §200).
+Status: **three draws read and with the operator; no further arm until his read** (2026-09-03). Draw1 stopped at scene 1 for a seed breach (stage-0 §200).
 Records to be read beside plan/serial-pilot-24.md §7,
 which is the last chapter the operator has (draw3 of *The Ratchet Counts Down*), and against
 the reads' families in plan/reader-read-17.md to -19.md. Nothing here is evidence; the
@@ -339,3 +339,83 @@ morning and never opened is a debt the chapter leaves.
 **Two draws under one concept, never a treatment effect.** Draw1b and draw2 differ by the
 counter's reading and by a fresh seed and draft; the read above is a description of two
 chapters, and the operator's read is what both answer to.
+
+## 6. Draw3 — the pass's fourth version, and the absence family moved
+
+**What ran** (`runs/ab/pilot25/draw3/`, 2026-09-02 23:42 to 2026-09-03 00:05 UTC, tree
+7a40a55 clean). One change from draw2, stage-0 §199.7 (the absence ask names its words, the
+whole-sentence families go first, every located sentence travels). The seed in 833 seconds,
+check and accept clean, two scenes on the first attempt, the pass, the shelf
+(`book-library/marks-for-moving--f4396e22/`), the readership. Thirty calls, $9.48. Four of
+four readers carried on, every one naming the arithmetic on *fellow candidate* and two the
+boy who took the register page.
+
+**Counted, per scene, from the decision rows** (per thousand words, before and after the pass):
+
+| scene | absence | paradox | the way | echo | chained and | long | said again / left / calls | spend |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| scene 1 | 6.6 to 3.3 | 0.0 | 2.2 to 1.1 | 3.3 to 1.1 | 4.4 to 2.2 | 8.8 to 4.4 | 8 / 9 / 10 | $1.78, 461,910 tokens |
+| scene 2 | 6.6 to 2.2 | 0.0 | 3.3 to 1.1 | 2.2 to 1.1 | 2.2 to 1.1 | 7.7 to 2.2 | 11 / 5 / 9 | $1.62, 416,369 tokens |
+
+The absence family moved on both scenes, for the first time in six batched scenes; nineteen
+sentences said again against draw2's seven, fourteen left against twenty-six, nineteen calls
+against twenty-two. The whole chapter, the counter reading narration only on both sides:
+
+| family | shelf's ceiling | draw1b | draw2 | draw3 |
+| --- | --- | --- | --- | --- |
+| absence | 2.6 | 2.0 | 8.3 | 2.8 |
+| paradox | 0.0 | 0.0 | 1.7 | 0.0 |
+| the way | 0.6 | 0.5 | 1.1 | 1.1 |
+| echo | 1.0 | 0.5 | 2.2 | 1.1 |
+| chained and | 0.5 | 1.0 | 0.6 | 1.7 |
+| long (over 35 words) | 0.0 | 1.0 | 1.7 | 3.3 |
+
+1,818 words; census median 9, longest 48, four sentences in a hundred and twenty-eight over
+forty words. The residue is the long sentence again: the six sentences the counter still
+finds over 35 words carry the absence, the chained *and* and the echo between them, and the
+pass left them after two tries. Three draws under one concept are three descriptions, and
+the seed and the draft differ under each; the rows are what moved on the page the pass was
+given, and nothing here is a treatment effect.
+
+**The read.** This is the chapter of the three I would hand a reader first. The edge is on
+the page in the first sentence (*Adam Kellow could do the invigilator's walk without
+thinking, which was the point of it*) and the prior life is exact (two summers of first-year
+mechanics for rent, a chapter on scattering gone through in green ink, a postdoc in Leeds
+that would take him if the date held). The arrival has the look and adds one thing the
+others did not: *He read it twice. That was the first thing he did wrong ... and the whole
+time he read, he was not doing anything on the list*, the threat's rule turned on the
+reader's own reflex. The first use is an act with a cost: he shouts, nobody moves (*He had
+spent two summers training them not to*), the girl in aisle C moves and says *Moving's one,
+you said one* in the flat voice of somebody reading a bus timetable aloud, the row goes,
+the rower hits the thing with a fire extinguisher for two, and desk 41 does not move. *It
+did not hurry. It was not angry. It was, he thought afterwards, marking.* The sheet does work
+and the work has a price: PACE 2, *the bell had spent them for him*, the wall bars arriving
+a stride early, *he had not been consulted*. The scene closes on arithmetic (*who exactly the
+paper thought a fellow candidate was*), which every reader named. The second scene is the
+morning after inside a minute: the light back to ordinary (*The grey had at least been
+honest*), the girl checking his marks *like a girl checking a delivery against an invoice*,
+*Six is a person*, the rower's four that bought two hits and no shoulders, the boy who asks
+for the register page and keeps his hand in the pocket, the outline in the corridor. The
+close is the concept's system revising itself against what he taught them (*THE CANDIDATE
+LEAVES THE HALL BY A DOOR NOT OPENED FOR HIM, 3*; striking gone; *THE COUNT HAS BEGUN*) and
+Kellow reading again, *doing nothing that was on the list*, the chapter's first sentence
+paid off as its last.
+
+**What a reader will hit.** *The flat grey-green of a swimming pool with nobody in it, lit
+pale from nothing* is the absence twice in narration inside a forty-word sentence the pass
+left. *That was somehow the worst of it* is the narrator's gloss with a hedge in it. *The
+outline was not chalk* and, later, *Chalk it was not* is the paradox family said twice and
+the second time in an order no one speaks. *The way a till says it* and *the way a screen
+goes out* are the located-habit simile, apt both times and at twice the shelf's rate. The
+status row has eight fields and six zeros, five of them unglossed (WEIGHT, RECALL, COVER,
+MARGIN, WITHDRAWAL), the *hollows* item again and now on three draws of one concept, which
+makes it the sheet's defect and not the writer's. *Under the badminton lines, three months of
+thesis sat in his inbox* puts the inbox on the floor. The setting is British (Leeds, the
+quad, a wet Tuesday) and the words are plain.
+
+**What the concept bought, three draws in.** Every §198 field is on the page in every draw;
+what differs between the three is staging and the story's shape, and draw3 has the shape
+the others reach for (a rule, its cost, its revision). What the loop bought: the first
+chapter in this house at the shelf's absence rate after the pass, and the pass at a third of
+its first spend. What it did not buy: the long sentence, still three times a chapter, and
+the status row's zeros. The operator's read is the readout.

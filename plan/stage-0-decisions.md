@@ -22432,3 +22432,30 @@ sentence to write and the counter's to check.
 **Anti-scope.** The next chapter drawn says what the fourth version moves; a diagnostic call
 on one page is one page. The four-family sentence remains the residue the pass is least
 likely to clear, and the census (§199.4) says the shelf does not write it.
+
+### 199.8 The fourth version moved the absence family on both scenes; the long sentence is the residue that remains
+
+**Measured (`runs/ab/pilot25/draw3/`, plan/serial-pilot-25.md §6, 2026-09-03).** The fourth
+version of the pass (§199.7) on one chapter under a fresh seed: scene 1, ten calls, $1.78,
+eight sentences said again and nine left; scene 2, nine calls, $1.62, eleven said again and
+five left. The absence family went from 6.6 to 3.3 and from 6.6 to 2.2 per thousand words,
+the first movement in six batched scenes (§199.5, §199.6); the long sentence from 8.8 to 4.4
+and 7.7 to 2.2, the echo from 3.3 to 1.1 and 2.2 to 1.1, the located habit from 2.2 to 1.1
+and 3.3 to 1.1, the chained *and* from 4.4 to 2.2 and 2.2 to 1.1. The whole chapter beside
+the shelf's ceilings: absence 2.8 against 2.6, paradox 0.0, the located habit 1.1 against
+0.6, the echo 1.1 against 1.0, the chained *and* 1.7 against 0.5, long 3.3 against 0.0. Of
+the sentences the counter still finds, six are over thirty-five words and carry the other
+families between them; the pass left them after two tries, as it left draw3 of pilot 24's
+(§199.3). One chapter, one seed: the rows say what moved on the page the pass was given.
+
+**What shipped.** Nothing; a record, and the question that follows it. **What is next, and
+not built.** The long sentence's rewrites are refused where the split pieces still carry a
+word family; the ask names the length and not the words. Whether one ask naming both (*two or
+more sentences, none over N words, without the words ...*) clears more is a measurement the
+next chapter's rows can make only if the ask changes, so the change is a §-entry of its own
+when it is made. The status row's zeros (eight fields, six at zero, unglossed, on three
+draws of one concept) are the sheet's and not the pass's, and are read 19's *hollows* item
+generalised; a census of the shelf's own first status windows precedes any rail.
+
+**Anti-scope.** Three draws under one concept are three descriptions and none a treatment
+effect; no bar is declared; the operator's read of the three is the readout.
