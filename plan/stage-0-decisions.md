@@ -23683,6 +23683,19 @@ show no prerequisite, fifteen no depth, thirteen fewer than five grants.
 any of the three slices reads as the genre on the page is the shelf's question and the
 operator's read, and no chapter was drawn under them here.
 
+**Correction in place, 2026-09-03 (litharness-48, merging the two tracks).** This census's
+record keeps the house's own refusal sentences in full — `genre.system_gap`'s unfinished-system
+complaint is 133 words and every blocked shape carries it — and
+`research/quality-measurement/corpus_leak_audit.py` fails on a committed string of 120 words or
+more, so the audit has been red since `c857710` and names 35 such strings, the longest 316 words.
+**They are ours, not a leak**: two of our sentences repeated per shape, which the audit's own
+definition excludes and its length rule cannot tell apart. `census.py` now records the sentence
+that *names* a refusal rather than its whole body (`shorten`, `shortened`), so no later run adds
+another; the committed blob stays as it was, because the artifact is §217's evidence and the
+audit reads history rather than the working tree. Clearing the audit itself would mean rewriting
+history or widening a leak audit's exemptions, which `tests/test_corpus_leak_audit.py` pins as
+the dangerous change — both are the operator's to decide, and neither was done here.
+
 ## 221. The evaluator is the product and the launch is its test: a readership port behind a domain-pack seam, and a release queue the tool never posts from
 
 The operator's direction, 2026-09-03, in four decisions, with the same-day addendum *"the

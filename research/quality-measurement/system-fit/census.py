@@ -860,6 +860,44 @@ def census(shapes: list[dict[str, Any]], workdir: Path) -> list[dict[str, Any]]:
     return rows
 
 
+#: How much of one of *our own* sentences this record keeps. The house's refusals run long —
+#: `genre.system_gap`'s unfinished-system complaint is 133 words and every blocked shape
+#: records it — and `corpus_leak_audit.py` fails a committed string of 120 words or more,
+#: because a length rule is the only rule that catches an excerpt of somebody else's novel
+#: before it is public. Sixty-four of these landed in this record and thirty-five tripped
+#: that rule, on two distinct sentences repeated per shape.
+#:
+#: **The repair is here rather than in the audit** (2026-09-03, correcting §217's artifact).
+#: The audit's exemption set is pinned exactly by `tests/test_corpus_leak_audit.py`, whose
+#: first line calls an exemption in a leak audit a dangerous thing to add; a path exemption
+#: would also let a future census that recorded a market chapter's line pass unseen. What the
+#: census needs from a refusal is which refusal it was, so the record keeps the sentence that
+#: names it and the code keeps the rest.
+SHORT_WORDS = 40
+
+
+def shorten(text: str) -> str:
+    """One of our sentences, cut to its first clause where that identifies it."""
+    words = text.split()
+    if len(words) <= SHORT_WORDS:
+        return text
+    head = text.split(". ")[0]
+    if head and len(head.split()) <= SHORT_WORDS:
+        return f"{head}. …"
+    return " ".join(words[:SHORT_WORDS]) + " …"
+
+
+def shortened(value: Any) -> Any:
+    """`shorten` over every string in a payload, leaving its shape alone."""
+    if isinstance(value, str):
+        return shorten(value)
+    if isinstance(value, list):
+        return [shortened(item) for item in value]
+    if isinstance(value, dict):
+        return {key: shortened(item) for key, item in value.items()}
+    return value
+
+
 def summarise(rows: list[dict[str, Any]]) -> dict[str, Any]:
     market = [r for r in rows if r["source"] == "royalroad"]
     shelf = [r for r in rows if r["source"] == "shelf"]
@@ -968,7 +1006,9 @@ def main(argv: list[str] | None = None) -> int:
         "shapes": rows,
     }
     args.out.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8", newline="\n"
+        json.dumps(shortened(payload), indent=2, ensure_ascii=False),
+        encoding="utf-8",
+        newline="\n",
     )
     print()
     print(tables(summary, rows))
