@@ -397,7 +397,9 @@ gaps explicitly. The library is a file handoff, not a posting scheduler or publi
 
 ## Development
 
-Read [AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md) before changing code. Use the
+Read [AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md) before changing code;
+[docs/system-model.md](docs/system-model.md) says where each fact the loop reasons about lives,
+which function reads it, and which test notices a change. Use the
 four-second core loop for immediate feedback, or let the checker select a conservative slice from
 the working tree:
 

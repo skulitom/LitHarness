@@ -446,9 +446,15 @@ def test_nothing_in_this_module_ranks_an_option() -> None:
     forbidden = ("best", "score", "rank_option", "prefer", "recommend", "suggest", "optimal")
     for name in gamesystem.__all__:
         assert not any(word in name.lower() for word in forbidden), name
-    source = inspect.getsource(gamesystem)
-    for word in ("def best", "def score", "def prefer", "def recommend"):
-        assert word not in source
+    # The three modules the game system lives in since stage-0 §216: `gamesystem` re-exports
+    # the other two, so a helper added to either would surface in `__all__` above, and its
+    # source is read here so a private one cannot hide either.
+    from litharness.domain import advancement, systems
+
+    for module in (gamesystem, systems, advancement):
+        source = inspect.getsource(module)
+        for word in ("def best", "def score", "def prefer", "def recommend"):
+            assert word not in source, module.__name__
 
 
 def test_the_progression_beat_never_names_a_fork() -> None:

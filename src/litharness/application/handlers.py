@@ -240,11 +240,11 @@ class _Ladder:
     """What one run of the deterministic ladder found, over one text (§187).
 
     **A value rather than a mutation, because the ladder now runs more than once.** §185 put
-    the reviser in front of the gates so the revision would be judged by them; §187 puts the
-    *draft* through them first so a doomed draft is never rewritten. That means two runs per
-    revised scene, and a sequence of rebindings in one scope could not express which run the
-    decision cites. Everything here is derived from the text in the `text` field and from
-    store reads; nothing in it is persisted by the run that produced it.
+    the reviser in front of the gates so the revision would be judged by them; §188.2 puts the
+    *draft* through them first so a doomed draft is never rewritten (§187.5 had refused it).
+    That means two runs per revised scene, and a sequence of rebindings in one scope could not
+    express which run the decision cites. Everything here is derived from the text in the
+    `text` field and from store reads; nothing in it is persisted by the run that produced it.
 
     **There is nowhere in this to put a preference between two texts.** It carries a verdict
     about *one* candidate, exactly as `DraftOutcome` does, and the caller keeps the second run
@@ -591,7 +591,7 @@ def make_scene_draft_handler(
                     store, job, revision, project_id, logical_id, head.revision_id, now
                 )
 
-        # **§4.2 ladder step 3's pre-flight half, in front of the spend.** A finding already
+        # **§4.2 ladder step 2's pre-flight half, in front of the spend.** A finding already
         # on record against this node cannot be caused or cleared by the candidate, so
         # generating one to discover a refusal that was knowable beforehand costs three model
         # calls and then poisons the unit — leaving nothing to resume when the operator does
@@ -711,7 +711,7 @@ def make_scene_draft_handler(
             # Stripping before the gate keeps one text, one hash and one offset space, which is
             # also why it cannot be done as a migration over prose already in the store: every
             # open finding's span is measured against the text as committed. **It therefore
-            # runs once per ladder run rather than once per handler call** (§187): each run
+            # runs once per ladder run rather than once per handler call** (§188.2): each run
             # judges its own text, and the strip is still the last rewrite before the gate on
             # whichever text is adopted, which is all §185.2's argument ever required.
             stripped, marks = strip_em_dash(candidate)
@@ -742,7 +742,7 @@ def make_scene_draft_handler(
             # can be queried later by job or by resulting revision.
             gates = gates_for_draft(outcome)
 
-            # §4.2 ladder step 3, and the first gate in the wired path that is about the *book*
+            # §4.2 ladder step 2, and the first gate in the wired path that is about the *book*
             # rather than about the string. It runs only on a candidate that cleared shape:
             # integrity over text the shape gate refused would be a second opinion on a draft
             # that is already going back, and it would cost a store read per refusal.
