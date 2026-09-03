@@ -4508,7 +4508,7 @@ def cmd_world(args: argparse.Namespace) -> int:
             # A sheet declaration the parser refuses is said at declare time as well: it is
             # neither transient nor permanent, since a declaration in the same slot replaces
             # it, so it gets its own key rather than either list above.
-            unreadable = list(extraction.unreadable_sheets([record]).values())
+            unreadable_lines = list(extraction.unreadable_sheets([record]).values())
             written = store.record_state_records(book_id, branch_id, [record], created_at=stamp)
             payload: Any = {
                 "record_id": record.record_id,
@@ -4517,7 +4517,7 @@ def cmd_world(args: argparse.Namespace) -> int:
                 "says": state_mod.describe(record),
                 "not_yet_coherent": new_complaints,
                 "will_not_resolve": list(warnings),
-                "cannot_be_read": unreadable,
+                "cannot_be_read": unreadable_lines,
             }
             if args.json:
                 print(json.dumps(payload, ensure_ascii=False, indent=2))
@@ -4528,7 +4528,7 @@ def cmd_world(args: argparse.Namespace) -> int:
                     print(f"  ! not yet coherent: {complaint}", file=sys.stderr)
                 for warning in warnings:
                     print(f"  !! will not resolve: {warning}", file=sys.stderr)
-                for sentence in unreadable:
+                for sentence in unreadable_lines:
                     print(f"  !! cannot be read: {sentence}", file=sys.stderr)
             return EXIT_OK
     finally:
