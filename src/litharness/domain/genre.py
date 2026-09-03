@@ -166,7 +166,14 @@ def _is_position_in(records: Sequence[lc.StateRecord], system: gamesystem_mod.Sy
             for key in snapshot
             if not (key.endswith(MAX_SUFFIX) and key[: -len(MAX_SUFFIX)] in wanted)
         }
-        if keys == wanted:
+        # **A column the snapshot lacks is a grant nobody holds yet** (§211, and the fit
+        # census's probes, `research/quality-measurement/system-fit/`): a system grows after
+        # the seed, and an exact comparison took every book on it from drafting to blocked
+        # at the first grant declared since, until somebody re-seeded the snapshot by hand.
+        # A snapshot carrying the rung and only the system's columns is a position in it;
+        # an extra column is still a different sheet, and one without the rung stands
+        # nowhere.
+        if gamesystem_mod.RANK_KEY in keys and keys <= wanted:
             return True
     return False
 

@@ -1333,6 +1333,26 @@ def test_the_gain_line_is_the_graph_line_s_can_do_phrase_filled_with_the_book_s_
     assert gain_example(standing_only, ability_id="cold_seal") is None
 
 
+def test_a_sheet_following_its_system_hides_a_column_the_snapshot_never_held() -> None:
+    """§211's sheet follows its system as it grows, and §203's projection printed `?` for
+    every grant declared after the snapshot, since a column the snapshot lacks is shown on
+    purpose. On a following sheet such a column is a grant nobody holds yet and is hidden like
+    any unheld one; a sheet naming no system keeps its `?`, and a following sheet that shows
+    unheld columns still prints it. Found by the fit census's probes."""
+    fields = (
+        SheetField("rank", "Seal"),
+        SheetField("seamsight", "Seamsight"),
+        SheetField("windread", "Windread"),
+    )
+    held = {"rank": 1, "seamsight": 2}
+    following = Sheet(fields, show_unheld=False, system="the_weave")
+    assert following.render("silas", held) == "[STATUS] silas — Seal 1 | Seamsight 2"
+    plain = Sheet(fields, show_unheld=False)
+    assert plain.render("silas", held) == "[STATUS] silas — Seal 1 | Seamsight 2 | Windread ?"
+    shown = Sheet(fields, show_unheld=True, system="the_weave")
+    assert shown.render("silas", held).endswith("Windread ?")
+
+
 def test_a_sheet_naming_its_system_round_trips_the_name() -> None:
     """§211: a sheet may name the system whose columns it prints; a sheet naming none
     declares nothing about one, so every declaration written before this is unchanged."""

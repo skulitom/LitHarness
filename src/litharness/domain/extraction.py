@@ -278,7 +278,15 @@ class Sheet:
         kept: list[SheetField] = []
         for index, field_ in enumerate(self.fields):
             keys = [field_.name] + ([f"{field_.name}{MAX_SUFFIX}"] if field_.paired else [])
-            held = any(value.get(key) is None or _held(value.get(key)) for key in keys)
+            # A column the snapshot never held stays visible as `?` on a sheet whose
+            # columns are its own; on a sheet that follows its system (§211) such a
+            # column is a grant declared after the snapshot, which nobody holds yet, and
+            # it is hidden like any unheld one. The fit census's probes found the line
+            # printing `?` for every grant a system had grown by.
+            held = any(
+                (value.get(key) is None and self.system is None) or _held(value.get(key))
+                for key in keys
+            )
             if index == 0 or held:
                 kept.append(field_)
         return tuple(kept)

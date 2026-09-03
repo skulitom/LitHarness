@@ -736,3 +736,36 @@ def test_an_owner_s_sheet_is_not_a_second_book_sheet_for_the_system_gap() -> Non
     assert "status_sheet records" not in (genre.system_gap(records) or "")
     two = [*records, canon("mara", "status_sheet", {"fields": [{"name": "hp", "label": "HP"}]})]
     assert "2 canon status_sheet records" in (genre.system_gap(two) or "")
+
+
+def test_a_snapshot_lacking_a_grant_declared_since_the_seed_is_still_a_position() -> None:
+    """§211 let a system grow after the seed and the floor went on comparing key sets
+    exactly, so the first grant declared after the seed took every book on that system from
+    drafting to blocked until somebody re-seeded the snapshot by hand. Found by the fit
+    census's probes (`research/quality-measurement/system-fit`). A snapshot carrying the rung
+    and only the system's columns is a position in it, and the columns it lacks stand at
+    nothing; an extra column is still a different sheet, and a snapshot without the rung
+    stands nowhere."""
+    import dataclasses
+
+    from litharness.domain import gamesystem as gs
+
+    complete = [
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in gs.records_for(_weave())
+    ]
+
+    def sheet(value: dict[str, int]) -> lc.StateRecord:
+        return lc.StateRecord(
+            record_id="seed",
+            kind=lc.StateRecordKind.ASSERTION,
+            subject="silas",
+            predicate=STATUS_PREDICATE,
+            value=value,
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+
+    assert genre.has_starting_sheet([*complete, sheet({"rank": 1, "seamsight": 1})])
+    assert genre.has_starting_sheet([*complete, sheet({"rank": 1})])
+    assert not genre.has_starting_sheet([*complete, sheet({"seamsight": 1})])
+    assert not genre.has_starting_sheet([*complete, sheet({"rank": 1, "glow": 3})])
