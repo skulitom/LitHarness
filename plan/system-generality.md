@@ -190,7 +190,7 @@ rule (what moved, what the scene named, the first few) instead of a higher cap. 
 numbers-go-up counters and the `stands_at` chain are unchanged: an ordinal field prints the
 same rung they count.
 
-### Phase 3 — displays as declared views (four slices done: stage-0 §205, the default sheet retired and a book's own evidence declaring its columns; §206, a sheet declaration naming its owner so a book carries several sheets; §207, the choice display, a way saying what it looks like and what it needs; §208, the notice, a gain phrase on the graph line asked for where a beat names a gain. The view node and the readout on request remain)
+### Phase 3 — displays as declared views (four slices done: stage-0 §205, the default sheet retired and a book's own evidence declaring its columns; §206, a sheet declaration naming its owner so a book carries several sheets; §207, the choice display, a way saying what it looks like and what it needs; §208, the notice, a gain phrase on the graph line asked for where a beat names a gain. Closed without a view node, stage-0 §209: the four slices gave every declared display a home on the predicates the vocabulary already had, so a node would be a second declaration of the same facts. The readout on request is owed, a furniture ask now that owners exist)
 
 The vocabulary's `view` node type gets an owner. A view is a subject with `type view`, a tag
 (`is_a`), a voice (`manifests_as`), a field list with per-field show rules, a trigger (on a
@@ -214,7 +214,7 @@ chain rather than a refused draw). *Numbers go up* becomes a declared monotonic 
 attribute that the §113 counters read, so a book whose numbers legitimately fall (a curse, a
 debt) declares the exception rather than fighting the engine.
 
-### Phase 5 — the floor generalised
+### Phase 5 — the floor generalised (done: stage-0 §209; the floor asks for a display the book can print, a sheet with a snapshot or a standing on a declared ladder with its line)
 
 `has_starting_sheet` and `speaks_system_voice` ask for *at least one declared view the writer
 is asked for* instead of a numeric snapshot. A numberless progression book declares a ladder

@@ -51,6 +51,7 @@ from litharness.domain.extraction import (
     SHEET_PREDICATE,
     STATUS_PREDICATE,
     speaks_system_voice,
+    standing_example,
 )
 
 #: The genre every book this house publishes is in. A constant rather than a per-book setting,
@@ -62,7 +63,9 @@ HOUSE_GENRE = "LitRPG"
 #: an operator who ignored the first sees the same words in the second. One string, two
 #: surfaces, no drift — `tests/test_genre_floor.py` pins that they are the same string.
 NO_SHEET = (
-    f"no state seeded — a {HOUSE_GENRE} book needs a starting sheet to speak system voice"
+    f"no display seeded — a {HOUSE_GENRE} book needs something it can print: a starting "
+    "sheet to speak system voice, or a standing on a declared ladder with the line that "
+    "prints it"
 )
 
 
@@ -100,6 +103,13 @@ def has_starting_sheet(records: Sequence[lc.StateRecord]) -> bool:
     door along: a switch somebody has to flip is a switch somebody forgets, and the moment seeds
     mint systems every new book is under the strict half automatically, with nothing to remember.
     """
+    # **A display, not a numeric sheet** (§209). A book whose progression has no numbers,
+    # a named ladder and the line the book prints when a standing changes, is a book
+    # this house can ask for its furniture; the sheet was the only display the floor
+    # knew. `extraction.standing_example` is the same question the writer's prompt asks,
+    # so the floor and the ask cannot disagree.
+    if standing_example(records) is not None:
+        return True
     if not speaks_system_voice(records):
         return False
     declared = _declared_systems(records)
@@ -119,9 +129,7 @@ def _declared_systems(
     report an empty world mid-build. The floor is the opposite case: a proposal is not yet this
     book's system, and tightening against one would refuse a book for a draw nobody accepted.
     """
-    return gamesystem_mod.systems_of(
-        [record for record in records if state_mod.is_canon(record)]
-    )
+    return gamesystem_mod.systems_of([record for record in records if state_mod.is_canon(record)])
 
 
 def _canon_snapshots(records: Sequence[lc.StateRecord]) -> tuple[Mapping[str, object], ...]:
@@ -134,9 +142,7 @@ def _canon_snapshots(records: Sequence[lc.StateRecord]) -> tuple[Mapping[str, ob
     )
 
 
-def _is_position_in(
-    records: Sequence[lc.StateRecord], system: gamesystem_mod.SystemDef
-) -> bool:
+def _is_position_in(records: Sequence[lc.StateRecord], system: gamesystem_mod.SystemDef) -> bool:
     """Whether some canon snapshot is a position in this system.
 
     **Compared by value keys and not by numbers.** Which rung somebody stands on and how far
@@ -225,8 +231,7 @@ def system_gap(records: Sequence[lc.StateRecord]) -> str | None:
                 + "; ".join(unfinished)
                 + ". An unfinished system reads back as no system at all, so the sheet is "
                 "never checked as a position in it and no beat speaks its ranks or "
-                "abilities."
-                + because
+                "abilities." + because
             )
         return (
             "this book declares no game system: no subject holds the system role with a "
@@ -400,9 +405,7 @@ def beat_ordinals(total: int, *, every: int = EVERY) -> frozenset[int]:
     return frozenset({1, *range(1 + every, total + 1, every)})
 
 
-def beat_text(
-    ordinal: int, total: int, *, counts: Sequence[str] = (), every: int = EVERY
-) -> str:
+def beat_text(ordinal: int, total: int, *, counts: Sequence[str] = (), every: int = EVERY) -> str:
     """The beat sentence a scheduled scene carries, in this book's own vocabulary.
 
     `counts` is what this book's system counts, in the order its sheet prints them —
@@ -611,8 +614,7 @@ OPENING_FIRST = (
 )
 
 OPENING_HOOK = (
-    "The scene ends on something the person has just read or been offered and has not yet "
-    "answered."
+    "The scene ends on something the person has just read or been offered and has not yet answered."
 )
 
 
@@ -669,8 +671,12 @@ def with_opening(
     the control.
     """
     beat = opening_text(
-        ordinal, reads=reads, arc_index=arc_index, chapter_scene=chapter_scene,
-        scenes_in_chapter=scenes_in_chapter, opening=opening,
+        ordinal,
+        reads=reads,
+        arc_index=arc_index,
+        chapter_scene=chapter_scene,
+        scenes_in_chapter=scenes_in_chapter,
+        opening=opening,
     )
     if beat is None:
         return statement

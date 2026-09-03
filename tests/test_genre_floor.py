@@ -269,9 +269,7 @@ def test_a_book_seeded_by_world_declare_is_actually_asked_for_a_status_line(
     monkeypatch.setenv("LITHARNESS_FAKE_PAD_CHARS", "400")
     db = tmp_path / "seeded.db"
     assert main(["--database", str(db), "init"]) == EXIT_OK
-    assert (
-        main(["--database", str(db), "listing", "--writer", "vance", "--scenes", "6"]) == EXIT_OK
-    )
+    assert main(["--database", str(db), "listing", "--writer", "vance", "--scenes", "6"]) == EXIT_OK
     capsys.readouterr()
 
     select = make_plan_selector(outline=False)
@@ -289,10 +287,16 @@ def test_a_book_seeded_by_world_declare_is_actually_asked_for_a_status_line(
     assert (
         main(
             [
-                "--database", str(db),
-                "world", "declare", "ilse", STATUS_PREDICATE,
-                "--value", sheet,
-                "--order-key", "s1",
+                "--database",
+                str(db),
+                "world",
+                "declare",
+                "ilse",
+                STATUS_PREDICATE,
+                "--value",
+                sheet,
+                "--order-key",
+                "s1",
             ]
         )
         == EXIT_OK
@@ -392,8 +396,20 @@ def test_the_beat_is_material_and_carries_no_quality_word() -> None:
     from litharness.domain import house
 
     text = genre.BEAT.lower()
-    for word in ("progress", "progression", "exciting", "interesting", "good", "compelling",
-                 "satisfying", "dopamine", "reward", "quickly", "immediately", "clearly"):
+    for word in (
+        "progress",
+        "progression",
+        "exciting",
+        "interesting",
+        "good",
+        "compelling",
+        "satisfying",
+        "dopamine",
+        "reward",
+        "quickly",
+        "immediately",
+        "clearly",
+    ):
         assert word not in text, f"the beat reaches for a quality word: {word!r}"
     leaked = sorted(word for word in house.MACHINERY_WORDS if word in text)
     assert not leaked, f"the beat speaks this system's own vocabulary: {leaked}"
@@ -454,8 +470,7 @@ def test_a_floored_book_says_why_on_the_operator_surface(tmp_path, capsys) -> No
     assert genre.NO_SHEET in out, "the floor's own sentence must reach the status report"
     assert "blocked" in out
     assert "needs attention 1" in out, (
-        "a blocked book must count in the number the operator watches; it appears in no "
-        "other count"
+        "a blocked book must count in the number the operator watches; it appears in no other count"
     )
 
 
@@ -521,9 +536,7 @@ def _seed_world(db, records) -> tuple[str, str]:
     store = SqliteStore.open(db)
     try:
         book_id, branch_id = _fixture(store, "mystery")
-        store.record_state_records(
-            book_id, branch_id, records, created_at="2026-08-29T00:00:00Z"
-        )
+        store.record_state_records(book_id, branch_id, records, created_at="2026-08-29T00:00:00Z")
     finally:
         store.close()
     return book_id, branch_id
@@ -666,3 +679,24 @@ def test_a_ceiling_key_on_the_snapshot_is_still_a_position_in_the_system() -> No
     assert genre.has_starting_sheet([*complete, sheet({**position, "seamsight_max": 3})])
     assert not genre.has_starting_sheet([*complete, sheet({**position, "glow_max": 3})])
     assert not genre.has_starting_sheet([*complete, sheet({**position, "glow": 3})])
+
+
+# --- §209: the floor asks for a display, not a numeric sheet -------------------------------
+
+
+def test_a_numberless_book_with_a_ladder_and_its_line_clears_the_floor() -> None:
+    """§209: a book whose progression has no numbers, a named ladder with a standing on it
+    and the line the book prints when the standing changes, is a book this house can ask for
+    its furniture; the same book with no line is refused, and the refusal names both ways."""
+    from litharness.domain import worlds
+    from tests.test_planner import _ladder_records
+
+    numberless = _ladder_records()
+    assert not any(record.predicate == STATUS_PREDICATE for record in numberless)
+    assert genre.has_starting_sheet(numberless)
+    assert genre.genre_block(numberless) is None
+    no_line = [record for record in numberless if record.predicate != worlds.GRAPH_LINE_PREDICATE]
+    assert not genre.has_starting_sheet(no_line)
+    reason = genre.genre_block(no_line)
+    assert reason is not None and genre.NO_SHEET in reason
+    assert "starting sheet" in genre.NO_SHEET and "declared ladder" in genre.NO_SHEET

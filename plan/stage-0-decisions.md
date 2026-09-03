@@ -22840,3 +22840,42 @@ line. A phrase supplied by this house when the world declares none: no default v
 **Anti-scope.** Whether a book's writer prints the notice where asked is the next chapter's
 to show; nothing here measures prose. The view node and the readout on request remain the
 last of phase 3.
+
+## 209. Phase 5: the floor asks for a display the book can print, and a numberless book with a ladder and its line clears it; phase 3 closes without a view node
+
+**What it answers.** The plan's phase 5 (`plan/system-generality.md` §4) and the genre's
+table (§2 there): a book whose progression has no numbers, named ranks or realms, was
+refused by the floor (§158's *a LitRPG book needs a starting sheet*), which asked for a
+numeric snapshot because a numeric snapshot was the one display the house could print. The
+market census (§202) found two thirds of the genre's earliest chapters printing no display
+at all and the true openings the same, so the floor's demand was already stronger than the
+genre's own openings; it stays, since this house asks for its furniture from chapter one,
+but it asks for a display and not for numbers.
+
+**What shipped** (`domain/genre.py`). `has_starting_sheet` is true where the book can print
+a display: a sheet with a canon snapshot as before (`speaks_system_voice`), or a standing on
+a declared ladder with the line the book prints when a standing changes
+(`extraction.standing_example`, the same question the writer's prompt asks, so the floor and
+the ask cannot disagree). `NO_SHEET` names both ways out, and `genre_block`'s sentence with
+it. Test: a book with a three-rung ladder, a protagonist standing on it and a graph line
+that prints a standing, and no snapshot, clears the floor; the same book without the line is
+refused, and the refusal names both ways (`tests/test_genre_floor.py`). Every book that
+cleared the floor before still does.
+
+**Phase 3 closes without a view node.** The plan named a `view` node (a tag, a trigger, a
+voice, an owner) as the general display; the four slices gave every declared display a home
+on the predicates the vocabulary already had, and a node now would be a second declaration
+of the same facts: the sheet with its kinds and its owner (§204, §206) and its show rule
+(§203), the graph line with a phrase per predicate (§208), the offer line with its text and
+its gates (§207). The readout on request (another owner's sheet printed where the protagonist
+reads it) is owed and not built: with owners in place it is a furniture ask and not a model
+change, and it waits for a book that needs it.
+
+**What was refused.** Dropping the floor: a book that prints nothing is a book the writer is
+never asked for furniture from, and this house's reader came for the furniture; the floor
+asks for one display, which a crafting book with no system declares as a ladder or a sheet
+or does not enter. A default display for a book that declares none: no default vocabulary.
+
+**Anti-scope.** Whether a numberless book's chapter reads as this genre's is the shelf's
+question and the operator's read; nothing here measures prose. Phase 4, moves and rules as
+declared shapes, follows, with its measurement first.
