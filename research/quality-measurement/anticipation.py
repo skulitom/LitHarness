@@ -32,6 +32,7 @@ import json
 import statistics
 import sys
 from collections.abc import Iterable, Sequence
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
@@ -511,6 +512,13 @@ def main(argv: list[str] | None = None) -> int:
         help="subscription-equivalent ceiling, read between cells and stopped at; a stopped "
         "run keeps every cell bought and is stamped partial",
     )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=3,
+        help="calls in flight within one (passage, arm); two or three on this box, which "
+        "froze on 2026-09-03 under more",
+    )
     parser.add_argument("--yes", action="store_true")
     args = parser.parse_args(argv)
 
@@ -557,22 +565,52 @@ def main(argv: list[str] | None = None) -> int:
                     break
                 transformed = _arm_text(arm, text)
                 shown = stop_point(transformed)
+
+                def buy(
+                    job: tuple[Any, int],
+                    shown: str = shown,
+                    arm: str = arm,
+                    passage_id: str = passage_id,
+                ) -> Any:
+                    persona, draw = job
+                    record = elicitor.ask_raw(
+                        personas.system_prompt(persona),
+                        [{"role": "user", "content": shown + "\n\n---\n\n" + PROBE}],
+                        schema=PROBE_SCHEMA,
+                        max_tokens=PROBE_MAX_TOKENS,
+                        tag={
+                            "study": ANTICIPATION_VERSION, "passage": passage_id,
+                            "arm": arm, "persona": persona.persona_id, "draw": draw,
+                        },
+                        sample=draw,
+                        model=args.model,
+                    )
+                    return persona.persona_id, draw, parse_response(record.get("text") or "")
+
+                # **The sixteen calls of one (passage, arm) run beside each other, and this is
+                # execution rather than design.** Every request, cache key, sample index and
+                # scorer is what the sequential loop built; `Elicitor` locks its cache and its
+                # counters and is used this way by its own `compare_pair`, and the sibling
+                # instrument's driver has run a pool over sessions since §122. Sequential, the
+                # registered 800 calls measured 67 seconds each on this transport — about
+                # fifteen hours, which would have spent a whole quota window on one arm. The
+                # ceiling still moves only between arms, where the registration put it.
+                jobs = [
+                    (persona, draw)
+                    for persona in personas.GENRE_PANEL
+                    for draw in range(K_DRAWS)
+                ]
+                with ThreadPoolExecutor(max_workers=args.workers) as pool:
+                    answered = list(pool.map(buy, jobs))
+                by_persona: dict[str, dict[int, Any]] = {}
+                for persona_id, draw, parsed in answered:
+                    by_persona.setdefault(persona_id, {})[draw] = parsed
                 for persona in personas.GENRE_PANEL:
-                    draws: list[list[tuple[str, str]] | None] = []
-                    for draw in range(K_DRAWS):
-                        record = elicitor.ask_raw(
-                            personas.system_prompt(persona),
-                            [{"role": "user", "content": shown + "\n\n---\n\n" + PROBE}],
-                            schema=PROBE_SCHEMA,
-                            max_tokens=PROBE_MAX_TOKENS,
-                            tag={
-                                "study": ANTICIPATION_VERSION, "passage": passage_id,
-                                "arm": arm, "persona": persona.persona_id, "draw": draw,
-                            },
-                            sample=draw,
-                            model=args.model,
-                        )
-                        draws.append(parse_response(record.get("text") or ""))
+                    # Reassembled in the registered order, so the result file is the one a
+                    # sequential run would have written.
+                    draws: list[list[tuple[str, str]] | None] = [
+                        by_persona[persona.persona_id][draw] for draw in range(K_DRAWS)
+                    ]
                     score = cell_score(
                         passage_id, arm, persona.persona_id, shown,
                         [d for d in draws if d is not None],
