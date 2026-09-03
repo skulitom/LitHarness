@@ -1328,6 +1328,31 @@ def test_the_gain_line_is_the_graph_line_s_can_do_phrase_filled_with_the_book_s_
     assert gain_example(standing_only, ability_id="cold_seal") is None
 
 
+def test_unreadable_sheets_names_the_declaration_the_parser_refuses_and_readable_drops_it() -> None:
+    """The fit census's finding, at the unit: a sheet declaration with a repeated value key is
+    named with the parser's own sentence, a readable one is not, and `readable` leaves the
+    named one aside so every reader over the records can still answer."""
+    from litharness.domain.extraction import readable, unreadable_sheets
+
+    bad = worlds.world_record(
+        "sera",
+        SHEET_PREDICATE,
+        value={
+            "fields": [
+                {"name": "mp", "label": "MP", "paired": True},
+                {"name": "mp_max", "label": "C"},
+            ]
+        },
+    )
+    good = worlds.world_record(
+        "sera", SHEET_PREDICATE, value={"fields": [{"name": "loop", "label": "Loop"}]}
+    )
+    found = unreadable_sheets([bad, good])
+    assert set(found) == {bad.record_id}
+    assert "repeat a value key" in found[bad.record_id]
+    assert readable([bad, good]) == [good]
+
+
 def test_a_sheet_following_its_system_hides_a_column_the_snapshot_never_held() -> None:
     """§211's sheet follows its system as it grows, and §203's projection printed `?` for
     every grant declared after the snapshot, since a column the snapshot lacks is shown on

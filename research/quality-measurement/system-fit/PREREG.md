@@ -60,6 +60,14 @@ release order, duplicates dropped, capped at 160 lines — and writes one row of
 The schema is the one `census.py` reads; a row the script cannot read is a row the reader
 rewrites, never one the script guesses at.
 
+**Amendments made while reading, before any declaration ran** (the first batch of ten dumps
+showed shapes the catalogue had no word for; the rule for each was fixed then and applied to
+every story): an attribute written as a named tier with a number after it (*Beginner 1*) is
+recorded as two fields, the tier as an `ordinal` and the number beside it; a value written as a
+decimal (*Level 3.71*, *Strength 0.1*) is recorded as `text`, since no kind carries it, and the
+findings say so; a choice screen whose option count the furniture never shows is recorded with
+two options, the least a fork can have, and the note says the count was not shown.
+
 ## Declaring each shape (`census.py`)
 
 For every shape the script builds the `world declare` sequence that expresses it, runs it

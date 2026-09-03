@@ -244,7 +244,8 @@ def printable(text: str) -> str:
 
 
 class Namer:
-    """Ids and labels for one owner's columns; a label used twice gets a letter."""
+    """Ids and labels for one owner's columns; a label used twice gets a letter, and an id
+    another namer already minted (a grant's) is skipped rather than reused."""
 
     def __init__(self, taken: set[str] | None = None) -> None:
         self.seen: Counter[str] = Counter()
@@ -252,15 +253,20 @@ class Namer:
 
     def __call__(self, label: str) -> tuple[str, str]:
         base = slug(label)
-        n = self.seen[base]
-        self.seen[base] += 1
-        while n == 0 and base in self.taken:
-            n += 1
+        while True:
+            n = self.seen[base]
             self.seen[base] += 1
-        if n == 0:
-            return base, printable(label)
-        suffix = LETTERS[n - 1] if n <= 26 else f"{LETTERS[(n - 1) // 26]}{LETTERS[(n - 1) % 26]}"
-        return f"{base}_{suffix}", printable(f"{label} {suffix.upper()}")
+            if n == 0:
+                candidate, printed = base, printable(label)
+            else:
+                suffix = (
+                    LETTERS[n - 1]
+                    if n <= 26
+                    else f"{LETTERS[(n - 1) // 26]}{LETTERS[(n - 1) % 26]}"
+                )
+                candidate, printed = f"{base}_{suffix}", printable(f"{label} {suffix.upper()}")
+            if candidate not in self.taken:
+                return candidate, printed
 
 
 OWNER_SUBJECTS = {

@@ -865,6 +865,39 @@ def implied_sheet(records: Sequence[lc.StateRecord]) -> Sheet | None:
     return Sheet(fields) if fields else None
 
 
+def unreadable_sheets(records: Sequence[lc.StateRecord]) -> dict[str, str]:
+    """Every `status_sheet` declaration this module cannot build a line from, by record id,
+    with the sentence that says why.
+
+    **Found by the fit census (`research/quality-measurement/system-fit/`), which declared a
+    sheet repeating a value key through `world declare`:** `world accept` read it through
+    `sheet_for` and fell over with a traceback, on the §213.1 preview and again at the
+    floor, and `world check` would have done the same once the sheet was canon. `MalformedSheet`
+    is raised on purpose (its docstring: a declaration that silently fell back looked like a
+    book that established nothing), and `cmd_new` catches it; the declare path had no catch.
+    This names the records so `check` can complain, `accept` can refuse, and every reader can
+    leave them aside rather than crash. A later declaration in the same slot replaces one.
+    """
+    found: dict[str, str] = {}
+    for record in records:
+        if record.predicate != SHEET_PREDICATE:
+            continue
+        try:
+            parse_sheet(record.value)
+        except MalformedSheet as error:
+            found[record.record_id] = (
+                f"{record.subject}'s {SHEET_PREDICATE} cannot be read, so no line can be "
+                f"rendered or read back from it: {error}. Declare the sheet again to replace it"
+            )
+    return found
+
+
+def readable(records: Sequence[lc.StateRecord]) -> list[lc.StateRecord]:
+    """`records` without the sheet declarations `unreadable_sheets` names."""
+    unreadable = unreadable_sheets(records)
+    return [record for record in records if record.record_id not in unreadable]
+
+
 def sheet_for(records: Sequence[lc.StateRecord], *, subject: str | None = None) -> Sheet | None:
     """The sheet this book declared, the one its own snapshots imply, or the default.
 

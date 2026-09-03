@@ -1,0 +1,2622 @@
+{
+  "registered": "6073b31755f89f67cd555be22e23a9be1605d951e58341813653b966808ce6a3",
+  "run_at": "2026-09-03T14:09:17.335738+00:00",
+  "classifier": "progression_cadence v2",
+  "source": "royalroad shards",
+  "seed": 20260903,
+  "chapters_read": 14156,
+  "stories_read": 608,
+  "population_with_windows": 301,
+  "sample_size": 60,
+  "stories": [
+    {
+      "story": "rr:106856",
+      "chapters": 3,
+      "words": 5014,
+      "windows": 1,
+      "widest_window": 6,
+      "fields_seen": 6,
+      "zero_fields": 0,
+      "labels": {
+        "charisma": {
+          "number_with_text": 1
+        },
+        "dexterity": {
+          "number_with_text": 1
+        },
+        "perception": {
+          "number_with_text": 1
+        },
+        "strength": {
+          "number_with_text": 1
+        }
+      },
+      "other_labels": 2,
+      "other_label_kinds": {
+        "number_with_text": 2
+      },
+      "notices": {
+        "other": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 7,
+      "dump_lines": 7
+    },
+    {
+      "story": "rr:106950",
+      "chapters": 18,
+      "words": 36405,
+      "windows": 10,
+      "widest_window": 3,
+      "fields_seen": 8,
+      "zero_fields": 0,
+      "labels": {
+        "cost": {
+          "number_with_text": 1
+        }
+      },
+      "other_labels": 6,
+      "other_label_kinds": {
+        "name_or_text": 4,
+        "number_with_text": 3
+      },
+      "notices": {
+        "other": 26,
+        "stat_delta": 7
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 1,
+      "bracketed_names": 0,
+      "verb_families": {
+        "merge_fuse": 1,
+        "gain_plain": 2
+      },
+      "arrows": {},
+      "furniture_lines": 60,
+      "dump_lines": 58
+    },
+    {
+      "story": "rr:107035",
+      "chapters": 34,
+      "words": 77490,
+      "windows": 2,
+      "widest_window": 0,
+      "fields_seen": 0,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 0,
+      "other_label_kinds": {},
+      "notices": {
+        "other": 26
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 30,
+      "dump_lines": 25
+    },
+    {
+      "story": "rr:107399",
+      "chapters": 150,
+      "words": 183837,
+      "windows": 12,
+      "widest_window": 3,
+      "fields_seen": 16,
+      "zero_fields": 2,
+      "labels": {},
+      "other_labels": 11,
+      "other_label_kinds": {
+        "number_with_text": 8,
+        "number": 4,
+        "name_or_text": 2,
+        "blank": 2
+      },
+      "notices": {
+        "other": 27
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 5,
+      "verb_families": {
+        "gain_plain": 1,
+        "replace": 1,
+        "transform": 1,
+        "upgrade": 2
+      },
+      "arrows": {},
+      "furniture_lines": 59,
+      "dump_lines": 52
+    },
+    {
+      "story": "rr:107432",
+      "chapters": 38,
+      "words": 58148,
+      "windows": 2,
+      "widest_window": 2,
+      "fields_seen": 3,
+      "zero_fields": 2,
+      "labels": {},
+      "other_labels": 3,
+      "other_label_kinds": {
+        "number": 2,
+        "blank": 1
+      },
+      "notices": {
+        "other": 22
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 2,
+      "verb_families": {
+        "merge_fuse": 1
+      },
+      "arrows": {},
+      "furniture_lines": 26,
+      "dump_lines": 20
+    },
+    {
+      "story": "rr:107587",
+      "chapters": 74,
+      "words": 223482,
+      "windows": 163,
+      "widest_window": 28,
+      "fields_seen": 634,
+      "zero_fields": 2,
+      "labels": {
+        "ability": {
+          "name_or_text": 10
+        },
+        "agility": {
+          "number": 5,
+          "number_with_text": 1
+        },
+        "charisma": {
+          "number": 5,
+          "number_with_text": 1
+        },
+        "constitution": {
+          "number": 5,
+          "number_with_text": 1
+        },
+        "defense": {
+          "number": 33,
+          "number_with_text": 1
+        },
+        "experience": {
+          "paired": 10
+        },
+        "health": {
+          "percent": 38
+        },
+        "intelligence": {
+          "number": 5,
+          "number_with_text": 1
+        },
+        "level": {
+          "number": 11
+        },
+        "luck": {
+          "number": 2
+        },
+        "name": {
+          "number_with_text": 3
+        },
+        "skill": {
+          "number_with_text": 21,
+          "name_or_text": 1
+        },
+        "strength": {
+          "number": 5,
+          "number_with_text": 1
+        },
+        "wisdom": {
+          "number": 5,
+          "number_with_text": 1
+        }
+      },
+      "other_labels": 215,
+      "other_label_kinds": {
+        "number_with_text": 384,
+        "number": 46,
+        "percent": 27,
+        "name_or_text": 11
+      },
+      "notices": {
+        "other": 421,
+        "level_up": 10
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 2,
+      "quest_cards": 0,
+      "bracketed_names": 14,
+      "verb_families": {
+        "merge_fuse": 1
+      },
+      "arrows": {},
+      "furniture_lines": 1323,
+      "dump_lines": 160
+    },
+    {
+      "story": "rr:107954",
+      "chapters": 54,
+      "words": 60722,
+      "windows": 17,
+      "widest_window": 6,
+      "fields_seen": 22,
+      "zero_fields": 0,
+      "labels": {
+        "constitution": {
+          "list": 1
+        },
+        "reward": {
+          "list": 2,
+          "name_or_text": 1,
+          "number_with_text": 1
+        }
+      },
+      "other_labels": 15,
+      "other_label_kinds": {
+        "name_or_text": 9,
+        "number_with_text": 7
+      },
+      "notices": {
+        "other": 17,
+        "stat_delta": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 3,
+      "quest_cards": 3,
+      "bracketed_names": 0,
+      "verb_families": {
+        "upgrade": 1,
+        "gain_plain": 6,
+        "replace": 2
+      },
+      "arrows": {},
+      "furniture_lines": 67,
+      "dump_lines": 67
+    },
+    {
+      "story": "rr:107993",
+      "chapters": 5,
+      "words": 11143,
+      "windows": 2,
+      "widest_window": 1,
+      "fields_seen": 1,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 1,
+      "other_label_kinds": {
+        "name_or_text": 1
+      },
+      "notices": {
+        "other": 7
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 11,
+      "dump_lines": 11
+    },
+    {
+      "story": "rr:108068",
+      "chapters": 26,
+      "words": 75161,
+      "windows": 17,
+      "widest_window": 5,
+      "fields_seen": 48,
+      "zero_fields": 5,
+      "labels": {
+        "body": {
+          "number": 4
+        },
+        "level": {
+          "blank": 2,
+          "number": 2
+        },
+        "luck": {
+          "number": 3,
+          "number_with_text": 1
+        },
+        "mind": {
+          "number": 4
+        },
+        "soul": {
+          "number": 4
+        },
+        "spirit": {
+          "number": 4
+        },
+        "will": {
+          "number": 4
+        }
+      },
+      "other_labels": 9,
+      "other_label_kinds": {
+        "number": 12,
+        "number_with_text": 7,
+        "blank": 1
+      },
+      "notices": {
+        "other": 13
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 61,
+      "dump_lines": 42
+    },
+    {
+      "story": "rr:108114",
+      "chapters": 38,
+      "words": 131295,
+      "windows": 1,
+      "widest_window": 0,
+      "fields_seen": 0,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 0,
+      "other_label_kinds": {},
+      "notices": {
+        "other": 2
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 1,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 4,
+      "dump_lines": 4
+    },
+    {
+      "story": "rr:108195",
+      "chapters": 58,
+      "words": 86752,
+      "windows": 32,
+      "widest_window": 6,
+      "fields_seen": 76,
+      "zero_fields": 5,
+      "labels": {
+        "agility": {
+          "number": 1
+        },
+        "cooldown": {
+          "number_with_text": 4
+        },
+        "dexterity": {
+          "number": 1
+        },
+        "duration": {
+          "number_with_text": 1
+        },
+        "endurance": {
+          "number": 1
+        },
+        "exp": {
+          "paired": 2
+        },
+        "health": {
+          "paired": 1
+        },
+        "intelligence": {
+          "number": 1
+        },
+        "level": {
+          "number": 3,
+          "number_with_text": 2
+        },
+        "luck": {
+          "number": 1
+        },
+        "mana": {
+          "paired": 1
+        },
+        "objective": {
+          "number_with_text": 2
+        },
+        "range": {
+          "number_with_text": 2
+        },
+        "stamina": {
+          "paired": 1
+        },
+        "strength": {
+          "number": 1
+        }
+      },
+      "other_labels": 26,
+      "other_label_kinds": {
+        "number_with_text": 23,
+        "change": 9,
+        "name_or_text": 7,
+        "list": 5,
+        "number": 4,
+        "blank": 2,
+        "paired": 1
+      },
+      "notices": {
+        "other": 94,
+        "capability": 2,
+        "stat_delta": 3
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 3,
+      "quest_cards": 2,
+      "bracketed_names": 24,
+      "verb_families": {
+        "gain_plain": 11,
+        "upgrade": 5,
+        "replace": 1
+      },
+      "arrows": {},
+      "furniture_lines": 189,
+      "dump_lines": 132
+    },
+    {
+      "story": "rr:108299",
+      "chapters": 44,
+      "words": 135546,
+      "windows": 1,
+      "widest_window": 0,
+      "fields_seen": 0,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 0,
+      "other_label_kinds": {},
+      "notices": {
+        "other": 4
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 6,
+      "dump_lines": 6
+    },
+    {
+      "story": "rr:108300",
+      "chapters": 92,
+      "words": 226892,
+      "windows": 19,
+      "widest_window": 2,
+      "fields_seen": 12,
+      "zero_fields": 0,
+      "labels": {
+        "experience": {
+          "percent": 6
+        },
+        "level": {
+          "number": 6
+        }
+      },
+      "other_labels": 0,
+      "other_label_kinds": {},
+      "notices": {
+        "other": 53
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 1,
+      "bracketed_names": 2,
+      "verb_families": {
+        "gain_plain": 3,
+        "lost_removed": 3
+      },
+      "arrows": {},
+      "furniture_lines": 98,
+      "dump_lines": 78
+    },
+    {
+      "story": "rr:108362",
+      "chapters": 38,
+      "words": 47220,
+      "windows": 24,
+      "widest_window": 8,
+      "fields_seen": 130,
+      "zero_fields": 3,
+      "labels": {
+        "agility": {
+          "number": 10
+        },
+        "class": {
+          "number_with_text": 9
+        },
+        "constitution": {
+          "number": 10
+        },
+        "hp": {
+          "paired": 2
+        },
+        "intelligence": {
+          "number": 10
+        },
+        "level": {
+          "number_with_text": 10
+        },
+        "mp": {
+          "paired": 2
+        },
+        "objective": {
+          "blank": 1
+        },
+        "perception": {
+          "number": 10
+        },
+        "reward": {
+          "number_with_text": 1
+        },
+        "stamina": {
+          "paired": 11
+        },
+        "strength": {
+          "number": 10
+        },
+        "will": {
+          "number": 10
+        },
+        "wisdom": {
+          "number": 10
+        }
+      },
+      "other_labels": 3,
+      "other_label_kinds": {
+        "paired": 18,
+        "number": 6
+      },
+      "notices": {
+        "other": 17,
+        "level_up": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 1,
+      "bracketed_names": 1,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 148,
+      "dump_lines": 117
+    },
+    {
+      "story": "rr:108441",
+      "chapters": 69,
+      "words": 97546,
+      "windows": 248,
+      "widest_window": 12,
+      "fields_seen": 321,
+      "zero_fields": 19,
+      "labels": {
+        "agility": {
+          "number_with_text": 8
+        },
+        "attributes": {
+          "name_or_text": 22
+        },
+        "charisma": {
+          "number_with_text": 8
+        },
+        "cost": {
+          "number_with_text": 6
+        },
+        "description": {
+          "name_or_text": 2
+        },
+        "duration": {
+          "number_with_text": 1
+        },
+        "health": {
+          "number_with_text": 9,
+          "list": 1
+        },
+        "intelligence": {
+          "number_with_text": 8
+        },
+        "luck": {
+          "number_with_text": 8
+        },
+        "mp": {
+          "number_with_text": 24
+        },
+        "quest complete": {
+          "name_or_text": 4
+        },
+        "reward": {
+          "name_or_text": 7
+        },
+        "skills": {
+          "name_or_text": 4
+        },
+        "speed": {
+          "number_with_text": 8
+        },
+        "strength": {
+          "number_with_text": 8
+        },
+        "xp": {
+          "number_with_text": 20,
+          "blank": 4
+        }
+      },
+      "other_labels": 35,
+      "other_label_kinds": {
+        "name_or_text": 101,
+        "number_with_text": 48,
+        "blank": 15,
+        "list": 5
+      },
+      "notices": {
+        "other": 61
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 9,
+      "bracketed_names": 71,
+      "verb_families": {
+        "gain_plain": 119
+      },
+      "arrows": {},
+      "furniture_lines": 831,
+      "dump_lines": 140
+    },
+    {
+      "story": "rr:108458",
+      "chapters": 87,
+      "words": 199259,
+      "windows": 24,
+      "widest_window": 11,
+      "fields_seen": 142,
+      "zero_fields": 0,
+      "labels": {
+        "soul": {
+          "number": 8,
+          "change": 5
+        },
+        "stamina": {
+          "number": 5,
+          "change": 2,
+          "number_with_text": 1
+        },
+        "strength": {
+          "number": 6,
+          "change": 2,
+          "number_with_text": 1
+        }
+      },
+      "other_labels": 8,
+      "other_label_kinds": {
+        "number": 70,
+        "change": 31,
+        "number_with_text": 10,
+        "paired": 1
+      },
+      "notices": {
+        "other": 7,
+        "stat_delta": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {
+        "up": 36,
+        "down": 1
+      },
+      "furniture_lines": 150,
+      "dump_lines": 93
+    },
+    {
+      "story": "rr:108491",
+      "chapters": 18,
+      "words": 63653,
+      "windows": 1,
+      "widest_window": 1,
+      "fields_seen": 1,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 1,
+      "other_label_kinds": {
+        "name_or_text": 1
+      },
+      "notices": {
+        "other": 8
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 2,
+      "verb_families": {
+        "gain_plain": 1
+      },
+      "arrows": {},
+      "furniture_lines": 10,
+      "dump_lines": 10
+    },
+    {
+      "story": "rr:108677",
+      "chapters": 57,
+      "words": 117338,
+      "windows": 159,
+      "widest_window": 12,
+      "fields_seen": 186,
+      "zero_fields": 9,
+      "labels": {
+        "age": {
+          "number_with_text": 13
+        },
+        "skills": {
+          "number": 4
+        },
+        "warning": {
+          "name_or_text": 2
+        }
+      },
+      "other_labels": 33,
+      "other_label_kinds": {
+        "number_with_text": 97,
+        "number": 28,
+        "name_or_text": 20,
+        "blank": 9,
+        "paired": 5,
+        "list": 1
+      },
+      "notices": {
+        "other": 287,
+        "capability": 3,
+        "stat_delta": 3
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 3,
+      "quest_cards": 1,
+      "bracketed_names": 20,
+      "verb_families": {
+        "gain_plain": 27,
+        "replace": 1,
+        "transform": 4,
+        "upgrade": 1,
+        "lost_removed": 1
+      },
+      "arrows": {},
+      "furniture_lines": 749,
+      "dump_lines": 160
+    },
+    {
+      "story": "rr:108682",
+      "chapters": 5,
+      "words": 12096,
+      "windows": 5,
+      "widest_window": 3,
+      "fields_seen": 11,
+      "zero_fields": 2,
+      "labels": {
+        "health": {
+          "percent": 2,
+          "number_with_text": 1
+        }
+      },
+      "other_labels": 6,
+      "other_label_kinds": {
+        "number": 4,
+        "number_with_text": 4
+      },
+      "notices": {
+        "other": 9
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 1,
+      "quest_cards": 1,
+      "bracketed_names": 2,
+      "verb_families": {
+        "gain_plain": 2
+      },
+      "arrows": {},
+      "furniture_lines": 20,
+      "dump_lines": 15
+    },
+    {
+      "story": "rr:108687",
+      "chapters": 39,
+      "words": 52291,
+      "windows": 129,
+      "widest_window": 6,
+      "fields_seen": 363,
+      "zero_fields": 93,
+      "labels": {
+        "ability": {
+          "number_with_text": 4
+        },
+        "description": {
+          "number_with_text": 2
+        },
+        "level": {
+          "number": 20,
+          "blank": 14,
+          "number_with_text": 10,
+          "list": 1
+        }
+      },
+      "other_labels": 22,
+      "other_label_kinds": {
+        "number_with_text": 142,
+        "number": 87,
+        "list": 51,
+        "blank": 32
+      },
+      "notices": {
+        "other": 200
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 11,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {
+        "upgrade": 34
+      },
+      "arrows": {},
+      "furniture_lines": 584,
+      "dump_lines": 160
+    },
+    {
+      "story": "rr:108729",
+      "chapters": 48,
+      "words": 78220,
+      "windows": 16,
+      "widest_window": 5,
+      "fields_seen": 41,
+      "zero_fields": 0,
+      "labels": {
+        "agility": {
+          "number": 6
+        },
+        "health": {
+          "paired": 1
+        },
+        "intelligence": {
+          "number": 5,
+          "number_with_text": 1
+        },
+        "mana": {
+          "paired": 1
+        },
+        "quest complete": {
+          "number_with_text": 1
+        },
+        "strength": {
+          "number": 6
+        }
+      },
+      "other_labels": 10,
+      "other_label_kinds": {
+        "number_with_text": 10,
+        "number": 9,
+        "percent": 1
+      },
+      "notices": {
+        "stat_delta": 1,
+        "other": 42
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 1,
+      "bracketed_names": 5,
+      "verb_families": {
+        "gain_plain": 7,
+        "upgrade": 1,
+        "lost_removed": 5
+      },
+      "arrows": {},
+      "furniture_lines": 83,
+      "dump_lines": 78
+    },
+    {
+      "story": "rr:108739",
+      "chapters": 24,
+      "words": 48784,
+      "windows": 17,
+      "widest_window": 6,
+      "fields_seen": 36,
+      "zero_fields": 1,
+      "labels": {
+        "agility": {
+          "change": 1
+        },
+        "error": {
+          "name_or_text": 1
+        },
+        "exp": {
+          "number_with_text": 1
+        },
+        "level": {
+          "number_with_text": 1
+        },
+        "mana": {
+          "name_or_text": 1,
+          "number_with_text": 1
+        },
+        "strength": {
+          "change": 1
+        },
+        "time remaining": {
+          "number_with_text": 1
+        },
+        "vitality": {
+          "change": 1
+        }
+      },
+      "other_labels": 22,
+      "other_label_kinds": {
+        "number_with_text": 14,
+        "name_or_text": 12
+      },
+      "notices": {
+        "other": 22,
+        "capability": 10,
+        "level_up": 2
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 2,
+      "bracketed_names": 2,
+      "verb_families": {
+        "gain_plain": 18
+      },
+      "arrows": {
+        "up": 3
+      },
+      "furniture_lines": 85,
+      "dump_lines": 85
+    },
+    {
+      "story": "rr:108749",
+      "chapters": 14,
+      "words": 34671,
+      "windows": 14,
+      "widest_window": 8,
+      "fields_seen": 39,
+      "zero_fields": 0,
+      "labels": {
+        "agility": {
+          "number": 2
+        },
+        "charisma": {
+          "number": 2
+        },
+        "constitution": {
+          "number": 2
+        },
+        "hp": {
+          "number": 1
+        },
+        "intelligence": {
+          "number": 2
+        },
+        "mp": {
+          "number": 1
+        },
+        "strength": {
+          "number": 2
+        },
+        "wisdom": {
+          "number": 2
+        }
+      },
+      "other_labels": 10,
+      "other_label_kinds": {
+        "name_or_text": 22,
+        "number_with_text": 3
+      },
+      "notices": {
+        "other": 13,
+        "stat_delta": 9
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 5,
+      "bracketed_names": 8,
+      "verb_families": {
+        "gain_plain": 3
+      },
+      "arrows": {},
+      "furniture_lines": 76,
+      "dump_lines": 75
+    },
+    {
+      "story": "rr:108757",
+      "chapters": 16,
+      "words": 45582,
+      "windows": 34,
+      "widest_window": 4,
+      "fields_seen": 43,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 32,
+      "other_label_kinds": {
+        "number_with_text": 13,
+        "name_or_text": 11,
+        "number": 10,
+        "list": 6
+      },
+      "notices": {
+        "other": 88,
+        "stat_delta": 2
+      },
+      "choice_screens": 1,
+      "options_per_screen": [
+        3
+      ],
+      "item_boxes": 2,
+      "quest_cards": 3,
+      "bracketed_names": 21,
+      "verb_families": {
+        "replace": 1,
+        "transform": 1,
+        "upgrade": 4,
+        "gain_plain": 1
+      },
+      "arrows": {},
+      "furniture_lines": 200,
+      "dump_lines": 148
+    },
+    {
+      "story": "rr:108768",
+      "chapters": 16,
+      "words": 26637,
+      "windows": 7,
+      "widest_window": 13,
+      "fields_seen": 56,
+      "zero_fields": 0,
+      "labels": {
+        "agi": {
+          "number": 8
+        },
+        "con": {
+          "number": 8
+        },
+        "int": {
+          "number": 8
+        },
+        "str": {
+          "number": 8
+        }
+      },
+      "other_labels": 5,
+      "other_label_kinds": {
+        "number": 16,
+        "name_or_text": 8
+      },
+      "notices": {
+        "other": 5
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {
+        "gain_plain": 5
+      },
+      "arrows": {},
+      "furniture_lines": 24,
+      "dump_lines": 21
+    },
+    {
+      "story": "rr:108848",
+      "chapters": 7,
+      "words": 20343,
+      "windows": 4,
+      "widest_window": 5,
+      "fields_seen": 18,
+      "zero_fields": 1,
+      "labels": {
+        "mp": {
+          "paired": 1
+        },
+        "skill": {
+          "number": 3
+        },
+        "skills": {
+          "number_with_text": 1
+        },
+        "toughness": {
+          "number": 3
+        }
+      },
+      "other_labels": 6,
+      "other_label_kinds": {
+        "number": 9,
+        "number_with_text": 1
+      },
+      "notices": {
+        "other": 11,
+        "stat_delta": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 30,
+      "dump_lines": 21
+    },
+    {
+      "story": "rr:109013",
+      "chapters": 75,
+      "words": 63583,
+      "windows": 55,
+      "widest_window": 3,
+      "fields_seen": 75,
+      "zero_fields": 0,
+      "labels": {
+        "class": {
+          "name_or_text": 1
+        },
+        "description": {
+          "name_or_text": 1
+        },
+        "effect": {
+          "name_or_text": 1
+        },
+        "level": {
+          "number_with_text": 22,
+          "name_or_text": 7
+        },
+        "location": {
+          "name_or_text": 1
+        }
+      },
+      "other_labels": 25,
+      "other_label_kinds": {
+        "name_or_text": 26,
+        "list": 10,
+        "number_with_text": 6
+      },
+      "notices": {
+        "other": 80,
+        "level_up": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 6,
+      "verb_families": {
+        "gain_plain": 6,
+        "transform": 1,
+        "lost_removed": 3,
+        "merge_fuse": 1,
+        "replace": 1,
+        "upgrade": 1
+      },
+      "arrows": {},
+      "furniture_lines": 218,
+      "dump_lines": 160
+    },
+    {
+      "story": "rr:109203",
+      "chapters": 2,
+      "words": 8668,
+      "windows": 7,
+      "widest_window": 8,
+      "fields_seen": 17,
+      "zero_fields": 1,
+      "labels": {
+        "age": {
+          "number_with_text": 1
+        },
+        "agility": {
+          "number_with_text": 1
+        },
+        "body": {
+          "name_or_text": 1
+        },
+        "charisma": {
+          "number_with_text": 1
+        },
+        "endurance": {
+          "number_with_text": 1
+        },
+        "intelligence": {
+          "number_with_text": 1
+        },
+        "name": {
+          "name_or_text": 1
+        },
+        "perception": {
+          "number_with_text": 1
+        },
+        "resilience": {
+          "name_or_text": 1
+        },
+        "strength": {
+          "number_with_text": 1
+        }
+      },
+      "other_labels": 7,
+      "other_label_kinds": {
+        "name_or_text": 5,
+        "list": 1,
+        "blank": 1
+      },
+      "notices": {
+        "other": 4
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 1,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 29,
+      "dump_lines": 29
+    },
+    {
+      "story": "rr:109311",
+      "chapters": 95,
+      "words": 447386,
+      "windows": 5,
+      "widest_window": 4,
+      "fields_seen": 13,
+      "zero_fields": 0,
+      "labels": {
+        "mp": {
+          "number": 1,
+          "paired": 1
+        },
+        "power": {
+          "percent": 1
+        },
+        "stamina": {
+          "percent": 1
+        }
+      },
+      "other_labels": 8,
+      "other_label_kinds": {
+        "number_with_text": 3,
+        "change": 2,
+        "percent": 2,
+        "number": 1,
+        "paired": 1
+      },
+      "notices": {
+        "other": 2
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {
+        "up": 2
+      },
+      "furniture_lines": 15,
+      "dump_lines": 15
+    },
+    {
+      "story": "rr:109324",
+      "chapters": 10,
+      "words": 17109,
+      "windows": 3,
+      "widest_window": 6,
+      "fields_seen": 10,
+      "zero_fields": 2,
+      "labels": {},
+      "other_labels": 9,
+      "other_label_kinds": {
+        "paired": 8,
+        "number_with_text": 2
+      },
+      "notices": {
+        "other": 4
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 14,
+      "dump_lines": 14
+    },
+    {
+      "story": "rr:109327",
+      "chapters": 36,
+      "words": 55687,
+      "windows": 3,
+      "widest_window": 2,
+      "fields_seen": 6,
+      "zero_fields": 3,
+      "labels": {
+        "exp": {
+          "paired": 3
+        },
+        "level": {
+          "number": 3
+        }
+      },
+      "other_labels": 0,
+      "other_label_kinds": {},
+      "notices": {
+        "other": 6
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 12,
+      "dump_lines": 7
+    },
+    {
+      "story": "rr:47199",
+      "chapters": 4,
+      "words": 8529,
+      "windows": 1,
+      "widest_window": 5,
+      "fields_seen": 5,
+      "zero_fields": 0,
+      "labels": {
+        "dexterity": {
+          "number": 1
+        },
+        "endurance": {
+          "number": 1
+        },
+        "intelligence": {
+          "number": 1
+        },
+        "perception": {
+          "number": 1
+        },
+        "strength": {
+          "number": 1
+        }
+      },
+      "other_labels": 0,
+      "other_label_kinds": {},
+      "notices": {
+        "other": 4
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 9,
+      "dump_lines": 9
+    },
+    {
+      "story": "rr:47271",
+      "chapters": 52,
+      "words": 64328,
+      "windows": 6,
+      "widest_window": 0,
+      "fields_seen": 0,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 0,
+      "other_label_kinds": {},
+      "notices": {
+        "other": 34
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 13,
+      "verb_families": {
+        "gain_plain": 3
+      },
+      "arrows": {},
+      "furniture_lines": 52,
+      "dump_lines": 43
+    },
+    {
+      "story": "rr:47310",
+      "chapters": 6,
+      "words": 10684,
+      "windows": 7,
+      "widest_window": 2,
+      "fields_seen": 14,
+      "zero_fields": 0,
+      "labels": {
+        "age": {
+          "number": 3
+        },
+        "health": {
+          "paired": 3
+        },
+        "reward": {
+          "number_with_text": 1
+        },
+        "stamina": {
+          "paired": 3
+        }
+      },
+      "other_labels": 2,
+      "other_label_kinds": {
+        "number": 3,
+        "number_with_text": 1
+      },
+      "notices": {
+        "other": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 1,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 15,
+      "dump_lines": 7
+    },
+    {
+      "story": "rr:47362",
+      "chapters": 23,
+      "words": 35355,
+      "windows": 15,
+      "widest_window": 1,
+      "fields_seen": 4,
+      "zero_fields": 0,
+      "labels": {
+        "time remaining": {
+          "number_with_text": 1
+        }
+      },
+      "other_labels": 2,
+      "other_label_kinds": {
+        "name_or_text": 2
+      },
+      "notices": {
+        "other": 27,
+        "capability": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 1,
+      "quest_cards": 2,
+      "bracketed_names": 4,
+      "verb_families": {
+        "gain_plain": 1,
+        "replace": 2
+      },
+      "arrows": {},
+      "furniture_lines": 73,
+      "dump_lines": 68
+    },
+    {
+      "story": "rr:47427",
+      "chapters": 8,
+      "words": 15024,
+      "windows": 7,
+      "widest_window": 3,
+      "fields_seen": 18,
+      "zero_fields": 0,
+      "labels": {
+        "charisma": {
+          "number_with_text": 3
+        },
+        "constitution": {
+          "number": 3
+        },
+        "dexterity": {
+          "number": 3
+        },
+        "intelligence": {
+          "number": 3
+        },
+        "strength": {
+          "number": 3
+        },
+        "wisdom": {
+          "number": 3
+        }
+      },
+      "other_labels": 0,
+      "other_label_kinds": {},
+      "notices": {
+        "other": 8
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 32,
+      "dump_lines": 27
+    },
+    {
+      "story": "rr:47431",
+      "chapters": 1,
+      "words": 609,
+      "windows": 3,
+      "widest_window": 1,
+      "fields_seen": 1,
+      "zero_fields": 0,
+      "labels": {
+        "level": {
+          "number_with_text": 1
+        }
+      },
+      "other_labels": 0,
+      "other_label_kinds": {},
+      "notices": {
+        "other": 8
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 10,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 14,
+      "dump_lines": 14
+    },
+    {
+      "story": "rr:47460",
+      "chapters": 3,
+      "words": 3226,
+      "windows": 1,
+      "widest_window": 5,
+      "fields_seen": 5,
+      "zero_fields": 2,
+      "labels": {},
+      "other_labels": 5,
+      "other_label_kinds": {
+        "number_with_text": 3,
+        "blank": 2
+      },
+      "notices": {},
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 5,
+      "dump_lines": 5
+    },
+    {
+      "story": "rr:47527",
+      "chapters": 109,
+      "words": 216081,
+      "windows": 121,
+      "widest_window": 9,
+      "fields_seen": 357,
+      "zero_fields": 64,
+      "labels": {
+        "defense": {
+          "number_with_text": 6,
+          "number": 4
+        },
+        "dexterity": {
+          "number_with_text": 6,
+          "number": 4
+        },
+        "durability": {
+          "paired": 7,
+          "number": 5
+        },
+        "duration": {
+          "number_with_text": 2
+        },
+        "endurance": {
+          "number_with_text": 6,
+          "number": 4
+        },
+        "health": {
+          "percent": 7
+        },
+        "intelligence": {
+          "number_with_text": 6,
+          "number": 4
+        },
+        "level": {
+          "number_with_text": 49,
+          "blank": 17,
+          "number": 15
+        },
+        "luck": {
+          "number": 6
+        },
+        "mana": {
+          "percent": 7
+        },
+        "perception": {
+          "number_with_text": 6,
+          "number": 4
+        },
+        "requirements": {
+          "number_with_text": 6
+        },
+        "skill": {
+          "name_or_text": 3
+        },
+        "spirit": {
+          "number": 6
+        },
+        "stamina": {
+          "percent": 7
+        },
+        "strength": {
+          "number_with_text": 6,
+          "number": 4
+        },
+        "tier": {
+          "number": 79
+        },
+        "time limit": {
+          "number_with_text": 3
+        },
+        "vitality": {
+          "number_with_text": 6,
+          "number": 4
+        },
+        "willpower": {
+          "number_with_text": 6,
+          "number": 4
+        },
+        "wisdom": {
+          "number_with_text": 6,
+          "number": 4
+        }
+      },
+      "other_labels": 12,
+      "other_label_kinds": {
+        "number": 24,
+        "number_with_text": 12,
+        "list": 8,
+        "paired": 3,
+        "blank": 1
+      },
+      "notices": {
+        "other": 110,
+        "stat_delta": 16
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 7,
+      "quest_cards": 2,
+      "bracketed_names": 1,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 480,
+      "dump_lines": 160
+    },
+    {
+      "story": "rr:47886",
+      "chapters": 2,
+      "words": 4098,
+      "windows": 6,
+      "widest_window": 9,
+      "fields_seen": 25,
+      "zero_fields": 0,
+      "labels": {
+        "constitution": {
+          "number": 1
+        },
+        "dexterity": {
+          "number": 1
+        },
+        "intelligence": {
+          "number": 1
+        },
+        "name": {
+          "number_with_text": 1
+        },
+        "strength": {
+          "number": 1
+        },
+        "wisdom": {
+          "number": 1
+        }
+      },
+      "other_labels": 16,
+      "other_label_kinds": {
+        "name_or_text": 11,
+        "number_with_text": 6,
+        "number": 1,
+        "list": 1
+      },
+      "notices": {
+        "other": 5
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 1,
+      "verb_families": {
+        "upgrade": 1
+      },
+      "arrows": {},
+      "furniture_lines": 40,
+      "dump_lines": 37
+    },
+    {
+      "story": "rr:47940",
+      "chapters": 195,
+      "words": 398479,
+      "windows": 21,
+      "widest_window": 2,
+      "fields_seen": 10,
+      "zero_fields": 2,
+      "labels": {},
+      "other_labels": 6,
+      "other_label_kinds": {
+        "number_with_text": 4,
+        "list": 3,
+        "number": 2,
+        "blank": 1
+      },
+      "notices": {
+        "other": 99,
+        "level_up": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 1,
+      "quest_cards": 0,
+      "bracketed_names": 1,
+      "verb_families": {
+        "upgrade": 24,
+        "lost_removed": 1,
+        "gain_plain": 42
+      },
+      "arrows": {},
+      "furniture_lines": 194,
+      "dump_lines": 128
+    },
+    {
+      "story": "rr:47944",
+      "chapters": 10,
+      "words": 10984,
+      "windows": 6,
+      "widest_window": 3,
+      "fields_seen": 18,
+      "zero_fields": 5,
+      "labels": {},
+      "other_labels": 3,
+      "other_label_kinds": {
+        "number": 18
+      },
+      "notices": {
+        "other": 31,
+        "stat_delta": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 50,
+      "dump_lines": 33
+    },
+    {
+      "story": "rr:48034",
+      "chapters": 23,
+      "words": 54201,
+      "windows": 4,
+      "widest_window": 3,
+      "fields_seen": 3,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 3,
+      "other_label_kinds": {
+        "percent": 3
+      },
+      "notices": {
+        "other": 22
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 4,
+      "verb_families": {
+        "gain_plain": 2
+      },
+      "arrows": {},
+      "furniture_lines": 32,
+      "dump_lines": 27
+    },
+    {
+      "story": "rr:48112",
+      "chapters": 1,
+      "words": 794,
+      "windows": 1,
+      "widest_window": 2,
+      "fields_seen": 2,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 2,
+      "other_label_kinds": {
+        "paired": 1,
+        "number_with_text": 1
+      },
+      "notices": {},
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 2,
+      "dump_lines": 2
+    },
+    {
+      "story": "rr:48146",
+      "chapters": 2,
+      "words": 2202,
+      "windows": 6,
+      "widest_window": 0,
+      "fields_seen": 0,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 0,
+      "other_label_kinds": {},
+      "notices": {
+        "other": 11
+      },
+      "choice_screens": 1,
+      "options_per_screen": [
+        1
+      ],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 5,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 24,
+      "dump_lines": 24
+    },
+    {
+      "story": "rr:48176",
+      "chapters": 200,
+      "words": 309754,
+      "windows": 7,
+      "widest_window": 6,
+      "fields_seen": 28,
+      "zero_fields": 10,
+      "labels": {
+        "health": {
+          "paired": 1
+        }
+      },
+      "other_labels": 10,
+      "other_label_kinds": {
+        "name_or_text": 9,
+        "paired": 9,
+        "number": 4,
+        "number_with_text": 1
+      },
+      "notices": {
+        "other": 77
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {
+        "upgrade": 25
+      },
+      "arrows": {},
+      "furniture_lines": 92,
+      "dump_lines": 62
+    },
+    {
+      "story": "rr:48222",
+      "chapters": 73,
+      "words": 192117,
+      "windows": 7,
+      "widest_window": 2,
+      "fields_seen": 4,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 2,
+      "other_label_kinds": {
+        "number_with_text": 3,
+        "name_or_text": 1
+      },
+      "notices": {
+        "capability": 36,
+        "other": 125,
+        "stat_delta": 2,
+        "level_up": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 1,
+      "quest_cards": 0,
+      "bracketed_names": 4,
+      "verb_families": {
+        "gain_plain": 48,
+        "merge_fuse": 1
+      },
+      "arrows": {},
+      "furniture_lines": 181,
+      "dump_lines": 67
+    },
+    {
+      "story": "rr:48310",
+      "chapters": 2,
+      "words": 3304,
+      "windows": 2,
+      "widest_window": 2,
+      "fields_seen": 4,
+      "zero_fields": 1,
+      "labels": {
+        "gold": {
+          "number": 1
+        },
+        "mana": {
+          "paired": 1
+        }
+      },
+      "other_labels": 2,
+      "other_label_kinds": {
+        "paired": 1,
+        "number": 1
+      },
+      "notices": {
+        "other": 2
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 6,
+      "dump_lines": 6
+    },
+    {
+      "story": "rr:48364",
+      "chapters": 21,
+      "words": 67694,
+      "windows": 51,
+      "widest_window": 10,
+      "fields_seen": 316,
+      "zero_fields": 21,
+      "labels": {
+        "charisma": {
+          "number": 27
+        },
+        "dexterity": {
+          "number": 8
+        },
+        "experience": {
+          "paired": 20
+        },
+        "health": {
+          "paired": 19
+        },
+        "intelligence": {
+          "number": 27
+        },
+        "mana": {
+          "paired": 19
+        },
+        "soul": {
+          "paired": 19
+        },
+        "strength": {
+          "number": 8
+        },
+        "vitality": {
+          "number": 27
+        },
+        "willpower": {
+          "paired": 19
+        },
+        "wisdom": {
+          "number": 27
+        }
+      },
+      "other_labels": 13,
+      "other_label_kinds": {
+        "number_with_text": 37,
+        "list": 34,
+        "blank": 19,
+        "percent": 3,
+        "paired": 2,
+        "number": 1
+      },
+      "notices": {
+        "other": 57,
+        "stat_delta": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 374,
+      "dump_lines": 130
+    },
+    {
+      "story": "rr:48402",
+      "chapters": 29,
+      "words": 181179,
+      "windows": 35,
+      "widest_window": 6,
+      "fields_seen": 106,
+      "zero_fields": 1,
+      "labels": {
+        "agility": {
+          "number": 6
+        },
+        "dexterity": {
+          "number": 6
+        },
+        "health": {
+          "percent": 5
+        },
+        "level": {
+          "number": 5
+        },
+        "mana": {
+          "number_with_text": 5
+        },
+        "reward": {
+          "number_with_text": 9,
+          "list": 2
+        },
+        "spirit": {
+          "number": 6
+        },
+        "strength": {
+          "number": 6
+        },
+        "vitality": {
+          "number": 6
+        },
+        "willpower": {
+          "number": 6
+        }
+      },
+      "other_labels": 10,
+      "other_label_kinds": {
+        "number_with_text": 24,
+        "name_or_text": 14,
+        "number": 5,
+        "blank": 1
+      },
+      "notices": {
+        "other": 167,
+        "level_up": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 2,
+      "quest_cards": 10,
+      "bracketed_names": 8,
+      "verb_families": {
+        "gain_plain": 9,
+        "replace": 1,
+        "lost_removed": 1
+      },
+      "arrows": {},
+      "furniture_lines": 345,
+      "dump_lines": 160
+    },
+    {
+      "story": "rr:48414",
+      "chapters": 27,
+      "words": 45988,
+      "windows": 7,
+      "widest_window": 2,
+      "fields_seen": 14,
+      "zero_fields": 0,
+      "labels": {
+        "cost": {
+          "number_with_text": 7
+        },
+        "health": {
+          "number": 7
+        }
+      },
+      "other_labels": 0,
+      "other_label_kinds": {},
+      "notices": {
+        "other": 57
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 71,
+      "dump_lines": 21
+    },
+    {
+      "story": "rr:48532",
+      "chapters": 7,
+      "words": 17963,
+      "windows": 12,
+      "widest_window": 6,
+      "fields_seen": 65,
+      "zero_fields": 2,
+      "labels": {
+        "exp": {
+          "paired": 1
+        },
+        "level": {
+          "number": 12
+        },
+        "skills": {
+          "paired": 5
+        },
+        "tier": {
+          "number": 6
+        }
+      },
+      "other_labels": 7,
+      "other_label_kinds": {
+        "number": 35,
+        "paired": 6
+      },
+      "notices": {
+        "other": 12
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 76,
+      "dump_lines": 45
+    },
+    {
+      "story": "rr:48614",
+      "chapters": 1,
+      "words": 650,
+      "windows": 1,
+      "widest_window": 0,
+      "fields_seen": 0,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 0,
+      "other_label_kinds": {},
+      "notices": {},
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 2,
+      "dump_lines": 2
+    },
+    {
+      "story": "rr:48683",
+      "chapters": 2,
+      "words": 2880,
+      "windows": 1,
+      "widest_window": 11,
+      "fields_seen": 11,
+      "zero_fields": 1,
+      "labels": {
+        "agility": {
+          "number": 1
+        },
+        "class": {
+          "number_with_text": 1
+        },
+        "defense": {
+          "number": 1
+        },
+        "exp": {
+          "paired": 1
+        },
+        "hp": {
+          "number": 1
+        },
+        "mind": {
+          "number": 1
+        },
+        "speed": {
+          "number": 1
+        }
+      },
+      "other_labels": 4,
+      "other_label_kinds": {
+        "number": 4
+      },
+      "notices": {},
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 6,
+      "dump_lines": 6
+    },
+    {
+      "story": "rr:48691",
+      "chapters": 19,
+      "words": 57142,
+      "windows": 66,
+      "widest_window": 6,
+      "fields_seen": 253,
+      "zero_fields": 20,
+      "labels": {
+        "age": {
+          "number": 14
+        },
+        "agility": {
+          "number": 15
+        },
+        "constitution": {
+          "number": 15
+        },
+        "cost": {
+          "number_with_text": 5
+        },
+        "dexterity": {
+          "number": 1
+        },
+        "durability": {
+          "paired": 11
+        },
+        "endurance": {
+          "number": 14
+        },
+        "experience": {
+          "paired": 14
+        },
+        "fortitude": {
+          "number": 15
+        },
+        "gold": {
+          "number": 1
+        },
+        "health": {
+          "paired": 5
+        },
+        "intelligence": {
+          "number": 15
+        },
+        "level": {
+          "number": 19
+        },
+        "magic": {
+          "number": 15
+        },
+        "mana": {
+          "paired": 1
+        },
+        "perception": {
+          "number": 15
+        },
+        "range": {
+          "number_with_text": 1
+        },
+        "strength": {
+          "number": 15
+        },
+        "weight": {
+          "number_with_text": 1
+        },
+        "willpower": {
+          "number": 15
+        },
+        "wisdom": {
+          "number": 15
+        }
+      },
+      "other_labels": 6,
+      "other_label_kinds": {
+        "number": 26,
+        "number_with_text": 5
+      },
+      "notices": {
+        "other": 74
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 11,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 327,
+      "dump_lines": 151
+    },
+    {
+      "story": "rr:48845",
+      "chapters": 10,
+      "words": 27832,
+      "windows": 10,
+      "widest_window": 5,
+      "fields_seen": 47,
+      "zero_fields": 3,
+      "labels": {
+        "dexterity": {
+          "number": 1
+        },
+        "strength": {
+          "number": 2
+        }
+      },
+      "other_labels": 8,
+      "other_label_kinds": {
+        "number": 24,
+        "paired": 18,
+        "number_with_text": 2
+      },
+      "notices": {
+        "other": 21
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 68,
+      "dump_lines": 62
+    },
+    {
+      "story": "rr:48934",
+      "chapters": 1,
+      "words": 3169,
+      "windows": 1,
+      "widest_window": 4,
+      "fields_seen": 4,
+      "zero_fields": 1,
+      "labels": {
+        "hp": {
+          "paired": 1
+        },
+        "mp": {
+          "paired": 1
+        }
+      },
+      "other_labels": 2,
+      "other_label_kinds": {
+        "percent": 2
+      },
+      "notices": {
+        "other": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 5,
+      "dump_lines": 5
+    },
+    {
+      "story": "rr:49003",
+      "chapters": 63,
+      "words": 128946,
+      "windows": 12,
+      "widest_window": 2,
+      "fields_seen": 7,
+      "zero_fields": 0,
+      "labels": {},
+      "other_labels": 5,
+      "other_label_kinds": {
+        "list": 6,
+        "name_or_text": 1
+      },
+      "notices": {
+        "other": 114,
+        "level_up": 1
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 13,
+      "verb_families": {
+        "gain_plain": 1,
+        "lost_removed": 1,
+        "evolve": 4,
+        "merge_fuse": 3,
+        "replace": 2
+      },
+      "arrows": {},
+      "furniture_lines": 143,
+      "dump_lines": 77
+    },
+    {
+      "story": "rr:49125",
+      "chapters": 21,
+      "words": 57510,
+      "windows": 14,
+      "widest_window": 8,
+      "fields_seen": 55,
+      "zero_fields": 0,
+      "labels": {
+        "charisma": {
+          "change": 1
+        },
+        "constitution": {
+          "change": 1
+        },
+        "cooldown": {
+          "number_with_text": 2
+        },
+        "damage": {
+          "number_with_text": 2
+        },
+        "dexterity": {
+          "change": 1
+        },
+        "intelligence": {
+          "number": 1
+        },
+        "mana": {
+          "number_with_text": 1
+        },
+        "perception": {
+          "list": 1
+        },
+        "range": {
+          "number_with_text": 2
+        },
+        "strength": {
+          "change": 1
+        },
+        "weight": {
+          "number_with_text": 9
+        },
+        "wisdom": {
+          "number": 1
+        }
+      },
+      "other_labels": 11,
+      "other_label_kinds": {
+        "number_with_text": 18,
+        "list": 12,
+        "paired": 2
+      },
+      "notices": {
+        "stat_delta": 8,
+        "other": 22,
+        "level_up": 2
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 3,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {},
+      "arrows": {},
+      "furniture_lines": 87,
+      "dump_lines": 64
+    },
+    {
+      "story": "rr:49272",
+      "chapters": 1,
+      "words": 1826,
+      "windows": 12,
+      "widest_window": 8,
+      "fields_seen": 33,
+      "zero_fields": 12,
+      "labels": {
+        "age": {
+          "number_with_text": 2
+        },
+        "energy": {
+          "blank": 2
+        },
+        "health": {
+          "name_or_text": 2
+        },
+        "magic": {
+          "blank": 1
+        },
+        "mana": {
+          "blank": 1
+        },
+        "race": {
+          "name_or_text": 2
+        },
+        "speed": {
+          "blank": 2
+        },
+        "strength": {
+          "blank": 2
+        }
+      },
+      "other_labels": 10,
+      "other_label_kinds": {
+        "name_or_text": 7,
+        "number_with_text": 6,
+        "blank": 4,
+        "list": 2
+      },
+      "notices": {
+        "other": 2
+      },
+      "choice_screens": 0,
+      "options_per_screen": [],
+      "item_boxes": 0,
+      "quest_cards": 0,
+      "bracketed_names": 0,
+      "verb_families": {
+        "replace": 3,
+        "gain_plain": 2
+      },
+      "arrows": {},
+      "furniture_lines": 68,
+      "dump_lines": 59
+    }
+  ]
+}
