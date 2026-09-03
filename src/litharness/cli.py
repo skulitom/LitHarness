@@ -467,8 +467,8 @@ def _resolve_writer(
 ) -> tuple[writers_domain.Writer | None, str]:
     """The writer a `--writer` name means, or `None` and the reason it is nobody.
 
-    **The accepted roster first, then the compiled cast**, which is
-    `plan/handoff-writer-recruiter.md`'s word — but the order is safe only because the two
+    **The accepted roster first, then the compiled cast**, which is the recruiter brief's word
+    (stage-0 §146) — but the order is safe only because the two
     namespaces cannot overlap. `writers.RESERVED_NAMES` refuses a stored row named after a cast
     writer or a probe, so for every name that can legitimately exist both orders return the same
     writer. The order then costs nothing and buys what the brief wanted: an accepted recruit is

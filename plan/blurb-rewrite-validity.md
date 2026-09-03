@@ -1,7 +1,8 @@
 # Blurb-rewrite validity — the reader writes, the code diffs, nobody judges
 
-**Status: REGISTRATION, 2026-08-26.** Written before any call. This is handoff task 1
-(`plan/handoff-reader-perception.md`): make the reader *produce* rather than *judge*. The
+**Status: REGISTRATION, 2026-08-26.** Written before any call. This is task 1 of the
+reader-perception handoff (2026-08-26; its record is stage-0 §143.2): make the reader
+*produce* rather than *judge*. The
 hypothesis: a model's generative fluency is reliable where its critical judgment is blind — it
 will rarely write "a patch of notes" even though it cannot reliably flag one — so a silent
 repair in a rewrite locates an off phrase, and an echo does not.
