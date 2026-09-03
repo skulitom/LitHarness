@@ -23233,3 +23233,24 @@ unmerged patch).
 **Anti-scope.** No prompt, gate, line or stored book changed, and the replay is the proof. No
 research claim is promoted or demoted; a result file that lost its writer keeps its digest and
 its date. Nothing here measures prose.
+
+### 214.1 The track closed: five cuts, the brief deleted, and the checks on the final tree
+
+**The commits**, on `claude/intelligent-feynman-119bfa`: `2142d0f` the replay script;
+`fdd5ee3` the inventory; `2f61d4c` cut 1; `05ef950` cut 2; `fb0c58c` cut 3; `64d0b9b` the
+merge of `main` (§213) that put this entry after it; `a4fb566` cut 4 (§214); `7a0df15` cut 5;
+and the commit carrying this sub-entry, which deletes `plan/handoff-pruning.md`.
+
+**The checks on the final tree.** `uv run pytest`: 3748 passed, 20 skipped in 175.02s (0:02:55). `uv run mypy`: no issues.
+`uv run ruff check .`: clean. `git diff --check`: clean. `tools/replay_books.py --baseline`
+against the baseline taken at `2142d0f`: 8/8 identical, no derived line moved. Every cut
+commit carried the same checks at module grain and the replay at book grain.
+
+**Two things the checks caught on the way, recorded so the next session does not pay for
+them.** Formatting an explicit list of test files that were not format-clean reflowed six of
+them well beyond the edit (§205's lesson again, one step removed); cut 3 was redone from
+`HEAD` with import sorting only. A regex that removed a method by name ran past the end of
+its class when the method was the last one, into the next class's header; ruff caught it
+before any test ran, and the block was removed by exact text instead.
+
+**Anti-scope.** Nothing in this sub-entry is a new decision; it closes §214.

@@ -1,6 +1,6 @@
 # Pruning inventory — what the tree holds that nothing runs, reads or cites
 
-**Status: INVENTORY, 2026-09-03, deliverable 1 of `plan/handoff-pruning.md`.** Measured on
+**Status: LANDED, 2026-09-03 (stage-0 §214 and §214.1).** Deliverable 1 of the pruning brief, which the last commit of the track deleted; every row below carries its outcome. Measured on
 the tree at `2142d0f` (main `d88114b` plus `tools/replay_books.py`). Every count below is this
 inventory's own tally on that snapshot, not a property of the project; the suite owns the test
 total, `BRIEF.md` §2 the refutation count, the ledger its entries. Each row carries the evidence
@@ -35,14 +35,14 @@ count) and `git status` per worktree. Category 5: the helper bodies read, not th
 
 | name | where | evidence | what would notice | disposition | status |
 | --- | --- | --- | --- | --- | --- |
-| `RowFilter` (type alias) | `adapters/sqlite_roster.py:43` | defined, never used; `Callable[[sqlite3.Row], bool]` appears nowhere else | nothing; ruff and mypy pass either way | cut | landed, cut 5 |
-| `SqliteStore.finding_counts` | `adapters/sqlite_store.py:1426` | not in `application/ports.py`, no caller, no test | nothing; `tests/test_store.py` covers the store's other finding methods | cut | landed, cut 5 |
-| `SqliteStore.exceptions_for_job` | `adapters/sqlite_store.py:2125` | not in `ports.py`, no caller, no test; `exceptions` reads `open_exceptions` | nothing | cut | landed, cut 5 |
-| `TickResult.did_work` | `application/conductor.py:71` | property never read; `cli.py` reads `outcome` directly | nothing | cut | landed, cut 5 |
-| `Job.renew` | `domain/jobs.py:169` | lease renewal never called; leases are claimed with a duration and reclaimed on expiry, and `assert_held_by` is the check that runs | nothing; `tests/test_domain.py` covers claim, release and expiry | cut | landed, cut 5 |
-| `version_map` | `domain/revision.py:418` | one-line alias of `Revision.version_ids` | nothing | cut | landed, cut 5 |
-| `excerpt_hash`, `slice_canonical` | `domain/text.py:58`, `:73` | every span site hashes `content_hash(text[start:end])` on node content that is canonical by construction (`Node.__post_init__`) | nothing | cut | landed, cut 5 |
-| `FakeProvider.append_responses` | `providers/fake.py:177` | no test or tool appends a response after construction | nothing | cut | landed, cut 5 |
+| `RowFilter` (type alias) | `adapters/sqlite_roster.py:43` | defined, never used; `Callable[[sqlite3.Row], bool]` appears nowhere else | nothing; ruff and mypy pass either way | cut | landed, cut 5 (`7a0df15`) |
+| `SqliteStore.finding_counts` | `adapters/sqlite_store.py:1426` | not in `application/ports.py`, no caller, no test | nothing; `tests/test_store.py` covers the store's other finding methods | cut | landed, cut 5 (`7a0df15`) |
+| `SqliteStore.exceptions_for_job` | `adapters/sqlite_store.py:2125` | not in `ports.py`, no caller, no test; `exceptions` reads `open_exceptions` | nothing | cut | landed, cut 5 (`7a0df15`) |
+| `TickResult.did_work` | `application/conductor.py:71` | property never read; `cli.py` reads `outcome` directly | nothing | cut | landed, cut 5 (`7a0df15`) |
+| `Job.renew` | `domain/jobs.py:169` | lease renewal never called; leases are claimed with a duration and reclaimed on expiry, and `assert_held_by` is the check that runs | nothing; `tests/test_domain.py` covers claim, release and expiry | cut | landed, cut 5 (`7a0df15`) |
+| `version_map` | `domain/revision.py:418` | one-line alias of `Revision.version_ids` | nothing | cut | landed, cut 5 (`7a0df15`) |
+| `excerpt_hash`, `slice_canonical` | `domain/text.py:58`, `:73` | every span site hashes `content_hash(text[start:end])` on node content that is canonical by construction (`Node.__post_init__`) | nothing | cut | landed, cut 5 (`7a0df15`) |
+| `FakeProvider.append_responses` | `providers/fake.py:177` | no test or tool appends a response after construction | nothing | cut | landed, cut 5 (`7a0df15`) |
 
 One commit, no ledger entry: none of these is behaviour a reader of a book could notice, and
 the commit message says so.
@@ -62,7 +62,7 @@ the commit message says so.
   says *"`litharness run` passes `revise=not args.no_revise`, so production has the stage and
   `--no-revise` is the control"*, which §196 reversed (`cli.py:672-676` passes
   `revise=bool(getattr(args, "revise", False))`). Disposition: correct the docstring in the
-  category 1a commit (landed, cut 5); refuse the cut.
+  category 1a commit (landed, cut 5, `7a0df15`); refuse the cut.
 - **`GAME_SYSTEM_DETECTOR_IDS`** (`application/evaluation.py:29`): the id vocabulary of the
   optional six-rule pack. `live_bundle_for` writes the ids into the ContinuityEvaluation
   bundle, `tests/test_continuity_evaluator.py` pins that bundle, `README.md` documents
@@ -97,7 +97,7 @@ has one importer, the `reader-evidence-audit` command, and its own test). Nothin
 | `schedule-library.ps1` | the ledger only (§63's entry, line 7085); its own header says when it is for and that you probably do not need it | keep; a README line would advertise what the header argues against | refused |
 | `sentence_census.py`, `tells_census.py` | §199's *Measured (`tools/sentence_census.py` …)* and §199.6; they import `exemplars.load_shelf` and `domain.tells` and run | keep: the instruments behind recorded numbers | refused |
 | `serial-pilot-setup.ps1`, `serial_pilot_check.py` | `plan/serial-pilot-1..6.md`, three ledger entries; `serial_pilot_check` imports only live modules and `setup` uses only live verbs | keep | refused |
-| `variation_repair_comparison.py` | `plan/variation-session.md` only; imports `litharness.application.variation` and `litharness.domain.variation`, both deleted in `530f40e`, so it cannot run; its numbers are `plan/variation-comparison.json`, cited by §105.5 | cut, with a ledger entry (a research surface, dead since 2026-08-24) | landed, cut 4 (§214) |
+| `variation_repair_comparison.py` | `plan/variation-session.md` only; imports `litharness.application.variation` and `litharness.domain.variation`, both deleted in `530f40e`, so it cannot run; its numbers are `plan/variation-comparison.json`, cited by §105.5 | cut, with a ledger entry (a research surface, dead since 2026-08-24) | landed, cut 4 (`a4fb566`, §214) |
 
 ### 2b. `research/quality-measurement/` (90 modules including the census subdirectories)
 
@@ -113,7 +113,7 @@ rest:
 | `rival_pool.py` | builds the `--rivals` pool README's `ab_redraw` recipe reads | keep | — |
 | `scorecard.py` | `ab_redraw`'s scorecard; three test modules | keep | — |
 | `blurb_perception.py` | the three quote-a-span probes §143.2 records as blind; `results/blurb-perception.json`; named by `plan/blurb-shelf-validity.md:32` (its transport class is reused) and `blurb_shelf.py:97` | keep: cited, and the brief refuses deleting a refuted arm's code | refused |
-| `blurb_defects.py` | ran once (`results/blurb-defects.json`, 2026-08-26); cited by no document, test, entry or module; nobody read the result | cut, with the ledger entry of 2a; the result file stays as the record of the run | landed, cut 4 (§214) |
+| `blurb_defects.py` | ran once (`results/blurb-defects.json`, 2026-08-26); cited by no document, test, entry or module; nobody read the result | cut, with the ledger entry of 2a; the result file stays as the record of the run | landed, cut 4 (`a4fb566`, §214) |
 
 The sibling research directories are outside the brief's category (`research/loop/` four
 modules and no `.md`, `progression-clause/` two, `structural-instrumentation/` one,
@@ -126,8 +126,8 @@ modules and no `.md`, `progression-clause/` two, `structural-instrumentation/` o
 | file | what it asked for | where that lives now | pointers into it | disposition | status |
 | --- | --- | --- | --- | --- | --- |
 | `handoff-listing-loop.md` (2026-08-25, header: historical, superseded 2026-08-27) | chapter output read, titles, a title-availability check | §139 (the loop wired, `application/titles.py`), `plan/reader-architecture-program.md` for the appetite path | §139, §142, `domain/voice.py:6`, `plan/dossier-voice-direction.md:20`, `plan/reader-read-5.md:219`, `plan/serial-pilot-7.md:7` | **keep**: its eleven-round listing table (genre nouns, number tokens, em dashes, words, second person; round 1 against the market) has no other home, and `voice.py` says the file owns it | refused |
-| `handoff-reader-perception.md` (2026-08-26, header: historical, superseded 2026-08-27) | make the reader produce not judge; surprisal; show the shelf; four counters | every table row is in the ledger: 15/16 (§140), 16/16 without taste and 24/24 against the summits (§143, lines 14340-14341), uncashable terms 5.75 against 12.5-13.8 (§142/§143), the blind quote-a-span probes (§143.2), bigrams 0.302 against 0.101 (§143.3); tasks 1 and 3 became `plan/blurb-rewrite-validity.md` and `plan/blurb-shelf-validity.md`; the surprisal task is `plan/force-program.md`'s GPU-only note | `plan/blurb-rewrite-validity.md:4`, `plan/reader-architecture-program.md:18` | cut; repoint the two pointers to §143.2 | landed, cut 2 |
-| `handoff-writer-recruiter.md` (2026-08-28, "Status: OPEN") | store-backed roster, `recruit` agent and `roster` suite, the twelve-shelf run | §146 (with §146.8 the run), §151 (one roster home); the rails are `plan/writer-roster.md` §5, which the handoff itself names as their owner | `src/litharness/adapters/sqlite_roster.py:12`, `application/roster.py:13,19`, `cli.py:471`, `domain/writers.py:61`, `tests/test_recruiter.py:3`, `tests/test_writer_roster.py:3`, `plan/reader-read-5.md:272` | cut; repoint the eight pointers to `plan/writer-roster.md` §5 and §146 (docstrings and one plan line, no behaviour) | landed, cut 2 |
+| `handoff-reader-perception.md` (2026-08-26, header: historical, superseded 2026-08-27) | make the reader produce not judge; surprisal; show the shelf; four counters | every table row is in the ledger: 15/16 (§140), 16/16 without taste and 24/24 against the summits (§143, lines 14340-14341), uncashable terms 5.75 against 12.5-13.8 (§142/§143), the blind quote-a-span probes (§143.2), bigrams 0.302 against 0.101 (§143.3); tasks 1 and 3 became `plan/blurb-rewrite-validity.md` and `plan/blurb-shelf-validity.md`; the surprisal task is `plan/force-program.md`'s GPU-only note | `plan/blurb-rewrite-validity.md:4`, `plan/reader-architecture-program.md:18` | cut; repoint the two pointers to §143.2 | landed, cut 2 (`05ef950`) |
+| `handoff-writer-recruiter.md` (2026-08-28, "Status: OPEN") | store-backed roster, `recruit` agent and `roster` suite, the twelve-shelf run | §146 (with §146.8 the run), §151 (one roster home); the rails are `plan/writer-roster.md` §5, which the handoff itself names as their owner | `src/litharness/adapters/sqlite_roster.py:12`, `application/roster.py:13,19`, `cli.py:471`, `domain/writers.py:61`, `tests/test_recruiter.py:3`, `tests/test_writer_roster.py:3`, `plan/reader-read-5.md:272` | cut; repoint the eight pointers to `plan/writer-roster.md` §5 and §146 (docstrings and one plan line, no behaviour) | landed, cut 2 (`05ef950`) |
 | `handoff-maintainability.md`, `handoff-market-fit.md`, `handoff-reader-sims.md`, `handoff-pruning.md` (2026-09-03) | this week's briefs | in progress in their worktrees | — | not candidates; the pruning brief goes in this track's last commit | — |
 
 ## 4. Worktrees and branches (report only; nothing here is deleted by this track)
@@ -186,10 +186,10 @@ the homonyms it listed beside it.
   `test_gamesystem._canon`, `test_progression_gate._canonical`,
   `test_progression_prompt._accepted`; and inline in `test_genre_floor` (four sites),
   `test_outline`, `test_page_contract`. Disposition: `tests/helpers.py` with `accepted` and
-  `accepted_all`, the local definitions replaced by imports. Status: landed, cut 3.
+  `accepted_all`, the local definitions replaced by imports. Status: landed, cut 3 (`fb0c58c`).
 - **The canon `world_record` shorthand** — `world_record(subject, predicate, authority=canon,
   **kwargs)` — in `test_packet_register.canon`, `test_display_names._canon`,
-  `test_extraction._canon`. Same helper file, `canon`. Status: landed, cut 3.
+  `test_extraction._canon`. Same helper file, `canon`. Status: landed, cut 3 (`fb0c58c`).
 - **Homonyms that are different fixtures, refused:** `_canon` in `test_gamesystem` (a list),
   `test_progression_gate` and `test_two_systems` (whole seeds); `_record` in six modules (a
   dict, a relationship record, a snapshot with foreign evidence, a keyed snapshot, an event
@@ -206,13 +206,13 @@ the homonyms it listed beside it.
 
 | where | what it says | canonical home | disposition | status |
 | --- | --- | --- | --- | --- |
-| `PLAN.md:659` | *787 tests passing + 8 opt-in live (2026-08-17 …)* in the current-state table for this repository | the suite | cut: strike in place, keep the pointer to the suite | landed, cut 1 |
-| `PLAN.md:1964` | *the refutation ledger … canonical for the count, now stands at twenty dead* | `BRIEF.md` §2, which says twenty-one: the restatement has already drifted | cut: strike the number, keep the pointer | landed, cut 1 |
+| `PLAN.md:659` | *787 tests passing + 8 opt-in live (2026-08-17 …)* in the current-state table for this repository | the suite | cut: strike in place, keep the pointer to the suite | landed, cut 1 (`2f61d4c`) |
+| `PLAN.md:1964` | *the refutation ledger … canonical for the count, now stands at twenty dead* | `BRIEF.md` §2, which says twenty-one: the restatement has already drifted | cut: strike the number, keep the pointer | landed, cut 1 (`2f61d4c`) |
 | `PLAN.md:1338`, `:2095`, `:2152` | *268 tests*, *119 passing tests*, *271 collected, 268 passing + 3 opt-in live* in the Stage 0 exit records | the suite, at those dates | refused: dated records of an exit, not current claims | refused |
 | `PLAN.md:660-665`, `:2101`, `:2108`; `plan/litrpg-rules-pack.md:3` | sibling repositories' test totals (BookWorldState, RevisionBench, MirrorBench, ContinuityEvaluation) in a dated inspection table and a build spec's status line | those repositories' suites | refused: not this repository's to keep current, and `test_architecture` deliberately does not resolve them | refused |
 | `PLAN.md:891`, `plan/promise-payoff-development.md:79` | *twenty-one proxies* in prose | `BRIEF.md` §2 | refused: prose in dated text, and the number matches the home today | refused |
 | `research/quality-measurement/BRIEF.md:31` | *21 proxies dead* | it is the home | — | — |
-| `plan/handoff-writer-recruiter.md:3` | *Status: OPEN* while §146 and §151 shipped it | the ledger | goes with category 3 | landed, cut 2 |
+| `plan/handoff-writer-recruiter.md:3` | *Status: OPEN* while §146 and §151 shipped it | the ledger | goes with category 3 | landed, cut 2 (`05ef950`) |
 
 ## Order of the cuts
 
@@ -227,5 +227,5 @@ Lowest risk first, one commit each, each after `uv run pytest`, `uv run ruff che
 4. Scripts (2): `tools/variation_repair_comparison.py`, `research/quality-measurement/blurb_defects.py`.
    One ledger entry, since a research surface goes.
 5. Unreferenced code (1a) and the stale reviser docstring (1b). No ledger entry.
-6. This brief's own file, deleted in the last commit, with the ledger entry of step 4
-   pointing at this inventory as the record.
+6. The brief's own file, deleted in the last commit; §214.1 records the commits and the
+   final checks.
