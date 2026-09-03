@@ -46,6 +46,8 @@ from litharness.domain.beats import (
 from litharness.domain.context import FACTS, assemble
 from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.extraction import (
+    SHEET_PREDICATE,
+    STATUS_PREDICATE,
     extract_state,
     progression_target,
     render_status_line,
@@ -2386,3 +2388,68 @@ def test_the_prompt_prints_the_system_s_line_where_the_world_speaks(store: Sqlit
     assert "[ASSAY] The Assay has noticed you" in system
     without, _ = render_prompt(beat, book_title=None, packet=packet)
     assert "Where the world says this" not in without
+
+
+# --- §220: the readout on request -------------------------------------------------------------
+
+
+def _owner(subject: str, role: str, name: str, level: int, *, owner: str) -> list[lc.StateRecord]:
+    """A subject with a sheet of its own (§206) and an opening snapshot, all canon."""
+    canon = lc.StateAuthority.ACCEPTED_CANON
+    return [
+        worlds.world_record(subject, worlds.ENTITY_ROLE_PREDICATE, value=role, authority=canon),
+        worlds.world_record(subject, "is_a", value=name, authority=canon),
+        worlds.world_record(
+            subject,
+            SHEET_PREDICATE,
+            value={"fields": [{"name": "level", "label": "Level"}], "owner": owner},
+            authority=canon,
+        ),
+        worlds.world_record(subject, STATUS_PREDICATE, value={"level": level}, authority=canon),
+    ]
+
+
+def test_another_owner_s_line_is_asked_for_where_the_plan_names_them() -> None:
+    """§220: a creature with a sheet of its own is printed where the scene's plan names it, in
+    its own columns; a plan that does not name it, a scene with no plan or no position, an
+    owner named by subject id rather than role, and the protagonist's own sheet are handled
+    as the docstring says."""
+    from litharness.domain.extraction import readout_lines
+
+    records = [
+        *_ladder_records(),
+        *_owner("dire_wolf", "creature", "Dire Wolf", 24, owner="creature"),
+    ]
+    named = "Rook meets the dire wolf at the ford."
+    assert readout_lines(records, plan=named, at="s2", protagonist="rook") == (
+        "[STATUS] Dire Wolf — Level 24",
+    )
+    assert (
+        readout_lines(records, plan="Rook crosses the ford alone.", at="s2", protagonist="rook")
+        == ()
+    )
+    assert readout_lines(records, plan=named, at=None, protagonist="rook") == ()
+    assert readout_lines(records, plan=None, at="s2", protagonist="rook") == ()
+    by_id = [*_ladder_records(), *_owner("tam_cawl", "cast", "Tam Cawl", 5, owner="tam_cawl")]
+    assert readout_lines(
+        by_id, plan="Tam Cawl waits by the kiln.", at="s2", protagonist="rook"
+    ) == ("[STATUS] Tam Cawl — Level 5",)
+    own = [*_ladder_records(), *_owner("rook", "cast", "Rook", 3, owner="rook")]
+    assert readout_lines(own, plan="Rook reads his own sheet.", at="s2", protagonist="rook") == ()
+
+
+def test_the_prompt_prints_another_owner_s_line_where_the_plan_names_them(
+    store: SqliteStore,
+) -> None:
+    book_id, branch_id = _book_zero(store)
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[0]
+    packet = packet_for(store, head, beat)
+    system, _ = render_prompt(
+        beat, book_title=None, packet=packet, readouts=("[STATUS] Dire Wolf — Level 24",)
+    )
+    assert "Where they read another's sheet, the book prints this line, exactly once" in system
+    assert "[STATUS] Dire Wolf — Level 24" in system
+    without, _ = render_prompt(beat, book_title=None, packet=packet)
+    assert "read another's sheet" not in without

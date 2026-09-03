@@ -23602,3 +23602,83 @@ A model choosing the column order: the declaration is the order (§61(5)).
 genre is the shelf's question and the operator's read; nothing here measures prose. The next
 slice is the readout on request (§217's fourth gap); the quest card, the third, is announced
 as a notice under §218 and a card of its own waits for a book that needs one.
+
+
+## 220. The readout on request, the third fit slice: another owner's line is printed where the scene's plan names the owner, which closes the item §209 owed
+
+**Measured first** (§217, `research/quality-measurement/system-fit/FINDINGS.md`). Twenty-three
+of the sixty sampled market stories print another subject's sheet where the protagonist
+reads it: a creature's level and health through an Identify, an appraisal of a rival, a
+follower's standing, a kill log with levels on both sides; one shelf anchor does the same.
+Since §206 every such sheet is declarable (a `status_sheet` with an `owner`, its own
+snapshot, its own columns) and the extractor reads its line back, and §209 left the ask owed:
+*with owners in place it is a furniture ask and not a model change, and it waits for a book
+that needs it*. The census is that book, twenty-three times over.
+
+**What shipped** (`domain/extraction.py`, `application/planner.py`, `application/world.py`).
+`extraction.readout_lines(records, plan=, at=, protagonist=)`: every owner a canon
+`status_sheet` names (a subject id, or every subject of the role it names) other than the
+protagonist, whose display name the scene's plan text names as a word, rendered through its
+own sheet from its own canon snapshots folded at the position (`_folded_before`); `()` for a
+scene with no plan text or no position, and for every book whose plans name no owner, which
+is every book on disk. The trigger is the plan's naming and nothing a model ranks (§61(5)):
+the plan says who is in the scene, and an owner in the scene is an owner whose line is
+read. `render_prompt` takes `readouts` and prints them under one sentence (*Where they read
+another's sheet, the book prints this line, exactly once, and it is read on the page*); the
+planner passes them at every scene off the composed plan text. The vocabulary's
+`status_sheet` line says where an owner's sheet is printed. Budget: the conditional row
+`readouts` at 2 and the maximal scene prompt 47 to 49, with the reasons where the numbers
+live. Tests: `test_another_owner_s_line_is_asked_for_where_the_plan_names_them`,
+`test_the_prompt_prints_another_owner_s_line_where_the_plan_names_them`
+(`tests/test_planner.py`) and the rows in `tests/test_prompt_budget.py`. Replay over the four
+stored books against main's baseline: identical (8/8).
+
+**What this does not do.** No gate checks that the line was printed (§212's rule). A readout
+is the owner's line as canon holds it; an appraisal that the market writes as *estimated*
+or as a range is the same line with the book's own labels, and a hidden level (the market's
+question marks) is a column the snapshot does not hold, which the sheet hides (§203). An
+owner the plan does not name prints nothing, so a scene that meets a creature its plan never
+mentions asks for no readout: the plan is the book's own statement of who is there, and a
+second trigger (a name in the drafted prose) would be a reader of the draft, which is the
+step §61(5) closed.
+
+**What was refused.** Printing every owner's line at every scene: ten creatures declared is
+ten lines a scene. A model deciding who is in the scene: the plan is the book's declaration.
+A second bracket tag for a readout: the owner's sheet prints as the owner's own
+`[STATUS]` line, which is what §206 built and the extractor reads.
+
+**Anti-scope.** Whether a book whose protagonist reads another's sheet on the page reads as
+its genre is the shelf's question and the operator's read; nothing here measures prose. The
+gaps below this one in §217's ranking (another screen, a rise by accumulation, a percent, a
+flat skill list, the box view) stay recorded with their shares and their reasons, and the
+track closes with this slice and the brief's deletion.
+
+
+### 220.1 The track closed: the census, three slices, three defects, and the brief deleted
+
+**The commits**, on `claude/handoff-market-fit-plan-6f4026`: `9490336` the census scaffolding
+and the owner-sheet fix; `49d5fe6` the growth fix; `3d63bbe` the acceptance-refusal reading;
+`c857710` the census and the unreadable-sheet fix (§217); `b9576f5` the notice (§218);
+`327d4d6` plain columns beside a system's grants (§219); `b3073bc` the rename mypy asked for
+on the merge; `4b0e0e7` the readout on request (§220); and the commit carrying this
+sub-entry, which deletes `plan/handoff-market-fit.md` (its deliverables live in
+`research/quality-measurement/system-fit/` and `plan/system-generality.md` §5). Each slice
+was replayed identical on the four stored books with `tools/replay_books.py --baseline`, and
+the full suite, mypy, ruff and the replay ran on the merged tree in the coordinating session's
+lock windows (§217 to §219 at `8c024b8`).
+
+**What the track leaves recorded and not built**, by §217's ranking: the quest card (rank
+3) is announced as a notice under §218 and its counters are paired columns; another screen
+(rank 5: a menu, a store, a board) is several displays the census does not separate, the
+store the commonest; a rise by accumulation, a percent kind, the box view for a window wider
+than nine columns, a list whose members carry a rank, a derived figure, a class or item that
+moves a number, and a pool's refill each keep their share in `FINDINGS.md` and their reason
+in §217. The draw's own rules (a graph rather than a list, a depth somewhere, five to eight
+grants) refused every hand-declared system in the sample at completion, and whether a
+*declared* system may be a list, held-or-not or three grants wide is a decision for its own
+entry, with the census's numbers beside it: sixteen of twenty-seven grant-bearing stories
+show no prerequisite, fifteen no depth, thirteen fewer than five grants.
+
+**Anti-scope.** Nothing in this sub-entry is a new decision; it closes §217's track. Whether
+any of the three slices reads as the genre on the page is the shelf's question and the
+operator's read, and no chapter was drawn under them here.

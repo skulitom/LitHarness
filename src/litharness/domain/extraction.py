@@ -110,6 +110,7 @@ from litharness.domain.moves import (
     offered_choice,
     offered_line,
     progression_target,
+    readout_lines,
     standing_example,
     standing_target,
 )
@@ -129,7 +130,7 @@ from litharness.domain.sheet import (
     Sheet,
     SheetField,
     _canon_of,
-    _folds_into,
+    _folded_before,
     _status_lines,
     declaration_from_snapshots,
     implied_sheet,
@@ -209,6 +210,7 @@ OWN_POSITION_VERSIONS = frozenset(
     }
 )
 
+
 def attested_position(records: Sequence[lc.StateRecord], logical_id: str) -> str | None:
     """The story position this scene is attested at, or None when the book has not said.
 
@@ -229,6 +231,7 @@ def attested_position(records: Sequence[lc.StateRecord], logical_id: str) -> str
         if any(span.source.logical_id == logical_id for span in record.evidence)
     }
     return next(iter(keys)) if len(keys) == 1 else None
+
 
 def has_story_vocabulary(known: Sequence[lc.StateRecord]) -> bool:
     """Whether this book already has story positions **somebody else** chose.
@@ -270,6 +273,7 @@ def has_story_vocabulary(known: Sequence[lc.StateRecord]) -> bool:
         and record.predicate_registry_version not in OWN_POSITION_VERSIONS
     )
 
+
 def stated_position(known: Sequence[lc.StateRecord], stated: str | None) -> str | None:
     """A position the *planner* stated, usable only for a book with no vocabulary of its own.
 
@@ -289,6 +293,7 @@ def stated_position(known: Sequence[lc.StateRecord], stated: str | None) -> str 
         return None
     return stated
 
+
 def record_id_for(subject: str, predicate: str, order_key: str, value: Mapping[str, object]) -> str:
     """Content-derived, and **value-sensitive on purpose**.
 
@@ -302,6 +307,7 @@ def record_id_for(subject: str, predicate: str, order_key: str, value: Mapping[s
     material = payload_digest({"s": subject, "p": predicate, "k": order_key, "v": value})
     return f"rec-x{sha256(material.encode()).hexdigest()[:24]}"
 
+
 def graph_record_id_for(subject: str, predicate: str, object_ref: str, order_key: str) -> str:
     """Content-derived, with the position in the material.
 
@@ -314,8 +320,10 @@ def graph_record_id_for(subject: str, predicate: str, object_ref: str, order_key
     material = payload_digest({"s": subject, "p": predicate, "o": object_ref, "k": order_key})
     return f"rec-g{sha256(material.encode()).hexdigest()[:24]}"
 
+
 def _edge_key(record: lc.StateRecord) -> tuple[str, str, str]:
     return (record.subject, record.predicate, record.object_ref or "")
+
 
 def extract_graph_facts(
     text: str,
@@ -450,6 +458,7 @@ def extract_graph_facts(
         )
     return tuple(extracted)
 
+
 def promotions(
     known: Sequence[lc.StateRecord],
     extracted: Sequence[lc.StateRecord],
@@ -536,6 +545,7 @@ def promotions(
             )
         )
     return tuple(promoted)
+
 
 def extract_state(
     text: str,
@@ -696,32 +706,6 @@ def extract_state(
     )
     return (*extracted, *graph, *promotions(known, graph, order_key=order_key))
 
-def _folded_before(
-    known: Sequence[lc.StateRecord], subject: str, order_key: str
-) -> dict[str, object]:
-    """This subject's state as it stands at `order_key`, folded forward from its own canon
-    snapshots (later values winning), for a projected line to be completed from (§203).
-
-    The fold is `state_as_it_stands`'s, applied to a named subject: only canon, only this
-    subject, only positions that fold into this one.
-    """
-    history = sorted(
-        (
-            record
-            for record in known
-            if record.predicate == STATUS_PREDICATE
-            and state_mod.is_canon(record)
-            and record.subject == subject
-            and isinstance(record.value, Mapping)
-            and _folds_into(state_mod.order_key_of(record), order_key)
-        ),
-        key=lambda record: state_mod.order_key_of(record) or "",
-    )
-    values: dict[str, object] = {}
-    for record in history:
-        assert isinstance(record.value, Mapping)
-        values.update(record.value)
-    return values
 
 def _already_canon(
     known: Sequence[lc.StateRecord],
@@ -794,6 +778,7 @@ __all__ = [
     "progression_target",
     "promotions",
     "readable",
+    "readout_lines",
     "record_id_for",
     "render_status_line",
     "sheet_for",
@@ -803,7 +788,7 @@ __all__ = [
     "speaks_system_voice",
     "standing_example",
     "standing_target",
-        "state_as_it_stands",
+    "state_as_it_stands",
     "stated_position",
     "system_voice_example",
     "unreadable_sheets",

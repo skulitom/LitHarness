@@ -43,6 +43,7 @@ STATUS_PREDICATE = "status_snapshot"
 #: a flag would be a second source of truth for something the records already answer.
 SHEET_PREDICATE = "status_sheet"
 
+
 class MalformedSheet(Exception):
     """A book declared a sheet this module cannot build a line from.
 
@@ -52,6 +53,7 @@ class MalformedSheet(Exception):
     no state — the silence this module's docstring says no gate catches. `cmd_new` calls
     `sheet_for` on the seed, so a malformed declaration is refused before the book exists.
     """
+
 
 @dataclass(frozen=True, slots=True)
 class SheetField:
@@ -80,8 +82,10 @@ class SheetField:
     def numeric(self) -> bool:
         return self.kind == "number"
 
+
 #: The kinds a column may declare. A number is what every sheet on disk has.
 FIELD_KINDS: tuple[str, ...] = ("number", "ordinal", "name", "text", "set")
+
 
 @dataclass(frozen=True, slots=True)
 class Sheet:
@@ -282,8 +286,10 @@ class Sheet:
                 found.append((match.group("subject"), value, match.span()))
         return found
 
+
 def _above_zero(value: object) -> bool:
     return isinstance(value, int | float) and not isinstance(value, bool) and value > 0
+
 
 def _held(value: object) -> bool:
     """Whether a column has something in it: a number above zero, a name, words, or a
@@ -291,6 +297,7 @@ def _held(value: object) -> bool:
     if isinstance(value, str | list | tuple):
         return bool(value)
     return _above_zero(value)
+
 
 def _render_typed(field_: SheetField, value: object, name: Callable[[str], str]) -> str:
     if field_.kind == "text":
@@ -306,6 +313,7 @@ def _render_typed(field_: SheetField, value: object, name: Callable[[str], str])
                 printed.append(name(str(member)))
         return ", ".join(printed) if printed else "none"
     return name(str(value))
+
 
 def _read_typed(field_: SheetField, rest: str, ids: Mapping[str, str]) -> object | None:
     """A typed column's value read off the page: an id the book knows for a name or a rung
@@ -331,9 +339,11 @@ def _read_typed(field_: SheetField, rest: str, ids: Mapping[str, str]) -> object
         return members
     return ids.get(rest.casefold())
 
+
 def _status_lines(text: str) -> list[tuple[str, tuple[int, int]]]:
     """Every status line in `text`, as its printed subject and its span."""
     return [(match.group("subject"), match.span()) for match in _LINE.finditer(text)]
+
 
 #: A status line's frame: the tag, the subject up to the em dash, and the rest as pairs.
 _LINE = re.compile(
@@ -343,6 +353,7 @@ _LINE = re.compile(
 _NUMBERS = re.compile(r"^(?P<current>\d+)(?:/(?P<ceiling>\d+))?$")
 #: A set member with a depth after its name: *Seamsight 2*.
 _TRAILING_NUMBER = re.compile(r"^(?P<name>.+?)[^\S\n]+(?P<depth>\d+)$")
+
 
 @cache
 def _compile_pattern(fields: tuple[SheetField, ...]) -> re.Pattern[str]:
@@ -361,6 +372,7 @@ def _compile_pattern(fields: tuple[SheetField, ...]) -> re.Pattern[str]:
         + r"[^\S\n]*\|[^\S\n]*".join(columns),
         re.MULTILINE,
     )
+
 
 def sheet_from_line(text: str) -> Sheet | None:
     """The sheet the first status line in `text` teaches: its labels become keys (lowercased,
@@ -393,8 +405,10 @@ def sheet_from_line(text: str) -> Sheet | None:
             return Sheet(tuple(fields))
     return None
 
+
 #: A pair as a first line writes it: words, then a number, optionally over a ceiling.
 _LOOSE_PAIR = re.compile(r"^(?P<label>[^\d|]+?)[^\S\n]+(?P<current>\d+)(?:/(?P<ceiling>\d+))?$")
+
 
 def declaration_from_snapshots(
     records: Sequence[lc.StateRecord],
@@ -432,6 +446,7 @@ def declaration_from_snapshots(
             )
     return None
 
+
 def sheet_from_value(value: Mapping[str, object]) -> Sheet | None:
     """The sheet one snapshot implies on its own: its numeric keys in order, a `_max` key
     pairing its column, labels by `label_for`. `None` for a snapshot with no numeric key.
@@ -456,6 +471,7 @@ def sheet_from_value(value: Mapping[str, object]) -> Sheet | None:
         if not (key.endswith(MAX_SUFFIX) and key[: -len(MAX_SUFFIX)] in known)
     )
     return Sheet(fields) if fields else None
+
 
 def parse_sheet(value: object) -> Sheet:
     """A `status_sheet` record's value as a `Sheet`, or `MalformedSheet`.
@@ -499,6 +515,7 @@ def parse_sheet(value: object) -> Sheet:
         system=system.strip() if system else None,
     )
 
+
 def label_for(key: str) -> str:
     """A column label for a snapshot key the book never labelled.
 
@@ -509,6 +526,7 @@ def label_for(key: str) -> str:
     sheet be the same object for a book that used the default.
     """
     return key.upper() if len(key) <= 3 else key.replace("_", " ").title()
+
 
 def implied_sheet(records: Sequence[lc.StateRecord]) -> Sheet | None:
     """The column form this book's own snapshots imply, or `None` where they imply none.
@@ -594,6 +612,7 @@ def readable(records: Sequence[lc.StateRecord]) -> list[lc.StateRecord]:
     unreadable = unreadable_sheets(records)
     return [record for record in records if record.record_id not in unreadable]
 
+
 def sheet_for(records: Sequence[lc.StateRecord], *, subject: str | None = None) -> Sheet | None:
     """The sheet this book declared, the one its own snapshots imply, or the default.
 
@@ -648,6 +667,7 @@ def sheet_for(records: Sequence[lc.StateRecord], *, subject: str | None = None) 
     live = [sheet for sheet in declared if set(sheet.value_keys) <= held]
     return live[0] if len(live) == 1 else implied
 
+
 def _following(sheet: Sheet, records: Sequence[lc.StateRecord]) -> Sheet:
     """A sheet that names its system, with that system's columns as they stand (§211) and the
     book's own columns around them (§219).
@@ -697,6 +717,7 @@ def _following(sheet: Sheet, records: Sequence[lc.StateRecord]) -> Sheet:
         )
     return sheet
 
+
 def impossible_fields(value: Mapping[str, object]) -> tuple[str, ...]:
     """Fields standing above their own ceiling in one snapshot — `mp 6` against `mp_max 4`.
 
@@ -732,6 +753,7 @@ def impossible_fields(value: Mapping[str, object]) -> tuple[str, ...]:
         ):
             impossible.append(key[: -len(MAX_SUFFIX)])
     return tuple(sorted(impossible))
+
 
 def render_status_line(
     subject: str,
@@ -772,8 +794,10 @@ def render_status_line(
         resolve=lambda entity: display_name(records, entity),
     )
 
+
 def _canon_of(records: Sequence[lc.StateRecord]) -> list[lc.StateRecord]:
     return [record for record in records if state_mod.is_canon(record)]
+
 
 def speaks_system_voice(records: Sequence[lc.StateRecord]) -> bool:
     """Whether this book states its game state on the page.
@@ -803,6 +827,7 @@ def speaks_system_voice(records: Sequence[lc.StateRecord]) -> bool:
         and isinstance(record.value, Mapping)
         for record in records
     )
+
 
 def system_voice_example(
     records: Sequence[lc.StateRecord], *, at: str | None = None, include_at: bool = True
@@ -836,6 +861,7 @@ def system_voice_example(
     subject, values = standing
     return render_status_line(subject, values, sheet=sheet_for(records), records=records)
 
+
 def _folds_into(key: str | None, ceiling: str | None) -> bool:
     """Whether a snapshot at `key` is part of the state standing at `ceiling`.
 
@@ -849,6 +875,35 @@ def _folds_into(key: str | None, ceiling: str | None) -> bool:
     if ceiling is None:
         return False
     return state_mod.comparable(key, ceiling) and key <= ceiling
+
+
+def _folded_before(
+    known: Sequence[lc.StateRecord], subject: str, order_key: str
+) -> dict[str, object]:
+    """This subject's state as it stands at `order_key`, folded forward from its own canon
+    snapshots (later values winning), for a projected line to be completed from (§203).
+
+    The fold is `state_as_it_stands`'s, applied to a named subject: only canon, only this
+    subject, only positions that fold into this one.
+    """
+    history = sorted(
+        (
+            record
+            for record in known
+            if record.predicate == STATUS_PREDICATE
+            and state_mod.is_canon(record)
+            and record.subject == subject
+            and isinstance(record.value, Mapping)
+            and _folds_into(state_mod.order_key_of(record), order_key)
+        ),
+        key=lambda record: state_mod.order_key_of(record) or "",
+    )
+    values: dict[str, object] = {}
+    for record in history:
+        assert isinstance(record.value, Mapping)
+        values.update(record.value)
+    return values
+
 
 def state_as_it_stands(
     records: Sequence[lc.StateRecord], *, at: str | None = None, include_at: bool = True
@@ -906,6 +961,7 @@ def state_as_it_stands(
         assert isinstance(record.value, Mapping)
         values.update(record.value)
     return latest.subject, values
+
 
 def snapshot_at(
     records: Sequence[lc.StateRecord], *, at: str | None = None, include_at: bool = True
@@ -994,6 +1050,7 @@ def snapshot_at(
         return None
     return max(chosen, key=lambda record: state_mod.order_key_of(record) or "")
 
+
 def _the_protagonists(
     snapshots: Sequence[lc.StateRecord], records: Sequence[lc.StateRecord]
 ) -> list[lc.StateRecord]:
@@ -1013,6 +1070,7 @@ def _the_protagonists(
         return list(snapshots)
     owned = [record for record in snapshots if record.subject == brief.subject]
     return owned or list(snapshots)
+
 
 def _stands_before(key: str | None, at: str) -> bool:
     """Whether a snapshot at `key` is one the book had already reached by `at`.

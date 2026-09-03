@@ -14,6 +14,7 @@ this module deriving the one kind of thing the extractor is most careful not to
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
@@ -27,8 +28,11 @@ from litharness.domain.graphline import graph_line_for
 from litharness.domain.names import display_name
 from litharness.domain.sheet import (
     MAX_SUFFIX,
+    SHEET_PREDICATE,
     STATUS_PREDICATE,
     _canon_of,
+    _folded_before,
+    readable,
     render_status_line,
     sheet_for,
     snapshot_at,
@@ -75,6 +79,7 @@ def progression_target(records: Sequence[lc.StateRecord], *, at: str | None = No
         return None
     target = min(ahead, key=lambda record: state_mod.order_key_of(record) or "")
     return render_status_line(target.subject, target.value, records=records)
+
 
 def standing_target(records: Sequence[lc.StateRecord], *, at: str | None = None) -> str | None:
     """The next rung a standing schedule asks this book to reach, as one line of facts. Or None.
@@ -141,6 +146,7 @@ def standing_target(records: Sequence[lc.StateRecord], *, at: str | None = None)
     )
     return f"{line}: {aimed_form}" if aimed_form else line
 
+
 def standing_example(records: Sequence[lc.StateRecord], *, at: str | None = None) -> str | None:
     """One graph line, filled with this book's own words and its live rung, or `None`.
 
@@ -173,6 +179,7 @@ def standing_example(records: Sequence[lc.StateRecord], *, at: str | None = None
         return None
     [(_, rung)] = standing.items()
     return line.render(subjects[0], phrase, rung)
+
 
 def change_example(
     records: Sequence[lc.StateRecord], *, character: str | None, at: str | None
@@ -208,6 +215,7 @@ def change_example(
     return render_status_line(
         character, sheet.snapshot(), sheet=sheet_for(records), records=records
     )
+
 
 def gain_example(
     records: Sequence[lc.StateRecord], *, at: str | None = None, ability_id: str
@@ -302,6 +310,61 @@ def notice_lines(
         found.append(f"[{line.label}] {said}")
     return tuple(found)
 
+
+def readout_lines(
+    records: Sequence[lc.StateRecord],
+    *,
+    plan: str | None,
+    at: str | None,
+    protagonist: str | None,
+) -> tuple[str, ...]:
+    """Another owner's line, where the scene's plan names the owner (§220).
+
+    **§209's owed item, and the fit census's fourth gap** (§217): twenty-three of sixty market
+    stories print another subject's sheet where the protagonist reads it — a creature's level
+    and health, an appraisal of a rival, a follower's standing — and since §206 every such
+    sheet is declarable and none was ever asked for. The ask needs a trigger that is the
+    book's and not a model's (§61(5)): the scene's plan names who is in it, so an owner named
+    in the plan is an owner whose line the scene prints, once, where the protagonist reads it.
+
+    An owner is a subject named by a canon `status_sheet`'s `owner`, or every subject of the
+    role it names; the protagonist is never a readout (their line is the status line). The
+    owner's state is folded at `at` from their own canon snapshots (`_folded_before`), and
+    rendered through their own sheet. `()` for a scene with no plan text or no position, and
+    for every book whose plans name no owner, which is every book on disk.
+    """
+    if not plan or at is None:
+        return ()
+    known = readable(records)
+    canon = _canon_of(known)
+    roles = worlds_mod.entity_roles(canon)
+    owners: set[str] = set()
+    for record in canon:
+        if record.predicate != SHEET_PREDICATE or not isinstance(record.value, Mapping):
+            continue
+        owner = record.value.get("owner")
+        if not isinstance(owner, str) or not owner.strip():
+            continue
+        owner = owner.strip()
+        if owner in worlds_mod.ENTITY_ROLES:
+            owners.update(subject for subject, held in roles.items() if owner in held)
+        else:
+            owners.add(owner)
+    text = plan.casefold()
+    found: list[str] = []
+    for subject in sorted(owners):
+        if subject == protagonist:
+            continue
+        name = display_name(known, subject).casefold()
+        if not re.search(r"(?<!\w)" + re.escape(name) + r"(?!\w)", text):
+            continue
+        value = _folded_before(known, subject, at)
+        if not value:
+            continue
+        found.append(render_status_line(subject, value, records=known))
+    return tuple(found)
+
+
 @dataclass(frozen=True, slots=True)
 class Movable:
     """One quantity a scheduled beat may name, and the snapshot key that quantity moves.
@@ -322,6 +385,7 @@ class Movable:
 
     name: str
     key: str
+
 
 def counted_names(records: Sequence[lc.StateRecord], *, at: str | None = None) -> tuple[str, ...]:
     """The names this book's own system counts by, in the order its sheet prints them.
@@ -346,6 +410,7 @@ def counted_names(records: Sequence[lc.StateRecord], *, at: str | None = None) -
     """
     return tuple(item.name for item in _counted(records, at=at))
 
+
 def _counted(records: Sequence[lc.StateRecord], *, at: str | None = None) -> tuple[Movable, ...]:
     """`counted_names` with the column each name moves still attached. See `Movable`."""
     standing = state_as_it_stands(records, at=at)
@@ -362,6 +427,7 @@ def _counted(records: Sequence[lc.StateRecord], *, at: str | None = None) -> tup
         and field_.name in held
         and field_.label.casefold() not in house_mod.MACHINERY_WORDS
     )
+
 
 def movable_names(
     records: Sequence[lc.StateRecord], *, character: str | None = None, at: str | None = None
@@ -411,6 +477,7 @@ def movable_names(
     """
     return tuple(item.name for item in movables(records, character=character, at=at))
 
+
 def movables(
     records: Sequence[lc.StateRecord], *, character: str | None = None, at: str | None = None
 ) -> tuple[Movable, ...]:
@@ -426,6 +493,7 @@ def movables(
         system, sheet = standing
         return _named_moves(system, gamesystem_mod.legal_moves(sheet))
     return _counted(records, at=at)
+
 
 def _standing_sheet(
     records: Sequence[lc.StateRecord], *, character: str | None = None, at: str | None = None
@@ -451,6 +519,7 @@ def _standing_sheet(
         return None
     sheet = gamesystem_mod.sheet_of(canon, character, system=system, at=at)
     return None if sheet is None else (system, sheet)
+
 
 def moved_to(
     records: Sequence[lc.StateRecord],
@@ -492,6 +561,7 @@ def moved_to(
         return None
     after = changed.get(movable.key)
     return after if isinstance(after, int) and not isinstance(after, bool) else None
+
 
 def moved_values(
     records: Sequence[lc.StateRecord],
@@ -540,6 +610,7 @@ def moved_values(
         return None
     return {movable.key: was + 1}
 
+
 def _printing_system(
     canon: Sequence[lc.StateRecord], records: Sequence[lc.StateRecord]
 ) -> gamesystem_mod.SystemDef | None:
@@ -558,6 +629,7 @@ def _printing_system(
         if _system_prints_the_line(system, records)
     ]
     return printing[0] if len(printing) == 1 else None
+
 
 def _system_prints_the_line(
     system: gamesystem_mod.SystemDef, records: Sequence[lc.StateRecord]
@@ -582,6 +654,7 @@ def _system_prints_the_line(
     # beats come from the system precisely when the line carries its columns.
     sheet = sheet_for(records)
     return sheet is not None and set(system.value_keys) <= {field_.name for field_ in sheet.fields}
+
 
 def _named_moves(
     system: gamesystem_mod.SystemDef, moves: Sequence[gamesystem_mod.Move]
@@ -617,6 +690,7 @@ def _named_moves(
         if name and key and name.casefold() not in house_mod.MACHINERY_WORDS:
             named.append(Movable(name, key))
     return tuple(named)
+
 
 def offered_choice(
     records: Sequence[lc.StateRecord], *, character: str | None = None, at: str | None = None
@@ -673,6 +747,7 @@ def offered_choice(
     if any(not name.strip() or name.casefold() in house_mod.MACHINERY_WORDS for name in names):
         return None
     return choice.name, tuple(option.name for option in options)
+
 
 def offered_line(
     records: Sequence[lc.StateRecord], *, character: str | None = None, at: str | None = None

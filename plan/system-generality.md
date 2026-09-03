@@ -228,7 +228,7 @@ Genre modules (a quest module, an inventory module, a notification module). A mo
 ranks or prefers displays. Any change to how the corpus is used. The reviser.
 
 
-## 5. The fit census, and the gaps it ranks (2026-09-03, stage-0 §217)
+## 5. The fit census, and the gaps it ranks (2026-09-03, stage-0 §217; the track closed at §220.1, its brief deleted)
 
 With the five phases closed, the question §1 opened was measured instead of argued:
 `research/quality-measurement/system-fit/` declares sixty sampled market stories' shapes,
@@ -245,8 +245,9 @@ The ranked gaps, and what each is in this note's terms:
    it: a snapshot that carries the rung is a position in its system whatever else it prints.
 3. **The quest card**: the notice's twin with counters; a change the System announces, its
    counters paired columns already. Not earned separately until the notice has been drawn.
-4. **The readout on request** (§209's owed item): every fact declarable since §206, nothing
-   asked for.
+4. **The readout on request** (§209's owed item): every fact declarable since §206; §220 asks
+   the scene whose plan names an owner to print that owner's line where the protagonist
+   reads it.
 5. **Another screen**: a menu, a store, a board; several displays the census does not
    separate.
 
