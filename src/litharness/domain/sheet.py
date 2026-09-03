@@ -146,8 +146,14 @@ class Sheet:
                 entry["kind"] = field_.kind
             fields.append(entry)
         declared: dict[str, object] = {"fields": fields}
-        if not self.show_unheld:
-            declared["show_unheld"] = False
+        # **The flag is written when it differs from what reading it back would assume**
+        # (§223). `parse_sheet` defaults an omitted `show_unheld` to `True` for a sheet whose
+        # columns are its own and to `False` for one that names its system, so writing the key
+        # only when it is `False` lost an explicit `True` on a following sheet's round trip.
+        # A sheet whose columns are its own still omits a `True` and still writes a `False`,
+        # which is every declaration on disk unchanged.
+        if self.show_unheld != (self.system is None):
+            declared["show_unheld"] = self.show_unheld
         if self.owner is not None:
             declared["owner"] = self.owner
         if self.system is not None:
@@ -499,15 +505,28 @@ def parse_sheet(value: object) -> Sheet:
         if not isinstance(kind, str):
             raise MalformedSheet(f"field {name!r}: kind must be one of {FIELD_KINDS}")
         fields.append(SheetField(name, label.strip(), bool(entry.get("paired", False)), kind))
-    show_unheld = value.get("show_unheld", True)
-    if not isinstance(show_unheld, bool):
-        raise MalformedSheet("show_unheld must be true or false when given")
     owner = value.get("owner")
     if owner is not None and (not isinstance(owner, str) or not owner.strip()):
         raise MalformedSheet("owner must be a subject id or a role when given")
     system = value.get("system")
     if system is not None and (not isinstance(system, str) or not system.strip()):
         raise MalformedSheet("system must be a subject id when given")
+    # **What an omitted `show_unheld` means depends on whose the columns are** (§223, from
+    # pilot 25 draw 5). `True` is the flag's documented default and is every sheet written
+    # before it existed, so a book whose columns are its own is unchanged. A sheet that
+    # *names its system* (§211) has the system's grants for columns, and a drawn system's
+    # own declaration has said `False` since §203 for the reason the market census gave —
+    # the genre's windows do not print a row of zeros. Draw 5's Architect declared a
+    # following sheet by hand, omitted the flag, and the opening line handed to its writer
+    # read `Gloves ? | Held Time ? | Red Line ? | Second Reading ? | Standing Order ?`:
+    # five of eight columns unanswered on the first line a reader meets, because the
+    # opening snapshot holds three grants and the system declares eight. A hand-declared
+    # following sheet now defaults the way the minted one does, and a declaration that
+    # says `true` is still obeyed exactly (`test_a_sheet_following_its_system_hides_a_column
+    # _the_snapshot_never_held` pins that).
+    show_unheld = value.get("show_unheld", system is None)
+    if not isinstance(show_unheld, bool):
+        raise MalformedSheet("show_unheld must be true or false when given")
     return Sheet(
         tuple(fields),
         show_unheld=show_unheld,

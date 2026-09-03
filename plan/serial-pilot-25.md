@@ -471,3 +471,17 @@ balance stood in the snapshot and not in a `can_do` edge, so the arithmetic offe
 the rise. The changes sit in the scheduled key space and never fold into a scene (§165).
 Spend $11.66 over 31 calls; the chapter is on the shelf as `marks-for-moving` and in
 `runs/ab/pilot25/draw4`. Not a substitute for the operator's read 20 of draw 3.
+
+## 8. Draw5 — the seed cleared §213.1, the beat came alive, and the line was addressed to nobody
+
+Drawn 2026-09-03 23:22 at f309123 (§203 to §222); the reading is stage-0 §223 and this section
+only points at it. Two earlier launches died at $0 inside the provider's health probe while Opus
+`-p` hung, from about 15:00 to 23:19. The seed was accepted with no snapshot faults, so §213's
+first two gaps did not recur, and the progression beat named *Band Two* where draw 4's gate had
+abstained. Scene 1 was drafted and refused: the status snapshot's subject is the literal word
+`book`, so the line handed to the writer read `[STATUS] Book — Band 1 | Coat 1 | Gloves ? | …`
+and the gate asked that subject's rank to move. Five of its eight columns printed `?`, which was
+ours: a hand-declared sheet that names its system took `show_unheld`'s documented default of
+`True`, and a drawn system's own declaration has said `False` since §203. That default is fixed
+in §223; the subject rule is left as an open question for the operator. Spend $7.63 over 11
+calls, one tick of four, no prose kept (a refused draft is not stored).

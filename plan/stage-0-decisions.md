@@ -23896,3 +23896,58 @@ promotes no mechanism, and moves no licence: `fcr.v0` remains unseated for any b
 claim, the editorial control plane stays inert, and the three remaining experiments of the
 handoff (order recovery, the anticipation run, and the architecture proposal that only a
 surviving signal would earn) are untouched by it.
+
+## 223. Pilot 25 draw 5: the seed cleared §213.1 and the beat came alive, and the chapter died on a status line addressed to a subject called `book` with five of eight columns unanswered
+
+**What was drawn** (`runs/ab/pilot25/draw5`, 2026-09-03 23:22, the pipeline at f309123, which is
+§203 to §222 inclusive). The settled pilot 25 concept and listing, writer tanaka, third person,
+three exemplars, a fresh store, the tick cap at four. Opus `-p` had hung past the provider's
+120-second health probe from about 15:00 to 23:19 and two earlier launches died in the probe at
+$0 (§213's redraw, twice); this one ran when it answered again. Spend $7.63 over 11 calls. One
+draw is one description.
+
+**What went right, and it is the part §213.1 was for.** The seed declared two systems, both with
+a stock and a priced graph, and `world accept` took it with **no snapshot faults**: the rung
+column carries a number, not a rung's id, and the opening line's held grants have `can_do` edges
+behind them. §213's first two gaps did not recur, and the refusal did not block a good seed. The
+beat then came alive for the first time: it named *Band Two*, the rise the arithmetic offered,
+where draw 4's gate had abstained because no reader of the line could read a number off it. The
+tells pass did its work on the drafted scene — absence 9.2 to 2.1 per thousand, long 4.1 to 0.0,
+paradox and the-way each halved, 12 sentences said again in 9 calls.
+
+**What killed it.** The scene was refused by `integrity.progression.v0`, and the refusal names
+the cause exactly: *Band Two was named as moving here; this scene wrote down no state for `book`
+at s1, and rank stands at 1*. **The snapshot's subject is the literal word `book`.** The
+Architect declared `world declare book status_snapshot …`, so the line the writer was handed read
+`[STATUS] Book — Band 1 | Coat 1 | Gloves ? | Held Time ? | Marks 3 | Red Line ? | Second
+Reading ? | Standing Order ?`, a sheet belonging to nobody in the cast, and the gate then asked
+for that subject's rank to move. The five who *are* in the cast (`marchetti`, `kieran`, `ivy`,
+`rooke`, and the protagonist) hold no sheet at all. The arm stopped at tick 1 of 4 with two
+attempts unspent, because a refused draft is not stored: the prose is gone and only the gate's
+sentence and the pass's counters remain.
+
+**What shipped** (`domain/sheet.py`). The second half of that line — `Gloves ? | Held Time ? |
+Red Line ? | Second Reading ? | Standing Order ?` — is ours, not the Architect's. A sheet that
+names its system (§211) has the system's grants for columns; this seed declared one by hand and
+omitted `show_unheld`, whose documented default is `True`, so every grant the opening snapshot
+does not answer for printed a question mark: five of eight columns on the first line a reader
+meets. A *drawn* system's own declaration has said `False` since §203, for the market census's
+reason. So an omitted `show_unheld` now means `True` for a sheet whose columns are its own and
+`False` for one that names its system, and `Sheet.declaration` writes the flag whenever it
+differs from what reading it back would assume — without which an explicit `True` on a following
+sheet was lost on the round trip, a hole this entry's own test found. A declaration that says
+either value is obeyed exactly, and §220's test that pins a loud following sheet still passes.
+Every sheet on disk is unchanged, because no stored book names a system; replay 8/8 identical.
+
+**What was refused.** A rule that a `status_snapshot`'s subject must hold a cast role. It is the
+larger half of this draw's defect and it is not obviously right: §219 has just decided that a
+snapshot carrying the rung is a position in its system *whatever else it prints*, a place or a
+creature may legitimately hold a sheet through its owner (§206), and a refusal here would fall on
+the seed of every book that names its protagonist late. Recorded as the open question it is, for
+the operator's read, with the evidence in this entry. Also refused: retrying the tick tonight —
+two attempts remain on that job and the same line would be handed to the same writer, so the
+money would buy the same refusal.
+
+**Anti-scope.** Nothing here measures prose; the drafted scene was refused and not read, and
+whether any of this reads as the genre is the operator's question. The chapter under the general
+system that §213 promised is still owed, and it is owed on a seed whose sheet belongs to somebody.

@@ -1414,3 +1414,32 @@ def test_a_sheet_naming_its_system_round_trips_the_name() -> None:
     plain = Sheet((SheetField("rank", "Seal"),))
     assert "system" not in plain.declaration()
     assert parse_sheet(plain.declaration()).system is None
+
+
+def test_a_hand_declared_following_sheet_hides_what_nobody_holds_by_default() -> None:
+    """§223: an omitted `show_unheld` means `true` for a sheet whose columns are its own and
+    `false` for one that names its system, which is what a drawn system's own declaration has
+    said since §203. Pilot 25 draw 5 handed its writer a line with five of eight columns
+    reading `?`, because its Architect declared a following sheet by hand and took the
+    default. A declaration that says so explicitly is still obeyed either way."""
+    fields = [
+        {"name": "rank", "label": "Band"},
+        {"name": "marks", "label": "Marks"},
+        {"name": "gloves", "label": "Gloves"},
+    ]
+    value = {"rank": 1, "marks": 3}
+
+    following = parse_sheet({"fields": fields, "system": "invigilation"})
+    assert following.show_unheld is False
+    assert following.render("nolan", value) == "[STATUS] nolan — Band 1 | Marks 3"
+
+    own = parse_sheet({"fields": fields})
+    assert own.show_unheld is True
+    assert own.render("nolan", value).endswith("Gloves ?")
+
+    louder = parse_sheet({"fields": fields, "system": "invigilation", "show_unheld": True})
+    assert louder.show_unheld is True and louder.render("nolan", value).endswith("Gloves ?")
+
+    # A declaration round-trips whatever it said, so neither default is lost on the way back.
+    assert parse_sheet(following.declaration()).show_unheld is False
+    assert parse_sheet(louder.declaration()).show_unheld is True
