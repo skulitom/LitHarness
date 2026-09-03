@@ -244,8 +244,10 @@ def vocabulary() -> dict[str, Any]:
             "status_sheet": (
                 "the columns this book's own status line prints; --value an object "
                 '{"fields": [{"name": <the key a snapshot fills>, "label": <what the line '
-                'prints>, "paired": true|false}]}, and a paired field prints '
-                "current/maximum and adds a <name>_max key. Declare exactly one or none: a "
+                'prints>, "paired": true|false}], "show_unheld": true|false}, and a paired '
+                "field prints current/maximum and adds a <name>_max key; with show_unheld "
+                "false the line prints its first column and the columns above zero only. "
+                "Declare exactly one or none: a "
                 "book that declares none, and a book that declares two, both print a generic "
                 "line written in nobody's vocabulary"
             ),

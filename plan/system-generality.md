@@ -162,7 +162,7 @@ reported as such. Distributions, no bar. The reading fixed before spend: what th
 phases 1 to 3 are set to (unheld shown or not; how many fields a first window carries; whether
 a choice display is a first-chapter object). The MirrorBench interpreter; a CPU job.
 
-### Phase 1 — the line is a declared projection of the snapshot
+### Phase 1 — the line is a declared projection of the snapshot (done: stage-0 §203)
 
 `domain/extraction.Sheet` gains a projection: the snapshot stays a full mapping per subject
 per position (state is unchanged), and the *printed* line carries the rung and the held

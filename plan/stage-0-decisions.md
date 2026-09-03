@@ -22580,3 +22580,50 @@ text carries the heading (below the two hundred the amendment required); a bar o
 **Anti-scope.** A census of typography: a system written into prose without furniture is
 invisible to it, so every share is a floor on what the genre displays. Which fields the
 market's windows carry is the next census and phase 2's.
+
+## 203. Phase 1 of the general system: the status line is a declared projection of the snapshot, and a drawn system hides its unheld columns
+
+**Measured first.** The market census (§202): one window field in fifteen at zero or blank,
+one window in six carrying any. Ours (§201): eight fields printed twice a chapter with five or
+six at zero, on six draws of two concepts. Under the projection, the four stored books' lines
+as they stand (`runs/ab/pilot25/draw1b`, `draw2`, `draw3`, `runs/ab/pilot24-third/draw3`)
+would print *BAND 1/10 | READING 1*, *BAND 1 | READING 1*, *BAND 1 | PACE 1* and *CLICK 0 |
+GROUND HELD 41 | HOLLOWS 0/4118 | STEP BACK 1* in place of eight columns each. Replayed over
+the same four stores, the new reader reads every one of the eight accepted scenes' lines to
+exactly the snapshot the store holds at that position (eight of eight, no mismatch): the
+books on disk read identically.
+
+**What shipped** (`domain/extraction.py`, `domain/gamesystem.py`, `application/world.py`).
+`Sheet` carries `show_unheld`, read off the `status_sheet` declaration and `True` where the
+declaration does not say, so every sheet on disk renders as it did. `Sheet.shown` is the
+projection: every column when unheld ones show; otherwise the first column and every column
+above zero (either half of a paired one), a column the snapshot never held still printing as
+`?`. `Sheet.render` prints it; `render_status_line` calls it. `Sheet.read` is the reader the
+extractor uses: the tag, the subject, the em dash and label-value pairs in any subset, a pair
+whose label the sheet never declared skipped, a line with no readable pair not a line; the
+strict `pattern` (every column present) is unchanged for the round-trip test and the renderer's
+docs. **The record is the whole state and the line is its projection:** a partial record at a
+position where a fuller one stands read as a contradiction to the integrity detector (the
+reviser's ladder found it first), so the columns a line leaves out are filled from the fold
+of the subject's own snapshots up to that position, the writer's *carry these values forward
+unchanged* applied on this side (`_folded_before`, the same fold `state_as_it_stands` renders
+from). `SystemDef.sheet_declaration` writes `show_unheld: false`, so a drawn system prints
+the rung and what is held while its snapshot, digest and arithmetic keep every ability at 0.
+The vocabulary line for `status_sheet` names the flag. Tests: the projection and its `?`,
+the tolerant read and the skipped column, a sheet declared without the flag unchanged, the
+projected line in a scene minting the completed record, a drawn system's declaration and its
+line (`tests/test_extraction.py`, `tests/test_gamesystem.py`).
+
+**Named and not settled.** The reviser's containment band (§185) counts the status line's
+words in the draft-to-revision length ratio, so a shorter line moves the ratio; the reviser
+test's fixture is pinned to the full-line rendering with a comment saying so. Whether the band
+should read prose only is the reviser's question and gets its own entry when it is asked.
+
+**What was refused.** Hiding zeros in code rather than by declaration (a book that wants its
+zeros shown declares it, and every book on disk already has). A tolerant reader that accepts a
+label the sheet never declared (a column the writer invented reaches no record). Retiring
+`DEFAULT_SHEET` here: that is phase 3's, once displays are declared views.
+
+**Anti-scope.** The line's shape is still one tag, one subject, one row of pairs, and its
+values are still digits; phase 2 is where a value may be a name. The wanting §160 put on the
+line as zeros rides the `[OFFER]` line, which is unchanged.

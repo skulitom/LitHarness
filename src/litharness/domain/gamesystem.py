@@ -259,9 +259,7 @@ class Ability:
 
     def __post_init__(self) -> None:
         """Prerequisites are held in a canonical order. See `SystemDef.__post_init__`."""
-        object.__setattr__(
-            self, "needs", tuple(sorted(self.needs, key=lambda need: need.ref))
-        )
+        object.__setattr__(self, "needs", tuple(sorted(self.needs, key=lambda need: need.ref)))
 
 
 @dataclass(frozen=True, slots=True)
@@ -566,9 +564,13 @@ class SystemDef:
         the very column set the operator rejects. One derivation cannot disagree with itself.
         """
         return {
-            "fields": [
-                {"name": column.name, "label": column.label} for column in self.columns
-            ]
+            "fields": [{"name": column.name, "label": column.label} for column in self.columns],
+            # **The unheld columns do not print** (§203): the snapshot still carries every
+            # ability at 0, so the arithmetic and the digest are what they were, and the
+            # line the reader sees is the rung and what is held. The market's windows carry
+            # one field in fifteen at zero (the system-displays census); the wanting §160
+            # put on the line as zeros rides the `[OFFER]` line instead.
+            "show_unheld": False,
         }
 
 
@@ -763,9 +765,7 @@ def check_draw(system: SystemDef) -> tuple[str, ...]:
     complaints: list[str] = []
 
     if not system.system_id.isidentifier():
-        complaints.append(
-            f"the system id {system.system_id!r} is not usable as an identifier"
-        )
+        complaints.append(f"the system id {system.system_id!r} is not usable as an identifier")
     if not system.name.strip():
         complaints.append("a system needs a name")
     if not system.criterion.strip():
@@ -855,9 +855,7 @@ def check_draw(system: SystemDef) -> tuple[str, ...]:
             "function's docstring for why that is not §114's refused depth gate"
         )
     if _cycle(system):
-        complaints.append(
-            "the prerequisites run in a cycle, so no order of gaining them exists"
-        )
+        complaints.append("the prerequisites run in a cycle, so no order of gaining them exists")
 
     # --- the forks
     #
@@ -869,9 +867,7 @@ def check_draw(system: SystemDef) -> tuple[str, ...]:
     granted_by_option: dict[str, str] = {}
     for choice in system.choices:
         if not choice.choice_id.isidentifier():
-            complaints.append(
-                f"the fork id {choice.choice_id!r} is not usable as an identifier"
-            )
+            complaints.append(f"the fork id {choice.choice_id!r} is not usable as an identifier")
         if not _printable_label(choice.name):
             complaints.append(
                 f"the fork {choice.choice_id}'s name {choice.name!r} cannot be put in a scene "
@@ -935,9 +931,7 @@ def check_draw(system: SystemDef) -> tuple[str, ...]:
 
     # --- the scale
     if not _printable_label(system.scale.label):
-        complaints.append(
-            f"the scale's label {system.scale.label!r} is not a printable label"
-        )
+        complaints.append(f"the scale's label {system.scale.label!r} is not a printable label")
     if not MIN_SCALE_MAXIMUM <= system.scale.maximum <= MAX_SCALE_MAXIMUM:
         complaints.append(
             f"this system's magnitudes run to {system.scale.maximum}; a drawn scale runs to "
@@ -968,9 +962,7 @@ def _cycle(system: SystemDef) -> bool:
     """
     onward = {
         ability.ability_id: [
-            need.ref
-            for need in ability.needs
-            if need.ref in set(system.ability_ids)
+            need.ref for need in ability.needs if need.ref in set(system.ability_ids)
         ]
         for ability in system.abilities
     }
@@ -1040,8 +1032,7 @@ def starting_sheet(
         character=character,
         rank_id=system.rank_ids[0],
         magnitudes=tuple(
-            (ability_id, 1 if ability_id in openers else 0)
-            for ability_id in system.ability_ids
+            (ability_id, 1 if ability_id in openers else 0) for ability_id in system.ability_ids
         ),
         visible_to=tuple(visible_to),
     )
@@ -1309,9 +1300,7 @@ def gain(sheet: CharacterSheet, ability_id: str, *, at: str) -> Advancement:
     unmet = _needs_met(sheet, ability)
     if unmet:
         raise IllegalAdvance("; ".join(unmet))
-    return _advanced(
-        sheet, AdvanceKind.GAIN, at=at, ability_id=ability_id, magnitude=1
-    )
+    return _advanced(sheet, AdvanceKind.GAIN, at=at, ability_id=ability_id, magnitude=1)
 
 
 def deepen(sheet: CharacterSheet, ability_id: str, *, at: str) -> Advancement:
@@ -1331,9 +1320,7 @@ def deepen(sheet: CharacterSheet, ability_id: str, *, at: str) -> Advancement:
         raise IllegalAdvance(
             f"{sheet.character} holds {ability_id} at {held}, which is this system's maximum"
         )
-    return _advanced(
-        sheet, AdvanceKind.DEEPEN, at=at, ability_id=ability_id, magnitude=held + 1
-    )
+    return _advanced(sheet, AdvanceKind.DEEPEN, at=at, ability_id=ability_id, magnitude=held + 1)
 
 
 def rise(sheet: CharacterSheet, *, at: str) -> Advancement:
@@ -1351,9 +1338,7 @@ def rise(sheet: CharacterSheet, *, at: str) -> Advancement:
     return _advanced(sheet, AdvanceKind.RISE, at=at, rank_id=system.rank_ids[index])
 
 
-def choose(
-    sheet: CharacterSheet, choice_id: str, option_id: str, *, at: str
-) -> Advancement:
+def choose(sheet: CharacterSheet, choice_id: str, option_id: str, *, at: str) -> Advancement:
     """Take one way at a fork this person has reached. Raises `IllegalAdvance` otherwise.
 
     **No number moves and that is the design.** Taking a way opens what it grants — those
@@ -1415,8 +1400,7 @@ def advance(sheet: CharacterSheet, move: Move, *, at: str) -> Advancement:
         return rise(sheet, at=at)
     if move.kind is AdvanceKind.CHOOSE:
         raise IllegalAdvance(
-            f"{move.choice_id} is a fork, and taking one needs the way it is taken; "
-            "call choose()"
+            f"{move.choice_id} is a fork, and taking one needs the way it is taken; call choose()"
         )
     if move.ability_id is None:
         raise IllegalAdvance(f"a {move.kind.value} names no ability")
@@ -1448,9 +1432,7 @@ def records_for(system: SystemDef) -> tuple[lc.StateRecord, ...]:
         raise MalformedSystem("; ".join(complaints))
 
     records = [
-        worlds_mod.world_record(
-            system.system_id, worlds_mod.ENTITY_ROLE_PREDICATE, value="system"
-        ),
+        worlds_mod.world_record(system.system_id, worlds_mod.ENTITY_ROLE_PREDICATE, value="system"),
         worlds_mod.world_record(system.system_id, "is_a", value=system.name),
         worlds_mod.world_record(
             system.system_id,
@@ -1466,9 +1448,7 @@ def records_for(system: SystemDef) -> tuple[lc.StateRecord, ...]:
         # writes both, so there is nothing for a second one to disagree with. The subject is
         # the system because `sheet_for` does not read the subject at all, and naming the
         # system is what makes the record legible to somebody reading canon by eye.
-        worlds_mod.world_record(
-            system.system_id, "status_sheet", value=system.sheet_declaration()
-        ),
+        worlds_mod.world_record(system.system_id, "status_sheet", value=system.sheet_declaration()),
         worlds_mod.world_record(
             system.criterion, worlds_mod.TYPE_PREDICATE, value=worlds_mod.CRITERION
         ),
@@ -1479,9 +1459,7 @@ def records_for(system: SystemDef) -> tuple[lc.StateRecord, ...]:
         # the abilities' — two unrelated things in one record, and a reader would have to know
         # which half it wanted.
         worlds_mod.world_record(system.criterion, "is_a", value=system.rank_label),
-        worlds_mod.world_record(
-            system.criterion, worlds_mod.COMPARATOR_PREDICATE, value="ordinal"
-        ),
+        worlds_mod.world_record(system.criterion, worlds_mod.COMPARATOR_PREDICATE, value="ordinal"),
         worlds_mod.world_record(
             system.criterion, worlds_mod.GOVERNED_BY, object_ref=system.system_id
         ),
@@ -1507,9 +1485,7 @@ def records_for(system: SystemDef) -> tuple[lc.StateRecord, ...]:
                 ability.ability_id, worlds_mod.ENTITY_ROLE_PREDICATE, value="capability"
             )
         )
-        records.append(
-            worlds_mod.world_record(ability.ability_id, "is_a", value=ability.name)
-        )
+        records.append(worlds_mod.world_record(ability.ability_id, "is_a", value=ability.name))
         records.append(
             worlds_mod.world_record(
                 ability.ability_id, worlds_mod.GOVERNED_BY, object_ref=system.system_id
@@ -1517,9 +1493,7 @@ def records_for(system: SystemDef) -> tuple[lc.StateRecord, ...]:
         )
         if ability.costs:
             records.append(
-                worlds_mod.world_record(
-                    ability.ability_id, worlds_mod.COSTS, value=ability.costs
-                )
+                worlds_mod.world_record(ability.ability_id, worlds_mod.COSTS, value=ability.costs)
             )
         if ability.manifests_as:
             records.append(
@@ -1568,14 +1542,10 @@ def records_for(system: SystemDef) -> tuple[lc.StateRecord, ...]:
                     choice.choice_id, worlds_mod.OFFERS, object_ref=option.option_id
                 )
             )
-            records.append(
-                worlds_mod.world_record(option.option_id, "is_a", value=option.name)
-            )
+            records.append(worlds_mod.world_record(option.option_id, "is_a", value=option.name))
             if option.costs:
                 records.append(
-                    worlds_mod.world_record(
-                        option.option_id, worlds_mod.COSTS, value=option.costs
-                    )
+                    worlds_mod.world_record(option.option_id, worlds_mod.COSTS, value=option.costs)
                 )
             for ability_id in option.grants:
                 records.append(
@@ -1694,9 +1664,7 @@ def systems_of(records: Sequence[lc.StateRecord]) -> tuple[SystemDef, ...]:
         maximum = scale_value.get("maximum")
         if not isinstance(maximum, int) or isinstance(maximum, bool):
             continue
-        system = _assemble(
-            records, system_id, Scale(label=label, maximum=maximum), names, governed
-        )
+        system = _assemble(records, system_id, Scale(label=label, maximum=maximum), names, governed)
         if system is not None:
             by_id[system_id] = system
     return tuple(by_id[key] for key in sorted(by_id))
@@ -1779,9 +1747,7 @@ def _choices_of(
     capability, and `genre.system_gap` is where a half-built system is reported.
     """
     found: list[Choice] = []
-    for subject in sorted(
-        candidate for candidate, owner in governed.items() if owner == system_id
-    ):
+    for subject in sorted(candidate for candidate, owner in governed.items() if owner == system_id):
         option_ids = worlds_mod.offered_by(records, subject)
         if not option_ids:
             continue
@@ -1938,9 +1904,7 @@ def completion_records(
     for system_id in worlds_mod.entities_with_role(records, "system"):
         if system_id in declared:
             continue
-        skeleton = _assemble(
-            records, system_id, Scale(label="", maximum=0), names, governed
-        )
+        skeleton = _assemble(records, system_id, Scale(label="", maximum=0), names, governed)
         if skeleton is None:
             reasons.append(
                 f"{system_id} holds the system role, and its ladder could not be read: a system "
@@ -1969,15 +1933,11 @@ def completion_records(
         except MalformedSystem as error:
             reasons.append(f"{system_id} is drawn but incoherent, so nothing was minted: {error}")
             continue
-        minted.extend(
-            record for record in drawn if record.predicate in CONFIGURATION_PREDICATES
-        )
+        minted.extend(record for record in drawn if record.predicate in CONFIGURATION_PREDICATES)
     return tuple(minted), tuple(reasons)
 
 
-def _declared_depth(
-    records: Sequence[lc.StateRecord], ability_ids: Sequence[str]
-) -> int | None:
+def _declared_depth(records: Sequence[lc.StateRecord], ability_ids: Sequence[str]) -> int | None:
     """The deepest magnitude this world has declared on these capabilities, or `None` for none.
 
     Both slots §160 reused are read: `can_do`'s value is how far a holder has taken a capability,
@@ -1998,9 +1958,7 @@ def _declared_depth(
     return max(depths) if depths else None
 
 
-def _first_value(
-    records: Sequence[lc.StateRecord], subject: str, predicate: str
-) -> str | None:
+def _first_value(records: Sequence[lc.StateRecord], subject: str, predicate: str) -> str | None:
     for record in records:
         if (
             record.subject == subject
@@ -2088,9 +2046,7 @@ def sheet_of(
     ]
     if not standings:
         return None
-    rank_id = max(
-        standings, key=lambda record: (state_mod.order_key_of(record) or "")
-    ).object_ref
+    rank_id = max(standings, key=lambda record: state_mod.order_key_of(record) or "").object_ref
     assert rank_id is not None
 
     magnitudes: list[tuple[str, int]] = []
@@ -2108,12 +2064,10 @@ def sheet_of(
         if not holdings:
             magnitudes.append((ability_id, 0))
             continue
-        latest = max(holdings, key=lambda record: (state_mod.order_key_of(record) or ""))
+        latest = max(holdings, key=lambda record: state_mod.order_key_of(record) or "")
         visible.update(latest.pov_visibility)
         value = latest.value
-        magnitude = (
-            value if isinstance(value, int) and not isinstance(value, bool) else 1
-        )
+        magnitude = value if isinstance(value, int) and not isinstance(value, bool) else 1
         magnitudes.append((ability_id, max(0, magnitude)))
 
     # **The picks, read off the same edges under the same cutoff.** A `chose` is a fact about the

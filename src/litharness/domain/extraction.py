@@ -172,6 +172,12 @@ class Sheet:
     """
 
     fields: tuple[SheetField, ...]
+    #: Whether a column standing at zero prints (§203). `True` is every sheet declared
+    #: before the flag existed, so every book on disk renders exactly as it did; a
+    #: drawn system declares `False`, after the market census found one window field in
+    #: fifteen at zero and a row with six zeros a shape the genre's windows do not have.
+    #: The first column always prints, so a line is never empty and a ladder's rung stays.
+    show_unheld: bool = True
 
     def __post_init__(self) -> None:
         if not self.fields:
@@ -203,8 +209,84 @@ class Sheet:
 
     @property
     def pattern(self) -> re.Pattern[str]:
-        """The parser for this line. Compiled once per distinct sheet."""
+        """The parser for the whole line, every column present. Compiled once per
+        distinct sheet. `read` is the reader the extractor uses; this is the strict form
+        the round-trip test and the renderer's docs speak of."""
         return _compile_pattern(self.fields)
+
+    def shown(self, value: Mapping[str, object]) -> tuple[SheetField, ...]:
+        """The columns the printed line carries for this snapshot (§203).
+
+        Every column when the sheet shows unheld ones; otherwise the first column and
+        every column whose value stands above zero (either half of a paired one). A
+        column the snapshot does not hold at all is shown, so the `?` the renderer
+        prints for it stays visible rather than being hidden as a zero.
+        """
+        if self.show_unheld:
+            return self.fields
+        kept: list[SheetField] = []
+        for index, field_ in enumerate(self.fields):
+            keys = [field_.name] + ([f"{field_.name}{MAX_SUFFIX}"] if field_.paired else [])
+            held = any(value.get(key) is None or _above_zero(value.get(key)) for key in keys)
+            if index == 0 or held:
+                kept.append(field_)
+        return tuple(kept)
+
+    def render(self, subject: str, value: Mapping[str, object]) -> str:
+        """The line for one snapshot, projected: label-value pairs in declared order."""
+        parts = []
+        for field_ in self.shown(value):
+            current = value.get(field_.name, "?")
+            if field_.paired:
+                ceiling = value.get(f"{field_.name}{MAX_SUFFIX}", "?")
+                parts.append(f"{field_.label} {current}/{ceiling}")
+            else:
+                parts.append(f"{field_.label} {current}")
+        return f"[STATUS] {subject} — " + " | ".join(parts)
+
+    def read(self, text: str) -> list[tuple[str, dict[str, int], tuple[int, int]]]:
+        """Every status line in `text`, tolerant of omitted columns (§203).
+
+        A line is the tag, a subject, an em dash and pairs separated by `|`; each pair
+        is a declared label and a number (or two, for a paired column). Pairs whose
+        label the sheet never declared are skipped, so a column the writer invented
+        reaches no record, and a line with no readable pair is not a line. The value
+        is partial where columns were omitted, which the snapshot fold
+        (`state_as_it_stands`) already expects (§161).
+        """
+        found: list[tuple[str, dict[str, int], tuple[int, int]]] = []
+        by_label = {field_.label.casefold(): field_ for field_ in self.fields}
+        for match in _LINE.finditer(text):
+            value: dict[str, int] = {}
+            for pair in match.group("pairs").split("|"):
+                read = _PAIR.match(pair.strip())
+                if read is None:
+                    continue
+                field_ = by_label.get(read.group("label").strip().casefold())
+                if field_ is None:
+                    continue
+                if field_.paired:
+                    if read.group("ceiling") is None:
+                        continue
+                    value[field_.name] = int(read.group("current"))
+                    value[f"{field_.name}{MAX_SUFFIX}"] = int(read.group("ceiling"))
+                elif read.group("ceiling") is None:
+                    value[field_.name] = int(read.group("current"))
+            if value:
+                found.append((match.group("subject"), value, match.span()))
+        return found
+
+
+def _above_zero(value: object) -> bool:
+    return isinstance(value, int | float) and not isinstance(value, bool) and value > 0
+
+
+#: A status line's frame: the tag, the subject up to the em dash, and the rest as pairs.
+_LINE = re.compile(
+    r"^\[STATUS\][^\S\n]*(?P<subject>[^\n|]+?)[^\S\n]*—[^\S\n]*(?P<pairs>[^\n]+)$", re.MULTILINE
+)
+#: One pair: a label, then a number, then optionally a slash and its ceiling.
+_PAIR = re.compile(r"^(?P<label>[^\d|]+?)[^\S\n]+(?P<current>\d+)(?:/(?P<ceiling>\d+))?$")
 
 
 @cache
@@ -468,7 +550,10 @@ def parse_sheet(value: object) -> Sheet:
         if not isinstance(label, str) or not label.strip():
             raise MalformedSheet(f"field {name!r} needs a label the line can print")
         fields.append(SheetField(name, label.strip(), bool(entry.get("paired", False))))
-    return Sheet(tuple(fields))
+    show_unheld = value.get("show_unheld", True)
+    if not isinstance(show_unheld, bool):
+        raise MalformedSheet("show_unheld must be true or false when given")
+    return Sheet(tuple(fields), show_unheld=show_unheld)
 
 
 def label_for(key: str) -> str:
@@ -635,10 +720,7 @@ def render_status_line(
     and gets the book's own spelling; one holding none gets the humanised id, which is still
     never the id.
     """
-    return sheet.template.format(
-        subject=display_name(records, subject),
-        **{field: value.get(field, "?") for field in sheet.value_keys},
-    )
+    return sheet.render(display_name(records, subject), value)
 
 
 def progression_target(records: Sequence[lc.StateRecord], *, at: str | None = None) -> str | None:
@@ -1305,13 +1387,22 @@ def extract_state(
     sheet = sheet_for(known)
 
     extracted: list[lc.StateRecord] = []
-    for match in sheet.pattern.finditer(text):
-        subject = normalise_subject(match.group("subject"))
+    # **Read tolerantly, so a projected line is a partial snapshot** (§203). The strict
+    # `pattern` needs every column; a line printing only the held columns folds forward
+    # onto the columns it left out, which is what `state_as_it_stands` already does.
+    for read_subject, read, span in sheet.read(text):
+        subject = normalise_subject(read_subject)
         # A name canon has never used is a claim about someone new, which is a proposal
         # rather than a reading of what the book already established.
         if subject not in subjects:
             continue
-        value = {key: int(match.group(key)) for key in sheet.value_keys}
+        # **The record is the whole state, the line is its projection.** A partial record at
+        # a position where a fuller one stands reads as a contradiction to the integrity
+        # detector (two values for one fact at one position), so the columns the line left
+        # out are filled from the fold of this subject's own snapshots up to here, later
+        # values winning: the writer's *carry these values forward unchanged* applied on this
+        # side, and the same fold `state_as_it_stands` renders from.
+        value = {**_folded_before(known, subject, order_key), **read}
         # Already established, identically, at this position: the record adds nothing, and
         # writing it anyway costs a permanent duplicate in every later context packet.
         if _already_canon(
@@ -1322,7 +1413,7 @@ def extract_state(
             replacing_logical_id=replacing_logical_id,
         ):
             continue
-        start, end = match.span()
+        start, end = span
         extracted.append(
             lc.StateRecord(
                 record_id=record_id_for(subject, STATUS_PREDICATE, order_key, value),
@@ -1374,6 +1465,34 @@ def extract_state(
         order_key=order_key,
     )
     return (*extracted, *graph, *promotions(known, graph, order_key=order_key))
+
+
+def _folded_before(
+    known: Sequence[lc.StateRecord], subject: str, order_key: str
+) -> dict[str, object]:
+    """This subject's state as it stands at `order_key`, folded forward from its own canon
+    snapshots (later values winning), for a projected line to be completed from (§203).
+
+    The fold is `state_as_it_stands`'s, applied to a named subject: only canon, only this
+    subject, only positions that fold into this one.
+    """
+    history = sorted(
+        (
+            record
+            for record in known
+            if record.predicate == STATUS_PREDICATE
+            and state_mod.is_canon(record)
+            and record.subject == subject
+            and isinstance(record.value, Mapping)
+            and _folds_into(state_mod.order_key_of(record), order_key)
+        ),
+        key=lambda record: state_mod.order_key_of(record) or "",
+    )
+    values: dict[str, object] = {}
+    for record in history:
+        assert isinstance(record.value, Mapping)
+        values.update(record.value)
+    return values
 
 
 def _already_canon(
@@ -1695,9 +1814,7 @@ class Movable:
     key: str
 
 
-def counted_names(
-    records: Sequence[lc.StateRecord], *, at: str | None = None
-) -> tuple[str, ...]:
+def counted_names(records: Sequence[lc.StateRecord], *, at: str | None = None) -> tuple[str, ...]:
     """The names this book's own system counts by, in the order its sheet prints them.
 
     **This is the book's vocabulary, read off canon, and this module mints none of it.** The
@@ -2016,9 +2133,7 @@ def offered_choice(
         return None
     choice = pending[0]
     names = (choice.name, *(option.name for option in choice.options))
-    if any(
-        not name.strip() or name.casefold() in house_mod.MACHINERY_WORDS for name in names
-    ):
+    if any(not name.strip() or name.casefold() in house_mod.MACHINERY_WORDS for name in names):
         return None
     return choice.name, tuple(option.name for option in choice.options)
 

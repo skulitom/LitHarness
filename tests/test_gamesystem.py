@@ -93,8 +93,7 @@ def test_a_list_of_abilities_is_refused_because_the_operator_specified_a_graph()
     """
     flat = _system(
         abilities=tuple(
-            gs.Ability(ability.ability_id, ability.name)
-            for ability in _system().abilities
+            gs.Ability(ability.ability_id, ability.name) for ability in _system().abilities
         )
     )
     assert any("list rather than a graph" in complaint for complaint in gs.check_draw(flat))
@@ -109,9 +108,7 @@ def test_the_world_inventory_depth_counter_is_not_gated_by_any_of_this() -> None
     """
     flat_world = [
         worlds.world_record("sera", worlds.CAN_DO, object_ref="cap_read_a_seam"),
-        worlds.world_record(
-            "cap_read_a_seam", worlds.ENTITY_ROLE_PREDICATE, value="capability"
-        ),
+        worlds.world_record("cap_read_a_seam", worlds.ENTITY_ROLE_PREDICATE, value="capability"),
     ]
     assert worlds.requirement_depth(flat_world) == 0
     assert worlds.validate(flat_world) == ()
@@ -158,9 +155,7 @@ def test_a_threshold_on_a_rung_is_refused_because_a_rung_has_no_depth() -> None:
 
 
 def test_an_ability_may_not_take_the_rungs_column() -> None:
-    clash = _system(
-        abilities=(*_system().abilities[:-1], gs.Ability(gs.RANK_KEY, "Rank"))
-    )
+    clash = _system(abilities=(*_system().abilities[:-1], gs.Ability(gs.RANK_KEY, "Rank")))
     assert any(gs.RANK_KEY in c and "carries the rung" in c for c in gs.check_draw(clash))
 
 
@@ -286,9 +281,9 @@ def test_a_ladder_whose_system_nobody_declared_is_complained_about() -> None:
 
 
 def test_a_starting_sheet_holds_what_needs_nothing_and_shows_the_rest_at_zero() -> None:
-    """An unheld ability at 0 is the design, not a gap: it is the operator's "I wonder what I
-    would pick" expressed as a number rather than as an adjective, and it keeps the line's
-    shape constant for a whole book, which a single declared `status_sheet` requires."""
+    """An unheld ability at 0 in the *snapshot* is the design: the arithmetic needs every
+    ability present. Whether a zero *prints* is the sheet's declaration since §203 (a drawn
+    system hides them; §160's wanting rides the offer line instead)."""
     sheet = gs.starting_sheet(_system(), "silas")
     assert sheet.snapshot() == {
         "rank": 1,
@@ -492,9 +487,7 @@ def test_the_module_hands_out_columns_rather_than_sheet_fields() -> None:
 def test_a_book_with_no_system_is_answered_exactly_as_before() -> None:
     """The half that keeps every book already on disk drafting. A renderable canon snapshot and
     no declared system is what §158 left behind, and it still clears the floor."""
-    legacy = _canon(
-        [worlds.world_record("sera", "status_snapshot", value={"level": 1, "hp": 3})]
-    )
+    legacy = _canon([worlds.world_record("sera", "status_snapshot", value={"level": 1, "hp": 3})])
     assert genre.has_starting_sheet(legacy)
     assert genre.genre_block(legacy) is None
 
@@ -511,9 +504,7 @@ def test_a_book_whose_sheet_does_not_match_its_system_is_refused() -> None:
     disagreement the floor exists to rule out."""
     system = _system()
     records = _canon(list(gs.records_for(system)))
-    records.extend(
-        _canon([worlds.world_record("silas", "status_snapshot", value={"level": 1})])
-    )
+    records.extend(_canon([worlds.world_record("silas", "status_snapshot", value={"level": 1})]))
     assert not genre.has_starting_sheet(records)
     block = genre.genre_block(records)
     assert block is not None and "different books" in block
@@ -523,9 +514,7 @@ def test_a_proposed_system_does_not_tighten_the_floor() -> None:
     """The Architect builds a system before `world accept`, and refusing a book for a draw
     nobody accepted would gate on a proposal."""
     records = list(gs.records_for(_system()))
-    records.extend(
-        _canon([worlds.world_record("silas", "status_snapshot", value={"level": 1})])
-    )
+    records.extend(_canon([worlds.world_record("silas", "status_snapshot", value={"level": 1})]))
     assert genre.has_starting_sheet(records)
 
 
@@ -662,9 +651,7 @@ def test_a_ladder_whose_issuer_is_never_declared_a_system_is_told_the_role_it_la
         [
             record
             for record in gs.records_for(_system())
-            if not (
-                record.predicate == worlds.ENTITY_ROLE_PREDICATE and record.value == "system"
-            )
+            if not (record.predicate == worlds.ENTITY_ROLE_PREDICATE and record.value == "system")
         ]
     )
     assert gs.systems_of(world) == ()
@@ -679,8 +666,7 @@ def test_a_system_whose_ladder_is_ungoverned_is_told_the_ladder_and_not_the_scal
             record
             for record in gs.records_for(_system())
             if not (
-                record.predicate == worlds.GOVERNED_BY
-                and record.subject == _system().criterion
+                record.predicate == worlds.GOVERNED_BY and record.subject == _system().criterion
             )
         ]
     )
@@ -696,15 +682,9 @@ def test_two_ladders_under_one_system_are_named_rather_than_read_as_no_system() 
     world.extend(
         _canon(
             [
-                worlds.world_record(
-                    "second_path", worlds.TYPE_PREDICATE, value=worlds.CRITERION
-                ),
-                worlds.world_record(
-                    "second_path", worlds.COMPARATOR_PREDICATE, value="ordinal"
-                ),
-                worlds.world_record(
-                    "second_path", worlds.GOVERNED_BY, object_ref="the_weave"
-                ),
+                worlds.world_record("second_path", worlds.TYPE_PREDICATE, value=worlds.CRITERION),
+                worlds.world_record("second_path", worlds.COMPARATOR_PREDICATE, value="ordinal"),
+                worlds.world_record("second_path", worlds.GOVERNED_BY, object_ref="the_weave"),
             ]
         )
     )
@@ -817,3 +797,22 @@ def test_a_finished_system_whose_sheet_is_the_books_own_closes_the_gap() -> None
     assert reasons == ()
     finished = [*world, *_canon(list(minted))]
     assert genre.system_gap(finished) is None
+
+
+def test_a_drawn_system_declares_that_unheld_columns_do_not_print() -> None:
+    """§203: the snapshot still carries every ability at 0 (the arithmetic and the digest are
+    unchanged), and the declaration says the line prints the rung and what is held; a sheet on
+    disk declared without the flag prints everything, as it always did."""
+    from litharness.domain import extraction
+
+    system = _system()
+    declared = system.sheet_declaration()
+    assert declared["show_unheld"] is False
+    sheet = extraction.parse_sheet(declared)
+    starting = gs.starting_sheet(system, "silas")
+    assert 0 in starting.snapshot().values(), "the snapshot keeps the unheld at zero"
+    line = sheet.render("Silas", starting.snapshot())
+    assert " 0" not in line and line.startswith("[STATUS] Silas — ")
+    assert sheet.read(line)[0][1] == {k: v for k, v in starting.snapshot().items() if v}
+    without_flag = {"fields": declared["fields"]}
+    assert extraction.parse_sheet(without_flag).show_unheld is True

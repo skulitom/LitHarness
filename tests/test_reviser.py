@@ -234,7 +234,7 @@ def test_a_common_word_capitalised_because_it_opens_a_sentence_is_not_a_name() -
     and the revision uses mid-sentence, are both the same word moved.
     """
     assert introduced("the tally did not move", "Tally aside, the tally did not move") == ()
-    assert introduced('he said "the gate holds"', 'The gate holds, he said') == ()
+    assert introduced('he said "the gate holds"', "The gate holds, he said") == ()
     assert introduced("Forty gold in.", "He counted forty gold in.") == ()
 
 
@@ -339,8 +339,7 @@ def test_the_revision_is_what_the_book_keeps_and_one_revision_lands(
     [
         REVISION.replace(STATUS, "[STATUS] Rook — Level 9 | HP 1/20 | MP 6/10 | Gold 12"),
         "Rook met Halloran on the ledger stone, and Halloran had been waiting since the "
-        "flame went out, which was longer than the gatekeeper had been looking down.\n"
-        + STATUS,
+        "flame went out, which was longer than the gatekeeper had been looking down.\n" + STATUS,
         "",
     ],
     ids=["the line moved", "a name introduced", "nothing returned"],
@@ -459,9 +458,9 @@ def test_both_calls_reach_the_budget_gate_and_the_reviser_row_is_its_own(
     ]
     stages = [row for row in recorded if row.get("stage") == "revision"]
     assert len(stages) == 1 and stages[0]["adopted"] is True
-    assert any(
-        gate["id"] == REVISION_GATE for gate in stages[0]["gates"]
-    ), "the reviser's own verdict is on its own decision"
+    assert any(gate["id"] == REVISION_GATE for gate in stages[0]["gates"]), (
+        "the reviser's own verdict is on its own decision"
+    )
 
 
 def test_the_job_settles_against_the_writers_decision_and_never_the_revisers(
@@ -541,10 +540,14 @@ UNMOVED = (
 #: The same scene with the panel printed and `cold seal` one higher — the beat's own ask, met.
 #: Rendered through the inverse of the parser rather than typed, so the line the test writes and
 #: the line `extract_state` reads cannot come apart.
+#: Rendered with every column, as the fixture's book printed it before §203 made a drawn
+#: system hide its unheld columns: the prose constants here were tuned so the revision sits
+#: inside the containment band with the full line's words counted, and the band counts the
+#: line's words (a separate question, named in §203 and not settled here).
 MOVED_STATUS = render_status_line(
     "ines_barrow",
     {**progression_standing(), "cold_seal": 3},
-    sheet=sheet_for(progression_canon()),
+    sheet=dataclasses.replace(sheet_for(progression_canon()), show_unheld=True),
     records=progression_canon(),
 )
 
@@ -809,9 +812,7 @@ def test_the_control_arm_makes_no_second_call_and_hashes_as_it_always_did(
     sampler = None
     assert settling.policy_config_digest == policy_digest(DraftPolicy(), sampler) or True
     assert policy_digest(DraftPolicy(), None, None) == policy_digest(DraftPolicy(), None)
-    assert policy_digest(DraftPolicy(), None, {"model": None}) != policy_digest(
-        DraftPolicy(), None
-    )
+    assert policy_digest(DraftPolicy(), None, {"model": None}) != policy_digest(DraftPolicy(), None)
 
 
 # ------------------------------------------------------------------------------ the prompt
@@ -847,11 +848,7 @@ def test_every_craft_clause_the_reviser_carries_says_what_fails() -> None:
     """
     from litharness.application import reviser as module
 
-    craft = [
-        demand
-        for demand in house.demands(module._TASK)
-        if demand.startswith("What fails")
-    ]
+    craft = [demand for demand in house.demands(module._TASK) if demand.startswith("What fails")]
     # 11 -> 12 on 2026-09-01: §194's located manner-gloss prohibition (reads 13-14's item,
     # recorded at read 14 as this instruction's next tuning; tested as turn 3's variant).
     assert len(craft) == 12, (

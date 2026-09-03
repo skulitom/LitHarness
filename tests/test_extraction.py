@@ -84,8 +84,12 @@ def test_the_position_is_read_out_of_the_book_not_computed() -> None:
     the book's own imported evidence already gives."""
     records = state_of("litrpg").records
     assert {f"scene-{i}": attested_position(records, f"scene-{i}") for i in range(1, 7)} == {
-        "scene-1": "s1", "scene-2": "s2", "scene-3": "s3",
-        "scene-4": "s4", "scene-5": "s5", "scene-6": "s6",
+        "scene-1": "s1",
+        "scene-2": "s2",
+        "scene-3": "s3",
+        "scene-4": "s4",
+        "scene-5": "s5",
+        "scene-6": "s6",
     }
 
 
@@ -137,16 +141,15 @@ def test_extraction_reproduces_the_fixtures_own_records_exactly() -> None:
         want = authored[f"rec-s{index}-status"]
         assert got.value == want.value, logical_id
         assert (got.evidence[0].start, got.evidence[0].end) == (
-            want.evidence[0].start, want.evidence[0].end
+            want.evidence[0].start,
+            want.evidence[0].end,
         ), logical_id
         assert got.evidence[0].content_sha256 == want.evidence[0].content_sha256, logical_id
 
 
 def test_repair_reextracts_an_unchanged_fact_against_the_new_node_version() -> None:
     others = [
-        record
-        for record in state_of("litrpg").records
-        if record.predicate != STATUS_PREDICATE
+        record for record in state_of("litrpg").records if record.predicate != STATUS_PREDICATE
     ]
     text = scenes_of("litrpg")["scene-1"]
     [first] = extract("litrpg", "scene-1", text, known=others)
@@ -185,13 +188,19 @@ def test_a_conforming_fixture_extracts_nothing(fixture_id: str) -> None:
     those positions, so the suppression rule drops them; the mystery book has no system voice
     at all. A check that fires on a conforming book is not a floor, it is a tax."""
     records = state_of(fixture_id).records
-    assert sum(
-        len(extract(fixture_id, logical_id, text))
-        for logical_id, text in scenes_of(fixture_id).items()
-    ) == 0
-    assert detect_contradictions(
-        DetectorInput(book_id="b", branch_id="br", logical_id="scene-1", records=tuple(records))
-    ) == []
+    assert (
+        sum(
+            len(extract(fixture_id, logical_id, text))
+            for logical_id, text in scenes_of(fixture_id).items()
+        )
+        == 0
+    )
+    assert (
+        detect_contradictions(
+            DetectorInput(book_id="b", branch_id="br", logical_id="scene-1", records=tuple(records))
+        )
+        == []
+    )
 
 
 # -- the point of the module ------------------------------------------------------------
@@ -213,8 +222,11 @@ def test_a_contradiction_fires_the_detector_and_a_repair_silences_it() -> None:
         extracted = extract("litrpg", "scene-4", text)
         return detect_contradictions(
             DetectorInput(
-                book_id="b", branch_id="br", logical_id="scene-4",
-                candidate=text, records=records + extracted,
+                book_id="b",
+                branch_id="br",
+                logical_id="scene-4",
+                candidate=text,
+                records=records + extracted,
             )
         )
 
@@ -465,15 +477,20 @@ def _subject_record() -> lc.StateRecord:
 
 
 _NAMES = st.text(alphabet="abcdefghijklmnopqrstuvwxyz", min_size=1, max_size=8)
-_LABELS = st.text(alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-                  min_size=1, max_size=8)
+_LABELS = st.text(
+    alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", min_size=1, max_size=8
+)
 
 
 @given(
     st.lists(
-        st.tuples(_NAMES, _LABELS, st.booleans()), min_size=1, max_size=5, unique_by=(
-            lambda item: item[0], lambda item: item[1],
-        )
+        st.tuples(_NAMES, _LABELS, st.booleans()),
+        min_size=1,
+        max_size=5,
+        unique_by=(
+            lambda item: item[0],
+            lambda item: item[1],
+        ),
     ),
     st.data(),
 )
@@ -516,15 +533,22 @@ def test_a_book_reads_the_sheet_it_declared_and_not_the_default_one() -> None:
     defect this rules out is the one that has no symptom: the default pattern would match none
     of its lines, so every scene would extract nothing and look like a scene that established
     nothing."""
-    known = [_subject_record(), _sheet_record([{"name": "loop", "label": "Loop"},
-                                               {"name": "day", "label": "Day"}])]
+    known = [
+        _subject_record(),
+        _sheet_record([{"name": "loop", "label": "Loop"}, {"name": "day", "label": "Day"}]),
+    ]
     sheet = sheet_for(known)
     line = render_status_line("Silas", {"loop": 2, "day": 1}, sheet=sheet)
 
     extracted = extract_state(
         f"He woke on the same morning.\n\n{line}\n",
-        known=known, project_id="p", book_id="b", branch_id="br",
-        logical_id="s1", version_id="v", stated_order_key="s1",
+        known=known,
+        project_id="p",
+        book_id="b",
+        branch_id="br",
+        logical_id="s1",
+        version_id="v",
+        stated_order_key="s1",
     )
 
     assert line == "[STATUS] Silas — Loop 2 | Day 1"
@@ -538,9 +562,14 @@ def test_two_sheet_declarations_abstain_to_the_default() -> None:
     same abstention `attested_position` makes."""
     first = _sheet_record([{"name": "loop", "label": "Loop"}])
     second = lc.StateRecord(
-        record_id="rec-sheet-2", kind=lc.StateRecordKind.WORLD_RULE, subject="silas",
-        predicate=SHEET_PREDICATE, value={"fields": [{"name": "day", "label": "Day"}]},
-        authority=lc.StateAuthority.ACCEPTED_CANON, pov_visibility=[], evidence=[],
+        record_id="rec-sheet-2",
+        kind=lc.StateRecordKind.WORLD_RULE,
+        subject="silas",
+        predicate=SHEET_PREDICATE,
+        value={"fields": [{"name": "day", "label": "Day"}]},
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+        pov_visibility=[],
+        evidence=[],
     )
 
     assert sheet_for([first, second]) is DEFAULT_SHEET
@@ -568,7 +597,6 @@ def test_a_malformed_sheet_declaration_is_refused_rather_than_defaulted(value) -
     use. `cmd_new` calls this on the seed, so the refusal lands before the book exists."""
     with pytest.raises(MalformedSheet):
         parse_sheet(value)
-
 
 
 # --- the number comes off the page (plan/stage-0-decisions.md §113) ---------------------------
@@ -754,3 +782,135 @@ def test_the_golden_fixtures_extract_exactly_what_they_extracted_before() -> Non
                 )
                 == ()
             )
+
+
+# -- §203: the line is a declared projection of the snapshot -----------------------------
+
+
+def _held_sheet(show_unheld: bool) -> Sheet:
+    return Sheet(
+        (
+            SheetField("rank", "Band"),
+            SheetField("pace", "Pace"),
+            SheetField("weight", "Weight"),
+            SheetField("carry", "Carry", paired=True),
+        ),
+        show_unheld=show_unheld,
+    )
+
+
+def test_a_sheet_that_hides_unheld_prints_the_first_column_and_the_held_ones() -> None:
+    """§203: six zeros on an eight-field row was a shape the market's windows do not have
+    (one field in fifteen at zero); the first column always prints so a rung stays."""
+    value = {"rank": 1, "pace": 2, "weight": 0, "carry": 0, "carry_max": 0}
+    assert _held_sheet(False).render("Kellow", value) == "[STATUS] Kellow — Band 1 | Pace 2"
+    assert _held_sheet(True).render("Kellow", value) == (
+        "[STATUS] Kellow — Band 1 | Pace 2 | Weight 0 | Carry 0/0"
+    )
+    # A paired column prints when either half stands above zero, and a first column at zero
+    # still prints.
+    assert _held_sheet(False).render(
+        "K", {"rank": 0, "pace": 0, "weight": 0, "carry": 0, "carry_max": 3}
+    ) == ("[STATUS] K — Band 0 | Carry 0/3")
+    # A column the snapshot never held is shown as `?`, not hidden as a zero.
+    assert _held_sheet(False).render("K", {"rank": 1}) == (
+        "[STATUS] K — Band 1 | Pace ? | Weight ? | Carry ?/?"
+    )
+
+
+def test_a_projected_line_reads_back_as_a_partial_snapshot_and_folds_forward() -> None:
+    sheet = _held_sheet(False)
+    line = sheet.render("Kellow", {"rank": 1, "pace": 2, "weight": 0, "carry": 0, "carry_max": 0})
+    [(subject, value, span)] = sheet.read(f"He read it again.\n{line}\nThen he moved.")
+    assert subject == "Kellow" and value == {"rank": 1, "pace": 2}
+    assert line[: span[1] - span[0]] == line
+    # The strict pattern, every column present, is what it always was.
+    assert sheet.pattern.search(line) is None
+    full = sheet.render("Kellow", {"rank": 1, "pace": 2, "weight": 3, "carry": 1, "carry_max": 2})
+    assert sheet.pattern.search(full) is not None, "every column present is the strict form"
+    assert sheet.read(full)[0][1] == {"rank": 1, "pace": 2, "weight": 3, "carry": 1, "carry_max": 2}
+
+
+def test_a_column_the_sheet_never_declared_is_skipped_and_the_rest_still_read() -> None:
+    sheet = _held_sheet(False)
+    line = "[STATUS] Kellow — Band 1 | Pace 2 | Luck 7 | Carry 1/2"
+    [(_, value, _)] = sheet.read(line)
+    assert value == {"rank": 1, "pace": 2, "carry": 1, "carry_max": 2}
+    assert sheet.read("[STATUS] Kellow — Luck 7") == [], "no declared pair, no line"
+    assert sheet.read("[STATUS] Kellow — Carry 1") == [], "a paired column needs both halves"
+
+
+def test_a_sheet_declared_without_the_flag_shows_every_column_as_it_always_did() -> None:
+    """Every book on disk declared its sheet before the flag existed, and reads the same."""
+    declared = parse_sheet(
+        {"fields": [{"name": "loop", "label": "Loop"}, {"name": "day", "label": "Day"}]}
+    )
+    assert declared.show_unheld is True
+    assert declared.render("Silas", {"loop": 2, "day": 0}) == "[STATUS] Silas — Loop 2 | Day 0"
+    hidden = parse_sheet(
+        {
+            "fields": [{"name": "loop", "label": "Loop"}, {"name": "day", "label": "Day"}],
+            "show_unheld": False,
+        }
+    )
+    assert hidden.render("Silas", {"loop": 2, "day": 0}) == "[STATUS] Silas — Loop 2"
+    with pytest.raises(MalformedSheet):
+        parse_sheet({"fields": [{"name": "loop", "label": "Loop"}], "show_unheld": "no"})
+    assert DEFAULT_SHEET.show_unheld is True
+    assert render_status_line(
+        "Mara", {"level": 1, "hp": 10, "hp_max": 10, "mp": 1, "mp_max": 1, "gold": 0}
+    ) == ("[STATUS] Mara — Level 1 | HP 10/10 | MP 1/1 | Gold 0")
+
+
+def test_a_projected_line_in_a_scene_becomes_a_record_completed_from_what_stood_before() -> None:
+    """The extractor reads the projected line and mints the whole state: the columns the line
+    left out are filled from the subject's own earlier snapshots (a partial record at a
+    position where a fuller one stands would read as a contradiction), and with nothing
+    standing before, the record is what the line carried."""
+    sheet_record = worlds.world_record(
+        "invigilation",
+        SHEET_PREDICATE,
+        value={
+            "fields": [
+                {"name": "rank", "label": "Band"},
+                {"name": "pace", "label": "Pace"},
+                {"name": "weight", "label": "Weight"},
+            ],
+            "show_unheld": False,
+        },
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+    )
+    person = worlds.world_record(
+        "kellow",
+        worlds.ENTITY_ROLE_PREDICATE,
+        value="cast",
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+    )
+    known = [*state_of("litrpg").records, sheet_record, person]
+    [record] = extract_state(
+        "[STATUS] Kellow — Band 1 | Pace 2",
+        known=known,
+        project_id="p",
+        book_id="b",
+        branch_id="br",
+        logical_id="scene-1",
+        version_id="v",
+    )
+    assert record.subject == "kellow" and record.value == {"rank": 1, "pace": 2}
+    # With the opening state on record, the same line mints the whole state as it stands.
+    opening = worlds.world_record(
+        "kellow",
+        STATUS_PREDICATE,
+        value={"rank": 1, "pace": 0, "weight": 0},
+        authority=lc.StateAuthority.ACCEPTED_CANON,
+    )
+    [completed] = extract_state(
+        "[STATUS] Kellow — Band 1 | Pace 2",
+        known=[*known, opening],
+        project_id="p",
+        book_id="b",
+        branch_id="br",
+        logical_id="scene-1",
+        version_id="v",
+    )
+    assert completed.value == {"rank": 1, "pace": 2, "weight": 0}
