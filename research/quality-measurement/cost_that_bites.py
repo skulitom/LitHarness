@@ -176,7 +176,7 @@ def registration_digest() -> str:
 # ------------------------------------------------------------------- the target's versions
 
 
-def book_shuffle(text: str) -> str:
+def book_shuffle(text: str, *, index: int = 0) -> str:
     """Every paragraph of the book in a seeded random order. Word-preserving.
 
     A real shuffle, seeded from the text and the salt, so two runs shuffle one book the same
@@ -185,12 +185,17 @@ def book_shuffle(text: str) -> str:
     question here needs the order destroyed. If the draw happens to return the identity (it
     cannot for any real book, but a two-paragraph text can) the order is rotated by one, so a
     "shuffled" copy is never byte-identical to its intact copy.
+
+    `index` selects one of several shuffles of the same book, for v2's three-seeds-per-book
+    design. **Index 0 is byte-identical to what v1 bought** — it uses the bare salt — so every
+    v1 record still replays and v1's committed numbers are untouched.
     """
     blocks = ablate.paragraphs(text)
     if len(blocks) < 2:
         raise ValueError("a book needs at least two paragraphs to shuffle")
     order = list(range(len(blocks)))
-    ablate._rng(text, SHUFFLE_SALT).shuffle(order)
+    salt = SHUFFLE_SALT if index == 0 else f"{SHUFFLE_SALT}/{index}"
+    ablate._rng(text, salt).shuffle(order)
     if order == list(range(len(blocks))):
         order = order[1:] + order[:1]
     return "\n\n".join(blocks[index] for index in order)
@@ -219,11 +224,20 @@ class Cell:
     rotation: int
     spec: feed_core.FeedSpec
     chunk_counts: tuple[int, ...]
+    #: v2's replicate index. v1 buys one session per (feed, version, rotation) and leaves it
+    #: at 0, which is what `run_feed_session` was already being passed, so v1's cache keys and
+    #: sampler indices are unchanged.
+    replicate: int = 0
 
     @property
     def pair_key(self) -> str:
         """What the three versions of one session share: the feed and the rotation."""
         return f"{self.feed_index:02d}:{self.rotation}"
+
+    @property
+    def book_key(self) -> str:
+        """v2's cluster: the book, whatever version or replicate this session carries."""
+        return f"{self.feed_index:02d}"
 
 
 def plan(texts: Sequence[tuple[str, str]], *, feeds: int | None = None) -> list[Cell]:
@@ -313,6 +327,11 @@ class Row:
     rotation: int
     pair_key: str
     session: feed_core.FeedSession
+    replicate: int = 0
+
+    @property
+    def book_key(self) -> str:
+        return f"{self.feed_index:02d}"
 
 
 def run_cells(
@@ -322,6 +341,7 @@ def run_cells(
     model: str,
     ceiling_usd: float,
     workers: int,
+    call_ceiling: int | None = None,
     log: Callable[[str], None] = print,
 ) -> tuple[list[Row], dict[str, Any]]:
     """Buy every cell, `workers` sessions at a time, stopping between sessions at the ceiling.
@@ -347,12 +367,19 @@ def run_cells(
                 stopped.set()
                 log(f"ceiling: ${spent:.2f} of ${ceiling_usd:.2f} spent; stopping between sessions")
                 return None
+            # v2's stop condition is a call ceiling rather than a dollar one; both are read
+            # between sessions, so a session that has started always finishes.
+            bought = int(getattr(elicitor, "api_calls", 0) or 0)
+            if call_ceiling is not None and bought >= call_ceiling:
+                stopped.set()
+                log(f"ceiling: {bought} of {call_ceiling} calls bought; stopping between sessions")
+                return None
             return pending.pop(0)
 
     def worker() -> None:
         while (cell := next_cell()) is not None:
             session = feed_session.run_feed_session(
-                elicitor, cell.spec, model=model, rotation=cell.rotation, replicate=0
+                elicitor, cell.spec, model=model, rotation=cell.rotation, replicate=cell.replicate
             )
             row = Row(
                 feed_index=cell.feed_index,
@@ -361,6 +388,7 @@ def run_cells(
                 rotation=cell.rotation,
                 pair_key=cell.pair_key,
                 session=session,
+                replicate=cell.replicate,
             )
             with lock:
                 rows.append(row)
@@ -545,6 +573,272 @@ def reading(rows: Sequence[Row]) -> dict[str, Any]:
             name: interval_block(values) for name, values in first_pairs.items()
         },
         "positional": feed_controls.slot_share_table(sessions)["slots"],
+    }
+
+
+# ------------------------------------------------------- v2: the book is the unit (§222)
+
+#: **v2's design, registered in `cost-that-bites/PREREG-v2.md` and separate from v1's above.**
+#: v1's constants and `registration_digest()` are untouched so its committed numbers stay
+#: reproducible (§120.5); everything here is additive and carries its own digest.
+VERSION_V2 = "cost-that-bites.v2"
+
+#: The slot the target occupies in every v2 session. Chosen because the reader *reads* there —
+#: 0.622 of its reads against 0.190, 0.105 and 0.082 (§222), a property of the reader measured
+#: from every session's slot-share vector and independent of any version contrast. That the
+#: effect was also largest there is recorded and is **not** the reason.
+TARGET_ROTATION_V2 = 0
+
+#: Replicates per version per book. Three is the knee: 69% of a paired difference's variance is
+#: within-cell noise (intact-versus-sham, the same book undamaged twice, sd 0.345 against the
+#: difference's 0.414), so replicates divide the dominant term until the between-book component
+#: at 0.230 takes over, and a fourth buys 0.023 of power at a one-read shift.
+REPLICATES_V2 = 3
+
+#: Floor on the reader's slot-A share for the design's premise to hold. Below it the reader is
+#: no longer attending to the position the target occupies and the arm is UNREADABLE whatever
+#: the intervals say — the assumption checked in the same pass that uses it.
+CAPACITY_FLOOR_V2 = 0.40
+
+#: Books needed with a complete scorable set before any interval is computed.
+MIN_BOOKS_V2 = 10
+
+#: Bought calls after which the run stops between sessions. No dollar ceiling: the operator's
+#: direction of 2026-09-04 is that this is subscription quota. 180 sessions ran at 8.1 calls a
+#: session in v1, so the plan is about 1,460 and this covers a skim-heavy run with margin.
+CALL_CEILING_V2 = 2_200
+
+PRE_REGISTRATION_V2: dict[str, Any] = {
+    "version": VERSION_V2,
+    "amends": VERSION,
+    "instrument": feed_core.FCR_VERSION,
+    "instrument_registration_digest": feed_core.registration_digest(),
+    "versions": list(VERSIONS),
+    "shuffle_salt": SHUFFLE_SALT,
+    "shuffle_seeds_per_book": REPLICATES_V2,
+    "sham": "ablate.rewhitespace",
+    "sham_strength": SHAM_STRENGTH,
+    "reader_model": READER_MODEL,
+    "transport": TRANSPORT,
+    "target_rotation": TARGET_ROTATION_V2,
+    "replicates": REPLICATES_V2,
+    "alpha": ALPHA,
+    "scorable_floor": SCORABLE_FLOOR,
+    "capacity_floor": CAPACITY_FLOOR_V2,
+    "min_books": MIN_BOOKS_V2,
+    "call_ceiling": CALL_CEILING_V2,
+    "primary": "target_read_share, averaged within book over replicates: intact - shuffled",
+    "sham_reading": "sham - shuffled, per sham and never pooled",
+    "cluster": "the book",
+    "declared_target_shift": 0.1875,
+    "underpowered_at": 0.125,
+    "decision": {
+        "UNREADABLE": "fp5 not PASS, a version under the scorable floor, the slot-A share "
+                      "no longer the largest or under the capacity floor, or fewer than "
+                      "MIN_BOOKS_V2 books with a complete scorable set",
+        "MOVES_WITH_ORDER": "both intervals strictly above zero, for a book in the position "
+                            "this reader attends to",
+        "MOVES_WITH_EDITEDNESS": "intact - shuffled above zero and sham - shuffled not",
+        "NULL": "intact - shuffled contains zero: no movement at the declared 0.1875 shift; "
+                "not a null at 0.125, which this design cannot reach",
+        "INVERTED": "intact - shuffled strictly below zero",
+    },
+}
+
+
+def registration_digest_v2() -> str:
+    material = json.dumps(PRE_REGISTRATION_V2, sort_keys=True, ensure_ascii=False)
+    return sha256(material.encode("utf-8")).hexdigest()[:16]
+
+
+def versions_v2(text: str) -> dict[str, list[str]]:
+    """Per version, the text each replicate is shown.
+
+    `intact` and `sham` repeat one text — the replicates are independent draws from the reader,
+    separated by the sample index `feed_session` folds the replicate into. `shuffled` carries a
+    **different shuffle per replicate**, so the estimate is about disorder rather than about one
+    permutation, which is what v1's single seed per book confounded.
+    """
+    return {
+        "intact": [text] * REPLICATES_V2,
+        "shuffled": [book_shuffle(text, index=index) for index in range(REPLICATES_V2)],
+        "sham": [sham(text)] * REPLICATES_V2,
+    }
+
+
+def plan_v2(texts: Sequence[tuple[str, str]], *, books: int | None = None) -> list[Cell]:
+    """Every book's three versions at three replicates, the target always in slot A."""
+    if len(texts) < feed_core.FEED_SIZE:
+        raise ValueError(
+            f"{len(texts)} book(s) on the pool; a feed of {feed_core.FEED_SIZE} needs "
+            f"{feed_core.FEED_SIZE}"
+        )
+    count = len(texts) if books is None else min(books, len(texts))
+    cells: list[Cell] = []
+    for index in range(count):
+        target_name, target_text = texts[index]
+        others = [texts[(index + offset) % len(texts)] for offset in range(1, feed_core.FEED_SIZE)]
+        for version, per_replicate in versions_v2(target_text).items():
+            for replicate, target in enumerate(per_replicate):
+                spec = feed_core.FeedSpec(
+                    feed_id=f"ctb2-{index:02d}-{version}-r{replicate}",
+                    arm=version,
+                    target=target,
+                    others=tuple(text for _, text in others),
+                    note=(
+                        f"target={target_name} ({version}, replicate {replicate}) "
+                        f"others={','.join(name for name, _ in others)}"
+                    ),
+                )
+                cells.append(
+                    Cell(
+                        feed_index=index,
+                        target_name=target_name,
+                        version=version,
+                        rotation=TARGET_ROTATION_V2,
+                        spec=spec,
+                        chunk_counts=tuple(len(bcr.chunks(text)) for text in spec.texts()),
+                        replicate=replicate,
+                    )
+                )
+    return cells
+
+
+def by_book(rows: Sequence[Row]) -> dict[str, dict[str, float]]:
+    """Per book, each version's mean target read share over its scorable replicates.
+
+    A book contributes only when all three versions have at least one scorable session; a book
+    missing a version is dropped whole rather than compared against a partial sibling.
+    """
+    collected: dict[str, dict[str, list[float]]] = {}
+    for row in rows:
+        if row.session.scorable:
+            collected.setdefault(row.book_key, {}).setdefault(row.version, []).append(
+                row.session.target_read_share
+            )
+    return {
+        book: {version: statistics.fmean(shares) for version, shares in versions.items()}
+        for book, versions in collected.items()
+        if all(version in versions for version in VERSIONS)
+    }
+
+
+def paired_v2(means: dict[str, dict[str, float]]) -> dict[str, list[tuple[str, float]]]:
+    """The three paired differences, one observation per book, the book as the cluster."""
+    out: dict[str, list[tuple[str, float]]] = {
+        "intact_minus_shuffled": [],
+        "intact_minus_sham": [],
+        "sham_minus_shuffled": [],
+    }
+    for book in sorted(means):
+        row = means[book]
+        out["intact_minus_shuffled"].append((book, row["intact"] - row["shuffled"]))
+        out["intact_minus_sham"].append((book, row["intact"] - row["sham"]))
+        out["sham_minus_shuffled"].append((book, row["sham"] - row["shuffled"]))
+    return out
+
+
+def capacity_v2(sessions: Sequence[feed_core.FeedSession]) -> dict[str, Any]:
+    """Precondition 3: is the reader still reading the slot the target sits in?"""
+    usable = [session for session in sessions if session.scorable]
+    if not usable:
+        return {"verdict": "UNREADABLE", "why": "no scorable session", "shares": {}}
+    shares = {
+        slot: statistics.fmean(session.read_share_of(slot) for session in usable)
+        for slot in feed_core.SLOTS
+    }
+    target_slot = feed_core.SLOTS[TARGET_ROTATION_V2]
+    held = shares[target_slot] >= CAPACITY_FLOOR_V2 and shares[target_slot] == max(shares.values())
+    return {
+        "verdict": "PASS" if held else "FAIL",
+        "shares": shares,
+        "target_slot": target_slot,
+        "floor": CAPACITY_FLOOR_V2,
+        "why": (
+            ""
+            if held
+            else "the reader no longer attends to the slot the target occupies; the design's "
+            "premise has gone and no interval from it is read"
+        ),
+    }
+
+
+def _shuffle_seed_spread(rows: Sequence[Row]) -> dict[str, float]:
+    """Per book, the spread of its three shuffles' shares: disorder, or one permutation?"""
+    spread: dict[str, float] = {}
+    for book in sorted({row.book_key for row in rows}):
+        shares = [
+            row.session.target_read_share
+            for row in rows
+            if row.book_key == book and row.version == "shuffled" and row.session.scorable
+        ]
+        if len(shares) > 1:
+            spread[book] = statistics.pstdev(shares)
+    return spread
+
+
+def reading_v2(rows: Sequence[Row]) -> dict[str, Any]:
+    """v2's reading: the preconditions in order, then one decision over the book means."""
+    sessions = [row.session for row in rows]
+    per_version: dict[str, Any] = {}
+    for version in VERSIONS:
+        mine = [row.session for row in rows if row.version == version]
+        usable = [session for session in mine if session.scorable]
+        per_version[version] = {
+            "sessions": len(mine),
+            "scorable": len(usable),
+            "scorable_share": (len(usable) / len(mine)) if mine else None,
+            "exit_notes": dict(Counter(s.exit_note for s in mine if not s.scorable)),
+            "mean_target_read_share": (
+                statistics.fmean(s.target_read_share for s in usable) if usable else None
+            ),
+            "mean_abandonment_step": (
+                statistics.fmean(s.abandonment_step for s in usable) if usable else None
+            ),
+            "mean_skim_rate": statistics.fmean(s.skim_rate for s in usable) if usable else None,
+            "target_never_read": sum(1 for s in usable if s.abandonment_step < 0),
+        }
+    readable = all(
+        block["sessions"] > 0
+        and block["scorable_share"] is not None
+        and block["scorable_share"] >= SCORABLE_FLOOR
+        for block in per_version.values()
+    )
+    fp5 = feed_controls.fp5_non_degenerate(sessions)
+    capacity = capacity_v2(sessions)
+    means = by_book(rows)
+    pairs = paired_v2(means)
+    shuffle_block = interval_block(pairs["intact_minus_shuffled"])
+    order_block = interval_block(pairs["sham_minus_shuffled"])
+    if (
+        str(fp5["verdict"]) != "PASS"
+        or not readable
+        or capacity["verdict"] != "PASS"
+        or len(means) < MIN_BOOKS_V2
+    ):
+        decision = "UNREADABLE"
+    else:
+        decision = decide(
+            fp5_verdict="PASS",
+            readable_versions=True,
+            complete_clusters=len(means),
+            shuffle=shuffle_block,
+            order=order_block,
+        )
+    return {
+        "decision": decision,
+        "fp5": fp5,
+        "capacity": capacity,
+        "readable_versions": readable,
+        "scorable_floor": SCORABLE_FLOOR,
+        "per_version": per_version,
+        "books_complete": len(means),
+        "min_books": MIN_BOOKS_V2,
+        "book_means": means,
+        "target_read_share": {name: interval_block(values) for name, values in pairs.items()},
+        "shuffle_seed_spread": _shuffle_seed_spread(rows),
+        "declared_target_shift": PRE_REGISTRATION_V2["declared_target_shift"],
+        "underpowered_at": PRE_REGISTRATION_V2["underpowered_at"],
     }
 
 
@@ -857,6 +1151,80 @@ def _rows_json(rows: Sequence[Row]) -> list[dict[str, Any]]:
     ]
 
 
+def _run_v2(args: argparse.Namespace) -> int:
+    """v2's run: the same runner and the same ledger, its own plan, reading and ceiling.
+
+    The stop condition is a **call ceiling** rather than a dollar one (PREREG-v2), so the
+    runner's dollar ceiling is set out of the way and the loop is bounded by
+    `CALL_CEILING_V2` bought calls, read between sessions. `equivalent_usd` is still reported,
+    because quota burn belongs on the record even when it is not the limit.
+    """
+    texts = feed_substrate.fitness_texts(Path(args.fitness_dir))
+    cells = plan_v2(texts, books=args.books)
+    books = len({cell.feed_index for cell in cells})
+    print(
+        f"arm-v2: {books} book(s), {len(cells)} session(s), at most "
+        f"{len(cells) * feed_core.MAX_STEPS} call(s) on {args.model} via {TRANSPORT}; "
+        f"call ceiling {CALL_CEILING_V2}"
+    )
+    broken = faults(cells)
+    if broken:
+        for feed_id, fault in sorted(broken.items()):
+            print(f"  {feed_id:24s} FAULT: {fault}", file=sys.stderr)
+        print("nothing runs until the plan is fault-free", file=sys.stderr)
+        return 1
+    if not args.yes:
+        print("pass --yes to spend", file=sys.stderr)
+        return 1
+
+    from elicit import Elicitor
+
+    # v2 gets its own cache: its sessions are a different design and pooling them into v1's
+    # raw records would make one file two experiments.
+    default_cache = args.cache == str(ARM_DIR / "raw.jsonl")
+    cache = ARM_DIR / "raw-v2.jsonl" if default_cache else Path(args.cache)
+    with Elicitor(cache, model=args.model, spot_model=None, transport=TRANSPORT) as elicitor:
+        rows, ledger = run_cells(
+            elicitor,
+            cells,
+            model=args.model,
+            ceiling_usd=float("inf"),
+            workers=args.workers,
+            call_ceiling=CALL_CEILING_V2,
+        )
+    read = reading_v2(rows)
+    result = {
+        "study": f"{VERSION_V2}/arm",
+        "registration": PRE_REGISTRATION_V2,
+        "registration_digest": registration_digest_v2(),
+        "supersedes_nothing": (
+            "v1's registration, digest and findings are untouched; this is a different design "
+            "and no number crosses between them except the reader properties §222 measured"
+        ),
+        "model": args.model,
+        "transport": TRANSPORT,
+        "plan": {"books": books, "sessions": len(cells)},
+        "ledger": ledger,
+        "reading": read,
+        "rows": _rows_json(rows),
+        "warnings": (
+            ["stopped at the call ceiling: the plan is not covered and the reading is partial"]
+            if ledger["stopped_at_ceiling"]
+            else []
+        ),
+    }
+    out = Path(args.out) if args.out else ARM_DIR / "results-arm-v2.json"
+    write_result(result, out)
+    headline = {
+        key: read[key]
+        for key in ("decision", "fp5", "capacity", "books_complete", "target_read_share")
+    }
+    print(json.dumps(headline, indent=2))
+    print(f"ledger: {json.dumps(ledger)}")
+    print(f"wrote {out}", file=sys.stderr)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--selftest", action="store_true", help="free: prove the arithmetic")
@@ -871,6 +1239,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--screen", action="store_true", help="paid: the first feeds only")
     parser.add_argument("--arm", action="store_true", help="paid: every feed")
     parser.add_argument(
+        "--arm-v2",
+        action="store_true",
+        help="paid: v2's design (PREREG-v2.md) — the target in slot A, the book as the unit, "
+        "three replicates and three shuffle seeds per book, a call ceiling and no dollar cap",
+    )
+    parser.add_argument(
         "--dry-elicitor",
         action="store_true",
         help="free: the screen's plan through a real Elicitor in dry-run mode (synthetic "
@@ -879,6 +1253,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--model", default=READER_MODEL)
     parser.add_argument("--workers", type=int, default=WORKERS)
     parser.add_argument("--fitness-dir", default=str(FITNESS_DIR))
+    parser.add_argument(
+        "--books",
+        type=int,
+        default=None,
+        help="arm-v2: limit the plan to its first N books; the result records the count",
+    )
     parser.add_argument("--cache", default=str(ARM_DIR / "raw.jsonl"))
     parser.add_argument("--out", default=None)
     parser.add_argument(
@@ -906,12 +1286,15 @@ def main(argv: list[str] | None = None) -> int:
                     )
         print(f"wrote {ARM_DIR / 'attainability.json'}")
         return 0
-    if not (args.dry_run or args.screen or args.arm or args.dry_elicitor):
+    if not (args.dry_run or args.screen or args.arm or args.dry_elicitor or args.arm_v2):
         parser.error(
-            "pass one of --selftest, --attainability, --dry-run, --dry-elicitor, --screen, --arm"
+            "pass one of --selftest, --attainability, --dry-run, --dry-elicitor, --screen, "
+            "--arm, --arm-v2"
         )
-    if args.screen and args.arm:
-        parser.error("--screen and --arm are two runs; pass one")
+    if sum((bool(args.screen), bool(args.arm), bool(args.arm_v2))) > 1:
+        parser.error("--screen, --arm and --arm-v2 are separate runs; pass one")
+    if args.arm_v2:
+        return _run_v2(args)
     screen_sized = args.screen or args.dry_elicitor
 
     texts = feed_substrate.fitness_texts(Path(args.fitness_dir))

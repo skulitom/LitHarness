@@ -289,3 +289,142 @@ def test_a_reader_that_never_moves_fails_fp5_and_reads_unreadable() -> None:
 
 def test_the_selftest_passes() -> None:
     assert ctb.selftest() == 0
+
+
+# ------------------------------------------------------------ v2: the book is the unit
+
+
+def test_v1s_registration_digest_is_untouched_by_v2_existing() -> None:
+    """The digest stamped on v1's committed result files, so its numbers stay reproducible."""
+    assert ctb.registration_digest() == "2659023acf6197e3"
+    assert ctb.registration_digest_v2() != ctb.registration_digest()
+    assert ctb.PRE_REGISTRATION_V2["amends"] == ctb.VERSION
+
+
+def test_v1s_shuffle_is_byte_identical_under_the_new_seed_parameter() -> None:
+    text = _member("s")
+    assert ctb.book_shuffle(text) == ctb.book_shuffle(text, index=0)
+
+
+def test_three_seeds_give_one_book_three_different_shuffles() -> None:
+    text = _member("s")
+    versions = ctb.versions_v2(text)
+    assert list(versions) == ["intact", "shuffled", "sham"]
+    shuffles = versions["shuffled"]
+    assert len(shuffles) == ctb.REPLICATES_V2 == len(set(shuffles))
+    for shuffled in shuffles:
+        assert shuffled != text
+        assert sorted(shuffled.split()) == sorted(text.split())
+    # intact and sham repeat one text; their replicates differ only by the sample index.
+    assert len(set(versions["intact"])) == 1
+    assert len(set(versions["sham"])) == 1
+
+
+def test_the_v2_plan_seats_every_book_in_slot_a_at_three_replicates() -> None:
+    pool = [(f"book-{index}", _member(f"b{index}")) for index in range(5)]
+    cells = ctb.plan_v2(pool)
+    assert len(cells) == 5 * 3 * ctb.REPLICATES_V2
+    assert {cell.rotation for cell in cells} == {ctb.TARGET_ROTATION_V2}
+    assert {cell.replicate for cell in cells} == set(range(ctb.REPLICATES_V2))
+    assert ctb.faults(cells) == {}
+    assert {cell.book_key for cell in cells} == {f"{i:02d}" for i in range(5)}
+
+
+def _book_rows(book: str, shares: dict[str, list[float]]) -> list[ctb.Row]:
+    """Rows whose sessions realise the given per-version target shares (eight reads each)."""
+    rows: list[ctb.Row] = []
+    for version, values in shares.items():
+        for replicate, share in enumerate(values):
+            hits = round(share * 8)
+            actions = tuple(
+                ("read", "A" if index < hits else "B") for index in range(8)
+            )
+            session = feed_core.FeedSession(
+                feed_id=f"ctb2-{book}-{version}-r{replicate}",
+                arm=version,
+                model="test",
+                rotation=0,
+                replicate=replicate,
+                dose=0.0,
+                actions=actions,
+            )
+            rows.append(
+                ctb.Row(
+                    feed_index=int(book),
+                    target_name=f"book-{book}",
+                    version=version,
+                    rotation=0,
+                    pair_key=f"{book}:0",
+                    session=session,
+                    replicate=replicate,
+                )
+            )
+    return rows
+
+
+def test_a_book_is_one_observation_averaged_over_its_replicates() -> None:
+    rows = _book_rows("00", {"intact": [1.0, 0.75, 0.875], "shuffled": [0.25, 0.25, 0.25],
+                             "sham": [0.875, 0.875, 0.875]})
+    means = ctb.by_book(rows)
+    assert set(means) == {"00"}
+    assert means["00"]["intact"] == pytest.approx(0.875)
+    assert means["00"]["shuffled"] == pytest.approx(0.25)
+    pairs = ctb.paired_v2(means)
+    assert pairs["intact_minus_shuffled"] == [("00", pytest.approx(0.625))]
+    assert pairs["sham_minus_shuffled"] == [("00", pytest.approx(0.625))]
+
+
+def test_a_book_missing_a_version_is_dropped_whole() -> None:
+    rows = _book_rows("00", {"intact": [1.0], "shuffled": [0.25]})
+    assert ctb.by_book(rows) == {}
+
+
+def test_the_capacity_precondition_fails_when_the_reader_leaves_slot_a() -> None:
+    elsewhere = [
+        row.session
+        for row in _book_rows("00", {"intact": [0.0], "shuffled": [0.0], "sham": [0.0]})
+    ]
+    verdict = ctb.capacity_v2(elsewhere)
+    assert verdict["verdict"] == "FAIL"
+    assert verdict["shares"]["A"] == 0.0
+    assert "premise" in verdict["why"]
+    attending = [
+        row.session
+        for row in _book_rows("00", {"intact": [1.0], "shuffled": [0.75], "sham": [1.0]})
+    ]
+    assert ctb.capacity_v2(attending)["verdict"] == "PASS"
+
+
+def test_v2_reads_unreadable_below_the_book_floor_however_the_intervals_look() -> None:
+    rows: list[ctb.Row] = []
+    for book in range(ctb.MIN_BOOKS_V2 - 1):
+        rows += _book_rows(
+            f"{book:02d}",
+            {"intact": [1.0, 1.0, 1.0], "shuffled": [0.25, 0.25, 0.25], "sham": [1.0, 1.0, 1.0]},
+        )
+    read = ctb.reading_v2(rows)
+    assert read["books_complete"] == ctb.MIN_BOOKS_V2 - 1
+    assert read["decision"] == "UNREADABLE"
+
+
+def test_v2_reads_moves_with_order_when_every_precondition_holds() -> None:
+    rows: list[ctb.Row] = []
+    for book in range(ctb.MIN_BOOKS_V2 + 2):
+        # A little variation per book so fp5 sees movement across sessions.
+        high = 1.0 if book % 2 else 0.875
+        rows += _book_rows(
+            f"{book:02d}",
+            {
+                "intact": [high, high, 0.75],
+                "shuffled": [0.25, 0.375, 0.25],
+                "sham": [high, 0.75, high],
+            },
+        )
+    read = ctb.reading_v2(rows)
+    assert read["capacity"]["verdict"] == "PASS"
+    assert read["fp5"]["verdict"] == "PASS"
+    assert read["decision"] == "MOVES_WITH_ORDER"
+    assert read["declared_target_shift"] == 0.1875
+    assert read["underpowered_at"] == 0.125
+    # The seed spread says whether the number is about disorder or about one permutation.
+    assert read["shuffle_seed_spread"]
