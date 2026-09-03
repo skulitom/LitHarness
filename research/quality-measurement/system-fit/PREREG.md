@@ -117,7 +117,9 @@ and tagged by the clause they name: `fork_options` (*a fork offers 2 to 4*), `dr
 `no_depth` (*declares no depth*), `scale_ceiling` (*a drawn scale runs to 2..99*),
 `mixed_columns` (*left unfinished on purpose*: plain columns beside a system's), `stock_priced`,
 `growth_floor` (*describing different books* after growth), `second_system_line` (two book
-sheets), and `other_refusal` for anything else, with the sentence kept. A refused system
+sheets), `snapshot_fault` (§213.1, landed on main while this was being written and read
+before any shard was: an id in a numeric column, or a held grant on the opening line with no
+`can_do` edge behind it), and `other_refusal` for anything else, with the sentence kept. A refused system
 leaves the shape's sheet half as it was: the book drafts under its plain sheet and no beat
 speaks its system, which is the house's own sentence and is recorded beside the tag.
 

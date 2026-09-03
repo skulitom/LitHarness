@@ -67,6 +67,11 @@ GAP_TEXT: dict[str, tuple[str, str]] = {
         "lacks the new columns and the line prints ? for them",
     ),
     "second_system_line": ("refused", "two systems with a sheet each: the second never prints"),
+    "snapshot_fault": (
+        "refused",
+        "a status line the arithmetic cannot read (§213.1): an id in a numeric column, or a "
+        "held grant on the opening line with no edge behind it",
+    ),
     "other_refusal": ("refused", "a refusal outside the clauses, kept in the house's words"),
     "member_rank": ("missing", "a list whose members carry a rank or rarity each"),
     "party_display": ("missing", "several subjects' sheets on one screen"),
@@ -117,6 +122,9 @@ REFUSAL_TAGS: tuple[tuple[str, str], ...] = (
     ("is handed out by the rungs and is priced", "stock_priced"),
     ("describing different books", "growth_floor"),
     ("canon status_sheet records", "second_system_line"),
+    ("takes a whole number", "snapshot_fault"),
+    ("is also a can_do edge", "snapshot_fault"),
+    ("no can_do", "snapshot_fault"),
 )
 
 #: The complaints `records_for` joins with `; ` each begin with an id or one of these words.
@@ -191,8 +199,9 @@ def run_book(book: Book, db: Path) -> dict[str, Any]:
             for line in err.splitlines():
                 if "will not resolve" in line:
                     book.warnings.append(line.strip())
-        _code, out, _err = _run(db, ["world", "accept"])
-        book.accepts.append(out.strip())
+        _code, out, err = _run(db, ["world", "accept"])
+        # A refusal prints to stderr (§200, §213.1) and is kept beside the acceptance.
+        book.accepts.append((out.strip() + chr(10) + err.strip()).strip())
         _code, out, _err = _run(db, ["world", "check"])
         book.checks.append(json.loads(out))
     store = SqliteStore.open(str(db))
@@ -742,6 +751,13 @@ def read_store(translator: Translator, book: Book) -> list[Feature]:
     minted_first = bool(book.accepts) and "minted to finish" in book.accepts[0]
     rounds = book.accepts[:1] + (book.accepts[1:] if minted_first else [])
     for accept in rounds:
+        if "not accepted" in accept:
+            for line in accept.splitlines():
+                if line.startswith("litharness:") and "not accepted" not in line:
+                    sentence = line.removeprefix("litharness:").strip()
+                    found.append(
+                        Feature("the world, at accept", "refused", tag_for(sentence), sentence)
+                    )
         for part in reasons_in(accept):
             tag = tag_for(part)
             key = tag if tag != "other_refusal" else re.sub(r"^\S+", "", part)[:60]
@@ -817,6 +833,7 @@ def census(shapes: list[dict[str, Any]], workdir: Path) -> list[dict[str, Any]]:
                         "would_not_finish",
                         "grown",
                         "would_breach",
+                        "snapshot_faults",
                     )
                 }
                 if book.checks
