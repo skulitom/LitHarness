@@ -870,6 +870,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dry-run", action="store_true", help="build the plan; no call")
     parser.add_argument("--screen", action="store_true", help="paid: the first feeds only")
     parser.add_argument("--arm", action="store_true", help="paid: every feed")
+    parser.add_argument(
+        "--dry-elicitor",
+        action="store_true",
+        help="free: the screen's plan through a real Elicitor in dry-run mode (synthetic "
+        "answers, no call); exercises the transport plumbing and writes beside --out",
+    )
     parser.add_argument("--model", default=READER_MODEL)
     parser.add_argument("--workers", type=int, default=WORKERS)
     parser.add_argument("--fitness-dir", default=str(FITNESS_DIR))
@@ -900,16 +906,19 @@ def main(argv: list[str] | None = None) -> int:
                     )
         print(f"wrote {ARM_DIR / 'attainability.json'}")
         return 0
-    if not (args.dry_run or args.screen or args.arm):
-        parser.error("pass one of --selftest, --attainability, --dry-run, --screen, --arm")
+    if not (args.dry_run or args.screen or args.arm or args.dry_elicitor):
+        parser.error(
+            "pass one of --selftest, --attainability, --dry-run, --dry-elicitor, --screen, --arm"
+        )
     if args.screen and args.arm:
         parser.error("--screen and --arm are two runs; pass one")
+    screen_sized = args.screen or args.dry_elicitor
 
     texts = feed_substrate.fitness_texts(Path(args.fitness_dir))
-    cells = plan(texts, feeds=SCREEN_FEEDS if args.screen else None)
+    cells = plan(texts, feeds=SCREEN_FEEDS if screen_sized else None)
     counts = planned_counts(cells)
-    kind = "screen" if args.screen else "arm"
-    registered_ceiling = CEILING_SCREEN_USD if args.screen else CEILING_ARM_USD
+    kind = "screen" if screen_sized else "arm"
+    registered_ceiling = CEILING_SCREEN_USD if screen_sized else CEILING_ARM_USD
     ceiling = registered_ceiling if args.ceiling_usd is None else args.ceiling_usd
     if ceiling > registered_ceiling:
         parser.error(
@@ -936,6 +945,36 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     if args.dry_run:
         print("dry run; nothing bought")
+        return 0
+    if args.dry_elicitor:
+        # A real Elicitor with synthetic answers: the params, the digest keys, the pool and
+        # the result writer all run; the answers are not actions, so every session ends
+        # `invalid_action` and the reading is UNREADABLE by construction. Nothing is bought
+        # and nothing lands in the arm's cache.
+        import tempfile
+
+        from elicit import Elicitor
+
+        scratch = Path(args.out) if args.out else Path(tempfile.gettempdir())
+        scratch.mkdir(parents=True, exist_ok=True)
+        with Elicitor(
+            scratch / "cost-that-bites-dry.jsonl",
+            model=args.model,
+            spot_model=None,
+            transport=TRANSPORT,
+            dry_run=True,
+        ) as elicitor:
+            rows, ledger = run_cells(
+                elicitor, cells, model=args.model, ceiling_usd=ceiling, workers=args.workers
+            )
+        read = reading(rows)
+        write_result(
+            {"study": f"{VERSION}/dry-elicitor", "ledger": ledger, "reading": read,
+             "rows": _rows_json(rows)},
+            scratch / "cost-that-bites-dry.json",
+        )
+        print(f"dry elicitor: {ledger['sessions_run']} session(s), decision {read['decision']}")
+        print(f"wrote {scratch / 'cost-that-bites-dry.json'}; nothing bought")
         return 0
     if counts["max_calls"] > CALL_GUARD and not args.yes:
         print(f"{counts['max_calls']} worst-case calls is above the {CALL_GUARD} guard; pass --yes")
