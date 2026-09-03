@@ -369,15 +369,15 @@ def cmd_sections(args: argparse.Namespace) -> int:
                 helper: sorted(user for user, mentioned in refs.items() if helper in mentioned)
                 for helper in sorted(private)
             }
-            rows = [
+            helper_rows = [
                 (helper, len(users), ", ".join(users[:6]) + (" ..." if len(users) > 6 else ""))
                 for helper, users in shared.items()
                 if users
             ]
-            rows.sort(key=lambda row: -int(row[1]))
+            helper_rows.sort(key=lambda row: -row[1])
             print("private helpers by number of top-level users:")
             print()
-            print(_table(("helper", "users", "used by"), rows))
+            print(_table(("helper", "users", "used by"), helper_rows))
             print()
     return 0
 
@@ -447,10 +447,13 @@ def cmd_imports(args: argparse.Namespace) -> int:
         for target in targets:
             importers[target].add(source)
 
-    edges = Counter((_layer(s), _layer(t)) for s, ts in graph.items() for t in ts)
+    edges: Counter[tuple[str, str]] = Counter(
+        (_layer(s), _layer(t)) for s, ts in graph.items() for t in ts
+    )
     print("## Layer edges (source layer -> target layer, count of module edges)")
     print()
-    print(_table(("from", "to", "edges"), sorted(edges.items(), key=lambda kv: -kv[1])))
+    ranked_edges = sorted(edges.items(), key=lambda kv: -kv[1])
+    print(_table(("from", "to", "edges"), ranked_edges))
     print()
 
     stated = {
