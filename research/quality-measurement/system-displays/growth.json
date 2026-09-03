@@ -1,0 +1,21 @@
+{
+  "chapters_read": 14156,
+  "stories_read": 608,
+  "stories_with_bracketed_names": 172,
+  "distinct_names_per_story": {
+    "p25": 1.0,
+    "p50": 4.0,
+    "p75": 8.0,
+    "p90": 15.0,
+    "max": 82.0
+  },
+  "stories_over_eight": 41,
+  "share_over_eight": 0.23837209302325582,
+  "names_per_sampled_chapter": {
+    "p25": 0.0,
+    "p50": 0.0,
+    "p75": 1.0,
+    "p90": 1.0,
+    "max": 10.0
+  }
+}

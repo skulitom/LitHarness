@@ -103,3 +103,19 @@ The reading for phase 4: numbers go up is the genre's rule and not a law. Writte
 one change in twenty-seven, and the commonest is a spend, which is a fall paired with a rise
 somewhere else on the window. An attribute that falls on its own is written by four stories in
 twenty-two, so a book that wants one declares it. Nothing here is about quality, and no bar.
+
+## How many named system things a story carries (`growth.py`, `growth.json`, 2026-09-03)
+
+Phase 4 also asks whether a system may grow after the seed; the engine draws five to eight
+grants and nothing after the seed re-checks or re-declares the sheet. Over the same chapters,
+172 of 608 stories write bracketed names on furniture lines (*[Basic Archery]*, the genre's
+way of handing out a skill, a title or a class). Distinct names per story, in the sampled
+slice alone: a quarter carry one, half carry four, three quarters carry eight, a tenth carry
+fifteen or more, and one carries eighty-two; 41 stories, a quarter of those that bracket,
+carry more than eight. Names per sampled chapter are mostly none and rarely above one.
+
+The reading for growth: the seed's five to eight is an opening and not a lifetime, since a
+quarter of the bracketing stories pass eight on a sample of their chapters; and growth is
+slow, a name a chapter at most, which is a grant declared as the book goes rather than a
+second draw. A floor on what the genre names, since a skill written without brackets is
+invisible here and the shards are slices. No bar.
