@@ -156,7 +156,9 @@ def vocabulary() -> dict[str, Any]:
             "type": (
                 "reifies a node; --value one of node_types, and only those. A change takes "
                 "--order-key for the scene it happens in (a scene key like s3), or none for "
-                "one already true when the book opens"
+                "one already true when the book opens. A change keyed at a scene that carries "
+                "a participant and a manifests_as line is a notice: that scene is asked to "
+                "print the line under the book's bracket, exactly once"
             ),
             "participant": (
                 "who a change happened to; the change (a subject of type change) is the "
@@ -174,7 +176,11 @@ def vocabulary() -> dict[str, Any]:
                 "a second-order effect of a rule; the rule is the subject, --object one of "
                 "consequence_domains, --value the consequence in plain words"
             ),
-            "manifests_as": "how it shows on the page; --value one line",
+            "manifests_as": (
+                "how it shows on the page; --value one line. On a change keyed at a scene "
+                "with a participant, the line the System prints where it happens, in its own "
+                "voice, under the label of the book's graph line"
+            ),
             "can_do": (
                 "a person holds a capability; --object the capability's id, and --value how "
                 "far they have taken it as a whole number. Leave the number off to say only "

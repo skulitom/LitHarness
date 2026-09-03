@@ -2296,3 +2296,93 @@ def test_the_prompt_prints_the_notice_where_the_book_prints_it(store: SqliteStor
     assert "[ASSAY] Rook has learned Seamsight" in system
     without, _ = render_prompt(beat, book_title=None, packet=packet, status_example=status)
     assert "Where they gain it" not in without
+
+
+# --- §218: the System's own voice -------------------------------------------------------------
+
+
+def _change(
+    change_id: str,
+    key: str,
+    *,
+    participant: bool = True,
+    said: str | None = "The Assay has noticed you",
+) -> list[lc.StateRecord]:
+    """A change declared the way the vocabulary teaches a notice: typed at a scene key, with a
+    participant and a line in the world's register, all canon."""
+    rows = [
+        worlds.world_record(
+            change_id,
+            worlds.TYPE_PREDICATE,
+            value=worlds.CHANGE,
+            order_key=key,
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        )
+    ]
+    if participant:
+        rows.append(
+            worlds.world_record(
+                change_id,
+                worlds.PARTICIPANT_ROLE,
+                object_ref="rook",
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            )
+        )
+    if said:
+        rows.append(
+            worlds.world_record(
+                change_id,
+                worlds.MANIFESTS_PREDICATE,
+                value=said,
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            )
+        )
+    return rows
+
+
+def test_the_notice_for_a_declared_change_is_asked_for_in_the_scene_it_lands_in() -> None:
+    """§218: a change keyed at this scene, with a participant and a line in the world's
+    register, is printed under the book's bracket; another scene, another person, a change
+    with no participant or no line, a scheduled change, and a book with no graph line are
+    asked for nothing. Two changes at one scene are two lines, in id order."""
+    from litharness.domain.extraction import notice_lines
+
+    records = _ladder_records()
+    with_notice = [*records, *_change("the_wake", "s2")]
+    assert notice_lines(with_notice, character="rook", at="s2") == (
+        "[ASSAY] The Assay has noticed you",
+    )
+    assert notice_lines(with_notice, character="rook", at="s3") == ()
+    assert notice_lines(with_notice, character="tam", at="s2") == ()
+    assert notice_lines(with_notice, character=None, at="s2") == ()
+    silent = [*records, *_change("beat_open", "s2", participant=False)]
+    assert notice_lines(silent, character="rook", at="s2") == ()
+    wordless = [*records, *_change("quiet", "s2", said=None)]
+    assert notice_lines(wordless, character="rook", at="s2") == ()
+    scheduled = [*records, *_change("later", "0200")]
+    assert notice_lines(scheduled, character="rook", at="s2") == ()
+    quiet_book = [r for r in with_notice if r.predicate != worlds.GRAPH_LINE_PREDICATE]
+    assert notice_lines(quiet_book, character="rook", at="s2") == ()
+    two = [*with_notice, *_change("the_warning", "s2", said="Your body is failing")]
+    assert notice_lines(two, character="rook", at="s2") == (
+        "[ASSAY] The Assay has noticed you",
+        "[ASSAY] Your body is failing",
+    )
+
+
+def test_the_prompt_prints_the_system_s_line_where_the_world_speaks(store: SqliteStore) -> None:
+    book_id, branch_id = _book_zero(store)
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[0]
+    packet = packet_for(store, head, beat)
+    system, _ = render_prompt(
+        beat,
+        book_title=None,
+        packet=packet,
+        notices=("[ASSAY] The Assay has noticed you",),
+    )
+    assert "Where the world says this to them, the book prints this line, exactly once" in system
+    assert "[ASSAY] The Assay has noticed you" in system
+    without, _ = render_prompt(beat, book_title=None, packet=packet)
+    assert "Where the world says this" not in without

@@ -23324,3 +23324,54 @@ tree.
 **Anti-scope.** Nothing here measures prose; whether a declared shape produces a chapter that
 reads as its genre is the shelf's question and the operator's read. The slices follow in rank
 order, the notice first, each with its own entry and its own replay.
+
+
+## 218. The System's own voice, the first fit slice: a change keyed at a scene with a participant and a line is printed by that scene under the book's bracket, after the census found a notice for something other than a gain or a rise in four market stories of five
+
+**Measured first** (§217, `research/quality-measurement/system-fit/FINDINGS.md`). Forty-nine
+of the sixty sampled market stories print a bracketed line for something other than a gain
+or a rise: the System speaking, a welcome, a warning, a quest given, a title, a zone entered,
+a kill log, a timer; three of the four shelf anchors do the same. This house printed a line
+for a gain (§208) and a line for a rise (§113) and nothing else. The declared shape already
+existed: a `change` node with a `manifests_as` line, which §212 found in eight stores as
+story beats with no role, written by the Architect from the vocabulary alone. What was
+missing was the ask.
+
+**What shipped** (`domain/extraction.py`, `application/planner.py`, `application/world.py`).
+`extraction.notice_lines(records, character=, at=)`: every canon `change` keyed at the scene
+being drafted (a scene key; a scheduled key never lands, §165), carrying a `participant` edge
+to the person and a `manifests_as` line, rendered as the line under the label of the book's
+graph line, in id order; `()` for a book with no graph line (its System is quiet, §208's
+rule), for another scene or another person, and for a change with no participant or no line.
+`render_prompt` takes `notices` and prints them under one sentence (*Where the world says
+this to them, the book prints this line, exactly once, and they read it on the page*),
+outside the status branch, since a numberless book with a ladder still has a System that
+speaks; the planner passes the lines at every scene. The vocabulary's `type` and
+`manifests_as` lines say that a change keyed at a scene with a participant and a line is a
+notice the scene is asked to print. Budget: the conditional row `notices` at 2 (measured with
+one line; a scene where several changes land costs one line each, which is what the market
+prints) and the maximal scene prompt 45 to 47, with the reasons where the numbers live.
+Tests: `test_the_notice_for_a_declared_change_is_asked_for_in_the_scene_it_lands_in`,
+`test_the_prompt_prints_the_system_s_line_where_the_world_speaks` (`tests/test_planner.py`),
+and the rows in `tests/test_prompt_budget.py`. Replay over the four stored books against
+main's baseline: identical (8/8), and every prompt on disk is what it was, since no stored
+change carries a participant.
+
+**What this does not do.** No gate checks that the scene printed the line (§212's rule: not
+ahead of an observation). Nothing reads the line back: the change is canon already and the
+line is furniture the reader watches. A quest card (§217's third gap) is announced as a
+notice and its counters are paired columns; a card of its own waits for a book that needs
+it. A change nobody is a participant in prints nothing: in this house a line is read by
+somebody on the page, and the participant is who.
+
+**What was refused.** A notice module, or a closed list of event kinds (welcome, warning,
+zone, quest): the kinds are the book's own words on a change, and a list would be the next
+book's wall (§205's lesson). A default bracket or a default phrase: none; a book that
+declares no graph line prints no notice. Printing the stored books' role-less changes: those
+are story beats in prose and were never furniture. A second bracket tag for the System's
+voice: the graph line's label is the book's one bracket, and a second would be the sheet's
+mistake again (§207).
+
+**Anti-scope.** Whether a book whose System speaks reads as its genre is the shelf's question
+and the operator's read; nothing here measures prose. The next slice is §217's second gap,
+plain columns beside a system's grants.

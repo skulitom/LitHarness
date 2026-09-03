@@ -239,7 +239,7 @@ The ranked gaps, and what each is in this note's terms:
 
 1. **The notice** for anything but a gain or a rise: the System speaking, a welcome, a
    warning, a quest given, a title, a zone. A `change` node with a `manifests_as` line is the
-   declared shape; no scene is asked to print it. The first slice.
+   declared shape; §218 asks the scene it lands in to print it under the book's bracket.
 2. **Plain columns beside a system's grants**: a pool, a currency, a class or an age on the
    line with the grants. Refused on purpose at completion (§165.2's branch); the census earns
    the reversal. The second slice.

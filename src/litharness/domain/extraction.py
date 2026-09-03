@@ -1270,6 +1270,65 @@ def gain_example(
     )
 
 
+def notice_lines(
+    records: Sequence[lc.StateRecord], *, character: str | None, at: str | None
+) -> tuple[str, ...]:
+    """The lines the System prints where a declared change lands on this person at this
+    scene, in the book's own bracket (§218).
+
+    **The gap the fit census ranked first** (`research/quality-measurement/system-fit/`,
+    §217): four market stories in five print a bracketed line for something other than a
+    gain or a rise — the System speaking, a welcome, a warning, a quest given, a title, a
+    zone entered — and this house printed a line for a gain (§208) and a line for a rise
+    (§113) and nothing else. The declared shape already existed: a `change` node with a
+    `manifests_as` line, which the Architect has written as story beats since the research
+    ontology (§212 found eight stores holding them). What was missing was the ask.
+
+    A change keyed at `at` (a scene key; a scheduled key never lands, §165), with a
+    `participant` edge to `character` and a `manifests_as` line, renders as `[LABEL] line`
+    under the label of the book's graph line, in id order. `()` where the book declares no
+    graph line (its System is quiet, §208's rule), where nothing is keyed here, and for a
+    change with no participant or no line — which is every change the stored books hold, so
+    every prompt drafted before this is the prompt it was. No default phrase and no default
+    bracket: the words and the tag are the book's own.
+    """
+    if character is None or at is None:
+        return ()
+    line = graph_line_for(records)
+    if line is None:
+        return ()
+    canon = _canon_of(records)
+    anchors = sorted(
+        record.subject
+        for record in canon
+        if record.predicate == worlds_mod.TYPE_PREDICATE
+        and str(record.value or "").strip() == worlds_mod.CHANGE
+        and state_mod.order_key_of(record) == at
+    )
+    found: list[str] = []
+    for change_id in anchors:
+        rows = [record for record in canon if record.subject == change_id]
+        if not any(
+            record.predicate == worlds_mod.PARTICIPANT_ROLE and record.object_ref == character
+            for record in rows
+        ):
+            continue
+        said = next(
+            (
+                record.value.strip()
+                for record in rows
+                if record.predicate == worlds_mod.MANIFESTS_PREDICATE
+                and isinstance(record.value, str)
+                and record.value.strip()
+            ),
+            None,
+        )
+        if said is None:
+            continue
+        found.append(f"[{line.label}] {said}")
+    return tuple(found)
+
+
 def _canon_of(records: Sequence[lc.StateRecord]) -> list[lc.StateRecord]:
     return [record for record in records if state_mod.is_canon(record)]
 
