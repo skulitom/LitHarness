@@ -42,6 +42,7 @@ from litharness.domain.jobs import Job
 from litharness.domain.plan_refinement import PlanApplication, PlanRevision
 from litharness.domain.policy import PolicyDecision
 from litharness.domain.promises import Promise
+from litharness.domain.release import ReleaseEntry, ReleaseStatus
 from litharness.domain.reviser import PreRevisionDraft
 from litharness.domain.revision import Revision
 
@@ -574,6 +575,42 @@ class ExportStore(ManuscriptReader, PlanReader, Protocol):
     pass
 
 
+class ReleaseQueue(Protocol):
+    """The operator-gated release queue (stage-0 §221): rows an operator moves.
+
+    Five methods and no `post`: the tool never posts, and a protocol with nowhere to put a
+    posting call is that sentence at the layer boundary. `move_release` is the only mutation
+    past `staged`, and it takes the operator's name because `domain/release.transition`
+    refuses without one.
+    """
+
+    def stage_release(self, entry: ReleaseEntry) -> bool: ...
+
+    def release_entry(self, release_id: str) -> ReleaseEntry | None: ...
+
+    def release_entries(
+        self, book_id: str, branch_id: str, *, status: ReleaseStatus | None = None
+    ) -> list[ReleaseEntry]: ...
+
+    def live_release(
+        self, book_id: str, branch_id: str, chapter_number: int
+    ) -> ReleaseEntry | None: ...
+
+    def move_release(
+        self,
+        release_id: str,
+        to: ReleaseStatus,
+        *,
+        at: str,
+        by: str,
+        reason: str | None = None,
+    ) -> ReleaseEntry: ...
+
+
+class ReleaseStore(ExportStore, ReleaseQueue, Protocol):
+    """What `application/release.py` needs: the book to render a chapter from, and the queue."""
+
+
 class StatusStore(
     BranchReader,
     DirectiveInbox,
@@ -682,6 +719,8 @@ __all__ = [
     "PlanningStore",
     "PromiseRepository",
     "ReaderControlStore",
+    "ReleaseQueue",
+    "ReleaseStore",
     "RepairStore",
     "StatusStore",
     "TextGenerator",

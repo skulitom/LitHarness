@@ -108,6 +108,16 @@ five above.
 | The store | `adapters/sqlite_store.py` (facade) and the capability repositories beside it | a migration is never edited; state and its events commit together; `state_records` slices inside one order-key space with `litharness_key_space` | `test_store.py`; `test_architecture.py::test_dependencies_only_point_outward_to_inward`, `test_internal_module_graph_has_no_cycles` |
 | The model | `providers/cli.py` (the frontier pin, and the two flags that keep `CLAUDE.md` out of every call: §109) | `providers/registry.py`, bound only in `cli.py` | `test_providers.py` under `LITHARNESS_LIVE_PROVIDERS=1`; `test_architecture.py::test_the_registry_still_satisfies_the_port_the_application_asks_for` |
 
+## The evaluator boundary and the release queue (stage-0 §221)
+
+| Fact | Home | The one reader | Written by | Pinned by |
+| --- | --- | --- | --- | --- |
+| Who is reading: a reader with its framing sentence, the two pools, the three specs a read takes | `domain/audience.py` (`Reader`, `StopRule`, `AudienceSpec`, `CurrencySpec`) | `application/instrument.py::SimulatedReadership.read`; `readers.render_choice_request` renders the reader's `system` | a pack | `test_instrument.py::test_a_reader_needs_a_framing_and_a_pool_it_can_be_in` |
+| What a domain supplies: the genre set, the framing, the rosters, the stop rule, the tier-3 essays | `packs/__init__.py` (`DomainPack`, `Pack`); `packs/litrpg` and `packs/plain` | `packs.select`, from the audience's `pack_id`; only `cli.py` and the tests name a pack | by hand, one module per pack | `test_architecture.py::test_the_application_reaches_a_pack_only_through_its_protocol`; `test_instrument.py::test_the_litrpg_readers_render_the_system_text_the_pipeline_has_always_rendered` |
+| The record: content-addressed, self-describing, no verdict slot at any depth | `instrument.Readout` (`record_id`, `to_jsonable`), `Validity`, `Rail` | `instrument.report` | the port, once per read | `test_a_record_refuses_a_verdict_slot_added_later`, `test_the_report_carries_the_record_hash_and_nothing_the_record_does_not`, `test_the_validity_block_names_every_rail_and_says_what_it_did_not_do` |
+| Which readers a checkpoint panel is frozen over | the pack's steering roster, passed to `editorial.mechanism_spec_digest`, `reader_jobs_for_checkpoint` and `make_reader_observation_handler` | `handlers.make_scene_draft_handler` (`reader_roster`) | `cli.py` composes `packs.litrpg` in | `test_editorial.py::test_reader_jobs_freeze_the_request_and_record_exact_provenance` |
+| The release queue: one chapter's pastable copy by hash, four states, an operator's name past `staged` | `domain/release.py` (`ReleaseEntry`, `transition`), migration 039 `release_queue` | `application/release.py` (`stage_chapter`, `approve`, `record_posted`, `withdraw`); `library.write_release_copy` writes the copy under its hash | the operator, through `litharness release` — never a program past `staged` | `test_release.py::test_the_command_line_has_no_post`, `test_approval_refuses_when_the_book_moved_under_the_entry`, `test_a_republish_never_touches_the_staged_copy`, `test_the_ai_generated_tag_is_required_not_defaulted` |
+
 ## Where the load-bearing numbers are
 
 Every numeric constant with a reason beside it is listed by `tools/maintainability_survey.py

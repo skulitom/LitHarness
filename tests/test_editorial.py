@@ -39,12 +39,18 @@ from litharness.domain.plan_refinement import (
 )
 from litharness.domain.revision import build_revision
 from litharness.domain.serials import SerialShape
+from litharness.packs import litrpg
 from litharness.providers.fake import FakeProvider
 from litharness.providers.registry import ProviderRegistry
 from tests.conftest import PROJECT_ID, make_revision
 
 STAMP = "2026-08-27T12:00:00Z"
 NOW = 1_777_800_000.0
+
+#: The steering roster every mechanism below is registered over: the house's, by the name it
+#: moved to (stage-0 §221). The control plane used to reach for it as a module constant; the
+#: digest it computes from these readers is the digest it always computed.
+ROSTER = litrpg.LITRPG.steering
 
 
 @pytest.fixture
@@ -53,7 +59,7 @@ def store(tmp_path) -> SqliteStore:
 
 
 def _qualification_payload() -> dict[str, object]:
-    candidate = experimental_mechanism(registered_at=STAMP)
+    candidate = experimental_mechanism(registered_at=STAMP, roster=ROSTER)
     return {
         "candidate_version_id": candidate.version_id,
         "mechanism_id": candidate.mechanism_id,
@@ -76,7 +82,7 @@ def _qualification_payload() -> dict[str, object]:
 
 
 def _qualified() -> ReaderMechanism:
-    spec = mechanism_spec_digest()
+    spec = mechanism_spec_digest(ROSTER)
     evidence = QualificationEvidence.from_payload(_qualification_payload()).evidence_digest
     status = ReaderMechanismStatus.QUALIFIED
     return ReaderMechanism(
@@ -90,7 +96,7 @@ def _qualified() -> ReaderMechanism:
 
 
 def _register_qualified(store: SqliteStore) -> ReaderMechanism:
-    candidate = experimental_mechanism(registered_at=STAMP)
+    candidate = experimental_mechanism(registered_at=STAMP, roster=ROSTER)
     store.register_reader_mechanism(candidate)
     qualified = _qualified()
     store.register_reader_mechanism(qualified, evidence=_qualification_payload())
@@ -108,15 +114,18 @@ def _record_panel(store: SqliteStore, mechanism: ReaderMechanism, *, chapter_ind
         prior_observations=(),
         mechanism=mechanism,
         shape=SerialShape(scenes_per_chapter=2, chapters_per_arc=3),
+        roster=ROSTER,
     )
-    handler = make_reader_observation_handler(ProviderRegistry(FakeProvider()), store, PROJECT_ID)
+    handler = make_reader_observation_handler(
+        ProviderRegistry(FakeProvider()), store, PROJECT_ID, roster=ROSTER
+    )
     for job in jobs:
         handler(job, NOW)
     return revision, jobs
 
 
 def test_the_mechanism_version_addresses_status_spec_and_evidence() -> None:
-    experimental = experimental_mechanism(registered_at=STAMP)
+    experimental = experimental_mechanism(registered_at=STAMP, roster=ROSTER)
     qualified = _qualified()
 
     assert experimental.version_id != qualified.version_id
@@ -165,7 +174,7 @@ def test_reader_wording_cannot_be_transcribed_into_live_direction() -> None:
 def test_reader_jobs_freeze_the_request_and_record_exact_provenance(
     store: SqliteStore,
 ) -> None:
-    mechanism = experimental_mechanism(registered_at=STAMP)
+    mechanism = experimental_mechanism(registered_at=STAMP, roster=ROSTER)
     store.register_reader_mechanism(mechanism)
     revision, jobs = _record_panel(store, mechanism)
 
@@ -184,7 +193,7 @@ def test_reader_jobs_freeze_the_request_and_record_exact_provenance(
     provider = FakeProvider()
     with pytest.raises(ValueError, match="input digest"):
         make_reader_observation_handler(
-            ProviderRegistry(provider), store, PROJECT_ID
+            ProviderRegistry(provider), store, PROJECT_ID, roster=ROSTER
         )(replace(jobs[0], job_id="tampered-job", payload=tampered_payload), NOW)
     assert provider.calls == 0
 
@@ -192,7 +201,7 @@ def test_reader_jobs_freeze_the_request_and_record_exact_provenance(
 def test_an_experimental_panel_is_durable_but_cannot_enqueue_direction(
     store: SqliteStore,
 ) -> None:
-    mechanism = experimental_mechanism(registered_at=STAMP)
+    mechanism = experimental_mechanism(registered_at=STAMP, roster=ROSTER)
     store.register_reader_mechanism(mechanism)
     revision, _jobs = _record_panel(store, mechanism)
 
@@ -255,7 +264,7 @@ def test_withdrawing_a_qualified_mechanism_closes_queued_and_future_steering(
 def test_accepting_the_last_scene_of_a_chapter_atomically_schedules_the_panel(
     store: SqliteStore,
 ) -> None:
-    mechanism = experimental_mechanism(registered_at=STAMP)
+    mechanism = experimental_mechanism(registered_at=STAMP, roster=ROSTER)
     store.register_reader_mechanism(mechanism)
     base = build_revision(
         "book-checkpoint",
@@ -318,6 +327,7 @@ def test_accepting_the_last_scene_of_a_chapter_atomically_schedules_the_panel(
         PROJECT_ID,
         reader_mechanism=mechanism,
         reader_shape=SerialShape(scenes_per_chapter=2, chapters_per_arc=3),
+        reader_roster=ROSTER,
     )(job, NOW)
 
     queued = store.jobs_by_status(JobStatus.QUEUED)

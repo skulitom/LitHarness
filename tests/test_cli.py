@@ -27,6 +27,10 @@ from litharness.domain.events import EventType
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.nodes import NodeKind
 from litharness.domain.policy import Outcome
+from litharness.packs import litrpg
+
+#: The steering roster the mechanism is registered over: the house's, by its moved name.
+ROSTER = litrpg.LITRPG.steering
 
 
 @pytest.fixture
@@ -1080,7 +1084,7 @@ def test_reader_mechanism_qualification_requires_the_complete_evidence_artifact(
     db, tmp_path, capsys
 ) -> None:
     assert run(db, "init") == EXIT_OK
-    candidate = experimental_mechanism(registered_at="2026-08-27T12:00:00Z")
+    candidate = experimental_mechanism(registered_at="2026-08-27T12:00:00Z", roster=ROSTER)
     with SqliteStore.open(db) as store:
         store.register_reader_mechanism(candidate)
     evidence: dict[str, object] = {
@@ -1117,7 +1121,7 @@ def test_reader_mechanism_refuses_an_evidence_artifact_with_a_failed_control(
     db, tmp_path, capsys
 ) -> None:
     assert run(db, "init") == EXIT_OK
-    candidate = experimental_mechanism(registered_at="2026-08-27T12:00:00Z")
+    candidate = experimental_mechanism(registered_at="2026-08-27T12:00:00Z", roster=ROSTER)
     with SqliteStore.open(db) as store:
         store.register_reader_mechanism(candidate)
     artifact = tmp_path / "failed.json"

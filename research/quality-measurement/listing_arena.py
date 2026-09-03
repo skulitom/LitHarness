@@ -39,6 +39,7 @@ sys.path.insert(0, str(HERE.parent.parent / "src"))
 
 from litharness.application import readers as readers_mod  # noqa: E402
 from litharness.domain import rivals as rivals_mod  # noqa: E402
+from litharness.packs import litrpg as litrpg_pack  # noqa: E402
 from litharness.providers import build_default_registry  # noqa: E402
 
 RESULTS = HERE / "results"
@@ -167,16 +168,18 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--blind",
         action="store_true",
-        help="use `readers.BLIND` — the measurement roster with no declared taste. The arm; "
-        "`READERS` is its control",
+        help="use `packs.litrpg.BLIND` — the measurement roster with no declared taste. The "
+        "arm; `READERS` is its control",
     )
     args = parser.parse_args(argv)
 
-    pool = rivals_mod.admit_all(json.loads(Path(args.rivals).read_text(encoding="utf-8")))
+    pool = rivals_mod.admit_all(
+        json.loads(Path(args.rivals).read_text(encoding="utf-8")), genres=litrpg_pack.GENRES
+    )
     texts = load_texts(args.texts)
     registry = build_default_registry()
     seats = (
-        readers_mod.BLIND if args.blind else readers_mod.pool(readers_mod.MEASUREMENT)
+        litrpg_pack.BLIND if args.blind else litrpg_pack.pool(readers_mod.MEASUREMENT)
     )
     print(f"{len(texts)} text(s) against a pool of {len(pool)}; sham pairs {args.sham}")
 

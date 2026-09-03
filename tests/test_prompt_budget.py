@@ -53,6 +53,7 @@ from litharness.domain import progression as progression_domain
 from litharness.domain import voice as voice_domain
 from litharness.domain import writers as writers_domain
 from litharness.domain.generation import CompletionRequest
+from litharness.packs import litrpg
 
 #: One writer, fixed, so a budget is about the rules rather than about whose dossier is longest.
 WRITER = writers_domain.CAST["ferreira"]
@@ -141,8 +142,8 @@ def _roles() -> dict[str, str]:
         # is a separate row rather than a replacement because `None` is still the default and
         # still the control, and the two totals are four demands apart.
         "scene writer, cast": f"{WRITER.render()}\n\n{floor}",
-        "measurement reader": readers.pool(readers.MEASUREMENT)[0].system(),
-        "steering reader": readers.pool(readers.STEERING)[0].system(),
+        "measurement reader": litrpg.pool(readers.MEASUREMENT)[0].system(),
+        "steering reader": litrpg.pool(readers.STEERING)[0].system(),
         # **Three rows rather than one, because the three dossier forms are three prompts.**
         # They differ by one clause and by nothing else, so a divergence between them is a
         # divergence in the registered arm rather than in the role, and one number could not

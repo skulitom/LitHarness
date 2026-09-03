@@ -48,6 +48,7 @@ from litharness.application.reviser import (
     render_revision_request,
 )
 from litharness.domain import tells
+from litharness.domain.audience import Reader
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
 from litharness.domain.draft import (
@@ -464,12 +465,18 @@ def make_scene_draft_handler(
     schedule_summary: bool = False,
     reader_mechanism: ReaderMechanism | None = None,
     reader_shape: SerialShape | None = None,
+    reader_roster: Sequence[Reader] | None = None,
     revise: bool = False,
     reviser_policy: ReviserPolicy | None = None,
     reviser_model: str | None = REVISION_MODEL,
     shelf: Shelf | None = None,
 ) -> JobHandler:
     """Build a `JobHandler` that drafts one node's prose and gates the result.
+
+    `reader_roster` is the steering roster a checkpoint panel is frozen over, and it travels
+    with `reader_mechanism` because the mechanism's spec digest is computed from it (stage-0
+    §221); a mechanism handed in without its roster is refused here rather than at the first
+    chapter boundary.
 
     `shelf` is the exemplar shelf the selector showed the writer (stage-0 §196); the ladder
     also holds every draft to the shelf's own rate of the regular tells (`domain/tells.py`)
@@ -500,6 +507,11 @@ def make_scene_draft_handler(
     production runs without the stage and `--revise` is the arm that keeps it reachable;
     `--no-revise` still parses and does nothing.
     """
+    if reader_mechanism is not None and reader_roster is None:
+        raise ValueError(
+            "a reader mechanism reads with a steering roster; pass the pack's (stage-0 §221)"
+        )
+
     # **The shelf's own rate of each regular tell, read once** (stage-0 §199): the highest
     # density any placed opening reaches, family by family, is what a draft is held to.
     tells_limits = (
@@ -1179,6 +1191,7 @@ def make_scene_draft_handler(
         if (
             reader_mechanism is not None
             and reader_shape is not None
+            and reader_roster is not None
             and outcome.revision is not None
             and selected.get("chapter_end") is True
         ):
@@ -1196,6 +1209,7 @@ def make_scene_draft_handler(
                         ),
                         mechanism=reader_mechanism,
                         shape=reader_shape,
+                        roster=reader_roster,
                     ),
                 )
         realizations: tuple[InterventionRealization, ...] = ()

@@ -19,6 +19,7 @@ from litharness.application import readers
 from litharness.application.conductor import JobHandler
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import PlanningStore, ReaderControlStore, TextGenerator
+from litharness.domain.audience import Reader
 from litharness.domain.budget import BudgetPolicy, BudgetVerdict
 from litharness.domain.budget import check as budget_check
 from litharness.domain.directives import Directive, DirectiveKind, directive_id_for
@@ -111,7 +112,24 @@ def _stamp(now: float) -> str:
     return datetime.fromtimestamp(now, tz=UTC).isoformat().replace("+00:00", "Z")
 
 
-def mechanism_spec_digest() -> str:
+def _steering(roster: Sequence[Reader]) -> tuple[Reader, ...]:
+    """The roster, if every reader on it steers. A measurement reader in a steering panel would
+    put a reader that judges the prose among those that shape it (§97.1)."""
+    wrong = [reader.reader_id for reader in roster if reader.pool != readers.STEERING]
+    if wrong:
+        raise ValueError(f"{wrong} are not steering readers and may not sit on a checkpoint panel")
+    return tuple(roster)
+
+
+def mechanism_spec_digest(roster: Sequence[Reader]) -> str:
+    """The digest that names a mechanism version, over the steering roster it reads with.
+
+    **The roster is an argument since stage-0 §221**, when the LitRPG readers moved behind
+    `packs/litrpg` and the application layer stopped reaching for a module constant. The
+    persona system text was always hashed here, so for the same readers the bytes are the same:
+    every stored `spec_digest` still resolves and every frozen job still validates. The
+    composition root passes the pack's steering roster.
+    """
     return payload_digest(
         {
             "mechanism_id": MECHANISM_ID,
@@ -119,7 +137,7 @@ def mechanism_spec_digest() -> str:
             "schema": readers.ANTICIPATION_SCHEMA,
             "reader_personas": [
                 {"reader_id": reader.reader_id, "system": reader.system()}
-                for reader in readers.pool(readers.STEERING)
+                for reader in _steering(roster)
             ],
             "stop_rule": "text.stop_point.v0",
             "context_rule": {
@@ -130,8 +148,8 @@ def mechanism_spec_digest() -> str:
     )
 
 
-def experimental_mechanism(*, registered_at: str) -> ReaderMechanism:
-    spec = mechanism_spec_digest()
+def experimental_mechanism(*, registered_at: str, roster: Sequence[Reader]) -> ReaderMechanism:
+    spec = mechanism_spec_digest(roster)
     status = ReaderMechanismStatus.EXPERIMENTAL
     return ReaderMechanism(
         mechanism_id=MECHANISM_ID,
@@ -207,8 +225,9 @@ def reader_jobs_for_checkpoint(
     prior_observations: Sequence[ReaderObservation],
     mechanism: ReaderMechanism,
     shape: SerialShape,
+    roster: Sequence[Reader],
 ) -> tuple[Job, ...]:
-    """Freeze one steering request per reader at a completed chapter boundary."""
+    """Freeze one steering request per reader of `roster` at a completed chapter boundary."""
     if mechanism.status is ReaderMechanismStatus.WITHDRAWN:
         return ()
     node = revision.node(logical_id)
@@ -235,7 +254,7 @@ def reader_jobs_for_checkpoint(
         shape=shape,
     )
     checkpoint_id = checkpoint_id_for(revision.revision_id, logical_id, chapter_index)
-    panel = readers.pool(readers.STEERING)
+    panel = _steering(roster)
     jobs: list[Job] = []
     for reader in panel:
         request = readers.render_anticipation_request(
@@ -374,13 +393,16 @@ def _shape_decision(
 
 
 def _validate_observation_job(
-    store: ReaderControlStore, job: Job, request: CompletionRequest
+    store: ReaderControlStore,
+    job: Job,
+    request: CompletionRequest,
+    roster: Sequence[Reader],
 ) -> None:
     if not job.input_digest or job.input_digest != input_digest_for(job.payload):
         raise ReaderControlOutputError("reader job input digest does not match its payload")
     reader_id = str(job.payload.get("reader_id") or "")
     persona = next(
-        (item for item in readers.pool(readers.STEERING) if item.reader_id == reader_id),
+        (item for item in _steering(roster) if item.reader_id == reader_id),
         None,
     )
     if persona is None or job.payload.get("pool") != readers.STEERING:
@@ -390,7 +412,7 @@ def _validate_observation_job(
     if (
         mechanism.status is ReaderMechanismStatus.WITHDRAWN
         or (current is not None and current.status is ReaderMechanismStatus.WITHDRAWN)
-        or mechanism.spec_digest != mechanism_spec_digest()
+        or mechanism.spec_digest != mechanism_spec_digest(roster)
     ):
         raise ReaderControlOutputError("reader observation job names an unsupported mechanism")
     if (
@@ -431,16 +453,19 @@ def make_reader_observation_handler(
     store: ReaderControlStore,
     project_id: str,
     *,
+    roster: Sequence[Reader],
     budget: BudgetPolicy | None = None,
 ) -> JobHandler:
+    """The handler that answers one frozen steering request, validated against `roster`."""
     budget_policy = budget or BudgetPolicy()
+    panel = _steering(roster)
 
     def handle(job: Job, now: float) -> Sequence[Event]:
         existing = store.reader_observation_for_job(job.job_id)
         if existing is not None:
             return ()
         request = _request_from(job.payload.get("request"))
-        _validate_observation_job(store, job, request)
+        _validate_observation_job(store, job, request, panel)
         provider, _ = registry.resolve(request.call_class)
         verdict = budget_check(
             budget_policy,

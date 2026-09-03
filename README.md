@@ -286,6 +286,17 @@ not delete the finding.
 
 ## Simulated readers
 
+The readership is also a port another pipeline can call (stage-0 §221): `application/instrument.py`
+takes a passage, an audience (a domain pack, a roster, a population) and a currency, stops the
+readers part-way, and returns a content-addressed record — the continue/abandon/return
+distribution per reader with each reader's own sentence, a validity block that names every rail
+and says what it did and did not do, the transport failures, and the hashes it was computed from.
+There is no score and no verdict slot, and the record refuses one added later. `instrument.report`
+renders the Markdown a downstream pipeline pastes into its README or model card, from the record
+alone. Domains are packs under `src/litharness/packs/`: `litrpg` is the house's readership and
+`plain` reads anything with no genre, no rival and no craft essay; the application layer imports
+only the seam, never a pack.
+
 The simulated readership can stop part-way through the latest drafted scene, or one named scene:
 
 ```bash
@@ -383,10 +394,26 @@ continuous across every boundary. An incomplete final volume means work in progr
 ending. Incomplete chapters are withheld from paste-ready output while reading copies show their
 gaps explicitly. The library is a file handoff, not a posting scheduler or publication platform.
 
+The release queue is the operator's, and the tool never posts (stage-0 §221):
+
+```bash
+uv run litharness --database book.db --chapter-scenes 1 release stage --chapter 1 --slot 2026-09-10 --tag AI-Generated --tag LitRPG
+uv run litharness --database book.db release approve rel-… --by "your name"
+uv run litharness --database book.db release record-posted rel-… --by "your name"
+uv run litharness --database book.db release show
+```
+
+`stage` writes the chapter's pastable copy under its content hash into the shelf's `release/`
+folder, which no republish touches; `approve` re-renders the chapter and refuses if the book has
+moved under the entry; `record-posted` is the operator saying, afterwards, that the approved copy
+went up by hand. The AI-Generated tag is a required field the operator states, not a default, and
+the author note carries the disclosure that names this repository. There is no `post`.
+
 ## Repository map
 
 - `src/litharness/domain/` — rules and value objects; imports only inward.
 - `src/litharness/application/` — workflows over structural ports.
+- `src/litharness/packs/` — domain packs behind the evaluator's seam; `litrpg` and `plain`.
 - `src/litharness/adapters/` — SQLite persistence and artifact translation.
 - `src/litharness/providers/` — pinned model transport and deterministic fake.
 - `migrations/` — append-only, checksummed SQLite migrations.

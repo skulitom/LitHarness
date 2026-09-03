@@ -56,6 +56,7 @@ sys.path.insert(0, str(HERE.parent.parent / "src"))
 
 from litharness.application import readers as readers_mod  # noqa: E402
 from litharness.domain import rivals as rivals_mod  # noqa: E402
+from litharness.packs import litrpg as litrpg_pack  # noqa: E402
 from litharness.providers import build_default_registry  # noqa: E402
 
 DERIVED = HERE / "derived"
@@ -88,7 +89,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--low", default=str(DERIVED / "rivals-low.json"))
     parser.add_argument("--pairs", type=int, default=8)
     parser.add_argument("--out", type=Path, default=RESULTS / "blurb-gradient.json")
-    parser.add_argument("--blind", action="store_true", help="use `readers.BLIND`")
+    parser.add_argument("--blind", action="store_true", help="use `packs.litrpg.BLIND`")
     args = parser.parse_args(argv)
 
     high = json.loads(Path(args.high).read_text(encoding="utf-8"))
@@ -96,7 +97,7 @@ def main(argv: list[str] | None = None) -> int:
     pairs = matched_pairs(high, low, args.pairs)
     registry = build_default_registry()
     seats = (
-        readers_mod.BLIND if args.blind else readers_mod.pool(readers_mod.MEASUREMENT)
+        litrpg_pack.BLIND if args.blind else litrpg_pack.pool(readers_mod.MEASUREMENT)
     )
     print(f"{len(pairs)} matched pair(s), HIGH from {len(high)}, LOW from {len(low)}")
 

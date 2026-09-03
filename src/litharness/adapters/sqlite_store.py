@@ -43,6 +43,7 @@ from litharness.adapters.sqlite_errors import (
 )
 from litharness.adapters.sqlite_jobs import SqliteJobRepository
 from litharness.adapters.sqlite_plans import SqlitePlanRepository
+from litharness.adapters.sqlite_release import SqliteReleaseRepository
 from litharness.adapters.sqlite_roster import SqliteRosterRepository
 from litharness.adapters.sqlite_voice import SqliteVoiceRepository
 from litharness.domain.budget import Spend
@@ -77,6 +78,7 @@ from litharness.domain.policy import (
     VerdictSource,
 )
 from litharness.domain.promises import PROMISE_OPEN, PROMISE_PAID, Promise
+from litharness.domain.release import ReleaseEntry, ReleaseStatus
 from litharness.domain.reviser import PreRevisionDraft
 from litharness.domain.revision import Revision, node_version_id
 from litharness.domain.state import key_space as _order_key_space
@@ -263,6 +265,7 @@ class SqliteStore:
             insert_decision=SqliteStore._insert_decision,
         )
         self._voice = SqliteVoiceRepository(connection, transaction)
+        self._release = SqliteReleaseRepository(connection, transaction)
 
     # -- lifecycle ------------------------------------------------------------
 
@@ -1958,6 +1961,38 @@ class SqliteStore:
     ) -> int:
         """Turn proposed writers down as one decision. Returns how many moved."""
         return self._roster.refuse_writers(writer_ids, decision=decision, refused_at=refused_at)
+
+    # --- the release queue --------------------------------------------------------------
+    #
+    # Delegates only. `sqlite_release.py` carries the one-live-entry rule and routes every move
+    # through `domain/release.transition`; nothing here or there posts anything (§221).
+
+    def stage_release(self, entry: ReleaseEntry) -> bool:
+        return self._release.stage_release(entry)
+
+    def release_entry(self, release_id: str) -> ReleaseEntry | None:
+        return self._release.release_entry(release_id)
+
+    def release_entries(
+        self, book_id: str, branch_id: str, *, status: ReleaseStatus | None = None
+    ) -> list[ReleaseEntry]:
+        return self._release.release_entries(book_id, branch_id, status=status)
+
+    def live_release(
+        self, book_id: str, branch_id: str, chapter_number: int
+    ) -> ReleaseEntry | None:
+        return self._release.live_release(book_id, branch_id, chapter_number)
+
+    def move_release(
+        self,
+        release_id: str,
+        to: ReleaseStatus,
+        *,
+        at: str,
+        by: str,
+        reason: str | None = None,
+    ) -> ReleaseEntry:
+        return self._release.move_release(release_id, to, at=at, by=by, reason=reason)
 
     # --- drawn exemplar passages -------------------------------------------------------
     #

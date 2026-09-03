@@ -21,6 +21,7 @@ import pytest
 from litharness.application import overview, readers, titles
 from litharness.cli import EXIT_OK, main
 from litharness.domain import writers as writers_domain
+from litharness.packs import litrpg
 
 WRITER = writers_domain.CAST["ferreira"]
 
@@ -179,14 +180,14 @@ def test_with_nothing_taken_the_title_call_is_what_it_always_was() -> None:
 
 
 def test_the_browsing_reader_sees_the_title_above_the_blurb_when_there_is_one() -> None:
-    reader = readers.pool(readers.MEASUREMENT)[0]
+    reader = litrpg.pool(readers.MEASUREMENT)[0]
     with_title = readers.render_start_request(reader, "a listing", "The Cinder Road")
     assert with_title.prompt.startswith("The Cinder Road\n\na listing")
 
 
 def test_the_no_title_arm_is_byte_identical_to_every_round_before_titles_existed() -> None:
     """The control has to be the same code path, or the comparison is between two scripts."""
-    reader = readers.pool(readers.MEASUREMENT)[0]
+    reader = litrpg.pool(readers.MEASUREMENT)[0]
     assert (
         readers.render_start_request(reader, "a listing", "").prompt
         == readers.render_start_request(reader, "a listing").prompt
@@ -194,7 +195,7 @@ def test_the_no_title_arm_is_byte_identical_to_every_round_before_titles_existed
 
 
 def test_a_steering_reader_still_may_not_measure() -> None:
-    steering = readers.pool(readers.STEERING)[0]
+    steering = litrpg.pool(readers.STEERING)[0]
     with pytest.raises(ValueError):
         readers.render_start_request(steering, "a listing", "The Cinder Road")
 
