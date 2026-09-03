@@ -166,7 +166,14 @@ def _is_position_in(records: Sequence[lc.StateRecord], system: gamesystem_mod.Sy
             for key in snapshot
             if not (key.endswith(MAX_SUFFIX) and key[: -len(MAX_SUFFIX)] in wanted)
         }
-        if keys == wanted:
+        # **A column the snapshot lacks is a grant nobody holds yet** (§211, and the fit
+        # census's probes, `research/quality-measurement/system-fit/`): a system grows after
+        # the seed, and an exact comparison took every book on it from drafting to blocked
+        # at the first grant declared since, until somebody re-seeded the snapshot by hand.
+        # A snapshot carrying the rung and only the system's columns is a position in it;
+        # an extra column is still a different sheet, and one without the rung stands
+        # nowhere.
+        if gamesystem_mod.RANK_KEY in keys and keys <= wanted:
             return True
     return False
 
@@ -193,10 +200,17 @@ def system_gap(records: Sequence[lc.StateRecord]) -> str | None:
     true one on a channel nobody watches. `gamesystem.unfinished_systems` tells the two apart
     in the reader's own terms, so `check` and `accept` now name the same missing piece.
     """
+    # **An owner's sheet is not a second book sheet** (§206, found by the fit census's
+    # probes, `research/quality-measurement/system-fit/`): a creature's, a place's or an
+    # item's sheet carries `owner` and never competes for the book's line, so counting it
+    # here told a book with its own sheet and one creature's that it had declared two and
+    # must retract one, on every `world check` after §206 and on nothing before it.
     sheets = sum(
         1
         for record in records
-        if record.predicate == SHEET_PREDICATE and state_mod.is_canon(record)
+        if record.predicate == SHEET_PREDICATE
+        and state_mod.is_canon(record)
+        and not (isinstance(record.value, Mapping) and record.value.get("owner"))
     )
     if sheets > 1:
         return (

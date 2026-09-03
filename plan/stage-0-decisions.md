@@ -23254,3 +23254,73 @@ its class when the method was the last one, into the next class's header; ruff c
 before any test ran, and the block was removed by exact text instead.
 
 **Anti-scope.** Nothing in this sub-entry is a new decision; it closes §214.
+
+
+## 217. The fit census: declared shape by shape, the house expresses seven in ten of the market's furniture features and three of sixty whole stories, and the gaps rank with the System's own voice first
+
+**What it answers.** The operator's question of 2026-09-03 (`plan/system-generality.md` §1):
+*will our system be able to fit any possible LitRPG story out there, and any future potential
+LitRPG?* The generality track closed its five phases against this house's own defects (§202
+to §212.1); this census measures the vocabulary against the market's furniture, by declaring
+rather than by arguing, and names every gap by the share of stories it blocks
+(`plan/handoff-market-fit.md`, which the last slice of this track deletes).
+
+**Measured first** (`research/quality-measurement/system-fit/`: `PREREG.md`, `sample.py`,
+`sample.json`, `shapes.jsonl`, `census.py`, `census.json`, `FINDINGS.md`; no model). One
+pass over the cached LitRPG shards (14,156 chapters, 608 stories, 301 that print a window),
+sixty of the window-printing stories drawn by seed, each story's furniture read by one reader
+into a shape in the house vocabulary (fields of kinds on owners, moves, displays, rules; labels
+only from the eighty the displays census already publishes, nothing quoted), the four shelf
+anchors beside them; every shape translated by clauses fixed before the sample was read into
+a `world declare` sequence, run through `world check` and `world accept` on a fresh store (a
+second round where growth needs one), every owner's line rendered, and the outcome read off
+the store's own sentences. **Three of the sixty market shapes declare cleanly, four with a
+workaround, fifty-three carry a feature nothing declares**; feature by feature, 844 of 1,224
+are clean (69 percent), 144 a workaround, 78 refused, 158 missing. The gaps by share of the
+sixty: a notice for anything but a gain or a rise (the System speaking, a welcome, a warning,
+a quest given, a title, a zone) 49 of 60; a plain column beside a system's grants (a pool, a
+currency, a class, an age on the same line) 30, every shape that took the system route; a
+quest card 27; another subject's sheet read where the protagonist reads it 23 (§209's owed
+readout); a menu, a store, a board 21; a rise by accumulation 19; a percent 18 (a
+workaround); a skill list with no prerequisite among its members 16 (refused: *a list rather
+than a graph*); a window wider than the nine columns the line prints 15 (a quarter of the
+shapes); more than eight grants 15 (two rounds); a paragraph on a screen 15; a list whose
+members carry a rank or a second number 13; grants held with no depth anywhere 13 (refused:
+*declares no depth*); an item's box 11; a derived figure 10; a class, title, race or item that
+moves a number 9; fewer than five grants 9; a pool's refill 8. The store refused every one of
+the thirty system shapes before its mixed-columns branch, so that count is the clause's and
+the store's sentence for it was read on the probe, not in the sample (FINDINGS says so in
+place). The four anchors: every one not expressible, three on the System's own voice, one on
+a party screen, and the widest on twelve gaps at once.
+
+**What shipped.** The census and its files, the reader's three amendments recorded in the
+registration before any declaration ran (a tier with a number after it as two fields, a
+decimal as text, a choice screen whose option count is never shown as two ways), and three
+defects the declaring found in the house, each fixed and replayed identical on the four
+stored books with `tools/replay_books.py --baseline` (8/8, nothing moved):
+`genre.system_gap` counted an owner's sheet (§206) as a second book sheet and told the book
+to retract one (`test_an_owner_s_sheet_is_not_a_second_book_sheet_for_the_system_gap`);
+after §211 the floor compared a snapshot's keys to a grown system's exactly and blocked the
+book at the first grant declared after the seed, while the following sheet printed `?` for
+every grown column (`test_a_snapshot_lacking_a_grant_declared_since_the_seed_is_still_a_position`,
+`test_a_sheet_following_its_system_hides_a_column_the_snapshot_never_held`); and a
+`status_sheet` declaration the parser refuses took `world accept` down with a traceback
+through §213.1's preview and the floor, where `declare` now says it cannot be read, `check`
+lists it as a complaint over the readable records, and `accept` refuses it without `--force`
+(`test_an_unreadable_sheet_is_a_complaint_and_a_refusal_never_a_traceback`,
+`test_unreadable_sheets_names_the_declaration_the_parser_refuses_and_readable_drops_it`).
+
+**What was refused.** A bar of any kind: the shares are a distribution and the four
+attainability checks were not run because nothing here is a bar. A model reading the dumps:
+one reader, named as the caveat it is. A translator that invents what the furniture does not
+show (a prerequisite to get a flat list past completion, a depth to mint a scale, a fifth
+grant): the census declares what the story prints and the store answers; the drawn profile's
+rules (five to eight grants, a graph not a list, a depth somewhere) block the system route in
+every shape that took it, and whether a *declared* system may be a list, held-or-not or three
+grants wide is a decision for its own entry, not one this census makes. Any change to how the
+corpus is used: shapes crossed to the census, no text did, and the dumps stay outside the
+tree.
+
+**Anti-scope.** Nothing here measures prose; whether a declared shape produces a chapter that
+reads as its genre is the shelf's question and the operator's read. The slices follow in rank
+order, the notice first, each with its own entry and its own replay.

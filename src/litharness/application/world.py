@@ -284,7 +284,7 @@ def vocabulary() -> dict[str, Any]:
                 "declare exactly one or none: a "
                 "book that declares none, and a book that declares two, both print a generic "
                 "line written in nobody's vocabulary. A drawn system writes its own sheet "
-                "naming it under \"system\", and that sheet prints the system's grants as "
+                'naming it under "system", and that sheet prints the system\'s grants as '
                 "they stand, so a grant declared after the seed is a column at once"
             ),
             "status_snapshot": (
@@ -596,7 +596,7 @@ def snapshot_faults(records: Sequence[lc.StateRecord]) -> list[str]:
     """
     as_canon = [
         dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
-        for record in records
+        for record in extraction.readable(records)
     ]
     sheet = extraction.sheet_for(as_canon)
     if sheet is None:
@@ -699,8 +699,13 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     `domain/schema_words.py` for this the same way it reads `validate` for that. The two lists
     are different questions and are kept as two.
     """
+    # **A sheet declaration the parser refuses is a complaint, and every reader below
+    # works on the records without it** (found by the fit census): before this, one such
+    # proposal took `check` and `accept` down with a traceback where a sentence was owed.
+    unreadable = extraction.unreadable_sheets(records)
+    records = [record for record in records if record.record_id not in unreadable]
     coverage = worlds.manifestation_coverage(records)
-    complaints = list(worlds.validate(records))
+    complaints = list(unreadable.values()) + list(worlds.validate(records))
     gaps: list[str] = []
     if not genre.has_starting_sheet(records):
         gaps.append(
