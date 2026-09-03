@@ -291,7 +291,11 @@ def vocabulary() -> dict[str, Any]:
                 "book that declares none, and a book that declares two, both print a generic "
                 "line written in nobody's vocabulary. A drawn system writes its own sheet "
                 'naming it under "system", and that sheet prints the system\'s grants as '
-                "they stand, so a grant declared after the seed is a column at once"
+                "they stand, so a grant declared after the seed is a column at once. A sheet "
+                "naming a system may declare columns of its own beside the system's (a pool, "
+                "a currency, a class, an age): they print where declared, the system's "
+                "columns take the place of the first of theirs, and a snapshot that carries "
+                "the rung column is a position in the system whatever else it prints"
             ),
             "status_snapshot": (
                 "where those columns stand; --value an object mapping each field name to "

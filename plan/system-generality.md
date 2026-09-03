@@ -241,8 +241,8 @@ The ranked gaps, and what each is in this note's terms:
    warning, a quest given, a title, a zone. A `change` node with a `manifests_as` line is the
    declared shape; §218 asks the scene it lands in to print it under the book's bracket.
 2. **Plain columns beside a system's grants**: a pool, a currency, a class or an age on the
-   line with the grants. Refused on purpose at completion (§165.2's branch); the census earns
-   the reversal. The second slice.
+   line with the grants. Refused on purpose at completion (§165.2's branch); §219 reverses
+   it: a snapshot that carries the rung is a position in its system whatever else it prints.
 3. **The quest card**: the notice's twin with counters; a change the System announces, its
    counters paired columns already. Not earned separately until the notice has been drawn.
 4. **The readout on request** (§209's owed item): every fact declarable since §206, nothing

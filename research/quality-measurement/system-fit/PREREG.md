@@ -131,6 +131,12 @@ before any shard was: an id in a numeric column, or a held grant on the opening 
 leaves the shape's sheet half as it was: the book drafts under its plain sheet and no beat
 speaks its system, which is the house's own sentence and is recorded beside the tag.
 
+**Amendment after the census ran (§219).** The `mixed_columns` clause is the translator's no
+longer: the slice landed as §219 lets a sheet carry columns of its own beside a system's
+grants, so `census.py` tags nothing for it and the store answers. `census.json` is §217's
+record, taken before the slice, and keeps the clause's count of thirty; a re-run measures the
+tree as it stands.
+
 ## What is reported
 
 `sample.json` (the draw), `shapes.jsonl` (sixty-four rows), `census.json` (per shape: the
