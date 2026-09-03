@@ -71,3 +71,25 @@ the `toll.db` shape `RUNBOOK.md` opens with. The default is now the absolute
 `DEFAULT_CACHE = results/anticipation-raw.jsonl`, an explicitly passed `--cache` is taken as
 typed, and `tests/test_anticipation.py` pins it. No cache existed when this was found, so no
 record was invalidated and no measurable moved.
+
+## Addendum, 2026-09-04: the run is parallel, and that is execution rather than design
+
+The first launch ran sequentially — the driver had no worker pool, only because none had been
+written — and measured **67 seconds a call** on the `claude -p` transport. At the registered 800
+calls that is about fifteen hours, which would have spent a whole quota window on one arm while
+the box sat otherwise idle. The run was stopped at 12 bought calls (all of which replay free
+from the cache) and the driver now runs the sixteen calls of one `(passage, arm)` beside each
+other, `--workers 3` by default.
+
+**Nothing registered moves.** Every request, system prompt, schema, cache key and sample index
+is the one the sequential loop built; the cells are reassembled in persona order and draw order,
+so the result file is the one a sequential run would have written. `Elicitor` locks its cache
+and its counters and is used concurrently by its own `compare_pair`; the sibling instrument's
+driver has run a pool over sessions since §122. The ceiling still moves only between arms, where
+this registration put it.
+
+**Two or three workers and no more**, because the box froze on 2026-09-03 under one arm at three
+workers beside five other sessions, and because `claude -p` degrades under load rather than
+failing loudly (`CLAUDE.md`). A parallel run pays a cache write per concurrent call where a
+sequential one shares a read, so the quota cost per call is expected to be somewhat higher; the
+ledger reports `equivalent_usd` either way.
