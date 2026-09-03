@@ -13,12 +13,27 @@ chapters present, chapters one to three by `position`. Text only; no engagement 
 read (this is a census of what is on the page, and the conversion label would be a second
 question). Under the MirrorBench interpreter, one CPU job, no model.
 
+## Amendment before the run (2026-09-03, after two dry runs and before any full read)
+
+The shards hold an arbitrary slice of each fiction, not its opening: `corpus_io` leaves
+`position` at zero and the chapter title field carries the fiction's title, so *chapters one
+to three by position* cannot be read off the metadata. Two readings replace it, both fixed
+here before the run. **The early slice:** each story's three earliest chapters in the shards
+by release date (positions 1 to 3 *within the sampled slice*), for every story with at least
+three chapters present; this is a census of early-sampled chapters and is reported as such.
+**The true openings:** the subset of chapters whose first lines carry a chapter-one or
+prologue heading in the text itself (a dry run found about one such chapter in a hundred and
+sixty, roughly one story in seven); the chapter-one readings below are taken from this subset
+when it holds at least two hundred stories, and the entry says so if it does not. The subset's
+bias is named: authors who write the heading into the text.
+
 ## What is counted, per chapter
 
 Lines that are not prose come from `progression_cadence`'s furniture classifier (`v2`), the
 same reading the cadence census used, so the two censuses agree on what a line is.
 
-- **A window** is a run of two or more consecutive furniture lines. Per window: the field
+- **A window** is a run of two or more furniture lines with only blank lines between them
+  (the placed openings put a blank line between fields; a run ends at a prose line). Per window: the field
   count (lines that read as `label: value` or `label value`, value numeric or a short token),
   and the share of fields whose value is `0`, `N/A`, `None`, `---`, `-` or empty.
 - **A notice** is a furniture line that is not inside a window, split by the cadence census's

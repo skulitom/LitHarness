@@ -33,7 +33,6 @@ VERSION = "v2"
 POSITIONS = (1, 2, 3)
 FAMILIES = ("level_up", "capability", "stat_delta", "other")
 
-_FIELD_COLON = re.compile(r"^\s*([A-Za-z][A-Za-z '\-/().]{0,40}?)\s*:\s*(.+?)\s*$")
 _FIELD_SPACE = re.compile(
     r"^\s*([A-Za-z][A-Za-z '\-/().]{0,30}?)\s+([-+]?\d[\d,./%]*|N/A|n/a|None|---)\s*$"
 )
@@ -46,10 +45,23 @@ _ITEM = re.compile(
     re.IGNORECASE,
 )
 _QUEST = re.compile(r"\b(quest|objective|objectives|reward|rewards)\b", re.IGNORECASE)
+#: A chapter whose first lines carry its own heading as chapter one or a prologue: the true
+#: openings, the subset the chapter-one readings come from (PREREG.md, the amendment).
+_FIRST_HEADING = re.compile(
+    r"^\s*(?:chapter|ch\.?|part)\s*(?:0*1|one|i)\b[^0-9]*$|^\s*prologue\b"
+    r"|^\s*(?:0*1|one)\s*[.:)\-–—]\s*\S",  # noqa: RUF001
+    re.IGNORECASE | re.MULTILINE,
+)
+HEAD_CHARS = 160
 
 
 def _inner(line: str) -> str:
-    return line.strip(cadence._EDGE).strip()
+    """The line without its box: edge characters are stripped only from a line that opens
+    with one, so a placeholder value at the end of a bare line (*Class: ---*) survives."""
+    stripped = line.strip()
+    if stripped and stripped[0] in cadence._EDGE:
+        return stripped.strip(cadence._EDGE).strip()
+    return stripped
 
 
 def classify_lines(text: str) -> list[str]:
@@ -58,32 +70,70 @@ def classify_lines(text: str) -> list[str]:
     ]
 
 
-def runs_of(classes: list[str]) -> list[tuple[int, int]]:
-    """Maximal runs of non-prose lines, as (start, end) exclusive."""
+def runs_of(classes: list[str], lines: list[str]) -> list[tuple[int, int]]:
+    """Maximal runs of non-prose lines, as (start, end) exclusive.
+
+    A blank line is neutral: the placed openings' windows put a blank line between fields
+    (*Class: ---*, blank, *Level: N/A*), so a run continues across blanks and ends at prose,
+    and is trimmed of the blanks at either end.
+    """
     runs: list[tuple[int, int]] = []
     start = None
-    for index, kind in enumerate([*classes, ""]):
-        if kind and start is None:
-            start = index
-        elif not kind and start is not None:
-            runs.append((start, index))
-            start = None
+    last_furnished = None
+    for index, kind in enumerate([*classes, "prose"]):
+        blank = index < len(lines) and not lines[index].strip()
+        if kind and kind != "prose":
+            if start is None:
+                start = index
+            last_furnished = index
+        elif blank and start is not None:
+            continue
+        elif start is not None:
+            runs.append((start, (last_furnished or start) + 1))
+            start = last_furnished = None
     return runs
 
 
-def field_of(line: str) -> tuple[str, str] | None:
+_LABEL_MARK = re.compile(r"([A-Za-z][A-Za-z '()\-/]{0,30}?)\s*[:=]\s*")
+_LAST_NUMBER = re.compile(r"[-+]?\d[\d,]*(?:\.\d+)?%?(?:\s*/\s*\d[\d,]*)?")
+
+
+def fields_on(line: str) -> list[tuple[str, str]]:
+    """Every `label: value` pair on one furniture line, in order.
+
+    The market writes several fields to a line (*Physical Stats: Power: 17 Agility: 25*), so a
+    line is split at its label marks; a mark whose value is empty is a group header (*Physical
+    Stats:*) and is dropped. A value written as a change (*80 → 160*) is read as its last
+    number, the value the window shows after the change.
+    """
     inner = _inner(line)
-    match = _FIELD_COLON.match(inner) or _FIELD_SPACE.match(inner)
-    if match is None:
-        return None
-    label, value = match.group(1).strip(), match.group(2).strip()
-    if len(value) > 40:
-        return None
-    return label, value
+    marks = list(_LABEL_MARK.finditer(inner))
+    if not marks:
+        match = _FIELD_SPACE.match(inner)
+        return [(match.group(1).strip(), match.group(2).strip())] if match else []
+    pairs: list[tuple[str, str]] = []
+    for index, mark in enumerate(marks):
+        end = marks[index + 1].start() if index + 1 < len(marks) else len(inner)
+        value = inner[mark.end() : end].strip(" ,;|")
+        if value and len(value) <= 60:
+            pairs.append((mark.group(1).strip(), value))
+    return pairs
 
 
 def is_zero(value: str) -> bool:
-    return bool(_ZERO.match(value.strip())) or value.strip() == ""
+    """Whether a field's shown value is zero, blank or a placeholder; a change reads its end."""
+    text = value.strip()
+    if not text or _ZERO.match(text):
+        return True
+    numbers = _LAST_NUMBER.findall(text)
+    if not numbers:
+        return False
+    last = numbers[-1].replace(",", "")
+    current = last.split("/")[0].strip().rstrip("%")
+    try:
+        return float(current) == 0.0
+    except ValueError:
+        return False
 
 
 def notice_family(line: str) -> str:
@@ -114,7 +164,7 @@ def measure_chapter(text: str) -> dict[str, Any]:
         "item_boxes": 0,
         "quest_cards": 0,
     }
-    for start, end in runs_of(classes):
+    for start, end in runs_of(classes, lines):
         furniture = [i for i in range(start, end) if classes[i] == "furniture"]
         if not furniture:
             continue
@@ -123,8 +173,7 @@ def measure_chapter(text: str) -> dict[str, Any]:
             continue
         row["windows"] += 1
         block = [lines[i] for i in furniture]
-        found = [field_of(line) for line in block]
-        fields = [f for f in found if f is not None]
+        fields = [pair for line in block for pair in fields_on(line)]
         zeros = sum(1 for _, value in fields if is_zero(value))
         row["fields"].append(len(fields))
         row["total_fields"] += len(fields)
@@ -168,6 +217,8 @@ def summarise(rows: list[dict[str, Any]]) -> dict[str, Any]:
     groups: dict[str, list[dict[str, Any]]] = {"pooled": rows}
     for position in POSITIONS:
         groups[f"position_{position}"] = [r for r in rows if r["position"] == position]
+    # The true openings: chapters whose own first lines say chapter one or prologue.
+    groups["true_opening"] = [r for r in rows if r.get("true_opening")]
     for name, group in groups.items():
         n = len(group)
         if not n:
@@ -207,23 +258,36 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path, default=HERE)
     args = parser.parse_args(argv)
 
-    by_story: dict[str, dict[int, corpus_io.Unit]] = defaultdict(dict)
+    # The shards hold an arbitrary slice of each fiction (`corpus_io.by_story`'s docstring), so
+    # a position is the chapter's rank by release date *within the sampled slice*, and a true
+    # opening is read off the text's own heading (PREREG.md, the amendment). Only the earliest
+    # three per story are kept in memory beyond their counts.
+    by_story: dict[str, list[tuple[str, str, corpus_io.Unit]]] = defaultdict(list)
     read = 0
     for unit in corpus_io.royalroad_chapters(limit=args.limit):
         read += 1
-        if unit.position in POSITIONS:
-            by_story[unit.work_id][unit.position] = unit
+        key = (unit.released_at or "", unit.unit_id)
+        earliest = by_story[unit.work_id]
+        earliest.append((*key, unit))
+        earliest.sort(key=lambda item: (item[0], item[1]))
+        del earliest[len(POSITIONS) :]
         if read % 5000 == 0:
             print(f"  read {read} chapters, {len(by_story)} stories", file=sys.stderr, flush=True)
 
     rows: list[dict[str, Any]] = []
-    for work_id, chapters in by_story.items():
-        if any(position not in chapters for position in POSITIONS):
+    for work_id, earliest in by_story.items():
+        if len(earliest) < len(POSITIONS):
             continue
-        for position in POSITIONS:
-            unit = chapters[position]
+        for position, (_date, _uid, unit) in zip(POSITIONS, earliest, strict=True):
             row = measure_chapter(unit.text)
-            row.update({"work_id": work_id, "position": position, "unit_id": unit.unit_id})
+            row.update(
+                {
+                    "work_id": work_id,
+                    "position": position,
+                    "unit_id": unit.unit_id,
+                    "true_opening": bool(_FIRST_HEADING.search(unit.text[:HEAD_CHARS])),
+                }
+            )
             rows.append(row)
 
     args.out.mkdir(parents=True, exist_ok=True)
