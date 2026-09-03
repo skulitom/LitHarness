@@ -104,6 +104,21 @@ def _imports(path: Path, known_modules: set[str]) -> list[tuple[str, int]]:
     return found
 
 
+#: The seams `domain/extraction.py` was split along (stage-0 §215), as the arrows that may not
+#: point back. `extraction` re-exports every name the four modules below it define, so any of
+#: them importing `extraction` closes a cycle the moment it lands; `sheet` reads only `names`;
+#: `graphline` reads the sheet's refusal class and nothing above it; `moves` reads all three;
+#: and `gamesystem` sits under all five, for the reason
+#: `tests/test_gamesystem.py::test_the_module_hands_out_columns_rather_than_sheet_fields` gives.
+EXTRACTION_SEAMS: dict[str, frozenset[str]] = {
+    "names": frozenset({"sheet", "graphline", "moves", "extraction", "gamesystem"}),
+    "sheet": frozenset({"graphline", "moves", "extraction"}),
+    "graphline": frozenset({"moves", "extraction"}),
+    "moves": frozenset({"extraction"}),
+    "gamesystem": frozenset({"names", "sheet", "graphline", "moves", "extraction"}),
+}
+
+
 def test_dependencies_only_point_outward_to_inward() -> None:
     modules = _modules()
     violations: list[str] = []
@@ -119,6 +134,23 @@ def test_dependencies_only_point_outward_to_inward() -> None:
                     f"{source}:{line} ({source_layer}) imports {target} ({target_layer})"
                 )
     assert not violations, "dependency boundary violations:\n" + "\n".join(violations)
+
+
+def test_the_extraction_seams_point_one_way() -> None:
+    """The cycle test would catch a back-arrow only once it closed a cycle; this names the
+    arrows before that, so a convenient `from litharness.domain.extraction import ...` inside
+    `sheet` or `moves` is refused with the seam it crosses rather than with a cycle report
+    that arrives one import later. The seams and their reasons are `EXTRACTION_SEAMS`'s.
+    """
+    modules = _modules()
+    violations: list[str] = []
+    for source, forbidden in EXTRACTION_SEAMS.items():
+        path = modules[f"litharness.domain.{source}"]
+        for target, line in _imports(path, set(modules)):
+            short = target.removeprefix("litharness.domain.")
+            if short in forbidden:
+                violations.append(f"domain/{source}.py:{line} imports {short}")
+    assert not violations, "a seam points the wrong way:\n" + "\n".join(violations)
 
 
 # --- the prose ------------------------------------------------------------------------

@@ -41,6 +41,22 @@ def test_an_unmapped_source_module_falls_back_instead_of_underselecting() -> Non
     assert "no safe test mapping" in selection.reason
 
 
+def test_a_split_seam_module_maps_to_the_tests_that_read_it() -> None:
+    """`_matching_test` would look for `tests/test_sheet.py`, which does not exist: the tests
+    that read the sheet are `extraction`'s (stage-0 §215), and without the explicit row every
+    touch of a sheet reader would fall to the quick lane instead of running them."""
+    for module, expected in (
+        ("src/litharness/domain/names.py", "tests/test_display_names.py"),
+        ("src/litharness/domain/sheet.py", "tests/test_extraction.py"),
+        ("src/litharness/domain/graphline.py", "tests/test_extraction.py"),
+        ("src/litharness/domain/moves.py", "tests/test_choice_points.py"),
+    ):
+        selection = check.select_changed([module])
+
+        assert not selection.use_quick, module
+        assert expected in selection.tests, module
+
+
 def test_a_changed_test_always_selects_itself() -> None:
     selection = check.select_changed(["tests/test_covers.py"])
 

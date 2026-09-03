@@ -48,6 +48,30 @@ _SOURCE_TESTS: Final = {
     # every touch of the Architect's view layer to a full run. The slot suite is the one that
     # grades it: it reads `vocabulary` line by line against the readers in `domain/worlds.py`.
     "src/litharness/application/world.py": ("tests/test_world_slots.py",),
+    # The four modules split out of `domain/extraction.py` (stage-0 §215) have no test file
+    # of their own name: the tests that read them are the ones that read `extraction`, by the
+    # subject each module holds, and `_matching_test` would otherwise send every touch of a
+    # sheet reader to the quick lane.
+    "src/litharness/domain/names.py": (
+        "tests/test_display_names.py",
+        "tests/test_extraction.py",
+    ),
+    "src/litharness/domain/sheet.py": (
+        "tests/test_display_names.py",
+        "tests/test_extraction.py",
+        "tests/test_order_key_spaces.py",
+        "tests/test_page_contract.py",
+    ),
+    "src/litharness/domain/graphline.py": (
+        "tests/test_extraction.py",
+        "tests/test_worlds.py",
+    ),
+    "src/litharness/domain/moves.py": (
+        "tests/test_choice_points.py",
+        "tests/test_progression_gate.py",
+        "tests/test_progression_prompt.py",
+        "tests/test_two_systems.py",
+    ),
     "tools/check.py": ("tests/test_check_tool.py",),
 }
 
