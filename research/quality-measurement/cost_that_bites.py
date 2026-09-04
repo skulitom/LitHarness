@@ -362,11 +362,22 @@ def run_cells(
         with lock:
             if stopped.is_set() or not pending:
                 return None
-            spent = float(elicitor.spend()["equivalent_usd"])
-            if spent >= ceiling_usd:
-                stopped.set()
-                log(f"ceiling: ${spent:.2f} of ${ceiling_usd:.2f} spent; stopping between sessions")
-                return None
+            # **Priced only when a dollar ceiling can actually stop the run.** v2 and v3 stop on
+            # a call ceiling and pass `inf` here, so this used to sum the whole cache about 180
+            # times an arm purely to compare it against infinity — pure waste, and from this
+            # side the sole trigger of §228's race, since `spend()` is what the scheduler read
+            # while workers wrote. The lock on main fixes the race; this removes the reason to
+            # take it. Both ceilings are still read **between sessions**, so a session that has
+            # started always finishes, which is the property the registration depends on.
+            if ceiling_usd != float("inf"):
+                spent = float(elicitor.spend()["equivalent_usd"])
+                if spent >= ceiling_usd:
+                    stopped.set()
+                    log(
+                        f"ceiling: ${spent:.2f} of ${ceiling_usd:.2f} spent; "
+                        "stopping between sessions"
+                    )
+                    return None
             # v2's stop condition is a call ceiling rather than a dollar one; both are read
             # between sessions, so a session that has started always finishes.
             bought = int(getattr(elicitor, "api_calls", 0) or 0)

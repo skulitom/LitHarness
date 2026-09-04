@@ -258,6 +258,57 @@ def test_the_runner_stops_between_sessions_at_the_ceiling_and_says_so() -> None:
     assert ledger["sessions_planned"] == len(cells)
 
 
+def test_an_infinite_dollar_ceiling_never_prices_the_cache() -> None:
+    """v2 and v3 stop on calls, so summing the cache to compare it against infinity is waste —
+    and from the driver's side it was the sole trigger of §228's race. The call ceiling still
+    stops the run, and both ceilings are still read between sessions."""
+    pool = [(f"book-{index}", _member(f"b{index}")) for index in range(4)]
+    cells = ctb.plan(pool, feeds=1)
+    priced = {"calls": 0}
+
+    class _CountingElicitor(ctb._ScriptedElicitor):
+        def spend(self) -> dict:  # type: ignore[override]
+            priced["calls"] += 1
+            return super().spend()
+
+    elicitor = _CountingElicitor(ctb._reads_target_by_version, usd_per_call=0.001)
+    rows, ledger = ctb.run_cells(
+        elicitor, cells, model="test", ceiling_usd=float("inf"), workers=2, log=lambda _: None
+    )
+    assert len(rows) == len(cells)
+    # Once at the end for the ledger, never per cell.
+    assert priced["calls"] == 1, priced
+    assert not ledger["stopped_at_ceiling"]
+
+    # A finite ceiling still prices, and still stops.
+    stopping = _CountingElicitor(ctb._reads_target_by_version, usd_per_call=0.5)
+    priced["calls"] = 0
+    rows_stopped, ledger_stopped = ctb.run_cells(
+        stopping, cells, model="test", ceiling_usd=1.0, workers=1, log=lambda _: None
+    )
+    assert priced["calls"] > 1
+    assert ledger_stopped["stopped_at_ceiling"] and len(rows_stopped) < len(cells)
+
+
+def test_a_call_ceiling_stops_the_run_between_sessions() -> None:
+    pool = [(f"book-{index}", _member(f"b{index}")) for index in range(4)]
+    cells = ctb.plan_v2(pool, books=2)
+    elicitor = ctb._ScriptedElicitor(ctb._reads_target_by_version, usd_per_call=0.0)
+    rows, ledger = ctb.run_cells(
+        elicitor,
+        cells,
+        model="test",
+        ceiling_usd=float("inf"),
+        workers=1,
+        call_ceiling=20,
+        log=lambda _: None,
+    )
+    assert ledger["stopped_at_ceiling"]
+    assert 0 < len(rows) < len(cells)
+    # Every session that started finished: no partial action records.
+    assert all(row.session.scorable for row in rows)
+
+
 def test_a_run_under_the_ceiling_buys_every_cell_and_reads_a_scripted_mover() -> None:
     pool = [(f"book-{index}", _member(f"b{index}")) for index in range(4)]
     cells = ctb.plan(pool)

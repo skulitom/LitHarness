@@ -24297,3 +24297,90 @@ reader learns the wrong rule and "restores" the worse behaviour.
 **Anti-scope.** Nothing about what the census measured moves, and §217's committed record is
 untouched: the strings stay as they were written, and the exemption is about how the audit reads
 them. This does not widen `OURS` or `OURS_EXACT_PATHS`, whose contents remain pinned exactly.
+
+## 230. A costed reader reads a shuffled book less, and it did it twice with the permutation redrawn
+
+**Registered before each spend** — `research/quality-measurement/cost-that-bites/PREREG-v2.md`
+for the arm and `PREREG-v3-replication.md` for the replication, the second written while the
+first's result was on disk and stating its prediction, its band and the outcome that would close
+the direction before any cell was bought. `FINDINGS-v2.md` and `FINDINGS-v3.md` own the readings.
+
+**Measured. Both arms clean, and the replication landed inside the band the registration fixed.**
+
+| | v2 | v3 |
+| --- | --- | --- |
+| shuffle seeds | 0, 1, 2 | 3, 4, 5 (`fitness-08`: 3, 5, 6) |
+| **intact − shuffled** | **+0.1640 [+0.0881, +0.2390]** | **+0.1890 [+0.0747, +0.2955]** |
+| **sham − shuffled** | **+0.2411 [+0.1512, +0.3366]** | **+0.1571 [+0.0690, +0.2437]** |
+| intact − sham | −0.0771 [−0.1658, +0.0146] | +0.0318 [−0.0506, +0.1173] |
+| books moving as predicted | 16 of 20 | 14 of 20 |
+| sessions scorable / transport failures | 180 of 180 / 0 | 180 of 180 / 0 |
+| spend, wall | $49.78, 2h04 | $50.35, 2h04 |
+
+The registered prediction was an interval excluding zero with a point in **[+0.08, +0.25]**, the
+band written down so "near +0.164" could not be decided after the fact. **v3 returned +0.1890.**
+Preconditions passed in both: `fp5` 0.219 and 0.196 against a 0.05 floor, the slot-A capacity
+share 0.5508 and 0.5740 against a 0.40 floor and largest of four each time, twenty books of
+twenty complete. **Nothing is pooled**: two arms side by side, no combined interval, because
+combining after seeing the first would make the pair one arm with a larger n and no registration.
+
+**So the claim, and it is deliberately narrow: a reader whose continuing costs it something reads
+a book less when that book's paragraph order is destroyed, and that is not an artifact of which
+permutation was drawn.** For a book in the slot this reader attends to, on this system's own
+twenty drafted books, on `claude-haiku-4-5` over `claude -p`. **Status: OBSERVED, and SUPPORTED
+for the registered claim across two arms. Not QUALIFIED**, and no editorial intervention is
+licensed by it.
+
+**This is the first mechanism in this house to move with a story-level manipulation and hold
+under replication.** §195.5's opening panel took a paragraph-shuffled copy of ours over an anchor
+at the ordered copy's rate; §199.1's `readers` lanes carried on four of four on every chapter and
+every shuffled copy of it; §227's anticipation probe returned the same answer whatever was done
+to the passage. The difference here is the cost: this reader had to give something up to keep
+reading, and §122 built that instrument for exactly the reason §70's 195-of-196 exposed.
+
+**One registered caution was removed by the replication and two stand.** v2's findings led with
+three ways the result could be less than it looked. The first — that the whitespace sham's point
+estimate ran *negative* in v2, which is not what an inert placebo does — is now weak: across the
+three measurements of that contrast the sign scatters, **+0.089 (v1's slot-A cells), −0.077 (v2),
++0.032 (v3)**, all containing zero and agreeing on no direction, which is what an inert placebo
+looks like and not what a confound looks like. Standing: the effect sits inside rather than
+comfortably inside the band this design can see, and the shuffle-seed spread is still about the
+size of the effect (0.1804 and 0.1957), which is why the replication was worth more than a third
+instrument would have been.
+
+**What it does not license, and the distance is the whole of the remaining work.** A whole-book
+paragraph shuffle is the most violent order damage available. That a costed reader notices it is
+a floor, not a ceiling, and says nothing about a chapter that is merely worse — which is the gap
+every dead proxy in `BRIEF.md` fell into. `plan/reader-architecture-proposal.md` states what
+qualification would require rather than claiming these arms satisfy any of it.
+
+**Provenance, recorded rather than left to a commit date.** v3 was bought while `elicit.spend()`
+still read the cache unlocked (§228, fixed on main as `ffaee27` after this arm started and before
+its results were committed). That defect can only **raise**: it cannot alter a session's content,
+cache key or scoring, it cannot miscount silently — CPython raises on a size change during
+iteration, every key these arms write is new, and in this path the sum was compared against an
+infinite ceiling anyway — and it did not fire, since 180 of 180 sessions ran. The numbers are
+unaffected.
+
+**What shipped besides the arms.** The seed **rule** (§ amendment a of the replication): the
+three lowest indices at or above an arm's start whose shuffled copy clears the feed's chunk
+floor, which reads chunk counts and never a reader's behaviour, was declared before the arm, and
+already describes v2's own (0, 1, 2) rather than retrofitting it — the plan had faulted at seeds
+(3, 4, 5) because `fitness-08`'s seed-4 permutation chunks to 10 against a floor of 11, the only
+such pair in seeds 0 to 9, and choosing a triple *because* it cleared would have let a
+replication select its own nuisance parameter to fit. And the ceiling skip §228's entry names as
+owed: `run_cells` priced the whole cache about 180 times an arm to compare it against infinity,
+which was waste and, from the driver's side, the sole trigger of that race; it is now priced only
+when a dollar ceiling can stop the run, with both ceilings still read **between** sessions so a
+started session always finishes.
+
+**What was refused.** No pooling of the two arms. No third arm to break a tie — the registration
+said so before v3 ran, because best-of-three is the rejection sampling `BRIEF.md` §6 prices. No
+bar over any effect size. No reader retuned (§89, §97.1), no book selected or revised on any of
+it (§105), and no claim about any of the twenty books: the arm measures how a reader spends
+minutes.
+
+**Anti-scope.** Nothing under `src/litharness/` changed by either arm. `fcr.v0`'s bytes are
+untouched and it remains unseated for any book-level claim; the editorial control plane stays
+inert; and this entry licenses one further experiment — a milder manipulation — and no
+production authority whatever.
