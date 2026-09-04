@@ -428,3 +428,56 @@ def test_v2_reads_moves_with_order_when_every_precondition_holds() -> None:
     assert read["underpowered_at"] == 0.125
     # The seed spread says whether the number is about disorder or about one permutation.
     assert read["shuffle_seed_spread"]
+def test_the_ceiling_can_be_priced_while_the_pool_is_still_recording() -> None:
+    """§227: `spend` is read by one worker while its siblings write, which is what
+    `run_cells` does between cells, and an unguarded dict raised `RuntimeError: dictionary
+    changed size during iteration` out of `future.result()` and stopped the run.
+
+    **The reader iterates a cache that is already large**, because that is what makes the
+    window wide enough to land on every run rather than on a lucky one: a first draft of this
+    test summed a dict of a few dozen records and passed against the unfixed code, which
+    would have shipped a guard that cannot fail. It is checked the other way — with the lock
+    removed this fails, with it in place it does not.
+    """
+    import threading
+
+    scripted = ctb._ScriptedElicitor(lambda tag: "x", usd_per_call=0.01)
+    for seed in range(4000):
+        scripted.ask_raw(
+            "", [], schema=None, max_tokens=1, tag={"feed": f"seed{seed}", "rotation": 0},
+            sample=seed,
+        )
+
+    done = threading.Event()
+    failures: list[BaseException] = []
+
+    def write(worker: int) -> None:
+        try:
+            for call in range(1500):
+                scripted.ask_raw(
+                    "", [], schema=None, max_tokens=1,
+                    tag={"feed": f"w{worker}-{call}", "rotation": worker}, sample=call,
+                )
+        except BaseException as error:
+            failures.append(error)
+
+    def read() -> None:
+        try:
+            while not done.is_set():
+                scripted.spend()
+        except BaseException as error:
+            failures.append(error)
+
+    reader = threading.Thread(target=read)
+    writers = [threading.Thread(target=write, args=(worker,)) for worker in range(3)]
+    reader.start()
+    for thread in writers:
+        thread.start()
+    for thread in writers:
+        thread.join(timeout=60)
+    done.set()
+    reader.join(timeout=60)
+
+    assert not failures, f"the pool raced: {failures[0]!r}"
+    assert scripted.api_calls == 4000 + 3 * 1500
+    assert scripted.spend()["equivalent_usd"] == round(scripted.api_calls * 0.01, 6)

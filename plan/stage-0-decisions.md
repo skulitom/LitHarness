@@ -24138,3 +24138,49 @@ scorers are untouched, and the re-run is the same instrument rather than a repai
 **Anti-scope.** This says nothing about whether a reader's described futures sharpen with a
 text's grip. It fixes a transport, audits what else that transport could have corrupted, finds
 nothing else, and records the cost of learning it.
+
+## 228. Two locks around one dictionary: the ceiling check read the elicitor's cache while its own workers wrote it, and CI is where that surfaced
+
+**Measured.** GitHub CI failed on `main` at `dd46e47` and on the reader-sims branch across several
+pushes, always the same way and never on every leg: `RuntimeError: dictionary changed size during
+iteration`, in `tests/test_cost_that_bites.py::test_the_selftest_passes` and
+`::test_a_run_under_the_ceiling_buys_every_cell_and_reads_a_scripted_mover`, on two of the four
+matrix legs while the other two passed, and not reproducible locally by running either test on its
+own. The traceback names the whole of it: `run_cells`' scheduler calls `next_cell`, which prices
+the ceiling with `elicitor.spend()`, which sums `self._cache.values()` while the pool's other
+workers are inserting into that cache.
+
+**What was wrong.** `Elicitor` holds a `threading.Lock` and takes it in six places that touch
+`_cache`; `spend()` was the seventh reader and took nothing. The scheduler holds `run_cells`' own
+lock while it calls `spend()`, and the workers hold the elicitor's lock while they write — **two
+disjoint locks around one dictionary**, which is not a lock at all. The scripted double in
+`cost_that_bites` had no lock of any kind, which is the end CI reached first because the selftest
+drives it through the same pool.
+
+**Exposure, stated because a defect in a paid path deserves it rather than a shrug** (the arm's
+owner established this and it is recorded here with the fix). It can only *raise*: a failure
+propagates out of `future.result()` and stops the run, and cached cells replay free, so a stopped
+arm is recoverable and a completed one is trustworthy. It cannot alter a session's content, its
+cache key or its scoring, and it cannot miscount silently, because CPython raises on a size change
+rather than returning a mixture and because every key these arms write is new, so no same-size
+replacement can occur. In the arms that ran under it (v2, and v3 while this was being written) the
+compared ceiling is `inf`, since their registered stop is a call ceiling — so in that path the call
+is at once the sole trigger of the race and pure waste.
+
+**What shipped.** `Elicitor.spend()` takes the lock for the read; the scripted double gains a lock
+and takes it on both sides; a regression test drives three writers and one reader over a
+pre-filled cache. **The first draft of that test passed against the unfixed code**, which would
+have shipped a guard that cannot fail — it summed a few dozen records, and the window was too
+narrow to land. It was rewritten around a cache large enough that iteration takes real time, and
+then checked the other way: with the lock removed it fails, with the lock in place it passes. That
+check is the point of the entry as much as the fix is.
+
+**Owed, and deliberately not done here.** Skipping the `spend()` call entirely when the ceiling is
+infinite removes the reason the call is made in that path at all. It belongs to the arm's owner and
+lands after the arm in flight finishes, so the committed script stays the one that produced its
+results — the same rule §225 followed with its flush. The registration requires the ceiling to be
+read *between sessions* so a started session always finishes, which is why the call sits in the
+scheduler and not in a worker, and any change keeps that.
+
+**Anti-scope.** No reading, interval or verdict moves: this is a crash, not an arithmetic. The
+arm running while it was fixed carries the pre-fix module, and its findings say so.

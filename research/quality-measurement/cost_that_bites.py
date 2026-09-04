@@ -949,6 +949,10 @@ class _ScriptedElicitor:
     def __init__(self, rule: Callable[[dict[str, Any]], str], *, usd_per_call: float) -> None:
         self._rule = rule
         self._usd = usd_per_call
+        # **The double is driven by the same pool as the real elicitor** (§227), so it needs
+        # the same lock: `run_cells` asks a worker to price the ceiling while its siblings
+        # are recording calls, and an unguarded dict raised out of `future.result()`.
+        self._lock = threading.Lock()
         self._records: dict[str, dict[str, Any]] = {}
         self.api_calls = 0
         self.replayed = 0
@@ -974,12 +978,15 @@ class _ScriptedElicitor:
             "refused": False,
             "usage": {"equivalent_usd": self._usd},
         }
-        self._records[key] = record
-        self.api_calls += 1
+        with self._lock:
+            self._records[key] = record
+            self.api_calls += 1
         return record
 
     def spend(self) -> dict[str, int | float]:
-        total = sum(record["usage"]["equivalent_usd"] for record in self._records.values())
+        with self._lock:
+            records = list(self._records.values())
+        total = sum(record["usage"]["equivalent_usd"] for record in records)
         return {"equivalent_usd": round(total, 6)}
 
 
