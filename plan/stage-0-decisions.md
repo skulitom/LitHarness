@@ -24647,3 +24647,60 @@ arm's own cache and is not answered here.
 **Anti-scope.** No arm was run and no number in any `FINDINGS.md` moved. The reader, the
 prompts, the personas and the schedule are untouched; this is the transport's bookkeeping and
 nothing above it.
+
+## 236. A gain the page printed never reached the sheet reader, so every first gain past chapter one became a beat nothing could satisfy; a status column that moved now records the holding, and a numeric rung column the standing
+
+**Measured first, on pilot 25 draw 6's poisoned unit, through `why --scene 5` (findable since
+§234) and a read-only replay of the composer on a copy of the store.** The frozen system message
+handed the writer the *entering* line — *which is the state as it stands:* `[STATUS] Tom Vance —
+BAND Band Two | MARKS 2 | COAT 1 | …` — on a scene whose beat read *Coat moves here*; the
+moved-line example had abstained. Replayed: `movables` at s5 offered `Coat` as a **gain**
+(`moved_values` returned `grey_coat: 1, marks: 6`, the arithmetic of a coat taken from nothing
+at a price of two), while the fold of the printed lines had held `COAT 1` since s1, so *after*
+equalled *before*, the example showed no move, and the gate compared `1` with `1` on three
+attempts. The two readers disagree because tom_vance's only canon `can_do` edge is the seed's
+`marks 8`: `gamesystem.sheet_of` reads grants off edges, the drafting loop records no
+advancement — `gamesystem.advance` has exactly one production caller, `moves.moved_values`, and
+it previews — and the status line's extraction wrote snapshots only. `records_for_sheet`'s
+docstring says the edges and the snapshot are one fact written together so they cannot
+disagree; the page wrote half of it. §232 called this stall *the ordinary progression refusal*.
+It is structural, and it waits for the second chapter because chapter one's single scheduled
+beat is the first gain, which the seed's edges cannot contradict.
+
+**Replay, the same tool as §234.** Every scene of the four baseline stores now mints holdings
+the stores lack (*re-minted but not stored: … can_do at s1*; 0 of 8 identical against the saved
+baseline, 16 lines moved), and pilot 24's third draw a standing at s1 and s2 read off its
+numeric rung column; draw 6 mints two holdings at s1, two at s2, three and the standing at s3,
+and the same again at s6; draw 7, whose chapter one printed the seed's own numbers, stays 2/2
+identical. Every difference is a number a page printed that canon's edges never held.
+
+**What shipped** (`domain/extraction.py`). `_holdings_from_line`: for each system the book
+declares, each numeric column that is one of its grants and reads a number other than the
+magnitude `sheet_of` holds at this position mints a canon `can_do` edge at that magnitude, with
+the line as its evidence, under `_standing_from_line`'s licence — the subject is one canon uses,
+the grant is declared, the number is the page's own, no model returned it.
+`holding_record_id_for` puts the magnitude in the id (`record_id_for`'s argument: two readings
+at one position are two rows the detector can see). `_standing_from_line` also reads a
+**numeric** rung column as an index into the one system printing the line, so a drawn system's
+own sheet (`Ticket 2`) states its rung the way an ordinal column does. Tests:
+`test_a_grant_that_moved_on_the_status_line_records_the_holding_the_line_states` — the gain and
+the deepen mint, the unchanged column and the ones left at nothing do not, the sheet reader then
+holds them, and the gain is not offered again — and
+`test_a_numeric_rung_column_that_moved_records_the_standing_by_its_index`.
+
+**What this does not do.** It touches no stored book: draw 6's edges stay as they are, a
+continuation of that store would meet the same asks until its scenes are re-read, and
+`tools/replay_books.py` shows exactly what a re-read would add. It writes nothing for a column
+the system does not declare (a pool, a currency, a place's sheet), for a book with no system, or
+for a number equal to what stands. A stock spent on the page (`MARKS 6` against a seed of 8) is
+written down at 6, which is what `_advanced` writes when the system spends it.
+
+**What was refused.** Making the loop *perform* the advancement — calling `advance` and
+recording its records when a beat lands — because the page is the record and the arithmetic is
+a preview: a book that printed something the arithmetic would not have done would then hold two
+stories, and reading the page is the rule extraction has always had. No bar; no claim about
+whether the asks a consistent sheet reader produces are better asks, which a drafted second
+chapter answers and this entry does not.
+
+**Anti-scope.** No prose read for quality, no reader signal, no book selected or revised. The
+tells pass, the readers and every registration are untouched.

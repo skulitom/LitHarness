@@ -398,11 +398,25 @@ def _standing_from_line(
     canon = _canon_of(known)
     on_record = _edges_on_record(known, order_key)
     minted: list[lc.StateRecord] = []
+    # **A numeric rung column states the rung by its index** (§236): a drawn system's own
+    # sheet prints `Ticket 2`, and the index names a rung of the one system whose columns
+    # the line prints, exactly as an ordinal column names it by id.
+    printing = _printing_system(canon, known)
     for field_ in sheet.fields:
-        if field_.kind != "ordinal":
-            continue
-        rung = read.get(field_.name)
-        if not isinstance(rung, str) or not rung:
+        rung: str | None = None
+        value = read.get(field_.name)
+        if field_.kind == "ordinal" and isinstance(value, str) and value:
+            rung = value
+        elif (
+            field_.name == gamesystem_mod.RANK_KEY
+            and field_.numeric
+            and printing is not None
+            and isinstance(value, int)
+            and not isinstance(value, bool)
+            and 1 <= value <= len(printing.rank_ids)
+        ):
+            rung = printing.rank_ids[value - 1]
+        if rung is None:
             continue
         criterion = worlds_mod.criterion_of_rung(canon, rung)
         if criterion is None:
@@ -439,6 +453,97 @@ def _standing_from_line(
                 ),
             )
         )
+    return tuple(minted)
+
+
+def holding_record_id_for(subject: str, ability_id: str, order_key: str, magnitude: int) -> str:
+    """Content-derived, with the position **and the magnitude** in the material.
+
+    `record_id_for`'s argument, one edge along: a holding read off the page at a position is a
+    reading, and two disagreeing readings at one position have to be two rows for the detector
+    to see them — an id blind to the magnitude would let `INSERT OR IGNORE` keep the first and
+    report success.
+    """
+    material = payload_digest(
+        {"s": subject, "p": worlds_mod.CAN_DO, "o": ability_id, "k": order_key, "v": magnitude}
+    )
+    return f"rec-h{sha256(material.encode()).hexdigest()[:24]}"
+
+
+def _holdings_from_line(
+    sheet: Sheet,
+    read: Mapping[str, object],
+    known: Sequence[lc.StateRecord],
+    *,
+    subject: str,
+    order_key: str,
+    source: lc.ResourceRef,
+    span: tuple[int, int],
+    text: str,
+) -> tuple[lc.StateRecord, ...]:
+    """The holdings a status line states through a system's own columns, as canon `can_do`
+    edges at this position — one per column whose number differs from what the edges say.
+
+    **A gain the page printed never reached the sheet reader, and past chapter one that made
+    the beat unsatisfiable** (§236). `gamesystem.sheet_of` reads a person's grants off `can_do`
+    edges alone; the drafting loop writes no advancement — `gamesystem.advance` has one caller,
+    `moves.moved_values`, and it previews — so the only edges canon ever held were the seed's.
+    Pilot 25 draw 6 printed `COAT 1` at s1 as a gain from nothing, the edges went on saying the
+    coat was not held, the beat vocabulary went on offering the gain, and at s5 the ask read
+    *Coat moves here* against a line that already said `COAT 1`: the moved-line example found
+    no move to show (the arithmetic's *after* equalled the page's *before*), the gate compared
+    `1` with `1` three times, and the unit poisoned. `records_for_sheet` says the edges and the
+    snapshot are one fact written together so they cannot disagree; the page wrote only the
+    snapshot.
+
+    The licence is `_standing_from_line`'s: the subject is one canon already uses, the column is
+    a grant the world declared, the number is the page's own, and no model returned the record.
+    The magnitude rides in the id so two readings at one position are two rows. A column the
+    system does not declare mints nothing, which is every book without a system.
+    """
+    canon = _canon_of(known)
+    minted: list[lc.StateRecord] = []
+    for system in gamesystem_mod.systems_of(canon):
+        abilities = set(system.ability_ids)
+        columns = [field_ for field_ in sheet.fields if field_.numeric and field_.name in abilities]
+        if not columns:
+            continue
+        standing = gamesystem_mod.sheet_of(canon, subject, system=system, at=order_key)
+        for field_ in columns:
+            value = read.get(field_.name)
+            if isinstance(value, bool) or not isinstance(value, int):
+                continue
+            held = standing.magnitude(field_.name) if standing is not None else 0
+            if value == held:
+                continue
+            start, end = span
+            minted.append(
+                lc.StateRecord(
+                    record_id=holding_record_id_for(subject, field_.name, order_key, value),
+                    kind=lc.StateRecordKind.RELATIONSHIP,
+                    subject=subject,
+                    predicate=worlds_mod.CAN_DO,
+                    object_ref=field_.name,
+                    value=value,
+                    story_position=lc.StoryPosition(order_key=order_key),
+                    authority=lc.StateAuthority.ACCEPTED_CANON,
+                    pov_visibility=[],
+                    evidence=[
+                        lc.EvidenceSpan(
+                            source=source,
+                            start=start,
+                            end=end,
+                            content_sha256=content_hash(text[start:end]),
+                        )
+                    ],
+                    predicate_registry_version=GRAPH_REGISTRY_VERSION,
+                    note=(
+                        "read off the status line: a declared subject holding a declared grant "
+                        "at the number the line prints, which is the book stating a fact its "
+                        "world already counts"
+                    ),
+                )
+            )
     return tuple(minted)
 
 
@@ -783,6 +888,18 @@ def extract_state(
                 text=text,
             )
         )
+        standings.extend(
+            _holdings_from_line(
+                own,
+                read,
+                known,
+                subject=subject,
+                order_key=order_key,
+                source=source,
+                span=span,
+                text=text,
+            )
+        )
         # **The record is the whole state, the line is its projection.** A partial record at
         # a position where a fuller one stands reads as a contradiction to the integrity
         # detector (two values for one fact at one position), so the columns the line left
@@ -920,6 +1037,7 @@ __all__ = [
     "graph_line_for",
     "graph_record_id_for",
     "has_story_vocabulary",
+    "holding_record_id_for",
     "humanise_subject",
     "implied_sheet",
     "impossible_fields",

@@ -911,6 +911,93 @@ def test_a_standing_scheduled_in_the_other_key_space_does_not_suppress_the_print
     assert len({record.record_id for record in both}) == len(both)
 
 
+def _drawn_book() -> list[lc.StateRecord]:
+    """A drawn system's own sheet and its seeded protagonist (§236): the shape every pilot since
+    the general system runs in, with the system's numeric columns and `show_unheld` off."""
+    from litharness.domain import gamesystem
+    from tests.helpers import accepted_all
+    from tests.test_progression_gate import _sheet_of, _system
+
+    system = _system()
+    return [
+        *accepted_all(gamesystem.records_for(system)),
+        *accepted_all(gamesystem.records_for_sheet(_sheet_of(system))),
+        _canon("ines_barrow", worlds.ENTITY_ROLE_PREDICATE, value="protagonist"),
+    ]
+
+
+def _holdings(records):  # type: ignore[no-untyped-def]
+    return [record for record in records if record.predicate == worlds.CAN_DO]
+
+
+def test_a_grant_that_moved_on_the_status_line_records_the_holding_the_line_states() -> None:
+    """**The page's gain reaches the sheet reader** (§236).
+
+    `sheet_of` reads a person's grants off `can_do` edges and the drafting loop writes no
+    advancement, so a gain the page printed left the edges saying the grant was not held: pilot
+    25 draw 6 printed `COAT 1` at s1, the beat vocabulary went on offering the gain, and at s5
+    the ask read *Coat moves here* against a line that already said `COAT 1` — no move to show,
+    `1` against `1` at the gate three times, the unit poisoned. A column of the system that
+    reads a number other than the one the edges hold is the book's own statement of the holding.
+    """
+    from litharness.domain import gamesystem
+
+    known = _drawn_book()
+    line = (
+        "[STATUS] Ines Barrow — Ticket 1 | cold seal 3 | read the grain 2 | stand the frame 1"
+    )
+    text = f"She set the frame herself.\n\n{line}\n"
+    read = _read_scene(text, known, logical_id="scene-1", at="s1")
+
+    held = {record.object_ref: record for record in _holdings(read)}
+    # The deepen and the gain, and neither the unchanged column nor the ones left at nothing.
+    assert set(held) == {"cold_seal", "stand_the_frame"}
+    assert held["cold_seal"].value == 3 and held["stand_the_frame"].value == 1
+    for record in held.values():
+        assert record.authority is lc.StateAuthority.ACCEPTED_CANON
+        assert record.story_position is not None and record.story_position.order_key == "s1"
+        assert record.predicate_registry_version == GRAPH_REGISTRY_VERSION
+        [span] = record.evidence
+        assert text[span.start : span.end] == line
+    assert _standings(read) == [], "the rung did not move, so no standing is minted"
+
+    [system] = gamesystem.systems_of(known)
+    after = [*known, *read]
+    sheet = gamesystem.sheet_of(after, "ines_barrow", system=system, at="s2")
+    assert sheet is not None
+    assert (sheet.magnitude("cold_seal"), sheet.magnitude("stand_the_frame")) == (3, 1)
+    offered = {
+        move.ability_id for move in gamesystem.legal_moves(sheet)
+        if move.kind is gamesystem.AdvanceKind.GAIN
+    }
+    assert "stand_the_frame" not in offered, "a gain the page printed is not offered again"
+
+    # Printing the same numbers again states nothing new.
+    again = _read_scene(f"Later.\n\n{line}\n", after, logical_id="scene-2", at="s2")
+    assert _holdings(again) == []
+
+
+def test_a_numeric_rung_column_that_moved_records_the_standing_by_its_index() -> None:
+    """A drawn system's own sheet prints the rung as its index; `Ticket 2` names the second
+    rung of the one system whose columns the line prints, and is canon at the position exactly
+    as an ordinal column's name is (§234, §236)."""
+    known = _drawn_book()
+    read = _read_scene(
+        "[STATUS] Ines Barrow — Ticket 2 | cold seal 2 | read the grain 2\n",
+        known,
+        logical_id="scene-1",
+        at="s1",
+    )
+    [standing] = _standings(read)
+    assert (standing.object_ref, standing.value) == ("rung_fitter", "yard_ticket")
+    assert worlds.standing_of([*known, *read], "ines_barrow", at="s1") == {
+        "yard_ticket": "rung_fitter"
+    }
+    # An index the ladder does not have, and the rung already stood on, mint nothing.
+    assert _standings(_read_scene("[STATUS] Ines Barrow — Ticket 9\n", known, at="s1")) == []
+    assert _standings(_read_scene("[STATUS] Ines Barrow — Ticket 1\n", known, at="s1")) == []
+
+
 def test_the_golden_fixtures_extract_exactly_what_they_extracted_before() -> None:
     """Absence is free, and it is asserted rather than intended. Neither fixture declares a
     graph line, so neither reads one — before this change or after it."""
