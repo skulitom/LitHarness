@@ -24138,3 +24138,73 @@ scorers are untouched, and the re-run is the same instrument rather than a repai
 **Anti-scope.** This says nothing about whether a reader's described futures sharpen with a
 text's grip. It fixes a transport, audits what else that transport could have corrupted, finds
 nothing else, and records the cost of learning it.
+
+## 227. The anticipation probe returns the same answer whatever is done to the passage, and the whitespace placebo moved it further than deleting the stakes did
+
+**Registered 2026-08-24 (§124), run 2026-09-04.** `anticipation.v0` asked a persona stopped
+mid-chapter to describe three concrete futures and mark each hope, dread or neither; specificity,
+distinctness and stance spread are scored by code, and four kill conditions were fixed before any
+call. The run is clean — **800 calls, 200 of 200 cells scorable, 795 of 800 draws parsed, zero
+transport failures, $30.65** — and the instrument is **REFUTED against its own conditions**.
+`research/quality-measurement/anticipation-run/FINDINGS.md` owns the reading; `BRIEF.md` §2 Pass
+7 carries the ledger row and the count.
+
+**The number that matters is not which kills fired but how little moved.** Across five arms —
+the original, the stakes deleted (`destake`), the same word count deleted from zero-stake
+sentences, an entity rename, and a whitespace re-flow:
+
+| arm | specificity | distinctness | engagement | bipolar |
+| --- | --- | --- | --- | --- |
+| original | 0.4255 | 0.9204 | 0.7632 | 0.844 |
+| destake | **0.4312** | 0.9234 | 0.7542 | 0.881 |
+| deplete_matched | 0.4299 | 0.9172 | 0.7688 | 0.819 |
+| rename_entities | 0.4247 | 0.9140 | 0.7708 | 0.881 |
+| rewhitespace | 0.4232 | 0.9184 | 0.7757 | 0.804 |
+
+**Mean specificity spans 0.0080 across the five, against a registered constancy floor of 0.05.**
+That is the useful fact for the next design and it is stronger than "K1 fired": the measurable is
+very nearly a **constant function of the passage**, so nothing downstream of it was ever going to
+be defined. Between-*passage* sd is 0.0507 — six times the whole between-*arm* span — so the
+probe tells passages apart far better than it tells apart what was done to them.
+
+**K2 fired inverted, and that is the second half of the entry.** Destake's distance from the
+original is 0.0090 on engagement; the **whitespace re-flow's is 0.0125**. The placebo moved the
+probe further than deleting the sentences that say what failure costs, and neither approaches the
+0.05 margin. K3 passed — destake beyond `deplete_matched`, 0.0090 against 0.0056 — and is
+recorded as **meaningless**: a pass on a constant function is noise putting itself in order, and
+K1 had already made it undefined. **The sign is wrong as well as the size**: destaked passages
+scored *higher* specificity than the originals, where the hypothesis predicted vaguer futures. No
+persona rescued it, and `climber` — written to read for what a climb costs — reported *more*
+engagement on the passages whose costs were deleted.
+
+**The transferable finding is saturation, and it is now three instruments deep.** Engagement sat
+at 0.75–0.78 and bipolarity at 0.80–0.88 on every arm including the most damaged: asked for three
+concrete futures and a stance on each, a cooperative reader always produces three and almost
+always reports both hope and dread. §70's persona gate-0 died the same way (`keep-reading` on 195
+of 196), and §199.1's `readers` lane died the same way (four of four on every chapter and every
+shuffled copy). All three were built to avoid the verdict channel §89 closed; all three inherited
+saturation instead. **The question to ask of the next report-channel design is not whether it
+avoids a verdict but whether a cooperative reader can answer it well every time** — if so it has
+no variance in it, whatever it is about.
+
+**A second observation, recorded because it is findable later rather than because it is a
+pattern.** The same night, in a different instrument on a different substrate, the whitespace
+placebo also moved a reader the wrong way: `cost-that-bites` v2's `intact − sham` came out at
+**−0.0771**, the re-flowed copy drawing *more* reads than the intact one (inside noise, and the
+opposite sign to v1's +0.089 on the same contrast). Two instruments is not a pattern and neither
+result is significant on its own; both are written down so that a third would be recognisable
+instead of surprising.
+
+**What was refused.** No effect read from a constant function. No reworded probe: §144's
+redirection makes the mechanism the unit of search, and a seventh phrasing of the same question
+is not a new mechanism. No rescue by subgroup — the per-persona table is reported and separates
+nothing. And no claim that anticipation is not a real property of reading: what is refuted is
+this probe, with these measurables, against this manipulation, which is the one it was registered
+against.
+
+**Anti-scope.** Nothing under `src/litharness/` changed. §128's direction — that a writer might
+one day take direction from what a reader hopes for — is untouched, because the channel it would
+use was never licensed by this probe and is not closed by its death. And the arm's earlier
+truncated run (§226) destroyed three hours and $30.69 and **destroyed no finding**: the properly
+bought arm reached this same place, which is the difference between an expensive mistake and a
+costly one.
