@@ -641,18 +641,31 @@ class Elicitor:
         if not self.cache_path.is_file():
             return
         kept = 0
+        left = 0
         for line in self.cache_path.read_text(encoding="utf-8").splitlines():
             try:
                 record = json.loads(line)
             except json.JSONDecodeError:
                 continue  # the shape an interrupted write leaves; redoing is cheap
             key = record.get("key")
-            if isinstance(key, str):
-                self._cache[key] = record
-                kept += 1
-        if kept:
-            print(f"replaying {kept} cached call(s) from {self.cache_path.name}",
-                  file=sys.stderr, flush=True)
+            if not isinstance(key, str):
+                continue
+            if _is_transport_failure(str(record.get("stop_reason") or "")):
+                # **A transport failure in an old cache is re-issued, not replayed** (§235).
+                # The local transport persisted its own until 2026-09-05, and replaying one
+                # reports a hiccup of that run's environment as a refusal in this one; the
+                # rule beside `_TRANSPORT_FAILURES` says a resume re-issues exactly these.
+                left += 1
+                continue
+            self._cache[key] = record
+            kept += 1
+        if kept or left:
+            print(
+                f"replaying {kept} cached call(s) from {self.cache_path.name}"
+                + (f"; {left} transport failure(s) left aside to re-issue" if left else ""),
+                file=sys.stderr,
+                flush=True,
+            )
 
     def _open(self) -> Any:
         if self._handle is None:
@@ -909,12 +922,18 @@ class Elicitor:
             with urllib.request.urlopen(request, timeout=OLLAMA_TIMEOUT_SECONDS) as response:
                 envelope = json.loads(response.read())
         except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError) as error:
+            # **Counted and never cached, which is the rule the CLI path already kept and this
+            # path did not** (stage-0 §235). Until 2026-09-05 a timeout or a refused connection
+            # here was written to the cache and the JSONL as a refusal, so a thermal hold or a
+            # server restart during a local arm was replayed on every later run as the model
+            # declining, and a resume could never repair it. `_load_cache` now leaves such a
+            # record aside as well, so an old cache re-issues them instead of replaying them.
             record = {**tag, "key": key, "model": params["model"], "text": "", "refused": True,
                       "stop_reason": f"transport_error:{type(error).__name__}", "usage": {}}
             with self._lock:
-                self._cache[key] = record
                 self.api_calls += 1
-                self._persist(record)
+                self.transport_failures += 1
+                self.failure_reasons[record["stop_reason"]] += 1
             return record
         elapsed = time.time() - begun
 
@@ -1019,20 +1038,37 @@ class Elicitor:
         text, stop_reason, usage = "", _cli_failure_reason(completed), {}
         if completed.returncode == 0:
             try:
-                envelope = json.loads(completed.stdout)
+                envelope: Any = json.loads(completed.stdout)
             except json.JSONDecodeError:
-                envelope = {}
-            text = _strip_fence(str(envelope.get("result", "")))
-            stop_reason = str(envelope.get("stop_reason") or "end_turn")
-            if envelope.get("is_error"):
-                stop_reason, text = "cli_is_error", ""
-            tokens = {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0}
-            for entry in (envelope.get("modelUsage") or {}).values():
-                tokens["input"] += int(entry.get("inputTokens", 0) or 0)
-                tokens["output"] += int(entry.get("outputTokens", 0) or 0)
-                tokens["cache_read"] += int(entry.get("cacheReadInputTokens", 0) or 0)
-                tokens["cache_write"] += int(entry.get("cacheCreationInputTokens", 0) or 0)
-            usage = {**tokens, "equivalent_usd": float(envelope.get("total_cost_usd") or 0.0)}
+                envelope = None
+            if not isinstance(envelope, dict):
+                # **A zero exit with no envelope is a transport failure, and until 2026-09-05
+                # it was a refusal** (stage-0 §235). `envelope = {}` gave an empty `result`,
+                # the stop reason defaulted to `end_turn`, and the record went into the cache
+                # and the JSONL — a garbled or truncated stdout baked into every replay as the
+                # model declining, which is the exact thing the rule above the transport-failure
+                # tuple says a cache must never hold. The `cli_error` prefix is what keeps it
+                # counted, uncached and re-issued by a resume.
+                stop_reason = "cli_error:rc=0:unparsable envelope"
+            else:
+                text = _strip_fence(str(envelope.get("result", "")))
+                stop_reason = str(envelope.get("stop_reason") or "end_turn")
+                subtype = envelope.get("subtype")
+                if envelope.get("is_error") or subtype not in {None, "success"}:
+                    # The production transport's own test (`providers/cli.py`): an error
+                    # envelope is one whose `is_error` is set *or* whose subtype is not
+                    # success; the subtype rides in the reason so the failures table says which.
+                    stop_reason, text = f"cli_is_error:{subtype or 'is_error'}", ""
+                tokens = {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0}
+                for entry in (envelope.get("modelUsage") or {}).values():
+                    tokens["input"] += int(entry.get("inputTokens", 0) or 0)
+                    tokens["output"] += int(entry.get("outputTokens", 0) or 0)
+                    tokens["cache_read"] += int(entry.get("cacheReadInputTokens", 0) or 0)
+                    tokens["cache_write"] += int(entry.get("cacheCreationInputTokens", 0) or 0)
+                usage = {
+                    **tokens,
+                    "equivalent_usd": float(envelope.get("total_cost_usd") or 0.0),
+                }
         record = {
             **tag,
             "key": key,

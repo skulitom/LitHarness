@@ -142,3 +142,111 @@ def test_text_with_no_json_at_all_comes_back_stripped() -> None:
     assert elicit._strip_fence("  I would rather not answer that.  ") == (
         "I would rather not answer that."
     )
+
+
+# ------------------------------------ a call that obtained no answer is never a cached refusal
+#
+# Stage-0 §235. The rule beside `_TRANSPORT_FAILURES` is that a transport failure is the
+# absence of a measurement and is never persisted, so a resume re-issues it. Two paths broke
+# it: a zero exit whose stdout was not an envelope became an `end_turn` refusal with an empty
+# result and went into the cache, and the local transport wrote its own timeouts and refused
+# connections to the cache and the JSONL. Neither was counted as a failure.
+
+
+def _fake_run(monkeypatch: pytest.MonkeyPatch, stdout: str, returncode: int = 0) -> None:
+    def fake_run(argv: list[str], **kwargs: object) -> subprocess.CompletedProcess:
+        return subprocess.CompletedProcess(argv, returncode, stdout, "")
+
+    monkeypatch.setattr(elicit.subprocess, "run", fake_run)
+
+
+def _ask(elicitor: object) -> dict:
+    return elicitor.ask_raw(  # type: ignore[attr-defined]
+        "sys",
+        [{"role": "user", "content": "the question"}],
+        schema=None,
+        max_tokens=16,
+        tag={"stage": "test"},
+        sample=1,
+    )
+
+
+def test_a_zero_exit_with_no_envelope_is_a_transport_failure_and_is_not_cached(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: object
+) -> None:
+    _fake_run(monkeypatch, "Warning: a line the CLI printed that is not JSON")
+    cache = tmp_path / "raw.jsonl"  # type: ignore[operator]
+    with elicit.Elicitor(cache_path=cache, model="m", transport="cli") as elicitor:
+        record = _ask(elicitor)
+        assert record["refused"] is True
+        assert elicit._is_transport_failure(record["stop_reason"])
+        assert "unparsable" in record["stop_reason"]
+        assert elicitor.transport_failures == 1
+        assert elicitor.failure_reasons[record["stop_reason"]] == 1
+        assert elicitor._cache == {}
+    assert not cache.exists(), "nothing was persisted, so a resume re-issues the call"
+
+
+def test_an_error_subtype_on_a_zero_exit_is_a_transport_failure(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: object
+) -> None:
+    _fake_run(
+        monkeypatch, '{"subtype": "error_max_turns", "result": "", "stop_reason": "end_turn"}'
+    )
+    with elicit.Elicitor(
+        cache_path=tmp_path / "raw.jsonl", model="m", transport="cli"  # type: ignore[operator]
+    ) as elicitor:
+        record = _ask(elicitor)
+        assert record["stop_reason"].startswith("cli_is_error")
+        assert "error_max_turns" in record["stop_reason"]
+        assert elicitor.transport_failures == 1
+        assert elicitor._cache == {}
+
+
+def test_a_refusal_with_an_envelope_is_still_a_cached_measurement(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: object
+) -> None:
+    """The distinction the rule turns on: an envelope whose result is empty is the model
+    declining, which is a datum, and it replays."""
+    _fake_run(monkeypatch, '{"subtype": "success", "result": "", "stop_reason": "refusal"}')
+    cache = tmp_path / "raw.jsonl"  # type: ignore[operator]
+    with elicit.Elicitor(cache_path=cache, model="m", transport="cli") as elicitor:
+        record = _ask(elicitor)
+        assert record["refused"] is True
+        assert not elicit._is_transport_failure(record["stop_reason"])
+        assert elicitor.transport_failures == 0
+        assert len(elicitor._cache) == 1
+    assert cache.read_text(encoding="utf-8").count("\n") == 1
+
+
+def test_a_cached_transport_failure_is_re_issued_rather_than_replayed(tmp_path: object) -> None:
+    import json
+
+    cache = tmp_path / "raw.jsonl"  # type: ignore[operator]
+    cache.write_text(
+        json.dumps({"key": "k:1", "stop_reason": "transport_error:URLError", "refused": True})
+        + "\n"
+        + json.dumps({"key": "k:2", "stop_reason": "end_turn", "refused": False, "text": "ok"})
+        + "\n",
+        encoding="utf-8",
+    )
+    with elicit.Elicitor(cache_path=cache, model="m", transport="cli") as elicitor:
+        assert set(elicitor._cache) == {"k:2"}
+
+
+def test_a_local_transport_failure_is_counted_and_never_cached(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: object
+) -> None:
+    def refused_connection(request: object, timeout: object = None) -> object:
+        raise elicit.urllib.error.URLError("connection refused")
+
+    monkeypatch.setattr(elicit.urllib.request, "urlopen", refused_connection)
+    cache = tmp_path / "raw.jsonl"  # type: ignore[operator]
+    with elicit.Elicitor(cache_path=cache, model="local", transport="ollama") as elicitor:
+        record = _ask(elicitor)
+        assert record["refused"] is True
+        assert elicit._is_transport_failure(record["stop_reason"])
+        assert elicitor.transport_failures == 1
+        assert elicitor.failure_reasons["transport_error:URLError"] == 1
+        assert elicitor._cache == {}
+    assert not cache.exists()

@@ -322,9 +322,17 @@ class Generator:
             try:
                 envelope = json.loads(completed.stdout)
             except json.JSONDecodeError:
+                envelope = None
+            if not isinstance(envelope, dict):
+                # A zero exit with no envelope is a transport failure, not a refusal (stage-0
+                # §235): the reload rule above drops `cli_`-prefixed failures for
+                # re-elicitation, and an `end_turn` refusal with an empty result — what an
+                # unparsable stdout used to become — it would have replayed forever.
                 envelope = {}
-            text = str(envelope.get("result", "")).strip()
-            stop_reason = str(envelope.get("stop_reason") or "end_turn")
+                stop_reason, text = "cli_error:rc=0:unparsable envelope", ""
+            else:
+                text = str(envelope.get("result", "")).strip()
+                stop_reason = str(envelope.get("stop_reason") or "end_turn")
             if envelope.get("is_error"):
                 stop_reason, text = "cli_is_error", ""
             tokens = {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0}

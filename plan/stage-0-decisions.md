@@ -24597,3 +24597,53 @@ is untouched: the moved line for a deepen was already composed and shown, the re
 and this entry records nothing about why the writer left `COAT 1`. Nothing under `research/`
 changed. The sim-reader arms, their registrations and the volume screen's untracked results are
 another session's and were not touched.
+
+## 235. A call that obtained no answer could still enter the replay cache as a refusal: a zero exit with no envelope, and every failure of the local transport
+
+**Measured by reading, on the transport every paid arm and every local arm runs through**
+(`research/quality-measurement/elicit.py`), in the same scouting pass as §234. Nothing was
+spent. The finding is three code paths held against the rule written beside
+`_TRANSPORT_FAILURES`: a transport failure is the absence of a measurement, is counted, is never
+persisted, and is re-issued by a resume — §87.3's distinction, and the one §222, §224 and §226
+each paid for.
+
+1. `_call_cli`, exit code zero, stdout not an envelope: `envelope = {}`, an empty `result`, a
+   stop reason defaulting to `end_turn`, `refused: True` — cached and persisted as the model
+   declining, and counted as nothing. A warning line ahead of the JSON, a truncated write, or a
+   CLI that printed nothing at all became a permanent refusal in the replay cache. §224 made the
+   non-zero exits say why and left this branch as it was.
+2. `_call_cli` did not read `subtype`. The production transport (`providers/cli.py`) treats any
+   subtype but `success` as an error envelope; here an `error_max_turns` envelope with an empty
+   result was a cached refusal.
+3. `_call_ollama`: a refused connection, a timeout or an unparsable reply built a
+   `transport_error:*` record and then **wrote it to the cache and the JSONL**, touching neither
+   `transport_failures` nor `failure_reasons`. A thermal hold and a server restart are exactly
+   what a local arm meets on this box; each was replayed on every later run as the model
+   declining, and no resume could repair it.
+4. `writer_states.py`'s own CLI transport carried the first defect and not the third: its reload
+   already drops `transport_error` and `cli_`-prefixed records for re-elicitation, so only the
+   unparsable-envelope refusal slipped through it.
+
+**What shipped.** `_call_cli`: a zero exit whose stdout is not a JSON object is
+`cli_error:rc=0:unparsable envelope`, and an error subtype is `cli_is_error:<subtype>`; both keep
+the prefixes `_is_transport_failure` matches, so both are counted, uncached and re-issued.
+`_call_ollama`: a transport failure is counted in both tallies and never cached. `_load_cache`: a
+transport-failure record in an old cache is left aside and said so (*n transport failure(s) left
+aside to re-issue*), which is what the rule always said a resume does; the CLI and SDK paths never
+persisted one, so the only caches this reaches are local arms', whose calls are free.
+`writer_states.py`: the same envelope rule, in the words its reload already drops. Tests:
+`test_a_zero_exit_with_no_envelope_is_a_transport_failure_and_is_not_cached`,
+`test_an_error_subtype_on_a_zero_exit_is_a_transport_failure`,
+`test_a_refusal_with_an_envelope_is_still_a_cached_measurement`,
+`test_a_cached_transport_failure_is_re_issued_rather_than_replayed`,
+`test_a_local_transport_failure_is_counted_and_never_cached`.
+
+**What it does not change.** No cache key, no persisted successful record, no registration, no
+verdict. Every cache the CLI transport wrote replays exactly as before. A local arm's old cache
+re-issues the calls it had recorded as failures, which costs GPU time and no money. Whether any
+recorded local-arm result carried cached transport failures as refusals is a question for that
+arm's own cache and is not answered here.
+
+**Anti-scope.** No arm was run and no number in any `FINDINGS.md` moved. The reader, the
+prompts, the personas and the schedule are untouched; this is the transport's bookkeeping and
+nothing above it.
