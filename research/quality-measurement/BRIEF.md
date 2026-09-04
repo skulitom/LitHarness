@@ -28,7 +28,7 @@ the scope axiom closed solicited human judgment (stage-0 §95). The honest gap i
 architectural: build an LLM-based cognitive system that can perceive these properties, then make
 it survive independent controls before any output can steer or gate production.
 
-## 2. The refutation ledger — 21 proxies dead
+## 2. The refutation ledger — 22 proxies dead
 
 **This section is canonical for the count.** It was carried in two places for a while and
 drifted within a single session; `PLAN.md` and `plan/stage-0-decisions.md` now point here
@@ -122,6 +122,26 @@ sham effect was the largest in the table). Implemented the same day: `evaluate.R
 is now `(detect − 0.5) − |sham − 0.5|` and reports **−0.3713** for this battery, and the
 harness's AUCs are within-chapter with a chapter-resampled bootstrap CI, so the next
 candidate is scored by the rule this one taught.
+
+**Pass 7: the anticipation probe — the report channel, run against its own kills. One more
+dead, and it died of saturation rather than of bias.**
+
+| proxy | how it died |
+|---|---|
+| `anticipation.v0` (a persona stopped mid-chapter describes three concrete futures and marks hope / dread / neither; specificity, distinctness and stance spread scored by code) | **K1 constancy fired: the five arms' mean specificity spans 0.0080 against a registered floor of 0.05.** Deleting the sentences that establish what failure costs (`destake`), deleting the same word count from zero-stake sentences, renaming entities and re-flowing whitespace all return the same answer. **K2 fired too, and inverted**: destake's distance from the original is 0.0090 on engagement against the whitespace sham's 0.0125 — the placebo moved the probe *further* than removing the stakes did — and neither approaches the registered 0.05 margin. K3 passed (destake beyond `deplete_matched`, 0.0090 against 0.0056) and **means nothing inside a total span of 0.008**; a pass on a constant function is not evidence. The sign is wrong as well as the size: destaked passages scored **higher** specificity (0.4312) than the originals (0.4255), where the hypothesis predicted vaguer futures. No persona rescued it — `climber`, written to read for what a climb costs, reported *more* engagement on the passages whose costs were deleted. Clean run: 800 calls, 200 of 200 cells scorable, zero transport failures, $30.65. [stage-0-decisions §227](../../plan/stage-0-decisions.md), `anticipation-run/FINDINGS.md`, `results/anticipation-rerun.json`. |
+
+**The transferable lesson is saturation, and it is now three instruments deep.** Engagement sat
+at 0.75–0.78 and bipolarity at 0.80–0.88 on *every* arm including the most damaged: asked for
+three concrete futures and a stance on each, a cooperative reader always produces three concrete
+futures and almost always reports both hope and dread. The measurable had no room to move. That
+is the same death as §70's persona gate-0 (`keep-reading` on 195 of 196 draws) and §199.1's
+`readers` lane (carrying on four of four on every chapter *and* every shuffled copy of it).
+**All three were designed to avoid the verdict channel §89 closed, and all three inherited
+saturation instead** — so the question to ask of the next report-channel design is not whether
+it avoids a verdict but whether a cooperative reader can answer it well every time. If so it has
+no variance in it, whatever it is about. The one costed instrument that did **not** saturate is
+the one whose reader had to give something up to keep reading (`cost-that-bites`, §227's
+sibling), which is where the design attention belongs.
 
 ## 3. The structural diagnosis (this is the opening for a novel approach)
 

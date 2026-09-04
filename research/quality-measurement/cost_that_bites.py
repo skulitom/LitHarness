@@ -362,11 +362,22 @@ def run_cells(
         with lock:
             if stopped.is_set() or not pending:
                 return None
-            spent = float(elicitor.spend()["equivalent_usd"])
-            if spent >= ceiling_usd:
-                stopped.set()
-                log(f"ceiling: ${spent:.2f} of ${ceiling_usd:.2f} spent; stopping between sessions")
-                return None
+            # **Priced only when a dollar ceiling can actually stop the run.** v2 and v3 stop on
+            # a call ceiling and pass `inf` here, so this used to sum the whole cache about 180
+            # times an arm purely to compare it against infinity — pure waste, and from this
+            # side the sole trigger of §228's race, since `spend()` is what the scheduler read
+            # while workers wrote. The lock on main fixes the race; this removes the reason to
+            # take it. Both ceilings are still read **between sessions**, so a session that has
+            # started always finishes, which is the property the registration depends on.
+            if ceiling_usd != float("inf"):
+                spent = float(elicitor.spend()["equivalent_usd"])
+                if spent >= ceiling_usd:
+                    stopped.set()
+                    log(
+                        f"ceiling: ${spent:.2f} of ${ceiling_usd:.2f} spent; "
+                        "stopping between sessions"
+                    )
+                    return None
             # v2's stop condition is a call ceiling rather than a dollar one; both are read
             # between sessions, so a session that has started always finishes.
             bought = int(getattr(elicitor, "api_calls", 0) or 0)
@@ -603,6 +614,14 @@ CAPACITY_FLOOR_V2 = 0.40
 #: Books needed with a complete scorable set before any interval is computed.
 MIN_BOOKS_V2 = 10
 
+#: The shuffle seed indices each book's three shuffled replicates use. **v3's replication moves
+#: only this**: v2 bought 0/1/2, v3 buys 3/4/5, and nothing else about the design changes
+#: (`PREREG-v3-replication.md`). It is a parameter rather than a constant because the whole
+#: point of the replication is to redraw the permutation luck v2's own seed spread — 0.1804
+#: against an effect of 0.1640 — says is the size of the effect.
+SHUFFLE_SEED_START_V2 = 0
+SHUFFLE_SEED_START_V3 = 3
+
 #: Bought calls after which the run stops between sessions. No dollar ceiling: the operator's
 #: direction of 2026-09-04 is that this is subscription quota. 180 sessions ran at 8.1 calls a
 #: session in v1, so the plan is about 1,460 and this covers a skim-heavy run with margin.
@@ -651,7 +670,35 @@ def registration_digest_v2() -> str:
     return sha256(material.encode("utf-8")).hexdigest()[:16]
 
 
-def versions_v2(text: str) -> dict[str, list[str]]:
+def seeds_for(text: str, *, start: int, count: int = REPLICATES_V2) -> tuple[int, ...]:
+    """The `count` lowest seed indices at or above `start` whose shuffle can carry a session.
+
+    **A rule and not a choice, declared before spend.** A shuffle reorders paragraphs, and
+    `bcr.chunks` closes a chunk once it passes the word target, so a permutation can leave a
+    book one chunk short of the floor a feed member needs — measured across seeds 0 to 9 over
+    the twenty books, exactly one pair does: `fitness-08` at seed 4, which chunks to 10 against
+    a floor of 11. Picking a seed triple *because* it happens to clear would be choosing the
+    nuisance parameter to fit; skipping a seed the instrument cannot carry, by a rule that reads
+    only chunk counts and never a reader's behaviour, is the same species as the reassembly
+    instrument repairing an answer that omits a label. Deviations are flagged in the result.
+
+    v2's `(0, 1, 2)` satisfies this rule at `start=0`, so the rule describes what v2 did rather
+    than changing it.
+    """
+    chosen: list[int] = []
+    index = start
+    while len(chosen) < count:
+        if index > start + 50:
+            raise ValueError(f"no {count} usable shuffle seeds at or above {start}")
+        if len(bcr.chunks(book_shuffle(text, index=index))) >= feed_core.MIN_CHUNKS_FEED:
+            chosen.append(index)
+        index += 1
+    return tuple(chosen)
+
+
+def versions_v2(
+    text: str, *, seeds: tuple[int, ...] | None = None
+) -> dict[str, list[str]]:
     """Per version, the text each replicate is shown.
 
     `intact` and `sham` repeat one text — the replicates are independent draws from the reader,
@@ -659,14 +706,21 @@ def versions_v2(text: str) -> dict[str, list[str]]:
     **different shuffle per replicate**, so the estimate is about disorder rather than about one
     permutation, which is what v1's single seed per book confounded.
     """
+    chosen = seeds_for(text, start=SHUFFLE_SEED_START_V2) if seeds is None else seeds
     return {
         "intact": [text] * REPLICATES_V2,
-        "shuffled": [book_shuffle(text, index=index) for index in range(REPLICATES_V2)],
+        "shuffled": [book_shuffle(text, index=index) for index in chosen],
         "sham": [sham(text)] * REPLICATES_V2,
     }
 
 
-def plan_v2(texts: Sequence[tuple[str, str]], *, books: int | None = None) -> list[Cell]:
+def plan_v2(
+    texts: Sequence[tuple[str, str]],
+    *,
+    books: int | None = None,
+    seed_start: int = SHUFFLE_SEED_START_V2,
+    tag: str = "ctb2",
+) -> list[Cell]:
     """Every book's three versions at three replicates, the target always in slot A."""
     if len(texts) < feed_core.FEED_SIZE:
         raise ValueError(
@@ -678,10 +732,11 @@ def plan_v2(texts: Sequence[tuple[str, str]], *, books: int | None = None) -> li
     for index in range(count):
         target_name, target_text = texts[index]
         others = [texts[(index + offset) % len(texts)] for offset in range(1, feed_core.FEED_SIZE)]
-        for version, per_replicate in versions_v2(target_text).items():
+        chosen = seeds_for(target_text, start=seed_start)
+        for version, per_replicate in versions_v2(target_text, seeds=chosen).items():
             for replicate, target in enumerate(per_replicate):
                 spec = feed_core.FeedSpec(
-                    feed_id=f"ctb2-{index:02d}-{version}-r{replicate}",
+                    feed_id=f"{tag}-{index:02d}-{version}-r{replicate}",
                     arm=version,
                     target=target,
                     others=tuple(text for _, text in others),
@@ -1158,7 +1213,13 @@ def _rows_json(rows: Sequence[Row]) -> list[dict[str, Any]]:
     ]
 
 
-def _run_v2(args: argparse.Namespace) -> int:
+def _run_v2(
+    args: argparse.Namespace,
+    *,
+    seed_start: int = SHUFFLE_SEED_START_V2,
+    tag: str = "ctb2",
+    label: str = "arm-v2",
+) -> int:
     """v2's run: the same runner and the same ledger, its own plan, reading and ceiling.
 
     The stop condition is a **call ceiling** rather than a dollar one (PREREG-v2), so the
@@ -1167,10 +1228,13 @@ def _run_v2(args: argparse.Namespace) -> int:
     because quota burn belongs on the record even when it is not the limit.
     """
     texts = feed_substrate.fitness_texts(Path(args.fitness_dir))
-    cells = plan_v2(texts, books=args.books)
+    cells = plan_v2(texts, books=args.books, seed_start=seed_start, tag=tag)
+    used = {name: list(seeds_for(text, start=seed_start)) for name, text in texts[: args.books]}
+    default = list(range(seed_start, seed_start + REPLICATES_V2))
+    deviating = {name: got for name, got in used.items() if got != default}
     books = len({cell.feed_index for cell in cells})
     print(
-        f"arm-v2: {books} book(s), {len(cells)} session(s), at most "
+        f"{label}: {books} book(s), {len(cells)} session(s), at most "
         f"{len(cells) * feed_core.MAX_STEPS} call(s) on {args.model} via {TRANSPORT}; "
         f"call ceiling {CALL_CEILING_V2}"
     )
@@ -1189,7 +1253,8 @@ def _run_v2(args: argparse.Namespace) -> int:
     # v2 gets its own cache: its sessions are a different design and pooling them into v1's
     # raw records would make one file two experiments.
     default_cache = args.cache == str(ARM_DIR / "raw.jsonl")
-    cache = ARM_DIR / "raw-v2.jsonl" if default_cache else Path(args.cache)
+    suffix = label.replace("arm-", "")
+    cache = ARM_DIR / f"raw-{suffix}.jsonl" if default_cache else Path(args.cache)
     with Elicitor(cache, model=args.model, spot_model=None, transport=TRANSPORT) as elicitor:
         rows, ledger = run_cells(
             elicitor,
@@ -1201,7 +1266,10 @@ def _run_v2(args: argparse.Namespace) -> int:
         )
     read = reading_v2(rows)
     result = {
-        "study": f"{VERSION_V2}/arm",
+        "study": f"{VERSION_V2}/{label}",
+        "shuffle_seed_start": seed_start,
+        "shuffle_seeds_per_book": used,
+        "shuffle_seeds_deviating": deviating,
         "registration": PRE_REGISTRATION_V2,
         "registration_digest": registration_digest_v2(),
         "supersedes_nothing": (
@@ -1220,7 +1288,7 @@ def _run_v2(args: argparse.Namespace) -> int:
             else []
         ),
     }
-    out = Path(args.out) if args.out else ARM_DIR / "results-arm-v2.json"
+    out = Path(args.out) if args.out else ARM_DIR / f"results-{label}.json"
     write_result(result, out)
     headline = {
         key: read[key]
@@ -1245,6 +1313,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dry-run", action="store_true", help="build the plan; no call")
     parser.add_argument("--screen", action="store_true", help="paid: the first feeds only")
     parser.add_argument("--arm", action="store_true", help="paid: every feed")
+    parser.add_argument(
+        "--arm-v3",
+        action="store_true",
+        help="paid: the replication (PREREG-v3-replication.md) — v2's design entire with only "
+        "the three shuffle seeds redrawn, so the permutation luck is a fresh draw",
+    )
     parser.add_argument(
         "--arm-v2",
         action="store_true",
@@ -1293,15 +1367,23 @@ def main(argv: list[str] | None = None) -> int:
                     )
         print(f"wrote {ARM_DIR / 'attainability.json'}")
         return 0
-    if not (args.dry_run or args.screen or args.arm or args.dry_elicitor or args.arm_v2):
+    if not (
+        args.dry_run or args.screen or args.arm or args.dry_elicitor or args.arm_v2 or args.arm_v3
+    ):
         parser.error(
             "pass one of --selftest, --attainability, --dry-run, --dry-elicitor, --screen, "
-            "--arm, --arm-v2"
+            "--arm, --arm-v2, --arm-v3"
         )
-    if sum((bool(args.screen), bool(args.arm), bool(args.arm_v2))) > 1:
-        parser.error("--screen, --arm and --arm-v2 are separate runs; pass one")
+    if sum((bool(args.screen), bool(args.arm), bool(args.arm_v2), bool(args.arm_v3))) > 1:
+        parser.error("--screen, --arm, --arm-v2 and --arm-v3 are separate runs; pass one")
     if args.arm_v2:
         return _run_v2(args)
+    if args.arm_v3:
+        # The replication: v2's design entire, only the shuffle seeds redrawn
+        # (`PREREG-v3-replication.md`).
+        return _run_v2(
+            args, seed_start=SHUFFLE_SEED_START_V3, tag="ctb3", label="arm-v3"
+        )
     screen_sized = args.screen or args.dry_elicitor
 
     texts = feed_substrate.fitness_texts(Path(args.fitness_dir))

@@ -24139,6 +24139,75 @@ scorers are untouched, and the re-run is the same instrument rather than a repai
 text's grip. It fixes a transport, audits what else that transport could have corrupted, finds
 nothing else, and records the cost of learning it.
 
+## 227. The anticipation probe returns the same answer whatever is done to the passage, and the whitespace placebo moved it further than deleting the stakes did
+
+**Registered 2026-08-24 (§124), run 2026-09-04.** `anticipation.v0` asked a persona stopped
+mid-chapter to describe three concrete futures and mark each hope, dread or neither; specificity,
+distinctness and stance spread are scored by code, and four kill conditions were fixed before any
+call. The run is clean — **800 calls, 200 of 200 cells scorable, 795 of 800 draws parsed, zero
+transport failures, $30.65** — and the instrument is **REFUTED against its own conditions**.
+`research/quality-measurement/anticipation-run/FINDINGS.md` owns the reading; `BRIEF.md` §2 Pass
+7 carries the ledger row and the count.
+
+**The number that matters is not which kills fired but how little moved.** Across five arms —
+the original, the stakes deleted (`destake`), the same word count deleted from zero-stake
+sentences, an entity rename, and a whitespace re-flow:
+
+| arm | specificity | distinctness | engagement | bipolar |
+| --- | --- | --- | --- | --- |
+| original | 0.4255 | 0.9204 | 0.7632 | 0.844 |
+| destake | **0.4312** | 0.9234 | 0.7542 | 0.881 |
+| deplete_matched | 0.4299 | 0.9172 | 0.7688 | 0.819 |
+| rename_entities | 0.4247 | 0.9140 | 0.7708 | 0.881 |
+| rewhitespace | 0.4232 | 0.9184 | 0.7757 | 0.804 |
+
+**Mean specificity spans 0.0080 across the five, against a registered constancy floor of 0.05.**
+That is the useful fact for the next design and it is stronger than "K1 fired": the measurable is
+very nearly a **constant function of the passage**, so nothing downstream of it was ever going to
+be defined. Between-*passage* sd is 0.0507 — six times the whole between-*arm* span — so the
+probe tells passages apart far better than it tells apart what was done to them.
+
+**K2 fired inverted, and that is the second half of the entry.** Destake's distance from the
+original is 0.0090 on engagement; the **whitespace re-flow's is 0.0125**. The placebo moved the
+probe further than deleting the sentences that say what failure costs, and neither approaches the
+0.05 margin. K3 passed — destake beyond `deplete_matched`, 0.0090 against 0.0056 — and is
+recorded as **meaningless**: a pass on a constant function is noise putting itself in order, and
+K1 had already made it undefined. **The sign is wrong as well as the size**: destaked passages
+scored *higher* specificity than the originals, where the hypothesis predicted vaguer futures. No
+persona rescued it, and `climber` — written to read for what a climb costs — reported *more*
+engagement on the passages whose costs were deleted.
+
+**The transferable finding is saturation, and it is now three instruments deep.** Engagement sat
+at 0.75–0.78 and bipolarity at 0.80–0.88 on every arm including the most damaged: asked for three
+concrete futures and a stance on each, a cooperative reader always produces three and almost
+always reports both hope and dread. §70's persona gate-0 died the same way (`keep-reading` on 195
+of 196), and §199.1's `readers` lane died the same way (four of four on every chapter and every
+shuffled copy). All three were built to avoid the verdict channel §89 closed; all three inherited
+saturation instead. **The question to ask of the next report-channel design is not whether it
+avoids a verdict but whether a cooperative reader can answer it well every time** — if so it has
+no variance in it, whatever it is about.
+
+**A second observation, recorded because it is findable later rather than because it is a
+pattern.** The same night, in a different instrument on a different substrate, the whitespace
+placebo also moved a reader the wrong way: `cost-that-bites` v2's `intact − sham` came out at
+**−0.0771**, the re-flowed copy drawing *more* reads than the intact one (inside noise, and the
+opposite sign to v1's +0.089 on the same contrast). Two instruments is not a pattern and neither
+result is significant on its own; both are written down so that a third would be recognisable
+instead of surprising.
+
+**What was refused.** No effect read from a constant function. No reworded probe: §144's
+redirection makes the mechanism the unit of search, and a seventh phrasing of the same question
+is not a new mechanism. No rescue by subgroup — the per-persona table is reported and separates
+nothing. And no claim that anticipation is not a real property of reading: what is refuted is
+this probe, with these measurables, against this manipulation, which is the one it was registered
+against.
+
+**Anti-scope.** Nothing under `src/litharness/` changed. §128's direction — that a writer might
+one day take direction from what a reader hopes for — is untouched, because the channel it would
+use was never licensed by this probe and is not closed by its death. And the arm's earlier
+truncated run (§226) destroyed three hours and $30.69 and **destroyed no finding**: the properly
+bought arm reached this same place, which is the difference between an expensive mistake and a
+costly one.
 ## 228. Two locks around one dictionary: the ceiling check read the elicitor's cache while its own workers wrote it, and CI is where that surfaced
 
 **Measured.** GitHub CI failed on `main` at `dd46e47` and on the reader-sims branch across several
@@ -24228,3 +24297,90 @@ reader learns the wrong rule and "restores" the worse behaviour.
 **Anti-scope.** Nothing about what the census measured moves, and §217's committed record is
 untouched: the strings stay as they were written, and the exemption is about how the audit reads
 them. This does not widen `OURS` or `OURS_EXACT_PATHS`, whose contents remain pinned exactly.
+
+## 230. A costed reader reads a shuffled book less, and it did it twice with the permutation redrawn
+
+**Registered before each spend** — `research/quality-measurement/cost-that-bites/PREREG-v2.md`
+for the arm and `PREREG-v3-replication.md` for the replication, the second written while the
+first's result was on disk and stating its prediction, its band and the outcome that would close
+the direction before any cell was bought. `FINDINGS-v2.md` and `FINDINGS-v3.md` own the readings.
+
+**Measured. Both arms clean, and the replication landed inside the band the registration fixed.**
+
+| | v2 | v3 |
+| --- | --- | --- |
+| shuffle seeds | 0, 1, 2 | 3, 4, 5 (`fitness-08`: 3, 5, 6) |
+| **intact − shuffled** | **+0.1640 [+0.0881, +0.2390]** | **+0.1890 [+0.0747, +0.2955]** |
+| **sham − shuffled** | **+0.2411 [+0.1512, +0.3366]** | **+0.1571 [+0.0690, +0.2437]** |
+| intact − sham | −0.0771 [−0.1658, +0.0146] | +0.0318 [−0.0506, +0.1173] |
+| books moving as predicted | 16 of 20 | 14 of 20 |
+| sessions scorable / transport failures | 180 of 180 / 0 | 180 of 180 / 0 |
+| spend, wall | $49.78, 2h04 | $50.35, 2h04 |
+
+The registered prediction was an interval excluding zero with a point in **[+0.08, +0.25]**, the
+band written down so "near +0.164" could not be decided after the fact. **v3 returned +0.1890.**
+Preconditions passed in both: `fp5` 0.219 and 0.196 against a 0.05 floor, the slot-A capacity
+share 0.5508 and 0.5740 against a 0.40 floor and largest of four each time, twenty books of
+twenty complete. **Nothing is pooled**: two arms side by side, no combined interval, because
+combining after seeing the first would make the pair one arm with a larger n and no registration.
+
+**So the claim, and it is deliberately narrow: a reader whose continuing costs it something reads
+a book less when that book's paragraph order is destroyed, and that is not an artifact of which
+permutation was drawn.** For a book in the slot this reader attends to, on this system's own
+twenty drafted books, on `claude-haiku-4-5` over `claude -p`. **Status: OBSERVED, and SUPPORTED
+for the registered claim across two arms. Not QUALIFIED**, and no editorial intervention is
+licensed by it.
+
+**This is the first mechanism in this house to move with a story-level manipulation and hold
+under replication.** §195.5's opening panel took a paragraph-shuffled copy of ours over an anchor
+at the ordered copy's rate; §199.1's `readers` lanes carried on four of four on every chapter and
+every shuffled copy of it; §227's anticipation probe returned the same answer whatever was done
+to the passage. The difference here is the cost: this reader had to give something up to keep
+reading, and §122 built that instrument for exactly the reason §70's 195-of-196 exposed.
+
+**One registered caution was removed by the replication and two stand.** v2's findings led with
+three ways the result could be less than it looked. The first — that the whitespace sham's point
+estimate ran *negative* in v2, which is not what an inert placebo does — is now weak: across the
+three measurements of that contrast the sign scatters, **+0.089 (v1's slot-A cells), −0.077 (v2),
++0.032 (v3)**, all containing zero and agreeing on no direction, which is what an inert placebo
+looks like and not what a confound looks like. Standing: the effect sits inside rather than
+comfortably inside the band this design can see, and the shuffle-seed spread is still about the
+size of the effect (0.1804 and 0.1957), which is why the replication was worth more than a third
+instrument would have been.
+
+**What it does not license, and the distance is the whole of the remaining work.** A whole-book
+paragraph shuffle is the most violent order damage available. That a costed reader notices it is
+a floor, not a ceiling, and says nothing about a chapter that is merely worse — which is the gap
+every dead proxy in `BRIEF.md` fell into. `plan/reader-architecture-proposal.md` states what
+qualification would require rather than claiming these arms satisfy any of it.
+
+**Provenance, recorded rather than left to a commit date.** v3 was bought while `elicit.spend()`
+still read the cache unlocked (§228, fixed on main as `ffaee27` after this arm started and before
+its results were committed). That defect can only **raise**: it cannot alter a session's content,
+cache key or scoring, it cannot miscount silently — CPython raises on a size change during
+iteration, every key these arms write is new, and in this path the sum was compared against an
+infinite ceiling anyway — and it did not fire, since 180 of 180 sessions ran. The numbers are
+unaffected.
+
+**What shipped besides the arms.** The seed **rule** (§ amendment a of the replication): the
+three lowest indices at or above an arm's start whose shuffled copy clears the feed's chunk
+floor, which reads chunk counts and never a reader's behaviour, was declared before the arm, and
+already describes v2's own (0, 1, 2) rather than retrofitting it — the plan had faulted at seeds
+(3, 4, 5) because `fitness-08`'s seed-4 permutation chunks to 10 against a floor of 11, the only
+such pair in seeds 0 to 9, and choosing a triple *because* it cleared would have let a
+replication select its own nuisance parameter to fit. And the ceiling skip §228's entry names as
+owed: `run_cells` priced the whole cache about 180 times an arm to compare it against infinity,
+which was waste and, from the driver's side, the sole trigger of that race; it is now priced only
+when a dollar ceiling can stop the run, with both ceilings still read **between** sessions so a
+started session always finishes.
+
+**What was refused.** No pooling of the two arms. No third arm to break a tie — the registration
+said so before v3 ran, because best-of-three is the rejection sampling `BRIEF.md` §6 prices. No
+bar over any effect size. No reader retuned (§89, §97.1), no book selected or revised on any of
+it (§105), and no claim about any of the twenty books: the arm measures how a reader spends
+minutes.
+
+**Anti-scope.** Nothing under `src/litharness/` changed by either arm. `fcr.v0`'s bytes are
+untouched and it remains unseated for any book-level claim; the editorial control plane stays
+inert; and this entry licenses one further experiment — a milder manipulation — and no
+production authority whatever.
