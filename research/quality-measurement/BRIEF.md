@@ -217,6 +217,37 @@ predictive distribution over the text. Zero.
 > with evidence behind it — and note the validity problem the paragraph above names is untouched:
 > no published-reader label reaches generated prose, which is what gates 2 and 3 exist to buy and
 > neither has been attempted.
+>
+> **Update, 2026-09-04: one reader in this family has now moved, and it is the one that charges
+> for reading.** `fcr.v0` pointed at a whole-book paragraph shuffle allocated fewer full reads to
+> the shuffled target than to the intact one, and further than a whitespace placebo moved it —
+> **replicated with the permutation redrawn**, `intact − shuffled` +0.1640 [+0.0881, +0.2390]
+> then +0.1890 [+0.0747, +0.2955], every precondition reported with its number, 180 of 180
+> sessions scorable in both arms (stage-0 §230,
+> [cost-that-bites](cost-that-bites/FINDINGS-v3.md)). It is the first mechanism here to move with
+> a **story-level** manipulation and hold under replication, where §195.5's opening panel,
+> §199.1's `readers` lanes and §227's anticipation probe all read surface or saturated. What
+> separates it from those three is the cost: its reader had to give something up to keep reading.
+>
+> **Read exactly what that is: one faculty, on the loudest stimulus available.** A whole-book
+> shuffle is the most violent order damage there is, and noticing it says nothing about a chapter
+> that is merely worse — the gap every proxy in §2 fell into.
+> **Qualification is the operator's and is not close**: `domain/editorial.QualificationEvidence`
+> requires ten fields and these two arms satisfy **one**, arguably — and one of the unmet nine is
+> the operator's own acceptance test.
+> [plan/reader-architecture-proposal.md](../../plan/reader-architecture-proposal.md) states what
+> would be required, what it would feed through `application/editorial.py`, and what would
+> withdraw the licence, and asks for nothing that spends.
+>
+> **And the finding that outlasts all four arms of that track is about substrate rather than
+> about readers.** Three designs, on three unrelated questions, in one night, each bounded by how
+> much material exists rather than by money or workers: the twenty-book fitness shelf caps the
+> costed reader's power (§222), nineteen operator reads of thirty-three shelf chapters cap order
+> recovery against sixty needed (§225), and the instrument needs ~3,900 words of member where our
+> chapters are 2,000, so it cannot read a chapter at all (the proposal's §3). **Quota was never
+> the constraint on any of them.** Where the operator's reading time and the pipeline's drafted
+> length go decides what can be measured next, and that is a fact about the substrate this brief
+> exists to protect.
 
 ## 4. Available experimental substrates
 

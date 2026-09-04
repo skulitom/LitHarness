@@ -84,10 +84,25 @@ was going to be read against.
 
 **What that costs this proposal is worth stating plainly: the gap to a production chapter is
 wider than §3 first claimed.** It is not only that a book has no damaged copy of itself; it is
-that this instrument needs about 3,900 words of member and a chapter is 2,000. A chapter-scale
-costed reader is therefore a **new instrument** with its own registration, its own sizing and its
-own null, not a re-pointing of this one — and building it is the honest form of "what would it
-take", not the arm this document originally proposed.
+that this instrument needs about 3,900 words of member and a chapter is 2,000.
+
+**But the constraint is length, not chapter-ness, and that leaves a fork rather than a single
+road.** A first version of this correction conceded a new instrument by default; that was too
+quick. Eleven chunks is a quantity of text, and two or three *consecutive* chapters of one book
+clear it comfortably — which is the instrument being fed the size it was built for rather than
+being weakened to accept a smaller one. The five shelf books that carry a session are exactly
+the multi-chapter ones, and they are old only because the recent pilots stop at chapter one.
+
+| road | what it needs | what it costs | what it keeps |
+| --- | --- | --- | --- |
+| **A. a chapter-scale costed reader** | a new instrument: its own registration, its own budget arithmetic sized to ~2,000-word members, its own attainability table computed from an observed reader (§94.7, and §222's repeat of it), its own null | design and a fresh seating; nothing transfers from v2/v3 except §1's four properties | the ability to ask about a chapter as the reader meets it, which is the unit the operator reads |
+| **B. this instrument reading two or three chapters** | **no new registration and no weakening** — the pipeline drafting more than one chapter of the same book. Ten books at v2's own floor, against the five that exist and none of them recent | roughly a chapter of generation per book; pilot 24's chapters measured $4.51 and $6.21, so about $50 for ten | the forty book-level contrasts as its null, and direct comparability with §230 |
+
+**B is the cheaper road and it is not this session's to take**: drafting is a generation spend and
+a substrate decision, and §222's shelf question was already refused on the ground that a corpus
+drafted overnight to feed one instrument is a substrate change nobody registered. It is stated
+here so the operator picks between the two rather than inheriting the more expensive one because
+a worktree session conceded it.
 
 **The third time a substrate has bounded a design in this track**, after the twenty-book fitness
 shelf (§222) and the nineteen operator reads (§225). Cost at the arms' measured rate, had it
@@ -149,12 +164,12 @@ queued controller work before it can spend.
 ## 6. What is asked, and what is not
 
 **Asked:** nothing that spends, and that is a change from this document's first version. The arm
-it proposed — order-dependence on real chapters — was measured to be unrunnable on this
-instrument before it was registered (§3's correction), so what is asked instead is that the next
-piece of work be a **chapter-scale costed reader**: a new instrument, sized to ~2,000-word
-members, with its own registration, its own attainability table computed from the observed
-reader rather than a simulated one (§94.7, and §222's repeat of it), and its own null. Its
-design inherits §1's four properties and nothing else from `fcr.v0`.
+it proposed — order-dependence on real chapters — was measured unrunnable on this instrument
+before it was registered (§3's correction). What is asked instead is a **decision between §3's
+two roads**, which is the operator's because one of them is a substrate change: build a
+chapter-scale instrument, or draft a second chapter for ten books and read them with the
+instrument that already has a null. Road B is the cheaper by a wide margin and is stated as such
+rather than conceded away.
 
 Read this document as the statement of what qualification would require rather than as a claim on
 any part of it.
