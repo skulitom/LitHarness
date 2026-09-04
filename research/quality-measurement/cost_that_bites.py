@@ -1213,6 +1213,153 @@ def _rows_json(rows: Sequence[Row]) -> list[dict[str, Any]]:
     ]
 
 
+def volume_text(book_dir: Path) -> tuple[str, int, int]:
+    """One drafted book's chapters as a single text, in reading order: (text, chapters, words)."""
+    chapters = sorted((book_dir / "chapters").glob("Chapter*.txt"), key=lambda p: p.name)
+    if not chapters:
+        raise ValueError(f"no chapters under {book_dir / 'chapters'}")
+    text = "\n\n".join(path.read_text(encoding="utf-8").strip() for path in chapters)
+    return text, len(chapters), len(text.split())
+
+
+def _run_volume_screen(args: argparse.Namespace) -> int:
+    """Three sessions on one drafted book: does it carry, does the reader answer, what does it cost?
+
+    `PREREG-volume-screen.md` owns the design and states, before any spend, that **no effect is
+    read under any outcome**: at one book `bcr.cluster_interval` returns None, and the forty
+    book-level contrasts are a fitness book's reference class rather than a shelf book's. The
+    three target read shares are recorded because they are what the sessions produce, and this
+    function computes no difference between them.
+    """
+    book_dir = Path(args.volume_screen)
+    text, chapters, words = volume_text(book_dir)
+    pool = feed_substrate.fitness_texts(Path(args.fitness_dir))
+    competitors = pool[: feed_core.FEED_SIZE - 1]
+    # **The intact book is checked before a shuffle is even sought.** `seeds_for` searches for a
+    # permutation that clears the floor and raises when none does — which is what a book far
+    # under the floor produces, and a raise is the wrong shape for the answer this screen
+    # exists to give. A book that cannot carry a session intact is TOO_SHORT, reported with
+    # its count, before anything is shuffled or bought.
+    held_intact = len(bcr.chunks(text))
+    if held_intact < feed_core.MIN_CHUNKS_FEED:
+        print(f"volume screen: {book_dir.name} — {chapters} chapter(s), {words} words")
+        print(f"  intact    {held_intact:2d} chunk(s) against a floor of "
+              f"{feed_core.MIN_CHUNKS_FEED}  FAULT")
+        result = {
+            "study": "cost-that-bites.volume-screen",
+            "book": book_dir.name,
+            "chapters": chapters,
+            "words": words,
+            "chunks": {"intact": held_intact},
+            "floor": feed_core.MIN_CHUNKS_FEED,
+            "reading": "TOO_SHORT",
+            "faults": {
+                "intact": (
+                    f"the book holds {held_intact} chunk(s) intact; a feed member needs "
+                    f"{feed_core.MIN_CHUNKS_FEED}, so no shuffle of it can clear either"
+                )
+            },
+        }
+        write_result(result, ARM_DIR / f"results-volume-screen-{book_dir.name}.json")
+        print("TOO_SHORT: nothing bought", file=sys.stderr)
+        return 0
+    seeds = seeds_for(text, start=SHUFFLE_SEED_START_V2, count=1)
+    versions = {
+        "intact": text,
+        "shuffled": book_shuffle(text, index=seeds[0]),
+        "sham": sham(text),
+    }
+    print(f"volume screen: {book_dir.name} — {chapters} chapter(s), {words} words")
+    faults_found: dict[str, str] = {}
+    cells: list[Cell] = []
+    for version, target in versions.items():
+        spec = feed_core.FeedSpec(
+            feed_id=f"vol-{book_dir.name[:20]}-{version}",
+            arm=version,
+            target=target,
+            others=tuple(t for _, t in competitors),
+            note=f"target={book_dir.name} ({version}) others={','.join(n for n, _ in competitors)}",
+        )
+        held = len(bcr.chunks(target))
+        fault = spec.fault()
+        print(f"  {version:9s} {held:2d} chunk(s) against a floor of {feed_core.MIN_CHUNKS_FEED}"
+              f"  {'ok' if fault is None else 'FAULT'}")
+        if fault is not None:
+            faults_found[version] = fault
+        cells.append(
+            Cell(
+                feed_index=0,
+                target_name=book_dir.name,
+                version=version,
+                rotation=TARGET_ROTATION_V2,
+                spec=spec,
+                chunk_counts=tuple(len(bcr.chunks(t)) for t in spec.texts()),
+            )
+        )
+    if faults_found:
+        # A fault is a **result of this screen**, not an error: it says three chapters is not
+        # enough for this instrument. Recorded and reported without buying a call.
+        result = {
+            "study": "cost-that-bites.volume-screen",
+            "book": book_dir.name,
+            "chapters": chapters,
+            "words": words,
+            "chunks": {v: len(bcr.chunks(t)) for v, t in versions.items()},
+            "floor": feed_core.MIN_CHUNKS_FEED,
+            "reading": "TOO_SHORT",
+            "faults": faults_found,
+        }
+        write_result(result, ARM_DIR / f"results-volume-screen-{book_dir.name}.json")
+        print(json.dumps(result["faults"], indent=2))
+        print("TOO_SHORT: nothing bought", file=sys.stderr)
+        return 0
+    if not args.yes:
+        print("pass --yes to spend (three sessions)", file=sys.stderr)
+        return 1
+
+    from elicit import Elicitor
+
+    cache = ARM_DIR / f"raw-volume-screen-{book_dir.name}.jsonl"
+    with Elicitor(cache, model=args.model, spot_model=None, transport=TRANSPORT) as elicitor:
+        rows, ledger = run_cells(
+            elicitor, cells, model=args.model, ceiling_usd=float("inf"), workers=1
+        )
+    scorable = [row for row in rows if row.session.scorable]
+    exits = dict(Counter(row.session.exit_note for row in rows if not row.session.scorable))
+    reading = "CARRIES" if len(scorable) == len(cells) else "DOES_NOT_CARRY"
+    result = {
+        "study": "cost-that-bites.volume-screen",
+        "book": book_dir.name,
+        "chapters": chapters,
+        "words": words,
+        "chunks": {v: len(bcr.chunks(t)) for v, t in versions.items()},
+        "floor": feed_core.MIN_CHUNKS_FEED,
+        "reading": reading,
+        "exit_notes": exits,
+        "sessions": len(rows),
+        "scorable": len(scorable),
+        "usd_per_session": (
+            round(float(ledger["spend"]["equivalent_usd"]) / len(rows), 4) if rows else None
+        ),
+        "slot_shares": feed_controls.slot_share_table([r.session for r in rows])["slots"],
+        # Recorded because they are what the sessions produce. **Not compared**: at one book
+        # there is no interval and no reference class (PREREG-volume-screen.md §2).
+        "target_read_share_per_version": {
+            row.version: row.session.target_read_share for row in scorable
+        },
+        "no_effect_is_read": (
+            "one book yields no interval (cluster_interval returns None below two clusters) and "
+            "the forty fitness-book contrasts are not this book's reference class"
+        ),
+        "ledger": ledger,
+        "rows": _rows_json(rows),
+    }
+    write_result(result, ARM_DIR / f"results-volume-screen-{book_dir.name}.json")
+    print(f"{reading}: {len(scorable)}/{len(cells)} scorable, "
+          f"${result['usd_per_session']} a session, exits {exits or 'none'}")
+    return 0
+
+
 def _run_v2(
     args: argparse.Namespace,
     *,
@@ -1320,6 +1467,13 @@ def main(argv: list[str] | None = None) -> int:
         "the three shuffle seeds redrawn, so the permutation luck is a fresh draw",
     )
     parser.add_argument(
+        "--volume-screen",
+        default=None,
+        metavar="BOOK_DIR",
+        help="paid, three sessions: can a multi-chapter book of ours carry a session at all? "
+        "(PREREG-volume-screen.md). Buys feasibility and price and never an effect",
+    )
+    parser.add_argument(
         "--arm-v2",
         action="store_true",
         help="paid: v2's design (PREREG-v2.md) — the target in slot A, the book as the unit, "
@@ -1368,7 +1522,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"wrote {ARM_DIR / 'attainability.json'}")
         return 0
     if not (
-        args.dry_run or args.screen or args.arm or args.dry_elicitor or args.arm_v2 or args.arm_v3
+        args.dry_run
+        or args.screen
+        or args.arm
+        or args.dry_elicitor
+        or args.arm_v2
+        or args.arm_v3
+        or args.volume_screen
     ):
         parser.error(
             "pass one of --selftest, --attainability, --dry-run, --dry-elicitor, --screen, "
@@ -1378,6 +1538,8 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--screen, --arm, --arm-v2 and --arm-v3 are separate runs; pass one")
     if args.arm_v2:
         return _run_v2(args)
+    if args.volume_screen:
+        return _run_volume_screen(args)
     if args.arm_v3:
         # The replication: v2's design entire, only the shuffle seeds redrawn
         # (`PREREG-v3-replication.md`).
