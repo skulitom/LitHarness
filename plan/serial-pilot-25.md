@@ -485,3 +485,14 @@ ours: a hand-declared sheet that names its system took `show_unheld`'s documente
 `True`, and a drawn system's own declaration has said `False` since §203. That default is fixed
 in §223; the subject rule is left as an open question for the operator. Spend $7.63 over 11
 calls, one tick of four, no prose kept (a refused draft is not stored).
+
+## 9. Draw6 and draw7 — the general system on the page, twice
+
+Both drawn 2026-09-04 (§223's fix in draw 6, §9847cd3 in draw 7), same recipe, fresh stores, four
+ticks each, no refusal. Draw 6 printed a notice in the System's voice, a rung by name, a stock at
+six and seven priced grants at zero; all four simulated readers said carry on and named the
+machinery as the reason. Draw 7 printed a longer notice and the same shape, and is the first seed
+to key its declared changes at scene positions rather than in the schedule space. The defect draw 7
+carries is §231's: the ladder is named *Band* and its rungs *Band One*, so the ordinal column
+prints `Band Band One`, and the two scenes printed the line two different ways. Spend $12.08 and
+$12.34.

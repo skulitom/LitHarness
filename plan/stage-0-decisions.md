@@ -24384,3 +24384,42 @@ minutes.
 untouched and it remains unseated for any book-level claim; the editorial control plane stays
 inert; and this entry licenses one further experiment — a milder manipulation — and no
 production authority whatever.
+
+## 231. Pilot 25 draw 7: the System spoke, the chapter drew clean, and one book printed its own status line two different ways
+
+**What was drawn.** `runs/ab/pilot25/draw7`, the same recipe as draw 6 at `9847cd3`, a fresh
+store, the tick cap at four. It completed: four ticks, both chapters of the pair, the library
+export and the readership step, no refusal. Two clean draws in a row under the general system
+after §223 fixed what stopped draw 5.
+
+**What it printed, and this is the second confirmation that the furniture reaches the page.** A
+notice in the System's own voice at the top of scene one — `[INVIGILATION] THE HALL IS ENTERED.
+ASSESSMENT IS CONTINUOUS AND HAS BEGUN…` — which is §218's line rendered from a declared change's
+`manifests_as`, and then a status line carrying a rung, a stock and six grants. Four changes were
+declared at scene keys rather than in the schedule space, which is the first seed to key them where
+§212 can fold them.
+
+**The defect, measured off the page rather than reasoned about.** The book named its ladder *Band*
+and its rungs *Band One* to *Band Ten*. The rank column is declared `ordinal`, so it prints the
+rung's display name under the column's label, and the line the writer was handed for every scene
+reads `Band Band One`. Scene one printed `Band 1` — the writer silently disagreed with its example
+and wrote the market's form — and scene two printed `Band Band One`, copying it. **So one book
+printed its own status line two different ways two scenes apart**, which is the kind of thing a
+reader notices and neither gate refuses: the progression gate reads the column the beat named, and
+nothing compares one scene's furniture with the next's.
+
+**Why the obvious fix is wrong, which is the part worth recording.** Suppressing the label when
+the rung's name begins with it would print `Band One`, and `Sheet.read` splits a line on its
+declared labels longest-first: the parser would match the label `Band`, read `One` as the value,
+and fail to map it to the rung whose name is `Band One`. The line would render prettily and stop
+round-tripping, which is the one property §160.3 makes the parsed surface carry. So the choice is
+between three things, none of them free: the ordinal prints the rung's index as the market's
+windows do (§202 measured rank as a number in most of them) and the name lives on the graph line;
+or the seed is told not to name a rung with its ladder's word; or the renderer suppresses the
+duplicate and the reader learns the name from the notice instead. **Left for the operator's read**,
+because which of the three is right depends on what he wants the line to look like, and two draws
+is enough evidence to choose from but not enough to choose for him.
+
+**Anti-scope.** Nothing here is a quality claim about either chapter; both are on the shelf for
+his read, and the simulated readers' answers are recorded beside them as observations rather than
+as a verdict.
