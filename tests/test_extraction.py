@@ -1443,3 +1443,31 @@ def test_a_hand_declared_following_sheet_hides_what_nobody_holds_by_default() ->
     # A declaration round-trips whatever it said, so neither default is lost on the way back.
     assert parse_sheet(following.declaration()).show_unheld is False
     assert parse_sheet(louder.declaration()).show_unheld is True
+
+
+def test_a_scene_that_prints_the_line_twice_keeps_the_state_it_leaves() -> None:
+    """§233: the genre shows the sheet, changes something, and shows it again — about 2.4
+    windows in a chapter that prints any (§202's census). One record a line offered two values
+    for one story position, which is the shape `integrity.detect_contradictions` refuses, and
+    pilot 25 draw 6's second chapter parked on exactly that (§232). The last line a subject
+    prints is the state the scene leaves; earlier ones stay on the page as furniture, and a
+    second subject keeps its own last line rather than the first one's."""
+    from litharness.domain import extraction as extraction_mod
+
+    text = (
+        "The bell rang.\n"
+        "[STATUS] rook — Level 3 | HP 20/30\n"
+        "[STATUS] vault — Level 1 | HP 9/9\n"
+        "He took the hit and stood up anyway.\n"
+        "[STATUS] rook — Level 3 | HP 11/30\n"
+    )
+    kept = extraction_mod._last_line_each(text, {"rook", "vault"})
+
+    assert [subject for subject, _ in kept] == ["rook", "vault"], "first-seen order"
+    spans = dict(kept)
+    assert text[spans["rook"][0] : spans["rook"][1]].endswith("HP 11/30"), "rook's last line"
+    assert text[spans["vault"][0] : spans["vault"][1]].endswith("HP 9/9")
+
+    # A subject canon has never named is no subject of this book's, whatever it printed.
+    assert extraction_mod._last_line_each(text, {"rook"}) == [kept[0]]
+    assert extraction_mod._last_line_each(text, set()) == []

@@ -24462,3 +24462,40 @@ one-book oddity to a property of the ask.
 **Anti-scope.** No fix is attempted here and none is implied. The three drafted scenes are on the
 shelf for the operator's read; whether the second chapter is any good is his question, and the
 stall is recorded as an observation rather than as a defect with a known cause.
+
+## 233. A scene may print the status line more than once, because the genre does, and the last one is the state it leaves
+
+**Measured first, and the measurement was already on disk.** The system-displays census (§202)
+counted **0.55 windows a chapter** across every LitRPG chapter in the shards, over the **22.7
+percent** of chapters that print any — about two and a half windows in a chapter that shows one at
+all. The house rule was one printed line per scene, and §232 is what that cost: pilot 25 draw 6's
+second chapter showed the sheet, struck a candidate off the scheme, and showed the sheet again, so
+extraction minted two records for one story position, `integrity.detect_contradictions` refused
+them as two values for one fact, and the unit parked with nothing wrong in it. Chapter one never
+meets this, because nothing has moved there yet. **The rule was a rule against the genre's own
+habit, and it only bound where the book started to move.**
+
+**What shipped** (`domain/extraction.py`). `_last_line_each` returns one line per subject — the
+last that subject printed — in first-seen order, and `extract_state` reads those instead of every
+match. §161.3's cardinality holds exactly as before: one canon record per subject per position.
+What changed is that it is satisfied by *choosing among* the lines rather than by forbidding the
+second, which is the same move §219 made for a snapshot that carries the rung.
+
+**The last rather than the first, and the reason is what a record means.** The record is the state
+the scene *leaves*: `state_as_it_stands` folds forward from it, the progression gate asks whether
+the named quantity moved by the end of the scene, and a reader who has seen two windows believes
+the later one. Earlier lines stay on the page as furniture and reach no record, which is what they
+are — the market's own windows are furniture the reader watches, and only the last is a claim
+about where the book now stands.
+
+**Tests and books.** `test_a_scene_that_prints_the_line_twice_keeps_the_state_it_leaves` pins the
+rule directly: two subjects in one scene, the first printing twice, each keeping its own last line,
+and a subject canon never named kept out however it printed. The four stored books replay 8/8
+identical, because none of them contains a scene that printed twice — such a scene could not be
+accepted until now, which is the same reason the defect waited for a second chapter to appear.
+
+**What this does not do.** It does not make the second chapter draft: §232's other failure, a beat
+naming a grant the scene did not deepen, is untouched and is the ordinary progression refusal.
+Nor does it license a scene to print contradictory lines *about different subjects*, which was
+always allowed and still is. And it says nothing about how many lines a scene *should* print;
+that is the writer's business and the ask is unchanged.

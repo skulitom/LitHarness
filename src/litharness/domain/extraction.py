@@ -76,7 +76,7 @@ and `docs/system-model.md` says which module is the home of which fact.
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from hashlib import sha256
 
 import litharness_contracts as lc
@@ -547,6 +547,39 @@ def promotions(
     return tuple(promoted)
 
 
+
+def _last_line_each(
+    text: str, subjects: Collection[str]
+) -> list[tuple[str, tuple[int, int]]]:
+    """One status line per subject — the last this scene printed — in first-seen order.
+
+    **A scene may print the line more than once, and the last one is the state it leaves**
+    (§233). Minting a record per line was the rule until pilot 25 draw 6 tried to draft a
+    second chapter: its scene showed the sheet, struck a candidate off the scheme, and showed
+    the sheet again, so extraction offered two values for one story position — the exact shape
+    `integrity.detect_contradictions` groups on — and the unit parked with nothing wrong in it
+    (§232). Chapter one never met this because nothing has moved yet there.
+
+    **The market prints more than one** (`research/quality-measurement/system-displays`,
+    §202): 0.55 windows a chapter across every LitRPG chapter in the shards, over the 22.7
+    percent of chapters that print any, which is about two and a half windows in a chapter
+    that shows one at all. A rule of one line a scene was a rule against the genre's own
+    habit, and §161.3's cardinality argument — one canon record per subject per position — is
+    satisfied by choosing among the lines rather than by forbidding the second.
+
+    The last rather than the first, because the record is what the scene *leaves*: the gate
+    asks whether the named quantity moved by the end of it, `state_as_it_stands` folds
+    forward, and a reader who has seen two windows believes the later one. Earlier lines stay
+    on the page as furniture and reach no record, which is what they are.
+    """
+    last: dict[str, tuple[str, tuple[int, int]]] = {}
+    for read_subject, span in _status_lines(text):
+        subject = normalise_subject(read_subject)
+        if subject in subjects:
+            last[subject] = (read_subject, span)
+    return list(last.values())
+
+
 def extract_state(
     text: str,
     *,
@@ -609,7 +642,7 @@ def extract_state(
     # onto the columns it left out, which is what `state_as_it_stands` already does.
     ids = {display_name(known, subject).casefold(): subject for subject in subjects}
     declared = False
-    for read_subject, span in _status_lines(text):
+    for read_subject, span in _last_line_each(text, subjects):
         subject = normalise_subject(read_subject)
         # A name canon has never used is a claim about someone new, which is a proposal
         # rather than a reading of what the book already established.
