@@ -269,9 +269,19 @@ def _strip_fence(text: str) -> str:
         if len(lines) >= 2:
             body = lines[1:-1] if lines[-1].strip().startswith("```") else lines[1:]
             stripped = "\n".join(body).strip()
-    start = stripped.find("{")
-    if start < 0:
+    # **Arrays as well as objects, and until 2026-09-04 only objects.** This scanned for the
+    # first balanced `{...}`, which is right for the pair question it was written for and
+    # silently destructive for any schema whose top level is a JSON array: the answer was
+    # truncated to its *first element* and cached that way, so the loss was invisible and
+    # unrecoverable. It cost the anticipation probe's whole paid run — 800 calls, zero
+    # transport failures, zero scorable cells (stage-0 §226). The opening bracket is now
+    # whichever of `{` or `[` comes first, and its own kind is matched.
+    opens = [position for position in (stripped.find("{"), stripped.find("[")) if position >= 0]
+    if not opens:
         return stripped
+    start = min(opens)
+    opener = stripped[start]
+    closer = "}" if opener == "{" else "]"
     depth = 0
     in_string = False
     escaped = False
@@ -287,9 +297,9 @@ def _strip_fence(text: str) -> str:
             continue
         if character == '"':
             in_string = True
-        elif character == "{":
+        elif character == opener:
             depth += 1
-        elif character == "}":
+        elif character == closer:
             depth -= 1
             if depth == 0:
                 return stripped[start : index + 1]

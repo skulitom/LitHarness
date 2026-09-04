@@ -225,6 +225,49 @@ def test_the_selftest_passes() -> None:
 # ------------------------------------------------------------------------------ the arm texts
 
 
+def test_the_dry_elicitor_leg_fails_when_the_stripper_truncates_an_array(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    """The guard must be able to fail, or it is not a guard.
+
+    Restores the pre-2026-09-04 stripper — first balanced `{...}` only — and asserts the leg
+    returns non-zero. That is the run this leg's absence let through: 800 calls, zero transport
+    failures, zero scorable cells (stage-0 §226).
+    """
+    import elicit
+
+    def object_only(text: str) -> str:
+        stripped = text.strip()
+        start = stripped.find("{")
+        if start < 0:
+            return stripped
+        depth = 0
+        for index in range(start, len(stripped)):
+            if stripped[index] == "{":
+                depth += 1
+            elif stripped[index] == "}":
+                depth -= 1
+                if depth == 0:
+                    return stripped[start : index + 1]
+        return stripped
+
+    monkeypatch.setattr(elicit, "_strip_fence", object_only)
+
+    class _Args:
+        cache = str(tmp_path / "dry.jsonl")
+        model = "claude-haiku-4-5"
+
+    assert anticipation.dry_elicitor(_Args()) == 1
+
+
+def test_the_dry_elicitor_leg_passes_on_the_fixed_stripper(tmp_path) -> None:
+    class _Args:
+        cache = str(tmp_path / "dry.jsonl")
+        model = "claude-haiku-4-5"
+
+    assert anticipation.dry_elicitor(_Args()) == 0
+
+
 def test_the_replay_cache_defaults_beside_the_result_and_not_into_the_working_directory() -> None:
     """An 800-call run's cache must not land wherever the operator happened to be standing."""
     assert anticipation.DEFAULT_CACHE.is_absolute()

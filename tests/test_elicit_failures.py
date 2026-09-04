@@ -77,3 +77,68 @@ def test_the_snippet_is_bounded_so_the_reasons_table_stays_a_table() -> None:
 def test_a_zero_exit_keeps_the_plain_bucket_it_never_reports() -> None:
     """Return code zero takes the parsing branch, so this value is only ever discarded."""
     assert elicit._cli_failure_reason(_completed(0, stderr="ignored")) == "cli_error"
+
+
+# ----------------------------------------------------- the answer survives the fence-stripper
+
+ARRAY = (
+    '[\n  {"outcome": "first", "stance": "hope"},\n'
+    '  {"outcome": "second", "stance": "dread"},\n'
+    '  {"outcome": "third", "stance": "neither"}\n]'
+)
+OBJECT = '{"choice": "A", "reason_code": "stakes-real"}'
+
+
+def test_an_array_answer_survives_whole() -> None:
+    """It did not until 2026-09-04: every array was truncated to its first element and cached
+    that way, which cost the anticipation probe's entire paid run (stage-0 §226)."""
+    import json
+
+    recovered = elicit._strip_fence(ARRAY)
+    assert json.loads(recovered) == [
+        {"outcome": "first", "stance": "hope"},
+        {"outcome": "second", "stance": "dread"},
+        {"outcome": "third", "stance": "neither"},
+    ]
+
+
+@pytest.mark.parametrize("wrapper", ["```json\n{body}\n```", "```\n{body}\n```", "{body}"])
+def test_an_array_survives_fenced_and_bare(wrapper: str) -> None:
+    import json
+
+    assert len(json.loads(elicit._strip_fence(wrapper.format(body=ARRAY)))) == 3
+
+
+def test_an_array_survives_commentary_after_it() -> None:
+    import json
+
+    trailing = ARRAY + "\n\nThose are the three I would expect, given the toll plot."
+    assert len(json.loads(elicit._strip_fence(trailing))) == 3
+
+
+def test_the_object_path_is_unchanged() -> None:
+    """The shape the stripper was written for, including an object followed by prose —
+    the case that made it scan for a balanced value in the first place."""
+    import json
+
+    assert json.loads(elicit._strip_fence(OBJECT)) == {
+        "choice": "A",
+        "reason_code": "stakes-real",
+    }
+    trailing = OBJECT + " ``` Passage A is a complete scene that lands on stakes I can feel..."
+    assert json.loads(elicit._strip_fence(trailing))["choice"] == "A"
+    assert json.loads(elicit._strip_fence("```json\n" + OBJECT + "\n```"))["choice"] == "A"
+
+
+def test_an_object_wins_when_it_comes_first_and_an_array_when_it_does() -> None:
+    """The opening bracket is whichever appears first, and only its own kind is matched."""
+    import json
+
+    assert isinstance(json.loads(elicit._strip_fence('{"a": [1, 2]}')), dict)
+    assert isinstance(json.loads(elicit._strip_fence('[{"a": 1}, {"a": 2}]')), list)
+
+
+def test_text_with_no_json_at_all_comes_back_stripped() -> None:
+    assert elicit._strip_fence("  I would rather not answer that.  ") == (
+        "I would rather not answer that."
+    )
