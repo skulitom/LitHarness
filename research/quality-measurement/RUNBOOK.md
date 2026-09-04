@@ -379,6 +379,10 @@ and the corrected reading prints beside it as a proposal an operator freezes, no
 
 ### W3 — can a reader name a cadence difference?
 
+**Retired (correction in place, 2026-09-05).** `cadence_discrimination.py` was cut with the dead
+cluster in `530f40e` (2026-08-24) along with `domain/discrimination.py`; the commands below are
+kept as the record of how W3 was run and no longer execute.
+
 E6's byte-frozen question, imported from `domain/discrimination.py`, over three payoff cadences
 of the same span. **The premise is checked before any call**: `certify` refuses to run if the
 three variants do not carry identical words, so a manipulation that stopped being about
@@ -773,6 +777,10 @@ and belong with `bcr.py`'s commands above.
 
 ## The comic-beat census — located levity, and what it costs to be sure of it
 
+**Retired (correction in place, 2026-09-05).** `comic_beats.py` was cut with the dead cluster in
+`530f40e` (2026-08-24); its results keep their home in the ledger and the commands below are the
+record of how they were bought, not a runnable recipe.
+
 `comic-beats-results.md` carries every number and is authoritative; this section is the commands
 and the cost as measured. **No bar is declared anywhere in this programme, nothing it produces
 reaches a prompt, a directive or the axis registry, and nothing under `src/` moved.**
@@ -858,6 +866,9 @@ took 11 transport failures in 551 calls, which is what that costs. A dedicated c
 refuses. Never wrap a run in `timeout`. Stdout is buffered, so the cache JSONL is the progress bar.
 
 ## Chapter endings — the locator and the census, §108
+
+**Retired (correction in place, 2026-09-05).** `chapter_endings.py` was cut with the dead cluster
+in `530f40e` (2026-08-24); §108 holds the census and the commands below are its record.
 
 **Free, deterministic, no model and no `claude -p`.** Three passes, two interpreters, and only the
 middle one needs the other venv. Under two minutes end to end.
