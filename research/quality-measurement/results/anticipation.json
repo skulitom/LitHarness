@@ -1,0 +1,3896 @@
+{
+  "cells": [
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-1",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-2",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-3",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-4",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-5",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-6",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-7",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-8",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-9",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "original",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "destake",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "deplete_matched",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rename_entities",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "climber",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "stranger",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "regular",
+        "recurrence": 0.0
+      }
+    },
+    {
+      "raw_draws": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "score": {
+        "arm": "rewhitespace",
+        "bipolar_rate": 0.0,
+        "draws_answered": 0,
+        "engagement": 0.0,
+        "mean_distinctness": 0.0,
+        "mean_specificity": 0.0,
+        "passage_id": "gen:scene-10",
+        "persona_id": "mechanism",
+        "recurrence": 0.0
+      }
+    }
+  ],
+  "kills": {
+    "k1": {
+      "floor": 0.05,
+      "span": null,
+      "verdict": "UNREADABLE"
+    },
+    "k2": {
+      "margin": 0.05,
+      "verdict": "UNREADABLE"
+    },
+    "k3": {
+      "verdict": "UNREADABLE"
+    },
+    "k4": {
+      "between_passage_sd": null,
+      "note": "within-cell spread needs per-draw records; the battery stores them and this table reports the comparison when a run exists",
+      "verdict": "REPORTED"
+    },
+    "scorable_cells": 0
+  },
+  "ledger": {
+    "api_calls": 768,
+    "call_ceiling": 800,
+    "ceiling_usd": null,
+    "cells_planned": 200,
+    "cells_run": 200,
+    "failure_reasons": {},
+    "replayed": 32,
+    "stopped_at_ceiling": false,
+    "transport_failures": 0
+  },
+  "model": "claude-haiku-4-5",
+  "registration": {
+    "arms": [
+      "original",
+      "destake",
+      "deplete_matched",
+      "rename_entities",
+      "rewhitespace"
+    ],
+    "call_guard": 1000,
+    "k1_span_floor": 0.05,
+    "k2_margin": 0.05,
+    "k_draws": 4,
+    "min_token_length": 2,
+    "n_outcomes": 3,
+    "outcome_max_words": 50,
+    "probe": "You have read this far and the chapter continues below the cut. Without judging the writing in any way, describe the three most concrete things that could plausibly happen next in this story. Be specific: name the people, objects and places involved. For each, say whether you notice yourself hoping it happens, dreading it, or neither.\n\nAnswer as a JSON array of exactly three objects: [{\"outcome\": \"<one or two sentences>\", \"stance\": \"hope\" | \"dread\" | \"neither\"}, ...]",
+    "probe_schema": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "outcome": {
+            "type": "string"
+          },
+          "stance": {
+            "enum": [
+              "hope",
+              "dread",
+              "neither"
+            ]
+          }
+        },
+        "required": [
+          "outcome",
+          "stance"
+        ],
+        "type": "object"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    },
+    "stances": [
+      "hope",
+      "dread",
+      "neither"
+    ],
+    "stop_fraction": 0.6,
+    "stopwords_digest": "5db61746db1facb0",
+    "version": "anticipation.v0"
+  },
+  "registration_digest": "e3d02f132147840a",
+  "spend": {
+    "cache_read": 22982849,
+    "cache_write": 3324850,
+    "equivalent_usd": 30.6927,
+    "input": 1486506,
+    "output": 4051644
+  },
+  "study": "anticipation.v0",
+  "warnings": []
+}
