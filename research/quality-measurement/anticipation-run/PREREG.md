@@ -116,3 +116,24 @@ on the record; what it no longer does is decide when to stop.
 **What does not change**: the arms, the panel, the passages, K, the probe's bytes, the schema,
 the scorers, and all four kill conditions. `registration_digest()` is untouched, because none of
 those constants moved.
+
+## Addendum, 2026-09-04: the arm's measured speed, because reproducing a run needs it
+
+Three measurements on the same transport, the same model and the same 800-call plan, each a
+seven-minute sample of the growing replay cache:
+
+| workers | seconds a call | calls a minute | scale |
+| --- | --- | --- | --- |
+| 1 (the driver before the pool) | 67 | 0.9 | — |
+| 3 | 26.3 | 2.3 | 2.5x |
+| 5 | **13.6** | **4.4** | **4.9x** |
+
+So the pool scales close to linearly to five on this box, and the whole arm runs in about three
+hours where the sequential driver would have taken fifteen. Five is the ceiling used, not a
+measured limit: the box froze on 2026-09-03 under one arm at three workers beside five other
+sessions and a suite, and the coordinating session's memory measurement — 63 GB with 32 GB
+free, 16 logical cores, 4.4 GB held across 35 processes — says the constraint is not memory,
+which leaves the transport, whose failure mode is silent (`CLAUDE.md`). The watch during the
+run was therefore the record growth rate rather than the machine's health: at five workers
+fewer than about three records a minute would mean calls failing rather than the box unwell,
+and the drop back to three was pre-decided rather than judged in the moment.
