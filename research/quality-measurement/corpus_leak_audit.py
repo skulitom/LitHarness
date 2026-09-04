@@ -108,6 +108,32 @@ _READER_ANSWER_FIELD = re.compile(
     r"line\d+\.answer\.(?:felt|expect_next|because|next|hoping_for\[\d+\]|dreading\[\d+\])"
 )
 
+#: The fit census (stage-0 §217) declares sixty market *shapes* into fresh stores and records
+#: what this system said back. Its long strings are all ours and each is machine output: the
+#: refusals `world check` and `world accept` print, the `world declare` arguments the census
+#: itself composed, the floor's own `system_gap` sentence, and a status line this renderer
+#: rendered from placeholder values. Thirty-five of them reach the excerpt threshold because
+#: `genre.system_gap`'s complaint is 133 words and every blocked shape carries a copy, which
+#: is why this audit has failed on `main` since `c857710` — and it scans history, so no edit
+#: to the working tree can clear the blob.
+#:
+#: **The exemption is safe because the generator is bounded, not because the file is trusted**
+#: (§229). `census.py` now records the sentence that *names* a refusal rather than its body,
+#: capped at `census.SHORT_WORDS`, which is far below :data:`EXCERPT_WORDS`; a later run
+#: therefore cannot write an excerpt-sized string into any field at all, and
+#: `test_the_fit_census_cannot_write_an_excerpt` pins that bound so the exemption cannot
+#: quietly become a hiding place. Keyed to the six field shapes that actually carry the
+#: historical strings, so a seventh — or corpus text in a new field — fails loudly.
+_FIT_CENSUS_OUTPUT_FIELD = re.compile(
+    r"\.shapes\[\d+\](?:"
+    r"\.accept\[\d+\]|"
+    r"\.check\.(?:gaps|complaints|would_not_finish|grown|would_breach|snapshot_faults)\[\d+\]|"
+    r"\.declarations(?:\[\d+\])+|"
+    r"\.floor\.system_gap|"
+    r"\.rendered\.[^.]+"
+    r")"
+)
+
 OURS_PATH_FIELDS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("reader-book-forge-a/forge.json", _FORGE_AUTHORED_FIELD),
     ("reader-book-forge-b/forge.json", _FORGE_AUTHORED_FIELD),
@@ -119,6 +145,7 @@ OURS_PATH_FIELDS: tuple[tuple[str, re.Pattern[str]], ...] = (
         re.compile(r"\.texts\[\d+\]\.listing"),
     ),
     ("research/quality-measurement/readers-order-control/raw.jsonl", _READER_ANSWER_FIELD),
+    ("research/quality-measurement/system-fit/census.json", _FIT_CENSUS_OUTPUT_FIELD),
 )
 
 

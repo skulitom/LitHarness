@@ -23694,7 +23694,7 @@ that *names* a refusal rather than its whole body (`shorten`, `shortened`), so n
 another; the committed blob stays as it was, because the artifact is §217's evidence and the
 audit reads history rather than the working tree. Clearing the audit itself would mean rewriting
 history or widening a leak audit's exemptions, which `tests/test_corpus_leak_audit.py` pins as
-the dangerous change — both are the operator's to decide, and neither was done here.
+the dangerous change — both are the operator's to decide, and neither was done here. **Decided by the operator on 2026-09-04 and done as §229**: the narrow one, a path-and-field exemption naming the census's own machine output, resting on the bound this repair put on the generator rather than on trust in the file.
 
 ## 221. The evaluator is the product and the launch is its test: a readership port behind a domain-pack seam, and a release queue the tool never posts from
 
@@ -24208,3 +24208,92 @@ use was never licensed by this probe and is not closed by its death. And the arm
 truncated run (§226) destroyed three hours and $30.69 and **destroyed no finding**: the properly
 bought arm reached this same place, which is the difference between an expensive mistake and a
 costly one.
+## 228. Two locks around one dictionary: the ceiling check read the elicitor's cache while its own workers wrote it, and CI is where that surfaced
+
+**Measured.** GitHub CI failed on `main` at `dd46e47` and on the reader-sims branch across several
+pushes, always the same way and never on every leg: `RuntimeError: dictionary changed size during
+iteration`, in `tests/test_cost_that_bites.py::test_the_selftest_passes` and
+`::test_a_run_under_the_ceiling_buys_every_cell_and_reads_a_scripted_mover`, on two of the four
+matrix legs while the other two passed, and not reproducible locally by running either test on its
+own. The traceback names the whole of it: `run_cells`' scheduler calls `next_cell`, which prices
+the ceiling with `elicitor.spend()`, which sums `self._cache.values()` while the pool's other
+workers are inserting into that cache.
+
+**What was wrong.** `Elicitor` holds a `threading.Lock` and takes it in six places that touch
+`_cache`; `spend()` was the seventh reader and took nothing. The scheduler holds `run_cells`' own
+lock while it calls `spend()`, and the workers hold the elicitor's lock while they write — **two
+disjoint locks around one dictionary**, which is not a lock at all. The scripted double in
+`cost_that_bites` had no lock of any kind, which is the end CI reached first because the selftest
+drives it through the same pool.
+
+**Exposure, stated because a defect in a paid path deserves it rather than a shrug** (the arm's
+owner established this and it is recorded here with the fix). It can only *raise*: a failure
+propagates out of `future.result()` and stops the run, and cached cells replay free, so a stopped
+arm is recoverable and a completed one is trustworthy. It cannot alter a session's content, its
+cache key or its scoring, and it cannot miscount silently, because CPython raises on a size change
+rather than returning a mixture and because every key these arms write is new, so no same-size
+replacement can occur. In the arms that ran under it (v2, and v3 while this was being written) the
+compared ceiling is `inf`, since their registered stop is a call ceiling — so in that path the call
+is at once the sole trigger of the race and pure waste.
+
+**What shipped.** `Elicitor.spend()` takes the lock for the read; the scripted double gains a lock
+and takes it on both sides; a regression test drives three writers and one reader over a
+pre-filled cache. **The first draft of that test passed against the unfixed code**, which would
+have shipped a guard that cannot fail — it summed a few dozen records, and the window was too
+narrow to land. It was rewritten around a cache large enough that iteration takes real time, and
+then checked the other way: with the lock removed it fails, with the lock in place it passes. That
+check is the point of the entry as much as the fix is.
+
+**Owed, and deliberately not done here.** Skipping the `spend()` call entirely when the ceiling is
+infinite removes the reason the call is made in that path at all. It belongs to the arm's owner and
+lands after the arm in flight finishes, so the committed script stays the one that produced its
+results — the same rule §225 followed with its flush. The registration requires the ceiling to be
+read *between sessions* so a started session always finishes, which is why the call sits in the
+scheduler and not in a worker, and any change keeps that.
+
+**Anti-scope.** No reading, interval or verdict moves: this is a crash, not an arithmetic. The
+arm running while it was fixed carries the pre-fix module, and its findings say so.
+
+## 229. The leak audit is green again, by naming the census's own machine output field by field and bounding the generator that writes it
+
+**Measured.** With §228's race fixed, every test leg of CI passed and one step still failed: `Audit
+corpus history`, on `main`, exactly as it had since `c857710`. Thirty-five excerpt-sized strings in
+one path, `research/quality-measurement/system-fit/census.json`, the longest 316 words. The
+correction recorded above §221 named the two ways out — rewrite history, or widen a leak audit's
+exemptions — and left both to the operator. **The operator asked for CI fixed** (2026-09-04), which
+decides it, and a permanently red guard is worse than either: it teaches every session to read a
+red CI as normal.
+
+**Which of the two, and why not the other.** Rewriting history means a force-push over a public
+repository other sessions and worktrees are cloned from, against a standing instruction never to
+force-push. So: the exemption — but not the blunt one. The audit already carries a narrow
+mechanism, `OURS_PATH_FIELDS`, a path *and* a field pattern, used for the forge's own premises and
+the order control's six answer keys. The 35 strings sit in six field shapes, and each is this
+system's own machine output: the refusals `world check` and `world accept` print, the `world
+declare` arguments the census composed, the floor's `system_gap` sentence, and a status line this
+renderer rendered from placeholder values. Two were read by hand rather than assumed — the
+rendered line is `[STATUS] Hero — Name as written | …`, and the long declaration argument is a
+`status_sheet` JSON — because "it is ours" is the claim the whole audit turns on and it is cheap
+to check.
+
+**What makes the exemption safe is a bound, not trust.** An exemption in a leak audit is a place a
+future leak can hide, which `tests/test_corpus_leak_audit.py` says in its first line. So the
+exemption rests on §223's repair one step further: `census.py` records the sentence that *names* a
+refusal rather than its body, capped at `SHORT_WORDS`, far below the audit's `EXCERPT_WORDS`, so a
+later census **cannot write an excerpt-sized string into any field at all**, exempt or not.
+`test_the_fit_census_cannot_write_an_excerpt` pins that: it asserts the cap is below the threshold
+and drives a 360-word string through the writer. If that test ever fails, the exemption goes
+rather than the bound — the entry says which one is load-bearing.
+
+**What shipped.** `_FIT_CENSUS_OUTPUT_FIELD` and its entry in `OURS_PATH_FIELDS`; two tests, one
+that the six shapes are exempt and that `source_excerpt`, `story_text` and a `chapter` field in
+the same file are *not*, and the bound test above. The audit now reports CLEAN across 908 commits
+and 324 blobs. Also here, because it was found in review of §228 rather than by a test: that
+entry's `spend()` docstring described holding the lock across the whole sum, while the code
+materialises under the lock and sums outside it — the opposite implementation, with a reason that
+argued against what the code does. Corrected in place; a contradicted comment is how a later
+reader learns the wrong rule and "restores" the worse behaviour.
+
+**Anti-scope.** Nothing about what the census measured moves, and §217's committed record is
+untouched: the strings stay as they were written, and the exemption is about how the audit reads
+them. This does not widen `OURS` or `OURS_EXACT_PATHS`, whose contents remain pinned exactly.

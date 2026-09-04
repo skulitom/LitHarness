@@ -1347,10 +1347,27 @@ class Elicitor:
         return anchor_agreement(persona, answers)
 
     def spend(self) -> dict[str, int | float]:
-        """Token totals over every record in the cache, replayed and fresh alike."""
+        """Token totals over every record in the cache, replayed and fresh alike.
+
+        **Under the lock, because a driver reads this while its own workers write** (§227).
+        Every other reader and writer of `_cache` in this class takes `_lock`; this one did
+        not, and a pooled driver calls it between cells to test its ceiling, so a call
+        completing mid-sum raised `RuntimeError: dictionary changed size during iteration`
+        out of a worker and stopped the run. It reached CI as two intermittent failures in
+        `tests/test_cost_that_bites.py` on two matrix legs of four, which is what an
+        unsynchronised read looks like from the outside: fine until the timing lands.
+
+        The lock is held for the materialisation and released before the arithmetic: a
+        snapshot taken *under* the lock cannot be touched by a concurrent write, while the
+        same snapshot taken outside it would be the identical race one line earlier. `spend`
+        is never called from inside a locked block — every caller is a driver — so there is
+        nothing here to deadlock against.
+        """
         totals: dict[str, int | float] = {"input": 0, "output": 0, "cache_read": 0,
                                           "cache_write": 0, "equivalent_usd": 0.0}
-        for record in self._cache.values():
+        with self._lock:
+            records = list(self._cache.values())
+        for record in records:
             usage = record.get("usage", {})
             for key in totals:
                 value = usage.get(key, 0) or 0
