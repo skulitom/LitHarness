@@ -64,7 +64,34 @@ happening", read 11's "describing the world to the readers"). It requires no com
 candidates, so §61(5) and §105.1 are untouched; it produces a located claim about one chapter;
 and it has a null distribution already measured — forty book-level contrasts across the two arms.
 
-Cost at the arms' measured rate: three sessions a chapter, about $0.85 and six minutes.
+**Correction, made 2026-09-04 before any cell was registered: this cannot be run on `fcr.v0`,
+because the instrument cannot read a chapter.** A feed member needs 11 chunks so that the
+24-minute budget cannot exhaust it (§122's measured floor, `MIN_CHUNKS_FEED`). Measured over
+every drafted book on the shelf:
+
+| | chunks | against a floor of 11 |
+| --- | --- | --- |
+| a chapter of ours, alone | **5 to 6** (median 6) | **cannot be a feed member** |
+| the 28 recent single-chapter draws | 5 to 6 | none can carry a session |
+| our books that *can* carry one | 24, 18, 12, 25, 24 | **five**, all drafted 2026-08-21 to 08-25 |
+
+So the per-chapter intervention is **not measurable by this mechanism**, and the five books that
+do fit are below v2's own ten-book floor and predate the concept stage, the tells pass and the
+third-person position — they are the wrong books as well as too few. Reducing the budget or the
+entry depth would make it fit and is refused: those constants are `fcr.v0`'s registration
+(§120.5), and moving them would void the very null — the forty book-level contrasts — this arm
+was going to be read against.
+
+**What that costs this proposal is worth stating plainly: the gap to a production chapter is
+wider than §3 first claimed.** It is not only that a book has no damaged copy of itself; it is
+that this instrument needs about 3,900 words of member and a chapter is 2,000. A chapter-scale
+costed reader is therefore a **new instrument** with its own registration, its own sizing and its
+own null, not a re-pointing of this one — and building it is the honest form of "what would it
+take", not the arm this document originally proposed.
+
+**The third time a substrate has bounded a design in this track**, after the twenty-book fitness
+shelf (§222) and the nineteen operator reads (§225). Cost at the arms' measured rate, had it
+been runnable: three sessions a chapter, about $0.85 and six minutes.
 
 **What it would feed, per §129's tier order.** Not a score a writer sees — never that. A
 qualified mechanism's output becomes a `ReaderObservation`, a controller reduces a complete panel
@@ -121,10 +148,16 @@ queued controller work before it can spend.
 
 ## 6. What is asked, and what is not
 
-**Asked:** that the next arm be the milder manipulation of §3 — order-dependence measured on real
-chapters, against the null the two arms already provide — registered before spend like everything
-else, and that this document be read as the statement of what qualification would require rather
-than as a claim on any part of it.
+**Asked:** nothing that spends, and that is a change from this document's first version. The arm
+it proposed — order-dependence on real chapters — was measured to be unrunnable on this
+instrument before it was registered (§3's correction), so what is asked instead is that the next
+piece of work be a **chapter-scale costed reader**: a new instrument, sized to ~2,000-word
+members, with its own registration, its own attainability table computed from the observed
+reader rather than a simulated one (§94.7, and §222's repeat of it), and its own null. Its
+design inherits §1's four properties and nothing else from `fcr.v0`.
+
+Read this document as the statement of what qualification would require rather than as a claim on
+any part of it.
 
 **Not asked:** qualification, an editorial intervention, a bar, a place in any gate, or any
 change to `src/litharness/`. `fcr.v0` remains unseated for any book-level claim, the control
