@@ -6,6 +6,17 @@ spend; this file owns the reading. Status: **OBSERVED**, 2026-09-04. The registe
 **NO_SEPARATION**. Raw answers in `raw.jsonl` (labels only, never prose), the summary in
 `results.json`. Nothing here promotes a claim past OBSERVED.
 
+## The one sentence worth carrying out of this arm
+
+**What bounds this measurement is how many chapters the operator has read, and nothing money or
+workers can move.** A chapter enters only when a read named its defects; the shelf holds
+thirty-three chapter-one files, nineteen have been read, and detecting a difference the size of
+the one observed would want about sixty. The same night's other arm hit the same wall from an
+unrelated direction — `../cost-that-bites/FINDINGS.md` and stage-0 §222 — where the twenty-book
+fitness shelf, not the call budget, is what caps that design's power. **Two arms, two unrelated
+questions, one constraint**, and it is a fact about where the operator's time buys the most
+rather than a fact about either verdict.
+
 ## The run
 
 Fifty-four calls on the registry's pinned model, **zero transport failures**, $13.71 against
@@ -76,6 +87,17 @@ number existed, but they are our reading of his items, and a defect harvest is n
 the classes describe what he happened to name on the day he read each chapter, not a property
 the chapters are guaranteed to have. Twelve against seven is a thin split, and the interval
 says so.
+
+## The sizing this null leaves behind, as arithmetic and not a proposal
+
+Computed the way v2's was — the spread taken from the data, the difference **declared** rather
+than read off this arm's own result, since sizing against an observed effect is a hypothesis
+wearing arithmetic's clothes. Chapters per class for the interval to exclude zero at the
+registered alpha: at a difference of +0.0332, 0.417 at ten per class, 0.693 at twenty, 0.793 at
+thirty and 0.917 at forty; at +0.05, 0.960 at twenty. Stage-0 §225 carries the full table.
+
+So a difference the size of this one wants **about thirty chapters a class** against the twelve
+and seven this arm had — and that is the number the section at the top is about.
 
 ## What is owed
 
