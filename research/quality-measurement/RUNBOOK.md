@@ -115,6 +115,37 @@ per-arm positional bias (chose-A 0.73–0.83) — near-twin pairs sit below this
 positional resolution, the §78-tail law at its extreme. The finding lives in the mechanics;
 read §83, not the win rates.
 
+## Guard and go: how several sessions share one box
+
+Written down 2026-09-04, after a night in which four sessions ran arms, suites and book draws on
+this machine in turn. The rule is not a rota — a rota stalls on hand-offs while the box sits
+idle — it is: **whoever needs the box checks, takes the lock, announces at start and at end.**
+
+```bash
+# check first: nothing of anyone's may be running
+ps -W | grep -E 'ab_redraw|claude -p|litharness|pytest|mypy|MirrorBench'   # or the CIM query
+# then take it atomically; mkdir fails if somebody already holds it
+mkdir C:/DEV/LitHarness/runs/box.lock && echo "<session>: <job>, <ceiling>, $(date +%H:%M)" \
+    > C:/DEV/LitHarness/runs/box.lock/holder
+# ... run ...
+rm -f C:/DEV/LitHarness/runs/box.lock/holder && rmdir C:/DEV/LitHarness/runs/box.lock
+```
+
+**A validation suite takes the lock like any other sustained job.** The lock means *the box is
+busy*, not *a paid arm is busy*, and a full suite under xdist on sixteen cores is exactly the
+load the rule exists to keep away from a live arm — `claude -p` degrades under it silently
+(CLAUDE.md), §89.5 recorded 390 transport failures from two jobs beside each other, and the box
+has hard-shut-down twice. The same goes for mypy, a corpus pass and a book draw.
+
+**Check the process list as well as the lock, and know why.** A two-part guard is read at two
+moments, so it has a window: on 2026-09-04 a check saw the lock free at 04:33:26 and the process
+list busy at about 04:33:45, straddling another session's acquisition at 04:33:41. The lock was
+never wrong; the reading was split. **The process list is the half that cannot lie**, and a
+guard that consulted only the lock would have put a 180-session paid arm beside a running suite.
+
+**One CLI arm at a time across all sessions, whatever pools they draw on.** Two Haiku arms, or a
+Haiku arm beside an Opus one, are still two `claude -p` jobs on one box.
+
 ## Five ways to waste a paid run, all of them already paid for once
 
 **Do not share a cache file between concurrent runs.** `Elicitor`'s write lock is per-process.
