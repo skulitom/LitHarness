@@ -137,3 +137,24 @@ which leaves the transport, whose failure mode is silent (`CLAUDE.md`). The watc
 run was therefore the record growth rate rather than the machine's health: at five workers
 fewer than about three records a minute would mean calls failing rather than the box unwell,
 and the drop back to three was pre-decided rather than judged in the moment.
+
+## The run of 2026-09-04, and why it bought nothing: OBSERVED, UNREADABLE
+
+800 calls, zero transport failures, no ceiling stop, $30.69 equivalent, **zero scorable cells**.
+K1, K2 and K3 all read UNREADABLE for want of data; K4 reports. No kill fired, because none
+could be evaluated, and **no claim is made about anticipation in either direction**.
+
+The cause was the transport rather than the reader or the probe: `elicit._strip_fence` recovered
+the first balanced `{...}` from a reply — right for the pair question it was written for, and
+destructive for this probe's registered array of three objects, every one of which was truncated
+to its first element before being cached. The reader answered correctly all 800 times. Stage-0
+§226 carries the defect, the audit that found exactly one top-level array schema in the tree
+(this one) and no corrupted committed finding, and the fix.
+
+The surviving one-of-three outcomes are **not** scored: the measurables registered above are
+defined over three, and scoring on one would be an instrument invented after the registered one
+returned nothing.
+
+A re-run is the same instrument — no registered constant moved and `registration_digest()` is
+unchanged — under the same 800-call ceiling, and the driver now carries `--dry-elicitor`, whose
+absence is why this was discovered by spending rather than for free.

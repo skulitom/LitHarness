@@ -24077,3 +24077,64 @@ the chapters are guaranteed to have, which the findings state before any number.
 pipelines, persons and writers: nothing here is a treatment effect between any two of them. The
 instrument is unchanged and remains what §199.2 made it — a diagnostic beside the tells counter,
 where a chapter below the shelf's range is a *list* found by code, and three of ours now are.
+
+## 226. The transport recovered objects and not arrays, so a paid arm bought 800 clean calls and nothing scorable — and the audit says the blast radius is that one arm
+
+**Measured.** The anticipation probe's registered paid run (§124, its registration in
+`research/quality-measurement/anticipation-run/PREREG.md`) completed on 2026-09-04: **800 calls,
+zero transport failures, no ceiling stop, $30.69 equivalent — and zero scorable cells.** Every
+kill condition reads UNREADABLE for want of data rather than for want of an effect. The reader
+answered correctly all 800 times; what reached the cache was a third of each answer.
+
+**The cause is `elicit._strip_fence`, and it is a shape mismatch rather than a bug in anything
+it was written for.** `claude -p` has no structured-output mode, so the schema is an instruction
+and the reply is recovered by scanning for the **first balanced `{...}`** — correct for the pair
+question that function was written for, and silently destructive for a schema whose top level is
+a JSON **array**. `anticipation.PROBE_SCHEMA` is an array of exactly three objects, so every
+answer was truncated to its first element. Reproduced in isolation: a valid three-element array
+in, one object out, fenced or bare.
+
+**The loss is unrecoverable and the reason is worth the sentence.** `_call_cli` strips at read
+time and caches the stripped text, so the full arrays were never written to disk. Nothing can be
+re-parsed. **And the surviving one-of-three outcomes are not scored**: the registered measurables
+are defined over three (distinctness is pairwise among them), so scoring on one would be an
+instrument invented after the registered one returned nothing — the move this track refused twice
+already tonight (§222's unbought top-up, §225's subgroup).
+
+**The audit, which is the part that reaches past this arm.** `_strip_fence` has been destructive
+on arrays for as long as it has existed and it truncates at cache-write time, so every registered
+schema was enumerated and classified by its **top-level** type. Result: **exactly one top-level
+array in the whole research tree — this probe's — and sixteen top-level objects**, which are the
+shape the scan was built for. Nested arrays (`blurb_perception`, `comprehension_battery`,
+`blurb_readers`, `blurb_tribunal`, `critic_prompts` and the rest) are inside an object and are
+recovered whole. The package side is a different function and is not affected: `providers/base.
+strip_fences` unwraps a whole fenced block or returns the text unchanged — it cannot truncate —
+and all thirteen package schemas are top-level objects in any case. **So no committed finding is
+corrupted and the blast radius is this one arm**, whose result was never promoted past the
+UNREADABLE it is recorded as here.
+
+**What shipped.** `_strip_fence` takes whichever of `{` or `[` opens first and matches that
+kind; the object path is byte-for-byte unchanged, including the object-followed-by-prose case
+the scan existed for (`tests/test_elicit_failures.py` pins both, fenced and bare). And the
+driver gains `--dry-elicitor`: one cell through a real `Elicitor` in dry-run mode, buying
+nothing, asserting that a conforming answer survives the round trip and parses. A test restores
+the old stripper and asserts that leg returns non-zero under it, because **a guard that cannot
+fail is not a guard**.
+
+**The rule this is the second instance of, stated as a rule.** *A first paid session must never
+also be a first integration test.* `--dry-elicitor` was built for `cost_that_bites` earlier the
+same night, for exactly this reason, and was not fitted to this driver — which is the whole of
+why the defect survived to a paid run. The probe's free legs tested `parse_response` on
+hand-written JSON and constructed no elicitor at all, so nothing in them ever put the registered
+schema through the transport that mangles it. Every instrument in this directory that reaches a
+model owes that leg; two now have it.
+
+**What was refused.** No score from the truncated data. No re-reading of the kill table, which
+is UNREADABLE and stays so. No claim about anticipation in either direction — §124's questions
+are exactly as open as they were before the $30.69. And no edit to the probe's registered
+constants: `registration_digest()` is unchanged, the arms, panel, passages, K, schema and
+scorers are untouched, and the re-run is the same instrument rather than a repaired one.
+
+**Anti-scope.** This says nothing about whether a reader's described futures sharpen with a
+text's grip. It fixes a transport, audits what else that transport could have corrupted, finds
+nothing else, and records the cost of learning it.

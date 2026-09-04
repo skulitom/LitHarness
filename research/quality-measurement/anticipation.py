@@ -497,10 +497,72 @@ def load_passages(path: Path = SCENES, *, min_words: int = 500) -> list[tuple[st
     ]
 
 
+def dry_elicitor(args: Any) -> int:
+    """One cell through a real `Elicitor` in dry-run mode: no call, no spend, no cache.
+
+    **The leg this driver did not have, and the omission cost it a whole paid run.** Its free
+    legs tested `parse_response` on hand-written JSON and built no elicitor at all, so nothing
+    ever put the probe's registered schema through the transport that mangles it: `claude -p`
+    has no structured-output mode, `elicit._strip_fence` recovers the answer, and until
+    2026-09-04 it recovered only objects while this schema is an array. 800 calls came back
+    truncated to their first element and every cell scored unscorable (stage-0 §226).
+
+    So this asks the smallest question that would have caught it: does a schema-shaped answer
+    survive the round trip and parse? A dry run's synthetic text is deliberately not a
+    conforming answer, so the parse is *expected* to fail — what is checked is that the
+    stripper hands back what the model sent rather than a fragment of it, which is exercised
+    on a conforming array here and reported beside the synthetic cell.
+    """
+    from elicit import Elicitor, _strip_fence
+
+    conforming = json.dumps(
+        [{"outcome": f"outcome {index}", "stance": stance}
+         for index, stance in enumerate(("hope", "dread", "neither"), start=1)]
+    )
+    recovered = _strip_fence(conforming)
+    survived = parse_response(recovered) is not None
+    fenced = parse_response(_strip_fence(f"```json\n{conforming}\n```")) is not None
+
+    passages = load_passages()
+    passage_id, text = passages[0]
+    shown = stop_point(_arm_text("original", text))
+    with Elicitor(Path(args.cache), model=args.model, spot_model=None, dry_run=True) as elicitor:
+        record = elicitor.ask_raw(
+            personas.system_prompt(personas.GENRE_PANEL[0]),
+            [{"role": "user", "content": shown + "\n\n---\n\n" + PROBE}],
+            schema=PROBE_SCHEMA,
+            max_tokens=PROBE_MAX_TOKENS,
+            tag={"study": ANTICIPATION_VERSION, "passage": passage_id, "arm": "original",
+                 "persona": personas.GENRE_PANEL[0].persona_id, "draw": 0},
+            sample=0,
+            model=args.model,
+        )
+    print(f"a conforming array survives the stripper and parses: {survived}")
+    print(f"the same array fenced survives and parses:           {fenced}")
+    print(f"the dry cell's synthetic answer parses:              "
+          f"{parse_response(record.get('text') or '') is not None} (expected False)")
+    if not (survived and fenced):
+        print(
+            "FAIL: a conforming answer does not survive the transport's fence-stripper; a paid "
+            "run would buy nothing scorable",
+            file=sys.stderr,
+        )
+        return 1
+    print("dry elicitor: the round trip holds; nothing bought", file=sys.stderr)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--selftest", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--dry-elicitor",
+        action="store_true",
+        help="free: one cell through a real Elicitor in dry-run mode. Buys nothing and proves "
+        "the round trip — the leg whose absence cost this arm its first paid run, when the "
+        "transport's fence-stripper truncated every array answer to its first element",
+    )
     parser.add_argument("--run", action="store_true")
     parser.add_argument("--model", default="claude-haiku-4-5")
     parser.add_argument("--cache", default=str(DEFAULT_CACHE))
@@ -551,8 +613,10 @@ def main(argv: list[str] | None = None) -> int:
                 )
         print("dry run: no elicitor constructed, nothing spent", file=sys.stderr)
         return 0
+    if args.dry_elicitor:
+        return dry_elicitor(args)
     if not args.run:
-        parser.error("pass one of --selftest, --dry-run, --run")
+        parser.error("pass one of --selftest, --dry-run, --dry-elicitor, --run")
     if calls > CALL_GUARD and not args.yes:
         print(f"{calls} calls exceeds the {CALL_GUARD} guard; pass --yes", file=sys.stderr)
         return 1
