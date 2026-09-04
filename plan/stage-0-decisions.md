@@ -24423,3 +24423,42 @@ is enough evidence to choose from but not enough to choose for him.
 **Anti-scope.** Nothing here is a quality claim about either chapter; both are on the shelf for
 his read, and the simulated readers' answers are recorded beside them as observations rather than
 as a verdict.
+
+## 232. Past chapter one for the first time: the economy moves on the page, and the second chapter's second scene will not commit
+
+**What was drawn.** Draw 6's store, continued past its first chapter for the first time any book
+has been under the general system (2026-09-04, `9847cd3` plus §231's record). Six scenes were
+planned; **three are drafted** and the fourth would not commit after two attempts, so the
+continuation stopped there rather than at a cap.
+
+**What worked, and it is the thing the system was built for.** Scene three — the first scene of
+chapter two — printed `[STATUS] Tom Vance — BAND Band Two | MARKS 2 | COAT 1 | GLOVES 1 | …`
+against chapter one's `BAND Band One | MARKS 6 | COAT 1 | GLOVES 0`. Between the two chapters the
+rung rose, the gloves were gained, and the stock fell from six to two, which is exactly their
+declared price of four. **The priced grant was bought on the page**: §210's stock and price, §211's
+following sheet and §113's ladder all moved together across a chapter boundary, without any of it
+being asked for in words. Until today no drawn book had a second chapter to show it in.
+
+**What stalled, in two different ways.** Scene four was **parked** by the integrity gate: the
+candidate's own extraction held *two different values for one story position* — the shape
+`integrity.detect_contradictions` groups on, and the shape §161.3 predicted when it argued that one
+prompt must carry one printable line. Nothing reached canon, so the store is clean; the unit simply
+will not accept. A later attempt failed the progression gate instead: *Coat was named as moving
+here; grey_coat reads 1 at s5 before and after* — the beat named a grant the person already holds,
+which is a legal deepen, and the scene did not deepen it.
+
+**What this says, and does not.** It does not say the pipeline cannot draft a second chapter: one
+of chapter two's two scenes drafted cleanly and carried the economy. It says the first attempt past
+chapter one met two failure modes that chapter one never meets, because chapter one is drafted
+against an opening state nobody has moved yet, and both are about a scene that must agree with a
+state its predecessors have already changed. Two attempts is not a diagnosis and this entry does
+not offer one.
+
+**Also recurring.** The label duplication §231 recorded on draw 7 appears here on a different seed:
+this book's ladder is `BAND` and its rungs `Band One`, `Band Two`, so its line reads `BAND Band
+Two`. Two seeds out of two that declared an ordinal rung have produced it, which moves it from a
+one-book oddity to a property of the ask.
+
+**Anti-scope.** No fix is attempted here and none is implied. The three drafted scenes are on the
+shelf for the operator's read; whether the second chapter is any good is his question, and the
+stall is recorded as an observation rather than as a defect with a known cause.
