@@ -1,0 +1,232 @@
+{
+  "instrument": "research\\quality-measurement\\reassembly\\run.py",
+  "instrument_sha256": "7f28e8a807514e6198e4c64c442ec66d17c929001409f825a2747adb9cf99f29",
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "paragraphs": 30,
+  "cap_usd": 30.0,
+  "spent_usd": 13.7138,
+  "stopped_at_cap": false,
+  "transport_failures": 0,
+  "stimuli_planned": 19,
+  "stimuli_with_two_or_more_seeds": 19,
+  "summary": {
+    "reappraisal": {
+      "class": "S",
+      "mean_tau": 1.0,
+      "min_tau": 1.0,
+      "mean_adjacent": 1.0,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "what-takes": {
+      "class": "S",
+      "mean_tau": 1.0,
+      "min_tau": 1.0,
+      "mean_adjacent": 1.0,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "a-good-take": {
+      "class": "S",
+      "mean_tau": 0.9173,
+      "min_tau": 0.8667,
+      "mean_adjacent": 0.9195,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "patch-notes-for-the-apocalypse": {
+      "class": "S",
+      "mean_tau": 0.9985,
+      "min_tau": 0.9954,
+      "mean_adjacent": 0.9655,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "the-rainwright-s-apprentice-has-no-licence": {
+      "class": "S",
+      "mean_tau": 0.9433,
+      "min_tau": 0.8759,
+      "mean_adjacent": 0.8161,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "unlicensed-weather": {
+      "class": "S",
+      "mean_tau": 0.9632,
+      "min_tau": 0.8989,
+      "mean_adjacent": 0.9195,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "what-the-kettle-remembers-draw2": {
+      "class": "S",
+      "mean_tau": 0.9356,
+      "min_tau": 0.931,
+      "mean_adjacent": 0.7471,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "what-the-kettle-remembers": {
+      "class": "S",
+      "mean_tau": 0.836,
+      "min_tau": 0.6368,
+      "mean_adjacent": 0.7356,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "reading-the-ladder-wrong": {
+      "class": "S",
+      "mean_tau": 0.8191,
+      "min_tau": 0.6414,
+      "mean_adjacent": 0.8736,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "the-station-keeps-score": {
+      "class": "S",
+      "mean_tau": 0.9969,
+      "min_tau": 0.9954,
+      "mean_adjacent": 0.9311,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "failed-delivery-notice--c7497693": {
+      "class": "S",
+      "mean_tau": 0.9831,
+      "min_tau": 0.9678,
+      "mean_adjacent": 0.8621,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "signed-for-by-nobody": {
+      "class": "S",
+      "mean_tau": 0.7962,
+      "min_tau": 0.692,
+      "mean_adjacent": 0.9195,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "the-station-keeps-score--435c41f9": {
+      "class": "T",
+      "mean_tau": 0.9985,
+      "min_tau": 0.9954,
+      "mean_adjacent": 0.9655,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "the-station-keeps-score--fa09c89c": {
+      "class": "T",
+      "mean_tau": 0.9709,
+      "min_tau": 0.954,
+      "mean_adjacent": 0.8966,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "the-game-nobody-plays-anymore": {
+      "class": "T",
+      "mean_tau": 0.9801,
+      "min_tau": 0.9402,
+      "mean_adjacent": 0.931,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "nineteen-floors-down": {
+      "class": "T",
+      "mean_tau": 0.951,
+      "min_tau": 0.8529,
+      "mean_adjacent": 0.9655,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "the-line-nobody-else-has--0ffc8699": {
+      "class": "T",
+      "mean_tau": 0.9249,
+      "min_tau": 0.7747,
+      "mean_adjacent": 0.9655,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "ground-held": {
+      "class": "T",
+      "mean_tau": 0.9801,
+      "min_tau": 0.9586,
+      "mean_adjacent": 0.8276,
+      "seeds_answered": 3,
+      "paragraphs": 30
+    },
+    "the-ratchet-counts-down": {
+      "class": "T",
+      "mean_tau": 0.954,
+      "min_tau": 0.9448,
+      "mean_adjacent": 0.6896,
+      "seeds_answered": 3,
+      "paragraphs": 30,
+      "reused_from": "../reassembly/results.json['ours-draw1']"
+    }
+  },
+  "description": {
+    "reading": "NO_SEPARATION",
+    "anchors_range": [
+      0.8544,
+      0.9969
+    ],
+    "classes": {
+      "S": {
+        "chapters": 12,
+        "mean": 0.9324333333333333,
+        "min": 0.7962,
+        "max": 1.0,
+        "per_chapter": {
+          "signed-for-by-nobody": 0.7962,
+          "reading-the-ladder-wrong": 0.8191,
+          "what-the-kettle-remembers": 0.836,
+          "a-good-take": 0.9173,
+          "what-the-kettle-remembers-draw2": 0.9356,
+          "the-rainwright-s-apprentice-has-no-licence": 0.9433,
+          "unlicensed-weather": 0.9632,
+          "failed-delivery-notice--c7497693": 0.9831,
+          "the-station-keeps-score": 0.9969,
+          "patch-notes-for-the-apocalypse": 0.9985,
+          "reappraisal": 1.0,
+          "what-takes": 1.0
+        }
+      },
+      "T": {
+        "chapters": 7,
+        "mean": 0.9656428571428571,
+        "min": 0.9249,
+        "max": 0.9985,
+        "per_chapter": {
+          "the-line-nobody-else-has--0ffc8699": 0.9249,
+          "nineteen-floors-down": 0.951,
+          "the-ratchet-counts-down": 0.954,
+          "the-station-keeps-score--fa09c89c": 0.9709,
+          "the-game-nobody-plays-anymore": 0.9801,
+          "ground-held": 0.9801,
+          "the-station-keeps-score--435c41f9": 0.9985
+        }
+      }
+    },
+    "t_minus_s": {
+      "point": 0.0332095238095238,
+      "low": -0.0036726190476190634,
+      "high": 0.07016904761904763,
+      "alpha": 0.1,
+      "resamples": 2000,
+      "s": 12,
+      "t": 7,
+      "above_zero": false,
+      "below_zero": false
+    },
+    "below_anchors_range": [
+      "reading-the-ladder-wrong",
+      "signed-for-by-nobody",
+      "what-the-kettle-remembers"
+    ]
+  },
+  "warnings": []
+}

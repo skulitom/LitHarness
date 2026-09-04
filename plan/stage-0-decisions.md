@@ -24000,3 +24000,80 @@ them does not exist and inventing a reading for them now would be worse than the
 measurable or cache key moved: a failure was never a record, so nothing that was ever persisted
 is affected and every existing replay is byte-identical. This entry buys one diagnosis for the
 next block of failures and none for the last.
+
+## 225. Order recovery does not separate the chapters the operator could not follow from the ones where he only named sentences, and the three that fall below the market's range are all his chapter-level ones
+
+**Registered before spend** (`research/quality-measurement/reassembly-reads/PREREG.md`), as the
+handoff's second experiment and the instrument §199.1 left owed. The question: the reassembly
+instrument (§199.2) reads a chapter's order by rank correlation, so does that recoverability
+differ between the chapters an operator read named something *at chapter level* — could not
+follow it, nothing happened, not present in it — and the chapters where every item he named was
+a sentence? His reads are defect harvests and not data (§95); the two classes were assigned from
+his own quoted words, chapter by chapter, before any number existed.
+
+**The run was clean, which is worth saying after §222.** Fifty-four calls on the registry's
+pinned model, **zero transport failures**, $13.71 against a $30 cap, all nineteen chapters
+answered at all three seeds, no cell repaired, nothing stopped. It ran on the Opus seat about an
+hour after that seat returned — Opus `-p` hung past its 120-second probe from roughly 15:00 to
+23:19 on 2026-09-03 while Haiku answered throughout — and was moved ahead of the larger Haiku
+arm on the reasoning that a 54-call arm is cheap to lose and expensive to find unrunnable half a
+day later. A health check answered in 4.5 seconds before it launched.
+
+**Measured, and the null is the reading.**
+
+| | class S: a chapter-level item | class T: sentence-level only |
+| --- | --- | --- |
+| chapters | 12 | 7 |
+| mean tau | **0.9324** (sd 0.0752) | **0.9656** (sd 0.0243) |
+
+**T − S = +0.0332, 90% interval [−0.0037, +0.0702]**, chapters as the unit, 2,000 resamples,
+alpha fixed before spend. The interval contains zero: **NO_SEPARATION**. Whatever the operator's
+chapter-level items name, it is not that the paragraphs could be swapped without a reader
+noticing — the same answer the instrument's six prior cells gave for two chapters, now at
+nineteen. **The lower bound is −0.0037 and it is not a finding**: an interval that nearly
+excludes zero is an interval that contains it, and the honest reading of a pre-registered rule
+is the one it returns.
+
+**Reported beside the reading and registered as a thing to report: three chapters fall below the
+range the four placed openings occupy** (0.8544 to 0.9969) — `signed-for-by-nobody` at 0.7962,
+`reading-the-ladder-wrong` at 0.8191, `what-the-kettle-remembers` at 0.8360 — and **all three
+are class S**. That is a description and not a separation, and the distinction is why the
+interval was registered first: the pre-registered test for whether the classes differ declined to
+support it, and a subgroup noticed afterwards does not overturn the test fixed before the spend.
+What the list is licensed to say is what the registration said it would — those three chapters'
+paragraphs are less recoverable than any opening on the shelf, found by code, which is the *list*
+shape the reads have named. The other sixteen sit inside or above that range, `reappraisal` and
+`what-takes` at 1.0000 on every seed — and `reappraisal` is the book read 2 called one where
+*"not much seems to be happening"*, which is this instrument's own limit on the page: perfectly
+ordered and not worth reading are compatible, and recoverability is coherence rather than
+engagement.
+
+**The sizing this null leaves for whatever asks next, as arithmetic and not as a proposal.**
+Keeping the observed spread and declaring a difference (the rule v2 used — variance from the
+data, effect size declared, never the observed effect as its own target), chapters per class for
+the interval to exclude zero at the registered alpha:
+
+| per class | d = +0.0332 | d = +0.05 | d = +0.075 |
+| --- | --- | --- | --- |
+| 10 | 0.417 | 0.783 | 0.997 |
+| 20 | 0.693 | 0.960 | 1.000 |
+| 30 | 0.793 | 0.997 | 1.000 |
+| 40 | 0.917 | 1.000 | 1.000 |
+
+So a difference the size of the one observed needs about **thirty chapters a class** — sixty
+against the nineteen this arm had, with twelve and seven in the two classes. **And the binding
+constraint is the operator's reads rather than the call budget**: a chapter enters only when a
+read named its defects, the whole shelf holds thirty-three chapter-one files, and nineteen of
+them have been read. That is §222's shape at a second address — the substrate bounds the design
+and money does not move it — and it is recorded so the next session sizes from it rather than
+re-deriving it or guessing.
+
+**What was refused.** No effect read from a null; no subgroup promoted after the fact; no bar
+over tau; no chapter revised, redrawn or selected on its recoverability (§105); no reader
+retuned (§89, §97.1). The classes are our reading of the operator's items and are not a property
+the chapters are guaranteed to have, which the findings state before any number.
+
+**Anti-scope.** Nineteen chapters drawn between 2026-08-21 and 2026-09-02 under different
+pipelines, persons and writers: nothing here is a treatment effect between any two of them. The
+instrument is unchanged and remains what §199.2 made it — a diagnostic beside the tells counter,
+where a chapter below the shelf's range is a *list* found by code, and three of ours now are.
