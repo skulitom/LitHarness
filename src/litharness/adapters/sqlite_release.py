@@ -90,18 +90,26 @@ class SqliteReleaseRepository:
         return _entry_from_row(row) if row is not None else None
 
     def stage_release(self, entry: ReleaseEntry) -> bool:
-        """Put a staged entry on the queue. `False` when this exact copy is already staged.
+        """Put a staged entry on the queue. `False` when this exact copy is already live.
 
         One live entry per chapter: a chapter with a staged, approved or posted entry refuses
-        a second one by name, so the operator withdraws the old copy before a re-drafted
-        chapter can be staged. The refusal is made here rather than left to the partial unique
-        index so it names the entry in the way; the index is the backstop.
+        a second *copy* by name, so the operator withdraws the old one before a re-drafted
+        chapter can be staged; the same copy staged again while it is live converges on the
+        live entry and inserts nothing. The refusal is made here rather than left to the
+        partial unique index so it names the entry in the way; the index is the backstop.
+
+        **Convergence is on the copy, not on the id** (§234). The id carries the staging time
+        since a withdrawn copy has to be re-stageable as a fresh entry, so two stagings of one
+        copy are two ids; `_live` is what says whether the copy is already on the queue, and
+        `live_release` is where a caller that was handed `False` finds the entry it converged on.
         """
         if entry.status is not ReleaseStatus.STAGED:
             raise IllegalRelease("only a staged entry enters the queue")
         with self._transaction() as connection:
             live = self._live(connection, entry.book_id, entry.branch_id, entry.chapter_number)
-            if live is not None and live.release_id != entry.release_id:
+            if live is not None and live.fragment_sha256 == entry.fragment_sha256:
+                return False
+            if live is not None:
                 raise IllegalRelease(
                     f"chapter {entry.chapter_number} already has a live entry "
                     f"{live.release_id} ({live.status.value}) at fragment "

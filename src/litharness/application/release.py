@@ -91,7 +91,15 @@ def stage_chapter(
         staged_at=staged_at,
         note=note,
     )
-    store.stage_release(entry)
+    if not store.stage_release(entry):
+        # **The copy is already on the queue, and what the operator is handed is the entry
+        # that is actually there** (§234). The id carries the staging time, so a second
+        # staging of one copy is a second id; the store converges on the live entry and says
+        # so with `False`, and returning the entry that was not written would hand back a
+        # `staged` row nothing holds — the shape that made a withdrawn copy unstageable.
+        live = store.live_release(book_id, branch_id, chapter_number)
+        if live is not None:
+            entry = live
     shelf = root / library.shelf_slug(root, title, book_id)
     copies = library.write_release_copy(shelf, chapter, fragment_sha256=entry.fragment_sha256)
     return entry, copies

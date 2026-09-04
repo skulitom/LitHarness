@@ -24499,3 +24499,101 @@ naming a grant the scene did not deepen, is untouched and is the ordinary progre
 Nor does it license a scene to print contradictory lines *about different subjects*, which was
 always allowed and still is. And it says nothing about how many lines a scene *should* print;
 that is the writer's business and the ask is unchanged.
+
+## 234. A rise printed on the status line reached the snapshot and never the sheet reader, so the system kept offering a rung the book had reached; the gate for a rise compared whole numbers on a column that reads a name; and the dossier could not find a unit nobody accepted
+
+**Measured first, on pilot 25 draw 6's store, through the read-only verbs and the replay tool,
+before any line changed.** A bug-scouting pass (2026-09-04, overnight, no model budget) read the
+code changed since 2026-08-30 against the one book that has been drafted past chapter one.
+
+- `why --scene 3`: the progression gate row reads *PASS — Band Two was named as moving here; the
+  line standing at s3 prints no rank column*, on a scene whose accepted prose printed
+  `[STATUS] Tom Vance — BAND Band Two | MARKS 2 | COAT 1 | GLOVES 1 | …`. The book's sheet is
+  hand-declared with its rung column `ordinal` (§204), so the column prints the rung's name and
+  reads back its id; `gate_progression`, `_asserted` and `moved_example` compared whole numbers
+  only and abstained. The moved-line example abstained the same way, so on the scene whose beat
+  asked for `Band Two` the writer was handed the entering line, `Band One`, and rose anyway.
+- `state`: tom_vance's canon `stands_at` edges are the un-keyed opening (`band_one`) and the
+  Architect's schedule at `0300` (`band_two`); nothing at s3 or s6, although both scenes'
+  extracted snapshots read `rank=band_two`. `gamesystem.sheet_of` reads a rung off `stands_at`
+  edges alone, on the stated ground that the snapshot is the printed form and the edges are what
+  the world knows — so after scene 3 it still placed him at `band_one`, `legal_moves` offered the
+  same rise again, and the beat named `Band Two` again. A gate fix alone would have turned that
+  silent abstention into a refusal the book could never satisfy.
+- `why --scene 4` and `--scene 5`: *job ABSENT - no queued unit is on record for this scene*,
+  while `jobs` counted one parked and one poisoned. The dossier reached a unit only through the
+  decision that accepted a revision, so the two units the `debug-book` skill sends a reader to
+  `why` for were invisible to it.
+- `tools/replay_books.py` on §215's four stores: 8/8 identical before the change and after it,
+  *nothing moved* against the saved baseline. On draw 6 after: `scene-3 at s3: DIFFERS —
+  re-minted but not stored: tom_vance stands_at at s3`, and the same at s6 (in a live run the s3
+  edge would stand and s6 would repeat nothing); draw 7, chapter one only and no rise printed,
+  2/2 identical.
+
+**What shipped.**
+
+1. `domain/extraction.py`: `_standing_from_line` — an ordinal column reading a declared rung of a
+   declared chain mints the `stands_at` canon edge at the scene's position, with the status line
+   as its evidence: the one canon-writable shape `extract_graph_facts` already had (a declared
+   subject at a declared rung of a declared chain, no model returned it), read off the other
+   surface. `_edges_on_record` carries the *already stated* rule for both surfaces, and
+   `_placeable` applies §165 to it: a record keyed in the other space is a position the book has
+   not reached, not a repetition, so a canon standing scheduled at `0300` no longer suppresses
+   the scene that prints the rise on either surface. Both surfaces stating one rung at one
+   position are one record, by id.
+2. `domain/moves.py`: `moved_values` hands the renderer the rung's **id** for a sheet whose rung
+   column is `ordinal` — `CharacterSheet.snapshot` counts in indices, which is the system's
+   arithmetic and stays so — and `moved_to` may return a name.
+3. `domain/progression.py`: `_reading`, `_same`, `_as_rung` and `_said`. The gate, `_asserted`
+   and `moved_example` compare a whole number or a rung id; an index and an id are resolved
+   through the one system printing the line (`_printing_system`), so a seed `records_for_sheet`
+   wrote and a line the page printed hold one rung; the ask says the rung's printed name and
+   never its id (§169). `MovedLine.was` and `now` are `int | str`.
+4. `application/planner.py`: `gain_line_for` abstains on a move between names rather than
+   comparing a name with zero.
+5. `cli.py`: `_unit_for_scene` — the dossier finds an undrafted scene's unit by the scene its
+   payload names, over the unfinished statuses in a fixed order; the unit's latest decision
+   stands in for the one that never accepted and is labelled so; the frozen prompt prints.
+6. `domain/release.py`, `adapters/sqlite_release.py`, `application/release.py`: the release id
+   carries the staging time, so a copy withdrawn and staged again is a fresh entry. Before, the
+   id keyed on the copy alone converged through `INSERT OR IGNORE` onto the withdrawn row,
+   handed the operator a `staged` entry the store did not hold, and left the chapter unstageable
+   until it was re-drafted — `withdrawn` is terminal by design, which only works if the
+   replacement can exist. Convergence on a copy that is live is the store's now, and
+   `stage_chapter` hands back the entry the queue holds. A read-only survey over every store
+   under `runs/` found zero release rows, so no stored id was invalidated.
+7. `domain/systems.py`: `RANK_KEY`'s docstring no longer says the field pattern is digits only;
+   it names the two representations and where they meet.
+
+Tests: `test_an_ordinal_column_on_the_status_line_records_the_rung_it_states`,
+`test_a_standing_scheduled_in_the_other_key_space_does_not_suppress_the_printed_one`,
+`test_a_rise_on_an_ordinal_rung_column_is_gated_by_the_rung_the_line_names`,
+`test_a_rung_stated_as_an_index_and_as_an_id_is_one_rung`,
+`test_a_rise_on_an_ordinal_rung_column_is_shown_by_the_name_the_book_prints`,
+`test_a_rise_between_named_rungs_is_never_a_gain_notice`,
+`test_why_finds_the_unit_of_a_scene_nobody_accepted`,
+`test_a_withdrawn_copy_can_be_staged_again_as_a_fresh_entry`. Every book that declares its rung
+column a number, which is every drawn system's own sheet, renders, reads and gates as it did.
+
+**What was refused, with the reason.** One representation of the rung everywhere — storing the
+index and mapping to the name only at the surface — because §204 decided the ordinal column
+carries the id, draw 6's and draw 7's stored snapshots hold ids, and the change would have
+re-read every ordinal book. Reviving a withdrawn release entry — terminal by design. A retraction
+for the schedule-space standing — `world retract` is still owed from serial pilot 14 §10 and is
+not this pass's to invent. No bar over anything.
+
+**Read and left, with the reasons.** `sheet.snapshot_at` falls back to *every* snapshot when a
+position has nothing at or before it, so a book whose snapshots are all keyed after the asked
+position would be shown a later state; no book on disk reaches it (every seed is un-keyed) and
+`test_order_key_spaces` pins the `include_at` cases, so it is recorded rather than changed.
+`moves.progression_target` and `standing_target` compare order keys by spelling across spaces;
+the outline mints milestones in the scene space and the system arm supplies the rise, so the
+legacy readers are left as they are. The `readers` verb on draw 6 said *genuinely lit up* four of
+four, which is the saturated lane §199.1 voided and is not evidence of anything here.
+
+**Anti-scope.** Nothing here reads prose for quality; no reader signal enters generation; no book
+is selected or revised. §232's other stall — the deepen of a held grant the scene did not take —
+is untouched: the moved line for a deepen was already composed and shown, the retry re-sent it,
+and this entry records nothing about why the writer left `COAT 1`. Nothing under `research/`
+changed. The sim-reader arms, their registrations and the volume screen's untracked results are
+another session's and were not touched.

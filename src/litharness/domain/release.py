@@ -84,15 +84,26 @@ def author_note(*, title: str, chapter_number: int) -> str:
 
 
 def release_id_for(
-    book_id: str, branch_id: str, chapter_number: int, fragment_sha256: str
+    book_id: str, branch_id: str, chapter_number: int, fragment_sha256: str, staged_at: str
 ) -> str:
-    """Content-derived, so staging the same chapter at the same hash twice converges."""
+    """Content-derived, and the staging time with it, so a copy withdrawn and staged again is
+    a fresh entry rather than a silent no-op (§234).
+
+    The first form keyed on the copy alone, so that staging the same chapter at the same hash
+    twice converged on one row — and it did, through `INSERT OR IGNORE`, including when the
+    row it converged on was *withdrawn*: the operator was handed a `staged` entry the store
+    did not hold, and `approve` then refused it as withdrawn. `withdrawn` is terminal by
+    design (a withdrawn entry is replaced, never revived), which only works if the
+    replacement can exist. Convergence while a copy is live is the store's business now
+    (`SqliteReleaseRepository.stage_release`), where the live entry is in hand to converge on.
+    """
     material = json.dumps(
         {
             "book_id": book_id,
             "branch_id": branch_id,
             "chapter_number": chapter_number,
             "fragment_sha256": fragment_sha256,
+            "staged_at": staged_at,
         },
         sort_keys=True,
     )
@@ -136,7 +147,7 @@ class ReleaseEntry:
 
     def __post_init__(self) -> None:
         expected = release_id_for(
-            self.book_id, self.branch_id, self.chapter_number, self.fragment_sha256
+            self.book_id, self.branch_id, self.chapter_number, self.fragment_sha256, self.staged_at
         )
         if self.release_id != expected:
             raise IllegalRelease(f"entry {self.release_id} does not address its own chapter")
@@ -213,7 +224,7 @@ def stage(
     """A fresh entry at `staged`. The one transition no operator name is needed for, because
     staging asserts nothing: it records which copy an operator may later approve."""
     return ReleaseEntry(
-        release_id=release_id_for(book_id, branch_id, chapter_number, fragment_sha256),
+        release_id=release_id_for(book_id, branch_id, chapter_number, fragment_sha256, staged_at),
         book_id=book_id,
         branch_id=branch_id,
         revision_id=revision_id,

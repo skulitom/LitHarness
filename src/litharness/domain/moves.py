@@ -527,8 +527,12 @@ def moved_to(
     *,
     character: str | None = None,
     at: str | None = None,
-) -> int | None:
+) -> int | str | None:
     """What `movable`'s column reads once the move that offered it has been made — or `None`.
+
+    A number for every column but one: a rung column the book declared `ordinal` (§204)
+    reads the rung's id, which is what the line prints as the rung's name and what
+    `extract_state` reads back off it (§234).
 
     **The third projection of one question**, beside `movables` and `movable_names`: which
     quantities may move here, which column each one occupies, and what that column reads
@@ -560,7 +564,18 @@ def moved_to(
     if changed is None:
         return None
     after = changed.get(movable.key)
-    return after if isinstance(after, int) and not isinstance(after, bool) else None
+    if isinstance(after, bool) or not isinstance(after, int | str):
+        return None
+    return after
+
+
+def _rank_is_ordinal(records: Sequence[lc.StateRecord]) -> bool:
+    """Whether the line this book prints carries its rung as a name rather than a number."""
+    sheet = sheet_for(records)
+    return sheet is not None and any(
+        field_.name == gamesystem_mod.RANK_KEY and field_.kind == "ordinal"
+        for field_ in sheet.fields
+    )
 
 
 def moved_values(
@@ -569,7 +584,7 @@ def moved_values(
     *,
     character: str | None = None,
     at: str | None = None,
-) -> Mapping[str, int] | None:
+) -> Mapping[str, int | str] | None:
     """Every column the move that offered `movable` leaves changed, with what each then reads.
 
     **`moved_to` for the whole line** (§210). A move that is paid in a stock the rungs hand
@@ -577,6 +592,14 @@ def moved_values(
     line it is shown, so the line has to carry every number the move changes and not the one
     the beat named. The named column is still the one the ask states and the gate checks. The
     arms, the abstentions and the ceiling are `moved_to`'s, which reads its answer off this.
+
+    **The rung column reads what the line prints** (§234). `CharacterSheet.snapshot` writes
+    the rung as its index, because that is the system's own arithmetic; a sheet that declares
+    the column `ordinal` (§204) prints the rung's name and reads it back as the rung's id, so
+    the value handed to the renderer here is the id, and the line the writer copies prints
+    the name the book uses. Pilot 25 draw 6 is the book this was measured on: with the index
+    left in, the moved line for a rise abstained on every scene, because the state the fold
+    read held `band_one` and the arithmetic offered `2`.
     """
     standing = _standing_sheet(records, character=character, at=at)
     if standing is not None and at is not None:
@@ -591,13 +614,21 @@ def moved_values(
                 # caught because composing a prompt is not the place to discover that the two
                 # disagree, and a book that hits it draws the entering line it drew before.
                 return None
-            return {
+            changed: dict[str, int | str] = {
                 key: value
                 for key, value in advanced.after.items()
                 if value != advanced.before.get(key)
                 and isinstance(value, int)
                 and not isinstance(value, bool)
             }
+            index = changed.get(gamesystem_mod.RANK_KEY)
+            if (
+                isinstance(index, int)
+                and 1 <= index <= len(system.rank_ids)
+                and _rank_is_ordinal(records)
+            ):
+                changed[gamesystem_mod.RANK_KEY] = system.rank_ids[index - 1]
+            return changed
         return None
     folded = state_as_it_stands(records, at=at)
     if folded is None:

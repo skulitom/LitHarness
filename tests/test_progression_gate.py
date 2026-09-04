@@ -45,6 +45,7 @@ from litharness.application.planner import make_plan_selector
 from litharness.domain import gamesystem, genre, worlds
 from litharness.domain.draft import DraftPolicy
 from litharness.domain.extraction import (
+    SHEET_PREDICATE,
     STATUS_PREDICATE,
     Movable,
     movable_names,
@@ -417,6 +418,142 @@ def test_a_fork_is_never_a_named_quantity_even_beside_a_beat_that_did_fire() -> 
     offered = movables(_canon(system), character="ines_barrow")
     assert "the Turn" not in {item.name for item in offered}
     assert {"hand", "keel"}.isdisjoint({item.name for item in offered})
+
+
+# ------------------------------------------------------ §234: a rung column that reads a name
+#
+# Pilot 25 draw 6's shape: the Architect declared the book's sheet by hand with its rung column
+# `ordinal` (§204), so the line prints the rung's name and reads back its id, while the gate
+# and the moved-line example compared integers and abstained on every rise with *the line
+# standing at s3 prints no rank column* — on a line that had just printed `BAND Band Two`.
+
+
+def _ordinal_system() -> gamesystem.SystemDef:
+    """`_system` with rungs whose names read back to their ids, so the line can print the rung
+    by name and `display_name` can find it again."""
+    return _system(
+        ranks=(
+            gamesystem.Rank("hand", "Hand"),
+            gamesystem.Rank("fitter", "Fitter"),
+            gamesystem.Rank("shaper", "Shaper"),
+        )
+    )
+
+
+def _ordinal_sheet() -> gamesystem.CharacterSheet:
+    system = _ordinal_system()
+    return gamesystem.CharacterSheet(
+        system=system,
+        character="ines_barrow",
+        rank_id="hand",
+        magnitudes=tuple(
+            (
+                ability.ability_id,
+                2 if ability.ability_id in {"cold_seal", "read_the_grain"} else 0,
+            )
+            for ability in system.abilities
+        ),
+    )
+
+
+def _ordinal_canon(*, seed_rank_as_index: bool = False) -> list[lc.StateRecord]:
+    """The book as it stands entering scene 1 with its rung column declared `ordinal`: the
+    system, a hand-declared sheet in place of the system's own, the protagonist on the first
+    rung, and an opening line stating the rung by id — or, for the mixed case, by the index
+    `records_for_sheet` writes."""
+    system = _ordinal_system()
+    sheet = _ordinal_sheet()
+    declared = {
+        "fields": [
+            {"name": gamesystem.RANK_KEY, "label": "Ticket", "kind": "ordinal"},
+            *[{"name": ability.ability_id, "label": ability.name} for ability in system.abilities],
+        ]
+    }
+    records = [
+        record for record in gamesystem.records_for(system) if record.predicate != SHEET_PREDICATE
+    ]
+    records.append(worlds.world_record("book", SHEET_PREDICATE, value=declared))
+    for record in gamesystem.records_for_sheet(sheet):
+        if record.predicate == STATUS_PREDICATE and not seed_rank_as_index:
+            continue
+        records.append(record)
+    if not seed_rank_as_index:
+        records.append(
+            worlds.world_record("ines_barrow", STATUS_PREDICATE, value=_ordinal_standing())
+        )
+    return [
+        *_canonical(records),
+        worlds.world_record(
+            "ines_barrow",
+            worlds.ENTITY_ROLE_PREDICATE,
+            value="protagonist",
+            authority=lc.StateAuthority.ACCEPTED_CANON,
+        ),
+    ]
+
+
+def _ordinal_standing(**overrides: object) -> dict[str, object]:
+    """The opening line's values with the rung as the id the ordinal column reads back."""
+    return {**_ordinal_sheet().snapshot(), gamesystem.RANK_KEY: "hand", **overrides}
+
+
+def test_a_rise_on_an_ordinal_rung_column_is_gated_by_the_rung_the_line_names() -> None:
+    """The rise is named by the rung it reaches, the column reads an id, and the gate compares
+    the two ids: a scene that prints the rung it entered on is refused, one that prints the
+    next rung is accepted. Before §234 both abstained as *prints no rank column*."""
+    before = _ordinal_canon()
+    target = named_target(_plan("Fitter"), before, character="ines_barrow", at="s1")
+    assert target == Movable("Fitter", gamesystem.RANK_KEY)
+
+    unmoved = gate_progression(
+        target.name,
+        target.key,
+        before=before,
+        extracted=[_snapshot("ines_barrow", _ordinal_standing(), order_key="s1")],
+        at="s1",
+    )
+    assert unmoved is not None
+    assert unmoved.passed is False
+    assert unmoved.vetoes == (Veto.PROGRESSION_UNMOVED,)
+    assert unmoved.detail == (
+        "Fitter was named as moving here; rank reads hand at s1 before and after"
+    )
+
+    risen = gate_progression(
+        target.name,
+        target.key,
+        before=before,
+        extracted=[_snapshot("ines_barrow", _ordinal_standing(rank="fitter"), order_key="s1")],
+        at="s1",
+    )
+    assert risen is not None
+    assert risen.passed is True
+    assert risen.detail == "Fitter moved: rank hand to fitter at s1"
+
+
+def test_a_rung_stated_as_an_index_and_as_an_id_is_one_rung() -> None:
+    """`CharacterSheet.snapshot` writes the rung as its index and an ordinal column reads it
+    back as an id, so a seed the system minted and a line the page printed hold one rung two
+    ways; the gate compares them through the one system printing the line."""
+    before = _ordinal_canon(seed_rank_as_index=True)
+
+    same = gate_progression(
+        "Fitter",
+        gamesystem.RANK_KEY,
+        before=before,
+        extracted=[_snapshot("ines_barrow", _ordinal_standing(), order_key="s1")],
+        at="s1",
+    )
+    assert same is not None and same.passed is False
+
+    moved = gate_progression(
+        "Fitter",
+        gamesystem.RANK_KEY,
+        before=before,
+        extracted=[_snapshot("ines_barrow", _ordinal_standing(rank="fitter"), order_key="s1")],
+        at="s1",
+    )
+    assert moved is not None and moved.passed is True
 
 
 # ------------------------------------------------------------------ one answer, two halves

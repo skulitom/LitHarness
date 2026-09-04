@@ -263,7 +263,14 @@ def gain_line_for(
     """The notice for this scene, or `None`: the beat names a grant the person did not
     hold and now holds (a gain, not a deepening or a rise), and the book's graph line
     has a phrase for `can_do` (§208)."""
-    if target is None or moved is None or moved.was != 0 or moved.now < 1:
+    if target is None or moved is None:
+        return None
+    # A rise on a rung column the book declared `ordinal` moves from one name to another
+    # (§234); a name is never a gain, and comparing it with zero would be a crash rather
+    # than an abstention.
+    if not isinstance(moved.was, int) or not isinstance(moved.now, int):
+        return None
+    if moved.was != 0 or moved.now < 1:
         return None
     return gain_example(records, at=at, ability_id=target.key)
 

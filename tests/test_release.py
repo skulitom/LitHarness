@@ -59,7 +59,7 @@ def _entry(**overrides: object) -> release.ReleaseEntry:
 
 def test_an_entry_addresses_its_chapter_and_its_copy_by_hash() -> None:
     entry = _entry()
-    assert entry.release_id == release.release_id_for(BOOK_ID, BRANCH_ID, 3, FRAGMENT)
+    assert entry.release_id == release.release_id_for(BOOK_ID, BRANCH_ID, 3, FRAGMENT, STAMP)
     assert entry.status is release.ReleaseStatus.STAGED
     assert entry.live
     assert release.AI_GENERATED_TAG in entry.author_note
@@ -133,6 +133,36 @@ def test_the_store_keeps_one_live_entry_per_chapter_and_converges_on_the_same_co
     assert [item.release_id for item in store.release_entries(BOOK_ID, BRANCH_ID)] == [
         entry.release_id,
         other.release_id,
+    ]
+
+
+def test_a_withdrawn_copy_can_be_staged_again_as_a_fresh_entry(store: SqliteStore) -> None:
+    """§234. `withdrawn` is terminal — a withdrawn entry is replaced, never revived — which
+    only works if the replacement can exist. With the id keyed on the copy alone, staging the
+    same copy again after a withdrawal converged on the withdrawn row through `INSERT OR
+    IGNORE`, handed the operator a `staged` entry the store did not hold, and left the
+    chapter unstageable until it was re-drafted. The id carries the staging time now, and
+    convergence is the store's, on the copy that is live."""
+    entry = _entry()
+    assert store.stage_release(entry)
+    store.move_release(
+        entry.release_id,
+        release.ReleaseStatus.WITHDRAWN,
+        at=LATER,
+        by="artem",
+        reason="wrong slot",
+    )
+
+    again = _entry(staged_at=LATER, scheduled_slot="2026-09-17")
+    assert again.release_id != entry.release_id
+    assert store.stage_release(again), "the same copy, staged again after a withdrawal, is fresh"
+    assert store.live_release(BOOK_ID, BRANCH_ID, 3) == again
+
+    # The copy already live converges on the live entry rather than minting a second row.
+    assert not store.stage_release(_entry(staged_at="2026-09-20T00:00:00Z"))
+    assert [item.status for item in store.release_entries(BOOK_ID, BRANCH_ID)] == [
+        release.ReleaseStatus.WITHDRAWN,
+        release.ReleaseStatus.STAGED,
     ]
 
 
@@ -225,6 +255,21 @@ def test_staging_writes_the_copy_under_its_hash_and_the_entry_references_it(
     assert content_hash(html_copy.read_text(encoding="utf-8")) == entry.fragment_sha256
     assert content_hash(text_copy.read_text(encoding="utf-8")) == entry.plain_sha256
     assert store.release_entry(entry.release_id) == entry
+    # Staged again, the operator is handed the entry the queue holds (§234), not a second
+    # `staged` value nothing stored.
+    later, _copies = release_app.stage_chapter(
+        store,
+        book_id=BOOK_ID,
+        branch_id=BRANCH_ID,
+        chapter_number=1,
+        scenes_per_chapter=1,
+        scheduled_slot="2026-09-17",
+        tags=TAGS,
+        root=root,
+        generated_at=LATER,
+        staged_at=LATER,
+    )
+    assert later == entry
 
 
 def test_a_republish_never_touches_the_staged_copy(store: SqliteStore, tmp_path: Path) -> None:

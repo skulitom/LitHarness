@@ -22,6 +22,7 @@ from hypothesis import strategies as st
 from litharness.adapters.contracts_fixtures import fixture_manuscript, fixture_state
 from litharness.domain import worlds
 from litharness.domain.extraction import (
+    GRAPH_REGISTRY_VERSION,
     MAX_SUFFIX,
     SHEET_PREDICATE,
     STATUS_PREDICATE,
@@ -789,6 +790,125 @@ def test_the_standing_target_aims_from_where_the_book_actually_is() -> None:
     aimed = standing_target(after, at="s4") or ""
     assert "silas stands at second_seal (2 of 3)" in aimed
     assert "the book's plan has them at first_seal (3 of 3)" in aimed
+
+
+def _ordinal_line_world() -> list[lc.StateRecord]:
+    """`_ladder_world` with the book's line carrying the rung as a name (§204): a sheet whose
+    rung column is `ordinal`, and an opening snapshot that states the rung by id."""
+    return [
+        *_ladder_world(),
+        _canon(
+            "book",
+            SHEET_PREDICATE,
+            value={
+                "fields": [
+                    {"name": "rank", "label": "Grade", "kind": "ordinal"},
+                    {"name": "marks", "label": "Marks"},
+                ]
+            },
+        ),
+        _canon("silas", STATUS_PREDICATE, value={"rank": "third_seal", "marks": 3}),
+    ]
+
+
+def _read_scene(text: str, known, *, logical_id: str = "scene-3", at: str = "s3"):  # type: ignore[no-untyped-def]
+    """One scene read the way the draft handler reads it, placed by the plan."""
+    return extract_state(
+        text,
+        known=known,
+        project_id="p",
+        book_id="b",
+        branch_id="br",
+        logical_id=logical_id,
+        version_id="v1",
+        stated_order_key=at,
+    )
+
+
+def _standings(records):  # type: ignore[no-untyped-def]
+    return [record for record in records if record.predicate == worlds.STANDS_AT_PREDICATE]
+
+
+def test_an_ordinal_column_on_the_status_line_records_the_rung_it_states() -> None:
+    """**The status line reaches the sheet reader** (§234).
+
+    §204 let a column carry a rung by name, and `gamesystem.sheet_of` reads a person's rung
+    off `stands_at` edges alone, so a rise printed on the line and nowhere else reached the
+    snapshot and not the edges: pilot 25 draw 6's first scene past chapter one printed
+    `BAND Band Two`, canon's only placeable standing stayed `band_one`, and the system went
+    on offering the same rise. The line is the book's own statement of a declared rung on a
+    declared chain — `extract_graph_facts`' one canon-writable shape, read off the other
+    surface — so it is canon at the position, with the line as its evidence.
+    """
+    known = _ordinal_line_world()
+    text = "He turned the seal over.\n\n[STATUS] silas — Grade Second Seal | Marks 3\n"
+    read = _read_scene(text, known)
+
+    [snapshot] = _statuses(read)
+    assert snapshot.value == {"rank": "second_seal", "marks": 3}
+    [standing] = _standings(read)
+    assert standing.authority is lc.StateAuthority.ACCEPTED_CANON
+    assert (standing.object_ref, standing.value) == ("second_seal", "assay_grade")
+    assert standing.story_position is not None
+    assert standing.story_position.order_key == "s3"
+    assert standing.predicate_registry_version == GRAPH_REGISTRY_VERSION
+    [span] = standing.evidence
+    assert text[span.start : span.end] == "[STATUS] silas — Grade Second Seal | Marks 3"
+
+    after = [*known, *read]
+    assert worlds.standing_of(after, "silas", at="s3") == {"assay_grade": "second_seal"}
+
+    # The rung the book already stands at is a repetition, and so is a rung an earlier
+    # scene already read; a name the ladder does not hold is skipped by the column reader.
+    assert _standings(_read_scene("[STATUS] silas — Grade Third Seal | Marks 3\n", known)) == []
+    assert (
+        _standings(
+            _read_scene(
+                "[STATUS] silas — Grade Second Seal | Marks 4\n",
+                after,
+                logical_id="scene-4",
+                at="s4",
+            )
+        )
+        == []
+    )
+    assert _standings(_read_scene("[STATUS] silas — Grade Platinum | Marks 3\n", known)) == []
+
+
+def test_a_standing_scheduled_in_the_other_key_space_does_not_suppress_the_printed_one() -> None:
+    """§165's rule reaches the edges already on record (§234). A canon standing the Architect
+    keyed at `0300` is a position the book has not reached; counting it as *already stated*
+    meant the scene that printed the rise read nothing, on the graph line and on the status
+    line alike, while every reader that places nothing scheduled went on seeing the old rung.
+    """
+    scheduled = _canon(
+        "silas",
+        worlds.STANDS_AT_PREDICATE,
+        object_ref="second_seal",
+        value="assay_grade",
+        order_key="0300",
+    )
+    known = [*_ladder_world(), scheduled]
+    [read] = _read("[ASSAY] silas now stands at second_seal", known)
+    assert read.authority is lc.StateAuthority.ACCEPTED_CANON
+    assert read.story_position is not None and read.story_position.order_key == "s3"
+
+    lined = [*_ordinal_line_world(), scheduled]
+    assert worlds.standing_of(lined, "silas", at="s3") == {"assay_grade": "third_seal"}
+    standings = _standings(_read_scene("[STATUS] silas — Grade Second Seal | Marks 3\n", lined))
+    assert [record.object_ref for record in standings] == ["second_seal"]
+    assert worlds.standing_of([*lined, *standings], "silas", at="s3") == {
+        "assay_grade": "second_seal"
+    }
+
+    # Both surfaces stating one rung at one position is one record, by id.
+    both = _read_scene(
+        "[ASSAY] silas now stands at second_seal\n\n"
+        "[STATUS] silas — Grade Second Seal | Marks 3\n",
+        lined,
+    )
+    assert len(_standings(both)) == 1
+    assert len({record.record_id for record in both}) == len(both)
 
 
 def test_the_golden_fixtures_extract_exactly_what_they_extracted_before() -> None:

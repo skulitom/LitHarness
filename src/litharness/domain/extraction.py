@@ -325,6 +325,123 @@ def _edge_key(record: lc.StateRecord) -> tuple[str, str, str]:
     return (record.subject, record.predicate, record.object_ref or "")
 
 
+def _placeable(record: lc.StateRecord, order_key: str) -> bool:
+    """Whether a record's position can be compared with this scene's at all.
+
+    **A schedule is a position the book has not reached** (§165, §167), and the edges
+    already on record are read under that rule (§234). `_edges_on_record` counts an edge as
+    already stated so that repetition adds nothing — but a canon `stands_at` the Architect
+    keyed at `0300` is a declaration about a future the book has not reached, and counting it
+    suppressed the one scene that printed the rise: pilot 25 draw 6 printed `Band Two` at s3
+    against a standing scheduled at `0300`, read nothing, and `gamesystem.sheet_of` went on
+    believing `band_one`. A record with no position is true of the book and counts
+    everywhere; one in this scene's own space counts; one in the other space is unplaceable
+    here and does not.
+    """
+    key = state_mod.order_key_of(record)
+    return key is None or state_mod.comparable(key, order_key)
+
+
+def _edges_on_record(known: Sequence[lc.StateRecord], order_key: str) -> set[tuple[str, str, str]]:
+    """The edges a scene at `order_key` would only be repeating: proposals as well as canon,
+    at positions this scene can place, and never the outline's own rung schedule.
+
+    **A scheduled standing does not suppress the reading of the printed one.** Repetition
+    adds nothing, so proposals count too — but the outline's rung schedule is a `PROPOSED`
+    `stands_at` edge at a future position, and counting it here would mean the one scene that
+    actually printed the rise read nothing, because the plan for it was already on record.
+    The plan and the page are different claims: the schedule carries no registry version from
+    the graph family, and the page's reading is what makes the rise true.
+    """
+    return {
+        _edge_key(record)
+        for record in known
+        if _placeable(record, order_key)
+        and not (
+            record.predicate == worlds_mod.STANDS_AT_PREDICATE
+            and record.authority is lc.StateAuthority.PROPOSED
+            and record.predicate_registry_version != GRAPH_REGISTRY_VERSION
+        )
+    }
+
+
+def _standing_from_line(
+    sheet: Sheet,
+    read: Mapping[str, object],
+    known: Sequence[lc.StateRecord],
+    *,
+    subject: str,
+    order_key: str,
+    source: lc.ResourceRef,
+    span: tuple[int, int],
+    text: str,
+) -> tuple[lc.StateRecord, ...]:
+    """The standing a status line states through an ordinal column, as canon at this position.
+
+    **The status line was the one parsed surface and it never reached the sheet reader**
+    (§234). §204 let a column carry a rung — an `ordinal` prints the rung's name and reads
+    back as its id — and `gamesystem.sheet_of` reads a person's rung off `stands_at` edges
+    alone, on the stated ground that the snapshot is the printed form and the edges are what
+    the world knows. So a rise printed on the line and nowhere else reached the snapshot and
+    not the edges: pilot 25 draw 6's first scene past chapter one printed `BAND Band Two`,
+    canon's only placeable standing stayed `band_one`, `legal_moves` went on offering the
+    same rise, and the beat named it again two scenes later.
+
+    This is `extract_graph_facts`' one canon-writable shape read off the other surface, and
+    it is licensed by the same argument: the subject is one canon already uses, the rung is a
+    declared rank of a declared chain, the criterion is derived from which chain holds it,
+    and no model returned the record — a recorded policy decision accepted the prose. A rung
+    on no declared chain, or on two, mints nothing; an edge already on record at a position
+    this scene can place adds nothing; and a book whose columns are all numbers is untouched,
+    which is every book written before §204.
+    """
+    canon = _canon_of(known)
+    on_record = _edges_on_record(known, order_key)
+    minted: list[lc.StateRecord] = []
+    for field_ in sheet.fields:
+        if field_.kind != "ordinal":
+            continue
+        rung = read.get(field_.name)
+        if not isinstance(rung, str) or not rung:
+            continue
+        criterion = worlds_mod.criterion_of_rung(canon, rung)
+        if criterion is None:
+            continue
+        key = (subject, worlds_mod.STANDS_AT_PREDICATE, rung)
+        if key in on_record or key in {_edge_key(row) for row in minted}:
+            continue
+        start, end = span
+        minted.append(
+            lc.StateRecord(
+                record_id=graph_record_id_for(
+                    subject, worlds_mod.STANDS_AT_PREDICATE, rung, order_key
+                ),
+                kind=lc.StateRecordKind.RELATIONSHIP,
+                subject=subject,
+                predicate=worlds_mod.STANDS_AT_PREDICATE,
+                object_ref=rung,
+                value=criterion,
+                story_position=lc.StoryPosition(order_key=order_key),
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+                pov_visibility=[],
+                evidence=[
+                    lc.EvidenceSpan(
+                        source=source,
+                        start=start,
+                        end=end,
+                        content_sha256=content_hash(text[start:end]),
+                    )
+                ],
+                predicate_registry_version=GRAPH_REGISTRY_VERSION,
+                note=(
+                    "read off the status line: a declared subject at a declared rung of a "
+                    "declared chain, which is the book stating a fact its world already holds"
+                ),
+            )
+        )
+    return tuple(minted)
+
+
 def extract_graph_facts(
     text: str,
     *,
@@ -368,22 +485,10 @@ def extract_graph_facts(
     if line is None:
         return ()
     predicates = {edge.phrase: edge.predicate for edge in line.edges}
-    # **A scheduled standing does not suppress the reading of the printed one.** `seen` exists
-    # because repetition adds nothing, and it counts proposals as well as canon — but the
-    # outline's own rung schedule is a `PROPOSED` `stands_at` edge at a future position, and
-    # counting it here would mean the one scene that actually printed the rise read nothing,
-    # because the plan for it was already on record. The plan and the page are different
-    # claims: the schedule carries no registry version from this family, and the page's reading
-    # is what makes the rise true.
-    seen = {
-        _edge_key(record)
-        for record in known
-        if not (
-            record.predicate == worlds_mod.STANDS_AT_PREDICATE
-            and record.authority is lc.StateAuthority.PROPOSED
-            and record.predicate_registry_version != GRAPH_REGISTRY_VERSION
-        )
-    }
+    # Repetition adds nothing, a schedule is not a repetition, and a position in the other
+    # key space is not one this scene can place: `_edges_on_record` carries the rule and the
+    # reasons, once, for this reader and for the status line's ordinal column.
+    seen = _edges_on_record(known, order_key)
     canon_subjects = {record.subject for record in known if state_mod.is_canon(record)}
     declared_rungs = {
         rung
@@ -637,6 +742,17 @@ def extract_state(
         )
 
     extracted: list[lc.StateRecord] = []
+    #: The standings the line states through an ordinal column (§234), kept apart from the
+    #: snapshots so a line already canon at this position still records its rung.
+    standings: list[lc.StateRecord] = []
+    source = lc.ResourceRef(
+        project_id=project_id,
+        book_id=book_id,
+        branch_id=branch_id,
+        logical_id=logical_id,
+        kind=lc.ResourceKind.MANUSCRIPT_SCENE,
+        version_id=version_id,
+    )
     # **Read tolerantly, so a projected line is a partial snapshot** (§203). The strict
     # `pattern` needs every column; a line printing only the held columns folds forward
     # onto the columns it left out, which is what `state_as_it_stands` already does.
@@ -655,6 +771,18 @@ def extract_state(
         if not found:
             continue
         read = found[0][1]
+        standings.extend(
+            _standing_from_line(
+                own,
+                read,
+                known,
+                subject=subject,
+                order_key=order_key,
+                source=source,
+                span=span,
+                text=text,
+            )
+        )
         # **The record is the whole state, the line is its projection.** A partial record at
         # a position where a fuller one stands reads as a contradiction to the integrity
         # detector (two values for one fact at one position), so the columns the line left
@@ -699,14 +827,7 @@ def extract_state(
                 pov_visibility=[],
                 evidence=[
                     lc.EvidenceSpan(
-                        source=lc.ResourceRef(
-                            project_id=project_id,
-                            book_id=book_id,
-                            branch_id=branch_id,
-                            logical_id=logical_id,
-                            kind=lc.ResourceKind.MANUSCRIPT_SCENE,
-                            version_id=version_id,
-                        ),
+                        source=source,
                         start=start,
                         end=end,
                         content_sha256=content_hash(text[start:end]),
@@ -737,7 +858,12 @@ def extract_state(
         version_id=version_id,
         order_key=order_key,
     )
-    return (*extracted, *graph, *promotions(known, graph, order_key=order_key))
+    # A rung the line and the graph line both state is one record: the ids agree by
+    # construction (`graph_record_id_for` over the same edge at the same position), so the
+    # graph line's copy is dropped rather than returned twice.
+    stated = {record.record_id for record in standings}
+    graph = tuple(record for record in graph if record.record_id not in stated)
+    return (*extracted, *standings, *graph, *promotions(known, graph, order_key=order_key))
 
 
 def _already_canon(

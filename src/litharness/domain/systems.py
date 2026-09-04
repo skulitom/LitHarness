@@ -54,12 +54,15 @@ CONFIGURATION_PREDICATES = frozenset({MAGNITUDE_SCALE, SYSTEM_DIGEST})
 REGISTRY_VERSION = "litharness.gamesystem.v0"
 #: The status line's column for the rung, and the one column that is not an ability.
 #:
-#: **It carries the rung's derived *index*, not its name, and that is forced rather than
-#: chosen.** `extraction`'s field pattern is `(?P<name>\\d+)` — digits only — so a named outfit
-#: cannot ride a status line at all. The name is not lost: it rides the graph line
-#: (`stands_at` / `parse_graph_line`), which is the surface built for exactly that in §113. The
-#: operator's "ranks with named outfits" is satisfied by the pair of surfaces, and a design that
-#: tried to put the name on the sheet would have had to widen a parser to do it.
+#: **`CharacterSheet.snapshot` carries the rung's derived *index*, not its name**, and when
+#: this was written that was forced rather than chosen: `extraction`'s field pattern was
+#: digits only, so a named outfit could not ride a status line at all, and the name rode the
+#: graph line (`stands_at` / `parse_graph_line`), the surface built for exactly that in §113.
+#: Since §204 a sheet may declare this column `ordinal`, in which case the line prints the
+#: rung's name and reads back its **id** — a second representation of one column, met where
+#: the two touch: `moves.moved_values` hands the renderer the id for such a sheet, and the
+#: progression gate compares an index and an id as one rung (§234). The system's own
+#: arithmetic still counts in indices, which is what a rise is.
 RANK_KEY = "rank"
 # --------------------------------------------------------------------------- what a draw must be
 

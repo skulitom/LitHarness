@@ -54,8 +54,10 @@ from dataclasses import dataclass
 import litharness_contracts as lc
 
 from litharness.domain import extraction as extraction_mod
+from litharness.domain import gamesystem as gamesystem_mod
 from litharness.domain import genre as genre_mod
 from litharness.domain import state as state_mod
+from litharness.domain.names import display_name
 from litharness.domain.patch import Veto
 from litharness.domain.policy import GateKind, GateOutcome, VerdictSource
 
@@ -73,12 +75,73 @@ class MovedLine:
     already being shown. `name` is the book's word for what moved and `was` is what that column
     read entering the scene, both of which the ask states in words so the line is legible as a
     move rather than as a restatement.
+
+    `was` and `now` are numbers for every column but one (§234): a rung column the book
+    declared `ordinal` (§204) reads a name, and the ask says the name the book prints for
+    the rung — never the rung's id, which is the machine word §169 keeps off the page.
     """
 
     line: str
     name: str
-    was: int
-    now: int
+    was: int | str
+    now: int | str
+
+
+def _reading(value: object) -> int | str | None:
+    """A column's value as the gate compares it: a whole number, or an ordinal column's rung
+    id (§204, §234). `None` for anything else, which the callers read as *prints no column*.
+
+    **A rung is compared as the id the line reads back to, and it was not compared at all**
+    (§234). §204 let a sheet declare its rung column `ordinal`, so a line prints the rung's
+    name and `extract_state` reads back its id; this module compared integers only, so on
+    such a book a rise was a column that *prints no rank column* — pilot 25 draw 6's third
+    scene printed `BAND Band Two` against a line that stood at `Band One`, and the gate
+    abstained with that sentence, the moved-line example handed the writer the entering line,
+    and nothing anywhere asked whether the rung the beat named had been reached.
+    """
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str) and value.strip():
+        return value
+    return None
+
+
+def _as_rung(
+    records: Sequence[lc.StateRecord], column: str, value: int | str
+) -> int | str:
+    """A rung's index as the id it names, where the two representations meet.
+
+    `CharacterSheet.snapshot` writes the rung column as an index and an `ordinal` column
+    reads it back as an id, so a seed the system minted and a line the page printed can hold
+    one rung two ways. Compared through the one system whose columns the line prints
+    (`extraction._printing_system`), which is the reader every arm of the beat already uses;
+    a number that resolves to no rung, or a book with no such system, compares as it stands.
+    """
+    if isinstance(value, str):
+        return value
+    canon = [record for record in records if state_mod.is_canon(record)]
+    system = extraction_mod._printing_system(canon, records)
+    if (
+        system is not None
+        and column == gamesystem_mod.RANK_KEY
+        and 1 <= value <= len(system.rank_ids)
+    ):
+        return system.rank_ids[value - 1]
+    return value
+
+
+def _same(records: Sequence[lc.StateRecord], column: str, was: int | str, now: int | str) -> bool:
+    """Whether two readings of one column are one value, across the index-or-id split."""
+    if type(was) is type(now):
+        return was == now
+    return _as_rung(records, column, was) == _as_rung(records, column, now)
+
+
+def _said(records: Sequence[lc.StateRecord], value: int | str) -> int | str:
+    """What the ask says for a reading: the number, or the name the book prints for a rung."""
+    return value if isinstance(value, int) else display_name(records, value)
 
 
 def named_target(
@@ -174,16 +237,16 @@ def moved_example(
     if folded is None:
         return None
     subject, values = folded
-    was = values.get(target.key)
-    if not isinstance(was, int) or isinstance(was, bool):
+    was = _reading(values.get(target.key))
+    if was is None:
         return None
     # **Every column the move changes is shown moved** (§210): a rise that hands out a
     # stock and a deepen that is paid in one each leave two numbers different, and the
     # writer copies the line, so the line carries both. `name`, `was` and `now` stay the
     # named column's, which is the one the ask states and the gate checks.
     changed = extraction_mod.moved_values(records, target, character=character, at=at)
-    now = None if changed is None else changed.get(target.key)
-    if changed is None or now is None or now == was:
+    now = None if changed is None else _reading(changed.get(target.key))
+    if changed is None or now is None or _same(records, target.key, was, now):
         return None
     return MovedLine(
         line=extraction_mod.render_status_line(
@@ -193,8 +256,8 @@ def moved_example(
             records=records,
         ),
         name=target.name,
-        was=was,
-        now=now,
+        was=_said(records, was),
+        now=_said(records, now),
     )
 
 
@@ -260,8 +323,8 @@ def gate_progression(
             f"{name} was named as moving here; canon already states {standing.subject}'s "
             f"state at {at}, so this scene is not the record of it",
         )
-    was = standing.value.get(column)
-    if not isinstance(was, int) or isinstance(was, bool):
+    was = _reading(standing.value.get(column))
+    if was is None:
         return _outcome(
             True,
             f"{name} was named as moving here; the line standing at {at} prints no "
@@ -274,7 +337,7 @@ def gate_progression(
             f"{name} was named as moving here; this scene wrote down no state for "
             f"{standing.subject} at {at}, and {column} stands at {was}",
         )
-    if now == was:
+    if _same(before, column, was, now):
         return _outcome(
             False,
             f"{name} was named as moving here; {column} reads {was} at {at} before and after",
@@ -284,7 +347,7 @@ def gate_progression(
 
 def _asserted(
     extracted: Sequence[lc.StateRecord], *, subject: str, at: str, column: str
-) -> int | None:
+) -> int | str | None:
     """What this scene's own extracted state says the column reads, or `None` where it is silent.
 
     **Read off `extracted` rather than off the two sides of `snapshot_at`**, and the reason is a
@@ -309,8 +372,8 @@ def _asserted(
             continue
         if not isinstance(record.value, Mapping):
             continue
-        value = record.value.get(column)
-        if isinstance(value, int) and not isinstance(value, bool):
+        value = _reading(record.value.get(column))
+        if value is not None:
             return value
     return None
 

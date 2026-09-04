@@ -1268,6 +1268,41 @@ def _payload_prompt(job: Job | None) -> dict[str, Any] | None:
     return {"system": system if isinstance(system, str) else None, "prompt": prompt}
 
 
+#: The states a unit can be in without an accepted revision naming it, in the order the
+#: dossier prefers one: still working, then stopped by policy, then stopped by exhaustion.
+_UNFINISHED_UNIT_STATUSES = (
+    JobStatus.RUNNING,
+    JobStatus.QUEUED,
+    JobStatus.PARKED,
+    JobStatus.POISONED,
+    JobStatus.FAILED,
+    JobStatus.CANCELLED,
+)
+
+
+def _unit_for_scene(
+    store: SqliteStore, book_id: str, branch_id: str, logical_id: str
+) -> Job | None:
+    """The drafting unit that names this scene and has not produced an accepted revision.
+
+    Read off the job's own payload — the planner writes `logical_id`, `book_id` and
+    `branch_id` there when it mints the unit — so a scene's parked or poisoned job is found
+    the way the accepting decision would have found it, by the scene it was for. The first
+    match in `_UNFINISHED_UNIT_STATUSES` order wins; a book holds at most a handful of these.
+    """
+    for status in _UNFINISHED_UNIT_STATUSES:
+        for job in store.jobs_by_status(status, limit=1000):
+            payload = job.payload
+            if (
+                job.job_kind == SCENE_DRAFT
+                and payload.get("logical_id") == logical_id
+                and payload.get("book_id") == book_id
+                and payload.get("branch_id") == branch_id
+            ):
+                return job
+    return None
+
+
 def _scene_dossier(
     store: SqliteStore, book_id: str, branch_id: str, node: Node, head: Revision
 ) -> dict[str, Any]:
@@ -1294,6 +1329,18 @@ def _scene_dossier(
     if job_id:
         with suppress(KeyError):
             job = store.load_job(job_id)
+    if job is None and decision is None:
+        # **A scene nobody has accepted still has a unit, and until §234 this verb could
+        # not find it.** The job was reached only through the decision that accepted the
+        # revision, so a parked or poisoned unit — the two the skill lists under *a scene was
+        # never written* — read as `ABSENT - no queued unit is on record`, while `jobs`
+        # counted it one line away. Pilot 25 draw 6 held one of each. The unit is found by
+        # the scene it names, its latest decision stands in for the one that never accepted,
+        # and the frozen prompt on its payload is printed exactly as for a drafted scene.
+        job = _unit_for_scene(store, book_id, branch_id, logical_id)
+        if job is not None:
+            job_id = job.job_id
+            decision = store.latest_decision_for(job.job_id)
     prompt = _payload_prompt(job)
     if prompt is None:
         absent.append("prompt")
@@ -1399,9 +1446,11 @@ def _render_dossier(dossier: dict[str, Any]) -> str:
     # reader looking for an attribution failure that is not there; the scene simply has not
     # been written. `absent` already draws the line — the renderer has to draw it too.
     undrafted = scene["accepted_in"] is None
+    decision: dict[str, Any] | None = dossier["decision"]
     if undrafted:
         field("prose", "ABSENT - no accepted revision carries this scene yet")
-        field("decision", "n/a - nothing has been accepted here, so nothing decided it")
+        if decision is None:
+            field("decision", "n/a - nothing has been accepted here, so nothing decided it")
     else:
         field(
             "accepted in",
@@ -1409,7 +1458,6 @@ def _render_dossier(dossier: dict[str, Any]) -> str:
         )
         field("prose", f"{scene['chars']} char(s), sha256 {scene['content_sha256']}")
 
-    decision: dict[str, Any] | None = dossier["decision"]
     if decision is None and not undrafted:
         field(
             "decision",
@@ -1419,9 +1467,13 @@ def _render_dossier(dossier: dict[str, Any]) -> str:
         cost = (
             "cost not reported" if decision["cost_usd"] is None else f"${decision['cost_usd']:.4f}"
         )
+        # On an undrafted scene this is the latest decision on a unit that never accepted
+        # (§234): the refusal an operator reads, and never a claim that prose exists.
+        standing_in = "  (latest on an unfinished unit; nothing accepted)" if undrafted else ""
         field(
             "decision",
-            f"{decision['decision_id']}  {decision['outcome']}  attempt {decision['attempt']}",
+            f"{decision['decision_id']}  {decision['outcome']}  attempt {decision['attempt']}"
+            f"{standing_in}",
         )
         field(
             "",

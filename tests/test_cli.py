@@ -20,13 +20,23 @@ import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.editorial import experimental_mechanism
+from litharness.application.handlers import SCENE_DRAFT
 from litharness.cli import EXIT_ATTENTION, EXIT_FAULT, EXIT_OK, build_parser, main
 from litharness.domain.directives import DirectiveStatus
 from litharness.domain.editorial import QualificationEvidence
 from litharness.domain.events import EventType
 from litharness.domain.jobs import Job, JobStatus
 from litharness.domain.nodes import NodeKind
-from litharness.domain.policy import Outcome
+from litharness.domain.patch import Veto
+from litharness.domain.policy import (
+    GateKind,
+    GateOutcome,
+    Outcome,
+    PolicyDecision,
+    VerdictSource,
+    decision_id_for,
+)
+from litharness.domain.revision import new_book
 from litharness.packs import litrpg
 
 #: The steering roster the mechanism is registered over: the house's, by its moved name.
@@ -1249,3 +1259,71 @@ def test_the_architects_allowance_is_every_world_command_except_accept() -> None
         world_agent.render_grow_request("prose", logical_id="s1").allowed_tools
         == world_agent.ALLOWED_TOOLS
     )
+
+
+# --- the dossier of a scene nobody accepted (§234) -----------------------------------------
+
+
+def test_why_finds_the_unit_of_a_scene_nobody_accepted(db, capsys) -> None:
+    """`jobs` counted a parked unit and `why --scene` said no unit was on record, because the
+    dossier reached a job only through the decision that accepted a revision. Pilot 25 draw 6
+    held one parked and one poisoned unit, each invisible to the verb the skill sends a reader
+    to for *a scene was never written*. The unit is found by the scene it names, its latest
+    decision stands in for the one that never accepted, and the frozen prompt prints."""
+    run(db, "init")
+    store = SqliteStore.open(db)
+    revision = new_book("book-why", "main", title="The Why", scenes=2)
+    store.commit_revision(revision, created_at="2026-09-04T00:00:00Z")
+    gate = GateOutcome(
+        gate=GateKind.INTEGRITY,
+        rule_or_critic_id="integrity.progression.v0",
+        passed=False,
+        verdict_source=VerdictSource.DETERMINISTIC,
+        blocking=True,
+        vetoes=(Veto.PROGRESSION_UNMOVED,),
+        detail="Coat was named as moving here; grey_coat reads 1 at s2 before and after",
+    )
+    store.enqueue(
+        Job(
+            job_id="beat-parked",
+            job_kind=SCENE_DRAFT,
+            status=JobStatus.PARKED,
+            attempts=3,
+            payload={
+                "revision_id": revision.revision_id,
+                "book_id": "book-why",
+                "branch_id": "main",
+                "logical_id": "scene-2",
+                "prompt": "Now write scene two, in which the coat is buttoned.",
+                "system": "You draft.",
+            },
+        )
+    )
+    store.record_decision(
+        PolicyDecision(
+            decision_id=decision_id_for("beat-parked", 3, (gate,)),
+            outcome=Outcome.PARK,
+            gates=(gate,),
+            job_id="beat-parked",
+            logical_id="scene-2",
+            base_revision_id=revision.revision_id,
+            attempt=3,
+            reason="attempt budget exhausted with progression_unmoved outstanding",
+        ),
+        decided_at="2026-09-04T00:01:00Z",
+    )
+    store.close()
+
+    assert run(db, "why", "--scene", "2") in (EXIT_OK, EXIT_ATTENTION)
+    shown = capsys.readouterr().out
+    assert "beat-parked  scene_draft  parked  3 attempt(s)" in shown
+    assert "latest on an unfinished unit" in shown
+    assert "grey_coat reads 1 at s2 before and after" in shown
+    assert "Now write scene two, in which the coat is buttoned." in shown
+    assert "ABSENT - no queued unit" not in shown
+
+    assert run(db, "why", "--scene", "2", "--json") in (EXIT_OK, EXIT_ATTENTION)
+    dossier = json.loads(capsys.readouterr().out)
+    assert dossier["job"]["job_id"] == "beat-parked"
+    assert dossier["decision"]["outcome"] == Outcome.PARK.value
+    assert "prompt" not in dossier["absent"]

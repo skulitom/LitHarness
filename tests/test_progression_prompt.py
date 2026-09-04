@@ -506,3 +506,48 @@ def test_the_scene_a_change_lands_in_is_shown_the_line_after_it_and_no_other_sce
         " Where this happens to them, the book prints this line, exactly once, and they read "
         f"it on the page:\n{line}"
     ) in system_text
+
+
+# ------------------------------------------- §234: a rise on a rung column that reads a name
+
+
+def test_a_rise_on_an_ordinal_rung_column_is_shown_by_the_name_the_book_prints() -> None:
+    """Pilot 25 draw 6's shape: the rung column is `ordinal` (§204), so the line prints the
+    rung's name. The moved line carries the next rung's *name*, never its index and never its
+    id, and the ask says the names — the writer is shown `Ticket Fitter`, not `Ticket 2`, and
+    told it stood at `Hand`. Before §234 the example abstained on every rise of such a book."""
+    from tests.test_progression_gate import _ordinal_canon
+
+    records = _ordinal_canon()
+    rise = Movable("Fitter", gamesystem.RANK_KEY)
+    assert rise in movables(records, character="ines_barrow", at="s1")
+
+    moved = moved_example(records, rise, character="ines_barrow", at="s1")
+
+    assert moved is not None
+    assert (moved.name, moved.was, moved.now) == ("Fitter", "Hand", "Fitter")
+    assert "Ticket Fitter" in moved.line
+    assert "Ticket 2" not in moved.line
+    assert "hand" not in moved.line.casefold()
+
+    entering = system_voice_example(records, at="s1")
+    assert entering is not None and "Ticket Hand" in entering
+    system = _rendered(status_example=entering, status_moved=moved)
+    assert f"once Fitter has moved from the Hand it stood at:\n{moved.line}\n" in system
+    assert system.count("[STATUS]") == 1
+
+
+def test_a_rise_between_named_rungs_is_never_a_gain_notice() -> None:
+    """A gain is a column going from nothing to something; a rise between two names is
+    neither, and the notice composer abstains rather than comparing a name with zero."""
+    from litharness.application.planner import gain_line_for
+    from litharness.domain.progression import MovedLine
+    from tests.test_progression_gate import _ordinal_canon
+
+    risen = MovedLine(
+        line="[STATUS] Ines Barrow — Ticket Fitter", name="Fitter", was="Hand", now="Fitter"
+    )
+    assert (
+        gain_line_for(_ordinal_canon(), Movable("Fitter", gamesystem.RANK_KEY), risen, at="s1")
+        is None
+    )
