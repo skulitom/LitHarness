@@ -506,11 +506,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cache", default=str(DEFAULT_CACHE))
     parser.add_argument("--out", default="anticipation.json")
     parser.add_argument(
+        "--call-ceiling",
+        type=int,
+        default=None,
+        help="bought calls after which the run stops between arms; defaults to the registered "
+        "plan itself (PREREG addendum 2026-09-04), so it truncates nothing the design asked for",
+    )
+    parser.add_argument(
         "--ceiling-usd",
         type=float,
-        default=30.0,
-        help="subscription-equivalent ceiling, read between cells and stopped at; a stopped "
-        "run keeps every cell bought and is stamped partial",
+        default=None,
+        help="optional subscription-equivalent stop, read between arms. Off by default since "
+        "2026-09-04: the registered $30 priced 800 calls at $31.57 and would have truncated "
+        "the arm at about 760 for a five-percent pricing error rather than for any reason "
+        "about the design",
     )
     parser.add_argument(
         "--workers",
@@ -553,14 +562,24 @@ def main(argv: list[str] | None = None) -> int:
 
     from elicit import Elicitor  # imported here so the free legs never touch it
 
+    # The registered plan is the default ceiling: it can truncate nothing the design asked for.
+    call_ceiling = calls if args.call_ceiling is None else args.call_ceiling
     cells: list[dict[str, Any]] = []
     stopped_at_ceiling = False
     with Elicitor(Path(args.cache), model=args.model, spot_model=None) as elicitor:
         for passage_id, text in passages:
             for arm in ARMS:
-                # The ceiling is read from the cache's own usage between arms — a stopped
-                # run keeps every cell bought, replays them free, and says it stopped.
-                if float(elicitor.spend()["equivalent_usd"]) >= args.ceiling_usd:
+                # The ceiling is read between arms — a stopped run keeps every cell bought,
+                # replays them free, and says it stopped. Since the 2026-09-04 addendum the
+                # stop is counted in **calls**, the unit the design is written in; a dollar
+                # stop is available and off by default.
+                if int(elicitor.api_calls) >= call_ceiling:
+                    stopped_at_ceiling = True
+                    break
+                if (
+                    args.ceiling_usd is not None
+                    and float(elicitor.spend()["equivalent_usd"]) >= args.ceiling_usd
+                ):
                     stopped_at_ceiling = True
                     break
                 transformed = _arm_text(arm, text)
@@ -627,6 +646,7 @@ def main(argv: list[str] | None = None) -> int:
                 break
         spend = elicitor.spend()
         ledger = {
+            "call_ceiling": call_ceiling,
             "ceiling_usd": args.ceiling_usd,
             "stopped_at_ceiling": stopped_at_ceiling,
             "cells_planned": len(passages) * len(ARMS) * len(personas.GENRE_PANEL),
