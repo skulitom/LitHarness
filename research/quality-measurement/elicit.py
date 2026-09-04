@@ -1357,10 +1357,11 @@ class Elicitor:
         `tests/test_cost_that_bites.py` on two matrix legs of four, which is what an
         unsynchronised read looks like from the outside: fine until the timing lands.
 
-        The whole sum is held rather than a snapshot taken, because a snapshot of a dict
-        being written is the same race one line earlier. `spend` is never called from inside
-        a locked block — every caller is a driver — so there is nothing here to deadlock
-        against.
+        The lock is held for the materialisation and released before the arithmetic: a
+        snapshot taken *under* the lock cannot be touched by a concurrent write, while the
+        same snapshot taken outside it would be the identical race one line earlier. `spend`
+        is never called from inside a locked block — every caller is a driver — so there is
+        nothing here to deadlock against.
         """
         totals: dict[str, int | float] = {"input": 0, "output": 0, "cache_read": 0,
                                           "cache_write": 0, "equivalent_usd": 0.0}

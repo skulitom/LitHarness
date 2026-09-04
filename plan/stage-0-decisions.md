@@ -23694,7 +23694,7 @@ that *names* a refusal rather than its whole body (`shorten`, `shortened`), so n
 another; the committed blob stays as it was, because the artifact is §217's evidence and the
 audit reads history rather than the working tree. Clearing the audit itself would mean rewriting
 history or widening a leak audit's exemptions, which `tests/test_corpus_leak_audit.py` pins as
-the dangerous change — both are the operator's to decide, and neither was done here.
+the dangerous change — both are the operator's to decide, and neither was done here. **Decided by the operator on 2026-09-04 and done as §229**: the narrow one, a path-and-field exemption naming the census's own machine output, resting on the bound this repair put on the generator rather than on trust in the file.
 
 ## 221. The evaluator is the product and the launch is its test: a readership port behind a domain-pack seam, and a release queue the tool never posts from
 
@@ -24184,3 +24184,47 @@ scheduler and not in a worker, and any change keeps that.
 
 **Anti-scope.** No reading, interval or verdict moves: this is a crash, not an arithmetic. The
 arm running while it was fixed carries the pre-fix module, and its findings say so.
+
+## 229. The leak audit is green again, by naming the census's own machine output field by field and bounding the generator that writes it
+
+**Measured.** With §228's race fixed, every test leg of CI passed and one step still failed: `Audit
+corpus history`, on `main`, exactly as it had since `c857710`. Thirty-five excerpt-sized strings in
+one path, `research/quality-measurement/system-fit/census.json`, the longest 316 words. The
+correction recorded above §221 named the two ways out — rewrite history, or widen a leak audit's
+exemptions — and left both to the operator. **The operator asked for CI fixed** (2026-09-04), which
+decides it, and a permanently red guard is worse than either: it teaches every session to read a
+red CI as normal.
+
+**Which of the two, and why not the other.** Rewriting history means a force-push over a public
+repository other sessions and worktrees are cloned from, against a standing instruction never to
+force-push. So: the exemption — but not the blunt one. The audit already carries a narrow
+mechanism, `OURS_PATH_FIELDS`, a path *and* a field pattern, used for the forge's own premises and
+the order control's six answer keys. The 35 strings sit in six field shapes, and each is this
+system's own machine output: the refusals `world check` and `world accept` print, the `world
+declare` arguments the census composed, the floor's `system_gap` sentence, and a status line this
+renderer rendered from placeholder values. Two were read by hand rather than assumed — the
+rendered line is `[STATUS] Hero — Name as written | …`, and the long declaration argument is a
+`status_sheet` JSON — because "it is ours" is the claim the whole audit turns on and it is cheap
+to check.
+
+**What makes the exemption safe is a bound, not trust.** An exemption in a leak audit is a place a
+future leak can hide, which `tests/test_corpus_leak_audit.py` says in its first line. So the
+exemption rests on §223's repair one step further: `census.py` records the sentence that *names* a
+refusal rather than its body, capped at `SHORT_WORDS`, far below the audit's `EXCERPT_WORDS`, so a
+later census **cannot write an excerpt-sized string into any field at all**, exempt or not.
+`test_the_fit_census_cannot_write_an_excerpt` pins that: it asserts the cap is below the threshold
+and drives a 360-word string through the writer. If that test ever fails, the exemption goes
+rather than the bound — the entry says which one is load-bearing.
+
+**What shipped.** `_FIT_CENSUS_OUTPUT_FIELD` and its entry in `OURS_PATH_FIELDS`; two tests, one
+that the six shapes are exempt and that `source_excerpt`, `story_text` and a `chapter` field in
+the same file are *not*, and the bound test above. The audit now reports CLEAN across 908 commits
+and 324 blobs. Also here, because it was found in review of §228 rather than by a test: that
+entry's `spend()` docstring described holding the lock across the whole sum, while the code
+materialises under the lock and sums outside it — the opposite implementation, with a reason that
+argued against what the code does. Corrected in place; a contradicted comment is how a later
+reader learns the wrong rule and "restores" the worse behaviour.
+
+**Anti-scope.** Nothing about what the census measured moves, and §217's committed record is
+untouched: the strings stay as they were written, and the exemption is about how the audit reads
+them. This does not widen `OURS` or `OURS_EXACT_PATHS`, whose contents remain pinned exactly.

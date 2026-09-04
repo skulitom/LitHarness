@@ -312,3 +312,59 @@ def test_no_package_code_names_a_corpus_source():
         for line, marker in _corpus_strings(tree)
     ]
     assert not offenders, "package code names a corpus source:\n" + "\n".join(offenders)
+
+
+def test_the_fit_censuss_own_output_is_exempt_by_path_and_field():
+    """§229: the census records what this system said back to sixty market shapes, and
+    `genre.system_gap`'s 133-word complaint rides every blocked one. The exemption is the six
+    field shapes that carry them, so corpus text in a new field still fails."""
+    path = "research/quality-measurement/system-fit/census.json"
+    for field in (
+        ".shapes[42].check.gaps[0]",
+        ".shapes[3].check.would_not_finish[1]",
+        ".shapes[7].accept[0]",
+        ".shapes[11].declarations[2][0][5]",
+        ".shapes[19].floor.system_gap",
+        ".shapes[5].rendered.hero",
+    ):
+        assert audit.is_ours_path_field(path, field), field
+    for field in (".shapes[0].source_excerpt", ".shapes[0].story_text", ".shapes[0].chapter"):
+        assert not audit.is_ours_path_field(path, field), field
+    assert not audit.is_ours_path_field(
+        "research/quality-measurement/system-fit/other.json", ".shapes[0].check.gaps[0]"
+    )
+
+
+def test_the_fit_census_cannot_write_an_excerpt():
+    """§229: what makes the exemption above safe is not trust in the file but a bound on its
+    generator — every string it writes is capped well below the audit's excerpt threshold, so
+    a later run cannot put a passage into an exempt field. If this fails, the exemption has
+    become a hiding place and goes rather than the bound."""
+    import importlib.util
+
+    source = RESEARCH / "system-fit" / "census.py"
+    if not source.exists():
+        pytest.skip("research module; skipped where research/ is unavailable")
+    import sys
+
+    name = "fit_census_for_audit_test"
+    spec = importlib.util.spec_from_file_location(name, source)
+    assert spec and spec.loader
+    census = importlib.util.module_from_spec(spec)
+    # Registered before execution: a dataclass in the module resolves its own module through
+    # `sys.modules` while the decorator runs, and an unregistered one raises there.
+    sys.modules[name] = census
+    try:
+        spec.loader.exec_module(census)
+    finally:
+        sys.modules.pop(name, None)
+    assert census.SHORT_WORDS < audit.EXCERPT_WORDS
+    long_text = " ".join(f"word{i}" for i in range(audit.EXCERPT_WORDS * 3))
+    payload = {"shapes": [{"check": {"gaps": [long_text]}, "rendered": {"hero": long_text}}]}
+    shortened = census.shortened(payload)
+    written = shortened["shapes"][0]
+    # The property the exemption rests on is the audit's own threshold, not the exact cap:
+    # `shorten` appends an ellipsis, so a capped string splits into `SHORT_WORDS + 1` tokens.
+    for field in (written["check"]["gaps"][0], written["rendered"]["hero"]):
+        assert len(field.split()) < audit.EXCERPT_WORDS
+        assert len(field.split()) <= census.SHORT_WORDS + 1
