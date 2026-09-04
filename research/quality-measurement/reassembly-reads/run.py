@@ -15,6 +15,13 @@ tunes a reader.
 The shelf and the run folders are gitignored build products that live in the primary checkout,
 so a linked worktree passes both roots explicitly; a missing chapter refuses the run by name
 rather than reporting a census short by one.
+
+**`raw.jsonl` is flushed per record**, because `RUNBOOK.md` tells a later session that a run's
+stdout is buffered and its JSONL is therefore the progress bar. This script's handle buffered
+too, so for the first arm that promise was false and the file sat at zero bytes through the
+first fifteen calls; the fix is to make the promise true rather than to document an exception
+to it. `elicit`'s cache has always flushed per record, which is why it is the progress bar the
+runbook means.
 """
 
 from __future__ import annotations
@@ -245,6 +252,7 @@ def main(argv: list[str] | None = None) -> int:
                         "failed": str(error)[:160], "shown": shown,
                     }
                     sink.write(json.dumps(row) + "\n")
+                    sink.flush()
                     rows.append(row)
                     print(f"  {name} seed {seed}: transport failure {str(error)[:80]}")
                     continue
@@ -264,6 +272,7 @@ def main(argv: list[str] | None = None) -> int:
                     "cost_usd": result.cost_usd,
                 }
                 sink.write(json.dumps(row) + "\n")
+                sink.flush()
                 rows.append(row)
                 note = " (repaired)" if flagged else ""
                 print(
