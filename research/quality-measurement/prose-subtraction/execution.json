@@ -1,0 +1,280 @@
+{
+  "status": "diagnostic_complete_both_responses_rejected_no_production_adoption",
+  "code_commit": "fdfa49f6a97cbb67916fe8792fd1b41b6c2f8199",
+  "frozen_files": {
+    "prose_subtraction.py": "a55219e50e3a88e2cf0f48c178f3a8aeecc83086b2851ff98fcb5f63cba1395a",
+    "prose_inputs.py": "3422aa027ad16b8f1e4267e60800a4811a8739a04cba3db5a36cc22770972e0a",
+    "PREREG.md": "f0cf81b05cd8141e1844564dce3e12f56651b987852897e03feb29880831fd4c"
+  },
+  "sources_digest": "2daffed101e5222cf1f91c8c2e82cb73ff71cc29dc55192d2335d4f131fcf055",
+  "provider_calls": 2,
+  "total_cost_usd": 0.450017,
+  "outputs": [
+    {
+      "id": "original",
+      "source_sha256": "0b0b80327436c6fd2779278610f5703d5fc4286e5e3f3db9e47e39dd56d1d4d7",
+      "source_words": 1924,
+      "request_sha256": "7d5946f2fe84b769164ba8fa0d6b5e18583923645543bd10bf1bfaa1223b3ee2",
+      "result_sha256": "09222ad138db91c65d404bb704d55c699a9345f0557cac861e70755a935ccbef",
+      "model": "claude-opus-5",
+      "cost_usd": 0.24975350000000004,
+      "wall_ms": 19243,
+      "proposed_cuts": 20,
+      "individually_exact_cuts": 18,
+      "application": {
+        "status": "rejected",
+        "error": "quote missing or ambiguous"
+      },
+      "span_checks": [
+        {
+          "cut": 1,
+          "paragraph": 11,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 2,
+          "paragraph": 11,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 3,
+          "paragraph": 12,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 4,
+          "paragraph": 13,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 5,
+          "paragraph": 18,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 6,
+          "paragraph": 23,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 7,
+          "paragraph": 26,
+          "exact_span_valid": false,
+          "error": "quote missing or ambiguous"
+        },
+        {
+          "cut": 8,
+          "paragraph": 27,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 9,
+          "paragraph": 31,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 10,
+          "paragraph": 32,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 11,
+          "paragraph": 35,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 12,
+          "paragraph": 37,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 13,
+          "paragraph": 40,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 14,
+          "paragraph": 41,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 15,
+          "paragraph": 44,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 16,
+          "paragraph": 45,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 17,
+          "paragraph": 46,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 18,
+          "paragraph": 47,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 19,
+          "paragraph": 52,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 20,
+          "paragraph": 54,
+          "exact_span_valid": false,
+          "error": "quote missing or ambiguous"
+        }
+      ]
+    },
+    {
+      "id": "literal",
+      "source_sha256": "b48bd0c7737b0a0fbcc713708af70e82b71949411d824b520e4f3626fae57561",
+      "source_words": 1739,
+      "request_sha256": "77d98d4b837dcaef5466b95f1dde2d4888e0085a4a17f8c4417fa2d072b1868d",
+      "result_sha256": "3934c8e88ba90f47a122b757c08db63cc0a10365c9af90eb23b3d2f5be2a3f98",
+      "model": "claude-opus-5",
+      "cost_usd": 0.2002635,
+      "wall_ms": 18268,
+      "proposed_cuts": 18,
+      "individually_exact_cuts": 15,
+      "application": {
+        "status": "rejected",
+        "error": "quote missing or ambiguous"
+      },
+      "span_checks": [
+        {
+          "cut": 1,
+          "paragraph": 2,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 2,
+          "paragraph": 4,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 3,
+          "paragraph": 10,
+          "exact_span_valid": false,
+          "error": "quote missing or ambiguous"
+        },
+        {
+          "cut": 4,
+          "paragraph": 10,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 5,
+          "paragraph": 12,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 6,
+          "paragraph": 12,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 7,
+          "paragraph": 13,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 8,
+          "paragraph": 15,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 9,
+          "paragraph": 20,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 10,
+          "paragraph": 20,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 11,
+          "paragraph": 22,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 12,
+          "paragraph": 26,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 13,
+          "paragraph": 30,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 14,
+          "paragraph": 30,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 15,
+          "paragraph": 30,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 16,
+          "paragraph": 33,
+          "exact_span_valid": false,
+          "error": "quote missing or ambiguous"
+        },
+        {
+          "cut": 17,
+          "paragraph": 33,
+          "exact_span_valid": true,
+          "error": null
+        },
+        {
+          "cut": 18,
+          "paragraph": 35,
+          "exact_span_valid": false,
+          "error": "quote missing or ambiguous"
+        }
+      ]
+    }
+  ],
+  "rebuild": "uv run python runs/ab/prose-subtraction-20260905/audit.py",
+  "rebuild_script_sha256": "6c64ced69070f6f1ddb89219c60ba334435705bc5da96abf5e1d67d33f32abb5"
+}
