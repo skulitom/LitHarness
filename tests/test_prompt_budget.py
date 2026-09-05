@@ -26,9 +26,11 @@ were themselves reading for *"what the next rung costs"*, so they scored the jar
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
+import litharness_contracts as lc
 import pytest
 
 from litharness.application import (
@@ -132,8 +134,8 @@ def _roles() -> dict[str, str]:
         "scene writer floor": (
             floor := house.with_house_rules(
                 "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
-                "no commentary, no summary of what you wrote. The context below is established and "
-                "may be relied on; do not contradict it."
+                "no commentary, no summary of what you wrote. Respect established facts and author "
+                "locks; future intentions are plans, not events that have already happened."
             )
         ),
         # **The floor plus who is writing, which was unreachable until 2026-08-25.**
@@ -620,6 +622,23 @@ _PACKET = context_domain.ContextPacket(
     base_revision_id="r0",
 )
 
+_RULE_PACKET = replace(
+    _PACKET,
+    sections={
+        context_domain.RULES: (
+            context_domain.PackedItem(
+                item_id="rule",
+                kind=lc.ContextItemKind.FACT,
+                source_logical_id="rule",
+                source_kind=lc.ResourceKind.WORLD_RULE,
+                text="One seal per carrier.",
+                tokens=context_domain.count_tokens("One seal per carrier."),
+                authority=lc.StateAuthority.ACCEPTED_CANON,
+            ),
+        )
+    },
+)
+
 #: Payloads with the shape the real extractors produce and none of their provenance —
 #: `DESCRIPTOR`'s convention. The two status lines go through `render_status_line` itself, so
 #: the default sheet's shape cannot drift away from what this file measures; the other three
@@ -661,7 +680,8 @@ _CRITERIA = "- guild_rank: outranks — courier then gate-runner then warden"
 
 def _scene_system(**conditionals: Any) -> str:
     """The system message the planner actually assembles, through the live path."""
-    system, _prompt = planner.render_prompt(_BEAT, book_title=None, packet=_PACKET, **conditionals)
+    packet = conditionals.pop("packet", _PACKET)
+    system, _prompt = planner.render_prompt(_BEAT, book_title=None, packet=packet, **conditionals)
     return system
 
 
@@ -674,6 +694,7 @@ _NOTICE_LINE = "[ASSAY] The Assay has noticed you"
 _READOUT_LINE = "[STATUS] Dire Wolf — Level 24"
 
 _CONDITIONAL_ARMS: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
+    "world_rules": ({}, {"packet": _RULE_PACKET}),
     "status_example": ({}, {"status_example": _STATUS_EXAMPLE}),
     "progression": ({"status_example": _STATUS_EXAMPLE}, {"progression": _PROGRESSION}),
     "offer_line": ({"status_example": _STATUS_EXAMPLE}, {"offer_line": _OFFER_LINE}),
@@ -694,6 +715,9 @@ _CONDITIONAL_ARMS: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
 #: because that is the number the three tracks were computing by hand, and each is the
 #: instruction's clauses plus one line of payload under the one-line convention above.
 SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
+    # §239: precedence, causal ordering, scope and identity plus one declared rule line.
+    # The payload uses the same one-line convention as the other conditional arms.
+    "world_rules": 8,
     "status_example": 4,
     "progression": 3,
     # **Joined 2026-09-01 at what is there, the opening-parity track**: one sentence saying the
@@ -775,7 +799,8 @@ SCENE_CONDITIONAL_BUDGET: dict[str, int] = {
 #: **47 -> 49 on 2026-09-03 for the `readouts` conditional** (§220): one sentence saying the
 #: book prints another owner's line where the plan names them, and the line itself, measured
 #: with every conditional present and one readout.
-SCENE_MAXIMAL_BUDGET = 49
+# §239 adds the protected rule block; actual rule payload length remains world-authored.
+SCENE_MAXIMAL_BUDGET = 57
 
 
 def test_the_scene_floor_row_is_what_the_planner_actually_assembles() -> None:
@@ -865,6 +890,7 @@ def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -
     """
     counted = house.demands(
         _scene_system(
+            packet=_RULE_PACKET,
             status_example=_STATUS_EXAMPLE,
             progression=_PROGRESSION,
             standing=_STANDING,

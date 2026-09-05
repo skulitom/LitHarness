@@ -24784,3 +24784,50 @@ instruction or a new quality metric.
 Concept-backed outlines now receive the same bounded 900-second allowance used on the successful
 retry, recorded in the outline policy digest. Their system instruction also drops the legacy
 one-sentence limit so it agrees with the detailed chapter-planning request introduced in §237.
+
+## 239. Protect declared operating rules through context and planning
+
+**2026-09-05.** The operator requested fixes for the additional chapter defects located during
+§238's diagnostic. Benefits preceded their recorded payment/activation and an additional
+entity exceeded the world's declared count. §238 removed a forced numerical increase, but
+ordinary world facts still had no distinct precedence over scene instructions and remained
+droppable under context pressure. The diagnostic's original packet did fit; budget loss is
+a separate routing risk, not the explanation of that particular draft.
+
+`worlds.operating_rule_ids` selects explicit world-rule records, costs, prerequisites, prices,
+exception edges and complete constraint nodes. It does not interpret prose, infer relevance,
+invent default limits or extract story-specific mechanics. Context applies its existing canon,
+time and POV filters first. Public rules retain source ids and authority in a budgeted `rules`
+section, rendered once in the writer's system message below author locks. Hidden rule records
+remain in the hidden section; superseded prices remain history. Folded constraint scopes and
+exceptions travel in the anchor sentence. Required rules and author locks refuse an insufficient
+budget instead of being omitted; ordinary context still records budget omissions.
+
+The shared planner instructions now require payment/prerequisite/activation before the dependent
+effect unless the declared rule permits deferred payment, and preserve quantities, scope,
+exceptions and entity identity across scenes. Outline and interpretive-plan policy digests now
+include those shared instructions. The writer's context description also distinguishes future
+intentions from established events. The new rule block has an explicit conditional prompt budget
+in `tests/test_prompt_budget.py`; its payload remains the world's own declaration.
+
+`tests/test_operating_rules_context.py` checks tight-budget preservation and refusal, provenance
+and contract round-trip, scoped cardinality with exceptions, exclusion of proposed/future/private
+records, superseded prices, hidden-rule containment, production prompt placement and absence for
+undeclared worlds. The existing unplaced-state cutoff regression now checks facts and rules
+together. These are implementation controls, not a new craft metric or a semantic acceptance
+gate; a model may still violate a rule stated in natural language. No story-specific narrative
+or located review text becomes a production instruction.
+
+One fresh Chapter 1 was then generated under `runs/ab/chapter-rule-context-20260905/`, with
+the same concept, starting world and writer, no exemplars and a hashed frozen working-source
+copy. The located reading found one continuing entity, unchanged initial speed, and purchases
+after the closing bell. These two earlier defects did not recur in this draw. The outline also
+retains the concept's intended final rank. This single observation establishes no general
+effect or quality guarantee.
+
+The reading located unsupported certainty about an exact interval. The ordinary facts heading
+had called globally true records `known to` the POV character, although the filter only controls
+writer access. The heading now distinguishes world truth from character knowledge, and the
+rule block states that receiving a rule does not make a character know it. The focused POV
+regression pins this distinction. This last wording correction happened after the frozen run
+and has not been tested by another generation; the original chapter is retained unchanged.

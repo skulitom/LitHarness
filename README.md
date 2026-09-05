@@ -118,6 +118,15 @@ result, while an unchanged panel appears only when the scene needs it. Legacy pl
 and explicit author locks remain in place.
 The outline receives the complete concept, including what carries over when the story moves
 under a second system, so its progression schedule can account for those intentions.
+Declared world rules, costs, prerequisites, limits and exceptions are protected context.
+The writer receives their existing text as operating constraints above scene-plan guidance,
+with author locks retaining precedence; these facts are not duplicated in the ordinary fact
+list. Hidden rules retain their disclosure boundary. If required rules or author locks cannot
+fit the context budget, drafting refuses rather than omitting them. Planners also receive
+explicit instructions to respect payment/activation order and declared quantities. These are
+context and instruction safeguards, not a semantic check that certifies the resulting prose.
+World facts are also distinguished from character knowledge: passing a fact through the POV
+visibility filter makes it available to the writer, not automatically known by the character.
 
 `--person` is a position, not a finding: `first` seeds one locked constraint every scene call
 carries, `third` and the default seed nothing. The operator's position since read 19 is third

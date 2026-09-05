@@ -960,7 +960,7 @@ def test_the_packet_is_built_for_the_protagonist_when_canon_names_one(
     """The seam that existed and was never passed anything, measured on a real packet.
 
     Two effects and only two, both of them the packet's own: the facts block is labelled with
-    whose knowledge it is, and `state.visible_to` admits records restricted to that id. On a
+    whose scene it is, and `state.visible_to` admits records restricted to that id. On a
     forged world the second is a no-op — `records_for` writes no `pov_visibility` at all, because
     the iceberg is a claim with a disclosure and not packet access control (§107.4) — so the
     labelled heading is the whole of the observable difference, and that is what is asserted.
@@ -973,8 +973,8 @@ def test_the_packet_is_built_for_the_protagonist_when_canon_names_one(
     for_nobody = packet_for(store, head, beat)
     for_silas = packet_for(store, head, beat, pov_character_id="silas")
 
-    assert "Established facts:" in for_nobody.render()
-    assert "Established facts known to silas:" in for_silas.render()
+    assert "Established facts — world truth" in for_nobody.render()
+    assert "Established facts (POV: silas) — world truth" in for_silas.render()
     assert [item.item_id for item in for_silas.sections[FACTS]] == [
         item.item_id for item in for_nobody.sections[FACTS]
     ]

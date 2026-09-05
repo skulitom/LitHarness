@@ -39,7 +39,7 @@ from litharness.adapters.contracts_fixtures import (
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application.planner import packet_for
 from litharness.domain.beats import Beat, beats_for, template_for
-from litharness.domain.context import FACTS, assemble
+from litharness.domain.context import FACTS, RULES, assemble
 from litharness.domain.draft import is_draftable
 from litharness.domain.extraction import (
     PLANNED_POSITION_VERSION,
@@ -306,7 +306,11 @@ def test_the_unplaced_ability_graph_survives_the_cutoff(store: SqliteStore) -> N
     head = _book_zero(store, seed)
     packet = packet_for(store, head, _beat(head, 1), token_budget=16000)
 
-    packed = {item.source_logical_id for item in packet.sections[FACTS]}
+    packed = {
+        item.source_logical_id
+        for section in (FACTS, RULES)
+        for item in packet.sections.get(section, ())
+    }
     # Every unplaced record except the sheet declaration, which is excluded as configuration.
     expected = {
         record.record_id for record in _unplaced(seed) if record.predicate != "status_sheet"

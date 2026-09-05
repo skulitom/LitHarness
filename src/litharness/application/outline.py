@@ -996,6 +996,7 @@ def _policy_digest() -> str:
             "schema": OUTLINE_SCHEMA,
             "concept_planning_version": 2,
             "concept_timeout_seconds": CONCEPT_TIMEOUT_SECONDS,
+            "world_rules": world_brief.WORLD_RULES,
         }
     )
 

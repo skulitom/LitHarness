@@ -406,8 +406,8 @@ def render_prompt(
     # boundary `point_of_view` states — neither of them is a judgment about a story.
     system = house.with_house_rules(
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
-        "no commentary, no summary of what you wrote. The context below is established and "
-        "may be relied on; do not contradict it."
+        "no commentary, no summary of what you wrote. Respect established facts and author "
+        "locks; future intentions are plans, not events that have already happened."
     )
     if writer is not None:
         # **Ahead of the mechanics and never in the packet** (`plan/writer-roster.md` §3.2).
@@ -659,6 +659,9 @@ def render_prompt(
     # a model resolving a conflict correctly would disobey the author-locked item.  Keep the
     # packet items and accounting intact, but put their locked block last in the system
     # message, after every lower-authority writing aid.
+    rules = packet.render_rules()
+    if rules:
+        system += f"\n\n{rules}"
     locked = packet.render_constraints()
     if locked:
         system += f"\n\nAUTHOR-LOCKED STORY DECISIONS — these outrank all other guidance:\n{locked}"
@@ -689,7 +692,7 @@ def render_prompt(
             )
     pov_line = "" if not point_of_view else f" Point of view: {point_of_view}."
     prompt = (
-        f"{packet.render(include_constraints=False)}\n\n"
+        f"{packet.render(include_constraints=False, include_rules=False)}\n\n"
         f"Now write {title}{beat.title or beat.logical_id} — {scene_position}."
         f"{pov_line} Dramatic function: {beat.function}."
         f"{plan_line}"

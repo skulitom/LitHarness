@@ -490,7 +490,14 @@ def _stamp(now: float) -> str:
 
 
 def _policy_digest() -> str:
-    return payload_digest({"profile": PROFILE, "schema": PROPOSAL_SCHEMA, "max_edits": MAX_EDITS})
+    return payload_digest(
+        {
+            "profile": PROFILE,
+            "schema": PROPOSAL_SCHEMA,
+            "max_edits": MAX_EDITS,
+            "world_rules": world_brief.WORLD_RULES,
+        }
+    )
 
 
 def _candidate_decision(

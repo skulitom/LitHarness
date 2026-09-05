@@ -664,6 +664,35 @@ def rules(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
     )
 
 
+def operating_rule_ids(records: Sequence[lc.StateRecord]) -> frozenset[str]:
+    """Explicit rules, prices, prerequisites and exceptions, without interpreting prose.
+
+    Callers supply their time/visibility projection. Reified constraints travel whole so a
+    limit cannot lose its scope or exception. A dated change is an occurrence, not a new
+    standing rule; its preconditions remain with that occurrence in ordinary context.
+    """
+    canon = _canon(records)
+    constraints = set(nodes_of_type(canon, CONSTRAINT)) | set(
+        nodes_of_type(canon, CARDINALITY_CONSTRAINT)
+    )
+    predicates = {
+        WORLD_RULE_PREDICATE,
+        COSTS,
+        REQUIRES,
+        PRICE_PREDICATE,
+        EDGE_PREDICATE,
+        EXCEPTION_PREDICATE,
+        EXCEPTS_PREDICATE,
+    }
+    return frozenset(
+        record.record_id
+        for record in canon
+        if record.kind is lc.StateRecordKind.WORLD_RULE
+        or record.predicate in predicates
+        or record.subject in constraints
+    )
+
+
 def consequence_domains(
     records: Sequence[lc.StateRecord],
 ) -> dict[str, tuple[str, ...]]:
@@ -2028,6 +2057,7 @@ __all__ = [
     "nodes_of_type",
     "normalise_id",
     "offered_by",
+    "operating_rule_ids",
     "project",
     "protagonist_brief",
     "questions",

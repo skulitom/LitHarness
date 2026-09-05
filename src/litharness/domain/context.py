@@ -18,8 +18,8 @@ obviously empty.
 **Priority order, and why prose is last.** Constraints and promises are the director's word
 and are tiny; open threads are what the book still owes; established facts ground the scene;
 prose is the largest and the most redundant with the facts extracted from it. So the order is
-premise → constraints → story intentions → threads → hidden → facts → prior prose. Under
-pressure prose is what goes. The hidden section — true, and not yet disclosed — packs
+premise → constraints → story intentions → world rules → threads → hidden → facts → prior prose.
+Under pressure prose is what goes. The hidden section — true, and not yet disclosed — packs
 *above* the ordinary facts and renders below them, because a scene written against a secret
 it was never given cannot be
 repaired later and a scene written with fewer ordinary facts is merely thinner.
@@ -45,7 +45,9 @@ no provider — which is what lets the golden suite grade it directly, and calli
 inside it would end that. `application/planner.py::packet_for` loads them, and a scene with no
 summary yet is simply an eviction with nothing to leave behind, exactly as before.
 
-**The premise and supplied story intentions are not droppable.** `plans.py` records why:
+**The premise, author locks, supplied intentions and declared rules are not droppable.**
+Rule selection uses declared predicates, not inferred relevance or a prose judgment.
+`plans.py` records why:
 a book drafted without a premise produces "six scenes of plausible prose about nothing,
 which no gate in this system can detect". A
 budget that cannot hold the premise is a misconfiguration, not a tight packet, so it raises
@@ -84,6 +86,7 @@ _TOKEN_PATTERN = re.compile(r"\w+|[^\w\s]", re.UNICODE)
 PREMISE = "premise"
 CONSTRAINTS = "constraints"
 INTENTIONS = "intentions"
+RULES = "rules"
 THREADS = "threads"
 
 #: Who is in this story, as one sheet each. Packed high because a writer that does not
@@ -109,6 +112,7 @@ SECTION_ORDER = (
     PREMISE,
     CONSTRAINTS,
     INTENTIONS,
+    RULES,
     THREADS,
     CAST,
     FACTS,
@@ -333,7 +337,24 @@ class ContextPacket:
             f"be contradicted:\n{lines}"
         )
 
-    def render(self, *, include_constraints: bool = True) -> str:
+    def render_rules(self) -> str:
+        """Declared operating constraints, with their original authority and source intact."""
+        rules = self.sections.get(RULES, ())
+        if not rules:
+            return ""
+        lines = "\n".join(f"- {item.text}" for item in rules)
+        return (
+            "World rules and limits — established facts, subject to author locks; "
+            "their presence here does not mean a character knows them. "
+            "Scene plans, milestones and dramatic instructions must fit these facts. "
+            "Apply each rule within its stated scope and declared exceptions. "
+            "Satisfy a cost, prerequisite or activation condition before its dependent effect, "
+            "unless the rule explicitly allows delayed payment. Preserve declared quantities "
+            "and entity identities across actions and scenes. These constrain what happens; "
+            f"they are not a checklist of explanations to put in the prose:\n{lines}"
+        )
+
+    def render(self, *, include_constraints: bool = True, include_rules: bool = True) -> str:
         """The packet as the text a generator is handed.
 
         Sections are labelled and separated, because an undifferentiated wall gives the model
@@ -354,6 +375,9 @@ class ContextPacket:
                 "reveals belong at their planned positions; the current scene plan "
                 f"determines what happens now:\n{lines}"
             )
+        rules = self.render_rules()
+        if include_rules and rules:
+            blocks.append(rules)
         threads = self.sections.get(THREADS, ())
         if threads:
             lines = "\n".join(f"- {item.text}" for item in threads)
@@ -365,8 +389,11 @@ class ContextPacket:
         facts = self.sections.get(FACTS, ())
         if facts:
             lines = "\n".join(f"- {item.text}" for item in facts)
-            pov = f" known to {self.pov_character_id}" if self.pov_character_id else ""
-            blocks.append(f"Established facts{pov}:\n{lines}")
+            pov = f" (POV: {self.pov_character_id})" if self.pov_character_id else ""
+            blocks.append(
+                f"Established facts{pov} — world truth, not automatically character "
+                f"knowledge:\n{lines}"
+            )
         hidden = self.sections.get(HIDDEN, ())
         if hidden:
             lines = "\n".join(f"- {item.text}" for item in hidden)
@@ -489,13 +516,13 @@ def assemble(
             tokens=count_tokens(plan_item.text),
             authority=lc.StateAuthority.AUTHOR_LOCKED,
         )
-        if fits(item):
-            constraints.append(item)
-            used += item.tokens
-        else:
-            omitted.append(
-                Omission(item.source_logical_id, item.item_id, "budget exhausted: constraint")
+        if not fits(item):
+            raise ContextBudgetTooSmall(
+                f"budget of {token_budget} tokens cannot hold author constraint "
+                f"({item.source_logical_id})"
             )
+        constraints.append(item)
+        used += item.tokens
     sections[CONSTRAINTS] = tuple(constraints)
 
     intentions: list[PackedItem] = []
@@ -603,8 +630,29 @@ def assemble(
     # written here — not because the coordinates agree, but because they are no longer assumed to.
     hidden_ids = worlds_mod.hidden_record_ids(visible, at=disclosure_at)
 
+    # Rules are mandatory before optional state consumes the budget. Hidden rules retain
+    # the hidden section's disclosure boundary; folded satellites are already represented
+    # by their anchor sentence and must not be counted or rendered twice.
+    rule_ids = worlds_mod.operating_rule_ids(visible)
+    rule_items: list[PackedItem] = []
+    hidden_rules: list[PackedItem] = []
+    for record in state_mod.in_story_order(visible):
+        if record.record_id not in rule_ids or projection.get(record.record_id) == "":
+            continue
+        item = _state_item(record, projection)
+        if not fits(item):
+            raise ContextBudgetTooSmall(
+                f"budget of {token_budget} tokens cannot hold world rule ({record.record_id})"
+            )
+        (hidden_rules if record.record_id in hidden_ids else rule_items).append(item)
+        used += item.tokens
+    if rule_items:
+        sections[RULES] = tuple(rule_items)
+
     threads: list[PackedItem] = []
     for record in state_mod.open_threads(visible):
+        if record.record_id in rule_ids:
+            continue
         item = _state_item(record, projection)
         if fits(item):
             threads.append(item)
@@ -664,6 +712,7 @@ def assemble(
         for record in state_mod.in_story_order(visible)
         if record.record_id not in thread_ids
         and record.record_id not in hidden_ids
+        and record.record_id not in rule_ids
         # A record the projection folded into its node's sentence is the same information
         # under a second id. Packing it would hand the generator the sentence and then its
         # parts; recording it as an omission would tell an operator the scene was written
@@ -682,9 +731,13 @@ def assemble(
     # hidden section **empty** — 14 recorded answers, none of them shown to the writer, with
     # every omission dutifully recorded and none of them the one that mattered. At 16,000 the
     # question does not arise; a packet should not depend on that.
-    hidden_packed: list[PackedItem] = []
+    hidden_packed: list[PackedItem] = list(hidden_rules)
     for record in state_mod.in_story_order(
-        record for record in visible if record.record_id in hidden_ids
+        record
+        for record in visible
+        if record.record_id in hidden_ids
+        and record.record_id not in rule_ids
+        and projection.get(record.record_id) != ""
     ):
         item = _state_item(record, projection)
         if fits(item):
@@ -883,6 +936,7 @@ __all__ = [
     "HISTORY",
     "PREMISE",
     "PRIOR_PROSE",
+    "RULES",
     "SECTION_ORDER",
     "SUMMARIES",
     "SUMMARY_SHARE",

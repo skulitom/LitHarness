@@ -340,6 +340,12 @@ def _reveals(records: Sequence[lc.StateRecord]) -> tuple[Reveal, ...]:
 #: that said "name the world's features" would make `research/quality-measurement/world_uptake.py`
 #: a target rather than a counter, which is the shallow-because-easy failure the project refuses.
 WORLD_RULES: tuple[str, ...] = (
+    "The world's declared rules constrain scene plans and milestones. For a planned gain, "
+    "place its required payment, prerequisite and activation condition before its effect, "
+    "unless the rule explicitly permits delayed payment; an unaffordable or unavailable "
+    "gain waits until its conditions can be met.",
+    "Preserve declared quantities, scope and exceptions across scenes. Continued action by "
+    "an existing entity does not introduce another instance of it.",
     "Put the world's rules and their consequences to work. What happens in a scene should be "
     "something only this world could make happen: a rule biting somebody, a consequence "
     "landing, a price being paid in the currency this world actually charges in.",
