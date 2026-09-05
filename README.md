@@ -33,7 +33,8 @@ project's most important status line.
 
 For the full objective and roadmap, see [PLAN.md](PLAN.md) §1a and §17. Historical decisions and
 reversals are preserved in [plan/stage-0-decisions.md](plan/stage-0-decisions.md); they are not an
-operator manual.
+operator manual. What the research has established so far, by question and with a pointer for
+every result, is [RESEARCH.md](RESEARCH.md).
 
 ## Install
 

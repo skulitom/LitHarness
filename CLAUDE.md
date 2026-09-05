@@ -17,7 +17,9 @@ to distrust first (PLAN.md header, the same lesson recorded three times).
 ## Read first, in this order
 
 1. `CONTRIBUTING.md` — setup, dependency direction, persistence rules. Short; read all of it.
-2. `README.md` — what is built and how it is operated. `PLAN.md` §1a and §17 for the goal and
+2. `README.md` — what is built and how it is operated. `RESEARCH.md` — what the research has
+   established, by question, every result pointing at the record that owns it; keep it current
+   with `tools/research_overview.py`. `PLAN.md` §1a and §17 for the goal and
    the roadmap; `plan/stage-0-decisions.md` for every load-bearing decision and why it went
    the way it did, including the ones since reversed. The ledger is long; read the entries you
    are about to build on, not the whole thing.
