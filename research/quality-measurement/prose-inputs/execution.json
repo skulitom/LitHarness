@@ -1,0 +1,102 @@
+{
+  "status": "diagnostic_complete_no_production_adoption",
+  "code_commit": "ad6bbd2dc1c840659557525b6a93f50fe58d886f",
+  "registration_sha256": "19d0966916896690cc93207f88640f085a0e32ed322930c74185f08d37e47298",
+  "base_digest": "94bd668ca98f6d03f499fed5566f3c84871f848badc4a650eadf5e34d34ce86d",
+  "reviewed_plan_digest": "1b3f65dc6ef72785b2211787140f851adcc5b4159d38837a529ba33359365392",
+  "prior_conversion_cost_usd": 0.46309,
+  "provider_calls": 11,
+  "total_cost_usd": 3.8945345,
+  "outputs": [
+    {
+      "id": "current_original-1",
+      "text_sha256": "f80f62eb98a993c87e32f64ce59723615ba9e9a5bae94b98df35d9a017a7239e",
+      "model": "claude-opus-5",
+      "cost_usd": 0.4104645,
+      "wall_ms": 59404,
+      "words": 971
+    },
+    {
+      "id": "plain_original-1",
+      "text_sha256": "13900187672ed3babaadf477ac2baf1c0f709e4a7691a74875483ea06b951e6e",
+      "model": "claude-opus-5",
+      "cost_usd": 0.4094445,
+      "wall_ms": 58333,
+      "words": 1077
+    },
+    {
+      "id": "current_factual-1",
+      "text_sha256": "70ef99234310a861a53f27286e8aec240c3d96636ff486342448854436e846dc",
+      "model": "claude-opus-5",
+      "cost_usd": 0.4238965,
+      "wall_ms": 65242,
+      "words": 1010
+    },
+    {
+      "id": "plain_factual-1",
+      "text_sha256": "521d2837974e2352deea29e280c76d26d756091031e65d0897dad3ef955e3463",
+      "model": "claude-opus-5",
+      "cost_usd": 0.4312415,
+      "wall_ms": 72814,
+      "words": 1019
+    },
+    {
+      "id": "plain_factual-2",
+      "text_sha256": "f6ed4ed846c9cdaa67b43c86bd865a0426dfbdf1875440fcb9aae496b1a104a5",
+      "model": "claude-opus-5",
+      "cost_usd": 0.1106715,
+      "wall_ms": 51908,
+      "words": 984
+    },
+    {
+      "id": "current_factual-2",
+      "text_sha256": "249c6d9b4e26127c26f2dfd022468901a9ec38995975d50104ab5814ccda460a",
+      "model": "claude-opus-5",
+      "cost_usd": 0.4346865,
+      "wall_ms": 73290,
+      "words": 960
+    },
+    {
+      "id": "plain_original-2",
+      "text_sha256": "b1d3ea2c10933dbe2851976f2bcc6c6e428c9eba76ae877c57cda78a7c8aaeaf",
+      "model": "claude-opus-5",
+      "cost_usd": 0.347007,
+      "wall_ms": 59586,
+      "words": 1018
+    },
+    {
+      "id": "current_original-2",
+      "text_sha256": "a90859f2f5c81c38e06daf52ca02e99b83945152be83d0739201e1814379ba64",
+      "model": "claude-opus-5",
+      "cost_usd": 0.3807155,
+      "wall_ms": 80625,
+      "words": 1034
+    },
+    {
+      "id": "edit-original",
+      "text_sha256": "8d9d2b138a27d6a97a958cf421a8d7887a23fc0e1708cb7282870fa97ff3d475",
+      "model": "claude-opus-5",
+      "cost_usd": 0.27143150000000005,
+      "wall_ms": 26137,
+      "changed_paragraphs": [
+        1,
+        5
+      ],
+      "edited_text_sha256": "49e3c2395db05bf89091ca9858dfab4073b9ea66fdb8eec86c0f9dbf6b8cc020"
+    },
+    {
+      "id": "edit-plain-factual-1",
+      "text_sha256": "cd99399fb6ffebc2708b9ca017550a6152a761749f1b194e9817435f9be6e309",
+      "model": "claude-opus-5",
+      "cost_usd": 0.21188550000000003,
+      "wall_ms": 28379,
+      "changed_paragraphs": [
+        1,
+        3,
+        4,
+        6
+      ],
+      "edited_text_sha256": "7ac7f5e62246dd7be051b4c43bdfc5df42cca8389816c30ae1b16df10a642575"
+    }
+  ]
+}
