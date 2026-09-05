@@ -1,4 +1,10 @@
-"""The surgical pass: each located tell said again, verified by code, batched by family.
+"""Surface observations in production; sentence rewriting for isolated experiments.
+
+Production calls ``observe`` and never changes text. The historical rewrite path below
+checks surface shape and length, not semantic equivalence, and has no production caller.
+Its implementation is retained for controlled experiments, not as a qualified editor.
+
+Historical rewrite design:
 
 `domain/tells.py` finds the sentences and holds the page to the shelf's own rate; this module
 asks a model to say the located sentences again and lets the locator decide, one sentence at a
@@ -139,7 +145,7 @@ def render_rewrite_request(
 
 @dataclass(frozen=True, slots=True)
 class TellsResult:
-    """What the pass did to one text: the rates before and after, and how many sentences moved."""
+    """Surface counts and mode, including whether any experimental rewrites were applied."""
 
     text: str
     before: dict[str, float]
@@ -147,9 +153,11 @@ class TellsResult:
     rewritten: int
     left: int
     calls: int
+    observational: bool = False
 
     def to_jsonable(self) -> dict[str, Any]:
         return {
+            "mode": "observe" if self.observational else "rewrite",
             "before": {family: round(rate, 2) for family, rate in self.before.items()},
             "after": {family: round(rate, 2) for family, rate in self.after.items()},
             "rewritten": self.rewritten,
@@ -159,6 +167,8 @@ class TellsResult:
 
     @property
     def detail(self) -> str:
+        if self.observational:
+            return f"observed only; {self.left} excess shape(s); prose unchanged"
         moved = ", ".join(
             f"{family} {self.before[family]:.1f}->{self.after[family]:.1f}"
             for family in tells.FAMILIES
@@ -215,6 +225,17 @@ def _needed(text: str, family: str, limits: Mapping[str, float]) -> tuple[list[t
     words = tells.word_count(text) or 1
     allowed = int(ceiling * words / 1000.0)
     return found, max(0, len(found) - allowed)
+
+
+def observe(text: str, *, limits: Mapping[str, float]) -> TellsResult:
+    """Report surface counts without rewriting or claiming meaning preservation.
+
+    The rewrite locator cannot establish semantic equivalence. Production uses this
+    call-free path; ``apply`` remains available for isolated experiments.
+    """
+    rates = tells.density(text, long_words=limits.get(tells.LONG_WORDS))
+    excess = sum(_needed(text, family, limits)[1] for family in tells.FAMILIES)
+    return TellsResult(text, rates, rates, 0, excess, 0, observational=True)
 
 
 def apply(
@@ -293,6 +314,7 @@ __all__ = [
     "Item",
     "TellsResult",
     "apply",
+    "observe",
     "render_rewrite_request",
     "rewrite_system",
 ]

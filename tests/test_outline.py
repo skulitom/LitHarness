@@ -62,7 +62,13 @@ def store(tmp_path) -> SqliteStore:
 SEED = {"level": 1, "hp": 18, "hp_max": 18, "mp": 4, "mp_max": 4, "gold": 12}
 
 
-def a_book(store: SqliteStore, scenes: int = 12, *, sheet: bool = True):  # type: ignore[no-untyped-def]
+def a_book(  # type: ignore[no-untyped-def]
+    store: SqliteStore,
+    scenes: int = 12,
+    *,
+    sheet: bool = True,
+    extra_plan_items: tuple[lc.PlanItem, ...] = (),
+):
     revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=scenes)
     store.commit_revision(revision, created_at="2026-08-16T00:00:00Z")
     store.record_plan_items(
@@ -75,7 +81,8 @@ def a_book(store: SqliteStore, scenes: int = 12, *, sheet: bool = True):  # type
                 text=PREMISE,
                 authority=lc.PlanAuthority.CANONICAL_IN_PROSE,
                 locked=True,
-            )
+            ),
+            *extra_plan_items,
         ],
         created_at="2026-08-16T00:00:00Z",
     )
@@ -779,10 +786,8 @@ def test_the_selector_enqueues_an_outline_when_the_sheet_repeats_a_function(
     assert selected.priority == OUTLINE_PRIORITY, "claimed before any scene draft"
 
 
-def test_a_six_scene_book_is_never_outlined(store: SqliteStore) -> None:
-    """The condition is the defect, not the book. At six scenes every dramatic function is
-    distinct, so there is nothing for an outline to disambiguate and both golden fixtures are
-    untouched by this — no model call, no plan movement, no behaviour change."""
+def test_a_legacy_six_scene_book_without_a_concept_keeps_its_control(store: SqliteStore) -> None:
+    """Imported short books retain the legacy path; concept-backed pilots are planned."""
     from litharness.application.planner import make_plan_selector
 
     a_book(store, scenes=6)

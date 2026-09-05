@@ -262,6 +262,7 @@ def render_outline_request(
     prior_summaries: Sequence[tuple[str, str]] = (),
     arc_entry_state: StoryStateView | None = None,
     concept: concept_mod.Concept | None = None,
+    chapter_by_scene: Mapping[str, int] | None = None,
 ) -> CompletionRequest:
     """Freeze the premise and the whole beat sheet into one structured-output request.
 
@@ -374,12 +375,23 @@ def render_outline_request(
                     "ordinal": beat.ordinal,
                     "of_total": beat.of_total,
                     "dramatic_function": beat.function,
+                    **(
+                        {"chapter": chapter_by_scene[beat.logical_id]}
+                        if chapter_by_scene and beat.logical_id in chapter_by_scene
+                        else {}
+                    ),
                 }
                 for beat in beats
             ],
             "rules": [
                 f"Return exactly {len(beats)} scenes, ordinals 1 to {len(beats)}, each once.",
-                f"Each statement is about {TARGET_WORDS} words.",
+                (
+                    "Give each scene enough detail to draft its action and consequences. "
+                    "Plan the scenes within each chapter together; choose their events and "
+                    "endings from this book's concept and the characters' circumstances."
+                    if concept is not None
+                    else f"Each statement is about {TARGET_WORDS} words."
+                ),
                 "State what happens in that scene: who acts, what they do, what changes.",
                 "Every statement must be different from every other. Two scenes that could "
                 "be swapped without the book noticing are one scene written twice.",
@@ -980,6 +992,7 @@ def _policy_digest() -> str:
             "profile": PROFILE,
             "target_words": TARGET_WORDS,
             "schema": OUTLINE_SCHEMA,
+            "concept_planning_version": 1,
         }
     )
 
@@ -1186,6 +1199,15 @@ def make_outline_handler(
                 summary = stored_summaries.get(node.logical_id, {}).get(content_hash(node.content))
                 if summary:
                     prior_summaries.append((node.logical_id, summary))
+        chapter_by_scene = job.payload.get("chapter_by_scene", {})
+        if not isinstance(chapter_by_scene, dict) or any(
+            not isinstance(scene, str)
+            or not isinstance(chapter, int)
+            or isinstance(chapter, bool)
+            or chapter < 1
+            for scene, chapter in chapter_by_scene.items()
+        ):
+            raise OutlineOutputError("chapter_by_scene must map scene ids to positive chapters")
         request = render_outline_request(
             premise,
             beats,
@@ -1198,6 +1220,7 @@ def make_outline_handler(
             prior_summaries=prior_summaries,
             arc_entry_state=entry_state,
             concept=concept,
+            chapter_by_scene=chapter_by_scene,
         )
         day = stamp[:10]
         provider, _ = registry.resolve(request.call_class)

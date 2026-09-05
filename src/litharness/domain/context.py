@@ -18,9 +18,10 @@ obviously empty.
 **Priority order, and why prose is last.** Constraints and promises are the director's word
 and are tiny; open threads are what the book still owes; established facts ground the scene;
 prose is the largest and the most redundant with the facts extracted from it. So the order is
-premise → constraints → threads → hidden → facts → prior prose, and under pressure prose is
-what goes. The hidden section — true, and not yet disclosed — packs *above* the ordinary facts
-and renders below them, because a scene written against a secret it was never given cannot be
+premise → constraints → story intentions → threads → hidden → facts → prior prose. Under
+pressure prose is what goes. The hidden section — true, and not yet disclosed — packs
+*above* the ordinary facts and renders below them, because a scene written against a secret
+it was never given cannot be
 repaired later and a scene written with fewer ordinary facts is merely thinner.
 LitHarness's endurance workload measures this recent-window baseline directly, which is why
 prose is *selected* nearest-scene-first — scene five matters more to scene six than scene one
@@ -44,8 +45,9 @@ no provider — which is what lets the golden suite grade it directly, and calli
 inside it would end that. `application/planner.py::packet_for` loads them, and a scene with no
 summary yet is simply an eviction with nothing to leave behind, exactly as before.
 
-**The premise is not droppable.** `plans.py` records why: a book drafted without one produces
-"six scenes of plausible prose about nothing, which no gate in this system can detect". A
+**The premise and supplied story intentions are not droppable.** `plans.py` records why:
+a book drafted without a premise produces "six scenes of plausible prose about nothing,
+which no gate in this system can detect". A
 budget that cannot hold the premise is a misconfiguration, not a tight packet, so it raises
 rather than producing a packet whose failure is invisible.
 
@@ -81,6 +83,7 @@ _TOKEN_PATTERN = re.compile(r"\w+|[^\w\s]", re.UNICODE)
 #: Section names, in packing priority order. Order is load-bearing — see the module docstring.
 PREMISE = "premise"
 CONSTRAINTS = "constraints"
+INTENTIONS = "intentions"
 THREADS = "threads"
 
 #: Who is in this story, as one sheet each. Packed high because a writer that does not
@@ -105,6 +108,7 @@ PRIOR_PROSE = "prior_prose"
 SECTION_ORDER = (
     PREMISE,
     CONSTRAINTS,
+    INTENTIONS,
     THREADS,
     CAST,
     FACTS,
@@ -341,6 +345,15 @@ class ContextPacket:
         constraints = self.render_constraints()
         if include_constraints and constraints:
             blocks.append(constraints)
+        intentions = self.sections.get(INTENTIONS, ())
+        if intentions:
+            lines = "\n\n".join(item.text for item in intentions)
+            blocks.append(
+                "Planned story — intentions, not events that have already happened. "
+                "Established prose and author locks take precedence. Later events and "
+                "reveals belong at their planned positions; the current scene plan "
+                f"determines what happens now:\n{lines}"
+            )
         threads = self.sections.get(THREADS, ())
         if threads:
             lines = "\n".join(f"- {item.text}" for item in threads)
@@ -408,6 +421,7 @@ def assemble(
     target_logical_id: str,
     *,
     plan_items: Sequence[lc.PlanItem] = (),
+    story_intentions: Mapping[str, str] = MappingProxyType({}),
     state_records: Sequence[lc.StateRecord] = (),
     query_id: str = "",
     pov_character_id: str | None = None,
@@ -483,6 +497,26 @@ def assemble(
                 Omission(item.source_logical_id, item.item_id, "budget exhausted: constraint")
             )
     sections[CONSTRAINTS] = tuple(constraints)
+
+    intentions: list[PackedItem] = []
+    for source, text in story_intentions.items():
+        item = PackedItem(
+            item_id=f"intention:{source}",
+            kind=lc.ContextItemKind.PLAN,
+            source_logical_id=source,
+            source_kind=lc.ResourceKind.PLAN,
+            text=text,
+            tokens=count_tokens(text),
+            authority=lc.StateAuthority.PROPOSED,
+        )
+        if not fits(item):
+            raise ContextBudgetTooSmall(
+                f"budget of {token_budget} tokens cannot hold the planned story ({source})"
+            )
+        intentions.append(item)
+        used += item.tokens
+    if intentions:
+        sections[INTENTIONS] = tuple(intentions)
 
     # 3. State. Canon only, POV-filtered, sliced at the story-time cutoff if one was given.
     #    The order of these three filters does not matter to the result and does to the

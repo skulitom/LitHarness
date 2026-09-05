@@ -26,12 +26,11 @@ handler was already writing — which is what §20.3's consumer-first sequencing
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from contextlib import suppress
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from hashlib import sha256
-from typing import Any
 
 import litharness_contracts as lc
 
@@ -63,7 +62,7 @@ from litharness.domain.editorial import (
     ReaderMechanism,
     realization_id_for,
 )
-from litharness.domain.events import Event, EventType
+from litharness.domain.events import Event, EventType, payload_digest
 from litharness.domain.extraction import extract_state
 from litharness.domain.failures import OperationalFailure
 from litharness.domain.findings import DetectorInput
@@ -104,7 +103,7 @@ from litharness.domain.text import content_hash
 #: Job kind this handler answers to.
 SCENE_DRAFT = "scene_draft"
 #: The tells pass's recorded verdict on the decision row (stage-0 §199).
-TELLS_GATE = "tells.v0"
+TELLS_GATE = "tells.observation.v1"
 
 
 class HandlerInputError(Exception):
@@ -478,11 +477,10 @@ def make_scene_draft_handler(
     §221); a mechanism handed in without its roster is refused here rather than at the first
     chapter boundary.
 
-    `shelf` is the exemplar shelf the selector showed the writer (stage-0 §196); the ladder
-    also holds every draft to the shelf's own rate of the regular tells (`domain/tells.py`)
-    and says the sentences over it again (`tells_pass`), stage-0 §199; without a shelf
-    there is no ceiling, no call, and no change.
-    then carries `gate_exemplar_leak`, which refuses a draft sharing a run of consecutive words
+    `shelf` is the exemplar shelf the selector showed the writer. The ladder reports
+    surface-shape counts against that shelf without rewriting prose: a locator cannot
+    verify that a replacement preserves meaning. It also carries `gate_exemplar_leak`,
+    which refuses a draft sharing a run of consecutive words
     with any exemplar. `None` — every book drafted without `--exemplars` — adds no gate row.
 
     A closure rather than a class because `JobHandler` is a bare callable protocol and the
@@ -512,29 +510,12 @@ def make_scene_draft_handler(
             "a reader mechanism reads with a steering roster; pass the pack's (stage-0 §221)"
         )
 
-    # **The shelf's own rate of each regular tell, read once** (stage-0 §199): the highest
-    # density any placed opening reaches, family by family, is what a draft is held to.
+    # Read the shelf's reference rates once for observation; they do not constrain prose.
     tells_limits = (
         tells.ceilings(exemplar.chapter for exemplar in shelf.exemplars)
         if shelf is not None
         else None
     )
-
-    # **Every call the pass makes, kept so the spend reaches a decision row** (§199.1): pilot
-    # 24's redraw counted forty-five rewrite calls on its acceptance events and none on the
-    # spend ledger, so the arm's cost was a floor. Cleared before each ladder run.
-    tells_calls: list[CompletionResult] = []
-
-    def _say_again(request: CompletionRequest) -> Mapping[str, Any] | None:
-        """One family's located sentences, said again in a batch (§199.3); a failed call, or
-        an answer that is not the labelled object the schema asks for, leaves every sentence
-        in the batch as drafted."""
-        try:
-            answer, _resolution = registry.complete(request)
-        except OperationalFailure:
-            return None
-        tells_calls.append(answer)
-        return answer.parsed if isinstance(answer.parsed, Mapping) else None
 
     budget_policy = budget or BudgetPolicy()
     revision_policy = reviser_policy or ReviserPolicy()
@@ -567,6 +548,10 @@ def make_scene_draft_handler(
         profile = str(payload.get("profile", "default"))
         sampler = draft_sampler(job, profile)
         config_digest = policy_digest(policy or DraftPolicy(), sampler, reviser_config)
+        if tells_limits is not None:
+            config_digest = payload_digest(
+                {"draft_policy": config_digest, "tells_mode": "observe", "ceilings": tells_limits}
+            )
 
         revision = store.load_revision(revision_id)
 
@@ -700,6 +685,15 @@ def make_scene_draft_handler(
             ]
 
         result, resolution = registry.complete(request)
+        # Preserve the exact provider text before punctuation, markup or an opted-in
+        # revision can change it. Candidate and acceptance events retain this text so
+        # later diagnosis need not guess what the writer actually returned.
+        raw_draft = {
+            "text": result.text,
+            "sha256": sha256(result.text.encode("utf-8")).hexdigest(),
+            "provider": result.provider,
+            "model": result.model,
+        }
 
         # Captured before anything rebinds `result`: the ladder below runs twice and both runs
         # judge the same provider answer's schema conformance, which is a property of the call
@@ -730,16 +724,11 @@ def make_scene_draft_handler(
             # The markup strip rides the em-dash strip's seat and its rules: after the model,
             # before the gate, machine lines untouched, the count on the record.
             stripped, markup = strip_markup(stripped)
-            # **The tells pass rides the same seat** (stage-0 §199): after the model, before
-            # the gate, one text and one hash. Each sentence of a regular family over the
-            # shelf's own rate is said again by a model and verified by the locator; with no
-            # shelf there is no ceiling and no call, and the ladder is the ladder it was.
+            # Counts are observations, never permission to replace a sentence. In
+            # particular, removing a negation may clear a shape while reversing a fact.
             tells_result: tells_pass.TellsResult | None = None
             if tells_limits is not None:
-                tells_result = tells_pass.apply(
-                    stripped, limits=tells_limits, complete=_say_again
-                )
-                stripped = tells_result.text
+                tells_result = tells_pass.observe(stripped, limits=tells_limits)
             outcome = gate_draft(
                 revision,
                 logical_id,
@@ -895,8 +884,7 @@ def make_scene_draft_handler(
                 gates=gates,
                 extracted=extracted,
                 findings=findings,
-                accepted=outcome.accepted
-                and all(gate.passed for gate in gates if gate.blocking),
+                accepted=outcome.accepted and all(gate.passed for gate in gates if gate.blocking),
             )
 
         # **The deterministic ladder runs on the draft, and the reviser is only paid for a
@@ -909,7 +897,6 @@ def make_scene_draft_handler(
         # gate's verdict cannot change** — so those rewrites were incapable of altering the
         # outcome they were paid for, by the design's own reasoning. A refused draft now costs
         # the writer's call and nothing else.
-        tells_calls.clear()
         ladder = run_ladder(result.text)
 
         # **One draft in, one revision out: no second candidate, no scoring, nothing choosing
@@ -968,31 +955,6 @@ def make_scene_draft_handler(
         marks_removed = ladder.marks_removed
         markup_removed = ladder.markup_removed
         tells_record = ladder.tells.to_jsonable() if ladder.tells is not None else None
-        if tells_calls and ladder.tells is not None:
-            # **The pass's spend, on a row of its own** (§199.1), the reviser's shape: the
-            # drafting call's row names the drafting call, and forty-five rewrites are not
-            # that call. One row per ladder run, `ACCEPT` because a rewrite refused by the
-            # locator is a sentence left as drafted and not a refusal of the draft.
-            costs = [call.cost_usd for call in tells_calls if call.cost_usd is not None]
-            store.record_decision(
-                PolicyDecision(
-                    decision_id=decision_id_for(f"tells:{job.job_id}", job.attempts, ()),
-                    outcome=Outcome.ACCEPT,
-                    gates=(),
-                    job_id=job.job_id,
-                    logical_id=logical_id,
-                    base_revision_id=revision_id,
-                    attempt=job.attempts,
-                    provider=tells_calls[0].provider,
-                    model=tells_calls[0].model,
-                    profile=tells_pass.REWRITE_PROFILE,
-                    invocations=sum(call.invocations for call in tells_calls),
-                    total_tokens=sum(call.usage.total for call in tells_calls),
-                    cost_usd=sum(costs) if costs else None,
-                    reason=ladder.tells.detail,
-                ),
-                decided_at=_timestamp(now),
-            )
         result = replace(result, text=ladder.text)
 
         if findings:
@@ -1081,6 +1043,7 @@ def make_scene_draft_handler(
                         "job_id": job.job_id,
                         "logical_id": logical_id,
                         "accepted": False,
+                        "raw_draft": raw_draft,
                         # Read off the failing gates rather than off `outcome`, so an
                         # integrity refusal reports its own veto instead of an empty list —
                         # the shape gate passed and has nothing to say about it.
@@ -1106,6 +1069,7 @@ def make_scene_draft_handler(
                 "job_id": job.job_id,
                 "logical_id": logical_id,
                 "accepted": True,
+                "raw_draft": raw_draft,
                 "chars": outcome.chars,
                 # **Removing the mark from the prose would otherwise remove the only way to
                 # see how often the model reached for it** (§180). The rate is the quantity

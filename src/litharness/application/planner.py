@@ -46,6 +46,7 @@ from hashlib import sha256
 
 import litharness_contracts as lc
 
+from litharness.application import concept as concept_mod
 from litharness.application import exemplars as exemplars_mod
 from litharness.application.conductor import WorkSelector
 from litharness.application.directive_planner import (
@@ -749,11 +750,14 @@ def packet_for(
             summaries[logical_id] = current
 
     records = store.state_records(revision.book_id, revision.branch_id)
+    plan_items = store.plan_items(revision.book_id, revision.branch_id)
+    concept = concept_mod.concept_of(plan_items)
 
     return assemble(
         revision,
         beat.logical_id,
-        plan_items=store.plan_items(revision.book_id, revision.branch_id),
+        plan_items=plan_items,
+        story_intentions={concept_mod.CONCEPT_PLAN_ID: concept.render()} if concept else {},
         state_records=records,
         query_id=f"beat:{beat.logical_id}",
         pov_character_id=pov_character_id,
@@ -1052,19 +1056,10 @@ def make_plan_selector(
                 else {}
             )
 
-            # **The book is outlined when its own sheet cannot tell its scenes apart.**
-            # `arc_template(30)` yields 25 `rising` beats, and the beat's function word is
-            # the whole of the plan-side instruction — so twenty-five scenes are asked an
-            # identical question, which §52 measured as the cause of both the duplicated
-            # scenes and the ledger that moved once. At six scenes every function is distinct
-            # and there is nothing for an outline to disambiguate, which is why both golden
-            # fixtures are untouched by this: the condition is the defect, not the book.
-            #
-            # **Enqueued, never waited on.** It outranks scene work (300 against 0) so it is
-            # claimed first when both are queued, and a scene drafted without a statement
-            # simply omits the statement — the scheduled house beat still rides where the
-            # cadence schedules one (the `scene_plan` fold below), so an outline that fails
-            # leaves a degraded book, not a stalled one and not an off-schedule one.
+            # Concept-backed books need narrative plans even at six scenes: distinct
+            # function labels do not specify actions or consequences. Legacy books without
+            # concepts retain the repeated-function trigger and --no-outline control.
+            # Outline work outranks drafting and must finish before its scenes can draft.
             #
             # **§155.3's beat schedule is deliberately not keyed to this gate.** It was, by
             # accident of call site: the beat's only fold lived in `outline_proposal`, so a
@@ -1077,7 +1072,10 @@ def make_plan_selector(
             plan_items = store.plan_items(progress.book_id, progress.branch_id)
             needs_outline = (
                 outline
-                and len(set(functions)) < len(functions)
+                and (
+                    concept_mod.concept_of(plan_items) is not None
+                    or len(set(functions)) < len(functions)
+                )
                 and any(scene_plan_for(plan_items, beat.logical_id) is None for beat in beats)
             )
             if needs_outline:
@@ -1092,6 +1090,11 @@ def make_plan_selector(
                         "book_id": progress.book_id,
                         "branch_id": progress.branch_id,
                         "plan_epoch": epoch,
+                        "chapter_by_scene": {
+                            beat.logical_id: positions[beat.logical_id].chapter_index
+                            for beat in beats
+                            if beat.logical_id in positions
+                        },
                         **(
                             {
                                 "arc_index": arc_index,
@@ -1115,6 +1118,10 @@ def make_plan_selector(
                     claimed = store.claim_next(holder, now=now, duration=duration)
                     if claimed is not None:
                         return claimed
+                # A leased, failed or incomplete outline is still missing narrative
+                # direction. Work on another book until it is available; never silently
+                # replace it with generic scene labels. --no-outline remains explicit.
+                continue
 
             ids = [
                 beat_job_id(

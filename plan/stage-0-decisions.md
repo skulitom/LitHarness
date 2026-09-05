@@ -16150,8 +16150,10 @@ the recipe.
 **The intent was read on both sides before either fix was picked.** The outline gate's own
 comment says the six-scene condition *"is the defect, not the book"* — an outline exists to
 disambiguate scenes an all-`rising` sheet cannot tell apart, six distinct functions leave nothing
-to disambiguate, and `test_a_six_scene_book_is_never_outlined` pins that no model call is spent
-there. So giving six-scene books outlines was refused: it would spend a whole-book generation to
+to disambiguate, and the six-scene exclusion test pinned that no model call was spent
+there. **Amendment, §237:** that test is now
+`test_a_legacy_six_scene_book_without_a_concept_keeps_its_control`; concept-backed pilots
+are no longer excluded. At the time, giving six-scene books outlines was refused: it would spend a whole-book generation to
 work around a scheduling accident, and it would overturn a correct design to compensate for an
 incidental call site. What was wrong was only that §155.3's schedule — a pure function of scene
 position, costing nothing — had been hung off a gate that answers a different question.
@@ -21938,7 +21940,9 @@ invented none, and the drafting side assumed exactly one declared system
    unlocked, under `plan-concept` (`new --concept`; `listing --concept --scenes` carries it
    through). `plans.constraints_of` carries only locked items into the scene call, so the
    writer's packet is byte-identical and the turn never reaches a scene before the world
-   schedules it (`test_the_concept_is_a_book_plan_item_the_scene_writer_never_sees`). A concept
+   schedules it. **Amendment, §237:** the test is now
+   `test_the_concept_is_a_book_plan_item_and_never_an_author_lock`; the writer receives
+   intentions separately from canon, while the concept remains unlocked. A concept
    the book carries and cannot read is a fault, not an absence.
 3. **What each stage is told.** The listing is written from it (`overview.render_overview_request`,
    material under the brief; the task untouched). The seed is told what the world has to be able
@@ -24704,3 +24708,32 @@ chapter answers and this entry does not.
 
 **Anti-scope.** No prose read for quality, no reader signal, no book selected or revised. The
 tells pass, the readers and every registration are untouched.
+
+## 237. Concept-backed pilots require narrative plans, and surface counts cannot rewrite prose
+
+**2026-09-05.** The operator authorised implementation after the chapter-one diagnosis,
+with no hardcoded narratives. This changes generation routing and records; it makes no
+claim that a reader mechanism or literary-quality measure has been validated.
+
+- A book with a settled concept requires scene plans even when its beat labels are all
+  different. Missing plans hold drafting while an outline is leased, failed or incomplete.
+  The planner receives chapter coordinates and chooses the events from the book's concept.
+  Legacy short books without concepts retain their previous control; `--no-outline` is
+  still the explicit bypass. This revises the six-scene exclusion recorded above.
+- The writer receives the concept as budgeted story intentions, with source identity and
+  proposed authority, separate from established facts and author locks. An insufficient
+  packet budget refuses rather than silently dropping it. This revises §197's decision
+  to withhold the concept from scene drafting.
+- Production tells checks observe only. The sentence rewriter's locator checks shape and
+  length, not semantic equivalence; reducing a count cannot license a replacement.
+  Observation calls no model, leaves prose unchanged, never blocks acceptance, and records
+  its mode under `tells.observation.v1`. The old rewrite helper is experimental only.
+- Accepted and refused candidate events retain the exact provider draft and its SHA-256
+  before cleanup or optional revision. Accepted raw drafts share the manuscript commit.
+
+Executable controls are in `tests/test_narrative_generation.py`: short-concept planning,
+missing-plan containment, explicit bypass, intention provenance and budget refusal,
+non-mutating tells observation, one-call production drafting, raw text retained through
+cleanup and refusal, and malformed chapter coordinates refused before generation.
+These establish implementation behaviour, not improvement in literary quality. No paid
+generation, reader ranking, qualification, or existing manuscript rewrite is part of this change.

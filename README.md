@@ -79,14 +79,11 @@ uv run litharness --database book.db --writer halloran \
 `--exemplars` names the shelf: openings and blurbs the operator places by hand under
 `book-library/<Name>/Chapter1.txt` and `blurb.txt` (gitignored, never committed, never quoted
 — an eight-word run lifted from one refuses the draft). The shelf is shown to the concept,
-listing and scene writers as how this shelf sounds, sets the listing's sentence-length
-ceiling, and sets the ceiling per family for the tells pass on the drafting ladder: each
-sentence of a regular family (a clause built on an absence, a paradox, a located habit, an
-echo, a chained *and*, a sentence longer than the shelf's longest; narration only, since a
-line a character says is the character's) over the shelf's own rate is said again by a model
-and kept only if
-the counter no longer finds the shape, with the rates before and after on the decision row.
-Without a shelf there is no ceiling, no pass, and no change.
+listing and scene writers as how this shelf sounds and sets the listing's sentence-length
+ceiling. On scene drafts, tells counts are observations only: the ladder reports rates
+against the shelf without rewriting sentences, blocking acceptance, or making extra model
+calls. Removing a surface pattern does not establish that a replacement preserves meaning.
+Without a shelf there is no tells observation or exemplar-leak gate.
 
 The listing loop is then the entry point for the book. It writes the listing a reader sees
 from the concept, records experimental appetite observations without feeding them back into
@@ -101,6 +98,15 @@ uv run litharness --database book.db listing \
   --scenes 24 \
   --out runs/pilots/my-book
 ```
+
+Books carrying a concept receive scene plans before drafting, including six-scene pilots.
+The planner sees which scenes share a chapter and chooses their events from the concept.
+The writer also receives the concept as planned story, separately from established facts
+and author locks. A missing or failed outline holds drafting for that book; `--no-outline`
+is the explicit control that permits drafting without one. These are generation and
+meaning-preservation safeguards, not evidence of literary quality.
+Candidate and acceptance events preserve the exact provider draft and its SHA-256 before
+format cleanup or an explicitly requested revision, so changes can be traced afterwards.
 
 `--person` is a position, not a finding: `first` seeds one locked constraint every scene call
 carries, `third` and the default seed nothing. The operator's position since read 19 is third

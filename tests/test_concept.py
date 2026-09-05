@@ -3,7 +3,7 @@
 Stage-0 §197. Draw 4 of pilot 21 (`plan/serial-pilot-21.md` §5.4) found no horizon a reader
 could feel and the listing at fault; nothing above the listing existed. These tests hold the
 shape of the fix: the schema can express the operator's example premise (a turn, two systems,
-grants kept across them); the concept is a plan item the scene writer never sees; the listing,
+grants kept across them); the concept is an unlocked plan item; the listing,
 the seed and the outline are each told it and render byte-identically without it; `new` opens
 its debts on the promise ledger. No model call, no network.
 """
@@ -178,7 +178,7 @@ def test_the_task_text_speaks_none_of_this_system_s_own_vocabulary() -> None:
 # --- where it lives ------------------------------------------------------------------------
 
 
-def test_the_concept_is_a_book_plan_item_the_scene_writer_never_sees() -> None:
+def test_the_concept_is_a_book_plan_item_and_never_an_author_lock() -> None:
     drawn = concept.Concept.from_payload(_example())
     item = drawn.plan_item()
     assert item.kind is lc.PlanKind.BOOK_PLAN

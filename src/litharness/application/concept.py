@@ -24,14 +24,11 @@ promise ledger before scene one (`new --concept`), which is the ledger the listi
 wrote to. Nothing here ranks (§61(5)): one concept per book, drawn once; a second draw is a
 second book.
 
-**Where it lives, and why the scene writer never sees it.** The concept is persisted as one
-plan item of the contracts' `BOOK_PLAN` kind — a kind the package had never used — and
-unlocked, so `plans.constraints_of` does not carry it into the scene call's locked block and
-the writer's packet stays byte-identical to what it was. The turn is a future event; a writer
-told it before the world scheduled it would write toward it, which is the leak rail
-`domain/world_brief.py` exists to hold. The page gets the concept the way it gets everything
-else: through the world the seed built from it and the statements the outline planned against
-it.
+**Where it lives.** The concept is an unlocked `BOOK_PLAN` item. The seed and outline
+read it through `concept_of`; the scene packet renders it in a budgeted intentions section,
+separate from established facts and author locks. Future plans are not past events or
+permission to disclose a secret early. Concept-backed books require scene plans before
+drafting, even when their short beat sheets contain no repeated function labels.
 
 **Two systems, and what this house can and cannot print yet.** The operator's example premise
 puts one person under a second system after a turn, keeping some of the first's grants. The
@@ -394,9 +391,8 @@ class Concept:
     def plan_item(self) -> lc.PlanItem:
         """The concept as the book carries it: a `BOOK_PLAN` item, unlocked.
 
-        Unlocked is the leak rail: `plans.constraints_of` carries only locked constraints and
-        promises into the scene call, so the writer is never handed the turn before the world
-        schedules it. The seed and the outline read it back through `concept_of`.
+        It remains revisable intent, never an author lock. The seed, outline and scene
+        packet read it through `concept_of`, with the packet labelling it as planned story.
         """
         return lc.PlanItem(
             logical_id=CONCEPT_PLAN_ID,
