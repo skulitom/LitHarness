@@ -273,6 +273,12 @@ def test_the_outline_plans_the_first_arc_against_the_concept_and_the_old_payload
     payload = json.loads(with_it.prompt)
     assert payload["book_concept"]["first_arc"]["closes"].startswith("he takes it")
     assert payload["book_concept"]["turn"]["when"] == concept.BEFORE_CHAPTER_ONE
+    # Carry-over conditions must reach the actual planner request, not just the saved
+    # concept: losing this field lets its milestone schedule contradict the intended turn.
+    assert payload["book_concept"]["second_system"] == _example()["second_system"]
+    assert payload["book_concept"]["system"] == _example()["system"]
+    assert payload["book_concept"]["exception"] == drawn.exception
+    assert payload["book_concept"]["debts"] == _example()["debts"]
     assert concept.FIRST_ARC_RULE in payload["rules"]
     assert concept.TURN_RULE in payload["rules"]
     later = json.loads(
@@ -285,6 +291,7 @@ def test_the_outline_plans_the_first_arc_against_the_concept_and_the_old_payload
         ).prompt
     )
     assert concept.LATER_ARC_RULE in later["rules"]
+    assert later["book_concept"]["second_system"] == _example()["second_system"]
     assert concept.FIRST_ARC_RULE not in later["rules"]
     assert "book_concept" not in json.loads(before.prompt)
 

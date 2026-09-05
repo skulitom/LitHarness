@@ -452,22 +452,19 @@ class Concept:
         return f"{heading}\n{self.render()}"
 
     def for_outline(self) -> dict[str, Any]:
-        """The `book_concept` field of the outline payload: the first arc's shape and the turn."""
+        """The complete concept, including what survives its turn, with the horizon view.
+
+        An abbreviated view previously omitted `second_system.kept`, so the planner could
+        schedule gains inconsistent with the state the concept intended to carry forward.
+        Keep the existing horizon key for the outline rules without discarding other fields.
+        """
         return {
-            "first_arc": {
-                "opens": self.first_arc.opens,
-                "middle": self.first_arc.middle,
-                "closes": self.first_arc.closes,
-            },
-            "turn": {"event": self.turn.event, "when": self.turn.when},
-            "first_use": self.first_use,
-            "threat": {"what": self.threat.what, "first_reach": self.threat.first_reach},
+            **self.to_jsonable(),
             "horizon": {
                 "steps": self.system.steps,
                 "strongest_known": self.system.strongest_known,
                 "pays": self.system.pays,
             },
-            "want": self.want,
         }
 
     def machinery_names(self) -> tuple[str, ...]:

@@ -24737,3 +24737,50 @@ non-mutating tells observation, one-call production drafting, raw text retained 
 cleanup and refusal, and malformed chapter coordinates refused before generation.
 These establish implementation behaviour, not improvement in literary quality. No paid
 generation, reader ranking, qualification, or existing manuscript rewrite is part of this change.
+
+## 238. Concept-backed plans own their events and wait for missing predecessor prose
+
+**2026-09-05.** The operator requested a fresh chapter after §237 and authorised fixes during
+the run. Automatic planning previously skipped an exhausted or parked scene job and drafted its
+successors against a manuscript with a hole. For books with a settled concept, the first scene
+without prose now holds automatic successor planning while its current-epoch job is unresolved
+or its node cannot be drafted. `status` reports the scene and job state; locked empty nodes no
+longer count as drafted. Other books remain eligible, queued work retains its ordering, and
+revival or a new plan epoch can recover the missing predecessor. Legacy books without concepts
+keep their prior scheduling policy. This narrows the skip-within-book policy recorded in §4.1;
+it does not introduce an assessment of literary quality or infer a narrative from a score.
+
+Regressions in `tests/test_narrative_generation.py` cover a missing predecessor with running,
+parked, poisoned or succeeded jobs; empty locked nodes; progress on another book; acceptance
+after revival; and reissuing the predecessor under a fresh epoch. The `new --concept` help now
+also describes §237's actual writer-visible intentions instead of claiming they remain hidden.
+
+The same change removes deterministic additions to new concept-backed scene plans: the
+alternating stat increase and cast bound at outline acceptance, and the interface-reading and
+opening/ending beats at draft preparation. Milestone timing is requested from the planned events
+instead of a fixed count. The writer receives the accepted scene statement verbatim. Its status
+format instruction requires a result when state changes, while an unchanged panel is conditional
+on the scene needing to consult it. Existing author locks, world facts and legacy defaults are
+preserved. Old stored plan text is not rewritten. The outline policy version and selected scene
+plan mode record the routing change. The concept-planning regressions assert exact statement
+preservation, absence of the additional progression gate, conditional panels, and an author-locked
+chapter ending reaching the writer without the default unanswered-offer ending appended.
+
+The operator-requested diagnostic chapter is separate local state under
+`runs/ab/chapter-after-fixes-20260905/`. It freezes generation at §237's commit, reuses the
+previous starting world and settled concept, and records its inputs and raw drafts. Published
+exemplars are omitted under the repository's no-corpus-in-generation boundary. A single draw
+and an editorial reading establish no quality improvement or treatment effect.
+
+That diagnostic completed a roughly 1,950-word chapter after one timed-out outline call was retried
+with a recorded longer transport timeout. Its outline planned a higher final rank than the
+concept's carry-over statement. Inspection found that `Concept.for_outline` omitted
+`second_system` entirely. It now carries the complete serialised concept, retaining the
+existing horizon view, and `tests/test_concept.py` checks that carry-over, system, exception
+and debt fields reach the actual outline request, including later arcs. This fixes missing
+input; it cannot certify that a model will follow it. The diagnostic used the earlier frozen
+code and therefore does not test these additional changes. Its prose is not a production
+instruction or a new quality metric.
+Concept-backed outlines now receive the same bounded 900-second allowance used on the successful
+retry, recorded in the outline policy digest. Their system instruction also drops the legacy
+one-sentence limit so it agrees with the detailed chapter-planning request introduced in §237.

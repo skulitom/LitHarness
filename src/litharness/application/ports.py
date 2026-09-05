@@ -472,6 +472,7 @@ class ConductorStore(
 
 class PlanningStore(
     JobQueue,
+    JobReader,
     DirectiveInbox,
     ManuscriptReader,
     PlanReader,

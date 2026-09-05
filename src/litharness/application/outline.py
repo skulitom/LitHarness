@@ -111,6 +111,7 @@ OUTLINE_PRIORITY = 300
 #: Words per statement, asked for rather than enforced. A statement is an instruction to the
 #: generator, not prose, and one that runs long starts writing the scene instead of placing it.
 TARGET_WORDS = 25
+CONCEPT_TIMEOUT_SECONDS = 900.0
 
 #: Added to the request only when canon declares a protagonist. **Position and fact, and the
 #: boundary is asserted rather than trusted**: whether the reader should like them, whether they
@@ -418,8 +419,13 @@ def render_outline_request(
                     "Use only the keys starting_state already has. Do not invent statistics.",
                     "The numbers must actually move. A schedule where every milestone "
                     "repeats the starting values plans a book in which nothing changes.",
-                    "Place four to eight milestones, spread across the book, at scenes where "
-                    "the statement you wrote would plausibly change them.",
+                    (
+                        "Place milestones where the planned events change the state; let "
+                        "those events determine the fields, values and timing."
+                        if concept is not None
+                        else "Place four to eight milestones, spread across the book, at scenes "
+                        "where the statement you wrote would plausibly change them."
+                    ),
                     "Costs as well as gains: spending and losing are progression too.",
                 ]
                 if seed
@@ -468,12 +474,18 @@ def render_outline_request(
         # that spends a scene on procedure buys the whole scene before a word is drafted.
         system=house.with_house_rules(
             "You are the Narrative Planner for a novel. Given a premise and a beat sheet, "
-            "say in one sentence what happens in each scene, so that a writer drafting any "
-            "one scene knows what that scene is for and what the others are for. Return "
-            "only the requested JSON."
+            + (
+                "plan the connected actions and consequences of each scene from the settled "
+                "concept, so a writer can develop each chapter as a whole. "
+                if concept is not None
+                else "say in one sentence what happens in each scene, so that a writer drafting "
+                "any one scene knows what that scene is for and what the others are for. "
+            )
+            + "Return only the requested JSON."
         ),
         schema=OUTLINE_SCHEMA,
         max_output_tokens=8192,
+        timeout_seconds=CONCEPT_TIMEOUT_SECONDS if concept is not None else 300.0,
         profile=PROFILE,
         call_class="generation",
     )
@@ -909,6 +921,7 @@ def outline_proposal(
     machinery that produced it.
     """
     statements = _statements(payload, len(beats))
+    concept_backed = concept_mod.concept_of(base.items) is not None
     # **CREATE where the statement is absent, UPDATE where it is already there.** A
     # create-only proposal cannot outline a *partially* outlined book, and partial is a state
     # the system reaches on its own: a manuscript that gains a scene keeps the statements for
@@ -930,28 +943,17 @@ def outline_proposal(
             item=lc.PlanItem(
                 logical_id=scene_plan_id_for(beat.logical_id),
                 kind=lc.PlanKind.SCENE_PLAN,
-                # **The progression beat rides in the scene's own plan, not in a rule.** It is
-                # folded in here rather than asked for in the outline prompt so that it is a
-                # scheduled fact rather than a request a model may decline — §110's move one
-                # beat earlier: showing the call the material instead of instructing it. One
-                # `SCENE_PLAN` item per scene either way, because `scene_plan_for` returns the
-                # first scoped match and a second item would be a coin toss.
-                #
-                # This fold is NOT the schedule's only reach: a book whose sheet has all-
-                # distinct functions never takes an outline at all, and the selector derives
-                # the bare beat at render time for its statement-less scenes (pilot 14 §3
-                # found the six-scene dead spot when this was the sole call site).
-                #
-                # **The opening's cast bound is folded here too, outside the beat** (§175).
-                # Same two-call-site discipline: the selector composes the identical pair for
-                # a book that never takes an outline, and the order is statement, then what
-                # else happens in the scene, then what the scene may not also contain. The arc
-                # index comes off the job payload for the reason `bounds_opening` names — on a
-                # serial every arc's beats start at ordinal 1, and only arc 1 opens the book.
-                text=staging.with_bound(
-                    genre.with_beat(statement, beat.ordinal, len(beats), counts=counts),
-                    beat.ordinal,
-                    arc_index=arc_index,
+                # Concept planning owns the events. Appending an unrelated stat increase
+                # after generation would silently change the plan we just asked it to make.
+                # The legacy cadence and opening bound remain for books without concepts.
+                text=(
+                    statement
+                    if concept_backed
+                    else staging.with_bound(
+                        genre.with_beat(statement, beat.ordinal, len(beats), counts=counts),
+                        beat.ordinal,
+                        arc_index=arc_index,
+                    )
                 ),
                 authority=lc.PlanAuthority.INTENDED,
                 locked=False,
@@ -992,7 +994,8 @@ def _policy_digest() -> str:
             "profile": PROFILE,
             "target_words": TARGET_WORDS,
             "schema": OUTLINE_SCHEMA,
-            "concept_planning_version": 1,
+            "concept_planning_version": 2,
+            "concept_timeout_seconds": CONCEPT_TIMEOUT_SECONDS,
         }
     )
 

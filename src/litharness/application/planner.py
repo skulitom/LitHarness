@@ -21,10 +21,12 @@ before an older scene draft can be claimed. Everything else retains the durable 
 ordering. This is the smallest rule under which "the next tick sees the directive" means
 the system cannot draft one more scene against an explicit constraint already in its inbox.
 
-**A blocked beat is skipped, not waited on.** §4.1: "a blocked or parked item never stalls
-the queue — the Conductor works elsewhere in the book." There is no predecessor rule: if
-beat 3 poisons, beats 4-6 still draft and the book finishes with a visible hole. A
-sequential rule would be easier to reason about and would let one bad scene stop the book.
+**Legacy books skip blocked beats.** §4.1: "a blocked or parked item never stalls
+the queue — the Conductor works elsewhere in the book." For books without a concept, if
+beat 3 poisons, beats 4-6 still draft and the book finishes with a visible hole.
+Concept-backed books instead hold at their first missing scene: later scene plans depend on
+its accepted prose. The queue can still work on other books, and revival or a new plan epoch
+can recover the predecessor. A locked empty node is missing prose, not a completed scene.
 
 **Job ids are derived, and include the plan epoch.** Derived so a replayed tick converges
 instead of re-enqueueing; epoch-versioned because `idempotency_key` is UNIQUE, so a
@@ -298,6 +300,7 @@ def render_prompt(
     change_line: str | None = None,
     notices: tuple[str, ...] = (),
     readouts: tuple[str, ...] = (),
+    require_status: bool = True,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -479,11 +482,17 @@ def render_prompt(
             if status_moved is not None
             else ("which is the state as it stands", status_example)
         )
+        status_instruction = (
+            "Print that line exactly once, where somebody in the scene reads it; failing that, "
+            "where one of its numbers changes, or at the scene's end. "
+            if require_status
+            else "When this scene changes that state, show the updated line as its result. "
+            "Otherwise, show it only when someone needs to consult it in this scene. "
+        )
         system += (
             f" The people in this book can read their own state, in this form, {stands}:\n"
             f"{example}\n"
-            "Print that line exactly once, where somebody in the scene reads it; failing that, "
-            "where one of its numbers changes, or at the scene's end. Write the character's "
+            f"{status_instruction}Write the character's "
             "name as your prose spells it, carry these values forward unchanged unless this "
             "scene changes them, and write the numbers the scene leaves true."
         )
@@ -824,6 +833,37 @@ def _book_title(revision: Revision) -> str | None:
     return roots[0].title if roots else None
 
 
+def _missing_predecessor(
+    store: PlanningStore,
+    head: Revision,
+    beats: Sequence[Beat],
+    *,
+    policy: DraftPolicy | None,
+) -> str | None:
+    """Why automatic planning cannot advance the first unwritten scene of a concept book."""
+    for beat in beats:
+        if head.node(beat.logical_id).content:
+            continue
+        if not is_draftable(head, beat.logical_id, policy=policy):
+            return f"{beat.logical_id} has no prose and cannot be drafted; successors wait"
+        job_id = beat_job_id(
+            head.book_id,
+            head.branch_id,
+            beat.logical_id,
+            beat.template_id,
+            store.plan_epoch(head.book_id, head.branch_id),
+        )
+        if store.has_job(job_id):
+            job = store.load_job(job_id)
+            return (
+                f"{beat.logical_id} has no accepted prose ({job.status.value}, job {job_id}); "
+                "successors wait"
+            )
+        # This is the scene to draft next. A later blocked scene cannot prevent it.
+        return None
+    return None
+
+
 def plan_progress(
     store: PlanningStore,
     book_id: str,
@@ -865,17 +905,24 @@ def plan_progress(
             )
         elif arcs:
             continuation = f"ready to plan arc {arcs[-1].index + 1}; the serial remains open"
-    if premise_of(store.plan_items(book_id, branch_id)) is None:
+    plan_items = store.plan_items(book_id, branch_id)
+    concept_backed = concept_mod.concept_of(plan_items) is not None
+    drafted = sum(
+        bool(head.node(beat.logical_id).content)
+        if concept_backed
+        else not is_draftable(head, beat.logical_id, policy=policy)
+        for beat in beats
+    )
+    if premise_of(plan_items) is None:
         return BookProgress(
             book_id,
             branch_id,
-            sum(1 for beat in beats if not is_draftable(head, beat.logical_id, policy=policy)),
+            drafted,
             len(beats),
             "no single premise plan item; import a plan snapshot for this book",
             continuation,
             serial_mode,
         )
-    drafted = sum(1 for beat in beats if not is_draftable(head, beat.logical_id, policy=policy))
     # **The house genre floor, reported as a reason and not as a finished book.** One door
     # along from the premise block and written under the same argument: a book with no
     # starting sheet is not idle, it is stopped, and `complete` must not read True over it.
@@ -891,7 +938,8 @@ def plan_progress(
         branch_id,
         drafted,
         len(beats),
-        genre_reason,
+        genre_reason
+        or (_missing_predecessor(store, head, beats, policy=policy) if concept_backed else None),
         continuation,
         serial_mode,
     )
@@ -1017,6 +1065,7 @@ def make_plan_selector(
             if plan_revision is None:  # pragma: no cover - premise lookup implies a plan
                 continue
             epoch = store.plan_epoch(progress.book_id, progress.branch_id)
+            concept_backed = concept_mod.concept_of(plan_revision.items) is not None
             book_serial_shape = serial_shape if progress.open_ended else None
             all_beats = (
                 beats_for_serial(head, book_serial_shape)
@@ -1182,6 +1231,7 @@ def make_plan_selector(
                     store.plan_items(progress.book_id, progress.branch_id),
                     beat.logical_id,
                 )
+                planned_from_concept = concept_backed and plan_item is not None
                 job_id = beat_job_id(
                     progress.book_id,
                     progress.branch_id,
@@ -1283,11 +1333,15 @@ def make_plan_selector(
                 # wrapped `scene_plan` below because §173's interaction beat only ever appends
                 # after this one, so the answer is identical and the smaller read is the
                 # honest one.
-                beat_target = progression.named_target(
-                    base_plan or "",
-                    records,
-                    character=pov_id,
-                    at=beat.story_order_key,
+                beat_target = (
+                    None
+                    if planned_from_concept
+                    else progression.named_target(
+                        base_plan or "",
+                        records,
+                        character=pov_id,
+                        at=beat.story_order_key,
+                    )
                 )
                 # **And what that ask means for the one artifact the writer can copy** (§186).
                 # Composed here rather than inside `render_prompt` because it is a reading of
@@ -1310,6 +1364,7 @@ def make_plan_selector(
                     # ordinary character/world records still use StateMoment.ENTERING.
                     status_example=status_line,
                     status_moved=beat_moved,
+                    require_status=not planned_from_concept,
                     target_words=(policy or DraftPolicy()).target_words,
                     # A stored statement already carries the beat where the cadence schedules
                     # one — `outline_proposal` folded it in — so it is passed verbatim. A
@@ -1349,7 +1404,9 @@ def make_plan_selector(
                     # exists so the hook lands on the first chapter's last scene whatever
                     # its length.
                     scene_plan=(
-                        genre.with_opening(
+                        base_plan
+                        if planned_from_concept
+                        else genre.with_opening(
                             genre.with_interaction(
                                 base_plan,
                                 beat.ordinal,
@@ -1432,7 +1489,10 @@ def make_plan_selector(
                         "open_ended_serial": book_serial_shape is not None,
                         "arc_index": arc_index or None,
                         "plan_epoch": epoch,
-                        "predicate": "draftable.v0",
+                        "predicate": (
+                            "draftable.with_predecessor.v1" if concept_backed else "draftable.v0"
+                        ),
+                        **({"scene_plan_mode": "concept"} if planned_from_concept else {}),
                         # Where the template says this beat sits in story time, or None when
                         # it is not entitled to say. Travels on the payload rather than being
                         # recomputed in the handler, so the position a scene was extracted

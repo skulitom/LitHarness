@@ -6250,9 +6250,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--concept",
         type=Path,
         help="the settled concept (`concept.json` from `litharness concept`) this book is "
-        "created from: persisted beside the premise as an unlocked plan item the scene "
-        "writer never sees, read back by the world seed and the outline, and its debts "
-        "opened as promises before scene one",
+        "created from: persisted beside the premise as unlocked story intentions, read by "
+        "the world seed, outline and scene writer, with its debts opened as promises "
+        "before scene one",
     )
     new.add_argument("--book", help="book id; a fresh uuid by default")
     new.add_argument("--branch", help="branch id; a fresh uuid by default")

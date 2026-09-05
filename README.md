@@ -107,6 +107,17 @@ is the explicit control that permits drafting without one. These are generation 
 meaning-preservation safeguards, not evidence of literary quality.
 Candidate and acceptance events preserve the exact provider draft and its SHA-256 before
 format cleanup or an explicitly requested revision, so changes can be traced afterwards.
+Automatic planning also waits for a concept-backed book's first missing scene before
+drafting its successors. `status` names the unresolved scene and job; an empty locked scene
+does not count as drafted. Other books can continue, and `revive` or `replan` can recover the
+missing scene. Existing explicitly queued work keeps its queue order.
+New concept-backed scene plans reach the writer without appended stat increases, mandatory
+interface readings, cast limits, or a prescribed chapter-one ending. Their events determine
+the milestone schedule. Status formatting remains available; a changed state is shown as a
+result, while an unchanged panel appears only when the scene needs it. Legacy planning defaults
+and explicit author locks remain in place.
+The outline receives the complete concept, including what carries over when the story moves
+under a second system, so its progression schedule can account for those intentions.
 
 `--person` is a position, not a finding: `first` seeds one locked constraint every scene call
 carries, `third` and the default seed nothing. The operator's position since read 19 is third
