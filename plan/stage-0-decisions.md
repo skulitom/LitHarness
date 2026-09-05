@@ -24831,3 +24831,59 @@ writer access. The heading now distinguishes world truth from character knowledg
 rule block states that receiving a rule does not make a character know it. The focused POV
 regression pins this distinction. This last wording correction happened after the frozen run
 and has not been tested by another generation; the original chapter is retained unchanged.
+
+## 240. The pastable chapter carried the writer's structure as prose, and Royal Road's editor takes structure only as markup
+
+**2026-09-05.** The operator asked that the per-chapter file come out in the format Royal Road
+expects, tables and breaks included. What the platform expects was read from its own authors'
+guides through a browser on 2026-09-05 (the site refuses a plain fetch): the chapter editor takes
+raw HTML only through its source-code button, and HTML typed into the body is text; `<p>` is a
+line; emphasis is `<strong>` and `<em>`; inline styles survive; the table editor writes border,
+width, alignment and background onto cells and knows header cells, merged cells and `scope`; the
+reader's stylesheet flips pure white and pure black between the light and dark themes; *Enable
+clean paste* exists for plain text whose paragraphs are line breaks. None of it is verified by a
+paste from this repository, and no page was posted.
+
+**Measured first**, over the forty-five pastable chapters on the local shelf
+(`book-library/*/chapters/`, 2026-09-05). Breaks were already right: 45 `<hr>`, every one the
+rule between two grouped scenes, and no `<p>* * *</p>` anywhere — the writer has not drawn a
+break line inside a scene on this shelf. Tables were already tables: 59 `[STATUS]` lines, every
+one a panel since §177. What was wrong: 81 markdown emphasis markers in 15 of the 45 files
+(`*it's me*`, `**Nobody**`; books drafted before §180's sibling strip existed), printed as
+asterisks; 12 line-structured blocks (a delivery slip, a list of marks) whose single newlines HTML
+folds into spaces; 5,651 `&quot;` and `&#x27;` entities where the platform's source view shows
+the quote itself; and a panel carrying `color-mix()`, `max-width`, `font-variant-numeric` and
+`letter-spacing`, declarations no platform editor is known to write. Zero staged release rows
+across the seventy databases on disk, so the fragment-hash change under §221 invalidated nothing.
+
+**What shipped** (`application/library.py`, `application/statusline.py`; `LIBRARY_FORMAT_VERSION`
+4, so every shelf re-renders on its next tick). Both pastable renderings now resolve the chapter's
+structure once (`_units`): a break line the writer draws — three or more of `* - _ ~ =` and
+spaces, any spelling — is `<hr>` in the fragment and `* * *` (`export.SCENE_BREAK`, one spelling)
+in the plain text, collapsed against the rule between grouped scenes and never opening or closing
+a chapter; a single newline inside a block is `<br>` inside its `<p>` or `<blockquote>`, blank
+lines remaining the only paragraph boundary; both renderings run `domain/draft.strip_markup`
+first, the live path's own seat for the same markers (pilot 21 §5.1 called them a leak, not
+italics), so a book drafted before the strip pastes as one drafted after it while the stored text
+is untouched; element text escapes `<`, `>` and `&` only. The panel's inline styles narrow to
+border, border-collapse, width, text-align, padding, font-weight, font-family, font-size and
+line-height, `currentColor` the only colour. The shelf index and README name the route:
+`ChapterN.html` through the source-code button, `ChapterN.txt` into the body with clean paste on,
+the title in the platform's own field. Tests:
+`test_a_break_line_drawn_in_the_prose_is_a_rule_and_not_a_paragraph`,
+`test_breaks_never_double_and_never_open_or_close_a_chapter`,
+`test_markdown_markers_never_reach_the_page`, `test_a_line_structured_block_keeps_its_lines`,
+`test_quotes_are_written_as_themselves`, `test_the_index_names_the_route_into_royal_road`,
+`test_the_pastable_panel_uses_only_the_properties_a_platform_table_editor_writes`;
+`test_only_the_conservative_tag_subset_is_emitted` now admits `<br>`.
+
+**Refused, and why.** Italics: the markers would become `<em>` on the platform, but §180's strip
+and pilot 21 decided they are the model's tic rather than the book's emphasis, and a renderer that
+italicised legacy books while the live path strips new ones would make two policies of one.
+Tables in the `.txt`: plain text has none; the status line stays exactly as written there (§177)
+and the file's job is the editor body under clean paste. Colours, backgrounds, the genre's blue
+box: the platform flips fixed colours per theme and the reader's palette is invisible from here.
+The whole-serial reading copy (`export.as_html`) is unchanged: it is the operator's diagnostic
+surface and shows the stored text with its leaks, which is what a defect harvest reads. Posting,
+an author-note field, a tag list: §221 stands, the tool never posts. **Anti-scope:** no prompt,
+rule or writer instruction changed; nothing here is a quality claim about any chapter.

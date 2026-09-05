@@ -137,9 +137,10 @@ def test_the_pastable_chapter_carries_no_scaffolding(tmp_path) -> None:
 
 
 def test_only_the_conservative_tag_subset_is_emitted(tmp_path) -> None:
-    """Prose carries no classes, ids or styles, and only tags every rich-text editor
-    preserves. The claim "this pastes correctly" is not one this repository can verify against
-    a particular editor, so the artifact stays inside the subset where it does not need to.
+    """Prose carries no classes, ids or styles, and only the tags Royal Road's chapter editor
+    is documented to keep: `<p>` (with `<br>` inside it), `<blockquote>`, `<hr>`. The claim
+    "this pastes correctly" was read from the platform's own authors, not made by pasting from
+    this repository, so the artifact stays inside the subset where it does not need to be.
 
     The status panel is the one element outside this subset, and it pays for its `<table>` by
     carrying its styling inline; the fixture line here is unparseable on purpose, so what this
@@ -151,7 +152,7 @@ def test_only_the_conservative_tag_subset_is_emitted(tmp_path) -> None:
         store.close()
     chapters, _ = chapters_for(document, scenes_per_chapter=2)
     tags = set(re.findall(r"<(/?[a-z0-9]+)", chapters[0].fragment))
-    assert tags <= {"p", "/p", "blockquote", "/blockquote", "hr"}
+    assert tags <= {"p", "/p", "br", "blockquote", "/blockquote", "hr"}
     assert "class=" not in chapters[0].fragment
     assert "style=" not in chapters[0].fragment
     assert "<!DOCTYPE" not in chapters[0].fragment and "<head" not in chapters[0].fragment
@@ -323,6 +324,82 @@ def test_the_plain_text_fallback_is_blank_line_separated() -> None:
     plain = paste_plain([Node.text_node("scene-1", NodeKind.SCENE, "010", DRAFTED, title="S")])
     assert "<" not in plain
     assert plain.count("\n\n") == 2
+
+
+# -- structure the writer's text carries, rendered as Royal Road's editor takes it ----------
+
+
+def a_scene(content: str, logical_id: str = "scene-1") -> Node:
+    return Node.text_node(logical_id, NodeKind.SCENE, "010", content, title="S")
+
+
+def test_a_break_line_drawn_in_the_prose_is_a_rule_and_not_a_paragraph() -> None:
+    """A scene break the writer draws as a line of asterisks inside one scene's text is
+    structure. Set as `<p>* * *</p>` it would publish three characters where the platform
+    draws a rule; every spelling of the line is one `<hr>`, and one `* * *` in plain text."""
+    scene = a_scene("She left.\n\n* * *\n\nMorning.\n\n---\n\nNoon.\n\n***\n\nNight.")
+    fragment = paste_fragment([scene])
+    assert fragment.count("<hr>") == 3 and fragment.count("<p>") == 4
+    assert "* * *" not in fragment and "---" not in fragment and "***" not in fragment
+    plain = paste_plain([scene])
+    assert plain.count("\n\n* * *\n\n") == 3
+    assert "---" not in plain and "***" not in plain
+
+
+def test_breaks_never_double_and_never_open_or_close_a_chapter() -> None:
+    """A scene that ends on a drawn break meets the rule between grouped scenes, and a chapter
+    that opened on a rule would open on nothing: adjacent breaks collapse, edge breaks go."""
+    first = a_scene("* * *\n\nOne.\n\n* * *", "scene-1")
+    second = a_scene("* * *\n\nTwo.\n\n* * *", "scene-2")
+    assert paste_fragment([first, second]) == "<p>One.</p>\n<hr>\n<p>Two.</p>\n"
+    assert paste_plain([first, second]) == "One.\n\n* * *\n\nTwo.\n"
+
+
+def test_markdown_markers_never_reach_the_page() -> None:
+    """Pilot 21 put `**Nobody**` on a pastable page and the live path answered with
+    `draft.strip_markup` before its gate; books drafted earlier hold the markers still. The
+    renderings take the same seat for them — the words stay, the markup goes — and a machine
+    line is not prose, so it passes untouched into the plain copy and into its panel."""
+    scene = a_scene(
+        "At the top, one word: **Nobody**.\n\nShe thought *it's me* and said nothing.\n\n"
+        f"{PANEL_LINE}"
+    )
+    fragment = paste_fragment([scene])
+    assert "<p>At the top, one word: Nobody.</p>" in fragment
+    assert "<p>She thought it's me and said nothing.</p>" in fragment
+    assert "*" not in fragment and "<table style=" in fragment
+    plain = paste_plain([scene])
+    assert "Nobody." in plain and "it's me" in plain and "*" not in plain
+    assert PANEL_LINE in plain
+
+
+def test_a_line_structured_block_keeps_its_lines() -> None:
+    """A notice the fiction prints line by line — a delivery slip, a list of marks — is one
+    block with single newlines in it. HTML folds a raw newline into a space, so the fragment
+    breaks the lines itself with the `<br>` the platform keeps inside a paragraph; the plain
+    copy already has the lines."""
+    scene = a_scene("DELIVERY NOTICE, returns bay\nAttempt 2 of 3.\nSign here.\n\nHe signed.")
+    fragment = paste_fragment([scene])
+    assert "<p>DELIVERY NOTICE, returns bay<br>Attempt 2 of 3.<br>Sign here.</p>" in fragment
+    assert "<p>He signed.</p>" in fragment
+    plain = paste_plain([scene])
+    assert plain == "DELIVERY NOTICE, returns bay\nAttempt 2 of 3.\nSign here.\n\nHe signed.\n"
+
+
+def test_quotes_are_written_as_themselves() -> None:
+    """Element text needs `<`, `>` and `&` escaped and nothing else. The platform's own source
+    view shows an apostrophe as an apostrophe, and so should the file pasted into it."""
+    fragment = paste_fragment([a_scene('"Nine days," he said. "It\'s what I\'ve got."')])
+    assert '<p>"Nine days," he said. "It\'s what I\'ve got."</p>' in fragment
+    assert "&quot;" not in fragment and "&#x27;" not in fragment
+
+
+def test_the_index_names_the_route_into_royal_road() -> None:
+    """The file an operator pastes from should say where it goes: the fragment through the
+    editor's source-code button, the plain text into the body with clean paste on."""
+    text = index_markdown((), checked_at=STAMP)
+    assert "chapters/ChapterN.html" in text and "chapters/ChapterN.txt" in text
+    assert "source code" in text and "clean paste" in text
 
 
 # -- the shelf ------------------------------------------------------------------------------

@@ -421,6 +421,14 @@ continuous across every boundary. An incomplete final volume means work in progr
 ending. Incomplete chapters are withheld from paste-ready output while reading copies show their
 gaps explicitly. The library is a file handoff, not a posting scheduler or publication platform.
 
+The chapter fragments are shaped for Royal Road's chapter editor as its authors document it:
+`chapters/ChapterN.html` goes in through the editor's source-code button (`<>`), with `<p>` per
+paragraph, `<hr>` for a scene break, a status sheet as a table in the platform's own inline style
+subset with no colour but the theme's, and no title heading because the platform takes the title
+in its own field. `chapters/ChapterN.txt` is the same chapter for the editor body with *Enable
+clean paste* on. Stray markdown markers are stripped from both copies the way the drafting path
+strips them; the stored text is untouched.
+
 The release queue is the operator's, and the tool never posts (stage-0 §221):
 
 ```bash

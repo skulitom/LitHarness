@@ -33,11 +33,27 @@ filename carries the title instead.
 **The HTML is a fragment, not a document**, and that is what makes one artifact serve both paste
 routes: a browser renders a bare run of `<p>` elements perfectly well, so "open it and copy"
 works, and there is no `<head>` to strip if it goes into an editor's HTML source view instead.
-Prose is only ever `<p>`, `<blockquote>` and `<hr>`, with no classes and no ids — the
-conservative subset every rich-text editor preserves. **This is not verified against any
-particular platform's editor from inside this repository**, which is why a `.txt` sits beside
-every fragment: if the HTML route mangles, blank-line-separated plain text pastes as paragraphs
-in every editor there is.
+Prose is only ever `<p>` (with `<br>` where the writer broke a line inside one block),
+`<blockquote>` and `<hr>`, with no classes and no ids. **Shaped to what Royal Road's own authors
+document about its chapter editor, read on 2026-09-05, and not verified by a paste from this
+repository:** the editor takes raw HTML only through its source-code button and treats HTML
+typed into the body as text; `<p>` is a line; emphasis is `<strong>` and `<em>`; inline styles
+survive; its table editor writes border, width and alignment onto cells; and *Enable clean
+paste* exists for plain text. The `.txt` beside every fragment is for that last route — the
+editor body with clean paste on — and it is still the fallback if the HTML route ever mangles.
+
+**Three things the writer's text can carry that are structure, not prose**, and the renderings
+carry them as structure. A line of nothing but asterisks (or dashes, or tildes) is a scene
+break the writer drew; set as a paragraph it would publish three characters where the platform
+draws a rule, so it is `<hr>` in the fragment and the one spelling `* * *` in the plain text,
+collapsed against the rule between grouped scenes. A single newline inside a block — a notice
+the fiction prints line by line — is `<br>`, because HTML folds a raw newline into a space and
+the `.txt` keeps the line. And markdown emphasis markers are stripped before either rendering,
+by the same `domain/draft.strip_markup` the live drafting path runs before its gate: pilot 21
+§5.1 named `**Nobody**` on the page a leak, the strip answered it for every book drafted since,
+and books drafted before it hold the markers still. The stored text is never touched; the words
+stay and the markup goes, in the pastable copies only — the whole-serial reading copy shows the
+text as stored, leaks included, because that is what a defect harvest reads.
 
 **The one thing outside that subset is the status panel, and it is outside it deliberately.**
 A `[STATUS]` line is a display in the fiction, and the fragment used to publish it as a
@@ -46,7 +62,10 @@ A `[STATUS]` line is a display in the fiction, and the fragment used to publish 
 table carries inline styles. Inline styles are the widening a paste can actually afford: a
 class name is the first thing a rich-text editor drops and a `style` attribute is among the
 last, and a status table is genre-standard on the platform these files are pasted into. The
-`.txt` beside it is unchanged and still the fallback if any of that turns out to be wrong.
+styles themselves stay inside the properties the platform's own table editor writes — border,
+width, alignment, padding, weight, font — with `currentColor` the only colour, because the
+platform flips fixed colours between its themes. The `.txt` beside it is unchanged and still
+the fallback if any of that turns out to be wrong.
 
 **This is a copy button and not the publication pillar (§62).** That pillar was cut, and what it
 was measured to lack was "no chapter-release unit, no hook placement, no recap generation, no
@@ -75,9 +94,16 @@ from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 
-from litharness.application.export import NOT_DRAFTED, BookExport, collect, reading_head
+from litharness.application.export import (
+    NOT_DRAFTED,
+    SCENE_BREAK,
+    BookExport,
+    collect,
+    reading_head,
+)
 from litharness.application.ports import ExportStore
 from litharness.application.statusline import status_block
+from litharness.domain.draft import strip_markup
 from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.text import content_hash
 
@@ -131,14 +157,22 @@ DEFAULT_CHAPTERS_PER_VOLUME = 50
 #: Stored in the derived-state cache so a rendering change republishes shelves whose manuscript
 #: head did not move. Version 2 introduced release-volume folders and manifests; version 3 gives
 #: the status line a panel, the reading copy a long-form measure, and the release volume the
-#: same head as the whole-serial copy.
-LIBRARY_FORMAT_VERSION = "3"
+#: same head as the whole-serial copy; version 4 renders the writer's break lines,
+#: line-structured blocks and stray markdown markers as Royal Road's editor takes them, and
+#: narrows the panel's inline styles to the platform's own subset.
+LIBRARY_FORMAT_VERSION = "4"
 
 #: A system-voice line: the bracketed all-caps tag the genre puts its state on. Restated from
 #: `domain/axes.py`'s `_SYSTEM_LINE` rather than imported, because that one is a *counter's*
 #: definition and this one is a *rendering* choice — they agree today and should be free to
 #: stop agreeing without one silently changing the other's meaning.
 _SYSTEM_LINE = re.compile(r"\[[A-Z][A-Z ]+\]")
+
+#: A break the writer drew inside one scene: a line that is nothing but three or more of the
+#: marks a scene break is drawn with — `* * *`, `***`, `---`, `~ ~ ~` — and spaces. Structure,
+#: not a paragraph, and rendered as structure in both copies. Restated rather than shared with
+#: any counter for the reason `_SYSTEM_LINE` is: this is a rendering choice.
+_BREAK_LINE = re.compile(r"^[*\-_~=](?:[ \t]*[*\-_~=]){2,}$")
 
 _SLUG_STRIP = re.compile(r"[^a-z0-9]+")
 _VOLUME_MARKDOWN_STRUCTURE = re.compile(r"^(?:#{1,6}(?:\s|$)|-{3,}\s*$|={3,}\s*$)")
@@ -315,49 +349,91 @@ def _blocks(content: str) -> list[str]:
     return [block.strip() for block in re.split(r"\n\s*\n", content) if block.strip()]
 
 
+def _units(scenes: Sequence[Node]) -> list[tuple[str, str]]:
+    """The chapter as `(kind, block)` units in reading order, with its structure resolved once.
+
+    Kinds: `break` (the rule between grouped scenes, or a break line the writer drew),
+    `status` (a block that is nothing but parseable status lines), `system` (a block carrying a
+    bracketed system-voice tag), `prose`. Breaks collapse — a scene ending on a drawn break
+    meets the rule between scenes — and never open or close a chapter, because a chapter that
+    opened on a rule would open on nothing. Markdown markers go first, by the live path's own
+    strip, so a book drafted before that strip existed pastes like one drafted after it.
+    """
+    units: list[tuple[str, str]] = []
+
+    def add(kind: str, block: str) -> None:
+        if kind == "break" and (not units or units[-1][0] == "break"):
+            return
+        units.append((kind, block))
+
+    for index, scene in enumerate(scenes):
+        if index:
+            add("break", "")
+        prose, _ = strip_markup(scene.content or "")
+        for block in _blocks(prose):
+            if _BREAK_LINE.match(block):
+                add("break", "")
+            elif status_block(block, inline=True) is not None:
+                add("status", block)
+            elif _SYSTEM_LINE.search(block):
+                add("system", block)
+            else:
+                add("prose", block)
+    while units and units[-1][0] == "break":
+        units.pop()
+    return units
+
+
+def _lines(block: str) -> str:
+    """One block as element text: `<`, `>` and `&` escaped, a line break kept as `<br>`.
+
+    Quotes are written as themselves. They are element text, not attribute values, and the
+    platform's own source view shows an apostrophe as an apostrophe.
+    """
+    return "<br>".join(html.escape(line.strip(), quote=False) for line in block.split("\n"))
+
+
 def paste_fragment(scenes: Sequence[Node]) -> str:
-    """The chapter body as minimal semantic HTML, and nothing else.
+    """The chapter body as the minimal HTML Royal Road's chapter editor takes, and nothing else.
 
     Escaped as text, exactly as `export._paragraphs` escapes it and for the same reason: a
     stray `<` in prose swallows everything up to the next `>` and the loss is silent.
 
-    System-voice lines become `<blockquote>`. That is a rendering choice rather than a fact
-    about the prose, and it is made because a stat block set as an ordinary paragraph reads as
-    a sentence — the genre sets it apart, and every rich-text editor keeps a blockquote.
+    The pause between two scenes grouped into one chapter is `<hr>` — the platform's rule —
+    and so is a break the writer drew as a line of asterisks, rather than a paragraph of three
+    characters. A block the fiction prints line by line keeps its lines as `<br>`. System-voice
+    lines become `<blockquote>`: a rendering choice rather than a fact about the prose, made
+    because a stat block set as an ordinary paragraph reads as a sentence and the genre sets
+    it apart.
 
     A block that is nothing but `[STATUS]` lines goes further and becomes a panel, because
     setting a sheet apart is not the same as drawing it. See the module docstring for why that
     one element is allowed inline styles when nothing else here is.
     """
     parts: list[str] = []
-    for index, scene in enumerate(scenes):
-        if index:
-            # A scene break inside a grouped chapter. `<hr>` rather than a row of asterisks
-            # because it survives a paste as structure instead of as three characters.
+    for kind, block in _units(scenes):
+        if kind == "break":
             parts.append("<hr>")
-        for block in _blocks(scene.content or ""):
-            panel = status_block(block, inline=True)
-            if panel is not None:
-                parts.append(panel)
-                continue
-            tag = "blockquote" if _SYSTEM_LINE.search(block) else "p"
-            parts.append(f"<{tag}>{html.escape(block)}</{tag}>")
+        elif kind == "status":
+            parts.append(status_block(block, inline=True) or f"<p>{_lines(block)}</p>")
+        elif kind == "system":
+            parts.append(f"<blockquote>{_lines(block)}</blockquote>")
+        else:
+            parts.append(f"<p>{_lines(block)}</p>")
     return "\n".join(parts) + "\n"
 
 
 def paste_plain(scenes: Sequence[Node]) -> str:
-    """The same body as blank-line-separated plain text.
+    """The same body as blank-line-separated plain text, for the editor body with clean paste on.
 
     The fallback, and it is here because the claim "this HTML pastes correctly" is not one this
-    repository can verify against any particular editor. Plain text with blank lines between
-    paragraphs pastes as paragraphs everywhere, so the uncertainty costs one small file rather
-    than a failed publish.
+    repository has verified by pasting. Plain text with blank lines between paragraphs pastes
+    as paragraphs everywhere, so the uncertainty costs one small file rather than a failed
+    publish. Every break — between scenes or drawn — is the one spelling `* * *`, a status line
+    stays exactly as written (plain text has no table, and `domain/extraction.py` reads the
+    line by character), and a line-structured block keeps its lines.
     """
-    parts: list[str] = []
-    for index, scene in enumerate(scenes):
-        if index:
-            parts.append("* * *")
-        parts.extend(_blocks(scene.content or ""))
+    parts = [SCENE_BREAK if kind == "break" else block for kind, block in _units(scenes)]
     return "\n\n".join(parts) + "\n"
 
 
@@ -700,11 +776,15 @@ Each book has a shelf:
 - `<book>.md` and `<book>.html` — the **reading copy**: the whole book with a progress table,
   and undrafted scenes shown as visible gaps. The gaps are the point; two copies a day apart
   differ in a way you can read at a glance.
-- `chapters/NN-title.html` — one **pastable** chapter each, as minimal HTML with no title
-  heading (a serial platform takes the title in its own field, so a heading in the body is
-  published twice). Open one in a browser, select all, copy.
-- `chapters/NN-title.txt` — the same chapter as plain text, for any editor the HTML route
-  does not survive.
+- `chapters/ChapterN.html` — one **pastable** chapter each, as the minimal HTML Royal Road's
+  chapter editor takes: `<p>` per paragraph, `<hr>` for a scene break, a `<table>` for a
+  status sheet, and no title heading (the platform takes the title in its own field, so a
+  heading in the body is published twice). Paste it through the editor's **source code**
+  button (`<>`), not into the editor body, which treats typed HTML as text; or open it in a
+  browser, select all, copy.
+- `chapters/ChapterN.txt` — the same chapter as plain text, for the editor body with *Enable
+  clean paste* on. Paragraphs and `* * *` breaks survive that route; a status sheet is one
+  line there, because plain text has no table.
 - `volumes/VolumeN/` — release packaging in roughly fifty global chapters, including a reading
   copy, pastable chapter files, and a manifest that keeps the canonical book/revision identity.
   A volume boundary does not reset canon and does not assert that the serial ends there.

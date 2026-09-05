@@ -9,6 +9,8 @@ worse than none of it.
 
 from __future__ import annotations
 
+import re
+
 from litharness.application.statusline import (
     parse_status_line,
     status_block,
@@ -103,3 +105,31 @@ def test_the_panel_escapes_its_text() -> None:
     panel = status_table_classed(status)
     assert "&lt;Mira&gt;" in panel and "&lt;3" in panel
     assert "<Mira>" not in panel
+
+
+def test_the_pastable_panel_uses_only_the_properties_a_platform_table_editor_writes() -> None:
+    """Royal Road's table editor writes border, width, alignment, padding, weight and font onto
+    cells, and its stylesheet flips pure white and pure black between its themes. So the inline
+    panel stays inside that property set, names no colour but `currentColor`, and leans on no
+    function a sanitizer might not know."""
+    status = parse_status_line(LINE)
+    assert status is not None
+    panel = status_table_inline(status)
+    properties = {
+        declaration.split(":", 1)[0].strip()
+        for style in re.findall(r'style="([^"]*)"', panel)
+        for declaration in style.split(";")
+        if declaration.strip()
+    }
+    assert properties <= {
+        "border",
+        "border-collapse",
+        "width",
+        "text-align",
+        "padding",
+        "font-weight",
+        "font-family",
+        "font-size",
+        "line-height",
+    }
+    assert "color-mix" not in panel and "#" not in panel and "rgb" not in panel

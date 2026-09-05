@@ -81,24 +81,21 @@ def parse_status_line(line: str) -> StatusLine | None:
     return StatusLine(subject=subject, cells=tuple(cells))
 
 
-#: Inline styling for the pastable panel. Sizes are relative and colours are derived from
-#: `currentColor`, so the same markup reads correctly on a light page, on a dark one, and
-#: inside whatever palette a serial platform wraps it in — none of which this module can see.
-#: `color-mix` is declared after a plain `currentColor` border rather than instead of it, so a
-#: renderer that does not know the function still draws the panel, just at full contrast.
-_EDGE = (
-    "border:1px solid currentColor;border-color:color-mix(in srgb,currentColor 26%,transparent);"
-)
+#: Inline styling for the pastable panel, held to the properties a serial platform's own table
+#: editor writes onto cells — border, width, alignment, padding, weight, font — so nothing here
+#: is a declaration a rich-text editor has to decide whether to keep. Colours are never fixed:
+#: Royal Road flips pure white and pure black between its light and dark themes (its authors'
+#: table guide records it), so every edge is drawn in `currentColor` and takes whatever the
+#: reader's theme paints the text. Sizes are relative for the same reason: the panel cannot
+#: see the page it lands on.
+_EDGE = "border:1px solid currentColor;"
 _PANEL = (
-    "border-collapse:collapse;width:100%;max-width:22em;margin:1.6em 0;text-indent:0;"
-    "font-family:ui-monospace,'IBM Plex Mono',Menlo,Consolas,monospace;"
-    "font-size:.85em;line-height:1.45;"
+    "border-collapse:collapse;width:100%;"
+    "font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;line-height:1.45;"
 )
-_NAME = _EDGE + "text-align:left;padding:.45em .8em;font-weight:700;letter-spacing:.05em;"
+_NAME = _EDGE + "text-align:left;padding:.45em .8em;font-weight:700;"
 _LABEL = _EDGE + "text-align:left;padding:.38em .8em;font-weight:400;"
-_VALUE = (
-    _EDGE + "text-align:right;padding:.38em .8em;font-weight:700;font-variant-numeric:tabular-nums;"
-)
+_VALUE = _EDGE + "text-align:right;padding:.38em .8em;font-weight:700;"
 
 
 def _table(status: StatusLine, *, panel: str, name: str, label: str, value: str) -> str:
