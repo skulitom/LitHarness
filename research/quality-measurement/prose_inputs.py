@@ -65,7 +65,7 @@ ARMS = ("current_original", "plain_original", "current_factual", "plain_factual"
 # Counterbalance order by replicate. Positions are fixed before outputs exist.
 ORDER = tuple((arm, 1) for arm in ARMS) + tuple((arm, 2) for arm in reversed(ARMS))
 MAX_CALLS = 11
-SPEND_STOP_USD = 12.0
+SPEND_STOP_USD = 11.5
 
 
 def digest(value: Any) -> str:
@@ -202,7 +202,9 @@ def apply_edits(scene: str, payload: Any) -> str:
     return "\n\n".join(paragraphs)
 
 
-def prepare(out: Path, source_request: Path, source_scene: Path) -> None:
+def prepare(
+    out: Path, source_request: Path, source_scene: Path, reviewed_plan: Path | None = None
+) -> None:
     if (
         not out.resolve().is_relative_to((ROOT / "runs").resolve())
         or out.resolve() == ROOT / "runs"
@@ -228,6 +230,9 @@ def prepare(out: Path, source_request: Path, source_scene: Path) -> None:
             "not automatically character knowledge:\n" + rest
         )
     source = source_scene.read_text(encoding="utf-8").strip()
+    reviewed = read_json(reviewed_plan) if reviewed_plan is not None else None
+    if reviewed is not None:
+        render_factual(reviewed, base["prompt"].split("This scene: ")[1])
     manifest = {
         "version": 1,
         "code_commit": subprocess.check_output(
@@ -242,6 +247,8 @@ def prepare(out: Path, source_request: Path, source_scene: Path) -> None:
         "original_digest": digest(original),
         "source_scene": source,
         "source_scene_digest": digest(source),
+        "reviewed_plan": reviewed,
+        "reviewed_plan_digest": digest(reviewed),
         "order": ORDER,
         "max_calls": MAX_CALLS,
         "spend_stop_usd": SPEND_STOP_USD,
@@ -296,8 +303,14 @@ def run(out: Path, phase: str) -> None:
     if digest(manifest["source_scene"]) != manifest["source_scene_digest"]:
         raise ValueError("frozen editing source changed")
     statement = base["prompt"].split("This scene: ")[1]
-    result = complete_once(out, "factual-plan", factual_request(statement))
-    factual = render_factual(result["parsed"], statement)
+    reviewed = manifest.get("reviewed_plan")
+    if reviewed is not None:
+        if digest(reviewed) != manifest["reviewed_plan_digest"]:
+            raise ValueError("frozen reviewed plan changed")
+        payload = reviewed
+    else:
+        payload = complete_once(out, "factual-plan", factual_request(statement))["parsed"]
+    factual = render_factual(payload, statement)
     if phase == "plan":
         print(factual, flush=True)
         return
@@ -330,11 +343,12 @@ def main() -> None:
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--source-request", type=Path)
     parser.add_argument("--source-scene", type=Path)
+    parser.add_argument("--reviewed-plan", type=Path)
     args = parser.parse_args()
     if args.phase == "prepare":
         if args.source_request is None or args.source_scene is None:
             parser.error("prepare requires --source-request and --source-scene")
-        prepare(args.out, args.source_request, args.source_scene)
+        prepare(args.out, args.source_request, args.source_scene, args.reviewed_plan)
     else:
         run(args.out, args.phase)
 

@@ -30,3 +30,11 @@ Call-free verification:
 uv run pytest tests/test_prose_inputs_trial.py -q -n 0
 uv run python tools/check.py handoff
 ```
+
+The original 2026-09-05 conversion failed its source inspection and that run stopped before
+drafting. Follow the visible amendment in PREREG.md for the continuation: use the same source
+request and chapter, a new output directory `runs/ab/prose-inputs-reviewed-20260905`, and add
+`--reviewed-plan runs/ab/prose-inputs-20260905/reviewed-plan.json` to `prepare`. This supplied
+payload bypasses conversion; it is frozen with a hash and its source quotations are validated.
+Then use `plan`, `draft` and `edit` with the new directory. Explicitly supplying source-checked
+notes is a diagnostic facility, not an automatic repair or evidence of planner reliability.

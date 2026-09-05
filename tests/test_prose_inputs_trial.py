@@ -1,5 +1,6 @@
 """The isolated trial changes only its declared factors and cannot rewrite canon."""
 
+import hashlib
 import json
 import runpy
 from dataclasses import asdict
@@ -107,3 +108,31 @@ def test_cached_calls_replay_but_uncertain_calls_and_changed_inputs_never_resend
 def test_output_directory_cannot_point_at_production(tmp_path):
     with pytest.raises(ValueError, match="beneath runs"):
         TRIAL["prepare"](tmp_path, Path("unused.json"), Path("unused.txt"))
+
+
+def test_frozen_reviewed_plan_bypasses_conversion_and_refuses_changed_notes(tmp_path, capsys):
+    payload = {
+        key: [{"text": "She opens the door.", "source_quote": "She opens the door."}]
+        for key in TRIAL["PLAN_SECTIONS"]
+    }
+    base = {"prompt": "This scene: She opens the door."}
+    manifest = {
+        "script_sha256": hashlib.sha256(Path(TRIAL["__file__"]).read_bytes()).hexdigest(),
+        "registration_sha256": hashlib.sha256(TRIAL["REGISTRATION"].read_bytes()).hexdigest(),
+        "base": base,
+        "base_digest": TRIAL["digest"](base),
+        "source_scene": "Scene",
+        "source_scene_digest": TRIAL["digest"]("Scene"),
+        "reviewed_plan": payload,
+        "reviewed_plan_digest": TRIAL["digest"](payload),
+    }
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    # Tests disable fresh calls, so this succeeds only if supplied notes bypass conversion.
+    TRIAL["run"](tmp_path, "plan")
+    assert "She opens the door." in capsys.readouterr().out
+    assert not list(tmp_path.glob("*.request.json"))
+    payload["ordered_actions"][0]["text"] = "Changed after preparation."
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(ValueError, match="reviewed plan changed"):
+        TRIAL["run"](tmp_path, "plan")

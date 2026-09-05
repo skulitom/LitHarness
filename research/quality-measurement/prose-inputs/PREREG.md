@@ -68,3 +68,27 @@ after a recorded request requires inspection rather than another paid call. Stop
 call when recorded equivalent cost reaches $12 or cost is unavailable; the last in-flight call
 can exceed that boundary. No billing calls in tests. All generated text and state stay under
 an ignored `runs/ab/` directory. Commit this registration and call-free tests before live calls.
+
+## Amendment after conversion, before any drafts or edits
+
+The original run at `runs/ab/prose-inputs-20260905` stopped after its single conversion call
+($0.46309 equivalent). Its output broadened private access to a floating scheme into private
+access to overwritten papers, and retained rhetorical wording in the purported factual notes.
+Exact-source quotation validation passed despite that scope error. This is a located defect,
+not an estimated converter error rate. The original response remains unchanged and is not sent
+to drafting. No draft or editor output existed when this amendment was written.
+
+Continue in a new directory, `runs/ab/prose-inputs-reviewed-20260905`, with source-checked factual
+notes supplied explicitly at preparation. Freeze their complete payload and digest in the new
+manifest. The source-specific notes stay in ignored local artifacts; the runner has no story
+content or repair rule. No second conversion call is made. These notes test a factual input
+representation; they do not test the reliability of an automatic factual planner. The original
+and corrected notes, source quotations and intervention record remain available for inspection.
+The reviewed-plan file SHA-256 is
+`9f40de509a635b93ce31829901991d9aea634eb965179245c24802b876bfa1da`.
+
+Keep the eight-draft order and both editor substrates unchanged. The new run has ten planned
+calls and an $11.50 equivalent spend stop, leaving room for the original conversion inside the
+original $12 boundary (a final in-flight call can still cross the boundary as declared above).
+No candidate selection, post-draft tuning or production adoption is added. Commit this visible
+amendment and its call-free checks before continuing.
