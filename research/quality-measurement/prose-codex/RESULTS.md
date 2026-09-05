@@ -73,4 +73,6 @@ source material; these generated scenes are not its input or examples.
 
 The full comparison, raw events, reviewed notes and provenance remain under ignored
 `runs/ab/prose-codex-20260905/`. The amended parser's handoff passed 3985 tests, with 19 skipped
-and 88.76% coverage, plus lint, types, build and corpus-history audit.
+and 88.76% coverage, plus lint, types, build and corpus-history audit. The comparison page was
+visually inspected, its alternate-draft selector exercised, and its console had zero errors or
+warnings. The final combined handoff passed 3991 tests, 19 skipped, with the same coverage.

@@ -1,0 +1,76 @@
+{
+  "status": "stopped_before_drafting_source_conflicts",
+  "code_commit": "cffcaf56cdaa48a9155dcee9d4ef526603b3b4c8",
+  "cli_versions": {
+    "codex": "codex-cli 0.153.4",
+    "claude": "2.1.261 (Claude Code)"
+  },
+  "authentication": {
+    "codex": "chatgpt",
+    "claude": "claude.ai"
+  },
+  "manifest_sha256": "642cd1e2a8175a22c5f229a50ba857375c3b363c471074a8d30a79ccd8fa701c",
+  "frozen_files": {
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_staging.py": "8c7b92d74951414d87e955be916668e57bcab4c647ec6a2f09a26836dfcc5826",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-staging\\PREREG.md": "5b31334939a71477e51032933d1c27952cea09936824f280bc409349dde2472b",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_codex.py": "e244da964219121b486fe5d9189230e117e8558f9130eceb4361695df163e24f",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_framing.py": "58212aa59590b6e1041ba7e389be94749a70817ae0b066d3d8cf046a74787e84",
+    "C:\\DEV\\LitHarness\\src\\litharness\\providers\\cli.py": "a6fe97fe090d82647428ab116ed8b94f904fac1993593d3542b00ba18036e544",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-framing-20260905\\neutral-1.request.json": "bdac886096831259a9b8b8cabfbcb57e9825ebbef4e2c159f577dc1fcd5fb7fc",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-staging-20260905\\planner\\system.txt": "5d677be79593b76a0bbc3e2ba4e0f69a5ae5b89d85d439593a87acc6cf5f302a"
+  },
+  "planner": {
+    "request_sha256": "8424bd05383bb6ed18a12e07d9a8444b4bc7974774e59fe1bc4cbe497b75d982",
+    "raw_sha256": "6087465b1ac0afbb394236a0fb9aa79a662d38dee96565a73ecf373501c24ff9",
+    "result_sha256": "5cad48b249ee8fb59e072ec6c8f55f8e3cf108dc00f8da19251c4b666170d691",
+    "text_sha256": "229f4d95229837d9446f432ec7dcf3524804de782d060894cd23a2e0061434db",
+    "usage": {
+      "input_tokens": 15932,
+      "cached_input_tokens": 2688,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1911,
+      "reasoning_output_tokens": 823
+    },
+    "wall_ms": 84374,
+    "requested_model": "gpt-6-astra",
+    "resolved_model": null,
+    "configuration_notice_count": 2,
+    "steps": 7,
+    "required_actions": 12,
+    "conflicts": 2
+  },
+  "review_sha256": "9673f140f1c7b197ab3cde39849e052e4adf66f0cc9ce7e9181e006fef80f563",
+  "reviewed_payload_sha256": "8bbe0799e6ad53d0398c1b47ba834ed78659696bbd80f4f1a883fead90e0119e",
+  "source_corrections": 0,
+  "planner_invocations": 1,
+  "draft_invocations": 0,
+  "planned_drafts": [
+    {
+      "id": "control-1",
+      "status": "not_dispatched_source_conflicts"
+    },
+    {
+      "id": "staged-1",
+      "status": "not_dispatched_source_conflicts"
+    },
+    {
+      "id": "staged-2",
+      "status": "not_dispatched_source_conflicts"
+    },
+    {
+      "id": "control-2",
+      "status": "not_dispatched_source_conflicts"
+    }
+  ],
+  "seed_provenance": {
+    "file_sha256": "ff423c013c0bf23979b6305c924756c026e032a738ab3943830e8027ae215546",
+    "record_id": "rec-wda03d69147c97ea0404adbd1",
+    "record_sha256": "809cb027cb58bfca3519e390cef86236c5229f549f3d4535ac8ba3d6516556f8",
+    "source_story_position_present": false,
+    "source_authority": "accepted_canon",
+    "source_evidence_count": 0
+  },
+  "rebuild": "uv run python runs/ab/prose-staging-tools/audit.py",
+  "rebuild_script_sha256": "8ec9c167c6cd3c0c9b52b5065f0067284f8964c5e25b012f141cbe83bfda2d48",
+  "freeze_refusal_log_sha256": "ba390ddb32cdd2137ac6a04450aa77a876266c23620d75608691012d61b6001b"
+}
