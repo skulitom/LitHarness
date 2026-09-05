@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import time
@@ -125,7 +126,29 @@ def parse_events(stdout: str) -> dict[str, Any]:
     completed = [e for e in events if e.get("type") == "turn.completed"]
     if len(completed) != 1:
         raise ValueError("expected exactly one completed turn")
-    items = [e["item"] for e in events if e.get("type") == "item.completed"]
+    items, notices = [], []
+    turn_started = False
+    for event in events:
+        if event.get("type") == "turn.started":
+            turn_started = True
+        if event.get("type") != "item.completed":
+            continue
+        item = event["item"]
+        message = item.get("message", "")
+        configuration_notice = message == (
+            "Code Mode is unavailable because code-mode host is disabled. Code mode will "
+            "fail closed; enable `features.code_mode_host` and install `codex-code-mode-host`."
+        ) or re.fullmatch(
+            r"Under-development features enabled: skip_host_skill_discovery\. "
+            r"Under-development features are incomplete and may behave unpredictably\. "
+            r"To suppress this warning, set `suppress_unstable_features_warning = true` "
+            r"in [^\r\n]+config\.toml\.",
+            message,
+        )
+        if item.get("type") == "error" and not turn_started and configuration_notice:
+            notices.append(message)
+        else:
+            items.append(item)
     if any(i.get("type") not in {"reasoning", "agent_message"} for i in items):
         raise ValueError("unexpected tool or non-prose item")
     # A started tool is a failure even if it never completed.
@@ -146,7 +169,12 @@ def parse_events(stdout: str) -> dict[str, Any]:
         raise ValueError("missing or invalid quota usage")
     if usage["cached_input_tokens"] > usage["input_tokens"]:
         raise ValueError("cached input exceeds total input")
-    return {"text": messages[0], "usage": usage, "event_types": [e["type"] for e in events]}
+    return {
+        "text": messages[0],
+        "usage": usage,
+        "event_types": [e["type"] for e in events],
+        "configuration_notices": notices,
+    }
 
 
 def validate(out: Path) -> dict[str, Any]:

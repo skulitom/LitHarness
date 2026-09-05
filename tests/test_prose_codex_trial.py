@@ -50,6 +50,30 @@ def test_codex_usage_preserves_cached_subset_without_double_counting():
     assert result["usage"]["input_tokens"] + result["usage"]["output_tokens"] == 120
 
 
+@pytest.mark.parametrize("during_turn", [False, True])
+def test_codex_classifies_known_startup_notice_without_ignoring_runtime_errors(during_turn):
+    stream = events()
+    notice = {
+        "type": "item.completed",
+        "item": {
+            "type": "error",
+            "message": (
+                "Code Mode is unavailable because code-mode host is disabled. Code mode will "
+                "fail closed; enable `features.code_mode_host` and install `codex-code-mode-host`."
+            ),
+        },
+    }
+    stream.insert(2 if during_turn else 1, notice)
+    encoded = "\n".join(map(json.dumps, stream))
+    if during_turn:
+        with pytest.raises(ValueError):
+            TRIAL["parse_events"](encoded)
+    else:
+        result = TRIAL["parse_events"](encoded)
+        assert result["text"] == "A scene."
+        assert result["configuration_notices"] == [notice["item"]["message"]]
+
+
 @pytest.mark.parametrize(
     "damage", ["tool", "unfinished_tool", "error", "extra_message", "usage", "cache"]
 )
