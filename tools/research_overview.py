@@ -12,7 +12,8 @@ Usage (from the repository root):
 
 Exit status is 1 when a pointer does not resolve, a state is outside the governance
 vocabulary, or the coverage marker is missing; the two untriaged lists are informational.
-Everything here is read-only over the working tree and imports nothing from the package.
+Everything here is read-only over the working tree, asks git only which cited paths it
+ignores (so the check sees what a clone sees), and imports nothing from the package.
 `tests/test_research_overview.py` runs the same checks in the suite.
 
 The one convention the page has to keep, because this script leans on it: a bare `§N` is
@@ -25,6 +26,7 @@ from __future__ import annotations
 import argparse
 import io
 import re
+import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -42,7 +44,9 @@ TRACKED_ROOTS: Final = frozenset(
     {"docs", "migrations", "plan", "research", "src", "tests", "tools"}
 )
 #: Local, gitignored roots. A pointer into one of these resolves on the box that wrote it and
-#: on no clone, which is the shape of a claim with its evidence removed.
+#: on no clone, which is the shape of a claim with its evidence removed. This set is the
+#: prose filter and the no-git fallback; `gitignored` asks git, which also knows the
+#: ignored subtrees under tracked roots (`research/quality-measurement/derived/`).
 LOCAL_ROOTS: Final = frozenset({"book-library", "dist", "exports", "runs"})
 #: Files at the repository root the page may name without a directory in front.
 ROOT_FILES: Final = re.compile(
@@ -128,6 +132,29 @@ def path_references(overview: str) -> list[str]:
     return found
 
 
+def gitignored(repo: Path, paths: list[str]) -> frozenset[str]:
+    """The cited paths git would not commit, asked of git itself, so the check sees what a
+    clone sees. `Path.exists` cannot: a gitignored subtree under a tracked root
+    (`research/quality-measurement/derived/`, excerpt-bearing by `.gitignore`) is present on
+    the box that wrote the page and in no clone. The page cited one on 2026-09-05, the suite
+    passed here and every CI job failed. Without git, or outside a repository, the answer is
+    the empty set and the check degrades to the working tree, which is what it was."""
+    if not paths:
+        return frozenset()
+    try:
+        completed = subprocess.run(
+            ["git", "-C", str(repo), "check-ignore", "-z", "--stdin"],
+            input="".join(f"{path}\0" for path in paths).encode("utf-8"),
+            capture_output=True,
+            timeout=30,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return frozenset()
+    if completed.returncode not in (0, 1):  # 0: some are ignored; 1: none; 128: no repository
+        return frozenset()
+    return frozenset(completed.stdout.decode("utf-8").split("\0")) - {""}
+
+
 def state_cells(overview: str) -> list[str]:
     """The `state` cell of every row of every table that has a `state` column."""
     cells: list[str] = []
@@ -202,10 +229,12 @@ def audit(
         if number not in entries
     )
 
+    cited_paths = list(dict.fromkeys(path_references(overview)))
+    ignored = gitignored(repo, cited_paths)
     broken_paths: list[str] = []
     local_paths: list[str] = []
-    for cited in dict.fromkeys(path_references(overview)):
-        if cited.split("/", 1)[0] in LOCAL_ROOTS:
+    for cited in cited_paths:
+        if cited.split("/", 1)[0] in LOCAL_ROOTS or cited in ignored:
             local_paths.append(cited)
         elif not (repo / cited).exists():
             broken_paths.append(cited)
@@ -253,7 +282,7 @@ def render(report: Report) -> str:
     for title, items in (
         ("ledger entries cited that do not exist", report.broken_sections),
         ("paths cited that do not exist", report.broken_paths),
-        ("paths cited into local, gitignored roots", report.local_paths),
+        ("paths cited that git ignores, present here and in no clone", report.local_paths),
         ("state cells outside the governance vocabulary", report.invalid_states),
     ):
         if items:

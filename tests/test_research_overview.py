@@ -7,6 +7,9 @@ entry, a moved `FINDINGS.md` or a state outside the governance vocabulary fails 
 from __future__ import annotations
 
 import re
+import subprocess
+
+import pytest
 
 from tools import research_overview as overview
 
@@ -102,3 +105,35 @@ def test_the_queue_lists_entries_past_the_marker_and_unmentioned_registrations()
     assert report.ok
     assert report.untriaged_entries == ("§169 A status line printed a machine id",)
     assert "research/sim-readership-backtest/PREREG.md" in report.unmentioned_registrations
+
+
+def test_a_gitignored_path_under_a_tracked_root_is_local_not_present() -> None:
+    """`research/quality-measurement/derived/` is gitignored (excerpt-bearing, `.gitignore`), so
+    a file there satisfies `Path.exists` on the box that wrote the page and in no clone. The
+    page cited one on 2026-09-05: the suite passed locally and every CI job failed. The audit
+    asks git, so the pointer is a local artifact here too, whether or not the file exists."""
+    page = "research/quality-measurement/derived/never-written.txt"
+    report = overview.audit(overview=page, ledger=_LEDGER, governance=_GOVERNANCE)
+    assert report.local_paths == (page,)
+    assert report.broken_paths == ()
+
+
+def test_the_gitignore_question_degrades_to_the_working_tree_without_git(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A tarball export has no git and no repository. The audit then checks the working tree
+    as it did before this question was asked, instead of failing to run at all."""
+
+    def no_git(*args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
+        raise OSError("git: not found")
+
+    monkeypatch.setattr(overview.subprocess, "run", no_git)
+    assert overview.gitignored(overview.REPO, ["runs/x.json"]) == frozenset()
+
+    def no_repository(*args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
+        return subprocess.CompletedProcess(
+            args, 128, stdout=b"", stderr=b"fatal: not a git repository"
+        )
+
+    monkeypatch.setattr(overview.subprocess, "run", no_repository)
+    assert overview.gitignored(overview.REPO, ["runs/x.json"]) == frozenset()

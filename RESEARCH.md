@@ -161,7 +161,7 @@ axiom.
 | result | state | home |
 | --- | --- | --- |
 | Before any force had a number, the programme found more than a dozen defects in its own instrument: harness arithmetic, the inference layer, the transport, the thermal governor, and a length confound the corpus had carried since §79 | `—` | §95, §95.3 to §95.15 |
-| F1's controls were vacuous and it returned a reading about the instrument; F2 scored the wrong token every time and its numbers are withdrawn | `—` | §95.11, §95.14; `research/quality-measurement/derived/README-f2-withdrawn.txt` |
+| F1's controls were vacuous and it returned a reading about the instrument; F2 scored the wrong token every time and its numbers are withdrawn | `—` | §95.11, §95.14; the withdrawn reading is kept, marked, at [research/quality-measurement/results/force-f2-partial.json](research/quality-measurement/results/force-f2-partial.json) |
 | F3: a fiction's own earlier chapters make its later chapter more predictable than length-matched foreign prose, the advantage grows with more of the book, and it grows more in the real chapter order than reversed, on three checkpoints across two lineages. The most replicated positive finding in the repository, and it predicts nothing about the conversion label at the n the corpus can supply (the registered reading is insufficient n, not a refutation) | `SUPPORTED` | §98, §102 |
 | F4, the surprisal field, is registered as a shape statistic with an external reading-time validation target, and has not run | `REGISTERED` | §99 |
 | The interventional effect does not survive distance: a perturbation's log-probability signature is gone by 512 tokens | `OBSERVED` | [research/quality-measurement/feasibility.md](research/quality-measurement/feasibility.md) §4.3 |
