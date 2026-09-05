@@ -1,0 +1,160 @@
+{
+  "status": "diagnostic_complete_no_quality_qualification",
+  "code_commit": "ab6cf237d02a99062e91be8a077a0889fcc17b32",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "manifest_sha256": "83d78b05ea4795e74281c63d41306774ea623f91a937d74771f290127da1b24b",
+  "frozen_files": {
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_codex.py": "e244da964219121b486fe5d9189230e117e8558f9130eceb4361695df163e24f",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-codex\\PREREG.md": "fc9743c29c79b0a0c492c27f729cb391393b169bc54691731119d349321ee914",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-framing-20260905\\neutral-1.request.json": "bdac886096831259a9b8b8cabfbcb57e9825ebbef4e2c159f577dc1fcd5fb7fc",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-framing-20260905\\focused-1.request.json": "58ca4fbe0b4b02a39ef7298501dd79a665f62b8e9e94594371e3c6a8f6670c0d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-codex-20260905\\system.txt": "4b907ed97dcd86b037e1a4e81d8c946b4bd7dcc8acb92810a0de82bb355a8995",
+    "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\bin\\codex.js": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-codex\\AMENDMENT-1.md": "55a1b1d091eb1b80687de8d6b30fc8d56bc08af553da1a8d99ba8460282b7df8"
+  },
+  "outputs": [
+    {
+      "id": "full-1",
+      "status": "completed",
+      "request_sha256": "8184543fb18a2acd726e3306363c126d3a03598eb3b51abdaa0519ab10e71829",
+      "result_sha256": "33d018921f3444c865753b3eaf98b3eddc9ac75c07bc4f82276b5d95f029b7ea",
+      "raw_sha256": "a1fc5a358a81c60d71fae35c25b59f7d6f0d11f7d1ba08e8ce77a75d30790222",
+      "wall_ms": 85316,
+      "usage": {
+        "input_tokens": 14986,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1649,
+        "reasoning_output_tokens": 516
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "text_sha256": "5a6b16c793967dd434ce5d43f141612e6486932b18e8d589084aa62f94f072b1",
+      "words": 881,
+      "paragraphs": 63,
+      "configuration_notice_count": 2
+    },
+    {
+      "id": "focused-1",
+      "status": "completed",
+      "request_sha256": "6ff7c2f165e84593c35bb0e363ac7604497920af32a42eb972ee5315c379ad8e",
+      "result_sha256": "457471e05d57f2a08410b4fdaf680833b8ddd64e0f23b6aad545c4689675137f",
+      "raw_sha256": "cd78cc0ac3a86ec6704dbf1b53d07f08cee975fd86654966677fade97f2c16be",
+      "wall_ms": 90087,
+      "usage": {
+        "input_tokens": 9536,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1704,
+        "reasoning_output_tokens": 516
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "text_sha256": "03b0157da94ba2945399e6dc7d20f9d75ed972541f7d7e4f1035a4dcd969583e",
+      "words": 947,
+      "paragraphs": 63,
+      "configuration_notice_count": 2
+    },
+    {
+      "id": "focused-2",
+      "status": "completed",
+      "request_sha256": "6ff7c2f165e84593c35bb0e363ac7604497920af32a42eb972ee5315c379ad8e",
+      "result_sha256": "1a5b42eeb37505d8a8b00f1d009f7fb79e1e9b378399a7e3c76226f948ac4f5b",
+      "raw_sha256": "e4eaf732a2c5f77b4bc6b269c1076ca7a413addabc77be93ef81f9436a076c0b",
+      "wall_ms": 79414,
+      "usage": {
+        "input_tokens": 9536,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1454,
+        "reasoning_output_tokens": 293
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "text_sha256": "9b657739909d8d925430d1da21d8ff24f647b1f2e07df32bece2f701b5abf0f5",
+      "words": 906,
+      "paragraphs": 64,
+      "configuration_notice_count": 2
+    },
+    {
+      "id": "full-2",
+      "status": "completed",
+      "request_sha256": "8184543fb18a2acd726e3306363c126d3a03598eb3b51abdaa0519ab10e71829",
+      "result_sha256": "7bf3022e49a5dfeb4a7d2810c8f90fa988c4a326196a77a99caa9af10b35e27c",
+      "raw_sha256": "971c472ca3d85179af6fbff41c4a446ecbf5c72527e37bac1fc1f257843884d1",
+      "wall_ms": 100058,
+      "usage": {
+        "input_tokens": 14986,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1662,
+        "reasoning_output_tokens": 516
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "text_sha256": "8ba568ebe84af2246ee573b75dc9a97927f7ea3d02eb744c299f5071298839cb",
+      "words": 900,
+      "paragraphs": 64,
+      "configuration_notice_count": 2
+    }
+  ],
+  "cli_invocations": 4,
+  "reported_input_tokens": 49044,
+  "reported_cached_input_tokens": 0,
+  "reported_output_tokens": 6469,
+  "cost_usd": null,
+  "rebuild": "uv run python runs/ab/prose-codex-tools/build_review.py",
+  "rebuild_script_sha256": "68ef4c108defd5967d4562f5b1b932cc269931b501f60e7e4b4763411dd8efd3",
+  "original_code_commit": "20bfef8a85b48f739ad8b9f02a306e043085742d",
+  "reported_reasoning_output_tokens": 1841,
+  "amendment_sha256": "5ed66c9ba644e02dc61de232f080baa047c9ee592284b38508d775002dc88184",
+  "original_manifest_sha256": "cea8129d08226147ae2e9936a766f245f4df41a8c8df819a0d95bac4041bfcb5",
+  "original_validation_sha256": "e6be0deb05dcd2fe08a563aed300ea1592c649088b0b95fa3bd3889d48b953e3",
+  "original_validation_outcome": {
+    "status": "failed",
+    "error_type": "ValueError",
+    "error": "unexpected tool or non-prose item",
+    "wall_ms": 85316
+  }
+}
