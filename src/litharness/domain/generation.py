@@ -152,7 +152,7 @@ class CompletionRequest:
 
     #: Tools this call may use, in the transport's own permission vocabulary. **Empty is the
     #: default and empty means a single-shot completion**, which is what every call in this
-    #: system was and what `providers/cli.py` spells `--allowed-tools ''` for a stated
+    #: system was and what `providers/cli.py` spells `--tools ''` for a stated
     #: reason: without it the transport is an agent that can read and write files outside
     #: the revision store (§5).
     #:

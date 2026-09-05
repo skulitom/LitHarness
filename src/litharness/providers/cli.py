@@ -120,10 +120,10 @@ class ClaudeCodeProvider:
 
     Five flags are not optional, each for a reason that cost something to learn:
 
-    * `--allowed-tools` — **empty unless the request names tools**, and empty is what
-      every drafting and reader call sends. Without the flag this is an agent that can
-      read and write files outside the revision store, violating "no subsystem mutates
-      canon directly" (§5). `CompletionRequest.allowed_tools` is how a role that
+    * `--tools ''` for an empty allowance removes built-in tools from a completion.
+      `--allowed-tools` controls approval, not tool availability; an empty approval list
+      alone still leaves tool definitions in context. `CompletionRequest.allowed_tools`
+      is how a role that
       *manages* the world asks for the world's own commands and nothing else; the rule
       it keeps is that canon is reached through a recorded decision, not that a model
       may never run a command.
@@ -214,6 +214,10 @@ class ClaudeCodeProvider:
             "--settings",
             CLAUDE_MD_EXCLUDES,
         ]
+        if not request.allowed_tools:
+            # Approval rules and available tools are different CLI surfaces. Keep scoped
+            # allowances intact for agent roles; a pure completion has no built-in tools.
+            argv += ["--tools", ""]
         system = self._system_prompt(request)
         if system:
             argv += ["--append-system-prompt", system]

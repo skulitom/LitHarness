@@ -375,3 +375,20 @@ Rules:
   ignore CLAUDE.md, was measured not to (the marker leaked), so nothing here relies on it.
 - Measure the same numbers for an Opus-tier model before Book Zero, since §15's
   budget depends on the tier actually used for generation.
+
+## 2026-09-05 correction: empty approval is not empty tool availability
+
+Claude Code 2.1.261's help and the
+[current CLI reference](https://code.claude.com/docs/en/cli-reference) distinguish
+`--allowed-tools` (commands approved without prompting) from `--tools` (available built-ins).
+The adapter formerly passed only an empty approval list for drafting and reader completions.
+It now also passes `--tools ""` when `CompletionRequest.allowed_tools` is empty. Nonempty
+scoped allowances retain their previous command lines; MCP isolation is unchanged.
+`test_claude_empty_allowance_removes_tools_without_rewriting_agent_permissions` checks both
+cases. This is a tool-availability correction, not evidence of better prose.
+
+The earlier 2.1.236 statement that `--bare` was the only available way to drop user
+customizations is historical. The installed 2.1.261 also advertises `--safe-mode`, which
+preserves authentication while disabling customizations. A separately registered diagnostic
+tests that mode with an explicit system-prompt replacement; production still uses append
+mode and its existing CLAUDE.md exclusions.

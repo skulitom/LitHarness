@@ -260,6 +260,20 @@ def test_the_claude_md_exclusion_is_well_formed_and_names_the_files_it_must() ->
     assert "**/CLAUDE.local.md" in patterns
 
 
+@pytest.mark.parametrize("allowance", [(), ("WebSearch",), ("Bash(litharness world show:*)",)])
+def test_claude_empty_allowance_removes_tools_without_rewriting_agent_permissions(allowance):
+    runner = claude_runner(CLAUDE_ENVELOPE)
+    ClaudeCodeProvider(runner=runner).complete(
+        CompletionRequest(prompt="x", allowed_tools=allowance)
+    )
+    argv = runner.argv  # type: ignore[attr-defined]
+    assert argv[argv.index("--allowed-tools") + 1] == ",".join(allowance)
+    if allowance:
+        assert "--tools" not in argv
+    else:
+        assert argv[argv.index("--tools") + 1] == ""
+
+
 def test_claude_reports_an_error_envelope_as_a_provider_error() -> None:
     broken = {**CLAUDE_ENVELOPE, "is_error": True, "api_error_status": 529, "result": "overloaded"}
     provider = ClaudeCodeProvider(runner=claude_runner(broken))
