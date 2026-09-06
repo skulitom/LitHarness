@@ -1,0 +1,13 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-narration-obligations-v1",
+  "statement": "Separating binding writer facts from required reader-facing narration may change explanatory restatement in Chapter 1. Unqualified conjecture.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-narration-obligations/PREREG.md",
+      "sha256": "5ffbb5a6b6ec7042cde16065067ae36c20e6cb4b91cc9dfb24c637f6ec5d7093"
+    }
+  ]
+}

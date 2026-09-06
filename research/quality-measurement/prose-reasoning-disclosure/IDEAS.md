@@ -2,7 +2,7 @@
 
 On 2026-09-06 the operator invited unconventional hypotheses, then authorized trying the
 recommendations. The first registered pair is reasoning effort and progressive disclosure.
-The following remain CONJECTURE, not tried, supported or qualified. They are recorded to
+The following were CONJECTURE at this record's creation. They are recorded to
 avoid mistaking discussion for completed experiments or repeatedly proposing the same test.
 
 - Separate world truth, character knowledge and required narration in the source record.
@@ -17,5 +17,8 @@ avoid mistaking discussion for completed experiments or repeatedly proposing the
   different narrative choices must not be credited automatically to language. No corpus prose
   or selected literary example would enter generation.
 
-These ideas have no generation allocation, fixed source or outcome labels yet. Register any
-subsequent run before calls, then link its failures and findings from the Chapter 1 history.
+Update, 2026-09-06: the first idea now has a separate
+[narration-obligations registration](../prose-narration-obligations/PREREG.md), with identical
+writer facts and a changed required-narration list. Its source classification is a research
+fixture, not a qualified production mechanism. The social-conflict and language ideas remain
+unrun conjectures with no allocation. Record subsequent findings in the Chapter 1 history.
