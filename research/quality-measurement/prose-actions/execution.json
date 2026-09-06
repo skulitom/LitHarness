@@ -1,0 +1,241 @@
+{
+  "status": "diagnostic_complete_no_quality_qualification",
+  "code_commit": "63e359b641d8b95f76a77f3bfd1e0771f1a5f82c",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "cli_invocations": 5,
+  "outputs": [
+    {
+      "status": "completed",
+      "wall_ms": 115047,
+      "usage": {
+        "input_tokens": 16299,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2605,
+        "reasoning_output_tokens": 1034
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "planner/full-1",
+      "files": {
+        "full-1.request.json": "ee8644cbe46eabcb0ec230b81569c218c5a23162e15df58f69cfe3881700dea2",
+        "full-1.raw.json": "1d82d949f6488a76c0cfccaab40ad93e2fb8ac7b32dc8e4903c6b9b0fb3a8408",
+        "full-1.result.json": "6f2cd75e836a9dc2d8c8d2adf7319064b7710c44dcb8a71545da8aa98159b4f4",
+        "full-1.txt": "dc8088f411a53878690069fe4d0a4d886977d254d0a14371fcdee60446aafe11"
+      },
+      "configuration_notice_count": 2
+    },
+    {
+      "status": "completed",
+      "wall_ms": 88065,
+      "usage": {
+        "input_tokens": 15274,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1615,
+        "reasoning_output_tokens": 387
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "drafts/full-1",
+      "files": {
+        "full-1.request.json": "963e0f4b69a14ffb3f8ce9d0978dac18ba15b30974ae55a9e9cc98cd3b20b0eb",
+        "full-1.raw.json": "151d683776f885654febfb89f225c3cd0bfe8c6e856cacb8a4bb533d548c34b9",
+        "full-1.result.json": "8105cf3021a96bb642de73e5b9504e4b7fd91dd5bfd110ba536a052bbaea7b2f",
+        "full-1.txt": "8390ba1deb8458f90858be9fdb965c29b08b77b9019e79bbfd167069df087cea"
+      },
+      "configuration_notice_count": 2,
+      "condition": "Existing plan",
+      "words": 932,
+      "paragraphs": 70
+    },
+    {
+      "status": "completed",
+      "wall_ms": 75202,
+      "usage": {
+        "input_tokens": 16196,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1428,
+        "reasoning_output_tokens": 234
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "drafts/focused-1",
+      "files": {
+        "focused-1.request.json": "ad875f8741c6ec5585937c15747e9e5a9706492a7b07b55164127fac5b01e898",
+        "focused-1.raw.json": "2a364d8424edd9b59484b1c04b46fa3887a4ce6d3225d12a5f4139d028393ceb",
+        "focused-1.result.json": "3acc35e884909bf6aca5e062b9ad34bf273f2b5c743efe10a9e670545eb0a9c7",
+        "focused-1.txt": "9fa4d72dcc73869cdf49ac70724396b319b7fd98fff485f7b3fc6bab2dbc7137"
+      },
+      "configuration_notice_count": 2,
+      "condition": "Action plan",
+      "words": 929,
+      "paragraphs": 71
+    },
+    {
+      "status": "completed",
+      "wall_ms": 94615,
+      "usage": {
+        "input_tokens": 16196,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1636,
+        "reasoning_output_tokens": 406
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "drafts/focused-2",
+      "files": {
+        "focused-2.request.json": "ad875f8741c6ec5585937c15747e9e5a9706492a7b07b55164127fac5b01e898",
+        "focused-2.raw.json": "49253b768de633529b82aef954ae1cfe81c8546b0799771401fc9179f6b64fbc",
+        "focused-2.result.json": "c9f0751b5ece96a939993ec593345c22cba863153dfd45607d5b55b9ab606b61",
+        "focused-2.txt": "13162867fa19070bec688e74dedfff57b5ca5d8b53e8f5e9a78fadc466930ade"
+      },
+      "configuration_notice_count": 2,
+      "condition": "Action plan",
+      "words": 949,
+      "paragraphs": 68
+    },
+    {
+      "status": "completed",
+      "wall_ms": 101115,
+      "usage": {
+        "input_tokens": 15274,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1697,
+        "reasoning_output_tokens": 516
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "drafts/full-2",
+      "files": {
+        "full-2.request.json": "963e0f4b69a14ffb3f8ce9d0978dac18ba15b30974ae55a9e9cc98cd3b20b0eb",
+        "full-2.raw.json": "5604f2479e84bd826c60f44ad1ff5cbc9588ab1b9b49d88e5977180fddb85855",
+        "full-2.result.json": "8ed3842d68dbdeda3c28dd3f0b0e870f771e1cb2955ec7c41b824dfd3273e70f",
+        "full-2.txt": "a3bcc8a8b3d83642248b4d8f1e460caae1a83cb1a1659fe333e1a80787155074"
+      },
+      "configuration_notice_count": 2,
+      "condition": "Existing plan",
+      "words": 928,
+      "paragraphs": 60
+    }
+  ],
+  "usage": {
+    "input_tokens": 79239,
+    "cached_input_tokens": 2688,
+    "output_tokens": 8981,
+    "reasoning_output_tokens": 2577
+  },
+  "conservative_token_total": 90797,
+  "cost_usd": null,
+  "frozen_files": {
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_actions.py": "665e9d1a86b1c606d27ed2e85255c03e4a2aef0416711fa8430b79a79fc38fcc",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-actions\\AMENDMENT-1.md": "ce71c789bde6758fb76dc0007f15f7be766710eb7ba1a91ec15a2c39ade32e57",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-actions\\PREREG.md": "8e745e03a4b7f3b4bf418dee93e5d923b54b175b2cb76a960103616ffa467fb0",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_codex.py": "e244da964219121b486fe5d9189230e117e8558f9130eceb4361695df163e24f",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_staging.py": "8c7b92d74951414d87e955be916668e57bcab4c647ec6a2f09a26836dfcc5826",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_framing.py": "58212aa59590b6e1041ba7e389be94749a70817ae0b066d3d8cf046a74787e84",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-framing-20260905\\neutral-1.request.json": "bdac886096831259a9b8b8cabfbcb57e9825ebbef4e2c159f577dc1fcd5fb7fc",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-actions-tools\\source-amendment-v2.json": "1bfcbdfe2868dfe0ecc7fe9896fd474c1061237435ea62d835878d09e3d53b4d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-actions-tools\\required-outcomes.json": "63217747ea8dd218709b958986f3f7646e6f21c90efc6a5561b893bf7888d17f",
+    "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\bin\\codex.js": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-actions-outcomes-20260906\\planner\\system.txt": "bef384a9d739caabb180e3f248603ca266687a1de65090ca54bf42c92a30c82c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-actions-outcomes-20260906\\drafts\\system.txt": "6909efacc374851b75e6a980af9ad42760b3c92fb3cae009b701130ab1a49b8f"
+  },
+  "artifacts": {
+    "manifest.json": "6788b3694604d2b46f51b8536aee826843fc161776b635653c72a62d32bf708a",
+    "plan.reviewed.json": "6bd4eebf2948f7e2ef7d731a5244378d889cd1e68da4480d95474af98942b1ad",
+    "plan-source-reviewed.json": "735297bebb494efa2af2bc8fc8ff4e3a0f1edd564e2af798e2b57375f222ba81",
+    "source-review.md": "bf1e8ba8186d57fb4c2bd8e023b9df4c1b0b5bbb442585fb610e63e882175b9c",
+    "drafts\\manifest.json": "e0a3f7bedcb5c718611488f68d0843240ab75b3801c7cbc67862ba838f81adf2",
+    "comparison.html": "929022cc011fe72e28c9cf56df8ec44e531f316f7afbfe429265976f8698942b",
+    "READING.md": "88369505ebb997587cb03e33f6c0016bcc1ca1f01249ac9f17cf25433b671032"
+  },
+  "rebuild": "uv run python runs/ab/prose-actions-tools/build_review.py",
+  "rebuild_script_sha256": "9ede3f698d0e98478710e7cb39c645ccaa2d960c73faad83f883c487c452181f",
+  "prior_attempt": {
+    "status": "stopped_before_drafts_plan_repackaging_and_unresolved_timing",
+    "code_commit": "e0166667a7f663f2758a817ca91abd957d411fd8",
+    "cli_version": "codex-cli 0.153.4",
+    "cli_invocations": 1,
+    "requested_model": "gpt-6-astra",
+    "resolved_model": null,
+    "authentication": "chatgpt",
+    "usage": {
+      "input_tokens": 16286,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2691,
+      "reasoning_output_tokens": 1315
+    },
+    "wall_ms": 122231,
+    "cost_usd": null,
+    "steps": 9,
+    "conflicts": 1,
+    "drafts_dispatched": 0,
+    "artifacts": {
+      "manifest.json": "2c4b0efa871d3ea3494cbf8c15dbdba5cf5f3d4d545c1470971856694c23f76a",
+      "planner\\full-1.request.json": "c0b37b14962914fbb657b4f5fce6d2976df07c183cba24ded50b409c916ecbd5",
+      "planner\\full-1.result.json": "b28de6defb3e993e54b4313966dd745cf5691ed8e922e37c12a07f677511fcc8",
+      "planner\\full-1.raw.json": "7c103d90c9a923836d836cd9bcfa12535607aedb8f5beaf48a3e2baf50c4915f",
+      "planner\\full-1.txt": "22f7d91b3a5902e8869851a73a32da42b42933c98c8e8cfb4dbe2cf7a4c8297f",
+      "runner-v1.py": "0df0ff05598be99b1ca433274d13b35544800b5707e4e178e9ecc538418a7c41",
+      "source-review-stop.md": "9f0e4e3e3e01285394ecbc1fd847a6a8e973cf0103cceb006120b589f20f8576"
+    }
+  },
+  "total_cli_invocations_including_stopped_attempt": 6,
+  "total_conservative_tokens_including_stopped_attempt": 111089
+}
