@@ -2,12 +2,17 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "prose-conflicting-objectives-v1",
   "statement": "A conflicting immediate objective may change local explanatory prose under the original supernatural rule burden. Unqualified diagnostic conjecture.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
       "path": "research/quality-measurement/prose-conflicting-objectives/PREREG.md",
       "sha256": "ac5e57d199a805290c758134beabd05c353ea3712297be88d87edee0aa8407f3"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-conflicting-objectives/execution.json",
+      "sha256": "264d42e488cf614eb61499c6748b1ad7ea297634ca76fd1b2532e1483c69b58f"
     }
   ]
 }

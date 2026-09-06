@@ -1,0 +1,132 @@
+{
+  "schema": "local-prose-diagnostic.v1",
+  "status": "observed",
+  "manifest_sha256": "80af10f24b1740126085aac90068b2cd79bfea3434a14d090621f9dc3e4bcfeb",
+  "code_commit": "11f7d06adf7846369b01cbbb36827627f7b48dc8",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "input_difference": "local_interaction.objective only",
+  "outputs": [
+    {
+      "id": "full-1",
+      "words": 1657,
+      "paragraphs": 84,
+      "literal_sequence_matches": true,
+      "usage": {
+        "input_tokens": 8472,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2472,
+        "reasoning_output_tokens": 399
+      },
+      "wall_ms": 103753,
+      "sha256": {
+        "request.json": "7f776720c8b3fe97702225dcb2e84de5f95ea137cd9685cc6c9ae8b081e7659a",
+        "raw.json": "076105dcd410658816a30b1a40df431f792c88127280485658b98983545d0347",
+        "result.json": "7a979132cf501a3fbe49ee21b0b1019cc1f04e89578a95901931889a0bfbff41",
+        "txt": "f895f4d05358f08f404360086e35f805970d704f591086235cae2a9809acc85a",
+        "inspection.json": "07860ee5f692d07b6b346630111954b4872b5267d8c5451b40f551fc737cea00"
+      }
+    },
+    {
+      "id": "focused-1",
+      "words": 1670,
+      "paragraphs": 99,
+      "literal_sequence_matches": true,
+      "usage": {
+        "input_tokens": 8472,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2968,
+        "reasoning_output_tokens": 869
+      },
+      "wall_ms": 128604,
+      "sha256": {
+        "request.json": "c553bfe4dcfa19108029fc4a58de3536336256db94cdba370171e0ed17eb1659",
+        "raw.json": "c06d8252654d751289dc475ceef44d72d28bc672bde7aa0a252fe5dcab0d8795",
+        "result.json": "99cfcde71f000d8d7607557bc6e30be7f4f564e75fe99c1661b22baf14072fb2",
+        "txt": "c506b10203aab994a1d01feaaaa233487e3c468531819328ced295294d339b2c",
+        "inspection.json": "60b3f098fbb703d20419d937425ce4094d32cd73e423d4dae4c53973253f0ccb"
+      }
+    },
+    {
+      "id": "focused-2",
+      "words": 1673,
+      "paragraphs": 89,
+      "literal_sequence_matches": true,
+      "usage": {
+        "input_tokens": 8472,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2523,
+        "reasoning_output_tokens": 423
+      },
+      "wall_ms": 110318,
+      "sha256": {
+        "request.json": "c553bfe4dcfa19108029fc4a58de3536336256db94cdba370171e0ed17eb1659",
+        "raw.json": "a0680d7a14ab30049826e83727583bb5a34b568e3285568fdd20b6c1d04abab5",
+        "result.json": "1873fe64304a40af0d7a370f41eae371a0ad0962f33bb32a7b56e1ea5135a06f",
+        "txt": "f31558646382c94ce4455c139bd13517245d81e832bb368cd0990612c701ed99",
+        "inspection.json": "f7b223bff92709fe7bbc8677014854deca40c6e698cb950febeb9ab3956dc877"
+      }
+    },
+    {
+      "id": "full-2",
+      "words": 1596,
+      "paragraphs": 87,
+      "literal_sequence_matches": true,
+      "usage": {
+        "input_tokens": 8472,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2545,
+        "reasoning_output_tokens": 511
+      },
+      "wall_ms": 109653,
+      "sha256": {
+        "request.json": "7f776720c8b3fe97702225dcb2e84de5f95ea137cd9685cc6c9ae8b081e7659a",
+        "raw.json": "c173b0191f8337f6efcf27fa0ef6c539a6f049a2ab05628eaeb0ba27772fddea",
+        "result.json": "79aec02109953b7670749feb4bc3b702ba8e3b52da68071d35cbacba2ce6ed7a",
+        "txt": "345b57b51f57a812b4a10442db5c2367c3cf6f74571c83e3f5237cba63e5c076",
+        "inspection.json": "de1e89def53764e24ceb8aa73ee70ed0226db7e29724e16b0aaec67631e942b0"
+      }
+    }
+  ],
+  "usage": {
+    "input_tokens": 33888,
+    "cached_input_tokens": 2688,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 10508,
+    "reasoning_output_tokens": 2202
+  },
+  "ranking": null,
+  "reading": {
+    "complete_passages": 4,
+    "original_source_units_audited": 168,
+    "sha256": "f9f3ae40e264184359bb69e03f9b564be9ea08f2a9e411786195afae29658c67"
+  },
+  "local_artifacts": {
+    "comparison.html": "011132b5ef5f4e63a3485328cad5adc76dbb739ad795633892edff554cfcaaad",
+    "READING.md": "cede109c3ec6d4af8b419c1786519011080d4ecce961f9e6b8fa9492043361df",
+    "reading-records.json": "f9f3ae40e264184359bb69e03f9b564be9ea08f2a9e411786195afae29658c67",
+    "runs\\ab\\prose-conflicting-objectives-20260906\\development-notes.md": "81b3a480a811d7638e264713416c6c456da0353769f3ce1f4b916ad1d38b0efc",
+    "runs\\ab\\prose-conflicting-objectives-20260906\\browser-qa\\QA.md": "645d469d007853609b02895a6535cb8d131de149e7fbc554584836792a855a35",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-conflicting-objectives-tools\\build_review.py": "fe68e4e260b77003337ab5cea7b78d44c09a8d7e74701da91de8530782e785cb",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-conflicting-objectives-tools\\manual_readings.py": "5bf58176c64be51b919ff65db5e9e3ea8e3aca151833b6c0a8b04df0500db09b",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-conflicting-objectives-tools\\run.log": "da95e7a71ed245aac53b6e60a9c467a40c2464611aadc59a362be80d5b6c7cbd",
+    "runs\\ab\\prose-conflicting-objectives-20260906\\browser-qa\\page-2026-09-06T22-50-33-889Z.yml": "068e47174ab12e178764b61889255505c8c92fe413581ff16737c04f651c306e",
+    "runs\\ab\\prose-conflicting-objectives-20260906\\browser-qa\\page-2026-09-06T22-51-21-081Z.yml": "9a3c65d801793f531bba572e405852f927859cdc008d69e5a6583348dfe8e7be",
+    "runs\\ab\\prose-conflicting-objectives-20260906\\browser-qa\\page-2026-09-06T22-54-02-407Z.yml": "d46f6bce94b73f5eeaa9f880d4f6ab8831893532a23ee5dede07275b7afe09e8",
+    "runs\\ab\\prose-conflicting-objectives-20260906\\browser-qa\\page-2026-09-06T22-55-29-289Z.yml": "2492e0872a933f6da67132b36c903b1e3501fad07bbd29e6a19f13a3ebb26f19",
+    "runs\\ab\\prose-conflicting-objectives-20260906\\browser-qa\\page-2026-09-06T22-56-14-525Z.yml": "fdc0a601166b134d5ee7af26dad24ed0b4344e2ebab73a475e66113ca39fec94",
+    "runs\\ab\\prose-conflicting-objectives-20260906\\browser-qa\\page-2026-09-06T22-57-03-082Z.yml": "e5b4dd318f2f771f016bc605b9fee468c0a3a62e0bf1e329db3dc6eb605c33df",
+    "runs\\ab\\prose-conflicting-objectives-20260906\\browser-qa\\page-2026-09-06T22-57-26-780Z.yml": "9dcd4eda9f0234368df32d3e189f38c3a095b67e4eee9da3c8b1892034614c76",
+    "output\\playwright\\prose-objectives-narrow-source.png": "b73aa9b481dd3b8377aadc46c7ba35f5ce960acea1f3e1de8522b89a4cdf3e1f",
+    "output\\playwright\\prose-objectives-opening.png": "8a1d19905cb45e047855bb97deaa5626da730837a715ca432dd61d1d2397808b",
+    "output\\playwright\\prose-objectives-rescue.png": "31837af801a6e269e28943380837a7ec861e5127d79fa47eb99eebe99d3d644b"
+  },
+  "registered_call_count": 4,
+  "completed_call_count": 4,
+  "accounted_tokens": 46598,
+  "token_stop": 90000
+}
