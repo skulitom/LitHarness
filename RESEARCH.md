@@ -215,7 +215,7 @@ The channel was opened (§128) and ranked above every craft rule (§129) before 
 | An agentic repair session against the fixed retry path: the same feasible commits at more than twice the calls; its higher gate-pass rate is an artifact of double-gating | `OBSERVED` | §105.5; [plan/variation-session.md](plan/variation-session.md) |
 | Whether ten writers are one writer in ten hats: every pair reads distinct and the shuffle control does not clear, so the statistic cannot answer | `OBSERVED` | §137 |
 | Instruction text was the thing nobody measured: two words of brief outweighed every rule in the prompt, a rule's affirmative half is what gets obeyed, and clauses added against the operator's named register defects moved one shape while the register stayed | `OBSERVED` | §135, §136, §138, §176 to §181, §187; [plan/agent-impact/REPORT.md](plan/agent-impact/REPORT.md) |
-| A prose-input trial: plain house guidance crossed with factual scene-planning notes, four conditions over one frozen scene request, written up as a diagnostic; a single draw and an editorial reading can establish no treatment effect | `CONJECTURE` | [research/quality-measurement/prose-inputs/PREREG.md](research/quality-measurement/prose-inputs/PREREG.md) |
+| Prose-input diagnostic, now completed: the investigated habits remained; a repeated source analogy survived elsewhere in context. This corrects the earlier overview's stale single-draw conjecture description; no quality effect is established | `OBSERVED` | [research/quality-measurement/prose-inputs/PREREG.md](research/quality-measurement/prose-inputs/PREREG.md); [results](research/quality-measurement/prose-inputs/RESULTS.md) |
 | Four paragraph edits of the actual Chapter 1, with all-information versus selective-retention instructions: selective edits omit later incidental details, but both retain the opening inventory. Sentence-shape counts fall in both conditions; no quality effect or semantic qualification is established | `OBSERVED` | [research/quality-measurement/prose-paragraph-revision/RESULTS.md](research/quality-measurement/prose-paragraph-revision/RESULTS.md); [registration](research/quality-measurement/prose-paragraph-revision/PREREG.md) |
 
 **What it changed.** The editorial control plane exists and is inert: a chapter-boundary panel
@@ -226,6 +226,37 @@ plan/reader-architecture-program.md). On the writing side, the levers that did m
 were code at the seat rather than clauses: the exemplar shelf shown to the writer with the
 reviser dropped (§196), the tells counter and the located rewrite pass (§199), and the concept
 stage drawn before the listing (§197).
+
+#### 4.5.1 Chapter 1 prose experiment history
+
+The operator requested a durable record of everything tried in this sequence on 2026-09-06.
+Each row points to the experiment's own registration and findings; it is not another source
+of empirical weight. `OBSERVED` means artifacts and located observations exist, not that the
+method improves prose. No trial below has qualified a literary-quality improvement.
+
+| Test and hypothesis | Recorded outcome or limit | state | Registration and findings |
+| --- | --- | --- | --- |
+| Plain guidance and factual plan: instruction phrasing may cause the prose habits | Habits remained; an analogy removed from the plan survived elsewhere in context. Source conversion needed correction. Early paragraph edits retained the opening problem. | `OBSERVED` | [registration](research/quality-measurement/prose-inputs/PREREG.md), [results](research/quality-measurement/prose-inputs/RESULTS.md) |
+| Literalize full context and reconstruct from a meaning ledger | Reviewed conversions required substantial source corrections. Explanatory structure and new comparisons persisted; an inline-display guard mismatch was retained. | `OBSERVED` | [registration](research/quality-measurement/prose-reconstruction/PREREG.md), [results](research/quality-measurement/prose-reconstruction/RESULTS.md) |
+| Delete dispensable spans without generating replacements | Both payloads failed exact matching. Some individually matching cuts also removed consequential meaning or damaged grammar. No edited manuscript was produced. | `OBSERVED` | [registration](research/quality-measurement/prose-subtraction/PREREG.md), [results](research/quality-measurement/prose-subtraction/RESULTS.md) |
+| Change transport framing, persona and supplied context | Manipulations executed; inventories, explanations and factual defects remained. A tools-availability fix was implemented separately; no prose gain is attributed to it. | `OBSERVED` | [registration](research/quality-measurement/prose-framing/PREREG.md), [results](research/quality-measurement/prose-framing/RESULTS.md) |
+| Use the subscription Codex writer on the fixed source packages | Interactions varied and explanations remained. A parser correction recovered a retained response; no redraw. Model and transport changed together against historical controls. | `OBSERVED` | [registration](research/quality-measurement/prose-codex/PREREG.md), [results](research/quality-measurement/prose-codex/RESULTS.md) |
+| Stage actions explicitly before drafting | Stopped on unresolved source conflicts about eligibility and initial acquisition. No prose conditions ran, so staging efficacy was not tested. | `OBSERVED` | [registration](research/quality-measurement/prose-staging/PREREG.md), [results](research/quality-measurement/prose-staging/RESULTS.md) |
+| Build a plan around actions and immediate outcomes | Planned interactions occurred, but controls also staged interaction. Inventories and rule interpretation remained; source-only assumptions and the initial planner stop are disclosed. | `OBSERVED` | [registration](research/quality-measurement/prose-actions/PREREG.md), [results](research/quality-measurement/prose-actions/RESULTS.md) |
+| Move the first paid action before the death | Assigned order changed. Earlier-action drafts still paused to explain understanding; the generated plans also differed in content, preventing an isolated sentence-order claim. | `OBSERVED` | [registration](research/quality-measurement/prose-order/PREREG.md), [results](research/quality-measurement/prose-order/RESULTS.md) |
+| Remove prescribed interpretation from the action plan | Background and repeated explanations persisted. The earlier exact contradiction did not recur in fresh controls either, preventing causal credit for its absence. | `OBSERVED` | [registration](research/quality-measurement/prose-interpretation/PREREG.md), [results](research/quality-measurement/prose-interpretation/RESULTS.md) |
+| Cross brief size and fixed-plan exposure on a fresh premise | All conditions opened on the specified emergency. Compact drafts invented backstory; explanations remained. Different premise and mechanics prevent attribution across cases. | `OBSERVED` | [registration](research/quality-measurement/prose-scene-brief/PREREG.md), [results](research/quality-measurement/prose-scene-brief/RESULTS.md) |
+| Allow incidental information to be omitted during paragraph revision | Some later information was omitted; both selective edits retained the opening inventory. Sentence-shape counts fell without establishing the desired improvement. | `OBSERVED` | [registration](research/quality-measurement/prose-paragraph-revision/PREREG.md), [results](research/quality-measurement/prose-paragraph-revision/RESULTS.md) |
+| Reconstruct from the same protected facts with original prose visible or withheld | Registered before calls; pending execution. Both request complete prose, isolating the appended reference block from patch formatting. | `REGISTERED` | [registration](research/quality-measurement/prose-protected-reconstruction/PREREG.md) |
+
+For subsequent tests in this sequence, record the hypothesis, fixed comparison, source/code
+hashes and stop rules before calls. Retain every request and raw response, including transport
+and format failures; record amendments without replacing failed draws. Finish a results file
+even when stopped, with deviations, protected-fact losses, unchanged problems, execution cost
+or quota accounting and artifact locations. Update this history with what the test delivered
+and what it did not establish. Narrative text stays in the ignored local artifacts; committed
+execution records retain their hashes and rebuild provenance. A stopped test and an ineffective
+delivered manipulation are different outcomes and must remain distinguishable.
 
 ### 4.6 What is our prose like next to the market's? Code-only censuses, no model, no bar.
 
