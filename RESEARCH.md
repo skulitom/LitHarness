@@ -248,6 +248,8 @@ method improves prose. No trial below has qualified a literary-quality improveme
 | Cross brief size and fixed-plan exposure on a fresh premise | All conditions opened on the specified emergency. Compact drafts invented backstory; explanations remained. Different premise and mechanics prevent attribution across cases. | `OBSERVED` | [registration](research/quality-measurement/prose-scene-brief/PREREG.md), [results](research/quality-measurement/prose-scene-brief/RESULTS.md) |
 | Allow incidental information to be omitted during paragraph revision | Some later information was omitted; both selective edits retained the opening inventory. Sentence-shape counts fell without establishing the desired improvement. | `OBSERVED` | [registration](research/quality-measurement/prose-paragraph-revision/PREREG.md), [results](research/quality-measurement/prose-paragraph-revision/RESULTS.md) |
 | Reconstruct from the same protected facts with original prose visible or withheld | All four omit the old opening inventory, including both reference controls. Repeated explanations remain; withheld outputs move the earlier briefing into current dialogue. New actions and display grammar defects survive exact literal checks. | `OBSERVED` | [registration](research/quality-measurement/prose-protected-reconstruction/PREREG.md), [results](research/quality-measurement/prose-protected-reconstruction/RESULTS.md) |
+| Change reasoning effort while keeping chapter inputs identical | Four complete reconstructions at high/low, fixed before calls; pending execution. | `REGISTERED` | [registration A](research/quality-measurement/prose-reasoning-disclosure/PREREG.md#a-reasoning-effort) |
+| Reveal source progressively while holding installment boundaries fixed | Both conditions write three installments; one sees future facts in advance. Twelve calls, fixed before execution. | `REGISTERED` | [registration B](research/quality-measurement/prose-reasoning-disclosure/PREREG.md#b-progressive-disclosure-with-a-matched-installment-control) |
 
 For subsequent tests in this sequence, record the hypothesis, fixed comparison, source/code
 hashes and stop rules before calls. Retain every request and raw response, including transport
@@ -257,6 +259,9 @@ or quota accounting and artifact locations. Update this history with what the te
 and what it did not establish. Narrative text stays in the ignored local artifacts; committed
 execution records retain their hashes and rebuild provenance. A stopped test and an ineffective
 delivered manipulation are different outcomes and must remain distinguishable.
+
+Other proposed but unrun diagnostics are recorded as conjectures in
+[the reasoning/disclosure idea record](research/quality-measurement/prose-reasoning-disclosure/IDEAS.md).
 
 ### 4.6 What is our prose like next to the market's? Code-only censuses, no model, no bar.
 

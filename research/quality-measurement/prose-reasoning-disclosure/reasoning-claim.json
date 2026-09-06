@@ -1,0 +1,13 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-reasoning-diagnostic-v1",
+  "statement": "Lower requested reasoning effort may change repeated explanation in fixed-input Chapter 1 reconstruction. Unqualified conjecture.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-reasoning-disclosure/PREREG.md",
+      "sha256": "7a96e8aad83ce86881041cd2bca5f4aedf3d85684bb93841c82944ca097ef0e9"
+    }
+  ]
+}

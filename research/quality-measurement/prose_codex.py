@@ -82,7 +82,9 @@ def command_prefix() -> list[str]:
     return [node, str(entry)]
 
 
-def argv(prefix: list[str], system_file: Path, work: Path) -> list[str]:
+def argv(prefix: list[str], system_file: Path, work: Path, *, effort: str = EFFORT) -> list[str]:
+    if effort not in {"low", "high"}:
+        raise ValueError("unregistered research reasoning effort")
     result = [
         *prefix,
         "exec",
@@ -104,7 +106,7 @@ def argv(prefix: list[str], system_file: Path, work: Path) -> list[str]:
         "forced_login_method": "chatgpt",
         "model_provider": "openai",
         "model_instructions_file": str(system_file),
-        "model_reasoning_effort": EFFORT,
+        "model_reasoning_effort": effort,
         "project_doc_max_bytes": 0,
         "personality": "none",
         "web_search": "disabled",
@@ -184,17 +186,19 @@ def validate(out: Path) -> dict[str, Any]:
     return manifest
 
 
-def complete_once(out: Path, name: str, manifest: dict[str, Any]) -> dict[str, Any]:
+def complete_once(
+    out: Path, name: str, manifest: dict[str, Any], *, effort: str = EFFORT
+) -> dict[str, Any]:
     if name not in ORDER:
         raise ValueError("unregistered condition")
     base = manifest["requests"][name.split("-")[0]]
-    arguments = argv(manifest["prefix"], out / "system.txt", out / "work")
+    arguments = argv(manifest["prefix"], out / "system.txt", out / "work", effort=effort)
     frozen = {
         "system": base["system"],
         "prompt": base["prompt"],
         "argv": arguments,
         "requested_model": MODEL,
-        "reasoning_effort": EFFORT,
+        "reasoning_effort": effort,
         "authentication": "chatgpt",
         "removed_environment_keys": list(REMOVED_ENV),
     }

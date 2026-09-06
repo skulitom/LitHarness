@@ -119,6 +119,20 @@ def test_codex_trial_blocks_fresh_billing_and_interrupted_or_changed_replay(tmp_
         TRIAL["complete_once"](tmp_path, "full-1", manifest)
     TRIAL["write_new"](tmp_path / "full-1.result.json", {"status": "completed", "text": "cached"})
     assert TRIAL["complete_once"](tmp_path, "full-1", manifest)["text"] == "cached"
+    with pytest.raises(ValueError, match="identity changed"):
+        TRIAL["complete_once"](tmp_path, "full-1", manifest, effort="low")
     manifest["requests"]["full"]["prompt"] = "Changed."
     with pytest.raises(ValueError, match="identity changed"):
         TRIAL["complete_once"](tmp_path, "full-1", manifest)
+
+
+def test_codex_research_effort_override_changes_only_reasoning_argument(tmp_path):
+    common = (["node", "codex.js"], tmp_path / "system.txt", tmp_path / "work")
+    high = TRIAL["argv"](*common)
+    low = TRIAL["argv"](*common, effort="low")
+    assert [x for x in high if not x.startswith("model_reasoning_effort=")] == [
+        x for x in low if not x.startswith("model_reasoning_effort=")
+    ]
+    assert 'model_reasoning_effort="low"' in low
+    with pytest.raises(ValueError, match="unregistered"):
+        TRIAL["argv"](*common, effort="invented")
