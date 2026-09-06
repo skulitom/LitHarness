@@ -1,0 +1,470 @@
+{
+  "status": "observed_unqualified_diagnostic",
+  "code_commit": "d5f50a31eac197ab7ed0bb3d6731b55624212688",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "cli_invocations": 4,
+  "usage": {
+    "input_tokens": 40414,
+    "cached_input_tokens": 0,
+    "output_tokens": 12398,
+    "reasoning_output_tokens": 5772
+  },
+  "conservative_token_total": 58584,
+  "outputs": [
+    {
+      "status": "completed",
+      "usage": {
+        "input_tokens": 10101,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2570,
+        "reasoning_output_tokens": 963
+      },
+      "wall_ms": 94975,
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "authentication": "chatgpt",
+      "cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "full-1",
+      "configuration_notice_count": 2,
+      "application": {
+        "status": "applied_for_inspection",
+        "patches": 12,
+        "literal_sequence_matches": true,
+        "source_sha256": "614e71241ed8cf942187f19b1cbc12b387c8459760a254759949daf081e53f61",
+        "result_sha256": "412dfb8b9329cb89ffff3d26b85c4d637a231738d3669aaf32031e3cf7ae0aa7"
+      },
+      "files": {
+        "full-1.request.json": "219d0b8671baf19053e4e05f90ecca5c44feaa31752a905ccaa8c3550cd1cab6",
+        "full-1.raw.json": "d7c5bf18dfa88b77d44b791ba5d387633cd4a55fc5d34312bc9f0161edcaf527",
+        "full-1.result.json": "412dfb8b9329cb89ffff3d26b85c4d637a231738d3669aaf32031e3cf7ae0aa7",
+        "full-1.txt": "293af1191e273fe9b89bd0abd4dc4cf4b28009e95dc9337ca65d0ef06b76ee58",
+        "full-1.application.json": "9960fb0a93900fef923a1897639475f3a2640525f8ef4d2633ebb9e6a8d77f63"
+      },
+      "metrics": {
+        "words": 1821,
+        "whitespace_words": 1901,
+        "paragraphs": 56,
+        "tells_counts": {
+          "absence": 18,
+          "paradox": 0,
+          "the_way": 4,
+          "echo": 0,
+          "chained_and": 4,
+          "long": 9
+        },
+        "tells_per_1000": {
+          "absence": 9.884678747940692,
+          "paradox": 0.0,
+          "the_way": 2.196595277320154,
+          "echo": 0.0,
+          "chained_and": 2.196595277320154,
+          "long": 4.942339373970346
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      }
+    },
+    {
+      "status": "completed",
+      "usage": {
+        "input_tokens": 10106,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2883,
+        "reasoning_output_tokens": 1034
+      },
+      "wall_ms": 95409,
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "authentication": "chatgpt",
+      "cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "focused-1",
+      "configuration_notice_count": 2,
+      "application": {
+        "status": "applied_for_inspection",
+        "patches": 14,
+        "literal_sequence_matches": true,
+        "source_sha256": "614e71241ed8cf942187f19b1cbc12b387c8459760a254759949daf081e53f61",
+        "result_sha256": "7644e39d1b951c24df4ae5877e33d2b3b90ad89208703b9f5dcda01417b8fa8c"
+      },
+      "files": {
+        "focused-1.request.json": "c631ed10fa508453d470f3b1ca9ab08ac1e5be510e9d2a38e9e3422ec8e352fe",
+        "focused-1.raw.json": "607253411768c434077d44b1d392782957e74799625797771539feb3fa62e829",
+        "focused-1.result.json": "7644e39d1b951c24df4ae5877e33d2b3b90ad89208703b9f5dcda01417b8fa8c",
+        "focused-1.txt": "5b31b47be7076dcea6a6a92b4f54529fbe842245c9bbb735a62d87aa036bd927",
+        "focused-1.application.json": "bb6ac522a8453ea6f1226de406f230ffb7e0494ad817c6bade5d71cd5154122a"
+      },
+      "metrics": {
+        "words": 1743,
+        "whitespace_words": 1823,
+        "paragraphs": 55,
+        "tells_counts": {
+          "absence": 19,
+          "paradox": 0,
+          "the_way": 4,
+          "echo": 0,
+          "chained_and": 3,
+          "long": 5
+        },
+        "tells_per_1000": {
+          "absence": 10.900745840504877,
+          "paradox": 0.0,
+          "the_way": 2.2948938611589216,
+          "echo": 0.0,
+          "chained_and": 1.721170395869191,
+          "long": 2.8686173264486516
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      }
+    },
+    {
+      "status": "completed",
+      "usage": {
+        "input_tokens": 10106,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3590,
+        "reasoning_output_tokens": 1950
+      },
+      "wall_ms": 148990,
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "authentication": "chatgpt",
+      "cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "focused-2",
+      "configuration_notice_count": 2,
+      "application": {
+        "status": "applied_for_inspection",
+        "patches": 10,
+        "literal_sequence_matches": true,
+        "source_sha256": "614e71241ed8cf942187f19b1cbc12b387c8459760a254759949daf081e53f61",
+        "result_sha256": "c2c1b70c0bf96358170c52d96b5fbf69c55d003e449e2cd01e5402c8d8c52e8a"
+      },
+      "files": {
+        "focused-2.request.json": "c631ed10fa508453d470f3b1ca9ab08ac1e5be510e9d2a38e9e3422ec8e352fe",
+        "focused-2.raw.json": "696d6971833847540299964cf018a3596e4dbd12114d44398d358d805825f7b2",
+        "focused-2.result.json": "c2c1b70c0bf96358170c52d96b5fbf69c55d003e449e2cd01e5402c8d8c52e8a",
+        "focused-2.txt": "fd740761aa73347ce32c9244d65e6bb680889037bc456cb378550c54e3ea7e59",
+        "focused-2.application.json": "343cb3fcc01419dc982ec5141c1a0961618007e7d697acc52857c9f6d32bd9b4"
+      },
+      "metrics": {
+        "words": 1733,
+        "whitespace_words": 1813,
+        "paragraphs": 56,
+        "tells_counts": {
+          "absence": 17,
+          "paradox": 0,
+          "the_way": 4,
+          "echo": 0,
+          "chained_and": 4,
+          "long": 7
+        },
+        "tells_per_1000": {
+          "absence": 9.809578765147144,
+          "paradox": 0.0,
+          "the_way": 2.308136180034622,
+          "echo": 0.0,
+          "chained_and": 2.308136180034622,
+          "long": 4.039238315060588
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      }
+    },
+    {
+      "status": "completed",
+      "usage": {
+        "input_tokens": 10101,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3355,
+        "reasoning_output_tokens": 1825
+      },
+      "wall_ms": 112672,
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "authentication": "chatgpt",
+      "cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "full-2",
+      "configuration_notice_count": 2,
+      "application": {
+        "status": "applied_for_inspection",
+        "patches": 12,
+        "literal_sequence_matches": true,
+        "source_sha256": "614e71241ed8cf942187f19b1cbc12b387c8459760a254759949daf081e53f61",
+        "result_sha256": "ac6a73c86b2fae270c7ffa6ff7de8e8b621ab965527200446b237c258adddf7f"
+      },
+      "files": {
+        "full-2.request.json": "219d0b8671baf19053e4e05f90ecca5c44feaa31752a905ccaa8c3550cd1cab6",
+        "full-2.raw.json": "1a1f7282197ae177c681d4420dca04fbebd2620868d7a2b42b5232da1da50b69",
+        "full-2.result.json": "ac6a73c86b2fae270c7ffa6ff7de8e8b621ab965527200446b237c258adddf7f",
+        "full-2.txt": "911aee73c49b5c5a7aabdac221ce759f7052ff16ef0fc6794ac2de507497d4d8",
+        "full-2.application.json": "c7e5cc892624a77bddae194c1fad7b5f27d1412ecd748c5a60899eaa0fa104b6"
+      },
+      "metrics": {
+        "words": 1828,
+        "whitespace_words": 1908,
+        "paragraphs": 56,
+        "tells_counts": {
+          "absence": 19,
+          "paradox": 0,
+          "the_way": 4,
+          "echo": 0,
+          "chained_and": 4,
+          "long": 9
+        },
+        "tells_per_1000": {
+          "absence": 10.393873085339168,
+          "paradox": 0.0,
+          "the_way": 2.1881838074398248,
+          "echo": 0.0,
+          "chained_and": 2.1881838074398248,
+          "long": 4.923413566739606
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      }
+    }
+  ],
+  "metrics": {
+    "original": {
+      "words": 1844,
+      "whitespace_words": 1924,
+      "paragraphs": 55,
+      "tells_counts": {
+        "absence": 18,
+        "paradox": 0,
+        "the_way": 4,
+        "echo": 1,
+        "chained_and": 10,
+        "long": 17
+      },
+      "tells_per_1000": {
+        "absence": 9.761388286334057,
+        "paradox": 0.0,
+        "the_way": 2.1691973969631237,
+        "echo": 0.5422993492407809,
+        "chained_and": 5.422993492407809,
+        "long": 9.219088937093275
+      },
+      "gloss_counts": {
+        "a1": 0,
+        "a2": 0,
+        "tier_a": 0,
+        "tier_b": 0
+      },
+      "long_words_diagnostic": 35
+    },
+    "full-1": {
+      "words": 1821,
+      "whitespace_words": 1901,
+      "paragraphs": 56,
+      "tells_counts": {
+        "absence": 18,
+        "paradox": 0,
+        "the_way": 4,
+        "echo": 0,
+        "chained_and": 4,
+        "long": 9
+      },
+      "tells_per_1000": {
+        "absence": 9.884678747940692,
+        "paradox": 0.0,
+        "the_way": 2.196595277320154,
+        "echo": 0.0,
+        "chained_and": 2.196595277320154,
+        "long": 4.942339373970346
+      },
+      "gloss_counts": {
+        "a1": 0,
+        "a2": 0,
+        "tier_a": 0,
+        "tier_b": 0
+      },
+      "long_words_diagnostic": 35
+    },
+    "focused-1": {
+      "words": 1743,
+      "whitespace_words": 1823,
+      "paragraphs": 55,
+      "tells_counts": {
+        "absence": 19,
+        "paradox": 0,
+        "the_way": 4,
+        "echo": 0,
+        "chained_and": 3,
+        "long": 5
+      },
+      "tells_per_1000": {
+        "absence": 10.900745840504877,
+        "paradox": 0.0,
+        "the_way": 2.2948938611589216,
+        "echo": 0.0,
+        "chained_and": 1.721170395869191,
+        "long": 2.8686173264486516
+      },
+      "gloss_counts": {
+        "a1": 0,
+        "a2": 0,
+        "tier_a": 0,
+        "tier_b": 0
+      },
+      "long_words_diagnostic": 35
+    },
+    "focused-2": {
+      "words": 1733,
+      "whitespace_words": 1813,
+      "paragraphs": 56,
+      "tells_counts": {
+        "absence": 17,
+        "paradox": 0,
+        "the_way": 4,
+        "echo": 0,
+        "chained_and": 4,
+        "long": 7
+      },
+      "tells_per_1000": {
+        "absence": 9.809578765147144,
+        "paradox": 0.0,
+        "the_way": 2.308136180034622,
+        "echo": 0.0,
+        "chained_and": 2.308136180034622,
+        "long": 4.039238315060588
+      },
+      "gloss_counts": {
+        "a1": 0,
+        "a2": 0,
+        "tier_a": 0,
+        "tier_b": 0
+      },
+      "long_words_diagnostic": 35
+    },
+    "full-2": {
+      "words": 1828,
+      "whitespace_words": 1908,
+      "paragraphs": 56,
+      "tells_counts": {
+        "absence": 19,
+        "paradox": 0,
+        "the_way": 4,
+        "echo": 0,
+        "chained_and": 4,
+        "long": 9
+      },
+      "tells_per_1000": {
+        "absence": 10.393873085339168,
+        "paradox": 0.0,
+        "the_way": 2.1881838074398248,
+        "echo": 0.0,
+        "chained_and": 2.1881838074398248,
+        "long": 4.923413566739606
+      },
+      "gloss_counts": {
+        "a1": 0,
+        "a2": 0,
+        "tier_a": 0,
+        "tier_b": 0
+      },
+      "long_words_diagnostic": 35
+    }
+  },
+  "within_condition_absolute_count_differences": {
+    "full": {
+      "absence": 1,
+      "paradox": 0,
+      "the_way": 0,
+      "echo": 0,
+      "chained_and": 0,
+      "long": 0
+    },
+    "focused": {
+      "absence": 2,
+      "paradox": 0,
+      "the_way": 0,
+      "echo": 0,
+      "chained_and": 1,
+      "long": 2
+    }
+  },
+  "frozen_files": {
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_paragraph_revision.py": "ae51eb0916e1f5dd5e9783aa761c934a70380e26ece3a7ba5fc14ad2710d34a7",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_codex.py": "e244da964219121b486fe5d9189230e117e8558f9130eceb4361695df163e24f",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-paragraph-revision\\PREREG.md": "c4a3f4da1222ae465173de6cb65673ff427f0b8d369c159dfc6a100c13a3dab5",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-paragraph-revision\\RUNBOOK.md": "b896ce43956653256750babe299afc77cab6d26477b5dd30c80758cd9c5086eb",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-paragraph-revision-tools\\source.json": "b75082e05b0647f097c923cbd8895ec42313699e8dcde5d20c4c8a06ac66a633",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-paragraph-revision-tools\\source-review.md": "a25f7328470c7d9ce4d67be26e7e7681a5145fb164800513ec59ba4389669f7d",
+    "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\bin\\codex.js": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-paragraph-revision-20260906\\system.txt": "f15d835242998ee1bd2d7ee1783e8c20f0b6caa1ae2cad75ab4eed916c1af12e"
+  },
+  "artifacts": {
+    "runs\\ab\\prose-paragraph-revision-20260906\\manifest.json": "614e71241ed8cf942187f19b1cbc12b387c8459760a254759949daf081e53f61",
+    "runs\\ab\\prose-paragraph-revision-20260906\\comparison.html": "e4073d7c2d6dc84cadf35d61c9b9dfb0b90e6cef3f4f01f6cfa1256cd8d7586c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-paragraph-revision-tools\\build_review.py": "3cb8fa36aaad9834e74443aa8e066a4d6489d3573d779a476e0cfd5d7284bec4",
+    "runs\\ab\\prose-order-tools\\build_review.py": "8cf5ce2e1d33c7641c6528ef8719079fe9a1fe46688fa4e66502f00f10cb66f8",
+    "src\\litharness\\domain\\tells.py": "c4459441995291de158f18dbbcb7b903b4e126c164fef0e955f01fedddea589c",
+    "research\\quality-measurement\\register_census.py": "f8bda53ced24815e11c67116ca280d8b5213e1582a210aa328fc4382f4df052c",
+    "runs\\ab\\prose-paragraph-revision-20260906\\READING.md": "84b483488c9a8ba67f90e8e5a3cefa3a5ea386051a9e35b28e4f9f60d2229ac9",
+    "runs\\ab\\prose-paragraph-revision-20260906\\fact-audit.json": "3c222655652c22f838694c837e095699b0431db63a444455845f2f35368e4e8f",
+    "runs\\ab\\prose-paragraph-revision-20260906\\browser-qa\\page-2026-09-06T17-27-01-090Z.yml": "71c71c726ac3ee9a04103c027bb6e4fdfb040e402b73ecfdc2c82b8aed0e291a",
+    "runs\\ab\\prose-paragraph-revision-20260906\\browser-qa\\page-2026-09-06T17-27-45-652Z.yml": "9ea347805adcdc0fc874a76d699270027ae3d4ab160b4e2bddc625b47bcfd9b8",
+    "runs\\ab\\prose-paragraph-revision-20260906\\browser-qa\\page-2026-09-06T17-27-47-877Z.yml": "dd2756b6de8cb184bb27c1aef86f0724599a725b7710c3ebd21f94dd471827f0",
+    "output\\playwright\\prose-paragraph-revision-default.png": "2115c368b221d5894590a540d14fe060e1913e8bcbda8d678741f576cdc6c9f3"
+  },
+  "request_integrity": "All actual prompts and systems match frozen requests and the configured system file.",
+  "rebuild": "uv run python runs/ab/prose-paragraph-revision-tools/build_review.py"
+}

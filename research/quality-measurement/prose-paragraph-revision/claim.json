@@ -2,12 +2,17 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "prose-paragraph-selective-retention-v1",
   "statement": "Allowing incidental information to be omitted or deferred during paragraph revision may change the located overload and repeated interpretation without losing consequential meaning. This is a conjecture, not a qualified editor.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
       "path": "research/quality-measurement/prose-paragraph-revision/PREREG.md",
       "sha256": "c4a3f4da1222ae465173de6cb65673ff427f0b8d369c159dfc6a100c13a3dab5"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-paragraph-revision/execution.json",
+      "sha256": "81a4db206fc460b6af6781bae9a0d79d5d177985551001deddfc729cd1c4fd4f"
     }
   ]
 }
