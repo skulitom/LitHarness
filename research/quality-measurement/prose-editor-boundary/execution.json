@@ -1,0 +1,1641 @@
+{
+  "status": "observed_unqualified_diagnostics",
+  "code_commit": "45566a9375d5d8c9eef78f207cc55e893bb717fd",
+  "versions": {
+    "codex": "codex-cli 0.153.4",
+    "claude": "2.1.263 (Claude Code)"
+  },
+  "authentication": {
+    "codex": "chatgpt",
+    "claude": "claude.ai/max/firstParty"
+  },
+  "cli_invocations": 20,
+  "completed_calls": 20,
+  "usage": {
+    "input_tokens": 142803,
+    "cached_input_tokens": 16128,
+    "output_tokens": 39345,
+    "reasoning_output_tokens": 6752
+  },
+  "conservative_token_total": 188900,
+  "outputs": [
+    {
+      "id": "selector",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 8104,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 437,
+        "reasoning_output_tokens": 159
+      },
+      "raw_usage": null,
+      "wall_ms": 20656,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 89,
+        "paragraphs": 1,
+        "english_surface_diagnostics": "not applicable"
+      },
+      "checks": null,
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\selector\\prose.txt": "60e2048c254ec4b328134e21aa4b28f65c1463486b7c79e941e7b449ba841894",
+        "runs\\ab\\prose-editor-boundary-20260906\\selector\\raw.json": "46cf39780aa73072d274e4d527983961ef0825964a9b3a5120ad1f185472d6ea",
+        "runs\\ab\\prose-editor-boundary-20260906\\selector\\request.json": "fa2a950e1fb91f938264c97330b47be2f22f0167f7f9a6681241c9e37e9ffff0",
+        "runs\\ab\\prose-editor-boundary-20260906\\selector\\result.json": "0daaa031cf4e081ba1851e44b196850209c9d839ec8d9cfe9a73822589031035",
+        "runs\\ab\\prose-editor-boundary-20260906\\selector\\system.txt": "2096593749d13851fd0a2ce519f1c7664329a5c2153907dd6440d8fcf607a1cd"
+      }
+    },
+    {
+      "id": "codex-full-1",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 8164,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2326,
+        "reasoning_output_tokens": 497
+      },
+      "raw_usage": null,
+      "wall_ms": 97292,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1460,
+        "paragraphs": 78,
+        "counted_words": 1375,
+        "tells_counts": {
+          "absence": 10,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 1,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 7.2727272727272725,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.7272727272727273,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-full-1\\prose.txt": "ce5364a49c11eef3aef77c539c61dacd598c3e3dd0da459714c49dcf7055c31c",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-full-1\\raw.json": "bf71a821ec7dd400cc91298b5637728202a8d99c23195c61a8ccf961b9bad154",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-full-1\\request.json": "c65365175d9857fd6985cd2ceee727c06901cfb7c3d3643446d44c58644a4d38",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-full-1\\result.json": "a011abe5e6c7939c696a4be1d8f33b7d1333005695cce7af2631396641d50bf1",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-full-1\\system.txt": "6ec7ef702373b1f01150720589ebc3af4a48dba78f9c074031166f074cbd890e"
+      }
+    },
+    {
+      "id": "claude-full-1",
+      "status": "completed",
+      "requested_model": "claude-opus-5",
+      "resolved_model": "claude-opus-5",
+      "effort": "high",
+      "authentication": "claude.ai/max/firstParty",
+      "usage": {
+        "input_tokens": 9396,
+        "cached_input_tokens": 0,
+        "output_tokens": 5898
+      },
+      "raw_usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 5080,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 5883,
+        "output_tokens_details": {
+          "thinking_tokens": 1479
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 5080,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 5883,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 5080,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 5080
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "wall_ms": 91757,
+      "equivalent_cost_usd": 0.20227400000000004,
+      "event_types": [
+        "system",
+        "rate_limit_event",
+        "system",
+        "system",
+        "system",
+        "system",
+        "system",
+        "system",
+        "system",
+        "system",
+        "system",
+        "system",
+        "system",
+        "system",
+        "system",
+        "assistant",
+        "assistant",
+        "result"
+      ],
+      "configuration_notice_count": 0,
+      "error": null,
+      "containment": "failed: unexpected auxiliary model; offline accounting recovery only",
+      "original_result_status": "failed",
+      "model_usage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 4314,
+          "outputTokens": 15,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.0043890000000000005,
+          "contextWindow": 200000,
+          "maxOutputTokens": 32000,
+          "thinkingTokens": 0,
+          "canonicalModel": "claude-haiku-4-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        },
+        "claude-opus-5": {
+          "inputTokens": 2,
+          "outputTokens": 5883,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 5080,
+          "webSearchRequests": 0,
+          "costUSD": 0.19788500000000003,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 64000,
+          "thinkingTokens": 1479,
+          "canonicalModel": "claude-opus-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "metrics": {
+        "full_words": 2556,
+        "paragraphs": 57,
+        "counted_words": 2476,
+        "tells_counts": {
+          "absence": 19,
+          "paradox": 1,
+          "the_way": 2,
+          "echo": 4,
+          "chained_and": 16,
+          "long": 21
+        },
+        "tells_per_1000": {
+          "absence": 7.673667205169629,
+          "paradox": 0.40387722132471726,
+          "the_way": 0.8077544426494345,
+          "echo": 1.615508885298869,
+          "chained_and": 6.462035541195476,
+          "long": 8.481421647819063
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": false,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 11,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\claude-full-1\\prose.txt": "0420e32045f5adb7a23b97ef45d98792d4e1c1b9f41c95b0deaa4a408ed8846b",
+        "runs\\ab\\prose-editor-boundary-20260906\\claude-full-1\\raw.json": "197ae94d11e00c37753b4649259120199212ea7a1080f9bcc71f6bdf31fc1c7c",
+        "runs\\ab\\prose-editor-boundary-20260906\\claude-full-1\\recovered.json": "e2fcccfb80c3dc8f1ce4f204732d1e6ee168345e6e920776cfe5d389bfc68565",
+        "runs\\ab\\prose-editor-boundary-20260906\\claude-full-1\\request.json": "a95d7633989ee60d22d0a76d9078028ff201b6ec5660e820ddca4878f5059bc8",
+        "runs\\ab\\prose-editor-boundary-20260906\\claude-full-1\\result.json": "e2391b4fb8aa369054202d6dff1d684ac1a3875719f70bddc5320783b66aeda2",
+        "runs\\ab\\prose-editor-boundary-20260906\\claude-full-1\\system.txt": "6ec7ef702373b1f01150720589ebc3af4a48dba78f9c074031166f074cbd890e"
+      }
+    },
+    {
+      "id": "codex-static-1",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 7543,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2141,
+        "reasoning_output_tokens": 516
+      },
+      "raw_usage": null,
+      "wall_ms": 89777,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1290,
+        "paragraphs": 69,
+        "counted_words": 1205,
+        "tells_counts": {
+          "absence": 6,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 4.979253112033195,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-static-1\\prose.txt": "dd2b3e33637f962cb2977dd3582d8cc14589a32b38dd1ae1e87efdb90df1abe4",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-static-1\\raw.json": "387525375516d9506db351f7ed412574368addf62b279bee09b20ca276f253c4",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-static-1\\request.json": "006c2cbf3653d355e369b8eaea191aee9f50a06454d7d60559c7afbc3f373b70",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-static-1\\result.json": "8e3e2f117a2ba08c8a9935fa9b64acf7cf660c6bf3c4b4223fceef35ae094b0e",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-static-1\\system.txt": "6ec7ef702373b1f01150720589ebc3af4a48dba78f9c074031166f074cbd890e"
+      }
+    },
+    {
+      "id": "codex-editor-1",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 7681,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2036,
+        "reasoning_output_tokens": 430
+      },
+      "raw_usage": null,
+      "wall_ms": 88898,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1263,
+        "paragraphs": 72,
+        "counted_words": 1178,
+        "tells_counts": {
+          "absence": 12,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 10.186757215619695,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-editor-1\\prose.txt": "fe18b1882407969a466ddbe517542af31e93d5c5cffd6c710a6c94213009f023",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-editor-1\\raw.json": "4dc08d7bea0739c925819bd925150dc7bf74ded3f24eb5c6f638765d912e6ef6",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-editor-1\\request.json": "9bd7c15192179dbeac0b912cf00d6a38b22fa004443fa3b37886f3127b048c16",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-editor-1\\result.json": "00db3e575b745470918148f384c909c174cea614951f40388e2616ddc3352ee8",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-editor-1\\system.txt": "6ec7ef702373b1f01150720589ebc3af4a48dba78f9c074031166f074cbd890e"
+      }
+    },
+    {
+      "id": "codex-editor-2",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 7681,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2094,
+        "reasoning_output_tokens": 516
+      },
+      "raw_usage": null,
+      "wall_ms": 85730,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1240,
+        "paragraphs": 70,
+        "counted_words": 1155,
+        "tells_counts": {
+          "absence": 11,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 9.523809523809524,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-editor-2\\prose.txt": "6818c4e0891ae9754cbe75856a8b3cac8e8ed7659407558c4af29074427e4a98",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-editor-2\\raw.json": "062bc88c88aec2666fe1244ad1a5e98b69d666019fe79a17a95ce54162dde31b",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-editor-2\\request.json": "03c64573df71fdd27d12cf239ccd912daeea40b729fcaaa86b6bca5afa346034",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-editor-2\\result.json": "3c00ab668e9ea344cbbee6a03599be6f0e167f1bac9bbc5964b0e8012f508539",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-editor-2\\system.txt": "6ec7ef702373b1f01150720589ebc3af4a48dba78f9c074031166f074cbd890e"
+      }
+    },
+    {
+      "id": "codex-static-2",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 7543,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2431,
+        "reasoning_output_tokens": 849
+      },
+      "raw_usage": null,
+      "wall_ms": 174015,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1252,
+        "paragraphs": 73,
+        "counted_words": 1167,
+        "tells_counts": {
+          "absence": 9,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 1,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 7.712082262210797,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.856898029134533,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-static-2\\prose.txt": "ce1be623b008c961e9e53bf6a977323093088648baca65e107a4643481ad9626",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-static-2\\raw.json": "07f2a357567f57a8f827db898f27b388f259184b52d9e3b7c2889fd4f35e8a2f",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-static-2\\request.json": "175cf33b21f60ba5dcd4e878adb0e0d49650246827569d71d71208c1b425f62a",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-static-2\\result.json": "62402873179ce59ea054f5434c8e56bd8efbcc6a3d3146325775a365e25b7f7e",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-static-2\\system.txt": "6ec7ef702373b1f01150720589ebc3af4a48dba78f9c074031166f074cbd890e"
+      }
+    },
+    {
+      "id": "codex-full-2",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 8164,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2181,
+        "reasoning_output_tokens": 516
+      },
+      "raw_usage": null,
+      "wall_ms": 84278,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1318,
+        "paragraphs": 70,
+        "counted_words": 1238,
+        "tells_counts": {
+          "absence": 16,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 1,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 12.924071082390952,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.8077544426494345,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-full-2\\prose.txt": "12b684884fa6b69cf4871d58a10ec47b0012406634806a7964377a02afcdc37a",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-full-2\\raw.json": "e33f284a8d9862e70be9faa80b6255bf25b522b793ff541d2d305887e42d30df",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-full-2\\request.json": "24281df1737921093ffcf6d53771c4640e10a61d3f36b6272b21c7fe299c74cc",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-full-2\\result.json": "df4ee6ef56482639f73c58514432d6411bd9e094fbd58a3a6943b7a5174fc7b1",
+        "runs\\ab\\prose-editor-boundary-20260906\\codex-full-2\\system.txt": "6ec7ef702373b1f01150720589ebc3af4a48dba78f9c074031166f074cbd890e"
+      }
+    },
+    {
+      "id": "mechanical-1",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 5207,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1206,
+        "reasoning_output_tokens": 275
+      },
+      "raw_usage": null,
+      "wall_ms": 62657,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 759,
+        "paragraphs": 44,
+        "counted_words": 759,
+        "tells_counts": {
+          "absence": 2,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 2.635046113306983,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": null,
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\mechanical-1\\prose.txt": "a4e61049397243d11b603405a4d2eb0b1e79d7a36c3da251bbec9a8af73b709e",
+        "runs\\ab\\prose-editor-boundary-20260906\\mechanical-1\\raw.json": "e9d7342071a552d8033554f872d66559fa300423a7e4c6b4bdbc8a4a2a098a07",
+        "runs\\ab\\prose-editor-boundary-20260906\\mechanical-1\\request.json": "e8e2279e0c1a2d1716e6e1937dd4556d21cbfc29217588365a217aaef8794d18",
+        "runs\\ab\\prose-editor-boundary-20260906\\mechanical-1\\result.json": "7997935a1bc3863680ae5f3c9281ab810900e48cb257aa60078457cfc0d37960",
+        "runs\\ab\\prose-editor-boundary-20260906\\mechanical-1\\system.txt": "d735059a0d9902e78b75ae8fbc345a826af53cf02f7026858744ae65c7d546fa"
+      }
+    },
+    {
+      "id": "social-1",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 5228,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1013,
+        "reasoning_output_tokens": 183
+      },
+      "raw_usage": null,
+      "wall_ms": 46883,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 679,
+        "paragraphs": 41,
+        "counted_words": 679,
+        "tells_counts": {
+          "absence": 2,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 2.9455081001472756,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": null,
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\social-1\\prose.txt": "2df9d4dd5168af8a4e613a649db8752dfdfe0cc75a172c765f91910e04b1aa4c",
+        "runs\\ab\\prose-editor-boundary-20260906\\social-1\\raw.json": "a84dbf59700e5519bb258115f3f9ea71b27c999e0acc2d203a168e385ab39be6",
+        "runs\\ab\\prose-editor-boundary-20260906\\social-1\\request.json": "afef32322a7fb16bb497dd25ca19b7e114a9ed4ecccd6e83249b173db173d3a5",
+        "runs\\ab\\prose-editor-boundary-20260906\\social-1\\result.json": "81bdbcd5b5bb635fe5af703a280c3035f8b89dbbdb1ec93301552a38b7b266a7",
+        "runs\\ab\\prose-editor-boundary-20260906\\social-1\\system.txt": "d735059a0d9902e78b75ae8fbc345a826af53cf02f7026858744ae65c7d546fa"
+      }
+    },
+    {
+      "id": "social-2",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 5228,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1000,
+        "reasoning_output_tokens": 241
+      },
+      "raw_usage": null,
+      "wall_ms": 52041,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 617,
+        "paragraphs": 45,
+        "counted_words": 617,
+        "tells_counts": {
+          "absence": 0,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 0.0,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": null,
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\social-2\\prose.txt": "4d24681f8d838bf16e40bb4aa6ae924a0effd1710b0bbe1d786c233dea231bc9",
+        "runs\\ab\\prose-editor-boundary-20260906\\social-2\\raw.json": "1269a50bfb23fb38e4694567e8f7abd27207e837534d9189f9f2a29af4841569",
+        "runs\\ab\\prose-editor-boundary-20260906\\social-2\\request.json": "1a4f592ff696ad44552bbee3634c4c36318606bc8154616e2405cd977f5690a9",
+        "runs\\ab\\prose-editor-boundary-20260906\\social-2\\result.json": "d306fc12b6833d595b28020509edf3270e59d3e327190383d21b11806ab98468",
+        "runs\\ab\\prose-editor-boundary-20260906\\social-2\\system.txt": "d735059a0d9902e78b75ae8fbc345a826af53cf02f7026858744ae65c7d546fa"
+      }
+    },
+    {
+      "id": "mechanical-2",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 5207,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1177,
+        "reasoning_output_tokens": 351
+      },
+      "raw_usage": null,
+      "wall_ms": 57546,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 675,
+        "paragraphs": 37,
+        "counted_words": 675,
+        "tells_counts": {
+          "absence": 2,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 2.962962962962963,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": null,
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\mechanical-2\\prose.txt": "fa0c79ba8897ffff63bb99cc0d18a2468fbf48d77f3a9442017de22ad9cf48f7",
+        "runs\\ab\\prose-editor-boundary-20260906\\mechanical-2\\raw.json": "171e6f9e92423aab70b38cde11a0b12e83fcebc09b7057ab29ff3c7eed3670bf",
+        "runs\\ab\\prose-editor-boundary-20260906\\mechanical-2\\request.json": "e4e6aec834aaf01476493946de87c23a833159625e1b7a8219eab4bc7925cec5",
+        "runs\\ab\\prose-editor-boundary-20260906\\mechanical-2\\result.json": "b9c64ea44bf25421ad34615a6b694b340cf09c999895bd950a24716716806744",
+        "runs\\ab\\prose-editor-boundary-20260906\\mechanical-2\\system.txt": "d735059a0d9902e78b75ae8fbc345a826af53cf02f7026858744ae65c7d546fa"
+      }
+    },
+    {
+      "id": "russian-source-1",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 7560,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2410,
+        "reasoning_output_tokens": 516
+      },
+      "raw_usage": null,
+      "wall_ms": 96962,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 994,
+        "paragraphs": 59,
+        "english_surface_diagnostics": "not applicable"
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-source-1\\prose.txt": "71a98236a0e7fdc9f66b30f8ad943b4b39b949c38b399abcdf2d05c35c07e02b",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-source-1\\raw.json": "129c98419bc78ce3cfebf9e12a31ca4ea336ee66708537b58d84a8f7c6f97723",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-source-1\\request.json": "442bd0da65a4980a6a09897f2904b6fca533ca7e29cffcff824317f24c50f84b",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-source-1\\result.json": "ec4810e30742276173ef5bd18f4e63d453b00ce96f8cd1229beecda89a6b4ecd",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-source-1\\system.txt": "61a40eba44336aaadae9168d57cc85640702dff5cd06c5bd265ab18398bd90f2"
+      }
+    },
+    {
+      "id": "russian-render-1",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 7000,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1643,
+        "reasoning_output_tokens": 85
+      },
+      "raw_usage": null,
+      "wall_ms": 53809,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1217,
+        "paragraphs": 59,
+        "counted_words": 1132,
+        "tells_counts": {
+          "absence": 6,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 5.30035335689046,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-render-1\\prose.txt": "587c62d0913f9968b1f4358a09c9dde98bde4c629984bda50db63fe037d5f263",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-render-1\\raw.json": "1bfa0535ba52c23e60422009f6adad6e9a88c40a327b66106679e281307080b2",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-render-1\\request.json": "05fc175f4017aff08c7bb0df551bdb1c83f6acf400d7c6d3a327011d5a098a7f",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-render-1\\result.json": "9be033f877552de42f576653f4cf2bf35099413de75b156104826d99c849c953",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-render-1\\system.txt": "bea9e5b191e00995de205f162c0d91232ffa0d2e0f88974ba39283714ce19539"
+      }
+    },
+    {
+      "id": "english-source-1",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 7560,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1899,
+        "reasoning_output_tokens": 352
+      },
+      "raw_usage": null,
+      "wall_ms": 71087,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1224,
+        "paragraphs": 70,
+        "counted_words": 1139,
+        "tells_counts": {
+          "absence": 8,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 7.023705004389815,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\english-source-1\\prose.txt": "c99c78a66e94f23bfb8a665a11f174ee27372c72087c1da75df262a8fc09f254",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-source-1\\raw.json": "0301196066d61d62b6fa86e09875357ab09cb4e0fdacc25d851607a17ca3c1ab",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-source-1\\request.json": "baebd89326274e1b9bf084c4a10facd5b0c21c40650856e6c54e295e4c4d2750",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-source-1\\result.json": "5ab3048300b0b2c5c4a4bafe63a2958fab2d6257961b0cda1a0c80f401cf7a94",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-source-1\\system.txt": "f75baea8110db55c2d98532299ea9a503409337cd0372a8ac0577b4cb999fcff"
+      }
+    },
+    {
+      "id": "english-render-1",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 6677,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1602,
+        "reasoning_output_tokens": 44
+      },
+      "raw_usage": null,
+      "wall_ms": 52212,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1221,
+        "paragraphs": 70,
+        "counted_words": 1136,
+        "tells_counts": {
+          "absence": 10,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 8.80281690140845,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\english-render-1\\prose.txt": "18fc6103ba42d8980089e7f1a6e48ba567dd33e77265bbf31f53f35d817261c3",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-render-1\\raw.json": "53aeda81ab6ce593e97727e928121f5a67f01c2d366906d711fcc80e9163eebb",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-render-1\\request.json": "51751de8cf99f4a9c8076e24711ad59d66f03ac449bdc3b0794518a4863219ff",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-render-1\\result.json": "6b9f639f174282ec5004551a41346c319abb6095de1a1aabd13c6a9e895356ec",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-render-1\\system.txt": "bea9e5b191e00995de205f162c0d91232ffa0d2e0f88974ba39283714ce19539"
+      }
+    },
+    {
+      "id": "english-source-2",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 7560,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1994,
+        "reasoning_output_tokens": 430
+      },
+      "raw_usage": null,
+      "wall_ms": 78388,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1241,
+        "paragraphs": 70,
+        "counted_words": 1156,
+        "tells_counts": {
+          "absence": 7,
+          "paradox": 1,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 6.055363321799308,
+          "paradox": 0.8650519031141869,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\english-source-2\\prose.txt": "e0f61c39eef25119517cebf488c8373ecf88143d747ebafa72f540aa8746f5a9",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-source-2\\raw.json": "6dd102410b993e4303bbd1a341384a1655eacafefd3a14c6e2d5d83e306dc380",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-source-2\\request.json": "66513a7b32b9a5b00e7f71f3a0d6ae9ca6a4ea58122e848936151f707b25248d",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-source-2\\result.json": "067d76bd81526d10ce0e947367460d9bfaa9605228a19ff8f673f1cc8256ce13",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-source-2\\system.txt": "f75baea8110db55c2d98532299ea9a503409337cd0372a8ac0577b4cb999fcff"
+      }
+    },
+    {
+      "id": "english-render-2",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 6694,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1647,
+        "reasoning_output_tokens": 97
+      },
+      "raw_usage": null,
+      "wall_ms": 54521,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1218,
+        "paragraphs": 70,
+        "counted_words": 1133,
+        "tells_counts": {
+          "absence": 12,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 1,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 10.59135039717564,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.8826125330979699,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\english-render-2\\prose.txt": "ac97016c70dce8944750dd52ba40c1cc3d68ca4ca792d591017439b174c958e4",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-render-2\\raw.json": "bb74ba2e92df5697c173af75b1256bae354cee2120323c4c32f48f9144237887",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-render-2\\request.json": "63669ce2c8e35b9d5e18d885aa75f187727e4856c38c81075d5e806a92b1fa6a",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-render-2\\result.json": "b4b1e2485c41a2cd366f133ef51db525ce398f40266763bc5baac3490ef6b6c8",
+        "runs\\ab\\prose-editor-boundary-20260906\\english-render-2\\system.txt": "bea9e5b191e00995de205f162c0d91232ffa0d2e0f88974ba39283714ce19539"
+      }
+    },
+    {
+      "id": "russian-source-2",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 7560,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2460,
+        "reasoning_output_tokens": 516
+      },
+      "raw_usage": null,
+      "wall_ms": 94920,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1014,
+        "paragraphs": 57,
+        "english_surface_diagnostics": "not applicable"
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-source-2\\prose.txt": "c88d1aa51aebffa4bd075696beb0d677613fff62b1a5287954e15a1bf824f53e",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-source-2\\raw.json": "b157eef5b0fbc8e7f1af370ae6a916552770b6a8df29e692d590b934fffb96d5",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-source-2\\request.json": "cc6a59a47011368789d2789d0a89f73cb9fb1632aadbfaadfde84ffe13631e29",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-source-2\\result.json": "3eca8f92424e3f07991defba71b9b942ce1ee02a8082669b91c7f2d6d46181df",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-source-2\\system.txt": "61a40eba44336aaadae9168d57cc85640702dff5cd06c5bd265ab18398bd90f2"
+      }
+    },
+    {
+      "id": "russian-render-2",
+      "status": "completed",
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "effort": "high",
+      "authentication": "chatgpt",
+      "usage": {
+        "input_tokens": 7046,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1750,
+        "reasoning_output_tokens": 179
+      },
+      "raw_usage": null,
+      "wall_ms": 57765,
+      "equivalent_cost_usd": null,
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "configuration_notice_count": 2,
+      "error": null,
+      "containment": null,
+      "original_result_status": null,
+      "model_usage": null,
+      "metrics": {
+        "full_words": 1240,
+        "paragraphs": 57,
+        "counted_words": 1155,
+        "tells_counts": {
+          "absence": 9,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "tells_per_1000": {
+          "absence": 7.792207792207792,
+          "paradox": 0.0,
+          "the_way": 0.0,
+          "echo": 0.0,
+          "chained_and": 0.0,
+          "long": 0.0
+        },
+        "gloss_counts": {
+          "a1": 0,
+          "a2": 0,
+          "tier_a": 0,
+          "tier_b": 0
+        },
+        "long_words_diagnostic": 35
+      },
+      "checks": {
+        "literal_sequence_matches": true,
+        "expected_literal_occurrences": 10,
+        "actual_literal_occurrences": 10,
+        "semantic_status": "literal sequence does not establish fidelity"
+      },
+      "files": {
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-render-2\\prose.txt": "d50035f602613a0adfde1341d4fd687143583f02018462a60d44278777632996",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-render-2\\raw.json": "c3e889b5a07dbc463d83a1703d40c82870d1666644b85e5385e405883c11a621",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-render-2\\request.json": "506a79ddb444ed49b93132cd4e3a7d533bc5b60b6ea6e0d9d3bd82f185dad529",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-render-2\\result.json": "1695c962905432b8d2af089c87ba66768f350f89393df48ce58a948e7cf55fd4",
+        "runs\\ab\\prose-editor-boundary-20260906\\russian-render-2\\system.txt": "bea9e5b191e00995de205f162c0d91232ffa0d2e0f88974ba39283714ce19539"
+      }
+    }
+  ],
+  "controls": {
+    "codex-full-1--claude-full-1": true,
+    "visible_counts": {
+      "full": 42,
+      "static": 31
+    },
+    "full_static_other_fields_equal": true,
+    "editor_retained_ids": [
+      "F01a",
+      "F02a",
+      "F03a",
+      "F04",
+      "F05",
+      "F06a",
+      "F06b",
+      "F06c",
+      "F07",
+      "F08",
+      "F09a",
+      "F10",
+      "F11a",
+      "F12",
+      "F13b",
+      "F14a",
+      "F15",
+      "F16",
+      "F17",
+      "F18a",
+      "F19",
+      "F20",
+      "F21",
+      "F22",
+      "F23",
+      "F24",
+      "F25a",
+      "F25b",
+      "F26",
+      "F27",
+      "F28",
+      "F29",
+      "F30"
+    ],
+    "editor_dropped_ids": [
+      "F01b",
+      "F02b",
+      "F03b",
+      "F09b",
+      "F11b",
+      "F13a",
+      "F14b",
+      "F18b",
+      "F25c"
+    ],
+    "editor_visible_count": 33
+  },
+  "frozen_files": {
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_editor_boundary.py": "44b22f5b1dc1e752d86ec207ce09f4bae5c13f12c7f0136864e15b60b9d49733",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_narration_obligations.py": "e1e09afaa51f4470e59a28e74836b3115522a3bb9271f7e9162e67e1cd8dd9b2",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_protected_reconstruction.py": "68e453943ea303707beed35b356c980e6c72887926a00e4cb32a15002d9895d3",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_paragraph_revision.py": "ae51eb0916e1f5dd5e9783aa761c934a70380e26ece3a7ba5fc14ad2710d34a7",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_codex.py": "1c99fc6b20c28f982640d9ebfd1405bd193be81124d6e883c901cae00426e563",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-editor-boundary\\PREREG.md": "e7f0b8c116066c9040303a331b34c70f123169ef3c54c9d380424d42ca718488",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-editor-boundary\\RUNBOOK.md": "82ca7caf80a963bbdfd6acf5684361e6b42c0b5e6b85f1219c887cd75bfe03d3",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-tools\\source.json": "4b996c48fe4c6c0e019061951661613311246cfaf216ec828191441fa6d8c8a8",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-tools\\source-review.md": "26c61f4073319a9f595b4553497ca735f84789d8c51b8c0d3485445534de622d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-tools\\prepare_source.py": "9310f3dce993fef31a0285f766ca36b18602b6066171856fe8993d92a548d641",
+    "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\bin\\codex.js": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+    "C:\\Users\\artem\\.local\\bin\\claude.exe": "0b35df94c1307004f07b738390bfef8dfca5e9af29aaf6517f305bf086b95b03"
+  },
+  "artifacts": {
+    "runs\\ab\\prose-editor-boundary-20260906\\manifest.json": "3e64a2124fbd26c2a487b36e601bc1b9f5e4be15d7e4e47602f506c08d78b5f3",
+    "runs\\ab\\prose-editor-boundary-20260906\\comparison.html": "5341497ad7f8a9208021106f7bf43a030e3a2101f656b4d2c443cee3f7a5d97d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-tools\\build_review.py": "b91852507846f8c0f819ea5e207079c9e1942decc64d15685831c91732929a35",
+    "src\\litharness\\domain\\tells.py": "c4459441995291de158f18dbbcb7b903b4e126c164fef0e955f01fedddea589c",
+    "research\\quality-measurement\\register_census.py": "f8bda53ced24815e11c67116ca280d8b5213e1582a210aa328fc4382f4df052c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-tools\\manual_readings.py": "67ef5f88d63278318cbb84b875dff20667f61a92484a28370959d138e291e683",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-tools\\read_passage.py": "252660086ff9249f8362ac3d4f3bd1ba18e45010ff31d0e5f4f910cd867413a4",
+    "output\\playwright\\prose-editor-boundary-final.png": "78a6475a235fd0c111aefddc414a36c78a638195b27ebea99db1da14e2c55992",
+    "output\\playwright\\prose-editor-boundary-initial.png": "8451253e02e74c970c8a51ccb0baeddf1dd1edc80d94821af4e384ece7f6d5db",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-tools\\registration-handoff.log": "9b5e333af80093749ec7c6f47cc651f0edd9f8dccc3054ba63ff99f5670175f2",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-tools\\amendment-handoff.log": "302597bb56529de36148b0b4cb0b9cfed4dd7c887f4f91991f9d0bb01e3bd800",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-tools\\amendment-handoff-2.log": "302597bb56529de36148b0b4cb0b9cfed4dd7c887f4f91991f9d0bb01e3bd800",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-tools\\amendment-handoff-3.log": "1abbf567d60e3836f09684ee4229263aa864e82fbf7a4bf84d6c9067e5b9a9ad",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-tools\\final-handoff.log": "b63b00e2f6ae6501d54777a1807f23a0e73fd35c6fa511c1fa2ea5ed721128fc",
+    "runs\\ab\\prose-editor-boundary-20260906\\selector-run.log": "98d9cacb6681c117c029983b09b9dcb8030f7c6e30be3f6bad012502bc197681",
+    "runs\\ab\\prose-editor-boundary-20260906\\run.log": "67de8106271758d784f548e1d8cc79e8574d1a362f2041abe3d800e5305bab98",
+    "runs\\ab\\prose-editor-boundary-20260906\\resume-run.log": "8fb60b8111e755312992a51575b5d4aab5f73075b696c550dbc929b6ea62bbd8",
+    "runs\\ab\\prose-editor-boundary-20260906\\READING.md": "1d86f977d61aa7ae89b0718c1906772e68940372aa98fbe11e95a0d362455ea6",
+    "runs\\ab\\prose-editor-boundary-20260906\\fact-audit.json": "9058a446b08c0cf235c846fcc0483199d19cc8b50e477e185d5d147c13db6dbf",
+    "runs\\ab\\prose-editor-boundary-20260906\\reading-records.json": "005992cc5ca26f4815ad7bd3e5599ca17a72fea0ac48649f508c998a0f11e463",
+    "runs\\ab\\prose-editor-boundary-20260906\\development-notes.md": "1e98002d8e20267f5d1a6563a86adb9b925974c70158e4a3cee2a5d99d72b961",
+    "runs\\ab\\prose-editor-boundary-20260906\\selector-review.md": "c6a0b6575055210b7a9ef54974cb4d85b4d1f051dbbbbc1f12045b3c220fa6fe",
+    "runs\\ab\\prose-editor-boundary-20260906\\resume-manifest.json": "5b16553d364ef59847391852b9b52612e9cc6542c937aad7083bc82fe6daac8a",
+    "runs\\ab\\prose-editor-boundary-20260906\\browser-qa\\console-2026-09-06T21-43-38-400Z.log": "a41c96879fe3d36bb3f4fbc4e37f4adaf8d0747a9c65f8b21dfdce07bfbdfc22",
+    "runs\\ab\\prose-editor-boundary-20260906\\browser-qa\\page-2026-09-06T21-43-39-374Z.yml": "81013493ca902f31882fa0e507321b8a6aca75cf69abd587f70b710edbd7f4de",
+    "runs\\ab\\prose-editor-boundary-20260906\\browser-qa\\page-2026-09-06T22-06-43-219Z.yml": "456701d536d79ef45d09035126334f20aee8ffec07773eadce5dbf7191deab81",
+    "runs\\ab\\prose-editor-boundary-20260906\\browser-qa\\page-2026-09-06T22-07-01-197Z.yml": "68299db5b64b3dd25919ee16630e5ac63722cd54e778648d12c1d652ba183485",
+    "runs\\ab\\prose-editor-boundary-20260906\\browser-qa\\page-2026-09-06T22-12-20-761Z.yml": "0ad3c16f697572e0848af6ca9d0b2320460a6860362901b1ef56639608130fcb",
+    "runs\\ab\\prose-editor-boundary-20260906\\browser-qa\\page-2026-09-06T22-12-33-420Z.yml": "47d471ea5e5c3c9e086b0928c0d8ba904ae6c32b7de089703680e1db14e9494a",
+    "runs\\ab\\prose-editor-boundary-20260906\\browser-qa\\page-2026-09-06T22-13-12-083Z.yml": "d750c1664feb68a65ca58e1c2d40be5eee0f4ce57e5895e457989550e9dbdc8e",
+    "runs\\ab\\prose-editor-boundary-20260906\\browser-qa\\page-2026-09-06T22-13-20-614Z.yml": "c12421b46e61633d88d270b77834634361638d4d923a1c49f9411735a3473501",
+    "runs\\ab\\prose-editor-boundary-20260906\\browser-qa\\page-2026-09-06T22-13-54-732Z.yml": "377c8056127507df95c1f47b8451b4042a55795edcfa19bae966b7b61194971d",
+    "runs\\ab\\prose-editor-boundary-20260906\\browser-qa\\page-2026-09-06T22-16-11-004Z.yml": "1a2c22af113dacaba8991c175de643fad2469d3f2d41818777d1892cbc8bf0ea",
+    "runs\\ab\\prose-editor-boundary-20260906\\browser-qa\\QA.md": "2974c5be896c94f896b27a52b0a2d1e76876ed3a2ad29b71ecb46aad7906f218"
+  },
+  "recovered_containment_failures": [
+    "claude-full-1"
+  ],
+  "skipped_calls": {
+    "claude-full-2.skipped": {
+      "reason": "Claude comparison stopped by registered amendment"
+    },
+    "claude-static-1.skipped": {
+      "reason": "Claude comparison stopped by registered amendment"
+    },
+    "claude-static-2.skipped": {
+      "reason": "Claude comparison stopped by registered amendment"
+    }
+  },
+  "rebuild": "uv run python runs/ab/prose-editor-boundary-tools/build_review.py",
+  "contained_completed_calls": 19,
+  "completed_prose_passages": 19,
+  "resume_code_commit": "2135568b0ae9e09dea28a45b7e2595642324fa25",
+  "resume_frozen_files": {
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-20260906\\manifest.json": "3e64a2124fbd26c2a487b36e601bc1b9f5e4be15d7e4e47602f506c08d78b5f3",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_editor_boundary_resume.py": "700c57e91c12bb0d97d3391f15e72f284ef4660b29daf96a4a69dfa851bfcdd6",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-editor-boundary\\AMENDMENT.md": "9547f0688e222d7eb86ce2ede88b385043940f0427a895f3ca0b30479aa4af0a",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-20260906\\claude-full-1\\request.json": "a95d7633989ee60d22d0a76d9078028ff201b6ec5660e820ddca4878f5059bc8",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-20260906\\claude-full-1\\raw.json": "197ae94d11e00c37753b4649259120199212ea7a1080f9bcc71f6bdf31fc1c7c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-20260906\\claude-full-1\\result.json": "e2391b4fb8aa369054202d6dff1d684ac1a3875719f70bddc5320783b66aeda2",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-editor-boundary-20260906\\claude-full-1\\recovered.json": "e2fcccfb80c3dc8f1ce4f204732d1e6ee168345e6e920776cfe5d389bfc68565"
+  },
+  "reading_passages": 19,
+  "source_unit_audits": 662,
+  "within_condition_absolute_count_differences": {
+    "codex-full": {
+      "absence": 6,
+      "paradox": 0,
+      "the_way": 0,
+      "echo": 0,
+      "chained_and": 0,
+      "long": 0
+    },
+    "codex-static": {
+      "absence": 3,
+      "paradox": 0,
+      "the_way": 0,
+      "echo": 1,
+      "chained_and": 0,
+      "long": 0
+    },
+    "codex-editor": {
+      "absence": 1,
+      "paradox": 0,
+      "the_way": 0,
+      "echo": 0,
+      "chained_and": 0,
+      "long": 0
+    },
+    "mechanical": {
+      "absence": 0,
+      "paradox": 0,
+      "the_way": 0,
+      "echo": 0,
+      "chained_and": 0,
+      "long": 0
+    },
+    "social": {
+      "absence": 2,
+      "paradox": 0,
+      "the_way": 0,
+      "echo": 0,
+      "chained_and": 0,
+      "long": 0
+    },
+    "english-source": {
+      "absence": 1,
+      "paradox": 1,
+      "the_way": 0,
+      "echo": 0,
+      "chained_and": 0,
+      "long": 0
+    },
+    "english-render": {
+      "absence": 2,
+      "paradox": 0,
+      "the_way": 0,
+      "echo": 0,
+      "chained_and": 1,
+      "long": 0
+    },
+    "russian-render": {
+      "absence": 3,
+      "paradox": 0,
+      "the_way": 0,
+      "echo": 0,
+      "chained_and": 0,
+      "long": 0
+    }
+  }
+}

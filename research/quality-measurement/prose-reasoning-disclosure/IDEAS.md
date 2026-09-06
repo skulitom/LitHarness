@@ -24,3 +24,14 @@ fixture, not a qualified production mechanism. Its [completed diagnostic](../pro
 found both selective drafts explicitly narrating all eleven optional units; it remains unqualified.
 The social-conflict and language ideas remain
 unrun conjectures with no allocation. Record subsequent findings in the Chapter 1 history.
+
+Further update, 2026-09-06: those two ideas now have completed, unqualified diagnostics in
+[editor-boundary results](../prose-editor-boundary/RESULTS.md). The ordinary-exam conflict
+fixtures produced negotiated exchanges but retained explanatory commentary and authority
+disclaimers; they do not isolate an effect in the original supernatural chapter. Both Russian
+translation chains and both English rewrite controls preserved all paragraph divisions and
+the underlying explanations, with located meaning drift. The same batch tested actual source
+withholding and a narrow source-selection intermediary. Its fresh writer comparison stopped
+after unexpected auxiliary Claude usage under a recorded amendment. All attempts are in
+[the Chapter 1 history](../../../RESEARCH.md#451-chapter-1-prose-experiment-history); none is a
+qualified improvement, and none should be proposed again as an unrun test in that exact form.
