@@ -8,6 +8,11 @@
       "kind": "registration",
       "path": "research/quality-measurement/prose-editor-boundary/PREREG.md",
       "sha256": "e7f0b8c116066c9040303a331b34c70f123169ef3c54c9d380424d42ca718488"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-editor-boundary/AMENDMENT.md",
+      "sha256": "9547f0688e222d7eb86ce2ede88b385043940f0427a895f3ca0b30479aa4af0a"
     }
   ]
 }
