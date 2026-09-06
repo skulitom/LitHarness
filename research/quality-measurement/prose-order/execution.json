@@ -1,0 +1,240 @@
+{
+  "status": "diagnostic_complete_no_quality_qualification",
+  "code_commit": "ef6afc95141f519f4d06af5a4378ec7832be4c9e",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "cli_invocations": 6,
+  "outputs": [
+    {
+      "status": "completed",
+      "wall_ms": 109738,
+      "usage": {
+        "input_tokens": 16629,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2638,
+        "reasoning_output_tokens": 963
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "planner/full-1",
+      "files": {
+        "full-1.request.json": "9c3d228926914fae3a4acc1c130ca8727ea3a83d726fce61fcaf15b95da1ab3e",
+        "full-1.raw.json": "4011c6a5538828af4991440d62f3c5f491141f725dee1250d5e132746892fb92",
+        "full-1.result.json": "7e29067060f01b8e42e08266d2345394469ae9af7837409bb008ab44db8f5cc8",
+        "full-1.txt": "c6f4a1e65a20c26bb3572e4cfa9f22be01286c036a8a342b34385d7cfc1982c3"
+      },
+      "configuration_notice_count": 2
+    },
+    {
+      "status": "completed",
+      "wall_ms": 92400,
+      "usage": {
+        "input_tokens": 16629,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2137,
+        "reasoning_output_tokens": 516
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "planner/focused-1",
+      "files": {
+        "focused-1.request.json": "6d61d9ce63c20794a87cae3562a44c4ab4ad08bf7dd8fd61f1b780d673020f4b",
+        "focused-1.raw.json": "b6f3815cf7acbaff989fcc9d2d2dca3b25216b4967b079641c1460e8705da676",
+        "focused-1.result.json": "4fedd781556e3020c10c83aa10a117668e1b666587e4af295fe2d857986b3e61",
+        "focused-1.txt": "78bfdc8c0409e9ee477171ed5554b11563efe74998c1700fa6dbce9c80a386f1"
+      },
+      "configuration_notice_count": 2
+    },
+    {
+      "status": "completed",
+      "wall_ms": 77554,
+      "usage": {
+        "input_tokens": 16342,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1663,
+        "reasoning_output_tokens": 357
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "drafts/full-1",
+      "files": {
+        "full-1.request.json": "4f42a1d5b0126cf470c1c3c91a321b28d9744801a0664e541d550a3255256547",
+        "full-1.raw.json": "f62a1bedcfe29e6d36d421d336cdc43c8df5895540452ffc1baba77761caec42",
+        "full-1.result.json": "422146b45ddb16def1574bcbd5e9ceafa9b2039ddbe1481f91b8976faf8ea073",
+        "full-1.txt": "8299444db242741a10f2980bd777f1d92724b9290667a882792b153a15fbd090"
+      },
+      "configuration_notice_count": 2,
+      "condition": "Step after death",
+      "words": 1019,
+      "paragraphs": 74
+    },
+    {
+      "status": "completed",
+      "wall_ms": 88518,
+      "usage": {
+        "input_tokens": 16289,
+        "cached_input_tokens": 4736,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1666,
+        "reasoning_output_tokens": 477
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "drafts/focused-1",
+      "files": {
+        "focused-1.request.json": "44a4f06edf336b922326be62c559543adb26de2535d4269ca609f1028576a874",
+        "focused-1.raw.json": "91714ea1dc4891944bdfa6aba05c3abd5eb955d9b7eadea85e3103711b37117f",
+        "focused-1.result.json": "e79faf833aea44adc9daf3f5b789cdbda96f29ecc878e6b7f505afa1e6d76e67",
+        "focused-1.txt": "74b3cff0bbc2e216bcba237987c18d7f100a86aed2b3361f6004008063c276b4"
+      },
+      "configuration_notice_count": 2,
+      "condition": "Step before death",
+      "words": 934,
+      "paragraphs": 66
+    },
+    {
+      "status": "completed",
+      "wall_ms": 86141,
+      "usage": {
+        "input_tokens": 16289,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1537,
+        "reasoning_output_tokens": 307
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "drafts/focused-2",
+      "files": {
+        "focused-2.request.json": "44a4f06edf336b922326be62c559543adb26de2535d4269ca609f1028576a874",
+        "focused-2.raw.json": "f51d4740ab3b7ca0f838724a75bf91fdbe028d17917a2191d50c3e58ee6498f0",
+        "focused-2.result.json": "3c627e931119c8f91059ad7c98e91b5166c0896406ed9a4a74b02aa60843d452",
+        "focused-2.txt": "970b725aae2e2d3f768867516cc94b05715260d7e549b5f6820553c9dfc618a6"
+      },
+      "configuration_notice_count": 2,
+      "condition": "Step before death",
+      "words": 958,
+      "paragraphs": 72
+    },
+    {
+      "status": "completed",
+      "wall_ms": 82582,
+      "usage": {
+        "input_tokens": 16342,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1500,
+        "reasoning_output_tokens": 292
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "drafts/full-2",
+      "files": {
+        "full-2.request.json": "4f42a1d5b0126cf470c1c3c91a321b28d9744801a0664e541d550a3255256547",
+        "full-2.raw.json": "7810dbe37f3dd55478d83729415f556d6794a91139b07d34a01793a0e1dba5a2",
+        "full-2.result.json": "57b3ef8a2281e2ee0a202e430f2a1be258e1362ad9c6d9ee7c068146d2f4fe0f",
+        "full-2.txt": "f70be63cc7ab3769c0a1501c9bc2c4c8b4f5b8cac16869b705cdfbd7f75eaf66"
+      },
+      "configuration_notice_count": 2,
+      "condition": "Step after death",
+      "words": 950,
+      "paragraphs": 72
+    }
+  ],
+  "usage": {
+    "input_tokens": 98520,
+    "cached_input_tokens": 7424,
+    "output_tokens": 11141,
+    "reasoning_output_tokens": 2912
+  },
+  "conservative_token_total": 112573,
+  "cost_usd": null,
+  "frozen_files": {
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_order.py": "828ca46f59d1d77a5cae60e76d485f2539df497c70548ac497a73eebe2bd75e6",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-order\\PREREG.md": "60fdf3086163e3e072acea86a5e72a8890c07f1f024968ab1084ae9bb9664563",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-framing-20260905\\neutral-1.request.json": "bdac886096831259a9b8b8cabfbcb57e9825ebbef4e2c159f577dc1fcd5fb7fc",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-order-tools\\source-amendment.json": "d0e42e67ee842c18de26de3b0c16da7332408cff3044aa9cbf73d534d1134a85",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-order-tools\\contract.json": "30d7722e4bcd27d3aebc255419d1d339eaac873fc89da5c556a6384d48f2c9b3",
+    "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\bin\\codex.js": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_actions.py": "665e9d1a86b1c606d27ed2e85255c03e4a2aef0416711fa8430b79a79fc38fcc",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_codex.py": "e244da964219121b486fe5d9189230e117e8558f9130eceb4361695df163e24f",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_staging.py": "8c7b92d74951414d87e955be916668e57bcab4c647ec6a2f09a26836dfcc5826",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_framing.py": "58212aa59590b6e1041ba7e389be94749a70817ae0b066d3d8cf046a74787e84",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-order-20260906\\planner\\system.txt": "0ac328c5a92447be16908b537aa2d6f980f46e68aaa36d87c17d1c5e47cb1411",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-order-20260906\\drafts\\system.txt": "51eb7ac0f41a3326d98d9731ca72bfbd8fdcfeb05a992dc6e30ce85df3125839"
+  },
+  "artifacts": {
+    "manifest.json": "739a65b1a384e0764341c9bb1bfaa2e3e37e7c66f1c3ceaa0022cce335aa1c5d",
+    "plans.reviewed.json": "fda93a73e5763817a61a1c5f4c1f3fa13a038d2155622d0c6a34c85ded048a3d",
+    "plans-source-reviewed.json": "b38bbced95e3d1065be869407cb83d3ad7625678675d5b644ec9d20f7ee8d853",
+    "source-review.md": "7af2c757f4d99c44e2a89c2d8645e3f202555b19f189e3adb9676b8776ac0ae8",
+    "drafts\\manifest.json": "26b765d2a2e10b1947e160d4cac6eccc8c69f2a992d2e86357df343cc743e738",
+    "comparison.html": "44ab0245a5335ba6d7fa0bfa2a5e26975ff30f83ef8eb51ce78ccf72afea0475",
+    "READING.md": "cd210cdcb394cf98293a382a35fd051e4aa61d739ad2a7c60106c1405ac4cb4a"
+  },
+  "rebuild": "uv run python runs/ab/prose-order-tools/build_review.py",
+  "rebuild_script_sha256": "8cf5ce2e1d33c7641c6528ef8719079fe9a1fe46688fa4e66502f00f10cb66f8"
+}
