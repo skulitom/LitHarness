@@ -1,0 +1,1348 @@
+{
+  "status": "observed_unqualified_diagnostics",
+  "code_commit": "3ddb709e39655babcb3fafb2a4164b141ecb851e",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "cli_invocations": 16,
+  "usage": {
+    "input_tokens": 119881,
+    "cached_input_tokens": 5376,
+    "output_tokens": 16268,
+    "reasoning_output_tokens": 2538
+  },
+  "conservative_token_total": 138687,
+  "completed_calls": 16,
+  "arms": {
+    "reasoning": {
+      "outputs": [
+        {
+          "id": "full-1",
+          "complete": true,
+          "checks": {
+            "literal_sequence_matches": true,
+            "expected_literal_occurrences": 10,
+            "actual_literal_occurrences": 10,
+            "text_sha256": "3e58cb509221e0c4091b13c12a512aa9bd4fba64c81130afee76792d0e7e78b7",
+            "semantic_status": "unassessed; literal checks are not meaning"
+          },
+          "calls": [
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 9158,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 2145,
+                "reasoning_output_tokens": 145
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 76371,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\full-1\\full-1.raw.json": "5705707a9e03553a0e0db819012d14d14f04832026507d99be225c4bc62e6740",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\full-1\\full-1.request.json": "8be81e70ecb8a7ba9e1d9a0582680537178b38cb927c32b3d128e659acd5194a",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\full-1\\full-1.result.json": "976456ef58c74dafc123fb763107625e9b2583dccab9a7dc2db949a701fe7b94",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\full-1\\full-1.txt": "3e58cb509221e0c4091b13c12a512aa9bd4fba64c81130afee76792d0e7e78b7",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\full-1\\system.txt": "230bc4cd45cb49423eef532ed53eaba42deefc5a2322eed8a97661d1b3cedf28"
+              },
+              "task_words": 3380,
+              "id": "reasoning/full-1/part-1",
+              "previous_text_sha256": null
+            }
+          ],
+          "installment_paragraph_counts": [
+            84
+          ],
+          "metrics": {
+            "words": 1527,
+            "whitespace_words": 1607,
+            "paragraphs": 84,
+            "tells_counts": {
+              "absence": 13,
+              "paradox": 0,
+              "the_way": 0,
+              "echo": 0,
+              "chained_and": 0,
+              "long": 0
+            },
+            "tells_per_1000": {
+              "absence": 8.513425016371972,
+              "paradox": 0.0,
+              "the_way": 0.0,
+              "echo": 0.0,
+              "chained_and": 0.0,
+              "long": 0.0
+            },
+            "gloss_counts": {
+              "a1": 0,
+              "a2": 0,
+              "tier_a": 0,
+              "tier_b": 0
+            },
+            "long_words_diagnostic": 35
+          },
+          "text_sha256": "3e58cb509221e0c4091b13c12a512aa9bd4fba64c81130afee76792d0e7e78b7"
+        },
+        {
+          "id": "focused-1",
+          "complete": true,
+          "checks": {
+            "literal_sequence_matches": true,
+            "expected_literal_occurrences": 10,
+            "actual_literal_occurrences": 10,
+            "text_sha256": "5a6fe8e0999b3b310a2f9346a10e7f1cea855310ce1b1531dbf3c5601ba6f99f",
+            "semantic_status": "unassessed; literal checks are not meaning"
+          },
+          "calls": [
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 9158,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 1797,
+                "reasoning_output_tokens": 0
+              },
+              "requested_effort": "low",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 72534,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\focused-1\\focused-1.raw.json": "460875da016d420b34f664267b13f76560547a35b63c1a4d7c8ed09385147bb6",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\focused-1\\focused-1.request.json": "2a756b87010a45193693d5d7c86630aa56623100fe85fecf95f326d7ac17bff9",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\focused-1\\focused-1.result.json": "adac706adbaca4b3f8803bfe9834ed6582350f0ef8b5d096c9ceada95b4b1a1f",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\focused-1\\focused-1.txt": "5a6fe8e0999b3b310a2f9346a10e7f1cea855310ce1b1531dbf3c5601ba6f99f",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\focused-1\\system.txt": "230bc4cd45cb49423eef532ed53eaba42deefc5a2322eed8a97661d1b3cedf28"
+              },
+              "task_words": 3380,
+              "id": "reasoning/focused-1/part-1",
+              "previous_text_sha256": null
+            }
+          ],
+          "installment_paragraph_counts": [
+            74
+          ],
+          "metrics": {
+            "words": 1347,
+            "whitespace_words": 1432,
+            "paragraphs": 74,
+            "tells_counts": {
+              "absence": 17,
+              "paradox": 1,
+              "the_way": 0,
+              "echo": 1,
+              "chained_and": 0,
+              "long": 0
+            },
+            "tells_per_1000": {
+              "absence": 12.620638455827766,
+              "paradox": 0.7423904974016332,
+              "the_way": 0.0,
+              "echo": 0.7423904974016332,
+              "chained_and": 0.0,
+              "long": 0.0
+            },
+            "gloss_counts": {
+              "a1": 0,
+              "a2": 0,
+              "tier_a": 0,
+              "tier_b": 0
+            },
+            "long_words_diagnostic": 35
+          },
+          "text_sha256": "5a6fe8e0999b3b310a2f9346a10e7f1cea855310ce1b1531dbf3c5601ba6f99f"
+        },
+        {
+          "id": "focused-2",
+          "complete": true,
+          "checks": {
+            "literal_sequence_matches": true,
+            "expected_literal_occurrences": 10,
+            "actual_literal_occurrences": 10,
+            "text_sha256": "e2943b8db147b1292dd0319903b7008ae32e3757446eb8926a69445b53ca4d79",
+            "semantic_status": "unassessed; literal checks are not meaning"
+          },
+          "calls": [
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 9158,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 1907,
+                "reasoning_output_tokens": 26
+              },
+              "requested_effort": "low",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 67167,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\focused-2\\focused-2.raw.json": "f1b5697725278bd9ddbbcacbf795a20e44a9462c849237916b084d2021f98c11",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\focused-2\\focused-2.request.json": "5201d509073e8d8b39dc65e343bcaa3257d34e8b4d87207bc9b0d0e63c8f782b",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\focused-2\\focused-2.result.json": "0065629c0283a65aa98d75f992ce09a1fac4568b3542761c91d9d05d76d0cee5",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\focused-2\\focused-2.txt": "e2943b8db147b1292dd0319903b7008ae32e3757446eb8926a69445b53ca4d79",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\focused-2\\system.txt": "230bc4cd45cb49423eef532ed53eaba42deefc5a2322eed8a97661d1b3cedf28"
+              },
+              "task_words": 3380,
+              "id": "reasoning/focused-2/part-1",
+              "previous_text_sha256": null
+            }
+          ],
+          "installment_paragraph_counts": [
+            77
+          ],
+          "metrics": {
+            "words": 1425,
+            "whitespace_words": 1510,
+            "paragraphs": 77,
+            "tells_counts": {
+              "absence": 15,
+              "paradox": 0,
+              "the_way": 1,
+              "echo": 2,
+              "chained_and": 0,
+              "long": 0
+            },
+            "tells_per_1000": {
+              "absence": 10.526315789473685,
+              "paradox": 0.0,
+              "the_way": 0.7017543859649122,
+              "echo": 1.4035087719298245,
+              "chained_and": 0.0,
+              "long": 0.0
+            },
+            "gloss_counts": {
+              "a1": 0,
+              "a2": 0,
+              "tier_a": 0,
+              "tier_b": 0
+            },
+            "long_words_diagnostic": 35
+          },
+          "text_sha256": "e2943b8db147b1292dd0319903b7008ae32e3757446eb8926a69445b53ca4d79"
+        },
+        {
+          "id": "full-2",
+          "complete": true,
+          "checks": {
+            "literal_sequence_matches": true,
+            "expected_literal_occurrences": 10,
+            "actual_literal_occurrences": 10,
+            "text_sha256": "1e46900111c4c99e6ef97a470d7e0dbeb7801ec14f2e1ca7f913bf9a3b107ca0",
+            "semantic_status": "unassessed; literal checks are not meaning"
+          },
+          "calls": [
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 9158,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 2197,
+                "reasoning_output_tokens": 139
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 91981,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\full-2\\full-2.raw.json": "bfb456e35f6c5b8253b3c56d471ad88b0d59e3527c1e4f6a00b6cecf3af1b8fd",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\full-2\\full-2.request.json": "24d9095309b06e019aa869017705e9b8abe3fc346666cb71b60bdac3ce677418",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\full-2\\full-2.result.json": "1ab2fd7fc46dd3d28db50295a06e247f818ad80a4e070654c2ef07203b2d3a94",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\full-2\\full-2.txt": "1e46900111c4c99e6ef97a470d7e0dbeb7801ec14f2e1ca7f913bf9a3b107ca0",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\reasoning\\full-2\\system.txt": "230bc4cd45cb49423eef532ed53eaba42deefc5a2322eed8a97661d1b3cedf28"
+              },
+              "task_words": 3380,
+              "id": "reasoning/full-2/part-1",
+              "previous_text_sha256": null
+            }
+          ],
+          "installment_paragraph_counts": [
+            75
+          ],
+          "metrics": {
+            "words": 1582,
+            "whitespace_words": 1662,
+            "paragraphs": 75,
+            "tells_counts": {
+              "absence": 11,
+              "paradox": 2,
+              "the_way": 0,
+              "echo": 0,
+              "chained_and": 0,
+              "long": 0
+            },
+            "tells_per_1000": {
+              "absence": 6.95322376738306,
+              "paradox": 1.2642225031605563,
+              "the_way": 0.0,
+              "echo": 0.0,
+              "chained_and": 0.0,
+              "long": 0.0
+            },
+            "gloss_counts": {
+              "a1": 1,
+              "a2": 0,
+              "tier_a": 1,
+              "tier_b": 0
+            },
+            "long_words_diagnostic": 35
+          },
+          "text_sha256": "1e46900111c4c99e6ef97a470d7e0dbeb7801ec14f2e1ca7f913bf9a3b107ca0"
+        }
+      ],
+      "metrics": {
+        "original": {
+          "words": 1844,
+          "whitespace_words": 1924,
+          "paragraphs": 55,
+          "tells_counts": {
+            "absence": 18,
+            "paradox": 0,
+            "the_way": 4,
+            "echo": 1,
+            "chained_and": 10,
+            "long": 17
+          },
+          "tells_per_1000": {
+            "absence": 9.761388286334057,
+            "paradox": 0.0,
+            "the_way": 2.1691973969631237,
+            "echo": 0.5422993492407809,
+            "chained_and": 5.422993492407809,
+            "long": 9.219088937093275
+          },
+          "gloss_counts": {
+            "a1": 0,
+            "a2": 0,
+            "tier_a": 0,
+            "tier_b": 0
+          },
+          "long_words_diagnostic": 35
+        },
+        "full-1": {
+          "words": 1527,
+          "whitespace_words": 1607,
+          "paragraphs": 84,
+          "tells_counts": {
+            "absence": 13,
+            "paradox": 0,
+            "the_way": 0,
+            "echo": 0,
+            "chained_and": 0,
+            "long": 0
+          },
+          "tells_per_1000": {
+            "absence": 8.513425016371972,
+            "paradox": 0.0,
+            "the_way": 0.0,
+            "echo": 0.0,
+            "chained_and": 0.0,
+            "long": 0.0
+          },
+          "gloss_counts": {
+            "a1": 0,
+            "a2": 0,
+            "tier_a": 0,
+            "tier_b": 0
+          },
+          "long_words_diagnostic": 35
+        },
+        "focused-1": {
+          "words": 1347,
+          "whitespace_words": 1432,
+          "paragraphs": 74,
+          "tells_counts": {
+            "absence": 17,
+            "paradox": 1,
+            "the_way": 0,
+            "echo": 1,
+            "chained_and": 0,
+            "long": 0
+          },
+          "tells_per_1000": {
+            "absence": 12.620638455827766,
+            "paradox": 0.7423904974016332,
+            "the_way": 0.0,
+            "echo": 0.7423904974016332,
+            "chained_and": 0.0,
+            "long": 0.0
+          },
+          "gloss_counts": {
+            "a1": 0,
+            "a2": 0,
+            "tier_a": 0,
+            "tier_b": 0
+          },
+          "long_words_diagnostic": 35
+        },
+        "focused-2": {
+          "words": 1425,
+          "whitespace_words": 1510,
+          "paragraphs": 77,
+          "tells_counts": {
+            "absence": 15,
+            "paradox": 0,
+            "the_way": 1,
+            "echo": 2,
+            "chained_and": 0,
+            "long": 0
+          },
+          "tells_per_1000": {
+            "absence": 10.526315789473685,
+            "paradox": 0.0,
+            "the_way": 0.7017543859649122,
+            "echo": 1.4035087719298245,
+            "chained_and": 0.0,
+            "long": 0.0
+          },
+          "gloss_counts": {
+            "a1": 0,
+            "a2": 0,
+            "tier_a": 0,
+            "tier_b": 0
+          },
+          "long_words_diagnostic": 35
+        },
+        "full-2": {
+          "words": 1582,
+          "whitespace_words": 1662,
+          "paragraphs": 75,
+          "tells_counts": {
+            "absence": 11,
+            "paradox": 2,
+            "the_way": 0,
+            "echo": 0,
+            "chained_and": 0,
+            "long": 0
+          },
+          "tells_per_1000": {
+            "absence": 6.95322376738306,
+            "paradox": 1.2642225031605563,
+            "the_way": 0.0,
+            "echo": 0.0,
+            "chained_and": 0.0,
+            "long": 0.0
+          },
+          "gloss_counts": {
+            "a1": 1,
+            "a2": 0,
+            "tier_a": 1,
+            "tier_b": 0
+          },
+          "long_words_diagnostic": 35
+        }
+      },
+      "within_condition_absolute_count_differences": {
+        "full": {
+          "absence": 2,
+          "paradox": 2,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "focused": {
+          "absence": 2,
+          "paradox": 1,
+          "the_way": 1,
+          "echo": 1,
+          "chained_and": 0,
+          "long": 0
+        }
+      }
+    },
+    "disclosure": {
+      "outputs": [
+        {
+          "id": "full-1",
+          "complete": true,
+          "checks": {
+            "literal_sequence_matches": true,
+            "expected_literal_occurrences": 10,
+            "actual_literal_occurrences": 10,
+            "text_sha256": "2acabdf4fa0763a71df0d9b638343f81819ece37737d5b4d801dd1f665fba5fc",
+            "semantic_status": "unassessed; literal checks are not meaning"
+          },
+          "calls": [
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 6963,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 481,
+                "reasoning_output_tokens": 108
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 21074,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-1\\full-1.raw.json": "a1540d8578509586736bbb4931546dcf9eec488df3c1af6d72aa88d991a9058b",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-1\\full-1.request.json": "b4492235d585f64358c07482776adbba9c266fb217553e6a5172a22d0e73b00b",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-1\\full-1.result.json": "82c4a64a621f2aa7bbc22643803bc3f288d2c1d89785a938e1e00139ba7e71cc",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-1\\full-1.txt": "b95b25967130c629e2b99ce844c8a6535094fd5c09085f811c8032c905b063bb",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-1\\system.txt": "b91a8f72e0135d51a8bdf24ff41b7085f47558a98a2674ae55570fc2df857e94"
+              },
+              "task_words": 1479,
+              "id": "disclosure/full-1/part-1",
+              "previous_text_sha256": null
+            },
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 7308,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 549,
+                "reasoning_output_tokens": 145
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 26935,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-2\\full-1.raw.json": "b47264d6b38a46015b2e4a3083d9ca0c13e690c648bf1bf7fd799f87f2e795b5",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-2\\full-1.request.json": "fd66d11e7f8b93b304079575b1a66be59acb53f822b5ec35ba0beeccc08dfe85",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-2\\full-1.result.json": "17984aaa4ddc5f56a5d7072957065d4898c36fc5ab7cdae715b0a537edd3afb2",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-2\\full-1.txt": "9689e3974fafddf750d8c200def5c51cc1656e93a05988c2f353b3151d400da4",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-2\\system.txt": "b91a8f72e0135d51a8bdf24ff41b7085f47558a98a2674ae55570fc2df857e94"
+              },
+              "task_words": 1724,
+              "id": "disclosure/full-1/part-2",
+              "previous_text_sha256": "3134bfadf7dd26a3317e4dd0e3c04a5e51f00d96ca36ba9876321cae8adae4f9"
+            },
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 7868,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 1112,
+                "reasoning_output_tokens": 373
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 40864,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-3\\full-1.raw.json": "9f19209de984160e8a0de21af3f9fd424ecce2db074f15610972fca31284b20d",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-3\\full-1.request.json": "65ef5b7bcfe6b8eb12fdc99349f941dd3e6d36effeee8b603c38dea1a3a841ae",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-3\\full-1.result.json": "996957f0b0f2dce16805eae8aa891c3d45815fad6200e7521da58b2f0cee810a",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-3\\full-1.txt": "15969a15195124ed03eab2f86f5a0777735bf4a772b7125e63fde43b852c0eca",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-1\\part-3\\system.txt": "b91a8f72e0135d51a8bdf24ff41b7085f47558a98a2674ae55570fc2df857e94"
+              },
+              "task_words": 2086,
+              "id": "disclosure/full-1/part-3",
+              "previous_text_sha256": "1df5c8ea73a67227d93f9863bec5d0ce1ee17611c08b13b630fa01fc2646737f"
+            }
+          ],
+          "installment_paragraph_counts": [
+            13,
+            18,
+            35
+          ],
+          "metrics": {
+            "words": 1095,
+            "whitespace_words": 1180,
+            "paragraphs": 66,
+            "tells_counts": {
+              "absence": 16,
+              "paradox": 0,
+              "the_way": 0,
+              "echo": 0,
+              "chained_and": 0,
+              "long": 0
+            },
+            "tells_per_1000": {
+              "absence": 14.61187214611872,
+              "paradox": 0.0,
+              "the_way": 0.0,
+              "echo": 0.0,
+              "chained_and": 0.0,
+              "long": 0.0
+            },
+            "gloss_counts": {
+              "a1": 0,
+              "a2": 0,
+              "tier_a": 0,
+              "tier_b": 0
+            },
+            "long_words_diagnostic": 35
+          },
+          "text_sha256": "2acabdf4fa0763a71df0d9b638343f81819ece37737d5b4d801dd1f665fba5fc"
+        },
+        {
+          "id": "focused-1",
+          "complete": true,
+          "checks": {
+            "literal_sequence_matches": true,
+            "expected_literal_occurrences": 10,
+            "actual_literal_occurrences": 10,
+            "text_sha256": "4bf5faf2bb4c439fba4ad3d97404d5d910c51c4dfc66dba2d77b023e5e089dd1",
+            "semantic_status": "unassessed; literal checks are not meaning"
+          },
+          "calls": [
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 5457,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 474,
+                "reasoning_output_tokens": 128
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 21113,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-1\\focused-1.raw.json": "fea829a27e84fbb2d088b0d89a210a67386d362919772720028d05419f5726c1",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-1\\focused-1.request.json": "0c080819415852dd2409855963b34a6591340008e182bd2719864900e366218f",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-1\\focused-1.result.json": "434e71fdc06279a7204d4672dad09f3612e2a965d52c51e6a39c86066f833e75",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-1\\focused-1.txt": "ed7e3544c0729ff6d946e9203a72179c9ce107dee0ae7c2d89e16eafe5aa19a6",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-1\\system.txt": "b91a8f72e0135d51a8bdf24ff41b7085f47558a98a2674ae55570fc2df857e94"
+              },
+              "task_words": 450,
+              "id": "disclosure/focused-1/part-1",
+              "previous_text_sha256": null
+            },
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 6224,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 540,
+                "reasoning_output_tokens": 172
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 25672,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-2\\focused-1.raw.json": "94c00b69b752d2eba379227a76e4cfd9375ae8b86d9cb191cc70bc11e461e814",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-2\\focused-1.request.json": "ef999c8b0a6279f94c387b90e3674c103681ce925a1aac4acb63ae9ee031bbbe",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-2\\focused-1.result.json": "f44934f48216f70f853fed13c152baf111ab58aa37b89df2c5b1d5e691b165d4",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-2\\focused-1.txt": "8667cf7ab92e82e7298ac8769726a6587fbfb72cd5946935b1a235629e77f41a",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-2\\system.txt": "b91a8f72e0135d51a8bdf24ff41b7085f47558a98a2674ae55570fc2df857e94"
+              },
+              "task_words": 980,
+              "id": "disclosure/focused-1/part-2",
+              "previous_text_sha256": "861c81b9ed93fc33a67d113883c468cea1ecfc9d26a3ebe6cc9c13f8369d9d86"
+            },
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 7805,
+                "cached_input_tokens": 2688,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 1032,
+                "reasoning_output_tokens": 284
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 36629,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-3\\focused-1.raw.json": "513b148c031d342ed792cef01dfb9a34aaff16255248e49f07e028991862ca02",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-3\\focused-1.request.json": "bb8e490a94c62494f8d0ffa54d2b5a670992eca9bd9430de70ce33d233eaf86c",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-3\\focused-1.result.json": "3fd4ca462288176fcb305055319e9b9213c7c4b2a4b970200477eedd12d8e904",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-3\\focused-1.txt": "cf20d11c7b1340afc7c51cb75b020908e752bfa9322c310960568bf8edc1e525",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-1\\part-3\\system.txt": "b91a8f72e0135d51a8bdf24ff41b7085f47558a98a2674ae55570fc2df857e94"
+              },
+              "task_words": 2032,
+              "id": "disclosure/focused-1/part-3",
+              "previous_text_sha256": "b7a88835187ee09d7e7e0c76b43f4c5dc710de6b6ee3806316e601855eb6c3d8"
+            }
+          ],
+          "installment_paragraph_counts": [
+            13,
+            18,
+            34
+          ],
+          "metrics": {
+            "words": 1047,
+            "whitespace_words": 1132,
+            "paragraphs": 65,
+            "tells_counts": {
+              "absence": 11,
+              "paradox": 0,
+              "the_way": 0,
+              "echo": 0,
+              "chained_and": 0,
+              "long": 0
+            },
+            "tells_per_1000": {
+              "absence": 10.506208213944603,
+              "paradox": 0.0,
+              "the_way": 0.0,
+              "echo": 0.0,
+              "chained_and": 0.0,
+              "long": 0.0
+            },
+            "gloss_counts": {
+              "a1": 0,
+              "a2": 0,
+              "tier_a": 0,
+              "tier_b": 0
+            },
+            "long_words_diagnostic": 35
+          },
+          "text_sha256": "4bf5faf2bb4c439fba4ad3d97404d5d910c51c4dfc66dba2d77b023e5e089dd1"
+        },
+        {
+          "id": "focused-2",
+          "complete": true,
+          "checks": {
+            "literal_sequence_matches": true,
+            "expected_literal_occurrences": 10,
+            "actual_literal_occurrences": 10,
+            "text_sha256": "0be5b91d8222faf512414b2edfe6e80cb8514723c1da6032780b7a2aa2211157",
+            "semantic_status": "unassessed; literal checks are not meaning"
+          },
+          "calls": [
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 5457,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 508,
+                "reasoning_output_tokens": 163
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 24684,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-1\\focused-2.raw.json": "cb1819d7ee4bc521d4402dad8b10621600c0740f1f28a066d0929fac33fe853a",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-1\\focused-2.request.json": "1607b718f464d0fca69274506c002cff69e9a773f2ee82a712f9058435b91ae1",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-1\\focused-2.result.json": "78927af395d46a7ff546e4f8a91fa3daba7fa5a371c0390fcb65cbdea44cf9fe",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-1\\focused-2.txt": "41cb5cc8b4fdc53646c9976f45bd6d7ebf031b00d76cabaecc53a2739b06e1ad",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-1\\system.txt": "b91a8f72e0135d51a8bdf24ff41b7085f47558a98a2674ae55570fc2df857e94"
+              },
+              "task_words": 450,
+              "id": "disclosure/focused-2/part-1",
+              "previous_text_sha256": null
+            },
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 6219,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 442,
+                "reasoning_output_tokens": 71
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 18834,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-2\\focused-2.raw.json": "76e8e8c7bfdfbd026617f77ee966db221af84c84002efe9f78b28d7ac5a62132",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-2\\focused-2.request.json": "774b449779511a99a261de95ad3ad64210557969e8f7fb6c5e808d45ddcf883c",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-2\\focused-2.result.json": "6cc84f18bef41b19640a0c5ee8d10cb1f21fe6a1e00bbffea2cf624d7683e3c3",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-2\\focused-2.txt": "1db2a1a1e4f911d5b31f28f1942b79a6fca4fc841976a1a9b47e2ff8750c0159",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-2\\system.txt": "b91a8f72e0135d51a8bdf24ff41b7085f47558a98a2674ae55570fc2df857e94"
+              },
+              "task_words": 976,
+              "id": "disclosure/focused-2/part-2",
+              "previous_text_sha256": "df342399113c3e198da21594a875507c84cab19f0a2ed4811a4a6201da7dad5b"
+            },
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 7804,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 909,
+                "reasoning_output_tokens": 138
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 31977,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-3\\focused-2.raw.json": "395df1c0821894e92f8d84d409fee19b0bc0cb5238c0201ee4a004756786fb61",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-3\\focused-2.request.json": "d37effba544dc0748d7f7c7f4afa2f621ae226274f88a1b1eeec622624c29070",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-3\\focused-2.result.json": "102d29aed9a0973d0ec522f01c00652e455abeaeb4ba3e220913eb275a3090b4",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-3\\focused-2.txt": "40eee803c35f30a8a9686a1948aaf077d2e3a545c723be4cebaa9fc36e3072cf",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\focused-2\\part-3\\system.txt": "b91a8f72e0135d51a8bdf24ff41b7085f47558a98a2674ae55570fc2df857e94"
+              },
+              "task_words": 2027,
+              "id": "disclosure/focused-2/part-3",
+              "previous_text_sha256": "aac787fa7cdd50ddfe66f41182410ab67281873edb93243b63dfa76f5fa4fbbe"
+            }
+          ],
+          "installment_paragraph_counts": [
+            11,
+            18,
+            28
+          ],
+          "metrics": {
+            "words": 1062,
+            "whitespace_words": 1147,
+            "paragraphs": 57,
+            "tells_counts": {
+              "absence": 12,
+              "paradox": 0,
+              "the_way": 0,
+              "echo": 0,
+              "chained_and": 0,
+              "long": 0
+            },
+            "tells_per_1000": {
+              "absence": 11.299435028248588,
+              "paradox": 0.0,
+              "the_way": 0.0,
+              "echo": 0.0,
+              "chained_and": 0.0,
+              "long": 0.0
+            },
+            "gloss_counts": {
+              "a1": 0,
+              "a2": 0,
+              "tier_a": 0,
+              "tier_b": 0
+            },
+            "long_words_diagnostic": 35
+          },
+          "text_sha256": "0be5b91d8222faf512414b2edfe6e80cb8514723c1da6032780b7a2aa2211157"
+        },
+        {
+          "id": "full-2",
+          "complete": true,
+          "checks": {
+            "literal_sequence_matches": true,
+            "expected_literal_occurrences": 10,
+            "actual_literal_occurrences": 10,
+            "text_sha256": "6b55080c6f3fad289ef30dac742546419e556ad757cb9292fe0f841eee863a97",
+            "semantic_status": "unassessed; literal checks are not meaning"
+          },
+          "calls": [
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 6963,
+                "cached_input_tokens": 2688,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 540,
+                "reasoning_output_tokens": 149
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 23967,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-1\\full-2.raw.json": "859808c0d3639c8aa191a8be870c53e7e0bd16ca1ba761e98fe1cf9d851dd748",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-1\\full-2.request.json": "b108b1c6824f9f18fd625973f88cc92661b0962f8a051b34e4383a82525f74f0",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-1\\full-2.result.json": "3843e5fc1f39b7f8444b6647594be16a588b4bf795e794f3b285ba9f5dd1c687",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-1\\full-2.txt": "d15065bf3be907a382e6f383defab6bfebf025501057b5a0a0c8c2bef951ee4a",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-1\\system.txt": "b91a8f72e0135d51a8bdf24ff41b7085f47558a98a2674ae55570fc2df857e94"
+              },
+              "task_words": 1479,
+              "id": "disclosure/full-2/part-1",
+              "previous_text_sha256": null
+            },
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 7326,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 499,
+                "reasoning_output_tokens": 126
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 23837,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-2\\full-2.raw.json": "4b8a6bf2aff331ea0b2f03befeb9c20eb9f0a440b6ffa72117319e863aea4d17",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-2\\full-2.request.json": "6b8f4ec6f8834704475d78f564b3d16fccaac3f12381e6d4f90b9590434dfc27",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-2\\full-2.result.json": "7eb6b534f80e702b4fe829d07e3191a05c76fe00cd2debe064a1213adb291c8c",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-2\\full-2.txt": "45ee965b7f740b67cbdac3c516e875373a9e14e3860a0fa0dfba7e7409ed72ed",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-2\\system.txt": "b91a8f72e0135d51a8bdf24ff41b7085f47558a98a2674ae55570fc2df857e94"
+              },
+              "task_words": 1734,
+              "id": "disclosure/full-2/part-2",
+              "previous_text_sha256": "7f45d1e14750d55164821014c1d19ae550c2bbb2b17e0b9aa3c72cf9833fd4cc"
+            },
+            {
+              "status": "completed",
+              "usage": {
+                "input_tokens": 7855,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 1136,
+                "reasoning_output_tokens": 371
+              },
+              "requested_effort": "high",
+              "requested_model": "gpt-6-astra",
+              "resolved_model": null,
+              "cost_usd": null,
+              "wall_ms": 39190,
+              "event_types": [
+                "thread.started",
+                "item.completed",
+                "item.completed",
+                "turn.started",
+                "item.completed",
+                "turn.completed"
+              ],
+              "configuration_notice_count": 2,
+              "error": null,
+              "files": {
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-3\\full-2.raw.json": "2863e315b4bb19cfcd22fe5360bda369cd5d5a4c175d0dd29e983ff996c6f3b8",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-3\\full-2.request.json": "7dd8a08fc96566870d42a2b053f2987f53502b7dcd375347fa2d7c8ca70ff507",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-3\\full-2.result.json": "30cb7dde95ef55b9bef18ce03f46233e3cd4a42aa01c655211c5e80ced434c89",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-3\\full-2.txt": "9593afc41e90ad848dc36c1fd723e3452d0a1b163c3e44100e6d47c6141bf7c9",
+                "runs\\ab\\prose-reasoning-disclosure-20260906\\calls\\disclosure\\full-2\\part-3\\system.txt": "b91a8f72e0135d51a8bdf24ff41b7085f47558a98a2674ae55570fc2df857e94"
+              },
+              "task_words": 2065,
+              "id": "disclosure/full-2/part-3",
+              "previous_text_sha256": "b4e0e107665ad6dcd0d5005e0daf16d651d5d6789f6f65c3121b02ec0c88de86"
+            }
+          ],
+          "installment_paragraph_counts": [
+            13,
+            18,
+            35
+          ],
+          "metrics": {
+            "words": 1103,
+            "whitespace_words": 1183,
+            "paragraphs": 66,
+            "tells_counts": {
+              "absence": 10,
+              "paradox": 0,
+              "the_way": 0,
+              "echo": 0,
+              "chained_and": 0,
+              "long": 0
+            },
+            "tells_per_1000": {
+              "absence": 9.066183136899365,
+              "paradox": 0.0,
+              "the_way": 0.0,
+              "echo": 0.0,
+              "chained_and": 0.0,
+              "long": 0.0
+            },
+            "gloss_counts": {
+              "a1": 0,
+              "a2": 0,
+              "tier_a": 0,
+              "tier_b": 0
+            },
+            "long_words_diagnostic": 35
+          },
+          "text_sha256": "6b55080c6f3fad289ef30dac742546419e556ad757cb9292fe0f841eee863a97"
+        }
+      ],
+      "metrics": {
+        "original": {
+          "words": 1844,
+          "whitespace_words": 1924,
+          "paragraphs": 55,
+          "tells_counts": {
+            "absence": 18,
+            "paradox": 0,
+            "the_way": 4,
+            "echo": 1,
+            "chained_and": 10,
+            "long": 17
+          },
+          "tells_per_1000": {
+            "absence": 9.761388286334057,
+            "paradox": 0.0,
+            "the_way": 2.1691973969631237,
+            "echo": 0.5422993492407809,
+            "chained_and": 5.422993492407809,
+            "long": 9.219088937093275
+          },
+          "gloss_counts": {
+            "a1": 0,
+            "a2": 0,
+            "tier_a": 0,
+            "tier_b": 0
+          },
+          "long_words_diagnostic": 35
+        },
+        "full-1": {
+          "words": 1095,
+          "whitespace_words": 1180,
+          "paragraphs": 66,
+          "tells_counts": {
+            "absence": 16,
+            "paradox": 0,
+            "the_way": 0,
+            "echo": 0,
+            "chained_and": 0,
+            "long": 0
+          },
+          "tells_per_1000": {
+            "absence": 14.61187214611872,
+            "paradox": 0.0,
+            "the_way": 0.0,
+            "echo": 0.0,
+            "chained_and": 0.0,
+            "long": 0.0
+          },
+          "gloss_counts": {
+            "a1": 0,
+            "a2": 0,
+            "tier_a": 0,
+            "tier_b": 0
+          },
+          "long_words_diagnostic": 35
+        },
+        "focused-1": {
+          "words": 1047,
+          "whitespace_words": 1132,
+          "paragraphs": 65,
+          "tells_counts": {
+            "absence": 11,
+            "paradox": 0,
+            "the_way": 0,
+            "echo": 0,
+            "chained_and": 0,
+            "long": 0
+          },
+          "tells_per_1000": {
+            "absence": 10.506208213944603,
+            "paradox": 0.0,
+            "the_way": 0.0,
+            "echo": 0.0,
+            "chained_and": 0.0,
+            "long": 0.0
+          },
+          "gloss_counts": {
+            "a1": 0,
+            "a2": 0,
+            "tier_a": 0,
+            "tier_b": 0
+          },
+          "long_words_diagnostic": 35
+        },
+        "focused-2": {
+          "words": 1062,
+          "whitespace_words": 1147,
+          "paragraphs": 57,
+          "tells_counts": {
+            "absence": 12,
+            "paradox": 0,
+            "the_way": 0,
+            "echo": 0,
+            "chained_and": 0,
+            "long": 0
+          },
+          "tells_per_1000": {
+            "absence": 11.299435028248588,
+            "paradox": 0.0,
+            "the_way": 0.0,
+            "echo": 0.0,
+            "chained_and": 0.0,
+            "long": 0.0
+          },
+          "gloss_counts": {
+            "a1": 0,
+            "a2": 0,
+            "tier_a": 0,
+            "tier_b": 0
+          },
+          "long_words_diagnostic": 35
+        },
+        "full-2": {
+          "words": 1103,
+          "whitespace_words": 1183,
+          "paragraphs": 66,
+          "tells_counts": {
+            "absence": 10,
+            "paradox": 0,
+            "the_way": 0,
+            "echo": 0,
+            "chained_and": 0,
+            "long": 0
+          },
+          "tells_per_1000": {
+            "absence": 9.066183136899365,
+            "paradox": 0.0,
+            "the_way": 0.0,
+            "echo": 0.0,
+            "chained_and": 0.0,
+            "long": 0.0
+          },
+          "gloss_counts": {
+            "a1": 0,
+            "a2": 0,
+            "tier_a": 0,
+            "tier_b": 0
+          },
+          "long_words_diagnostic": 35
+        }
+      },
+      "within_condition_absolute_count_differences": {
+        "full": {
+          "absence": 6,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        },
+        "focused": {
+          "absence": 1,
+          "paradox": 0,
+          "the_way": 0,
+          "echo": 0,
+          "chained_and": 0,
+          "long": 0
+        }
+      }
+    }
+  },
+  "frozen_files": {
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_reasoning_disclosure.py": "1f07e471cd3a38bfadaf807394c665d68229186beed0e8995c598b19f96d8050",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_codex.py": "1c99fc6b20c28f982640d9ebfd1405bd193be81124d6e883c901cae00426e563",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_paragraph_revision.py": "ae51eb0916e1f5dd5e9783aa761c934a70380e26ece3a7ba5fc14ad2710d34a7",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-reasoning-disclosure\\PREREG.md": "7a96e8aad83ce86881041cd2bca5f4aedf3d85684bb93841c82944ca097ef0e9",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-reasoning-disclosure\\RUNBOOK.md": "3414c6ef69465bdde9922a3d285dce4f638cb00ee067db343171ba89ba163a06",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-reasoning-disclosure-tools\\source.json": "72de2d4184fa8498d43b5538dfa1a028c50b71749fc11c0606d983978a8783fa",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-reasoning-disclosure-tools\\source-review.md": "115c9a45ea54d33e5174c3a9aefcfa879c7e59c822ff23b19e7a03bfbf12ab43",
+    "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\bin\\codex.js": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70"
+  },
+  "artifacts": {
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\manifest.json": "4f42c0341ef24bc5f7416933db89e81c91cf03240708f99bfce451d791fec759",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\comparison.html": "fca3b3e4dff194882d65064a4bdf76b09951cad9571446caaa1ed0d9ab19e3ff",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\disclosure.html": "f2c0997660bf68f1e38006f440ba4e0cb372399aaab80ab63e64fd5d34ca896c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-reasoning-disclosure-tools\\build_review.py": "03ddb2a436bb45fe7a3c56420754025ceff18f230b45faa6c8c818b7c538459a",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-reasoning-disclosure-tools\\manual_readings.py": "defd7599eb2e1a95e0357098b88e9e65f21a2ed91dae84003b8bcd0a24134218",
+    "runs\\ab\\prose-order-tools\\build_review.py": "8cf5ce2e1d33c7641c6528ef8719079fe9a1fe46688fa4e66502f00f10cb66f8",
+    "src\\litharness\\domain\\tells.py": "c4459441995291de158f18dbbcb7b903b4e126c164fef0e955f01fedddea589c",
+    "research\\quality-measurement\\register_census.py": "f8bda53ced24815e11c67116ca280d8b5213e1582a210aa328fc4382f4df052c",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-1-part-1.inspection.json": "48ed33c8c6d7bcfb83807b13d535447d04ebe2b192d3c2d19977b5fe01e79d9f",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-1-part-1.txt": "ed7e3544c0729ff6d946e9203a72179c9ce107dee0ae7c2d89e16eafe5aa19a6",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-1-part-2.inspection.json": "9b0f2b42e822987583b4f9cbe9197e14edb52ee6ce60a98f2a42ad041be1189b",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-1-part-2.txt": "8667cf7ab92e82e7298ac8769726a6587fbfb72cd5946935b1a235629e77f41a",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-1-part-3.inspection.json": "51e05b8e290f11aa03d084694772c253ec0ba41716b7487cb9ffafa5fc75e28f",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-1-part-3.txt": "cf20d11c7b1340afc7c51cb75b020908e752bfa9322c310960568bf8edc1e525",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-1.inspection.json": "af14c132026c77631a2700bd1544fe68ed3c9fad925a344ebc1c15dc182bc0a7",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-1.txt": "4bf5faf2bb4c439fba4ad3d97404d5d910c51c4dfc66dba2d77b023e5e089dd1",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-2-part-1.inspection.json": "e61c3a1d1d459b56f098840e61a3e44e8fc428429cb4677395cd9cc6e57e37da",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-2-part-1.txt": "41cb5cc8b4fdc53646c9976f45bd6d7ebf031b00d76cabaecc53a2739b06e1ad",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-2-part-2.inspection.json": "15905306e04ff3595559d06b1ea21c9af1803c0d544f677e9b193f914a3f10ca",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-2-part-2.txt": "1db2a1a1e4f911d5b31f28f1942b79a6fca4fc841976a1a9b47e2ff8750c0159",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-2-part-3.inspection.json": "e908689f3ece88c2bac8402e0add5b249cfe04a9589ff3a3f1fe29ad3c3a7533",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-2-part-3.txt": "40eee803c35f30a8a9686a1948aaf077d2e3a545c723be4cebaa9fc36e3072cf",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-2.inspection.json": "6c25b64ca13c05a04fe36f5472f296c321fe0eb81791c0211ac991b46ae8b7cf",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-focused-2.txt": "0be5b91d8222faf512414b2edfe6e80cb8514723c1da6032780b7a2aa2211157",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-1-part-1.inspection.json": "5c1857b7ac3b67aa519c003c46469d5a899ecb6f6b98a2a81b368c8db5630008",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-1-part-1.txt": "b95b25967130c629e2b99ce844c8a6535094fd5c09085f811c8032c905b063bb",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-1-part-2.inspection.json": "bb5834dd16b17648a2c28a74bcb4ee105a55d60e67df7a307ad069eafbcc793a",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-1-part-2.txt": "9689e3974fafddf750d8c200def5c51cc1656e93a05988c2f353b3151d400da4",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-1-part-3.inspection.json": "230cb4fd4798f5850f62c089686c2eacd2763856600fcfb42df2d72c6270b60d",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-1-part-3.txt": "15969a15195124ed03eab2f86f5a0777735bf4a772b7125e63fde43b852c0eca",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-1.inspection.json": "4db48c1e3e64b3de14b42ba5b12ada40c1bdb0d55e8a0c72c8007dd9917d181f",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-1.txt": "2acabdf4fa0763a71df0d9b638343f81819ece37737d5b4d801dd1f665fba5fc",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-2-part-1.inspection.json": "cf4d66d5c83c8bc69fef13d31fcdc334054d9e06fcd0b3b1a541c795f06787cf",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-2-part-1.txt": "d15065bf3be907a382e6f383defab6bfebf025501057b5a0a0c8c2bef951ee4a",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-2-part-2.inspection.json": "da567d693e1fb3132baa86ae8fe3fdc88d93bd819424f69a24b2987fc0d03f15",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-2-part-2.txt": "45ee965b7f740b67cbdac3c516e875373a9e14e3860a0fa0dfba7e7409ed72ed",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-2-part-3.inspection.json": "a9f3d98be8eea57a730474c955e305524404d6f38cad28d9e9b0561b7d50aa62",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-2-part-3.txt": "9593afc41e90ad848dc36c1fd723e3452d0a1b163c3e44100e6d47c6141bf7c9",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-2.inspection.json": "d9010ac496bab24d0d102857c4205f3145392ee98de5d476c8e0f41f4658bc10",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\disclosure-full-2.txt": "6b55080c6f3fad289ef30dac742546419e556ad757cb9292fe0f841eee863a97",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\reasoning-focused-1.inspection.json": "f6f30159bcdcdd4e4132343ed509a8a6a4fb73a9834738a930350ee612af7212",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\reasoning-focused-1.txt": "5a6fe8e0999b3b310a2f9346a10e7f1cea855310ce1b1531dbf3c5601ba6f99f",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\reasoning-focused-2.inspection.json": "4dda079951e9cb49336b5ea935cba090ca123544ec3e0d215ec0b08d4eb2c8d4",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\reasoning-focused-2.txt": "e2943b8db147b1292dd0319903b7008ae32e3757446eb8926a69445b53ca4d79",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\reasoning-full-1.inspection.json": "c0279db3a7574b5ce1ac944f2ccac46febb4696519d5093ae7bc71a6b18838f1",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\reasoning-full-1.txt": "3e58cb509221e0c4091b13c12a512aa9bd4fba64c81130afee76792d0e7e78b7",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\reasoning-full-2.inspection.json": "a18501b42ee6608da0d15f86fcd7fb3937b4cb08512834496700e4c609581e61",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\assembled\\reasoning-full-2.txt": "1e46900111c4c99e6ef97a470d7e0dbeb7801ec14f2e1ca7f913bf9a3b107ca0",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\READING.md": "784be45a21757ad729bbd974ebb3803fc7693b57b0d7d5e38bfa2b74ebbc31d6",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\fact-audit.json": "e1d141a953e8e2c3ea95b0b183fa678f3d96d55b1aa9ea8b702b962bf793964a",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\reading-records.json": "79331e7bae3e73905658c65fede9c42835d10c8acf1060d1421a12d5fafc27d0",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\development-notes.md": "e295c4e307572e90185a06a1d9364ee70f582f1e018ea7e1b8502885d4148f75",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\browser-qa\\console.log": "5e022534a5fe0feeb06a8fc815ff2ad8e4598aae62e789579db7dbcbfb58bc2a",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\browser-qa\\page-2026-09-06T19-47-46-074Z.yml": "2ee40b72584b123ef358fd2b41e0a6a3364bccb3eee68fdd50b827598f58b6c6",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\browser-qa\\page-2026-09-06T19-50-46-288Z.yml": "5e2e13fc5ace87812fc4254ac9e3545eda8444e894cbf8a41c5cbd77bd1a56ea",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\browser-qa\\page-2026-09-06T19-51-01-038Z.yml": "4fe88a1d41970110a879c987c1df0e1d42a546ef4c2d24ba1b66fd66fa491489",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\browser-qa\\page-2026-09-06T19-52-03-373Z.yml": "64446c4c9d7c3d37c3bcefd880f122470ffcbc981d237e0e53fe658811c6e4d7",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\browser-qa\\page-2026-09-06T19-52-15-497Z.yml": "cc001cba3d4612cdc5bb59fb9403348c1a5c15535cfc5ce320ab179fb9732cd0",
+    "runs\\ab\\prose-reasoning-disclosure-20260906\\browser-qa\\page-2026-09-06T19-52-32-156Z.yml": "c8ea1a38ecf57e464df17433d0b2b0b18eef5f6864818a53886fc6e4e522ace7",
+    "output\\playwright\\prose-reasoning-disclosure-disclosure.png": "40a3ad56dde58ddc797d443ff018477fcb5ab44b1391a7cc02c4efce6586d122",
+    "output\\playwright\\prose-reasoning-disclosure-reasoning.png": "1c7cff9291e73e16dc88d497b851cf8287dc1af5cc7240e1747ef727ccf42286"
+  },
+  "request_integrity": "All available requests match registered source composition, effort and system files. Later installments contain their own unrevised prior output, with boundary whitespace normalized. Per-call filesystem paths differ by design.",
+  "rebuild": "uv run python runs/ab/prose-reasoning-disclosure-tools/build_review.py"
+}
