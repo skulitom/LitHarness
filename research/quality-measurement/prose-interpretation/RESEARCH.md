@@ -28,6 +28,13 @@ local defect; none of these papers establishes its cause or promises a cure for 
   and specifying desired writing structure. Our prior isolation trial already removed tools,
   project documents, host skills and inherited configuration. This guidance does not diagnose
   the remaining literary problem. Documentation was read; no model API was invoked.
+- [Agents' Room, Huot et al., ICLR 2025](https://proceedings.iclr.cc/paper_files/paper/2025/hash/0fbc8a83d93dd8021a4dd8d2d34138eb-Abstract-Conference.html):
+  the system separates four planning roles and five sequential writing roles through a shared
+  scratchpad. Its concrete orchestrator uses a fixed exposition-to-resolution structure and
+  studies prompted and fine-tuned agents. The reported preferences are evidence about that
+  evaluated system, not evidence that adding one generic narrative agent to LitHarness will
+  remove its opening defects. The separation of planning from realization is relevant; the
+  fixed structure, training setup and evaluator are not adopted in this diagnostic.
 
 ## Local design implication, still a conjecture
 

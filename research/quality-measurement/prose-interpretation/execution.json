@@ -1,0 +1,181 @@
+{
+  "status": "diagnostic_complete_no_quality_qualification",
+  "code_commit": "faad16c7377ae01367ee49523fb83c31da46618f",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "cli_invocations": 4,
+  "outputs": [
+    {
+      "status": "completed",
+      "wall_ms": 76857,
+      "usage": {
+        "input_tokens": 16293,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1514,
+        "reasoning_output_tokens": 254
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "full/full-1",
+      "condition": "Original interpretation",
+      "words": 984,
+      "paragraphs": 71,
+      "configuration_notice_count": 2,
+      "files": {
+        "full-1.request.json": "45428f5c2f7495af219f8b461e69d20272d5a23e8e75e5795858b81383486201",
+        "full-1.raw.json": "d1a17607c471f520b3d8e8e2d0df36281ddd57d79a3c6c2b45976aa80adf59b6",
+        "full-1.result.json": "242d1ae52c5fe76928e7b7a33a676576102adc02b583f42d8a3928393476b0a6",
+        "full-1.txt": "edd6e725188ac9875da381d968d7a4a291160d19f397c4a980d3f1a16d08f83c"
+      }
+    },
+    {
+      "status": "completed",
+      "wall_ms": 76993,
+      "usage": {
+        "input_tokens": 16068,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1450,
+        "reasoning_output_tokens": 196
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "focused/focused-1",
+      "condition": "Interpretation reduced",
+      "words": 968,
+      "paragraphs": 67,
+      "configuration_notice_count": 2,
+      "files": {
+        "focused-1.request.json": "ed7cf779911d9713b1ccbe7d513d029d97aff070b1ce0bddaf88817ecec1c6bf",
+        "focused-1.raw.json": "74dc1163500e57638313eb1ab79c1a82cb46069e8d31510d16bc9219c3848fa4",
+        "focused-1.result.json": "0c6736d2de1a14ce838d3ce478a7f30a6eadd4d388ddc9396dd007b8d5cb8885",
+        "focused-1.txt": "60e58095a47911a03fd841d498d6f1b34abfcfd83fb7b7d9257872863d3207bb"
+      }
+    },
+    {
+      "status": "completed",
+      "wall_ms": 83501,
+      "usage": {
+        "input_tokens": 16068,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1541,
+        "reasoning_output_tokens": 335
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "focused/focused-2",
+      "condition": "Interpretation reduced",
+      "words": 945,
+      "paragraphs": 66,
+      "configuration_notice_count": 2,
+      "files": {
+        "focused-2.request.json": "ed7cf779911d9713b1ccbe7d513d029d97aff070b1ce0bddaf88817ecec1c6bf",
+        "focused-2.raw.json": "31962fb05cdd1131465b575401bce4b2702b93fc1af3081c2d56c291f37151c7",
+        "focused-2.result.json": "fad8d69bc2c983b9aba3cc152389e3f1e57f5c1b35212deb260f3c697df8f714",
+        "focused-2.txt": "1fbf2e0793c356dedd60c767e2fb2efc2ea87713c136c0f2672d2ba3e4ab67c9"
+      }
+    },
+    {
+      "status": "completed",
+      "wall_ms": 83625,
+      "usage": {
+        "input_tokens": 16293,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1566,
+        "reasoning_output_tokens": 333
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "full/full-2",
+      "condition": "Original interpretation",
+      "words": 964,
+      "paragraphs": 59,
+      "configuration_notice_count": 2,
+      "files": {
+        "full-2.request.json": "45428f5c2f7495af219f8b461e69d20272d5a23e8e75e5795858b81383486201",
+        "full-2.raw.json": "6294fd116b53271cf20eee19a92afd869a22a9a2e56d3cf73509e357e997f477",
+        "full-2.result.json": "3346487edd065f882a7004c64b71eeaffd24cc787be76afa3857414746571dc0",
+        "full-2.txt": "01ab5a4192d665f9b1a86032979320b73de5825aaafbfa1c5b3a2c07d809cf8b"
+      }
+    }
+  ],
+  "usage": {
+    "input_tokens": 64722,
+    "cached_input_tokens": 0,
+    "output_tokens": 6071,
+    "reasoning_output_tokens": 1118
+  },
+  "conservative_token_total": 71911,
+  "cost_usd": null,
+  "frozen_files": {
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_interpretation.py": "57c5cd4f59e7db7c2df6335b047a8203d7bca74df1dced9821265070be30f1de",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-interpretation\\PREREG.md": "0d9acf9f5a0e16d4ec6fa341eb86f580cada797d6308b4f570cf12c365e53958",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-interpretation\\RUNBOOK.md": "7aef9dc2507f3e9909d03a32a5b06926945263bc88571a9256c663024b93cf89",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-order-20260906\\drafts\\focused-1.request.json": "44a4f06edf336b922326be62c559543adb26de2535d4269ca609f1028576a874",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-interpretation-tools\\amendment.json": "82a720b547940fce30e7f952a292258505d96323a95903843bbf5f97c5edd317",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-interpretation-tools\\source-review.md": "5dc7ba4239bb51529c31655c6023d08eecb683e0a0aa96bc1b624e022491cbf3",
+    "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\bin\\codex.js": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_actions.py": "665e9d1a86b1c606d27ed2e85255c03e4a2aef0416711fa8430b79a79fc38fcc",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_codex.py": "e244da964219121b486fe5d9189230e117e8558f9130eceb4361695df163e24f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-interpretation-20260906\\full\\system.txt": "51eb7ac0f41a3326d98d9731ca72bfbd8fdcfeb05a992dc6e30ce85df3125839",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-interpretation-20260906\\focused\\system.txt": "872c6fca446f1d04c58cd4c3daeb6b5738ce1655bd61753cf969e0cd6c1d8606"
+  },
+  "artifacts": {
+    "runs\\ab\\prose-interpretation-20260906\\manifest.json": "74264391b66aed613d02782f294fbb1cb54401e95c15a646babc28ee8d6f8063",
+    "runs\\ab\\prose-interpretation-20260906\\comparison.html": "865e201699fcdf7c5be0cc5e28ca47c558774b524eb43f17e476b7e7733ccc3e",
+    "runs\\ab\\prose-interpretation-tools\\source-review.md": "5dc7ba4239bb51529c31655c6023d08eecb683e0a0aa96bc1b624e022491cbf3",
+    "runs\\ab\\prose-interpretation-tools\\amendment.diff": "ee101545bef1327a98d841cca0ff7bde22d4a1eb2800629ebd40af6a0c0a0153",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-interpretation-tools\\build_review.py": "0719b9a62f84910870b6467b4089c9b67b8b7fbc7d71080e9e588b7e700b4788",
+    "runs\\ab\\prose-order-tools\\build_review.py": "8cf5ce2e1d33c7641c6528ef8719079fe9a1fe46688fa4e66502f00f10cb66f8",
+    "READING.md": "ea89d2bbc8afc9f8cc427c047c5553c114e220c41e89cf97851b6232c7a7933e"
+  },
+  "request_integrity": "Both actual system and prompt match each frozen condition; system file and argv agree.",
+  "browser_qa": {
+    "runs\\ab\\prose-interpretation-20260906\\browser-qa\\page-2026-09-06T02-39-39-130Z.yml": "a70aa0fa96c70f112c0a29cfbfdc1cdb7acea92593c1e62f07b0667e1370f319",
+    "runs\\ab\\prose-interpretation-20260906\\browser-qa\\page-2026-09-06T02-41-10-495Z.yml": "62f6fa6775c22919771792345c41eefd4fdcd8225d1cec1a8815457393014fbc",
+    "output\\playwright\\prose-interpretation-default.png": "27dc460c6271c48b8ce5acd6be15e1f1d2599a8843b9f184910b83a108c73de2"
+  }
+}
