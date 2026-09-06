@@ -2,12 +2,17 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "prose-scene-brief-exposure-v1",
   "statement": "Providing only current-scene essentials and removing fixed intermediate action plans may reduce the located exposition and repetitive interpretation on a fresh scene. This is an unqualified conjecture tested by the registered diagnostic.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
       "path": "research/quality-measurement/prose-scene-brief/PREREG.md",
       "sha256": "3d6e11d46c45057d7f1df0611d5064aa252b93f05a8f036e2b607a82c1174301"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-scene-brief/execution.json",
+      "sha256": "45ac1ccfff3120035d5339eb5f7023b0f3211145e45b40ceede76e49f0ca1dad"
     }
   ]
 }

@@ -1,0 +1,359 @@
+{
+  "status": "observed_unqualified_diagnostic",
+  "code_commit": "60c09e670ae39d7be94bf76cb2ef7b05cbe7ecf5",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "cli_invocations": 9,
+  "usage": {
+    "input_tokens": 51760,
+    "cached_input_tokens": 2688,
+    "output_tokens": 13382,
+    "reasoning_output_tokens": 4107
+  },
+  "conservative_token_total": 69249,
+  "cost_usd": null,
+  "outputs": [
+    {
+      "status": "completed",
+      "wall_ms": 39842,
+      "usage": {
+        "input_tokens": 6176,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 714,
+        "reasoning_output_tokens": 398
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "planner/full-1",
+      "configuration_notice_count": 2,
+      "files": {
+        "full-1.request.json": "c08fbf0bf3b4f951471588c23c81f3bfa63eef86867b99cc60d1631470d4bc7c",
+        "full-1.raw.json": "907b7b8bdd27c47aba2e08feeaeb23b137496ed4ca81256c5adb682b864046b0",
+        "full-1.result.json": "aa392940fbc276addb396f34382dc9325677c164a5a135b1a30999341fd22c4c",
+        "full-1.txt": "9b6ec78ba72eb04cebebae25682aaf4286ff8720ac5e8285c172aab13b1dfe18"
+      }
+    },
+    {
+      "status": "completed",
+      "wall_ms": 92146,
+      "usage": {
+        "input_tokens": 6315,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1511,
+        "reasoning_output_tokens": 411
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "planned/full-1",
+      "configuration_notice_count": 2,
+      "files": {
+        "full-1.request.json": "56741fe255ba8fde55d89d0723ac418adead179d9f2d356c302a929df45b2e56",
+        "full-1.raw.json": "75ba043bc021995f4b3a7923e4f7649dc17322cc61009961b761ef26295439cb",
+        "full-1.result.json": "e363099116d83eee9f19c35580b3e8ff41029ad7e97f9e73a4877fd12631be7f",
+        "full-1.txt": "900dc11c846e992b054a938546ceb52238531ad8581ccfbeb2cb577dfccebdde"
+      },
+      "condition": "Extended \u00b7 Fixed plan",
+      "words": 873,
+      "paragraphs": 38
+    },
+    {
+      "status": "completed",
+      "wall_ms": 100016,
+      "usage": {
+        "input_tokens": 6015,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1599,
+        "reasoning_output_tokens": 448
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "free/full-1",
+      "configuration_notice_count": 2,
+      "files": {
+        "full-1.request.json": "d28bd6ff1460a6f2f7f8a251801a32f1d5420c0a7680b63181f052e06341b766",
+        "full-1.raw.json": "dd75426968c837d22c35355c836f55b574bc8feebb80d7a1ea0a702cfebfb696",
+        "full-1.result.json": "1bea9b7cf7bfe94eb41db6a00cad54d9f51503e8a74e45d7679fb6f82ae95e79",
+        "full-1.txt": "3df747a3927ab3c7929e5538fabbb70a96ebac97372fa1362212b782c86c8bd7"
+      },
+      "condition": "Extended \u00b7 Free actions",
+      "words": 900,
+      "paragraphs": 52
+    },
+    {
+      "status": "completed",
+      "wall_ms": 113002,
+      "usage": {
+        "input_tokens": 5081,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1631,
+        "reasoning_output_tokens": 516
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "free/focused-1",
+      "configuration_notice_count": 2,
+      "files": {
+        "focused-1.request.json": "95cb41fac966d6267f15bf9c6b7fb41f133dcdc35d97d914c17777eb91bb264c",
+        "focused-1.raw.json": "3ff78612fdaa7e257e57d69932737a1e0c0bf94eef7726ff369ceca04f89ed63",
+        "focused-1.result.json": "7029d660f7b23857dc2384944ebaeb20d5276a745e8f9db0d75b0946a5832c41",
+        "focused-1.txt": "7416649d16782714b28000142fd1984c8d55eb236e92915fa305c7fd1ec852dc"
+      },
+      "condition": "Compact \u00b7 Free actions",
+      "words": 875,
+      "paragraphs": 51
+    },
+    {
+      "status": "completed",
+      "wall_ms": 85868,
+      "usage": {
+        "input_tokens": 5381,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1371,
+        "reasoning_output_tokens": 270
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "planned/focused-1",
+      "configuration_notice_count": 2,
+      "files": {
+        "focused-1.request.json": "80db6895addaea5d3c7f312af7b53e3d20534833d78ce6701c07d23beab47c70",
+        "focused-1.raw.json": "d766e5a40a3ead89fcd6f5cfeaf26d4f69911ebb948e335d536cb9e709ede763",
+        "focused-1.result.json": "f32df1a3fe52160042b2ee79cea0fedafe5ff8fd9f6ed53c635117d7eed4fb45",
+        "focused-1.txt": "ef574c3a30603d577ce677f01d82a09ea52907859bb1136544496504aafb4ba2"
+      },
+      "condition": "Compact \u00b7 Fixed plan",
+      "words": 894,
+      "paragraphs": 33
+    },
+    {
+      "status": "completed",
+      "wall_ms": 90886,
+      "usage": {
+        "input_tokens": 5381,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1432,
+        "reasoning_output_tokens": 304
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "planned/focused-2",
+      "configuration_notice_count": 2,
+      "files": {
+        "focused-2.request.json": "80db6895addaea5d3c7f312af7b53e3d20534833d78ce6701c07d23beab47c70",
+        "focused-2.raw.json": "e157658fc640e6f836a95957575ed08aad213753f715d41a3d15c01f780548c4",
+        "focused-2.result.json": "55e6392c151fdfd8b2e5b2fe78a1e416f5c283f5f5c0e017a3cb42c1ccf2ee8e",
+        "focused-2.txt": "dec23fbf1d6ccf898a51354fe3081c9d67df383a760de64a16010d4bf392ef87"
+      },
+      "condition": "Compact \u00b7 Fixed plan",
+      "words": 914,
+      "paragraphs": 36
+    },
+    {
+      "status": "completed",
+      "wall_ms": 118705,
+      "usage": {
+        "input_tokens": 5081,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1829,
+        "reasoning_output_tokens": 728
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "free/focused-2",
+      "configuration_notice_count": 2,
+      "files": {
+        "focused-2.request.json": "95cb41fac966d6267f15bf9c6b7fb41f133dcdc35d97d914c17777eb91bb264c",
+        "focused-2.raw.json": "2ef66ce28edebd971466abb9d4c635fe4150a611b6f94250a3f05124b48f50f1",
+        "focused-2.result.json": "ab3246c6331bd9ea0e2ae740565c79816ac9f3e6d2c46ebeb3b08dd58b4f8eab",
+        "focused-2.txt": "960ce70cca0f62eaf47ca899dd01d4889b72106e704aa77c123cad4bc5c1f829"
+      },
+      "condition": "Compact \u00b7 Free actions",
+      "words": 871,
+      "paragraphs": 45
+    },
+    {
+      "status": "completed",
+      "wall_ms": 115553,
+      "usage": {
+        "input_tokens": 6015,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1649,
+        "reasoning_output_tokens": 516
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "free/full-2",
+      "configuration_notice_count": 2,
+      "files": {
+        "full-2.request.json": "d28bd6ff1460a6f2f7f8a251801a32f1d5420c0a7680b63181f052e06341b766",
+        "full-2.raw.json": "dc4787484a0fe3f20b5b8f7f78dd922d6b3d6afb38ea97bc124d7aae2b7aaac0",
+        "full-2.result.json": "73ef09157f63f0726aeae4783e332ba50f1deb9f1dfd9e5424a6c44b60a5838e",
+        "full-2.txt": "d558455a7130c6567a2617d951789df75f165e044610f1e3be0b05125608c7c0"
+      },
+      "condition": "Extended \u00b7 Free actions",
+      "words": 896,
+      "paragraphs": 56
+    },
+    {
+      "status": "completed",
+      "wall_ms": 98125,
+      "usage": {
+        "input_tokens": 6315,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1646,
+        "reasoning_output_tokens": 516
+      },
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null,
+      "cost_usd": null,
+      "authentication": "chatgpt",
+      "event_types": [
+        "thread.started",
+        "item.completed",
+        "item.completed",
+        "turn.started",
+        "item.completed",
+        "turn.completed"
+      ],
+      "id": "planned/full-2",
+      "configuration_notice_count": 2,
+      "files": {
+        "full-2.request.json": "56741fe255ba8fde55d89d0723ac418adead179d9f2d356c302a929df45b2e56",
+        "full-2.raw.json": "ecc728c94beca57bb2288b2a54ff3c127db5517d5be8e4f3efbc9f2433ccfd2e",
+        "full-2.result.json": "c1d99a0ff220c8e39d54c1f4674baa09b317c98fd6cbb62994802ac327e50657",
+        "full-2.txt": "492cef5ce75decae3ea8e6689e6631e8cc26598f3dbf8da9881c2f3256b52265"
+      },
+      "condition": "Extended \u00b7 Fixed plan",
+      "words": 911,
+      "paragraphs": 34
+    }
+  ],
+  "frozen_files": {
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_scene_brief.py": "40acf2fccefe96814022eabed765a5d48157fa440dd57cc4bbaaa4ed3871f601",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_codex.py": "e244da964219121b486fe5d9189230e117e8558f9130eceb4361695df163e24f",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-scene-brief\\PREREG.md": "3d6e11d46c45057d7f1df0611d5064aa252b93f05a8f036e2b607a82c1174301",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-scene-brief\\RUNBOOK.md": "8d240b23990db28f3c7d0e6fce5c6ccbda9887df6c33c5ce1dd0d41fdc3bcb16",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-scene-brief-tools\\source.json": "c061ab1f300363a439f80b9f2e60485b456062fc6cfeb26427bc49fd7e15ad98",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-scene-brief-tools\\source-review.md": "59cef30f3b3266ed575c43d07c552d88aabb0e1760394fa3feb8382e05ec728f",
+    "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\bin\\codex.js": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-scene-brief-20260906\\planner\\system.txt": "a92e8006a5d35f593a1ca48ac877035d3434a6e36052a787cbf5102d9c8d9098",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-scene-brief-20260906\\planned\\system.txt": "edbc30e4acd1b03c24b7a92ae60d16c9c23f35029ec424b6677975327b902e4c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-scene-brief-20260906\\free\\system.txt": "edbc30e4acd1b03c24b7a92ae60d16c9c23f35029ec424b6677975327b902e4c"
+  },
+  "artifacts": {
+    "runs\\ab\\prose-scene-brief-20260906\\manifest.json": "d0673a8a068411b9c32f65dc1133ccdf9af450f9f28b060a9aeba8f41cbeb71b",
+    "runs\\ab\\prose-scene-brief-20260906\\frozen.json": "9b7846b187a7a71ef6f7702b88f1087c54bb87c22b2bb1084101024db5663096",
+    "runs\\ab\\prose-scene-brief-20260906\\plan.reviewed.json": "9b6ec78ba72eb04cebebae25682aaf4286ff8720ac5e8285c172aab13b1dfe18",
+    "runs\\ab\\prose-scene-brief-20260906\\plan-review.md": "529b87a0096da1894f35c86d54b2b2927b46c80c0b034c9186b7f8ada9b68f66",
+    "runs\\ab\\prose-scene-brief-20260906\\comparison.html": "b7f640bc9e17cd3d508df3ee516c7ddea98514fc1253925a95b1d94c238350d4",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-scene-brief-tools\\build_review.py": "8a363eded0046b2b0fc7baab25932b0cec6bd3a676624f0d017bf666dfd54010",
+    "runs\\ab\\prose-order-tools\\build_review.py": "8cf5ce2e1d33c7641c6528ef8719079fe9a1fe46688fa4e66502f00f10cb66f8",
+    "READING.md": "b193e2cd516c294cf1b2b244adc23bb277615a995581a428843bac3deadf65df"
+  },
+  "request_words": {
+    "free": {
+      "full": 1115,
+      "focused": 328
+    },
+    "planned": {
+      "full": 1355,
+      "focused": 568
+    }
+  },
+  "request_integrity": "All actual writer systems and prompts match frozen cells; parsed system-file configuration matches each hashed system file.",
+  "browser_qa": {
+    "runs\\ab\\prose-scene-brief-20260906\\browser-qa\\page-2026-09-06T11-39-51-833Z.yml": "d5290bd44d633e2d7fb2ab0609afc5ecfbb4ecb4582a5ff8673e7f05b6795a29",
+    "runs\\ab\\prose-scene-brief-20260906\\browser-qa\\page-2026-09-06T11-43-51-336Z.yml": "62526a22f65d4d3442e4149aed791d991c58038fe8f3026bb27791a0bfb5eea7",
+    "runs\\ab\\prose-scene-brief-20260906\\browser-qa\\page-2026-09-06T11-44-14-265Z.yml": "ca70cea336838d8f944adf4d469216f7d1cd40f71e08754723ec25336366ffe1",
+    "output\\playwright\\prose-scene-brief-default.png": "4674ce247958ca6b4590415c7ab35b1e35930deb8ee0241006ebea494ef3290f"
+  }
+}
