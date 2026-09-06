@@ -1,0 +1,13 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-editor-boundary-v1",
+  "statement": "Actual source withholding, optional-unit selection, conflicting intentions, language mediation and a fresh subscription-writer comparison may reveal contributors to Chapter 1 explanatory prose. Unqualified diagnostic conjectures.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-editor-boundary/PREREG.md",
+      "sha256": "e7f0b8c116066c9040303a331b34c70f123169ef3c54c9d380424d42ca718488"
+    }
+  ]
+}
