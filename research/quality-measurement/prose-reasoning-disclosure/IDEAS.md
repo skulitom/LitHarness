@@ -20,5 +20,7 @@ avoid mistaking discussion for completed experiments or repeatedly proposing the
 Update, 2026-09-06: the first idea now has a separate
 [narration-obligations registration](../prose-narration-obligations/PREREG.md), with identical
 writer facts and a changed required-narration list. Its source classification is a research
-fixture, not a qualified production mechanism. The social-conflict and language ideas remain
+fixture, not a qualified production mechanism. Its [completed diagnostic](../prose-narration-obligations/RESULTS.md)
+found both selective drafts explicitly narrating all eleven optional units; it remains unqualified.
+The social-conflict and language ideas remain
 unrun conjectures with no allocation. Record subsequent findings in the Chapter 1 history.
