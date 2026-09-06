@@ -2,12 +2,17 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "prose-original-exposure-reconstruction-v1",
   "statement": "Withholding original prose during reconstruction from the same protected story record may reduce conservative reuse of its incidental information and phrasing while preserving consequential meaning. This is an unqualified conjecture.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
       "path": "research/quality-measurement/prose-protected-reconstruction/PREREG.md",
       "sha256": "9eaf0eb9077e1bf0694e431b4c8273eb0d6d4c7e4a6a6e448a74f0d1db4d80b0"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-protected-reconstruction/execution.json",
+      "sha256": "52199741104d56986d2207e0e671798fbedc4333177841a44e8d7ca44f7ce3fc"
     }
   ]
 }
