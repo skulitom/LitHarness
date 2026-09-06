@@ -14,7 +14,7 @@ ROOT = HERE.parents[1]
 CODEX = runpy.run_path(str(HERE / "prose_codex.py"))
 STAGING = runpy.run_path(str(HERE / "prose_staging.py"))
 read, write_new, sha = (CODEX[k] for k in ("read", "write_new", "sha"))
-REGISTRATION = HERE / "prose-actions/PREREG.md"
+REGISTRATION = HERE / "prose-actions/AMENDMENT-1.md"
 ORDER = ("full-1", "focused-1", "focused-2", "full-2")
 FIELDS = ("intention", "action", "response", "consequence")
 TOKEN_STOP = 120_000
@@ -106,8 +106,8 @@ def validate_plan(plan: Any, actions: list[dict[str, str]]) -> None:
         raise ValueError("missing or reordered source actions")
 
 
-def render(base: dict[str, Any], plan: Any) -> dict[str, Any]:
-    validate_plan(plan, STAGING["source_actions"](base["prompt"]))
+def render(base: dict[str, Any], plan: Any, actions: Any = None) -> dict[str, Any]:
+    validate_plan(plan, STAGING["source_actions"](base["prompt"]) if actions is None else actions)
     before, rest = base["prompt"].split("\nOrdered actions:\n")
     _, after = rest.split("\nEnding state:\n")
     rows = ["Immediate objective: " + plan["objective"]]
@@ -118,12 +118,30 @@ def render(base: dict[str, Any], plan: Any) -> dict[str, Any]:
     }
 
 
-def prepare(out: Path, source: Path, amendment: Path) -> None:
+def prepare(out: Path, source: Path, amendment: Path, outcomes: Path) -> None:
     if not out.is_relative_to(ROOT / "runs") or out == ROOT / "runs":
         raise ValueError("output must be beneath runs")
     original = read(source)["request"]
     base = reconcile(original, read(amendment))
-    actions = STAGING["source_actions"](base["prompt"])
+    actions = read(outcomes)
+    if (
+        not isinstance(actions, list)
+        or not actions
+        or any(
+            set(a) != {"id", "text"} or a["id"] != f"a{i}" or not a["text"].strip()
+            for i, a in enumerate(actions, 1)
+        )
+    ):
+        raise ValueError("invalid reviewed outcome contract")
+    before, rest = base["prompt"].split("\nOrdered actions:\n")
+    _, after = rest.split("\nEnding state:\n")
+    planning_context = (
+        before
+        + "\nRequired outcomes:\n"
+        + "\n".join("- " + a["text"] for a in actions)
+        + "\nEnding state:\n"
+        + after
+    )
     if base.get("allowed_tools") or base.get("schema"):
         raise ValueError("tool-free unstructured source required")
     prefix = CODEX["command_prefix"]()
@@ -144,11 +162,13 @@ def prepare(out: Path, source: Path, amendment: Path) -> None:
     paths = [
         Path(__file__),
         REGISTRATION,
+        HERE / "prose-actions/PREREG.md",
         HERE / "prose_codex.py",
         HERE / "prose_staging.py",
         HERE / "prose_framing.py",
         source,
         amendment,
+        outcomes,
         Path(prefix[1]),
         out / "planner/system.txt",
         out / "drafts/system.txt",
@@ -163,6 +183,7 @@ def prepare(out: Path, source: Path, amendment: Path) -> None:
             "base": base,
             "amendment": read(amendment),
             "actions": actions,
+            "planning_context": planning_context,
             "prefix": prefix,
             "order": list(ORDER),
             "token_stop": TOKEN_STOP,
@@ -200,7 +221,7 @@ def plan_scene(out: Path, m: dict[str, Any]) -> None:
         "prompt": json.dumps(
             {
                 "source_system": m["base"]["system"],
-                "source_context_and_plan": m["base"]["prompt"],
+                "source_context_and_plan": m["planning_context"],
                 "required_actions": m["actions"],
             },
             ensure_ascii=False,
@@ -235,7 +256,7 @@ def freeze(out: Path, m: dict[str, Any], reviewed: Path, note: Path) -> None:
         out / "drafts/manifest.json",
         {
             "prefix": m["prefix"],
-            "requests": {"full": m["base"], "focused": render(m["base"], plan)},
+            "requests": {"full": m["base"], "focused": render(m["base"], plan, m["actions"])},
             "review_sha256": sha(out / "plan.reviewed.json"),
         },
     )
@@ -244,7 +265,7 @@ def freeze(out: Path, m: dict[str, Any], reviewed: Path, note: Path) -> None:
 def draft(out: Path, m: dict[str, Any]) -> None:
     review = read(out / "plan.reviewed.json")
     frozen = read(out / "drafts/manifest.json")
-    expected = {"full": m["base"], "focused": render(m["base"], review["payload"])}
+    expected = {"full": m["base"], "focused": render(m["base"], review["payload"], m["actions"])}
     if (
         review["manifest_sha256"] != sha(out / "manifest.json")
         or frozen["review_sha256"] != sha(out / "plan.reviewed.json")
@@ -261,14 +282,14 @@ def draft(out: Path, m: dict[str, Any]) -> None:
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("phase", choices=("prepare", "plan", "freeze", "draft"))
-    for flag in ("out", "source", "amendment", "reviewed", "note"):
+    for flag in ("out", "source", "amendment", "outcomes", "reviewed", "note"):
         p.add_argument("--" + flag, type=Path, required=flag == "out")
     args = p.parse_args()
     out = args.out.resolve()
     if args.phase == "prepare":
-        if not args.source or not args.amendment:
-            p.error("prepare requires --source and --amendment")
-        prepare(out, args.source.resolve(), args.amendment.resolve())
+        if not args.source or not args.amendment or not args.outcomes:
+            p.error("prepare requires --source, --amendment and --outcomes")
+        prepare(out, args.source.resolve(), args.amendment.resolve(), args.outcomes.resolve())
         return
     m = load(out)
     if args.phase == "plan":

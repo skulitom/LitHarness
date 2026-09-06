@@ -1,0 +1,30 @@
+{
+  "status": "stopped_before_drafts_plan_repackaging_and_unresolved_timing",
+  "code_commit": "e0166667a7f663f2758a817ca91abd957d411fd8",
+  "cli_version": "codex-cli 0.153.4",
+  "cli_invocations": 1,
+  "requested_model": "gpt-6-astra",
+  "resolved_model": null,
+  "authentication": "chatgpt",
+  "usage": {
+    "input_tokens": 16286,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2691,
+    "reasoning_output_tokens": 1315
+  },
+  "wall_ms": 122231,
+  "cost_usd": null,
+  "steps": 9,
+  "conflicts": 1,
+  "drafts_dispatched": 0,
+  "artifacts": {
+    "manifest.json": "2c4b0efa871d3ea3494cbf8c15dbdba5cf5f3d4d545c1470971856694c23f76a",
+    "planner\\full-1.request.json": "c0b37b14962914fbb657b4f5fce6d2976df07c183cba24ded50b409c916ecbd5",
+    "planner\\full-1.result.json": "b28de6defb3e993e54b4313966dd745cf5691ed8e922e37c12a07f677511fcc8",
+    "planner\\full-1.raw.json": "7c103d90c9a923836d836cd9bcfa12535607aedb8f5beaf48a3e2baf50c4915f",
+    "planner\\full-1.txt": "22f7d91b3a5902e8869851a73a32da42b42933c98c8e8cfb4dbe2cf7a4c8297f",
+    "runner-v1.py": "0df0ff05598be99b1ca433274d13b35544800b5707e4e178e9ecc538418a7c41",
+    "source-review-stop.md": "9f0e4e3e3e01285394ecbc1fd847a6a8e973cf0103cceb006120b589f20f8576"
+  }
+}

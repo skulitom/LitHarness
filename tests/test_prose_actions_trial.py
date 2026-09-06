@@ -12,8 +12,7 @@ TRIAL = runpy.run_path(
 BASE = {
     "system": "Rules.",
     "prompt": (
-        "Private facts.\nOrdered actions:\n- Read notice.\n- Shut gate."
-        "\nEnding state:\nGate shut."
+        "Private facts.\nOrdered actions:\n- Read notice.\n- Shut gate.\nEnding state:\nGate shut."
     ),
 }
 
@@ -44,6 +43,16 @@ def test_action_plan_replaces_only_action_section_and_keeps_source_unchanged():
     assert rendered["prompt"].endswith("\nEnding state:\nGate shut.")
     assert "Ordered actions" not in rendered["prompt"]
     assert "source_actions" not in rendered["prompt"]
+
+
+def test_action_plan_can_use_a_frozen_outcome_contract_instead_of_old_intermediate_beats():
+    plan = proposal()
+    plan["steps"][0]["source_actions"] = ["a1"]
+    outcomes = [{"id": "a1", "text": "End at the closed gate."}]
+    rendered = TRIAL["render"](BASE, plan, outcomes)
+    assert rendered["prompt"].endswith("\nEnding state:\nGate shut.")
+    with pytest.raises(ValueError, match="missing or reordered"):
+        TRIAL["render"](BASE, plan)
 
 
 @pytest.mark.parametrize("damage", ["missing", "reordered", "unknown", "conflict"])
