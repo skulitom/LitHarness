@@ -275,6 +275,19 @@ with planned reveals kept separate. It reads current declarations, including lab
 it does not reconstruct the old writer packet, inspect scene-plan prose, or authorize a reveal.
 Missing, invalid and deliberately unpositioned job keys remain distinct; a manuscript
 reading-order position is not a substitute story key.
+`why.plan_item` is explicitly the current plan. `why.job_plan` uses only the plan revision
+recorded by the drafting job, with missing and mismatched history named separately. The
+historical plan item is not assumed to equal the final rendered instruction.
+New drafting jobs also retain `prompt_sources`: item identities, authority, visibility,
+source hashes and exact character spans in the frozen system/prompt. `scene_trace.source_map`
+reports availability and counts; request `source_limit` (1–100) and `source_offset` to page
+entries, optionally filtering an exact `source_id`. Use the returned stage and offsets with
+the existing excerpt parameters to inspect the input. Rules and locks map to the system
+message; shelf insertion shifts prompt offsets and shelf exposure withholds source entries.
+Older jobs report `not_recorded`; current state is never substituted for missing provenance.
+The map identifies inserted packet items and producing renderer fragments. Derived fragments
+and aggregate cast/world items do not expose complete upstream declaration lineage. Source
+matches establish input provenance, not why the model chose a passage or its literary quality.
 CLI `world` read views also use a read-only connection: they refuse missing databases and
 pending migrations instead of creating or upgrading a store. SQLite may still create
 empty WAL/shared-memory sidecars while reading a WAL database.

@@ -1,0 +1,62 @@
+{
+  "original_before": {
+    "": "f11823ca25791ccc5278deca2dbdd8fb41c42537cccb2d17e83840fbd8516969",
+    "-wal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "-shm": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+  },
+  "original_after": {
+    "": "f11823ca25791ccc5278deca2dbdd8fb41c42537cccb2d17e83840fbd8516969",
+    "-wal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "-shm": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+  },
+  "original_unchanged": true,
+  "scenes": {
+    "1": {
+      "job_id": "beat-2c70980362f0426bfd63cb30",
+      "plan_revision_id": "ff4f728305543d9901d9d26d2839becb52968881fa3f540204063bfba55e2eeb",
+      "historical_plan_status": "available",
+      "current_equals_job_plan": true,
+      "source_map_status": "not_recorded",
+      "story_order": {
+        "source": "job_payload.selected_by.story_order_key",
+        "status": "recorded",
+        "key": "s1"
+      },
+      "stage_hashes": {
+        "system": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3",
+        "prompt": "2db42b49841cc280e3b26b495048a98f71c15786a6829db1ab3145fe958cd0fc",
+        "raw_draft": "b65afabd9c0c30f78e40f6dabce764b4425963eb5aa399241aa184154c4bdd48",
+        "pre_revision_draft": null,
+        "accepted": "53e8d772c42ff7bb4f46a985149be87a37a8991b2bd5378716a4859484210b35"
+      }
+    },
+    "2": {
+      "job_id": "beat-bd457b6e7cf611b934dd34ad",
+      "plan_revision_id": "ff4f728305543d9901d9d26d2839becb52968881fa3f540204063bfba55e2eeb",
+      "historical_plan_status": "available",
+      "current_equals_job_plan": true,
+      "source_map_status": "not_recorded",
+      "story_order": {
+        "source": "job_payload.selected_by.story_order_key",
+        "status": "recorded",
+        "key": "s2"
+      },
+      "stage_hashes": {
+        "system": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3",
+        "prompt": "400b028a35b1df5b006acc4d46da4f6386dc3acde75a6d09a54f68e595b10937",
+        "raw_draft": "2d9febaade71f89d6e2d211cf5a762c547d5828d68928f2b54a5c1797fec074e",
+        "pre_revision_draft": null,
+        "accepted": "2ce236088db2e899ccc9baf34d921e51d941861cdd26f79600b0452ef1afc07c"
+      }
+    }
+  },
+  "model_calls": 0,
+  "scope": "Historical plan and absent map checks, not a reconstructed request",
+  "artifacts": {
+    "runs\\debugging-provenance-20260907\\inspect_chapter.py": "4e9860043ac94ec53a539cf3108b60bacc734c5ade07a8716c093fa060eae8f7",
+    "runs\\debugging-provenance-20260907\\copy-receipt.json": "4858ebbb90b73598b6c328d999e46039ac208e176f25f086a36978001a9dfd38",
+    "runs\\debugging-provenance-20260907\\chapter-inspection.json": "9a914200d37bf90ec67fbf164f7e6e28b5bae14352159e87cb41403a28db056b",
+    "runs\\debugging-provenance-20260907\\chapter-summary.json": "664be4ca49e64120ec5a4f8483d3f5e74f0759d3a0d0a90aef9f776ad01afe9a",
+    "runs\\debugging-provenance-20260907\\planner-before.py": "45e298ab50d6f81994c5f4ee93c353bd882326c62d14d27a130de44f859eba06"
+  }
+}

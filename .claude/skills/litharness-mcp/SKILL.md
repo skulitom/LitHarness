@@ -108,6 +108,21 @@ bytes establish a change, not its literary effect or cause. Frozen job input pre
 the application's text; it does not capture provider-added instructions or omitted transport
 settings. Nothing is reconstructed from today's plan, writer dossier or configuration.
 
+`why.plan_item` is explicitly the current plan; `why.job_plan` reads the revision recorded
+by the drafting job and reports missing/invalid/unavailable history. Its scene item may have
+been wrapped during rendering, so inspect the frozen prompt for the delivered instruction.
+New drafting jobs retain an input source map. `source_map` gives status and counts by default;
+set `source_limit` (1–100), `source_offset`, and optionally an exact `source_id` to page entries.
+Each entry identifies its original stage, half-open character range and hash. Use `stage`,
+`offset` and `max_chars` to read that range. Identical wording inserted from different items
+has separate entries. Context item authority and visibility are recorded; the hidden section
+describes its rendered disclosure role, without granting permission to reveal it.
+Renderer fragments identify the producer, not complete upstream record lineage. Aggregate
+cast/world items may derive from several records. Old jobs say `not_recorded`; no map is
+inferred from current declarations. Revision-call provenance remains unavailable, and shelf
+exposure withholds source-map entries and context. Maps establish input provenance, not model
+causation, semantic support, or literary quality.
+
 For conflicting disclosure instructions, read `request.story_order` from `scene_trace`.
 Only status=`recorded` supplies an exact key to pass as `at` to `world(view=threads)`;
 `unpositioned` records an intentional null, while `not_recorded`, `unavailable` and

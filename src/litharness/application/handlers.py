@@ -74,7 +74,7 @@ from litharness.domain.generation import (
     Sampler,
 )
 from litharness.domain.integrity import gate_integrity, gate_standing
-from litharness.domain.jobs import Job
+from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.nodes import NodeKind
 from litharness.domain.patch import Veto
 from litharness.domain.policy import (
@@ -219,13 +219,30 @@ def draft_sampler(job: Job, profile: str) -> Sampler:
 
     A job with no `input_digest` — one enqueued by hand — falls back to its id, which is
     still stable per job and per attempt.
+
+    The v1 prompt-source sidecar records how the unchanged request was composed. Exclude
+    only that metadata from scene sampling material, so instrumentation does not change
+    the sample. The full recorded input digest still covers it for job integrity.
     """
     sampler = PROFILES.get(profile, PROFILES["default"])
     if sampler.temperature == 0.0:
         # Greedy decoding samples nothing, so a seed here would be a number in a record that
         # changed no output. Measured: three distinct seeds returned byte-identical text.
         return sampler
-    material = f"{job.input_digest or job.job_id}:{job.attempts}"
+    sampling_digest = job.input_digest
+    sources = job.payload.get("prompt_sources")
+    if (
+        job.job_kind == SCENE_DRAFT
+        and sampling_digest
+        and isinstance(sources, dict)
+        and sources.get("schema") == "litharness.prompt-sources.v1"
+        and sampling_digest == input_digest_for(job.payload)
+    ):
+        # Derive locally from the recorded payload, never from a sidecar-supplied seed.
+        sampling_digest = input_digest_for(
+            {key: value for key, value in job.payload.items() if key != "prompt_sources"}
+        )
+    material = f"{sampling_digest or job.job_id}:{job.attempts}"
     return replace(
         sampler, seed=int(sha256(material.encode()).hexdigest()[:16], 16) % _SEED_MODULUS
     )

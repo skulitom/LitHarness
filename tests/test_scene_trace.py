@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 from collections.abc import Iterator
 from dataclasses import dataclass, replace
@@ -221,6 +222,137 @@ def _trace(store: SqliteStore, **options: Any) -> dict[str, Any]:
     head = store.head(BOOK, BRANCH)
     assert head is not None
     return build_scene_trace(store, BOOK, BRANCH, head.node(SCENE), head, **options)
+
+
+def _source_map() -> dict[str, Any]:
+    digest = sha256(FROZEN_PROMPT.encode("utf-8")).hexdigest()
+    return {
+        "schema": "litharness.prompt-sources.v1",
+        "stages": {
+            name: {"chars": len(text), "sha256": sha256(text.encode("utf-8")).hexdigest()}
+            for name, text in (("system", FROZEN_SYSTEM), ("prompt", FROZEN_PROMPT))
+        },
+        "entries": [
+            {
+                "stage": "prompt",
+                "start": 0,
+                "end": len(FROZEN_PROMPT),
+                "sha256": digest,
+                "kind": "context_item",
+                "section": "facts",
+                "source": {
+                    "item_id": "frozen-item",
+                    "source_logical_id": "frozen-record",
+                    "source_kind": "state_event",
+                    "authority": "accepted_canon",
+                    "pov_visibility": [],
+                    "source_span": None,
+                    "packed_text_sha256": digest,
+                },
+            }
+        ],
+        "context": {
+            "book_id": BOOK,
+            "branch_id": BRANCH,
+            "logical_id": SCENE,
+            "query_id": "beat:scene-1",
+        },
+    }
+
+
+def test_trace_pages_only_frozen_sources_without_loading_current_state(
+    store: SqliteStore, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    base, job = _seed(store, payload_extra={"prompt_sources": _source_map()})
+    _accept(store, base, job)
+
+    def forbidden(*args: Any, **kwargs: Any) -> Any:
+        raise AssertionError("A source map must not read current state")
+
+    monkeypatch.setattr(store, "state_records", forbidden)
+    summary = _trace(store)
+    assert summary["source_map"]["status"] == "available"
+    assert summary["source_map"]["entries"] == []
+    page = _trace(store, source_id="frozen-record", source_limit=1)
+    assert page["source_map"]["entries"][0]["source"]["item_id"] == "frozen-item"
+    assert page["excerpt"] is None
+    assert FROZEN_PROMPT not in json.dumps(page)
+    assert _trace(store, source_offset=1, source_limit=1)["source_map"]["entries"] == []
+    with pytest.raises(ValueError, match="source_limit"):
+        _trace(store, source_limit=True)
+
+
+@pytest.mark.parametrize("recorded_map", [False, True])
+def test_trace_keeps_legacy_maps_absent_and_malformed_maps_closed(
+    store: SqliteStore, recorded_map: bool
+) -> None:
+    recorded = _source_map()
+    recorded["entries"][0]["sha256"] = "0" * 64
+    base, job = _seed(store, payload_extra={"prompt_sources": recorded} if recorded_map else None)
+    _accept(store, base, job)
+    view = _trace(store, source_limit=100)
+    assert view["source_map"]["reason"] == (
+        "source_entry_hash_mismatch" if recorded_map else "prompt_sources_not_recorded"
+    )
+    assert view["source_map"]["entries"] == [] and view["source_map"]["context"] is None
+    assert view["stages"]["accepted"]["available"]
+
+
+def test_trace_suppresses_source_ids_for_shelf_exposure_and_revision_decisions(
+    store: SqliteStore,
+) -> None:
+    base, job = _seed(
+        store, payload_extra={"prompt_sources": _source_map(), "exemplars": {"captured": True}}
+    )
+    revision_decision = PolicyDecision(
+        decision_id="source-reviser",
+        outcome=Outcome.ESCALATE,
+        job_id=job.job_id,
+        logical_id=SCENE,
+        base_revision_id=base.revision_id,
+        profile=REVISION_PROFILE,
+    )
+    store.record_decision(revision_decision, decided_at=STAMP)
+    _accept(store, base, job)
+    view = _trace(store, source_id="frozen-record", source_limit=100)
+    assert view["source_map"]["status"] == "withheld"
+    assert view["source_map"]["matched_count"] is None
+    assert view["source_map"]["entries"] == [] and view["source_map"]["context"] is None
+    revised = _trace(store, decision_id=revision_decision.decision_id, source_limit=100)
+    assert revised["source_map"]["status"] == "unavailable"
+    assert revised["source_map"]["reason"] == "revision_request_not_recorded"
+    assert revised["source_map"]["entries"] == [] and revised["source_map"]["context"] is None
+
+
+@pytest.mark.parametrize("fault", ["metadata_changed", "digest_missing", "digest_malformed"])
+def test_source_digest_failure_does_not_erase_the_recorded_text_stages(
+    store: SqliteStore, monkeypatch: pytest.MonkeyPatch, fault: str
+) -> None:
+    base, job = _seed(store, payload_extra={"prompt_sources": _source_map()})
+    _accept(store, base, job)
+    original_load = store.load_job
+
+    def altered_load(job_id: str) -> Job:
+        recorded = original_load(job_id)
+        if fault == "metadata_changed":
+            payload = copy.deepcopy(recorded.payload)
+            payload["prompt_sources"]["entries"][0]["source"]["item_id"] = "forged-item"
+            return replace(recorded, payload=payload)
+        return replace(recorded, input_digest=None if fault == "digest_missing" else "invalid")
+
+    monkeypatch.setattr(store, "load_job", altered_load)
+    view = _trace(store, source_limit=100, stage="prompt")
+    assert (
+        view["source_map"]["reason"]
+        == {
+            "metadata_changed": "input_digest_mismatch",
+            "digest_missing": "input_digest_not_recorded",
+            "digest_malformed": "invalid_recorded_input_digest",
+        }[fault]
+    )
+    assert view["source_map"]["entries"] == [] and view["source_map"]["context"] is None
+    assert view["excerpt"]["text"] == FROZEN_PROMPT
+    assert view["stages"]["accepted"]["original_sha256"] == sha256(ACCEPTED.encode()).hexdigest()
 
 
 @pytest.mark.parametrize(

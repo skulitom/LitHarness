@@ -1050,6 +1050,44 @@ def test_the_default_selector_queues_the_prompt_it_always_queued(store: SqliteSt
     assert "Chapter" not in str(job.payload["prompt"])
 
 
+def test_new_drafting_job_freezes_source_map_and_preserves_sampling(store: SqliteStore) -> None:
+    from litharness.application.handlers import draft_sampler
+    from litharness.application.prompt_source_view import build_prompt_source_view
+    from litharness.domain.jobs import input_digest_for
+
+    _fixture(store, "mystery")
+    make_plan_selector(project_id=PROJECT_ID, policy=DraftPolicy(require_starting_sheet=False))(
+        store, "worker-a", START, 300.0
+    )
+    [job] = [j for j in store.jobs_by_status(JobStatus.QUEUED) if j.job_kind == SCENE_DRAFT]
+    frozen = store.load_job(job.job_id)
+    view = build_prompt_source_view(
+        frozen.payload, source_limit=100, recorded_input_digest=frozen.input_digest
+    )
+    assert view["status"] == "available"
+    assert view["context"]["plan_revision_id"] == frozen.payload["plan_revision_id"]
+    assert view["context"]["disclosure_at"] == frozen.payload["selected_by"]["story_order_key"]
+    assert any(e["kind"] == "context_item" for e in view["entries"])
+    records = {
+        r.record_id: r
+        for r in store.state_records(job.payload["book_id"], job.payload["branch_id"])
+    }
+    source_entries = [e for e in view["entries"] if "source_record_sha256" in e["source"]]
+    assert source_entries
+    for entry in source_entries:
+        from litharness.domain.events import payload_digest
+
+        source = entry["source"]
+        assert source["source_record_sha256"] == payload_digest(
+            lc.to_jsonable(records[source["source_logical_id"]])
+        )
+    before = {k: v for k, v in job.payload.items() if k != "prompt_sources"}
+    legacy = replace(job, payload=before, input_digest=input_digest_for(before))
+    assert job.input_digest == input_digest_for(job.payload)
+    assert job.input_digest != legacy.input_digest
+    assert draft_sampler(job, "default") == draft_sampler(legacy, "default")
+
+
 def test_a_tick_over_a_book_planned_before_the_cue_remints_nothing(
     store: SqliteStore,
 ) -> None:

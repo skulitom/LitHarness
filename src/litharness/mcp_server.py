@@ -452,6 +452,7 @@ RESULT_KEYS: dict[str, tuple[str, ...]] = {
         "attempts",
         "request",
         "stages",
+        "source_map",
         "excerpt",
         "absent",
     ),
@@ -570,8 +571,15 @@ DESCRIPTIONS: dict[str, str] = {
         "Frozen job input is labelled separately from an uncaptured provider transport. "
         "request.story_order gives the frozen drafting key for a world threads disclosure "
         "query; its missing/unpositioned statuses must not be replaced by reading order. "
+        "source_map verifies the full recorded job digest, stage hashes and spans, without "
+        "source text or current-state "
+        "lookups. source_limit=0 returns its summary; source_limit=1..100 and source_offset "
+        "page entries. source_id filters item_id or source_logical_id by exact equality. "
+        "Legacy jobs report not_recorded. Sources establish input provenance, not semantic "
+        "support; renderer fragments may contain derived inputs that are not individually mapped. "
         "Missing or ambiguous evidence stays missing; rejected drafts are not accepted prose. "
-        "Shelf-exposed raw drafts are withheld; prompt shelves are redacted. Byte differences "
+        "Shelf-exposed raw drafts, prompt shelves and source metadata are withheld. "
+        "Byte differences "
         f"do not measure quality. {_keys('scene_trace')} {FENCE}"
     ),
     "findings": (
@@ -1073,6 +1081,9 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
         stage: str | None = None,
         offset: int = 0,
         max_chars: int = 12_000,
+        source_id: str | None = None,
+        source_offset: int = 0,
+        source_limit: int = 0,
         book_id: str | None = None,
         branch_id: str | None = None,
     ) -> dict[str, Any]:
@@ -1097,11 +1108,23 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
                 stage=stage,
                 offset=offset,
                 max_chars=max_chars,
+                source_id=source_id,
+                source_offset=source_offset,
+                source_limit=source_limit,
             )
         missing = set(view["absent"]) - {"system", "pre_revision_draft"}
         restricted = any(
             value["withheld"] or value["absent_reason"] == "ambiguous_pre_revision_draft"
             for value in view["stages"].values()
+        )
+        restricted = (
+            restricted
+            or view["source_map"]["status"]
+            in {
+                "invalid_recorded_value",
+                "withheld",
+            }
+            or view["source_map"]["reason"] == "input_digest_not_recorded"
         )
         return {**view, "attention": bool(missing) or restricted, "next": ["why", "scene"]}
 
@@ -1472,8 +1495,9 @@ def prompt_text(name: str, **arguments: str) -> str:
             "store's own record with the litharness tools and nothing else.\n"
             "1. `store_info`, then `book`: confirm the scene exists and whether it is drafted.\n"
             f"2. `why` with scene=`{scene}`: read `decision.gates` (a FAIL on a blocking gate is "
-            "the reason; an advisory one is information), `plan_item` (what the scene was "
-            "told to do), `context_omitted` (what it was never shown), `findings`, and "
+            "the reason; an advisory one is information), `plan_item` (the current plan), "
+            "`job_plan` (the snapshot in the job's recorded plan revision), `context_omitted`, "
+            "`findings`, and "
             "`absent`. If prose is absent, `queue` shows the unit that stopped and why.\n"
             f"3. `scene` with scene=`{scene}` for the text, and `state` with the subjects it "
             "names, to see whether what it contradicts was ever on record.\n"
@@ -1481,6 +1505,11 @@ def prompt_text(name: str, **arguments: str) -> str:
             "page the needed stage. Check whether the passage already exists in raw_draft or "
             "only in accepted text. A changed hash identifies changed bytes, not a cause or a "
             "quality judgment. Frozen job input is not the full provider transport.\n"
+            "Use `source_map` for recorded input provenance: source_limit=1..100 pages verified "
+            "entries and source_id filters an exact item_id or source_logical_id. Compare the "
+            "frozen prompt with job_plan to establish actual rendering; neither the current "
+            "plan nor the stored plan snapshot proves prompt equivalence. Missing maps stay "
+            "not_recorded. Renderer fragments do not identify every upstream input.\n"
             "5. For a disclosure conflict, use a recorded request.story_order key as `at` in "
             "`world` view=`threads`, with `subject` for the claim. Read the disclosure reasons "
             "and supporting records. This is current declaration state, not the frozen packet; "

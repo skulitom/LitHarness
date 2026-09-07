@@ -61,7 +61,7 @@ approximation produced its numbers rather than implying provider-token accuracy.
 from __future__ import annotations
 
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from types import MappingProxyType
 
@@ -228,6 +228,64 @@ class Omission:
 
 
 @dataclass(frozen=True, slots=True)
+class RenderedItem:
+    """One inserted item body, with half-open Python character offsets in its rendering."""
+
+    section: str
+    item: PackedItem
+    start: int
+    end: int
+
+
+@dataclass(frozen=True, slots=True)
+class RenderedContext:
+    """Exact rendered text and the item insertions that produced it, including empty bodies."""
+
+    text: str
+    spans: tuple[RenderedItem, ...]
+
+
+def _render_items(
+    section: str,
+    items: Sequence[PackedItem],
+    heading: str,
+    *,
+    separator: str = "\n",
+    prefix: str | Callable[[PackedItem], str] = "- ",
+) -> RenderedContext:
+    parts = [heading]
+    spans: list[RenderedItem] = []
+    offset = len(heading)
+    for index, item in enumerate(items):
+        if index:
+            parts.append(separator)
+            offset += len(separator)
+        label = prefix(item) if callable(prefix) else prefix
+        parts.extend((label, item.text))
+        offset += len(label)
+        spans.append(RenderedItem(section, item, offset, offset + len(item.text)))
+        offset += len(item.text)
+    return RenderedContext("".join(parts), tuple(spans))
+
+
+def _join_rendered(parts: Sequence[RenderedContext], separator: str) -> RenderedContext:
+    texts: list[str] = []
+    spans: list[RenderedItem] = []
+    offset = 0
+    for index, part in enumerate(parts):
+        if index:
+            texts.append(separator)
+            offset += len(separator)
+        texts.append(part.text)
+        spans.extend(
+            RenderedItem(span.section, span.item, offset + span.start, offset + span.end)
+            for span in part.spans
+        )
+        offset += len(part.text)
+    return RenderedContext("".join(texts), tuple(spans))
+
+
+@dataclass(frozen=True, slots=True)
 class ContextPacket:
     """A frozen answer to "what does this scene get to know", with its own accounting."""
 
@@ -328,22 +386,32 @@ class ContextPacket:
         provider's authority hierarchy agrees with the packet's own authority metadata;
         other consumers can continue to render the complete packet in one document.
         """
+        return self.render_constraints_with_sources().text
+
+    def render_constraints_with_sources(self) -> RenderedContext:
+        """Render author locks and attribute each inserted item without text matching."""
         constraints = self.sections.get(CONSTRAINTS, ())
         if not constraints:
-            return ""
-        lines = "\n".join(f"- {item.text}" for item in constraints)
-        return (
+            return RenderedContext("", ())
+        return _render_items(
+            CONSTRAINTS,
+            constraints,
             "Locked constraints and promises — these are the director's and may not "
-            f"be contradicted:\n{lines}"
+            "be contradicted:\n",
         )
 
     def render_rules(self) -> str:
         """Declared operating constraints, with their original authority and source intact."""
+        return self.render_rules_with_sources().text
+
+    def render_rules_with_sources(self) -> RenderedContext:
+        """Render operating rules and retain their exact item positions."""
         rules = self.sections.get(RULES, ())
         if not rules:
-            return ""
-        lines = "\n".join(f"- {item.text}" for item in rules)
-        return (
+            return RenderedContext("", ())
+        return _render_items(
+            RULES,
+            rules,
             "World rules and limits — established facts, subject to author locks; "
             "their presence here does not mean a character knows them. "
             "Scene plans, milestones and dramatic instructions must fit these facts. "
@@ -351,7 +419,7 @@ class ContextPacket:
             "Satisfy a cost, prerequisite or activation condition before its dependent effect, "
             "unless the rule explicitly allows delayed payment. Preserve declared quantities "
             "and entity identities across actions and scenes. These constrain what happens; "
-            f"they are not a checklist of explanations to put in the prose:\n{lines}"
+            "they are not a checklist of explanations to put in the prose:\n",
         )
 
     def render(self, *, include_constraints: bool = True, include_rules: bool = True) -> str:
@@ -360,43 +428,58 @@ class ContextPacket:
         Sections are labelled and separated, because an undifferentiated wall gives the model
         no way to tell a locked constraint it must obey from prose it may echo.
         """
-        blocks: list[str] = []
+        return self.render_with_sources(
+            include_constraints=include_constraints, include_rules=include_rules
+        ).text
+
+    def render_with_sources(
+        self, *, include_constraints: bool = True, include_rules: bool = True
+    ) -> RenderedContext:
+        """Render the same packet text with item-body spans recorded during composition."""
+        blocks: list[RenderedContext] = []
         for premise in self.sections.get(PREMISE, ()):
-            blocks.append(f"Premise: {premise.text}")
-        constraints = self.render_constraints()
-        if include_constraints and constraints:
+            blocks.append(_render_items(PREMISE, (premise,), "Premise: ", prefix=""))
+        constraints = self.render_constraints_with_sources()
+        if include_constraints and constraints.text:
             blocks.append(constraints)
         intentions = self.sections.get(INTENTIONS, ())
         if intentions:
-            lines = "\n\n".join(item.text for item in intentions)
             blocks.append(
-                "Planned story — intentions, not events that have already happened. "
-                "Established prose and author locks take precedence. Later events and "
-                "reveals belong at their planned positions; the current scene plan "
-                f"determines what happens now:\n{lines}"
+                _render_items(
+                    INTENTIONS,
+                    intentions,
+                    "Planned story — intentions, not events that have already happened. "
+                    "Established prose and author locks take precedence. Later events and "
+                    "reveals belong at their planned positions; the current scene plan "
+                    "determines what happens now:\n",
+                    separator="\n\n",
+                    prefix="",
+                )
             )
-        rules = self.render_rules()
-        if include_rules and rules:
+        rules = self.render_rules_with_sources()
+        if include_rules and rules.text:
             blocks.append(rules)
         threads = self.sections.get(THREADS, ())
         if threads:
-            lines = "\n".join(f"- {item.text}" for item in threads)
-            blocks.append(f"Open threads the book still owes:\n{lines}")
+            blocks.append(_render_items(THREADS, threads, "Open threads the book still owes:\n"))
         people = self.sections.get(CAST, ())
         if people:
-            lines = "\n\n".join(item.text for item in people)
-            blocks.append(f"Who is in this story:\n{lines}")
+            blocks.append(
+                _render_items(CAST, people, "Who is in this story:\n", separator="\n\n", prefix="")
+            )
         facts = self.sections.get(FACTS, ())
         if facts:
-            lines = "\n".join(f"- {item.text}" for item in facts)
             pov = f" (POV: {self.pov_character_id})" if self.pov_character_id else ""
             blocks.append(
-                f"Established facts{pov} — world truth, not automatically character "
-                f"knowledge:\n{lines}"
+                _render_items(
+                    FACTS,
+                    facts,
+                    f"Established facts{pov} — world truth, not automatically character "
+                    "knowledge:\n",
+                )
             )
         hidden = self.sections.get(HIDDEN, ())
         if hidden:
-            lines = "\n".join(f"- {item.text}" for item in hidden)
             # **Honour, never state.** The instruction is two clauses because the failure modes
             # are opposite and a generator handed only one of them takes the other: told a
             # secret with no prohibition it explains it on the page, and told a prohibition
@@ -404,23 +487,27 @@ class ContextPacket:
             # — this is the section most likely to produce exposition, which is the one thing
             # the popcorn direction forbids outright.
             blocks.append(
-                "True, and the reader has not been told — write as if it is true and never "
-                "put it on the page. Nothing here may be explained, hinted at as a summary, "
-                "or spoken by a character who does not know it; the scene must simply stay "
-                f"consistent with it:\n{lines}"
+                _render_items(
+                    HIDDEN,
+                    hidden,
+                    "True, and the reader has not been told — write as if it is true and never "
+                    "put it on the page. Nothing here may be explained, hinted at as a summary, "
+                    "or spoken by a character who does not know it; the scene must simply stay "
+                    "consistent with it:\n",
+                )
             )
         history = self.sections.get(HISTORY, ())
         if history:
-            lines = "\n".join(f"- {item.text}" for item in history)
             blocks.append(
-                "Earlier states — these were true then and have since been replaced; use "
-                f"them only as history, never as the current state:\n{lines}"
+                _render_items(
+                    HISTORY,
+                    history,
+                    "Earlier states — these were true then and have since been replaced; use "
+                    "them only as history, never as the current state:\n",
+                )
             )
         summaries = self.sections.get(SUMMARIES, ())
         if summaries:
-            lines = "\n".join(
-                f"- {item.item_id.split(':', 1)[-1]}: {item.text}" for item in summaries
-            )
             # Labelled as summary *and* as a register not to copy. This is the one section
             # that hands the generator prose written in a voice the book must not use:
             # §1a.3 item 6 names "summarising instead of dramatising" as an AI tell, and a
@@ -428,14 +515,26 @@ class ContextPacket:
             # write more of it. Naming the trap is free; measuring whether it works is what
             # `craft` instrumentation on the scenes drafted after an eviction is for.
             blocks.append(
-                "Earlier scenes, in summary — these happened and are established; write the "
-                f"new scene in full dramatised prose, never in this register:\n{lines}"
+                _render_items(
+                    SUMMARIES,
+                    summaries,
+                    "Earlier scenes, in summary — these happened and are established; write the "
+                    "new scene in full dramatised prose, never in this register:\n",
+                    prefix=lambda item: f"- {item.item_id.split(':', 1)[-1]}: ",
+                )
             )
         prose = self.sections.get(PRIOR_PROSE, ())
         if prose:
-            scenes = "\n\n".join(f"[{item.item_id}]\n{item.text}" for item in prose)
-            blocks.append(f"The story so far, in full:\n\n{scenes}")
-        return "\n\n".join(blocks)
+            blocks.append(
+                _render_items(
+                    PRIOR_PROSE,
+                    prose,
+                    "The story so far, in full:\n\n",
+                    separator="\n\n",
+                    prefix=lambda item: f"[{item.item_id}]\n",
+                )
+            )
+        return _join_rendered(blocks, "\n\n")
 
 
 def _prose_label(revision: Revision, logical_id: str) -> str:
@@ -945,6 +1044,8 @@ __all__ = [
     "ContextPacket",
     "Omission",
     "PackedItem",
+    "RenderedContext",
+    "RenderedItem",
     "assemble",
     "count_tokens",
 ]

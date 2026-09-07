@@ -133,10 +133,11 @@ order.
 3. ~~**`craft`** — advisory measurements recorded against this scene. Numbers only, no verdict.
    Cross-book context: `uv run litharness craft`.~~ **Step removed: the craft measurements
    and their verb went in 530f40e; the dossier carries no such key (stage-0 §241).**
-4. **`plan item`** — the per-scene statement that steered the draft, verbatim. `ABSENT` means
-   the book has no outline for this scene (normal for a book run with `--no-outline`, and for
-   the golden fixture books, which carry only book-wide statements). A scene with no statement
-   was told only the premise and its beat function.
+4. **`job_plan`** — the scene item in the job's recorded plan revision, with its availability
+   and scope checks. It is historical plan text, not a verified copy of the final rendered
+   instruction: rendering can wrap or supplement it. **`plan_item`** is today's plan, labelled
+   current_plan; a later edit must not be mistaken for original steering. Missing historical
+   provenance is not evidence that the writer had no instruction. Inspect the frozen prompt.
 5. **`selected by`** — why this beat, from the payload's own record: which beat of how many,
    its function (`rising`, `complication`, …), the template, and the plan epoch.
 6. **the prompt itself**, printed last and whole, after `--- system ---` and `--- prompt ---`.
@@ -307,7 +308,9 @@ is `null` and is named in `absent`, while an empty list is a recorded emptiness.
 | `context_omitted` | what the packet could not hold, and why. **Read this for anything the scene should have known** |
 | ~~`payload_feedback`~~ | ~~the feedback set frozen onto the prompt: `items`, `digest`, `dropped`~~ **not emitted: the key left with the feedback channel in 530f40e (stage-0 §241)** |
 | ~~`scene_feedback`~~ | ~~the same set projected onto the accepted revision. `null` means no row was written~~ **not emitted: same removal (stage-0 §241)** |
-| `plan_item` | the per-scene statement and whether a director locked it |
+| `plan_item` | the current per-scene statement and whether a director locked it |
+| `plan_item_scope` | explicitly current_plan |
+| `job_plan` | the job-bound historical plan revision/item, availability and scope checks |
 | ~~`craft_metrics`~~ | ~~advisory numbers measured against this revision~~ **not emitted: the key left with the craft programme in 530f40e (stage-0 §241)** |
 | `findings` | what detectors said about this scene, open and closed |
 | `draft_before_revision` | the writer's own text, when the §185 reviser replaced it: both models, the mark count §180 took out of it, and `content` — the prose `--no-revise` would have committed. `null` means the accepted prose *is* the writer's, which is not a gap and is not in `absent` |

@@ -302,6 +302,13 @@ current public rule wording remains a separate issue. The source and reading qua
 including the preliminary presentation, are retained. No automatic disclosure policy or
 production change was adopted.
 
+The subsequent [provenance tooling work](research/quality-measurement/prose-debug-provenance/RESULTS.md)
+separates a job's historical plan from the current plan and records inserted-item source
+maps for new drafting requests. A read-only inspection of an isolated chapter-one database
+copy found both historical plan items available and equal to the current items; both old
+jobs correctly reported absent source maps. Prompt bytes and sampling material are preserved
+by the implementation checks. This delivers diagnostic capability, not a prose-quality result.
+
 For subsequent tests in this sequence, record the hypothesis, fixed comparison, source/code
 hashes and stop rules before calls. Retain every request and raw response, including transport
 and format failures; record amendments without replacing failed draws. Finish a results file

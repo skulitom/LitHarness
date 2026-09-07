@@ -45,6 +45,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from hashlib import sha256
+from typing import Any
 
 import litharness_contracts as lc
 
@@ -75,6 +76,7 @@ from litharness.application.outline import (
     outline_job_id,
 )
 from litharness.application.ports import ApplicationStore, PlanningStore
+from litharness.application.prompt_sources import PromptSources, text_digest
 from litharness.domain import genre, house, progression, staging, worlds
 from litharness.domain import state as state_mod
 from litharness.domain.beats import (
@@ -301,6 +303,7 @@ def render_prompt(
     notices: tuple[str, ...] = (),
     readouts: tuple[str, ...] = (),
     require_status: bool = True,
+    source_map: dict[str, Any] | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
 
@@ -409,6 +412,8 @@ def render_prompt(
         "no commentary, no summary of what you wrote. Respect established facts and author "
         "locks; future intentions are plans, not events that have already happened."
     )
+    sources = PromptSources()
+    system = sources.append("system", "", system, "house_guidance")
     if writer is not None:
         # **Ahead of the mechanics and never in the packet** (`plan/writer-roster.md` §3.2).
         # The packet's contract is "established and may be relied on; do not contradict it",
@@ -421,7 +426,8 @@ def render_prompt(
         # meet, the packet outranks it. A writer who knows metallurgy from the inside is
         # being asked to write *this* book, not a book about metallurgy — which is the
         # contamination G3 exists to measure.
-        system = f"{writer.render()}\n\n{system}"
+        system = sources.prepend("system", f"{writer.render()}\n\n", system, "writer")
+        sources.entries[-1]["source"]["writer_id"] = writer.writer_id
     if status_example:
         # Values as well as shape. A model asked for a status line with no numbers in view
         # invents them, and an invented balance is a contradiction the gate refuses and the
@@ -489,12 +495,17 @@ def render_prompt(
             else "When this scene changes that state, show the updated line as its result. "
             "Otherwise, show it only when someone needs to consult it in this scene. "
         )
-        system += (
-            f" The people in this book can read their own state, in this form, {stands}:\n"
-            f"{example}\n"
-            f"{status_instruction}Write the character's "
-            "name as your prose spells it, carry these values forward unchanged unless this "
-            "scene changes them, and write the numbers the scene leaves true."
+        system = sources.append(
+            "system",
+            system,
+            (
+                f" The people in this book can read their own state, in this form, {stands}:\n"
+                f"{example}\n"
+                f"{status_instruction}Write the character's "
+                "name as your prose spells it, carry these values forward unchanged unless this "
+                "scene changes them, and write the numbers the scene leaves true."
+            ),
+            "status",
         )
         if offer_line:
             # **The fork as furniture, beside the sheet it belongs to** (2026-09-01, the
@@ -504,29 +515,44 @@ def render_prompt(
             # with what each way opens, reached the writer as notation. The book prints it as
             # it prints the sheet: one bracketed line, in the book's own words, exactly once.
             # Inside the `status_example` branch because a fork needs the sheet it is a fork in.
-            system += (
-                " Where this fork is put in front of the person, the book prints this line, "
-                "exactly once, and they read it on the page:\n"
-                f"{offer_line}"
+            system = sources.append(
+                "system",
+                system,
+                (
+                    " Where this fork is put in front of the person, the book prints this line, "
+                    "exactly once, and they read it on the page:\n"
+                    f"{offer_line}"
+                ),
+                "offer",
             )
         if gain_line:
             # **The notice** (§208): where the beat names a grant gained and the book's
             # graph line has a phrase for it, the line is shown filled, as the standing
             # line is on a rise. Furniture the reader watches; the sheet is the record.
-            system += (
-                " Where they gain it, the book prints this line, exactly once, and they read "
-                "it on the page:\n"
-                f"{gain_line}"
+            system = sources.append(
+                "system",
+                system,
+                (
+                    " Where they gain it, the book prints this line, exactly once, and they read "
+                    "it on the page:\n"
+                    f"{gain_line}"
+                ),
+                "gain",
             )
         if change_line:
             # **The change of kind** (§212): where a declared change lands on the person at
             # this position — a grant evolving, merging, or going — the line after it, shown
             # filled as the moved line is, and printed once. What the change is stands in the
             # packet as the world's own sentence; this is the furniture the reader watches.
-            system += (
-                " Where this happens to them, the book prints this line, exactly once, and "
-                "they read it on the page:\n"
-                f"{change_line}"
+            system = sources.append(
+                "system",
+                system,
+                (
+                    " Where this happens to them, the book prints this line, exactly once, and "
+                    "they read it on the page:\n"
+                    f"{change_line}"
+                ),
+                "change",
             )
         if progression:
             # **The instruction above defaults to stasis, and a model with no reason to
@@ -535,11 +561,16 @@ def render_prompt(
             # thing "unless this scene changes them" silently assumed the model would decide
             # for itself. "Toward" rather than "to": jumping to the milestone would collapse
             # the progression the schedule exists to spread out.
-            system += (
-                " The book's plan has the state reaching this later on:\n"
-                f"{progression}\n"
-                "Move it toward that in this scene where the events warrant it; do not jump "
-                "to it, and do not move it for no reason on the page."
+            system = sources.append(
+                "system",
+                system,
+                (
+                    " The book's plan has the state reaching this later on:\n"
+                    f"{progression}\n"
+                    "Move it toward that in this scene where the events warrant it; do not jump "
+                    "to it, and do not move it for no reason on the page."
+                ),
+                "progression",
             )
     if notices:
         # **The System's own voice** (§218): where a declared change with a line in the
@@ -549,9 +580,14 @@ def render_prompt(
         # the `status_example` branch because a book whose progression is a ladder with no
         # numbers still has a System that speaks, and the graph line is the declaration that
         # says so. `extraction.notice_lines` is the one reader of what lands here.
-        system += (
-            " Where the world says this to them, the book prints this line, exactly once, and "
-            "they read it on the page:\n" + "\n".join(notices)
+        system = sources.append(
+            "system",
+            system,
+            (
+                " Where the world says this to them, the book prints this line, exactly once, and "
+                "they read it on the page:\n" + "\n".join(notices)
+            ),
+            "notices",
         )
     if readouts:
         # **The readout on request** (§220, §209's owed item): where the scene's plan names
@@ -559,9 +595,14 @@ def render_prompt(
         # prints that owner's line, once, where the protagonist reads it. The trigger is the
         # plan's naming and nothing a model ranks; `extraction.readout_lines` is the one
         # reader of it, and the line is rendered through the owner's own sheet (§206).
-        system += (
-            " Where they read another's sheet, the book prints this line, exactly once, and it "
-            "is read on the page:\n" + "\n".join(readouts)
+        system = sources.append(
+            "system",
+            system,
+            (
+                " Where they read another's sheet, the book prints this line, exactly once, and it "
+                "is read on the page:\n" + "\n".join(readouts)
+            ),
+            "readouts",
         )
     if standing:
         # **The numeric block's wording, reused deliberately** (`plan/stage-0-decisions.md`
@@ -574,11 +615,16 @@ def render_prompt(
         # It sits outside the `status_example` branch because the two are independent: a world
         # can declare a rank ladder and no stat sheet, which is true of the legacy generated
         # worlds, and nesting it would make the ladder unreachable for all of them.
-        system += (
-            "\nThe book's plan has the standing reaching this later on:\n"
-            f"{standing}\n"
-            "Move it toward that in this scene where the events warrant it; do not jump to it, "
-            "and do not move it for no reason on the page."
+        system = sources.append(
+            "system",
+            system,
+            (
+                "\nThe book's plan has the standing reaching this later on:\n"
+                f"{standing}\n"
+                "Move it toward that in this scene where the events warrant it; do not jump to it, "
+                "and do not move it for no reason on the page."
+            ),
+            "standing",
         )
         if standing_line:
             # **A filled example, never a template with braces**, and that is a measurement
@@ -590,9 +636,14 @@ def render_prompt(
             # currently names, so the model is shown a line `parse_graph_line` has already agreed
             # reads. A book that declares no graph line passes `None` and is asked to print
             # nothing — the declare -> ask -> print -> read chain simply does not start.
-            system += (
-                "\nWhen the standing changes, print the line in this form, as the book "
-                f"prints it:\n{standing_line}"
+            system = sources.append(
+                "system",
+                system,
+                (
+                    "\nWhen the standing changes, print the line in this form, as the book "
+                    f"prints it:\n{standing_line}"
+                ),
+                "standing_line",
             )
     if target_words:
         # **Length is asked for by giving the scene somewhere to spend it**, which is the
@@ -602,11 +653,16 @@ def render_prompt(
         # doing the work: a model told only a number pads, and padding is §1a.3 item 6's
         # "summarising instead of dramatising" arriving by the door that was opened to
         # avoid it. So the instruction spends its words on events rather than on the count.
-        system += (
-            f" Write approximately {target_words} words. A scene of that length has room to "
-            "play out in real time — what is said, what is done, what is noticed — instead "
-            "of being told in summary. Do not pad it with restatement to reach the length; "
-            "give the scene enough events to fill it."
+        system = sources.append(
+            "system",
+            system,
+            (
+                f" Write approximately {target_words} words. A scene of that length has room to "
+                "play out in real time — what is said, what is done, what is noticed — instead "
+                "of being told in summary. Do not pad it with restatement to reach the length; "
+                "give the scene enough events to fill it."
+            ),
+            "target_words",
         )
     if criteria:
         # **The criterion the scene is writing against** (`plan/state-model-abilities.md` §5
@@ -647,11 +703,16 @@ def render_prompt(
         # ("when the standing changes, print the line in this form"). §138's reading is that
         # the prohibition half is the half that gets obeyed; the affirmative half here was
         # redundant with two better-addressed demands.
-        system += (
-            "\nThis world judges people by the following, and what fails is a narrator "
-            "reporting a rank whose change the reader was never shown; the line the book "
-            "itself prints is not that:\n"
-            f"{criteria}"
+        system = sources.append(
+            "system",
+            system,
+            (
+                "\nThis world judges people by the following, and what fails is a narrator "
+                "reporting a rank whose change the reader was never shown; the line the book "
+                "itself prints is not that:\n"
+                f"{criteria}"
+            ),
+            "criteria",
         )
     # **Transport authority now agrees with author authority.** Constraints used to sit in
     # the user prompt while house rules, a writer dossier and reader reactions sat in the
@@ -659,12 +720,24 @@ def render_prompt(
     # a model resolving a conflict correctly would disobey the author-locked item.  Keep the
     # packet items and accounting intact, but put their locked block last in the system
     # message, after every lower-authority writing aid.
-    rules = packet.render_rules()
+    rules_rendered = packet.render_rules_with_sources()
+    rules = rules_rendered.text
     if rules:
-        system += f"\n\n{rules}"
-    locked = packet.render_constraints()
+        system = sources.append(
+            "system", system, (f"\n\n{rules}"), "rules", rendered=rules_rendered, rendered_offset=2
+        )
+    locked_rendered = packet.render_constraints_with_sources()
+    locked = locked_rendered.text
+    locked_prefix = "\n\nAUTHOR-LOCKED STORY DECISIONS — these outrank all other guidance:\n"
     if locked:
-        system += f"\n\nAUTHOR-LOCKED STORY DECISIONS — these outrank all other guidance:\n{locked}"
+        system = sources.append(
+            "system",
+            system,
+            (f"{locked_prefix}{locked}"),
+            "locks",
+            rendered=locked_rendered,
+            rendered_offset=len(locked_prefix),
+        )
     title = f"{book_title}: " if book_title else ""
     # **What this scene is for, which until now was one word shared with twenty-four others.**
     # `arc_template(30)` yields 25 `rising` beats, and the line below was the whole of the
@@ -691,15 +764,57 @@ def render_prompt(
                 f"{chapter.scenes_in_chapter}"
             )
     pov_line = "" if not point_of_view else f" Point of view: {point_of_view}."
-    prompt = (
-        f"{packet.render(include_constraints=False, include_rules=False)}\n\n"
-        f"Now write {title}{beat.title or beat.logical_id} — {scene_position}."
-        f"{pov_line} Dramatic function: {beat.function}."
-        f"{plan_line}"
+    rendered_packet = packet.render_with_sources(include_constraints=False, include_rules=False)
+    prompt = sources.append("prompt", "", rendered_packet.text, "context", rendered=rendered_packet)
+    prompt = sources.append(
+        "prompt",
+        prompt,
+        f"\n\nNow write {title}{beat.title or beat.logical_id} — {scene_position}."
+        f"{pov_line} Dramatic function: {beat.function}.",
+        "scene_task",
     )
+    if plan_line:
+        prompt = sources.append(
+            "prompt",
+            prompt,
+            plan_line,
+            "scene_plan",
+            kind="scene_plan",
+            source={
+                "producer": "domain.plans.scene_plan_line",
+                "rendered_argument_sha256": text_digest(scene_plan or ""),
+                "source_logical_id": None,
+                "plan_revision_id": None,
+                "stored_text_sha256": None,
+                "rendered_equals_stored": None,
+            },
+        )
     if shelf is not None:
-        system += f"\n{exemplars_mod.SHELF_SYSTEM}"
-        prompt = f"{exemplars_mod.render_openings(shelf)}\n\n{prompt}"
+        system = sources.append("system", system, f"\n{exemplars_mod.SHELF_SYSTEM}", "shelf_system")
+        prompt = sources.prepend(
+            "prompt", f"{exemplars_mod.render_openings(shelf)}\n\n", prompt, "exemplar_shelf"
+        )
+    if source_map is not None:
+        source_map.clear()
+        source_map.update(
+            sources.finish(
+                system,
+                prompt,
+                {
+                    "source": "drafting_composition",
+                    "query_id": packet.query_id,
+                    "book_id": packet.book_id,
+                    "branch_id": packet.branch_id,
+                    "logical_id": packet.target_logical_id,
+                    "manuscript_revision_id": packet.base_revision_id,
+                    "pov_character_id": packet.pov_character_id,
+                    "coverage": (
+                        "selected_packet_items_and_renderer_fragments; "
+                        "upstream_inputs_of_derived_fragments_not_mapped"
+                    ),
+                },
+            )
+        )
     return system, prompt
 
 
@@ -1357,8 +1472,10 @@ def make_plan_selector(
                     records, beat_target, character=pov_id, at=beat.story_order_key
                 )
                 beat_gain = gain_line_for(records, beat_target, beat_moved, at=beat.story_order_key)
+                prompt_sources: dict[str, Any] = {}
                 system, prompt = render_prompt(
                     beat,
+                    source_map=prompt_sources,
                     book_title=_book_title(head),
                     packet=packet,
                     # A status snapshot is the value *entering* its keyed scene (the imported
@@ -1459,7 +1576,35 @@ def make_plan_selector(
                     ),
                     shelf=shelf,
                 )
+                prompt_sources["context"].update(
+                    {
+                        "plan_revision_id": plan_revision.plan_revision_id,
+                        "story_order_key": beat.story_order_key,
+                        "disclosure_at": beat.story_order_key,
+                        "story_time_cutoff": stated_position(records, beat.story_order_key),
+                    }
+                )
+                source_records = {record.record_id: record for record in records}
+                for entry in prompt_sources["entries"]:
+                    source = entry["source"]
+                    if entry["kind"] == "scene_plan":
+                        source["plan_revision_id"] = plan_revision.plan_revision_id
+                        if plan_item is not None:
+                            source["source_logical_id"] = plan_item.logical_id
+                            source["stored_text_sha256"] = text_digest(plan_item.text)
+                            source["rendered_equals_stored"] = (
+                                source["rendered_argument_sha256"] == source["stored_text_sha256"]
+                            )
+                    elif entry["kind"] == "context_item":
+                        record = source_records.get(source["source_logical_id"])
+                        if record is not None:
+                            source["source_record_sha256"] = payload_digest(
+                                lc.to_jsonable(record)
+                            )
+                        if source["source_kind"] == lc.ResourceKind.PLAN.value:
+                            source["plan_revision_id"] = plan_revision.plan_revision_id
                 payload: dict[str, object] = {
+                    "prompt_sources": prompt_sources,
                     "revision_id": head.revision_id,
                     "book_id": progress.book_id,
                     "branch_id": progress.branch_id,

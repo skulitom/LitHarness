@@ -18,6 +18,8 @@ from __future__ import annotations
 from contextlib import suppress
 from typing import Any
 
+import litharness_contracts as lc
+
 from litharness.application import exemplars as exemplars_mod
 from litharness.application.handlers import SCENE_DRAFT
 from litharness.application.ports import DossierStore
@@ -43,6 +45,8 @@ DOSSIER_KEYS: tuple[str, ...] = (
     "context",
     "context_omitted",
     "plan_item",
+    "plan_item_scope",
+    "job_plan",
     "findings",
     "draft_before_revision",
     "absent",
@@ -306,14 +310,9 @@ def scene_dossier(
         "selected_by": payload.get("selected_by"),
         "context": payload.get("context"),
         "context_omitted": payload.get("context_omitted"),
-        "plan_item": None
-        if plan_item is None
-        else {
-            "plan_item_id": plan_item.logical_id,
-            "text": plan_item.text,
-            "locked": plan_item.locked,
-            "authority": plan_item.authority.value,
-        },
+        "plan_item": _plan_item_row(plan_item),
+        "plan_item_scope": "current_plan",
+        "job_plan": _job_plan(store, job, book_id, branch_id, logical_id),
         "findings": [
             finding_row(item)
             for item in store.findings(book_id, branch_id, logical_id=logical_id, open_only=False)
@@ -336,6 +335,69 @@ def scene_dossier(
         },
         "absent": absent,
     }
+
+
+def _plan_item_row(item: lc.PlanItem | None) -> dict[str, Any] | None:
+    if item is None:
+        return None
+    return {
+        "plan_item_id": item.logical_id,
+        "text": item.text,
+        "locked": item.locked,
+        "authority": item.authority.value,
+    }
+
+
+def _job_plan(
+    store: DossierStore, job: Job | None, book_id: str, branch_id: str, logical_id: str
+) -> dict[str, Any]:
+    """Read only the plan revision the attributed job named, never today's replacement.
+
+    A scene item in that snapshot is not necessarily the string rendered into the request:
+    templates, transforms and alternate scene asks may have intervened. The frozen prompt
+    is the evidence for its actual rendering. Older jobs retain explicit gaps here.
+    """
+    payload = job.payload if job is not None else {}
+    recorded = payload.get("plan_revision_id")
+    result: dict[str, Any] = {
+        "source": "job_payload.plan_revision_id",
+        "scope": "job_bound_plan_revision",
+        "job_id": job.job_id if job is not None else None,
+        "plan_revision_id": recorded,
+        "status": "unavailable",
+        "reason": None,
+        "plan_item": None,
+        "prompt_equivalence_verified": False,
+    }
+    if job is None:
+        return {**result, "reason": "job_not_recorded"}
+    if any(
+        key in payload and payload[key] != expected
+        for key, expected in (
+            ("book_id", book_id),
+            ("branch_id", branch_id),
+            ("logical_id", logical_id),
+        )
+    ):
+        return {**result, "reason": "job_scope_mismatch"}
+    if job.job_kind != SCENE_DRAFT:
+        return {**result, "reason": "unsupported_job_kind"}
+    if "plan_revision_id" not in payload:
+        return {**result, "status": "not_recorded", "reason": "plan_revision_id_not_recorded"}
+    if not isinstance(recorded, str) or not recorded.strip():
+        return {**result, "status": "invalid_recorded_value", "reason": "invalid_plan_revision_id"}
+    try:
+        revision = store.plan_revision_for_id(recorded)
+    except KeyError:
+        return {**result, "reason": "plan_revision_not_recorded"}
+    if revision.plan_revision_id != recorded:
+        return {**result, "reason": "plan_revision_identity_mismatch"}
+    if (revision.book_id, revision.branch_id) != (book_id, branch_id):
+        return {**result, "reason": "plan_revision_scope_mismatch"}
+    item = scene_plan_for(revision.items, logical_id)
+    if item is None:
+        return {**result, "reason": "scene_plan_not_recorded"}
+    return {**result, "status": "available", "plan_item": _plan_item_row(item)}
 
 
 def render_dossier(dossier: dict[str, Any]) -> str:
@@ -463,14 +525,22 @@ def render_dossier(dossier: dict[str, Any]) -> str:
 
     plan_item = dossier["plan_item"]
     if plan_item is None:
-        field("plan item", "ABSENT - the plan holds no statement for this scene")
+        field("plan item", "ABSENT - the plan holds no statement for this scene (current plan)")
     else:
         field(
             "plan item",
-            f"{plan_item['plan_item_id']}  "
+            f"CURRENT plan: {plan_item['plan_item_id']}  "
             f"{'locked' if plan_item['locked'] else 'unlocked'}  {plan_item['authority']}",
         )
         field("", plan_item["text"])
+
+    job_plan = dossier["job_plan"]
+    if job_plan["status"] == "available":
+        field("job plan", f"{job_plan['plan_revision_id']}  (job-bound snapshot)")
+        field("", job_plan["plan_item"]["text"])
+        field("", "Exact rendering is not verified here; inspect the frozen prompt.")
+    else:
+        field("job plan", f"{job_plan['status']} - {job_plan['reason']}")
 
     findings: list[dict[str, Any]] = dossier["findings"]
     blocking = sum(1 for item in findings if item["blocks"])

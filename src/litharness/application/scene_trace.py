@@ -16,6 +16,10 @@ from litharness.application import dossier as dossier_mod
 from litharness.application import exemplars as exemplars_mod
 from litharness.application.handlers import REVISION_GATE, SCENE_DRAFT
 from litharness.application.ports import DossierStore, StoredEvent
+from litharness.application.prompt_source_view import (
+    build_prompt_source_view,
+    validate_source_query,
+)
 from litharness.application.reviser import REVISION_PROFILE
 from litharness.domain.events import EventType
 from litharness.domain.nodes import Node
@@ -220,6 +224,9 @@ def build_scene_trace(
     stage: str | None = None,
     offset: int = 0,
     max_chars: int = 12_000,
+    source_id: str | None = None,
+    source_offset: int = 0,
+    source_limit: int = 0,
 ) -> dict[str, Any]:
     """Trace a decision in the scene's current attributed or unfinished job only.
 
@@ -237,6 +244,7 @@ def build_scene_trace(
         or not 0 < max_chars <= MAX_EXCERPT_CHARS
     ):
         raise ValueError(f"max_chars must be an integer from 1 through {MAX_EXCERPT_CHARS}")
+    validate_source_query(source_id, source_offset, source_limit)
 
     dossier = dossier_mod.scene_dossier(store, book_id, branch_id, node, head)
     job_info = dossier["job"]
@@ -449,6 +457,15 @@ def build_scene_trace(
             "exemplar_shelf_exposure": shelf_exposure,
         },
         "stages": {name: stages[name].descriptor for name in STAGES},
+        "source_map": build_prompt_source_view(
+            payload,
+            source_id=source_id,
+            source_offset=source_offset,
+            source_limit=source_limit,
+            unavailable_reason=request_absent,
+            shelf_exposure=shelf_exposure,
+            recorded_input_digest=job.input_digest if job is not None else None,
+        ),
         "excerpt": _excerpt(stage, stages[stage], offset, max_chars) if stage is not None else None,
         "absent": absent,
     }
