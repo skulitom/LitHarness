@@ -1,0 +1,51 @@
+{
+  "schema": "local-prose-validation.v1",
+  "handoff": {
+    "command": "uv run python tools/check.py handoff",
+    "exit_code": 0,
+    "passed": 4449,
+    "skipped": 19,
+    "suite_seconds": 112.34,
+    "coverage_percent": 89.05,
+    "corpus_history": {
+      "status": "clean",
+      "commits": 990,
+      "data_blobs": 398
+    }
+  },
+  "display_wrapper": {
+    "exit_code": 1,
+    "stage": "log display after saved handoff exit status",
+    "exception": "UnicodeDecodeError",
+    "attempted_encoding": "utf-8",
+    "invalid_byte_hex": "97",
+    "byte_offset": 19915,
+    "log_preserved": true,
+    "does_not_change_child_exit_code": true
+  },
+  "claim_record_preflight": {
+    "initial_invalid_artifact_kind": "analysis",
+    "correction": "Removed prose annotation pointers; retained allowed registration and deterministic derived-result pointers.",
+    "corrected_validation_exit_code": 0
+  },
+  "execution_reproduction": {
+    "recorded_command": "uv run python runs/ab/prose-disclosure-permission-tools/summarize_execution.py --run C:\\DEV\\LitHarness\\runs\\ab\\prose-disclosure-permission-20260907 --out C:\\DEV\\LitHarness\\runs\\ab\\prose-disclosure-permission-20260907\\rebuilt-execution.json",
+    "result": "byte_identical",
+    "execution_sha256": "ef6fbbdf2054d8b35e018df899055a4602c5983c20b111ec7534e1e6340915c0",
+    "rebuild_sha256": "ef6fbbdf2054d8b35e018df899055a4602c5983c20b111ec7534e1e6340915c0",
+    "initial_snapshot_preserved": true,
+    "frozen_generation_artifacts_changed": false
+  },
+  "local_artifacts_verified": true,
+  "artifacts": {
+    "runs/ab/prose-disclosure-permission-tools/handoff-final.log": "4e453462981acc1b3a8f05142cea7b9df44e32d046c5ffac7e524a86fd6dd558",
+    "runs/ab/prose-disclosure-permission-tools/handoff-final-status.json": "6bc28f26fa817adb746e176849e33dfc9dc7686a3254e290a79f8c2f1f156a95",
+    "runs/ab/prose-disclosure-permission-tools/summarize_execution-initial.py": "4a7de3f04a4f26b9a9f1a6fc80cd60d9da7adf86fa975116f7b8ca859dc247eb",
+    "runs/ab/prose-disclosure-permission-20260907/execution-initial.json": "ba83409740abfcdd7cc62dd87228518ba1c4a42fe8c529de0ceb38a9e55dae63",
+    "research/quality-measurement/prose-disclosure-permission/execution.json": "ef6fbbdf2054d8b35e018df899055a4602c5983c20b111ec7534e1e6340915c0",
+    "runs/ab/prose-disclosure-permission-20260907/rebuilt-execution.json": "ef6fbbdf2054d8b35e018df899055a4602c5983c20b111ec7534e1e6340915c0",
+    "research/quality-measurement/prose-disclosure-permission/RESULTS.md": "299200a859e306ae67a15ed494e64651d94fcd31dbe94a9701379b88e0660191",
+    "research/quality-measurement/prose-disclosure-permission/DEVIATIONS.md": "8a6ba4721645e9f48d083b343696acacd84d9676b8978bc2aba10ab173bf0d8d"
+  },
+  "scope": "Repository and artifact checks, not literary validity or account-window consumption."
+}

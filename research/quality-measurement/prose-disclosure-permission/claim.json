@@ -1,8 +1,8 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "prose-disclosure-permission-v1",
-  "statement": "A registered four-call comparison tests the consequences of moving one currently required fact from a hidden prohibition into explicit permission for the scene. It does not establish a prose-quality effect or authorize automatic disclosure inference.",
-  "status": "registered",
+  "statement": "All four registered calls completed with the exact scoped permission edit verified. Both permission draws retain located explanatory detours, and both add an early reward absent from the controls. These observations on one fixture do not establish a general prose-quality effect or authorize automatic disclosure inference.",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,16 @@
       "kind": "registration",
       "path": "research/quality-measurement/prose-disclosure-permission/RUNBOOK.md",
       "sha256": "5336e94eb05c426695a1d4ffe9b5290a3a02eebd58d79fb8bd7b2107d020c890"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-disclosure-permission/execution.json",
+      "sha256": "ef6fbbdf2054d8b35e018df899055a4602c5983c20b111ec7534e1e6340915c0"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-disclosure-permission/validation.json",
+      "sha256": "681e19c3fe149df55a667f14c73e681be0c648968ad886428df37d60592ac013"
     }
   ]
 }

@@ -291,11 +291,16 @@ check exposed a writable read path and changed SQLite's file layout; that failur
 limited logical audit and the corrected read verification are retained. No generation or
 prose-quality comparison ran, and no disclosure permissions were inferred or applied.
 
-The next [registered comparison](research/quality-measurement/prose-disclosure-permission/PREREG.md)
-moves that one hidden-list fact into explicit permission for the current scene, preserving
-its literal content, the other hidden facts and the scene plan. Four fresh subscription
-calls compare exact archived controls with that permission-and-relocation package. This
-registration does not claim a prose gain or authorize automatic disclosure inference.
+The [scoped disclosure comparison](research/quality-measurement/prose-disclosure-permission/RESULTS.md)
+completed all four subscription calls with no reported retry. The verified move preserves
+the fact, seven other hidden bullets and the scene plan, but both permission draws retain
+explanatory detours. Both also add another student's early reward before the complete
+scheme has been read; neither control explicitly does so. This is a located batch difference,
+not a quality gain or general effect. All four preserve scheme prices and the paid endpoint
+and leave the victim unnamed. No future-answer component was explicitly disclosed; added
+current public rule wording remains a separate issue. The source and reading qualifications,
+including the preliminary presentation, are retained. No automatic disclosure policy or
+production change was adopted.
 
 For subsequent tests in this sequence, record the hypothesis, fixed comparison, source/code
 hashes and stop rules before calls. Retain every request and raw response, including transport
