@@ -291,6 +291,12 @@ check exposed a writable read path and changed SQLite's file layout; that failur
 limited logical audit and the corrected read verification are retained. No generation or
 prose-quality comparison ran, and no disclosure permissions were inferred or applied.
 
+The next [registered comparison](research/quality-measurement/prose-disclosure-permission/PREREG.md)
+moves that one hidden-list fact into explicit permission for the current scene, preserving
+its literal content, the other hidden facts and the scene plan. Four fresh subscription
+calls compare exact archived controls with that permission-and-relocation package. This
+registration does not claim a prose gain or authorize automatic disclosure inference.
+
 For subsequent tests in this sequence, record the hypothesis, fixed comparison, source/code
 hashes and stop rules before calls. Retain every request and raw response, including transport
 and format failures; record amendments without replacing failed draws. Finish a results file

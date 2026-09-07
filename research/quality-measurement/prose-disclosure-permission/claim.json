@@ -1,0 +1,18 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-disclosure-permission-v1",
+  "statement": "A registered four-call comparison tests the consequences of moving one currently required fact from a hidden prohibition into explicit permission for the scene. It does not establish a prose-quality effect or authorize automatic disclosure inference.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-disclosure-permission/PREREG.md",
+      "sha256": "6942f33ae6713ca88cf93080d320d748183f2137affaf35a2175d1a8ddc2e809"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-disclosure-permission/RUNBOOK.md",
+      "sha256": "5336e94eb05c426695a1d4ffe9b5290a3a02eebd58d79fb8bd7b2107d020c890"
+    }
+  ]
+}
