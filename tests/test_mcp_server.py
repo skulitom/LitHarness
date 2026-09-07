@@ -300,6 +300,7 @@ def test_a_read_tool_opens_the_store_read_only_and_leaves_no_file_behind(db: Pat
         "guide": {},
         "book": {},
         "scene": {"scene": "1"},
+        "lookup": {"id": "nope"},
         "scene_trace": {"scene": "1"},
         "status": {},
         "why": {"scene": "1"},
@@ -951,6 +952,7 @@ def test_every_result_carries_the_keys_the_tool_list_documents(db: Path) -> None
         "guide": {},
         "book": {},
         "scene": {"scene": "1"},
+        "lookup": {"id": "nope"},
         "scene_trace": {"scene": "1"},
         "status": {},
         "why": {"scene": "1"},
@@ -1026,3 +1028,86 @@ def test_the_prompts_walk_the_tools_they_name_and_end_with_the_fence() -> None:
     assert set(prompt_names()) == set(PROMPTS["read"]) | set(PROMPTS["propose"])
     for profile, uris in RESOURCES.items():
         assert "litharness://store" in uris and "litharness://guide" in uris, profile
+
+
+# --- §241.4: what the Opus dogfood asked for ------------------------------------------------
+
+
+def test_lookup_resolves_the_ids_other_tools_hand_out(db: Path) -> None:
+    """`verify`, `queue` and `status` hand an agent revision, job, decision, finding and
+    exception ids, and one asked in its answer for a way to open a decision by id. `lookup`
+    resolves any of them by the prefix the store mints; an id nothing holds is a result."""
+    tools = make_tools(binding(db))
+    head = tools["store_info"]()["books"][0]["head"]
+    revision = tools["lookup"](id=head)
+    assert revision["kind"] == "revision" and revision["record"]["revision_id"] == head
+    assert revision["record"]["scenes"][0] == "scene-1" and revision["found"] is True
+    plan = tools["plans"]()["revisions"][0]["plan_revision_id"]
+    assert tools["lookup"](id=plan)["kind"] == "plan_revision"
+    record = tools["world"](view="show")["result"][0]["record_id"]
+    resolved = tools["lookup"](id=record)
+    assert resolved["kind"] == "state_record" and resolved["record"]["record_id"] == record
+    with SqliteStore.open_existing(db) as store:
+        book_id, branch_id, _ = store.branches()[0]
+        payload = {
+            "prompt": "the frozen prompt text stays out of a lookup",
+            "logical_id": "scene-1",
+            "book_id": book_id,
+            "branch_id": branch_id,
+        }
+        store.enqueue(
+            Job(
+                job_id="beat-lookup",
+                job_kind=SCENE_DRAFT,
+                payload=payload,
+                input_digest=input_digest_for(payload),
+            )
+        )
+    unit = tools["lookup"](id="beat-lookup")
+    assert unit["kind"] == "job" and unit["record"]["payload_keys"] == sorted(payload)
+    assert "frozen prompt text" not in json.dumps(unit), "the prompt is the dossier's to show"
+    missing = tools["lookup"](id="dec-0000")
+    assert missing["error_kind"] == "unknown_id" and missing["found"] is False
+    assert missing["attention"] is True
+
+
+def test_show_takes_several_subjects_in_one_call_and_ladders_carry_their_manifestations(
+    db: Path,
+) -> None:
+    """An agent describing the ladders walked `show` once per rung for `manifests_as` and ran
+    out of turns; another read sixteen subjects one at a time. The rung carries the fact and
+    `show` takes a list."""
+    propose = make_tools(binding(db, "propose"))
+    propose["world_declare_batch"](
+        items=[
+            {"subject": "tier", "predicate": "type", "value": "criterion"},
+            {"subject": "tier", "predicate": "comparator", "value": "ordinal"},
+            {"subject": "low", "predicate": "precedes", "object": "high", "value": "tier"},
+            {"subject": "low", "predicate": "manifests_as", "value": "a chalk mark on the wrist"},
+            {"subject": "high", "predicate": "manifests_as", "value": "a brass mark on the wrist"},
+        ]
+    )
+    read = make_tools(binding(db))
+    ladders = read["world"](view="ladders")["result"]
+    tier = next(item for item in ladders if item["criterion"] == "tier")
+    assert [rung["manifests_as"] for rung in tier["rungs"]] == [
+        "a chalk mark on the wrist",
+        "a brass mark on the wrist",
+    ]
+    several = read["world"](view="show", subjects=["low", "high"])["result"]
+    assert set(several) == {"low", "high"}
+    assert {row["predicate"] for row in several["low"]} == {"precedes", "manifests_as"}
+    assert read["world"](view="show", subject="low")["result"] == several["low"]
+
+
+def test_plans_carry_the_head_plans_items_on_request(db: Path) -> None:
+    """Two agents said `plans` gave lineage and counts and nothing mapped a statement to its
+    scene (§241.4). The items ride along when asked, never by default."""
+    tools = make_tools(binding(db))
+    bare = tools["plans"]()
+    assert "items" not in bare
+    full = tools["plans"](items=True)
+    assert full["revisions"] == bare["revisions"]
+    assert full["items"], "the litrpg fixture imports a plan"
+    assert {"plan_item_id", "kind", "text", "locked", "authority"} <= set(full["items"][0])
+    assert any(item["locked"] for item in full["items"])

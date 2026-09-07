@@ -44,15 +44,16 @@ it lists that tool's result keys.
 | `guide` | command tiers, tool names, result keys and excluded-command reasons |
 | `book` | title, premise, head and scenes grouped by chapter |
 | `scene` | one scene's current prose and reading position |
+| `lookup` | the record behind an id another tool handed you: a decision, finding, exception, directive, release entry, queued unit, world record, or a manuscript or plan revision |
 | `scene_trace` | the attributed or unfinished job's input and draft stages, hashes, gaps and bounded excerpts |
 | `status` | queue depth, attention conditions, digest, usage and blocked books |
 | `why` | scene dossier: frozen prompt, decisions, gates, current and historical plans, findings and omissions |
 | `findings` | detector reports, worst first, with blocking counts |
 | `events` | write-order event log from `since`, bounded by `limit`, with `next_since` |
-| `plans` | plan lineage and the proposal behind each revision |
+| `plans` | plan lineage and the proposal behind each revision; `items=true` adds the head plan's items |
 | `state` | current story declarations with authority, provenance, subject, predicate, text and visibility |
 | `queue` | job counts, units in one status, exceptions and captured direction |
-| `world` | `summary`, `show`, `rules`, `ladders`, `abilities`, `cast`, `threads`, `vocabulary`, `presence` or `check` |
+| `world` | `summary`, `show`, `rules`, `ladders`, `abilities`, `cast`, `threads`, `vocabulary`, `presence` or `check`; `subjects` lists several subjects for `show` in one call, and `ladders` carries each rung's `manifests_as` |
 | `characters` | what canon records about each person; an empty cast includes a hint |
 | `roster` | `show`, `check`, `vocabulary` or `rehearse`; dossier prose is withheld |
 | `release_show` | the operator-gated release queue |

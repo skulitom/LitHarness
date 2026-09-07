@@ -697,12 +697,6 @@ class ProvenanceReader(Protocol):
         """The units in one status: what `jobs --status` lists and the dossier searches."""
         ...
 
-    def pre_revision_drafts(
-        self, book_id: str, branch_id: str, *, logical_id: str | None = ...
-    ) -> list[PreRevisionDraft]:
-        """The writer's text a reviser replaced (§187), for the dossier's pair."""
-        ...
-
     def read_log(self, *, since: int = ...) -> Sequence[StoredEvent]:
         """The event log in write order from a cursor: `events`' one source. A `Sequence`,
         because `list` is invariant and the adapter returns its own row type."""
@@ -740,6 +734,27 @@ class ProvenanceReader(Protocol):
         ...
 
 
+class KeptDraftReader(Protocol):
+    """The one read of the text a reviser replaced (§187), and the reason it is its own port.
+
+    §188.4 made the kept draft write-only at this boundary so no workflow coordinating
+    through these ports could route it into a packet, a summary, a detector input or a
+    prompt; the read lived on the concrete store, and the operator's dossier was its one
+    caller. Lifting the dossier into `application/` (stage-0 §241) needed the read on a port,
+    and the scene trace beside it became a second caller. So the read is *named* rather than
+    folded into `ProvenanceReader`: one protocol, one method, and
+    `test_the_kept_draft_is_write_only_at_the_application_boundary` holds the set of modules
+    that call it to the dossier and the trace — which is §188.4's property kept as a list of
+    callers instead of an absence of readers (§241.4).
+    """
+
+    def pre_revision_drafts(
+        self, book_id: str, branch_id: str, *, logical_id: str | None = ...
+    ) -> list[PreRevisionDraft]:
+        """The writer's text a reviser replaced (§187), for the dossier's pair."""
+        ...
+
+
 class DossierStore(
     ManuscriptReader,
     PlanReader,
@@ -747,6 +762,7 @@ class DossierStore(
     DecisionRepository,
     FindingRepository,
     ProvenanceReader,
+    KeptDraftReader,
     Protocol,
 ):
     """What one scene's dossier is joined from (`application/dossier.py`)."""
@@ -779,7 +795,7 @@ class StatusReportStore(
     book, so the report and the tick's selector refuse with the same sentence."""
 
 
-class ToolStore(ApplicationStore, ReleaseQueue, ProvenanceReader, Protocol):
+class ToolStore(ApplicationStore, ReleaseQueue, ProvenanceReader, KeptDraftReader, Protocol):
     """Everything the agent surface may reach (stage-0 §241), as one name.
 
     The server binds a concrete store to this the way `cli.py` binds one to

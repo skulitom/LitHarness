@@ -260,8 +260,8 @@ claude mcp add -s project litharness -- uv run --project /abs/path/to/LitHarness
 ```
 
 `.claude/skills/litharness-mcp/SKILL.md` is the agent's guide to the tools. Beside the verbs'
-own tools it offers `book` (every scene, drafted or not) and `scene` (one scene's prose),
-and `scene_trace` (the attributed job's frozen input, raw output and accepted revision,
+own tools it offers `book` (every scene, drafted or not), `scene` (one scene's prose),
+`lookup` (the record behind any id another tool handed out), and `scene_trace` (the attributed job's frozen input, raw output and accepted revision,
 joined by recorded identities). Start with its stage hashes and gaps, then request one
 stage with `stage` and page it with `offset`/`max_chars`. This distinguishes where text is
 recorded without declaring why it reads poorly. Frozen job input is not a capture of the

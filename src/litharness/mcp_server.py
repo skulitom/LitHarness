@@ -119,6 +119,7 @@ READ_TOOLS: tuple[str, ...] = (
     "guide",
     "book",
     "scene",
+    "lookup",
     "scene_trace",
     "status",
     "why",
@@ -137,7 +138,14 @@ READ_TOOLS: tuple[str, ...] = (
 
 #: The tools that wrap no single command-line verb: the surface's own. Every other read tool
 #: is a verb's `--json`, and `TIERS` says which.
-SURFACE_ONLY_TOOLS: tuple[str, ...] = ("store_info", "guide", "book", "scene", "scene_trace")
+SURFACE_ONLY_TOOLS: tuple[str, ...] = (
+    "store_info",
+    "guide",
+    "book",
+    "scene",
+    "lookup",
+    "scene_trace",
+)
 
 #: The Architect's shape: the world's read views and the two declares, and no dossier tool
 #: beside a write tool. The structural half of §97.1 — no tool a finding could be routed
@@ -433,6 +441,7 @@ RESULT_KEYS: dict[str, tuple[str, ...]] = {
         "lock",
         "text",
     ),
+    "lookup": ("id", "kind", "found", "record"),
     "status": (
         "jobs",
         "needs_attention",
@@ -552,6 +561,13 @@ DESCRIPTIONS: dict[str, str] = {
         "id (`scene-3`) or a 1-based place in reading order (`3`); `text` is null for a scene "
         f"nobody has drafted. {_keys('scene')} {FENCE}"
     ),
+    "lookup": (
+        "READ. The record behind an id another tool handed you: a decision (`dec-`), a finding "
+        "(`f-`), an exception (`exc-`), a directive (`dir-`), a release entry (`rel-`), a queued "
+        "unit (`beat-` or any job id), a world record (`rec-`), or a manuscript or plan revision "
+        "(a 64-character hash). `kind` says which; an id nothing holds is a result with "
+        f"`error_kind: unknown_id`. {_keys('lookup')} {FENCE}"
+    ),
     "status": (
         f"READ. {VERB_HELP[('status',)]}. `attention` is true when anything needs a person. "
         f"{_keys('status')} {FENCE}"
@@ -583,15 +599,22 @@ DESCRIPTIONS: dict[str, str] = {
         f"do not measure quality. {_keys('scene_trace')} {FENCE}"
     ),
     "findings": (
-        f"READ. {VERB_HELP[('findings',)]}. `attention` is true when any finding blocks; "
-        f"`limit` and `offset` page the list and `total` counts it. {_keys('findings')} {FENCE}"
+        f"READ. {VERB_HELP[('findings',)]}: the integrity detectors' recorded verdicts per "
+        "scene (contradiction, duplicate, overdue) and any evaluator's ingested findings; the "
+        "prose was checked against canon when it was drafted, and this is what the check said. "
+        f"`attention` is true when any finding blocks; `limit` and `offset` page the list and "
+        f"`total` counts it. {_keys('findings')} {FENCE}"
     ),
     "events": (
         f"READ. {VERB_HELP[('events',)]}. `since` is a sequence number from an earlier result's "
         "`next_since`, or an ISO-8601 instant; `types` filters event types. Raw draft text is "
         f"withheld; use the scoped scene_trace tool for its safe view. {_keys('events')} " + FENCE
     ),
-    "plans": f"READ. {VERB_HELP[('plans',)]}. {_keys('plans')} {FENCE}",
+    "plans": (
+        f"READ. {VERB_HELP[('plans',)]}. `items=true` adds the head plan's items themselves: "
+        "each statement with the scene it steers and whether a person locked it. "
+        f"{_keys('plans')} {FENCE}"
+    ),
     "state": (
         f"READ. {VERB_HELP[('state',)]}. Each row carries its story position, whether this "
         "system read it out of its own prose or was given it, and its authority; `limit` and "
@@ -603,7 +626,9 @@ DESCRIPTIONS: dict[str, str] = {
         f"is true when an exception is open. {_keys('queue')} {FENCE}"
     ),
     "world": (
-        "READ. Ask this world a question, by `view`. "
+        "READ. Ask this world a question, by `view`. `subjects` lists several subjects for "
+        "`show` in one call (the result is then keyed by subject); `ladders` carries each "
+        "rung's `manifests_as`. "
         + _views_help("world", WORLD_VIEWS)
         + " `threads` exposes disclosure reasons and supporting record IDs; `subject` narrows "
         "that view to one claim. Pass its exact story key as `at`, not a reading-order position. "
@@ -627,8 +652,9 @@ DESCRIPTIONS: dict[str, str] = {
         f"no post anywhere (stage-0 §221). {_keys('release_show')} {FENCE}"
     ),
     "verify": (
-        f"READ. {VERB_HELP[('verify',)]}; `attention` is true when a revision no decision "
-        f"explains. {_keys('verify')} {FENCE}"
+        f"READ. {VERB_HELP[('verify',)]}: manuscript revisions, not plan revisions, which "
+        "`plans` lists separately; `attention` is true when a revision no decision explains. "
+        f"{_keys('verify')} {FENCE}"
     ),
     "export_markdown": (
         f"READ. {VERB_HELP[('export',)]}, as Markdown, cut at `max_chars` with `truncated` "
@@ -851,6 +877,152 @@ def instructions(binding: Binding) -> str:
     )
 
 
+_HEX64 = 64
+#: What `_resolve_id` hands back: the kind, the record as a row, and the tools to call next.
+Found = tuple[str, dict[str, Any], list[str]]
+
+
+def _job_row(job: Any) -> dict[str, Any]:
+    return {
+        "job_id": job.job_id,
+        "job_kind": job.job_kind,
+        "status": job.status.value,
+        "attempts": job.attempts,
+        "priority": job.priority,
+        "input_digest": job.input_digest,
+        "error": job.error,
+        "payload_keys": sorted(job.payload),
+    }
+
+
+def _resolve_id(store: SqliteStore, ident: str) -> Found | None:
+    """The record an id names, by the prefix the store mints it with (stage-0 §241.4): an
+    agent reading `status`, `queue` or `verify` is handed decision, job, finding, exception and
+    revision ids and had no way to open one. Each loader raises on an unknown id; the next
+    kind is tried only where the prefix leaves it open."""
+    ident = ident.strip()
+
+    def try_(fn: Callable[[], Found | None]) -> Found | None:
+        try:
+            return fn()
+        except (KeyError, LookupError, ValueError):
+            return None
+
+    def decision() -> Found:
+        return "decision", dossier_mod.decision_row(store.load_decision(ident)), ["why"]
+
+    def finding() -> Found:
+        return "finding", dossier_mod.finding_row(store.load_finding(ident)), ["why", "findings"]
+
+    def exception() -> Found:
+        item = store.load_exception(ident)
+        return (
+            "exception",
+            {
+                "exception_id": item.exception_id,
+                "kind": item.kind.value,
+                "status": item.status.value,
+                "summary": item.summary,
+                "job_id": item.job_id,
+                "logical_id": item.logical_id,
+                "decision_id": item.decision_id,
+                "raised_at": item.raised_at,
+                "resolved_at": item.resolved_at,
+                "resolution": item.resolution,
+                "attempts": item.attempts,
+            },
+            ["queue", "why"],
+        )
+
+    def directive() -> Found:
+        item = store.load_directive(ident)
+        return (
+            "directive",
+            {
+                "directive_id": item.directive_id,
+                "kind": item.kind.value,
+                "status": item.status.value,
+                "body": item.body,
+                "author": item.author or "human",
+                "book_id": item.book_id,
+                "branch_id": item.branch_id,
+                "interpretation": item.interpretation,
+                "received_at": item.received_at,
+            },
+            ["plans"],
+        )
+
+    def release() -> Found | None:
+        entry = store.release_entry(ident)
+        return None if entry is None else ("release", entry.to_jsonable(), ["release_show"])
+
+    def job() -> Found:
+        return "job", _job_row(store.load_job(ident)), ["why", "queue"]
+
+    def state_record() -> Found | None:
+        for book, br, _ in store.branches():
+            for row in world_mod.declarations(store.state_records(book, br)):
+                if row["record_id"] == ident:
+                    return "state_record", {**row, "book_id": book, "branch_id": br}, ["world"]
+        return None
+
+    def revision() -> Found:
+        item = store.load_revision(ident)
+        decided = store.decision_for_revision(ident)
+        return (
+            "revision",
+            {
+                "revision_id": item.revision_id,
+                "book_id": item.book_id,
+                "branch_id": item.branch_id,
+                "parent_revision_id": item.parent_revision_id,
+                "nodes": len(item.nodes),
+                "scenes": [node.logical_id for node in dossier_mod.scenes_of(item)],
+                "decision": None if decided is None else dossier_mod.decision_row(decided),
+            },
+            ["why", "verify"],
+        )
+
+    def plan_revision() -> Found:
+        item = store.plan_revision_for_id(ident)
+        return (
+            "plan_revision",
+            {
+                "plan_revision_id": item.plan_revision_id,
+                "book_id": item.book_id,
+                "branch_id": item.branch_id,
+                "parent_plan_revision_id": item.parent_plan_revision_id,
+                "items": len(item.items),
+                "locked": sum(1 for entry in item.items if entry.locked),
+            },
+            ["plans"],
+        )
+
+    by_prefix: dict[str, list[Callable[[], Found | None]]] = {
+        "dec-": [decision],
+        "f-": [finding],
+        "exc-": [exception],
+        "dir-": [directive],
+        "rel-": [release],
+        "rec-": [state_record],
+        "beat-": [job],
+    }
+    for prefix, loaders in by_prefix.items():
+        if ident.startswith(prefix):
+            for loader in loaders:
+                found = try_(loader)
+                if found is not None:
+                    return found
+            return None
+    generic = [job, finding, decision, state_record]
+    loaders = [revision, plan_revision] if len(ident) == _HEX64 else generic
+    for loader in loaders:
+        found = try_(loader)
+        if found is not None:
+            return found
+    return None
+
+
 def _page(rows: list[Any], *, limit: int, offset: int) -> tuple[list[Any], dict[str, Any]]:
     """One page of a list and the four keys that say which page: a bound an agent can see is
     the alternative to a host silently cutting the answer."""
@@ -1019,6 +1191,34 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
         }
 
     @guarded
+    def lookup(id: str) -> dict[str, Any]:
+        store = open_read()
+        try:
+            found = _resolve_id(store, id)
+        finally:
+            store.close()
+        if found is None:
+            return {
+                "error_kind": "unknown_id",
+                "id": id,
+                "kind": None,
+                "found": False,
+                "record": None,
+                "message": f"no record with id {id}",
+                "attention": True,
+                "next": ["store_info"],
+            }
+        kind, record, hints = found
+        return {
+            "id": id,
+            "kind": kind,
+            "found": True,
+            "record": record,
+            "attention": False,
+            "next": hints,
+        }
+
+    @guarded
     def status() -> dict[str, Any]:
         store = open_read()
         try:
@@ -1179,16 +1379,37 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
         return {**view, "attention": False}
 
     @guarded
-    def plans(book_id: str | None = None, branch_id: str | None = None) -> dict[str, Any]:
+    def plans(
+        items: bool = False, book_id: str | None = None, branch_id: str | None = None
+    ) -> dict[str, Any]:
         store = open_read()
         try:
             resolved = branch(store, book_id, branch_id)
             if isinstance(resolved, dict):
                 return resolved
             view = views_mod.plans_view(store, *resolved)
+            # The items themselves, on request (stage-0 §241.4): two agents said `plans` gave
+            # lineage and counts and nothing mapped a statement to its scene.
+            rows = (
+                [
+                    {
+                        "plan_item_id": item.logical_id,
+                        "kind": getattr(item.kind, "value", item.kind),
+                        "text": item.text,
+                        "locked": item.locked,
+                        "authority": item.authority.value,
+                    }
+                    for item in store.plan_items(*resolved)
+                ]
+                if items
+                else None
+            )
         finally:
             store.close()
-        return {**view, "attention": bool(view["conflicted"])}
+        result: dict[str, Any] = {**view, "attention": bool(view["conflicted"])}
+        if rows is not None:
+            result["items"] = rows
+        return result
 
     @guarded
     def state(
@@ -1235,6 +1456,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
     def world(
         view: WorldView,
         subject: str | None = None,
+        subjects: list[str] | None = None,
         holder: str | None = None,
         at: str | None = None,
         book_id: str | None = None,
@@ -1257,15 +1479,22 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
                         for node in head.nodes
                         if node.kind is NodeKind.SCENE
                     }
-            result = world_mod.view(
-                records,
-                in_force,
-                name=view,
-                scenes=scenes,
-                subject=subject,
-                holder=holder,
-                at=at,
-            )
+            if subjects and view == "show":
+                # Several subjects in one call (§241.4): an agent modelling a character on
+                # the cast read sixteen subjects one `show` at a time.
+                result = {
+                    name: world_mod.declarations(records, subject=name) for name in subjects
+                }
+            else:
+                result = world_mod.view(
+                    records,
+                    in_force,
+                    name=view,
+                    scenes=scenes,
+                    subject=subject,
+                    holder=holder,
+                    at=at,
+                )
         finally:
             store.close()
         return {
@@ -1466,6 +1695,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
         "guide": guide,
         "book": book,
         "scene": scene,
+        "lookup": lookup,
         "scene_trace": scene_trace,
         "status": status,
         "why": why,
