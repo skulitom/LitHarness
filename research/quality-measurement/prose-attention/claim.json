@@ -1,0 +1,13 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-attention-v1",
+  "statement": "Using a source-derived attention trajectory to govern narrative emphasis may change repeated explanations while preserving the full chapter. Matched trace exposure diagnostic; unqualified conjecture.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-attention/PREREG.md",
+      "sha256": "a7f5e163169a7588861e81cbbb2dd6924f719869e9940cba0fe82a6446bbaebe"
+    }
+  ]
+}
