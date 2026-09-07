@@ -1,0 +1,24 @@
+{
+  "command": "uv run python tools/check.py handoff",
+  "exit_code": 0,
+  "passed": 4557,
+  "skipped": 19,
+  "suite_seconds": 112.89,
+  "coverage_percent": 89.12,
+  "corpus_history": {
+    "commits": 992,
+    "data_blobs": 403,
+    "status": "clean"
+  },
+  "new_generation_calls": 0,
+  "direct_api_calls": 0,
+  "scope": "Documentation and retained-input audit; no literary validation or production behavior change.",
+  "artifacts": {
+    "runs/chapter-one-forensics-20260907/handoff.log": "3165da40df7edc39620ea76b816d3f96c5a3cbe7de6504877bb6b4d381d0fe79",
+    "runs/chapter-one-forensics-20260907/handoff-status.json": "58950b56bd08fcf8e92401ec78bd16d37bfd0a6a2651c24dfb1a44f4ee4e88de",
+    "runs/chapter-one-forensics-20260907/READING.md": "f6c76da7d3a3a2f4d334185926e6a5a84d563dbb8e3ab94055ee652000764b2a",
+    "runs/chapter-one-forensics-20260907/audit_chapter.py": "22a17f31a5ab07eb4ff9e172ecf36e80ce2df044762aef66b7ddcfd40045cdcb",
+    "research/quality-measurement/prose-chapter-one-forensics/inspection.json": "5952261470ac94b9d47b2cb1bf66853587320cc43934ab383abb2753a0630fe7",
+    "research/quality-measurement/prose-chapter-one-forensics/RESULTS.md": "0bcd756f305b1117ca77d34eddc0da51479473dd01468a96ecc4ddd3e3da5dbf"
+  }
+}

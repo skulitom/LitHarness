@@ -1,0 +1,621 @@
+{
+  "scope": "retained historical Chapter 1, not a current-build generation or quality metric",
+  "code_commit": "8172c9d26bc041d80be562f9869e48b083440afa",
+  "new_generation_calls": 0,
+  "direct_api_calls": 0,
+  "source_before": {
+    "": "f11823ca25791ccc5278deca2dbdd8fb41c42537cccb2d17e83840fbd8516969",
+    "-wal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "-shm": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+  },
+  "scenes": {
+    "1": {
+      "job_id": "beat-2c70980362f0426bfd63cb30",
+      "decision_id": "dec-b2f0506643fb216db6e650b0",
+      "plan_revision_id": "ff4f728305543d9901d9d26d2839becb52968881fa3f540204063bfba55e2eeb",
+      "current_plan_equals_job_plan": true,
+      "source_map_status": "not_recorded",
+      "stage_hashes": {
+        "system": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3",
+        "prompt": "2db42b49841cc280e3b26b495048a98f71c15786a6829db1ab3145fe958cd0fc",
+        "raw_draft": "b65afabd9c0c30f78e40f6dabce764b4425963eb5aa399241aa184154c4bdd48",
+        "accepted": "53e8d772c42ff7bb4f46a985149be87a37a8991b2bd5378716a4859484210b35"
+      },
+      "cleanup_lexical_sequence_equal": true,
+      "cleanup_changes": [
+        {
+          "operation": "delete",
+          "raw_start": 1283,
+          "raw_end": 1284,
+          "accepted_start": 1283,
+          "accepted_end": 1283
+        },
+        {
+          "operation": "delete",
+          "raw_start": 1298,
+          "raw_end": 1299,
+          "accepted_start": 1297,
+          "accepted_end": 1297
+        },
+        {
+          "operation": "replace",
+          "raw_start": 1682,
+          "raw_end": 1684,
+          "accepted_start": 1680,
+          "accepted_end": 1681
+        },
+        {
+          "operation": "replace",
+          "raw_start": 1714,
+          "raw_end": 1716,
+          "accepted_start": 1711,
+          "accepted_end": 1712
+        },
+        {
+          "operation": "replace",
+          "raw_start": 1762,
+          "raw_end": 1764,
+          "accepted_start": 1758,
+          "accepted_end": 1759
+        },
+        {
+          "operation": "delete",
+          "raw_start": 1964,
+          "raw_end": 1965,
+          "accepted_start": 1959,
+          "accepted_end": 1959
+        },
+        {
+          "operation": "delete",
+          "raw_start": 1977,
+          "raw_end": 1978,
+          "accepted_start": 1971,
+          "accepted_end": 1971
+        },
+        {
+          "operation": "replace",
+          "raw_start": 2008,
+          "raw_end": 2010,
+          "accepted_start": 2001,
+          "accepted_end": 2002
+        },
+        {
+          "operation": "delete",
+          "raw_start": 2215,
+          "raw_end": 2216,
+          "accepted_start": 2207,
+          "accepted_end": 2207
+        },
+        {
+          "operation": "delete",
+          "raw_start": 2219,
+          "raw_end": 2220,
+          "accepted_start": 2210,
+          "accepted_end": 2210
+        },
+        {
+          "operation": "delete",
+          "raw_start": 2247,
+          "raw_end": 2248,
+          "accepted_start": 2237,
+          "accepted_end": 2237
+        },
+        {
+          "operation": "delete",
+          "raw_start": 2252,
+          "raw_end": 2253,
+          "accepted_start": 2241,
+          "accepted_end": 2241
+        },
+        {
+          "operation": "delete",
+          "raw_start": 2280,
+          "raw_end": 2281,
+          "accepted_start": 2268,
+          "accepted_end": 2268
+        },
+        {
+          "operation": "delete",
+          "raw_start": 2333,
+          "raw_end": 2334,
+          "accepted_start": 2320,
+          "accepted_end": 2320
+        },
+        {
+          "operation": "delete",
+          "raw_start": 3979,
+          "raw_end": 3981,
+          "accepted_start": 3965,
+          "accepted_end": 3965
+        },
+        {
+          "operation": "delete",
+          "raw_start": 3983,
+          "raw_end": 3985,
+          "accepted_start": 3967,
+          "accepted_end": 3967
+        },
+        {
+          "operation": "delete",
+          "raw_start": 4527,
+          "raw_end": 4528,
+          "accepted_start": 4509,
+          "accepted_end": 4509
+        },
+        {
+          "operation": "delete",
+          "raw_start": 4541,
+          "raw_end": 4542,
+          "accepted_start": 4522,
+          "accepted_end": 4522
+        },
+        {
+          "operation": "delete",
+          "raw_start": 4602,
+          "raw_end": 4603,
+          "accepted_start": 4582,
+          "accepted_end": 4582
+        },
+        {
+          "operation": "delete",
+          "raw_start": 4707,
+          "raw_end": 4708,
+          "accepted_start": 4686,
+          "accepted_end": 4686
+        },
+        {
+          "operation": "delete",
+          "raw_start": 4773,
+          "raw_end": 4774,
+          "accepted_start": 4751,
+          "accepted_end": 4751
+        },
+        {
+          "operation": "delete",
+          "raw_start": 4835,
+          "raw_end": 4836,
+          "accepted_start": 4812,
+          "accepted_end": 4812
+        }
+      ],
+      "selected_by": {
+        "arc_index": null,
+        "beat_function": "setup",
+        "chapter_end": false,
+        "chapter_in_volume": 1,
+        "chapter_index": 1,
+        "chapter_scene_index": 1,
+        "chapter_scenes": 2,
+        "of_total": 6,
+        "open_ended_serial": false,
+        "ordinal": 1,
+        "plan_epoch": 1,
+        "predicate": "draftable.with_predecessor.v1",
+        "scene_plan_mode": "concept",
+        "story_order_key": "s1",
+        "template_id": "template.six-beat.v0",
+        "volume_index": 1
+      },
+      "gates": [
+        {
+          "gate": "shape",
+          "rule_or_critic_id": "shape.draft.v0",
+          "passed": true,
+          "blocking": true,
+          "verdict_source": "deterministic",
+          "vetoes": [],
+          "detail": "971 words against a target of 900 (108%)",
+          "calibration_id": null
+        },
+        {
+          "gate": "integrity",
+          "rule_or_critic_id": "integrity.standing.v0",
+          "passed": true,
+          "blocking": true,
+          "verdict_source": "deterministic",
+          "vetoes": [],
+          "detail": null,
+          "calibration_id": null
+        },
+        {
+          "gate": "integrity",
+          "rule_or_critic_id": "integrity.findings.v0",
+          "passed": true,
+          "blocking": true,
+          "verdict_source": "deterministic",
+          "vetoes": [],
+          "detail": "4 detector(s) ran, nothing found",
+          "calibration_id": null
+        }
+      ]
+    },
+    "2": {
+      "job_id": "beat-bd457b6e7cf611b934dd34ad",
+      "decision_id": "dec-c6ce660f183de8e455be0692",
+      "plan_revision_id": "ff4f728305543d9901d9d26d2839becb52968881fa3f540204063bfba55e2eeb",
+      "current_plan_equals_job_plan": true,
+      "source_map_status": "not_recorded",
+      "stage_hashes": {
+        "system": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3",
+        "prompt": "400b028a35b1df5b006acc4d46da4f6386dc3acde75a6d09a54f68e595b10937",
+        "raw_draft": "2d9febaade71f89d6e2d211cf5a762c547d5828d68928f2b54a5c1797fec074e",
+        "accepted": "2ce236088db2e899ccc9baf34d921e51d941861cdd26f79600b0452ef1afc07c"
+      },
+      "cleanup_lexical_sequence_equal": true,
+      "cleanup_changes": [
+        {
+          "operation": "insert",
+          "raw_start": 333,
+          "raw_end": 333,
+          "accepted_start": 333,
+          "accepted_end": 334
+        },
+        {
+          "operation": "delete",
+          "raw_start": 334,
+          "raw_end": 337,
+          "accepted_start": 335,
+          "accepted_end": 335
+        },
+        {
+          "operation": "delete",
+          "raw_start": 341,
+          "raw_end": 342,
+          "accepted_start": 339,
+          "accepted_end": 339
+        },
+        {
+          "operation": "delete",
+          "raw_start": 1783,
+          "raw_end": 1784,
+          "accepted_start": 1780,
+          "accepted_end": 1780
+        },
+        {
+          "operation": "delete",
+          "raw_start": 1786,
+          "raw_end": 1787,
+          "accepted_start": 1782,
+          "accepted_end": 1782
+        },
+        {
+          "operation": "replace",
+          "raw_start": 2180,
+          "raw_end": 2182,
+          "accepted_start": 2175,
+          "accepted_end": 2176
+        },
+        {
+          "operation": "replace",
+          "raw_start": 2186,
+          "raw_end": 2188,
+          "accepted_start": 2180,
+          "accepted_end": 2181
+        },
+        {
+          "operation": "replace",
+          "raw_start": 2640,
+          "raw_end": 2642,
+          "accepted_start": 2633,
+          "accepted_end": 2634
+        },
+        {
+          "operation": "replace",
+          "raw_start": 2714,
+          "raw_end": 2716,
+          "accepted_start": 2706,
+          "accepted_end": 2707
+        },
+        {
+          "operation": "replace",
+          "raw_start": 4146,
+          "raw_end": 4148,
+          "accepted_start": 4137,
+          "accepted_end": 4138
+        },
+        {
+          "operation": "replace",
+          "raw_start": 4574,
+          "raw_end": 4576,
+          "accepted_start": 4564,
+          "accepted_end": 4565
+        }
+      ],
+      "selected_by": {
+        "arc_index": null,
+        "beat_function": "inciting",
+        "chapter_end": true,
+        "chapter_in_volume": 1,
+        "chapter_index": 1,
+        "chapter_scene_index": 2,
+        "chapter_scenes": 2,
+        "of_total": 6,
+        "open_ended_serial": false,
+        "ordinal": 2,
+        "plan_epoch": 1,
+        "predicate": "draftable.with_predecessor.v1",
+        "scene_plan_mode": "concept",
+        "story_order_key": "s2",
+        "template_id": "template.six-beat.v0",
+        "volume_index": 1
+      },
+      "gates": [
+        {
+          "gate": "shape",
+          "rule_or_critic_id": "shape.draft.v0",
+          "passed": true,
+          "blocking": true,
+          "verdict_source": "deterministic",
+          "vetoes": [],
+          "detail": "950 words against a target of 900 (106%)",
+          "calibration_id": null
+        },
+        {
+          "gate": "integrity",
+          "rule_or_critic_id": "integrity.standing.v0",
+          "passed": true,
+          "blocking": true,
+          "verdict_source": "deterministic",
+          "vetoes": [],
+          "detail": null,
+          "calibration_id": null
+        },
+        {
+          "gate": "integrity",
+          "rule_or_critic_id": "integrity.findings.v0",
+          "passed": true,
+          "blocking": true,
+          "verdict_source": "deterministic",
+          "vetoes": [],
+          "detail": "4 detector(s) ran, nothing found",
+          "calibration_id": null
+        }
+      ]
+    }
+  },
+  "files": {
+    "runs/ab/chapter-rule-context-20260905/library/marks-for-moving/chapters/Chapter1.txt": {
+      "sha256": "79f72b8aabcb2a4efdd56c418a7c068a8e9167d0692843893a95f89d49f804eb",
+      "bytes": 9984
+    },
+    "book-library/PrimalHunter/Chapter1.txt": {
+      "sha256": "f0f76be4bc9ad28e7adddd6a21baa906155142dd4841dcffe1fe429537140363",
+      "bytes": 9328
+    },
+    "C:/DEV/LitHarness/runs/chapter-one-forensics-20260907/audit_chapter.py": {
+      "sha256": "22a17f31a5ab07eb4ff9e172ecf36e80ce2df044762aef66b7ddcfd40045cdcb",
+      "bytes": 7859
+    },
+    "runs/ab/prose-protected-reconstruction-tools/source.json": {
+      "sha256": "a8ba0d3281b27b691f48a2f860aaf547f1ea2689e745fa85cf997fed46a1b56d",
+      "bytes": 20925
+    },
+    "runs/ab/prose-narration-obligations-tools/source.json": {
+      "sha256": "616810347afea05aa753ebf91a5349048166a58d088de83abc613d1e8b3ea4b9",
+      "bytes": 34225
+    },
+    "runs/ab/prose-source-contract-tools/source.json": {
+      "sha256": "74fd8df0a63a17cc9879294eca9a2ef67d1067eef9c1f7ff5becabf16e6066d3",
+      "bytes": 50107
+    },
+    "src/litharness/domain/house.py": {
+      "sha256": "ac7a456bd5cec8bc3b29680378f4ac3b5227a7aace1c0b1760dcb0983f4babef",
+      "bytes": 60048
+    },
+    "src/litharness/application/views.py": {
+      "sha256": "e44bbe90b6f269eb8a94fd2ae663334d9060165814a911aaf8fcdc89f1c18a6b",
+      "bytes": 17552
+    },
+    "src/litharness/mcp_server.py": {
+      "sha256": "b0ba1b8bab246a044702c7f6011dc1700a95f74326b839d97d5496430c574b43",
+      "bytes": 70414
+    }
+  },
+  "f28_requests": [
+    {
+      "path": "runs/ab/prose-source-contract-20260907/embedded-free-1/full-1.request.json",
+      "file_sha256": "d114ba1701f27af972bd1d347976148032d0cdf3f1120e9b205f013dd9f19514",
+      "system_sha256": "bfc3bf2b2f8cccc6ae931e06457d9e73375e998e826509f218166cef4f7e5591",
+      "prompt_sha256": "3a244137eb617b5d99b86d7e019e88819f5edd00893fabd726b6465bf3ea4142",
+      "f28": {
+        "start": 8902,
+        "end": 9151,
+        "sha256": "c1e4cbce4fc4b0066b0ba358f5502be765a657f378e11342623481c6c59ea1b5",
+        "scope": "literal occurrence, not source-map attribution"
+      },
+      "separate_guard": null,
+      "original_cost_literal_present": false,
+      "original_memory_clause_present": false,
+      "memory_or_forgetting_word_present": false,
+      "f28_required_narration": true,
+      "preserve_ambiguities_instruction_present": true
+    },
+    {
+      "path": "runs/ab/prose-source-contract-20260907/embedded-free-2/full-1.request.json",
+      "file_sha256": "418b3fade4a5bd58c8db74d18c020cf05482e01a704d35961e96fe1d7066bf5f",
+      "system_sha256": "bfc3bf2b2f8cccc6ae931e06457d9e73375e998e826509f218166cef4f7e5591",
+      "prompt_sha256": "3a244137eb617b5d99b86d7e019e88819f5edd00893fabd726b6465bf3ea4142",
+      "f28": {
+        "start": 8902,
+        "end": 9151,
+        "sha256": "c1e4cbce4fc4b0066b0ba358f5502be765a657f378e11342623481c6c59ea1b5",
+        "scope": "literal occurrence, not source-map attribution"
+      },
+      "separate_guard": null,
+      "original_cost_literal_present": false,
+      "original_memory_clause_present": false,
+      "memory_or_forgetting_word_present": false,
+      "f28_required_narration": true,
+      "preserve_ambiguities_instruction_present": true
+    },
+    {
+      "path": "runs/ab/prose-source-contract-20260907/embedded-target-1/full-1.request.json",
+      "file_sha256": "e8918547ab5012a0b2ac4447053997bf3e51681f25bc479f55995829bfda69e3",
+      "system_sha256": "2601a5c17ea0e734b15b9586ada70484692673a48493f8bf5e1c2e957bd078c8",
+      "prompt_sha256": "3a244137eb617b5d99b86d7e019e88819f5edd00893fabd726b6465bf3ea4142",
+      "f28": {
+        "start": 8902,
+        "end": 9151,
+        "sha256": "c1e4cbce4fc4b0066b0ba358f5502be765a657f378e11342623481c6c59ea1b5",
+        "scope": "literal occurrence, not source-map attribution"
+      },
+      "separate_guard": null,
+      "original_cost_literal_present": false,
+      "original_memory_clause_present": false,
+      "memory_or_forgetting_word_present": false,
+      "f28_required_narration": true,
+      "preserve_ambiguities_instruction_present": true
+    },
+    {
+      "path": "runs/ab/prose-source-contract-20260907/embedded-target-2/full-1.request.json",
+      "file_sha256": "9185d71f1c9361b83f7e0161d02f20eab4fc005f8c0526f20fe1e7cb5da7312a",
+      "system_sha256": "2601a5c17ea0e734b15b9586ada70484692673a48493f8bf5e1c2e957bd078c8",
+      "prompt_sha256": "3a244137eb617b5d99b86d7e019e88819f5edd00893fabd726b6465bf3ea4142",
+      "f28": {
+        "start": 8902,
+        "end": 9151,
+        "sha256": "c1e4cbce4fc4b0066b0ba358f5502be765a657f378e11342623481c6c59ea1b5",
+        "scope": "literal occurrence, not source-map attribution"
+      },
+      "separate_guard": null,
+      "original_cost_literal_present": false,
+      "original_memory_clause_present": false,
+      "memory_or_forgetting_word_present": false,
+      "f28_required_narration": true,
+      "preserve_ambiguities_instruction_present": true
+    },
+    {
+      "path": "runs/ab/prose-source-contract-20260907/separated-free-1/full-1.request.json",
+      "file_sha256": "cf9919bdd6f57b7d8661b751f12f146424a1f16fe9a1b6652cefe8e1d8a050c4",
+      "system_sha256": "bfc3bf2b2f8cccc6ae931e06457d9e73375e998e826509f218166cef4f7e5591",
+      "prompt_sha256": "7c2366470c674804b1f80b973003f2b852afd787c9cffdfe4d873e51fb04892d",
+      "f28": {
+        "start": 8570,
+        "end": 8706,
+        "sha256": "c39bd46d08e621cf1b6a1ce7b1a13df50be1d4d7d9c28fde74b0f46465f20126",
+        "scope": "literal occurrence, not source-map attribution"
+      },
+      "separate_guard": {
+        "start": 10957,
+        "end": 11070,
+        "sha256": "9f19aaff7527c3b8367e728380a803140b505a15a974e653c832edae4f4f5b8a",
+        "scope": "literal occurrence, not source-map attribution"
+      },
+      "original_cost_literal_present": false,
+      "original_memory_clause_present": false,
+      "memory_or_forgetting_word_present": false,
+      "f28_required_narration": true,
+      "preserve_ambiguities_instruction_present": true
+    },
+    {
+      "path": "runs/ab/prose-source-contract-20260907/separated-free-2/full-1.request.json",
+      "file_sha256": "f448c34fca5843f11e8da0290d1d7c9d5720cb4869459ef128b28616ad436d26",
+      "system_sha256": "bfc3bf2b2f8cccc6ae931e06457d9e73375e998e826509f218166cef4f7e5591",
+      "prompt_sha256": "7c2366470c674804b1f80b973003f2b852afd787c9cffdfe4d873e51fb04892d",
+      "f28": {
+        "start": 8570,
+        "end": 8706,
+        "sha256": "c39bd46d08e621cf1b6a1ce7b1a13df50be1d4d7d9c28fde74b0f46465f20126",
+        "scope": "literal occurrence, not source-map attribution"
+      },
+      "separate_guard": {
+        "start": 10957,
+        "end": 11070,
+        "sha256": "9f19aaff7527c3b8367e728380a803140b505a15a974e653c832edae4f4f5b8a",
+        "scope": "literal occurrence, not source-map attribution"
+      },
+      "original_cost_literal_present": false,
+      "original_memory_clause_present": false,
+      "memory_or_forgetting_word_present": false,
+      "f28_required_narration": true,
+      "preserve_ambiguities_instruction_present": true
+    },
+    {
+      "path": "runs/ab/prose-source-contract-20260907/separated-target-1/full-1.request.json",
+      "file_sha256": "3664c6623992921a28857a5909c1f4a472b6b6c76d50dd297c19cc4108fd2a8f",
+      "system_sha256": "2601a5c17ea0e734b15b9586ada70484692673a48493f8bf5e1c2e957bd078c8",
+      "prompt_sha256": "7c2366470c674804b1f80b973003f2b852afd787c9cffdfe4d873e51fb04892d",
+      "f28": {
+        "start": 8570,
+        "end": 8706,
+        "sha256": "c39bd46d08e621cf1b6a1ce7b1a13df50be1d4d7d9c28fde74b0f46465f20126",
+        "scope": "literal occurrence, not source-map attribution"
+      },
+      "separate_guard": {
+        "start": 10957,
+        "end": 11070,
+        "sha256": "9f19aaff7527c3b8367e728380a803140b505a15a974e653c832edae4f4f5b8a",
+        "scope": "literal occurrence, not source-map attribution"
+      },
+      "original_cost_literal_present": false,
+      "original_memory_clause_present": false,
+      "memory_or_forgetting_word_present": false,
+      "f28_required_narration": true,
+      "preserve_ambiguities_instruction_present": true
+    },
+    {
+      "path": "runs/ab/prose-source-contract-20260907/separated-target-2/full-1.request.json",
+      "file_sha256": "6bcbb050f1718815c23a873554e704d33dbf9b03e34c4a09c7a9a80441183afc",
+      "system_sha256": "2601a5c17ea0e734b15b9586ada70484692673a48493f8bf5e1c2e957bd078c8",
+      "prompt_sha256": "7c2366470c674804b1f80b973003f2b852afd787c9cffdfe4d873e51fb04892d",
+      "f28": {
+        "start": 8570,
+        "end": 8706,
+        "sha256": "c39bd46d08e621cf1b6a1ce7b1a13df50be1d4d7d9c28fde74b0f46465f20126",
+        "scope": "literal occurrence, not source-map attribution"
+      },
+      "separate_guard": {
+        "start": 10957,
+        "end": 11070,
+        "sha256": "9f19aaff7527c3b8367e728380a803140b505a15a974e653c832edae4f4f5b8a",
+        "scope": "literal occurrence, not source-map attribution"
+      },
+      "original_cost_literal_present": false,
+      "original_memory_clause_present": false,
+      "memory_or_forgetting_word_present": false,
+      "f28_required_narration": true,
+      "preserve_ambiguities_instruction_present": true
+    }
+  ],
+  "accepted_export_matches_two_scenes": true,
+  "historical_chapter_scenes": 2,
+  "current_book_default_projection_chapter_one_scenes": 4,
+  "recall_chain": {
+    "current_record_id": "rec-wbd4ade952629c6594fd7f99d",
+    "current_value_sha256": "b8558fddd0bc6455dbcdeede3974bc3095a9125457d1ae02380d07e538c76014",
+    "frozen_system_cost": {
+      "start": 9969,
+      "end": 10099,
+      "sha256": "b8558fddd0bc6455dbcdeede3974bc3095a9125457d1ae02380d07e538c76014",
+      "scope": "literal occurrence, not source-map attribution"
+    },
+    "job_plan_phrase": {
+      "start": 1037,
+      "end": 1124,
+      "sha256": "e4c45820708e5450313f5802ad008871334d8ebf5ab0c86a076c75ede1fd6cb0",
+      "scope": "literal occurrence, not source-map attribution"
+    },
+    "raw_draft_paragraph": {
+      "start": 4326,
+      "end": 4476,
+      "sha256": "f79c17031f59fecf742d94d7d869f5ee6f33ff2d2621dabf16b660da1389935d",
+      "scope": "literal occurrence, not source-map attribution"
+    },
+    "accepted_paragraph": {
+      "start": 4316,
+      "end": 4466,
+      "sha256": "f79c17031f59fecf742d94d7d869f5ee6f33ff2d2621dabf16b660da1389935d",
+      "scope": "literal occurrence, not source-map attribution"
+    }
+  },
+  "source_after": {
+    "": "f11823ca25791ccc5278deca2dbdd8fb41c42537cccb2d17e83840fbd8516969",
+    "-wal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "-shm": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+  },
+  "original_database_family_unchanged": true,
+  "raw_artifact": {
+    "path": "runs/chapter-one-forensics-20260907/evidence/tool-results.json",
+    "sha256": "f2e9846a57088fa7d9e88763e12dda573252ffb54e9dbe5cf8eb9833232a59d8"
+  }
+}

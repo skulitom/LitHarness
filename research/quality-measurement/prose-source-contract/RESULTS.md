@@ -1,5 +1,12 @@
 # Local wording varies; repeated conclusions survive
 
+**2026-09-07 scope qualification:** the [chapter-one forensic audit](../prose-chapter-one-forensics/RESULTS.md)
+traces F28 to an ambiguous cost description extracted from the generated chapter. All eight
+requests preserve that description and omit the original world's memory-loss operation.
+The recall observations below concern rendition of that protected input; they do not test
+whether restoring the canonical cost would repair the passage. The registered task and
+its retained results are unchanged.
+
 Status: OBSERVED, unqualified. Eight logical subscription CLI calls completed, and all eight
 chapters were read in full. The internally retried separated-free-1 output is retained and
 marked; the registered no-retry condition was not fully met inside the CLI. See

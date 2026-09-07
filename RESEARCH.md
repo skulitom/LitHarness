@@ -309,6 +309,13 @@ copy found both historical plan items available and equal to the current items; 
 jobs correctly reported absent source maps. Prompt bytes and sampling material are preserved
 by the implementation checks. This delivers diagnostic capability, not a prose-quality result.
 
+The [chapter-one forensic audit](research/quality-measurement/prose-chapter-one-forensics/RESULTS.md)
+then traced a cost from the frozen production rule through its less specific scene-plan and
+draft descriptions into protected reconstruction unit F28. All eight source-contract requests
+preserve the draft's ambiguity and omit the original memory-loss operation. Those trials test
+rendition of their protected input, not restoration of the canonical cost. This is a scope
+qualification, not evidence that a corrected plan improves prose. No new generation ran.
+
 For subsequent tests in this sequence, record the hypothesis, fixed comparison, source/code
 hashes and stop rules before calls. Retain every request and raw response, including transport
 and format failures; record amendments without replacing failed draws. Finish a results file
