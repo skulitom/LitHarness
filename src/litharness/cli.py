@@ -41,8 +41,8 @@ import litharness_contracts as lc
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
+from litharness.application import bookaudit, covers, recruiter, revoice, titles, world_agent
 from litharness.application import concept as concept_mod
-from litharness.application import covers, recruiter, revoice, titles, world_agent
 from litharness.application import dossier as dossier_mod
 from litharness.application import exemplars as exemplars_mod
 from litharness.application import export as export_module
@@ -753,6 +753,53 @@ def cmd_tick(args: argparse.Namespace) -> int:
         return EXIT_ATTENTION
     return EXIT_OK
 
+
+def cmd_audit(args: argparse.Namespace) -> int:
+    """The book read across its scenes: descriptions of where two places disagree.
+
+    **Built on the first whole-volume draw** (runs/volume1, 2026-09-07), where every
+    in-process check read one scene or one position and the defects a person found were
+    between scenes: a status line whose columns fell and came back, a debt paid with no
+    quote, a schedule the sheet followed to the digit, a scene opening on the sentence the
+    last one closed on, a phrase said in six scenes, a world holding a grant the page had
+    spent. `application/bookaudit.py` holds the views; this prints them. Exit 1 when any
+    view has something for a person to look at, which is a result and never a verdict:
+    nothing here scores, ranks, gates or reaches a prompt (§61(5), §97.1, §105).
+    """
+    store = _store(args)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        book = bookaudit.load(store, book_id, branch_id, scenes_per_chapter=args.chapter_scenes)
+    finally:
+        store.close()
+    if book is None:
+        print("litharness: this branch has no revision", file=sys.stderr)
+        return EXIT_FAULT
+    views = tuple(args.view) if args.view else bookaudit.VIEWS
+    try:
+        audit = bookaudit.report(book, views=views, subject=args.subject)
+    except ValueError as error:
+        print(f"litharness: {error}", file=sys.stderr)
+        return EXIT_FAULT
+    notes = bookaudit.attention(audit)
+    if args.json:
+        _say(json.dumps({**audit, "attention_lines": notes}, ensure_ascii=False, indent=2))
+        return EXIT_ATTENTION if notes else EXIT_OK
+    print(f"audit: {audit['title']}")
+    print(
+        f"  {audit['scenes_drafted']} of {audit['scenes_total']} scene(s) drafted, "
+        f"{audit['chapters_drafted']} chapter(s), {audit['words']:,} word(s)"
+    )
+    print(f"  {bookaudit.DESCRIPTIVE_ONLY}")
+    if not notes:
+        print("  nothing for a person to look at in the views asked for")
+        return EXIT_OK
+    print("  look at:")
+    for note in notes:
+        print(f"    - {note}")
+    print("  `--json` carries every view in full; `--view` picks one or more of "
+          + ", ".join(bookaudit.VIEWS))
+    return EXIT_ATTENTION
 
 def cmd_status(args: argparse.Namespace) -> int:
     store = _store(args)
@@ -5826,6 +5873,23 @@ def build_parser() -> argparse.ArgumentParser:
     state.add_argument("--json", action="store_true", help="machine-readable output")
     state.set_defaults(func=cmd_state)
 
+
+    audit = sub.add_parser(
+        "audit",
+        help="the book read across its scenes: status lines, debts, facts, cast, plans, "
+        "refrains, seams and the sheet against the page; descriptions, never a score",
+    )
+    audit.add_argument(
+        "--view",
+        action="append",
+        choices=bookaudit.VIEWS,
+        help="one view; repeatable. All of them by default",
+    )
+    audit.add_argument("--subject", help="restrict the facts view to one subject id")
+    audit.add_argument("--json", action="store_true")
+    audit.add_argument("--book")
+    audit.add_argument("--branch")
+    audit.set_defaults(func=cmd_audit)
     characters = sub.add_parser(
         "characters", help="everything canon holds about each person, one sheet each"
     )

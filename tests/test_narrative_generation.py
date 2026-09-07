@@ -10,6 +10,7 @@ import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application import concept, exemplars, tells_pass
+from litharness.application import outline as outline_mod
 from litharness.application.handlers import SCENE_DRAFT, TELLS_GATE, make_scene_draft_handler
 from litharness.application.outline import BOOK_OUTLINE, make_outline_handler
 from litharness.application.planner import make_plan_selector, packet_for, plan_progress
@@ -59,7 +60,9 @@ def test_six_scene_concept_is_planned_before_its_first_draft(tmp_path: Path) -> 
         assert len(provider.requests) == 1
         request = provider.requests[0]
         assert "say in one sentence" not in request.system  # type: ignore[attr-defined]
-        assert request.timeout_seconds == 900.0  # type: ignore[attr-defined]
+        # The outline's timeout is the module's constant, raised on the first whole-volume
+        # draw when an arc-2 outline ran past 900 s twice (stage-0 §242).
+        assert request.timeout_seconds == outline_mod.CONCEPT_TIMEOUT_SECONDS  # type: ignore[attr-defined]
         payload = json.loads(request.prompt)  # type: ignore[attr-defined]
         assert [s["chapter"] for s in payload["scenes"]] == [1, 1, 2, 2, 3, 3]
         assert payload["book_concept"]["first_arc"] == _example()["first_arc"]

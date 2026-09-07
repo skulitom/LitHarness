@@ -25278,3 +25278,84 @@ in place.
 **No bar declared.** A pass rate on one afternoon's battery is a measurement of that battery.
 **Anti-scope.** No prompt, rule or writer instruction changed; the internal agents are where
 §241 left them; nothing here touches the volume draw or its store.
+
+## 242. The first whole-volume draw: one arc of twenty-four scenes read end to end, four pipeline defects that only a long book could show, and the book read across its scenes as a tool
+
+**Decided 2026-09-07.** The operator asked for a whole volume of one book, a hand read, and
+debugging tools for what the read found. `tools/volume_run.py` is the recipe (stand the
+book up under a settled concept and listing, tick through 24-scene arcs, grow the world at
+a chapter cadence set from `control.json`, run the readership at each arc's end, extend by
+one closed arc, record every command, spend and stop reason; resumable; a refused seed is
+repaired from the fault's own message or set aside and redrawn). *The Order Stays Open*
+(writer tanaka, concept `--scenes 24`, third person, empty brief, three exemplars) drew its
+first arc in two hours and twenty minutes of wall clock for $38 of reported spend; the
+second arc's outline timed out twice and the draw was stopped there. The record is
+[plan/volume-pilot-1.md](volume-pilot-1.md): the chapter-by-chapter read, every hand action
+with its backup, and the six-lens Opus harvest. Nothing below is a score, a bar or a
+treatment effect; n is one, and the operator's read is what the record answers to.
+
+**What the book did.** The arc makes sense read end to end. The concept's four debts were
+paid on or before their scenes; the turn arrived at the arc's two-thirds; the second
+system spoke at the close; the simulated readership carried on four of four at scene 24,
+every one naming the roll reveal. What a reader carries as faults, in the order a reader
+meets them: a status column (Reading) that read 0, 1, 0, 1, 0 across four chapters with a
+different rule each time; Mark 4 reappearing after the strike; head counts that drift by
+one; a clock that names Thursday and then "four days", "a week" and "the last week of the
+year"; a handful of similes said in nearly every chapter ("at a reader's pace", "like a
+match into water", "the way a page shows through a page"). The six-lens read on Opus found
+two story-breaking defects my chapter reads missed: the held orders, the book's only
+currency, are spent twice (a sentence cashed in chapter 9 is listed as held in 10 and
+re-answered in 11 to buy Carriage and Mark Four); and Sowden's tag man is culled on the
+page in chapter 6 and back on his feet in 9 and 10. Both are between chapters, which is
+where nothing in this repository looked.
+
+**What the pipeline did, in the order found** (the four with fixes landed under
+3b729cd; the rest are open):
+
+1. `world check` and `world accept` previewed a seed clean whose rank column held a rung id,
+   because the preview ran before accept minted the drawn system's scale. Fixed:
+   `world.as_accepted`.
+2. The Architect keys reveals, notices and picks in the schedule space (`0130`), where no
+   scene cutoff reads them; the vocabulary says both spaces; §167's doctrine names this the
+   cheap side of an asymmetry, and on a 24-scene arc it means the disclosure schedule is
+   decoration. `world check` now lists them under `unplaceable`; there is no re-keying path
+   ("the record is blind to position"), which the Architect found for itself at grow 5.
+3. The arc outline's milestone snapshots and standings were proposals with no registry
+   version; the first grow's `world accept` promoted them; from then on the writer was
+   handed the schedule as canon (the sheet followed it to the digit, including its own
+   contradictions — Grace and Overlay zeroed with a paragraph of explanation each) and
+   `extraction.has_story_vocabulary` read the book as somebody else's numbering, so the
+   page wrote no state for eleven scenes. Fixed: the outline stamps
+   `PLANNED_POSITION_VERSION`, accept leaves planned proposals, the live store was
+   repaired in place (twice, with backups; see the record). At scene 23 the same canon
+   milestone contradicted the page's line by the grown Carriage column and parked the
+   draft three times.
+4. A return to a rung once held (Mark Four back to Mark One at the strike) was never
+   minted, because the un-keyed opening standing counts everywhere; the world kept Mark
+   Four and the next writer was handed it. Fixed: `extraction._standing_now`.
+5. A revived unit re-parked on its earlier attempt's park decision after the revived
+   attempt had accepted, twice. Open; the driver tolerates a parked draft whose scene is
+   accepted at head.
+6. The second arc's outline, planned against twelve chapters of state, ran past 900 s
+   twice as a transient failure that refunds the attempt; raised to 1800 s.
+7. The summariser did not report the payment of the Mark Nine debt the page paid on its
+   due scene; the ledger carried it overdue and the arc-2 outline will read it that way.
+8. `architect grow` is handed one scene under the label "the chapter just drafted".
+9. A 24-scene concept overflowed its 4,000-token output bound on the first draw.
+
+**The tool.** `application/bookaudit.py`, the CLI verb `audit` and the MCP tool `audit`
+read a book across its scenes and describe where two places disagree: the status-line
+census (column sets, falls, kind flips, unmoved printings), the promise ledger (overdue,
+paid unlocated, paid early), the fact timeline with provenance, cast presence and
+undeclared names, plan/summary pairs, repeated word runs, restated scene boundaries, and
+the printed sheet against the world's edges at every scene. Descriptions only (§61(5),
+§105): the falls it lists on this book are eight purchases the page explains and three
+disagreements the page does not. The six-lens read is a named workflow,
+`.claude/workflows/volume-arc-review.js` (Opus, six readers at ten findings each, one
+skeptic per finding, forty at most, one harvest), with `tools/arc_review_args.py` writing
+its arguments from a run folder. Neither instrument ranks, gates or reaches a prompt.
+
+**What this does not decide.** Whether to draw arcs 2 to 4 is the operator's, and the
+open items above (2, 5, 7, 8) are where the next long draw will fail first; the harvest's
+"what the next arc must carry" is the continuation brief an outline should be handed and
+is not.

@@ -55,6 +55,7 @@ it lists that tool's result keys.
 | `queue` | job counts, units in one status, exceptions and captured direction |
 | `world` | `summary`, `show`, `rules`, `ladders`, `abilities`, `cast`, `threads`, `vocabulary`, `presence` or `check`; `subjects` lists several subjects for `show` in one call, and `ladders` carries each rung's `manifests_as` |
 | `characters` | what canon records about each person; an empty cast includes a hint |
+| `audit` | the book read across its scenes: status-line census, promise ledger, fact timeline, cast presence, plan/summary pairs, repeated word runs, restated scene boundaries, and the sheet against the page; `views` picks some; `attention_lines` says where to look; descriptions, never a score |
 | `roster` | `show`, `check`, `vocabulary` or `rehearse`; dossier prose is withheld |
 | `release_show` | the operator-gated release queue |
 | `verify` | revision reconstruction and attribution gaps |

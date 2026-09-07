@@ -56,6 +56,7 @@ id wins. An unknown scene exits 1 and lists known scenes.
 | symptom | first view |
 | --- | --- |
 | a scene reads badly | `why --scene N`, then the prose through MCP `scene` |
+| the book stops adding up across scenes (a column that fell, a debt unpaid, a name that vanished, a sentence said again) | `audit`, then `audit --view status --json` or the view the line names |
 | the book drifted from direction | `plans`, then `events --type PlanChanged` |
 | a scene contradicts canon | `state`, then the frozen prompt and `context_omitted` |
 | a scene was never written | `jobs`, `exceptions`, then `events` |

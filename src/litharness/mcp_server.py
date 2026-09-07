@@ -72,6 +72,7 @@ from litharness.adapters.sqlite_store import (
     migrations_dir,
     pending_migrations,
 )
+from litharness.application import bookaudit
 from litharness.application import dossier as dossier_mod
 from litharness.application import export as export_mod
 from litharness.application import operations as operations_mod
@@ -130,6 +131,7 @@ READ_TOOLS: tuple[str, ...] = (
     "queue",
     "world",
     "characters",
+    "audit",
     "roster",
     "release_show",
     "verify",
@@ -266,6 +268,7 @@ TIERS: dict[tuple[str, ...], Tier] = {
     ("extend",): _operator("litharness extend", "appends planned arcs"),
     ("state",): _read("state", "litharness state --json"),
     ("characters",): _read("characters", "litharness characters --json"),
+    ("audit",): _read("audit", "litharness audit --json"),
     ("world", "summary"): _read("world", "litharness world summary"),
     ("world", "show"): _read("world", "litharness world show"),
     ("world", "rules"): _read("world", "litharness world rules"),
@@ -372,6 +375,10 @@ VERB_HELP: dict[tuple[str, ...], str] = {
     ("plans",): "the plan's lineage, newest first, and what produced each revision",
     ("state",): "what this book holds as true, in story order",
     ("characters",): "everything canon holds about each person, one sheet each",
+    ("audit",): (
+        "the book read across its scenes: status lines, debts, facts, cast, plans, refrains, "
+        "seams and the sheet against the page; descriptions, never a score"
+    ),
     ("verify",): "rebuild every revision from canonical records",
     ("export",): "a reading copy of the book as it stands, gaps and all",
     ("release", "show"): "the queue for this book",
@@ -502,6 +509,17 @@ RESULT_KEYS: dict[str, tuple[str, ...]] = {
     ),
     "world": ("view", "book_id", "branch_id", "result"),
     "characters": ("book_id", "branch_id", "characters", "hint"),
+    "audit": (
+        "book_id",
+        "branch_id",
+        "title",
+        "scenes_drafted",
+        "scenes_total",
+        "chapters_drafted",
+        "words",
+        "caveat",
+        "attention_lines",
+    ),
     "roster": ("view", "result"),
     "release_show": ("book_id", "branch_id", "entries"),
     "verify": ("rebuilt", "unattributed"),
@@ -640,6 +658,12 @@ DESCRIPTIONS: dict[str, str] = {
     "characters": (
         f"READ. {VERB_HELP[('characters',)]}. An empty cast carries a `hint`. "
         f"{_keys('characters')} {FENCE}"
+    ),
+    "audit": (
+        f"READ. {VERB_HELP[('audit',)]}. `views` picks among status, promises, facts, cast, "
+        "plans, refrains, seams, sheet (all by default); each chosen view is a key of the result "
+        "beside the ones named here, and `attention_lines` is what a person looks at first. "
+        f"{_keys('audit')} {FENCE}"
     ),
     "roster": (
         "READ. The installation's writer roster, by `view`. "
@@ -1482,9 +1506,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             if subjects and view == "show":
                 # Several subjects in one call (§241.4): an agent modelling a character on
                 # the cast read sixteen subjects one `show` at a time.
-                result = {
-                    name: world_mod.declarations(records, subject=name) for name in subjects
-                }
+                result = {name: world_mod.declarations(records, subject=name) for name in subjects}
             else:
                 result = world_mod.view(
                     records,
@@ -1518,6 +1540,32 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
         finally:
             store.close()
         return {**view, "attention": False}
+
+    @guarded
+    def audit(
+        views: list[str] | None = None,
+        subject: str | None = None,
+        book_id: str | None = None,
+        branch_id: str | None = None,
+    ) -> dict[str, Any]:
+        store = open_read()
+        try:
+            resolved = branch(store, book_id, branch_id)
+            if isinstance(resolved, dict):
+                return resolved
+            book = bookaudit.load(store, *resolved, scenes_per_chapter=per_chapter)
+        finally:
+            store.close()
+        if book is None:
+            return {"error_kind": "no_revision", "attention": False}
+        try:
+            report = bookaudit.report(
+                book, views=tuple(views) if views else bookaudit.VIEWS, subject=subject
+            )
+        except ValueError as error:
+            return {"error_kind": "unknown_view", "message": str(error), "attention": False}
+        notes = bookaudit.attention(report)
+        return {**report, "attention_lines": notes, "attention": bool(notes)}
 
     @guarded
     def roster(
@@ -1706,6 +1754,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
         "queue": queue,
         "world": world,
         "characters": characters,
+        "audit": audit,
         "roster": roster,
         "release_show": release_show,
         "verify": verify,

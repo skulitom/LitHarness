@@ -235,6 +235,7 @@ Useful operating views:
 | `events [--since CURSOR] [--json]` | append-only state-change history |
 | `plans [--json]` | immutable plan lineage and its proposals |
 | `state [--json]`, `characters [--json]`, `world summary` | current canon and world state |
+| `audit [--view V] [--json]` | the book read across its scenes: status lines, debts, facts, cast, plans, refrains, seams and the sheet against the page; descriptions, never a score; exits 1 when there is something to look at |
 | `world declare-batch --records '[...]'` | several world proposals in one call, reported one by one, ending with `world check` |
 | `prompts [--role ROLE]` | labelled representative requests: role, material, schema, tools, and effective size |
 | `prompts --role scene --scene N` | the exact frozen scene request, provenance, section pressure, omissions, and repeated material |
