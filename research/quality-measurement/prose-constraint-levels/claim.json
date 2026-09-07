@@ -1,13 +1,23 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "prose-constraint-levels-v1",
-  "statement": "Progressively requiring an ending and detailed event sequence may reveal contributors to explanatory Chapter 1 prose. Unqualified diagnostic conjecture.",
-  "status": "registered",
+  "statement": "Six nested-constraint chapter drafts retain interpretive narration, including both premise-only drafts, which stop before closure and purchases. Event freedom changes the rescue course but supplies no dependable prose fix in these observations. Bundled information, plot freedom and coverage changes prevent a pure constraint-count claim. Unqualified diagnostic; no quality ranking or production authority.",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
       "path": "research/quality-measurement/prose-constraint-levels/PREREG.md",
       "sha256": "f8f5f42ce7517b12c44d4d1e122778913bf16e7f6e596d56db2ed64cb1b3bbbd"
+    },
+    {
+      "kind": "results",
+      "path": "research/quality-measurement/prose-constraint-levels/RESULTS.md",
+      "sha256": "42f210cf905ec7b49dbf98b08e6dc239c9d6a2a5f11fb07c57b74ba71774785e"
+    },
+    {
+      "kind": "execution",
+      "path": "research/quality-measurement/prose-constraint-levels/execution.json",
+      "sha256": "e03d1f9df2cd137708dcbb80653857266555e1bac9542a408eb3800e8a03f808"
     }
   ]
 }

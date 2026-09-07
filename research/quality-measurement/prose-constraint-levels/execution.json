@@ -1,0 +1,247 @@
+{
+  "schema": "local-prose-diagnostic.v1",
+  "status": "observed",
+  "manifest_sha256": "e7b1acbeffbf9516689e2fc10644eef862e6856fa17f8d47b35c9da75d4b3226",
+  "registration_commit": "12d1191951fa1f563e797e195e0759a6ca63b9ff",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "condition_payload_words": {
+    "premise": 568,
+    "ending": 779,
+    "sequence": 2379
+  },
+  "nested_input_equality_verified": true,
+  "common_units": 10,
+  "ending_units": 4,
+  "sequence_units": 42,
+  "outputs": [
+    {
+      "id": "premise-1",
+      "words": 1670,
+      "paragraphs": 129,
+      "literal_counts": {
+        "countdown": 1,
+        "rubric": 1,
+        "award_one": 0,
+        "award_two": 0,
+        "award_six": 1,
+        "standalone_six": 0,
+        "closure": 0,
+        "status": 0
+      },
+      "original_display_word_sequence_matches": false,
+      "within_length_aim": true,
+      "usage": {
+        "input_tokens": 5774,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3169,
+        "reasoning_output_tokens": 1034
+      },
+      "wall_ms": 166770,
+      "sha256": {
+        "request.json": "6ba7f11eed0e4f3d7ba9ca18a35463152f08fae392aca31da810dbd2fea88845",
+        "raw.json": "aa1ea3e51e7a3eecea6b685af3954a9c0d75867a5838e8608571484f8d250075",
+        "result.json": "5e4fcd6362a0e84aa5d4da4c6ca30f70560b735dfd02fadb85a8fcc59c1f3c92",
+        "txt": "7da54c9327c859fce187345bbab68a1e25c3fe9e54e6e6f58a943b73260436b7"
+      }
+    },
+    {
+      "id": "ending-1",
+      "words": 1768,
+      "paragraphs": 120,
+      "literal_counts": {
+        "countdown": 1,
+        "rubric": 1,
+        "award_one": 1,
+        "award_two": 1,
+        "award_six": 1,
+        "standalone_six": 0,
+        "closure": 1,
+        "status": 1
+      },
+      "original_display_word_sequence_matches": false,
+      "within_length_aim": true,
+      "usage": {
+        "input_tokens": 6096,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3186,
+        "reasoning_output_tokens": 932
+      },
+      "wall_ms": 165964,
+      "sha256": {
+        "request.json": "c356d86ff0a06b0348e40cd2c830e439bea576268af4bf2778e511a311ded3b0",
+        "raw.json": "f34561337b54a0a71edb3bfee502af61be91a906717d33dabd7dc13c7ea2f7a9",
+        "result.json": "b1cadfb6a1c116c6460ab031de26e1ad6aab991b98305ccbe615563d571f7bfd",
+        "txt": "6ef7d137a0b606b075ff2d0784879432525c19db78f3927b6ea2f18d960ead40"
+      }
+    },
+    {
+      "id": "sequence-1",
+      "words": 1755,
+      "paragraphs": 102,
+      "literal_counts": {
+        "countdown": 1,
+        "rubric": 1,
+        "award_one": 2,
+        "award_two": 2,
+        "award_six": 1,
+        "standalone_six": 2,
+        "closure": 1,
+        "status": 1
+      },
+      "original_display_word_sequence_matches": false,
+      "within_length_aim": true,
+      "usage": {
+        "input_tokens": 8912,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2575,
+        "reasoning_output_tokens": 351
+      },
+      "wall_ms": 110627,
+      "sha256": {
+        "request.json": "936dabdc3b9d96ba418fac987fb02e749f4ab7cca3d88457f46a9b0f572a9571",
+        "raw.json": "28f6065269a02cd2bc8ee4a0fbf715bfaf5d11e12aadfc88a10d273d2dccfd13",
+        "result.json": "fdfd9f55dd2f9db33110d901dc7b19049e9a0ede826738c4dc91626053fb1245",
+        "txt": "68a8664687d182b2815fa2964f67748064d2dbbbf29ae476c8075c5ae46bed0c"
+      }
+    },
+    {
+      "id": "sequence-2",
+      "words": 1782,
+      "paragraphs": 101,
+      "literal_counts": {
+        "countdown": 1,
+        "rubric": 1,
+        "award_one": 2,
+        "award_two": 2,
+        "award_six": 2,
+        "standalone_six": 1,
+        "closure": 1,
+        "status": 1
+      },
+      "original_display_word_sequence_matches": false,
+      "within_length_aim": true,
+      "usage": {
+        "input_tokens": 8912,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2445,
+        "reasoning_output_tokens": 186
+      },
+      "wall_ms": 77597,
+      "sha256": {
+        "request.json": "83d5ec02a6a257bc2f54d4e30f1d02a097e6ccd5cfe4f2c4c1599d286f7fe61f",
+        "raw.json": "f906bc696e176cd8da1ef498b549cf8b36f5fe63d91eb7313e2802cbcd34cbe1",
+        "result.json": "51251180b36ab99e69c0c14da272f94cf9ee60e8dfb045a5a97b50daf4a15a82",
+        "txt": "99d9a3b306984dca222709cc3a44ccb723aba643dcf345f61cd0cfb123b6080d"
+      }
+    },
+    {
+      "id": "ending-2",
+      "words": 1731,
+      "paragraphs": 128,
+      "literal_counts": {
+        "countdown": 1,
+        "rubric": 1,
+        "award_one": 1,
+        "award_two": 1,
+        "award_six": 1,
+        "standalone_six": 0,
+        "closure": 1,
+        "status": 1
+      },
+      "original_display_word_sequence_matches": false,
+      "within_length_aim": true,
+      "usage": {
+        "input_tokens": 6096,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2985,
+        "reasoning_output_tokens": 724
+      },
+      "wall_ms": 105626,
+      "sha256": {
+        "request.json": "4b7454cab6961cb298ade8d6bf3e20be5241a8d7e2e376967bf74bf88df586f2",
+        "raw.json": "b5d1d30153cc9b4c977055fb97a98fe8d190da5aac480987dd68964bb3eda14b",
+        "result.json": "d628bc12aaa9b2c4c8596c48570993c10b7af05af10bb03927cccc9f54b6d209",
+        "txt": "099fe592c02ef3b53f756cc066e800fd6fa0fe93fc64006e812c4c3753d5d66f"
+      }
+    },
+    {
+      "id": "premise-2",
+      "words": 1753,
+      "paragraphs": 126,
+      "literal_counts": {
+        "countdown": 1,
+        "rubric": 1,
+        "award_one": 0,
+        "award_two": 0,
+        "award_six": 1,
+        "standalone_six": 0,
+        "closure": 0,
+        "status": 0
+      },
+      "original_display_word_sequence_matches": false,
+      "within_length_aim": true,
+      "usage": {
+        "input_tokens": 5774,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2749,
+        "reasoning_output_tokens": 516
+      },
+      "wall_ms": 131537,
+      "sha256": {
+        "request.json": "dcb6e24f0705cb14be3ead264ce40ab7e72fd896306f26b64b01344b5b556143",
+        "raw.json": "f2223ac1e4dbfc637c72040d69b7818a400714a2671edd6105c7e3d36b70cc59",
+        "result.json": "5f1a33f83e0ebce83ef3b22d1438f6f9b6d3b5fc9fddc55356616516b3e31970",
+        "txt": "1bd8d39aa608961c50ce4deb4dade93fc0d42321ea6186bba71c5459bfec4680"
+      }
+    }
+  ],
+  "usage": {
+    "input_tokens": 41564,
+    "cached_input_tokens": 10752,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 17109,
+    "reasoning_output_tokens": 3743
+  },
+  "accounted_tokens": 62416,
+  "completed_calls": 6,
+  "registered_calls": 6,
+  "token_stop": 110000,
+  "ranking": null,
+  "reading": {
+    "complete_passages": 6,
+    "original_units_audited": 252,
+    "common_units_audited": 60,
+    "ending_correspondences": 24,
+    "sha256": "416bef44030da17c3fde767455d4fc253b759062abd1351469bc0501cbd53a93"
+  },
+  "local_artifacts": {
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\READING.md": "97f752bba288ed9993d1d48a3821fcee0cdfc0a7cc471f816e986cd7b944dd91",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\reading-records.json": "416bef44030da17c3fde767455d4fc253b759062abd1351469bc0501cbd53a93",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\comparison.html": "06c807eede9877ae287906c9b4576c9012d13bd4d5626f5f3b714bd4a056eb5e",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-tools\\build_review.py": "e7a483414a979133c9a181173d45574d073932c52f7e51249dbfeeb42a4f602d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-tools\\manual_readings.py": "f18cad9856afb0d5de796d449bf7274ce79e6f29e95dbc03863681451be9b1fd",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-tools\\run.log": "287e059d650d463a51c98dca9ce2bb40161e99bf239dc3c4b1cbc44b327c164e",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\development-notes.md": "3d55dd25d5bce88775eb2789d329bb9f5bf9fb38394f68a050ac0cbdb06f0f9e",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\browser-qa\\QA.md": "63702aae805e922ef6ecec8125743989db136dc480f0292da22e17c5516ead0a",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\browser-qa\\page-2026-09-07T02-29-49-223Z.yml": "f675e64ab672f139d012dd177236869b328e6f15db78093f5ed8cb0ca0059b4f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\browser-qa\\page-2026-09-07T02-31-28-069Z.yml": "2c37a1eeabb8214939078dfd8259fe425150d69b3173702d940f60b1acfeebcf",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\browser-qa\\page-2026-09-07T02-31-43-937Z.yml": "0d8df7c26dff92a375f80f781c209cb86f4729e91d626be1e75775de34fba002",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\browser-qa\\page-2026-09-07T02-31-45-618Z.yml": "adc92159028b63cae7af14147bfb8cebf137d0ae3f2093a3b45dbdb811a52954",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\browser-qa\\page-2026-09-07T02-32-06-369Z.yml": "a1773a87546e25efd4fa70a8446684edbcb2c58645aff65262d140b5ff1daccf",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\browser-qa\\page-2026-09-07T02-32-08-032Z.yml": "ddea581f319de6f0434324034513f659057f1e9e3026bbcf569f114de7880ee8",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\browser-qa\\page-2026-09-07T02-32-09-727Z.yml": "0b4e1330ece5912c97ecbf0608fb194a084b6433e4bcf3e3a8c9ba25a01dd074",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\browser-qa\\page-2026-09-07T02-32-31-909Z.yml": "53e8c9879de6c039157ced03f369050aa431eabc38ea549a84d5c7a5d2e62ee9",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\browser-qa\\page-2026-09-07T02-32-53-194Z.yml": "41f05e30d21fca39479b673d16f9967ee2e56a07a26474ade45640917d60f87f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\browser-qa\\prose-constraints-desktop.png": "1b321526b440233fd204e95548169a65af24e5457ff1e3fe31721243b14df889",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-20260907\\browser-qa\\prose-constraints-mobile.png": "b0f32cd7d6f7abf57ccde80d1135f782bf7a5db675c7182e04195863caaf2d4d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-tools\\registration-handoff.log": "7699ec4f10e0b942a078d58e0a665b850395c83564f8b4e03b03f306ae91ab44",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-constraint-levels-tools\\final-handoff.log": "6f9fa2baa5ce34befc8ed0235e799de83efc3d90b0575131a1fd3f5b42030aa5"
+  }
+}
