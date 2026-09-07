@@ -1,0 +1,66 @@
+{
+  "schema": "local-prose-validation.v1",
+  "registration_handoff": {
+    "exit_code": 0,
+    "passed": 4599,
+    "skipped": 19,
+    "coverage_percent": 89.12,
+    "suite_seconds": 112.29
+  },
+  "final_handoff": {
+    "command": "uv run python tools/check.py handoff",
+    "exit_code": 0,
+    "passed": 4599,
+    "skipped": 19,
+    "coverage_percent": 89.12,
+    "suite_seconds": 115.89,
+    "corpus_history": {
+      "status": "clean",
+      "commits": 994,
+      "data_blobs": 406
+    }
+  },
+  "execution_reproduction": {
+    "result": "byte_identical",
+    "command": "uv run python runs/ab/prose-recall-clarification-tools/build_report.py --html comparison-complete.html --execution execution-complete-rebuilt.json",
+    "execution_sha256": "5b399ea732900d5f25344fe378423a39dfd39a4b5fd1f7cc9c9d2851a5c0ba49",
+    "rebuilt_sha256": "5b399ea732900d5f25344fe378423a39dfd39a4b5fd1f7cc9c9d2851a5c0ba49"
+  },
+  "frozen_generation_artifacts_verified": true,
+  "final_ui": {
+    "all_slots_both_panes_verified": true,
+    "fixed_prefix_toggle_verified": true,
+    "source_correction_present_checked": true,
+    "final_note_only_addendum": "The same renderer adds a movement-award inference qualification; no generated text changed."
+  },
+  "documentation_cleanup": {
+    "paths": [
+      "AGENTS.md",
+      "CLAUDE.md",
+      "CONTRIBUTING.md",
+      ".claude/skills/debug-book/SKILL.md",
+      ".claude/skills/litharness-mcp/SKILL.md"
+    ],
+    "before_commit": "486112136b21361af2faa22213793d9b7a8cee9f",
+    "before_words": 8625,
+    "after_words": 5003,
+    "method": "Whitespace-delimited words in the five guides; excludes newly added research navigation and README links.",
+    "scope": "Agent/operator navigation, not writer input or a prose-quality intervention."
+  },
+  "artifacts": {
+    "runs/ab/prose-recall-clarification-tools/finalize_records.py": "67e1e1755f92652a183243f25758ad096ea68eb350fbc32531675046704d018e",
+    "runs/ab/prose-recall-clarification-tools/handoff-registration.log": "92b898a511af8c74a9e17a67ace077e7ce0e1da45402edea3d62ab3b0cbdf643",
+    "runs/ab/prose-recall-clarification-tools/handoff-registration.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "runs/ab/prose-recall-clarification-tools/handoff-final.log": "b8f504bfaedc262b3f3b51688e59b6b79e752c335d418aab50a07a3096d695eb",
+    "runs/ab/prose-recall-clarification-tools/handoff-final.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "runs/ab/prose-recall-clarification-tools/ui-controls.log": "5a830077f6482eb0d1817c5ee75432d1466cf966be14f421a6cca92e3a5294eb",
+    "runs/ab/prose-recall-clarification-tools/ui-final.log": "5b752968d786f3ed46e8af566d16f1ea3c14e0676099b7e5655eeed93a4ac19a",
+    "runs/ab/prose-recall-clarification-20260907/UI-CHECK.md": "6ab7659458b067fa6d494640837fb85091938b63437afaedb40bf7a7e411b53e",
+    "runs/ab/prose-recall-clarification-20260907/READING.md": "0798676cc229636d5715ef25dda8d05dc61f9a062bd019ad1a1eb98a2342d943",
+    "runs/ab/prose-recall-clarification-20260907/FACT-AUDIT.md": "c5d6e8d8bde982de4532c7811bab23a64354decd1b518cf04f481b4f119e9164",
+    "research/quality-measurement/prose-recall-clarification/RESULTS.md": "e59dfbbf004034ee42fedcd5432324cdd3e21fe01190f56822e11dceca50d4b0",
+    "research/quality-measurement/prose-recall-clarification/DEVIATIONS.md": "93f4a6627631f5454267b5e3ba21fa1c73a493b57afcea068dafa07a74f1fdf7",
+    "research/quality-measurement/prose-recall-clarification/execution.json": "5b399ea732900d5f25344fe378423a39dfd39a4b5fd1f7cc9c9d2851a5c0ba49"
+  },
+  "scope": "Repository, source identity, transport and presentation checks; no literary qualification."
+}

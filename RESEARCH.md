@@ -316,6 +316,14 @@ preserve the draft's ambiguity and omit the original memory-loss operation. Thos
 rendition of their protected input, not restoration of the canonical cost. This is a scope
 qualification, not evidence that a corrected plan improves prose. No new generation ran.
 
+The [Recall clarification comparison](research/quality-measurement/prose-recall-clarification/RESULTS.md)
+then changed only that cost clause in four fixed-prefix second-scene continuations. Both
+clarified draws state the exact memory operation and immediately paraphrase it; both fresh
+controls also communicate bounded memory loss before purchase. Located explanation and
+source-compatibility problems remain. This delivers the registered clarification, not a
+reliable prose cure or an effect on the fixed first paragraph. A prospective decision-rationale
+test remains a conjecture; no production change or candidate selection follows.
+
 For subsequent tests in this sequence, record the hypothesis, fixed comparison, source/code
 hashes and stop rules before calls. Retain every request and raw response, including transport
 and format failures; record amendments without replacing failed draws. Finish a results file

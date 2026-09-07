@@ -36,6 +36,10 @@ reversals are preserved in [plan/stage-0-decisions.md](plan/stage-0-decisions.md
 operator manual. What the research has established so far, by question and with a pointer for
 every result, is [RESEARCH.md](RESEARCH.md).
 
+For task-specific reading paths, use the [contributor guide](CONTRIBUTING.md) or
+[research navigation](research/quality-measurement/README.md). Start with the relevant
+workflow; the full plans and decision archive are reference material.
+
 ## Install
 
 Python 3.11+ and [uv](https://docs.astral.sh/uv/) are required. The contracts package and golden

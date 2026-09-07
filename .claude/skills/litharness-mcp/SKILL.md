@@ -1,201 +1,165 @@
 ---
 name: litharness-mcp
-description: Read a LitHarness book's state, provenance and queue, or propose world records, through the in-process MCP server (`litharness-mcp`) instead of shelling out to the CLI. Use when a session lists mcp__litharness__ tools, when a task needs the store's answers from another agent or process, or when an Architect-shaped agent should declare world records in batches. Read-only by default; nothing here creates, migrates, accepts, spends or posts.
+description: Read a LitHarness book's state, provenance and queue through the in-process MCP server. Use when mcp__litharness__ tools are available or another agent needs stored book evidence. The default read profile cannot write or spend; the separate propose profile can declare proposed world records but cannot accept them.
 ---
 
 # The LitHarness agent surface
 
-LitHarness keeps every book in one SQLite store and answers questions about it through the
-`litharness` command line. Since stage-0 §241 the same read verbs are also served in-process
-by `litharness-mcp`, a stdio MCP server that binds one store at start and answers from the
-same functions the CLI prints from — so a tool result and a `--json` verb never disagree. It
-imports no model provider, so nothing behind it can spend; it opens the store read-only for
-every read; it refuses an absent path instead of creating one; and it never migrates the
-schema, accepts a proposal into canon, or posts anything anywhere.
+`litharness-mcp` binds a store without a model provider. Read tools use read-only connections,
+refuse absent paths and never migrate schemas. They share the CLI's underlying views; the
+additional `scene_trace` tool joins frozen request and draft evidence.
 
-## Connect
+## Connect and select a book
 
-**In this repository, nothing to install.** `.mcp.json` at the repository root registers a
-server named `litharness`. A Claude Code session started here offers it once and asks you to
-approve it; after that its tools appear as `mcp__litharness__<tool>`. The store it serves is
-`LITHARNESS_DATABASE` when that is set in the environment the session started with, else
-`litharness.db` in the repository root (a relative path is resolved against the project
-directory the host names, `CLAUDE_PROJECT_DIR`). `LITHARNESS_MCP_PROFILE` picks the profile
-(`read` unless set) and `LITHARNESS_ROSTER_DATABASE` the roster store. Point it at a real
-store before starting the session, or the server refuses to start and the tools are simply
-absent — read the session's MCP status rather than guessing. The `mcp` extra has to be
-installed in the checkout (`uv sync --extra mcp`); without it the server exits with one line
-saying so.
+The repository's `.mcp.json` registers the server as `litharness`. Install its optional
+dependency with `uv sync --extra mcp`, set `LITHARNESS_DATABASE` before starting the host,
+and approve the connection once when the host requests it. Tools appear as
+`mcp__litharness__<tool>`. The default store is `litharness.db` in the project directory
+(`CLAUDE_PROJECT_DIR`); the server refuses to start if that file is absent.
 
-**From another project or agent host:** register it by hand, with absolute paths and the
-`mcp` extra installed (`uv sync --extra mcp` in the LitHarness checkout):
+For another project or host, use absolute paths:
 
 ```bash
 claude mcp add -s project litharness -- uv run --project /abs/path/to/LitHarness --no-sync litharness-mcp --database /abs/path/to/book.db
 ```
 
-**By hand, for any MCP client:** the command is `uv run --no-sync litharness-mcp --database
-<absolute path>` in the checkout. `--roster-database` names the installation's roster store
-(`LITHARNESS_ROSTER_DATABASE` also works; the book's own store is the default), `--profile`
-picks `read` (the default) or `propose`, and `--client NAME` is recorded on every proposal the
-server writes. `litharness-mcp --help` lists them. Every call leaves one line on the server's
-stderr — actor, tool, an argument digest, elapsed time, outcome — and, when
-`LITHARNESS_MCP_LOG` names a file, appends it there too, because a host swallows a child's
-stderr; that file is how the operator sees what agents ask.
+Any MCP client can launch the same console script. `--profile` or
+`LITHARNESS_MCP_PROFILE` chooses `read` (default) or `propose`.
+`--roster-database` / `LITHARNESS_ROSTER_DATABASE` names a separate roster store;
+the book store is the default. `--client NAME` records proposal authorship.
+Each call logs actor, tool, argument digest, elapsed time and outcome to stderr, and to
+`LITHARNESS_MCP_LOG` when set.
 
-## First call
+Call `store_info` first for bound paths, books, heads, pending migrations and available
+tools; call `book` next. Book-scoped calls can omit `book_id` and `branch_id` when there
+is only one pair. Otherwise the result reports `error_kind: ambiguous_branch` and the
+known pairs. `guide` lists CLI verbs by tier and explains which are tools; with `tool`,
+it lists that tool's result keys.
 
-Call `store_info`. It returns the bound paths, every `(book_id, branch_id, head)` the store
-holds, how many migrations are pending, and the tools this profile registers. Most stores hold
-one book, so `book_id` and `branch_id` can be left off every other tool; a store holding more
-returns `error_kind: ambiguous_branch` with the known pairs, and you pass one back.
-
-Call `guide` when you want to know whether something is a tool here: it lists every verb of the
-command line with its tier — `read`, `propose`, `operator`, `excluded` — the tool that wraps it,
-and for the rest the reason and the CLI form. The verbs that spend money are named as such;
-none of them is a tool.
-
-## The tools
-
-Read profile (every one opens the store read-only):
+## Read tools
 
 | tool | answers |
 | --- | --- |
-| `store_info` | what this server is bound to, and the books in it |
-| `guide` | every CLI verb with its tier, tool, reason and CLI form; with `tool`, the keys that tool's result always carries |
-| `book` | the book at a glance: title, premise, every scene with whether it is drafted and how long, grouped by chapter, the head revision. Call it second |
-| `scene` | one scene's prose as it stands, with its place in the book. The dossier withholds prose and sends you here |
-| `scene_trace` | one scene's attributed or unfinished job: frozen input, raw draft, retained pre-revision draft and accepted text joined by decision/revision IDs; hashes and gaps by default, one bounded excerpt with `stage` |
-| `status` | queue depth, attention counts, digest and spend; blocked books with the sentence the next tick refuses with |
-| `why` | one scene's dossier: the frozen prompt, the decision that took it, the gate ladder, the plan item, findings, what the packet omitted. `scene` is a logical id (`scene-3`) or a 1-based place in reading order (`3`); `include_prompt=false` keeps the prompt's sizes and drops its text |
-| `findings` | what the evaluators say is wrong, worst first; `blocking` counts what a gate refuses on; `limit`/`offset` page it |
-| `events` | the event log in write order from a cursor (`since`), bounded by `limit`, with `next_since` to resume |
-| `plans` | the plan's lineage, newest first, and the proposal behind each revision |
-| `state` | what the book holds as true, in story order: position, provenance (`read` from its own prose or `given`), authority, subject, predicate, the sentence, the note, who may know it; `limit`/`offset` page it and `total` says how many there are |
-| `queue` | job counts by status (always present), the units in one status, open exceptions, and captured direction with its author |
-| `world` | one of the world's views by name: `summary`, `show`, `rules`, `ladders`, `abilities`, `cast`, `threads`, `vocabulary`, `presence`, `check` |
-| `characters` | everything canon holds about each person; an empty cast carries a `hint` |
-| `roster` | the installation's writer roster: `show`, `check`, `vocabulary`, or `rehearse` a candidate dossier; dossier prose is never returned |
-| `release_show` | the operator-gated release queue for the book; there is no post anywhere |
-| `verify` | rebuild every revision from canonical records; the ones no decision explains |
-| `export_markdown` | a reading copy of the book as it stands, gaps and all, cut at `max_chars` with `truncated` saying so; prefer `scene` for one scene |
+| `store_info` | bound paths, books, schema status and registered tools |
+| `guide` | command tiers, tool names, result keys and excluded-command reasons |
+| `book` | title, premise, head and scenes grouped by chapter |
+| `scene` | one scene's current prose and reading position |
+| `scene_trace` | the attributed or unfinished job's input and draft stages, hashes, gaps and bounded excerpts |
+| `status` | queue depth, attention conditions, digest, usage and blocked books |
+| `why` | scene dossier: frozen prompt, decisions, gates, current and historical plans, findings and omissions |
+| `findings` | detector reports, worst first, with blocking counts |
+| `events` | write-order event log from `since`, bounded by `limit`, with `next_since` |
+| `plans` | plan lineage and the proposal behind each revision |
+| `state` | current story declarations with authority, provenance, subject, predicate, text and visibility |
+| `queue` | job counts, units in one status, exceptions and captured direction |
+| `world` | `summary`, `show`, `rules`, `ladders`, `abilities`, `cast`, `threads`, `vocabulary`, `presence` or `check` |
+| `characters` | what canon records about each person; an empty cast includes a hint |
+| `roster` | `show`, `check`, `vocabulary` or `rehearse`; dossier prose is withheld |
+| `release_show` | the operator-gated release queue |
+| `verify` | revision reconstruction and attribution gaps |
+| `export_markdown` | a reading copy, bounded by `max_chars` and labelled `truncated` |
 
-Large results are paged or cut rather than dropped: `state` and `findings` take `limit` and
-`offset` and report `total`; `export_markdown` reports `chars` and `truncated`; `why` takes
-`include_prompt`. The server also offers prompts (`debug_scene`, `book_health`, and
-`propose_world` under the propose profile), which the host lists as slash commands and which
-walk the workflows below, and resources (`litharness://store`, `litharness://guide`,
-`litharness://book/{book_id}`, `litharness://export/{book_id}`) a host can attach to context.
+`scene` arguments accept a logical id or 1-based reading position. `state` and `findings`
+page with `limit` / `offset` and report `total`. `why` accepts `include_prompt=false`
+to retain prompt sizes while withholding text. Prefer bounded views over a whole-book dump.
 
-### Trace a prose problem
+`book` groups scenes using today's default chapter size. For a draft's historical boundary,
+use its frozen `why.selected_by.chapter_scenes` and `why.selected_by.chapter_end`; missing
+values remain a gap rather than being inferred from today's grouping.
 
-After `book`, `scene` and `why`, call `scene_trace` for the scene. Its default answer gives
-stage identities without dumping the chapter and prompts into context. The trace covers
-the current scene's attributed job (or its unfinished job), not every job ever aimed at it.
-Use a `decision_id` from `attempts` to inspect another recorded decision on that job; attempt
-numbers can restart after revival and are not reliable chronology.
+Hosts may also expose prompts `debug_scene`, `book_health` and, under the propose profile,
+`propose_world`; resources are `litharness://store`, `litharness://guide`,
+`litharness://book/{book_id}` and `litharness://export/{book_id}`.
 
-Request `stage` = `system`, `prompt`, `raw_draft`, `pre_revision_draft` or `accepted`, with
-`offset` and `max_chars` (1 to 20000), to read that stage in chunks. Follow `next_offset`
-until it is null. Stage metadata distinguishes original hashes/sizes from delivered,
-redacted text. A missing capture, ambiguous event or hash mismatch is a gap to report.
-Do not substitute the current manuscript for a refused candidate: its event names a base
-revision, not accepted candidate text. The accepted stage belongs to the selected decision's
-resulting revision. An optional revision call's input is not the frozen drafting prompt.
+## Trace a prose problem
 
-Locate whether a passage already appears in raw output or appears only later. Different
-bytes establish a change, not its literary effect or cause. Frozen job input preserves
-the application's text; it does not capture provider-added instructions or omitted transport
-settings. Nothing is reconstructed from today's plan, writer dossier or configuration.
+After `book`, `scene` and `why`, call `scene_trace`. By default it returns identities
+and gaps for the current scene's attributed job or unfinished job, not every historical job.
+A `decision_id` from `attempts` selects another recorded decision on that job.
+Attempt counters may restart after revival; use recorded chronology.
 
-`why.plan_item` is explicitly the current plan; `why.job_plan` reads the revision recorded
-by the drafting job and reports missing/invalid/unavailable history. Its scene item may have
-been wrapped during rendering, so inspect the frozen prompt for the delivered instruction.
-New drafting jobs retain an input source map. `source_map` gives status and counts by default;
-set `source_limit` (1–100), `source_offset`, and optionally an exact `source_id` to page entries.
-Each entry identifies its original stage, half-open character range and hash. Use `stage`,
-`offset` and `max_chars` to read that range. Identical wording inserted from different items
-has separate entries. Context item authority and visibility are recorded; the hidden section
-describes its rendered disclosure role, without granting permission to reveal it.
-Renderer fragments identify the producer, not complete upstream record lineage. Aggregate
-cast/world items may derive from several records. Old jobs say `not_recorded`; no map is
-inferred from current declarations. Revision-call provenance remains unavailable, and shelf
-exposure withholds source-map entries and context. Maps establish input provenance, not model
-causation, semantic support, or literary quality.
+Request `stage` = `system`, `prompt`, `raw_draft`, `pre_revision_draft` or `accepted`,
+with `offset` and `max_chars` (1–20000), and follow `next_offset` until null.
+Metadata separates original hashes/sizes from delivered, possibly redacted text.
+Missing capture, ambiguity and hash mismatch are gaps. A refused draft's base revision
+is not accepted candidate text; the accepted stage belongs to the selected decision's
+resulting revision. Revision-call input is not the frozen drafting prompt.
 
-For conflicting disclosure instructions, read `request.story_order` from `scene_trace`.
-Only status=`recorded` supplies an exact key to pass as `at` to `world(view=threads)`;
-`unpositioned` records an intentional null, while `not_recorded`, `unavailable` and
-`invalid_recorded_value` identify gaps. Do not substitute the scene's reading-order
-`position_key`. Use `subject` to inspect a single claim. `disclosures` gives its source
-record, disclosure-rule reason, reader and other-audience records, and the comparison of
-each position with `at`. `planned_reveal_scene` is intent, not proof of disclosure.
-The inspector reads current in-force declarations, including labelled proposals. It does
-not reconstruct the frozen packet, establish which facts reached it, inspect scene-plan
-prose, or authorize a reveal. Compare the result with the retained prompt through the trace;
-report missing records and conflicting instructions without turning them into canon.
+Locate whether a passage occurs in raw output or only later. Different bytes establish a
+change, not its literary effect or cause. Frozen job input preserves application text,
+not every provider-added instruction or transport setting.
 
-Shelf-bearing prompts are withheld in full because a heading inside source prose cannot
-establish where the application's own context resumes; original sizes remain available.
-Raw and pre-revision drafts exposed to an exemplar shelf are withheld, including rejected
-drafts that might copy it without a heading. Their identities remain visible. The generic
-`events` tool always withholds raw draft text; local event storage remains unchanged. These
-are diagnostic reads under the same fence below, not a route into automatic story direction.
+`why.plan_item` is current plan text. `why.job_plan` reads only the revision recorded by
+the drafting job and labels unavailable history. Rendering may wrap that item, so inspect
+the frozen prompt for the delivered instruction.
 
-Propose profile (`--profile propose`): `store_info`, `guide`, `world`, and two writes —
-`world_declare` (one record) and `world_declare_batch` (a list of records, reported one by
-one, ending with the world's `check`). This is the Architect's shape: the world's read views
-and the two declares, and no dossier tool beside a write tool.
+New drafting jobs retain an input source map. `source_map` returns status and counts;
+`source_limit` (1–100), `source_offset` and an optional exact `source_id` page entries.
+Each identifies an original stage, half-open character range and hash; use the existing
+excerpt parameters to read it. Duplicate text from different items has distinct entries.
+Authority, visibility and section membership describe recorded handling, not permission
+to reveal a claim. Renderer fragments and aggregate cast/world items do not provide complete
+upstream lineage. Legacy jobs report `not_recorded`; current state never fills the gap.
+Maps establish input provenance, not semantic support, model causation or literary quality.
 
-## Reading a result
+For disclosure conflicts, pass `request.story_order.key` as `at` in `world(view=threads)`
+only when `request.story_order.status` is `recorded`; `unpositioned` means intentional null, while
+`not_recorded`, `unavailable` and `invalid_recorded_value` identify gaps.
+Do not substitute reading-order `position_key`. Filter a claim with `subject`.
+`disclosures` includes supporting records, audience records, rule reasons and position
+comparisons. `planned_reveal_scene` is intent, not proof of disclosure. These are current
+in-force declarations, including labelled proposals; compare them with the frozen prompt.
+The inspector does not interpret scene-plan prose or authorize a reveal.
 
-Every result is a JSON object. `attention: true` means what exit code 1 means at the command
-line: a result a person should read — a scene with no prose, a blocking finding, an open
-exception, a world that contradicts itself. It is never an error. Results may carry `next`, the
-tools worth calling after; `why` on an undrafted scene points at `queue`.
+Shelf-bearing prompts are withheld because source prose cannot establish the application
+boundary reliably. Shelf exposure also withholds raw/pre-revision text and source-map entries
+and context; identities remain. Revision calls do not inherit drafting maps.
+`events` always withholds raw draft text. Local stored evidence is unchanged.
 
-A tool error is the exit-2 class only: the store is locked by the ticking session (retry
-after the current tick; the server never retries for you), migrations are pending (run
-`litharness --database <path> status` at the CLI, which applies them), the path is absent, or an
-argument is malformed. An unknown scene comes back as a result with `error_kind:
-unknown_scene` and the known scene ids, not as an error.
+## Read results and respect the diagnostic boundary
 
-## The one rule
+`attention: true` is a result needing attention, like CLI exit 1, not a tool error.
+`next` suggests related tools. Unknown scenes return `error_kind: unknown_scene` and
+known ids. Operational errors include locking, absent paths, pending migrations and
+malformed arguments; the server does not retry. An operator can apply migrations through
+the CLI after confirming the store; diagnosing a gap does not authorize that mutation.
 
-These tools are read-only and they are fenced (stage-0 §97.1). Nothing a dossier tells you
-may become a prompt, directive, finding or plan item. Diagnose, report to the operator, and
-stop. Every read tool's description ends with this sentence; the fix is a person's call, and
-the paths that reach a prompt have their own gates (`application/editorial.py`).
+Nothing a dossier tells you may become a prompt, directive, finding or plan item.
+This is the production diagnostic fence (stage-0 §97.1); report evidence and gaps without
+bypassing `application/editorial.py`. AGENTS.md defines the separate scope of
+operator-authorized isolated research. These tools do not turn a research observation into
+a production directive.
 
-## What is not here, and where it is
+## Proposal profile and excluded operations
 
-- **Operator acts** — `world accept`, `roster accept`/`refuse`, `release approve`/`record-posted`
-  /`withdraw`, `dismiss`, `resolve`, `revive`, `enqueue`, `ingest`, `replan`, `revert`,
-  `revert-plan`, `init`, `new`, `extend`, `import`, `backup`, `propagate` — each mints a
-  person's judgment as a decision row or selects one item out of a set an agent can see. They
-  are command-line verbs a person runs.
-- **Direction** — `litharness directive` records a person's direction; a machine's has its own
-  gated path. No tool.
-- **Anything that spends** — `tick`, `architect seed`/`grow`, `readers`, `listing`, `concept`,
-  `recruit`, `revoice`, `cover`. Command-line only, operator-run, one arm at a time on this box.
-- **`prompts`** — it loads the exemplar shelf. The frozen scene prompt is in `why`, with any
-  shelf withheld by character count.
-- **Rehearsing a writer** is here (`roster` with `rehearse`); declaring one is not, because a
-  recruit run stamps the shelf and the form.
+`propose` exposes only `store_info`, `guide`, `world`, `world_declare` and
+`world_declare_batch`. The two declare tools write proposed records, not accepted canon;
+no dossier tool is exposed beside them. Acceptance requires an operator's
+`litharness world accept`.
 
-## Proposing world records
+Other operations remain CLI-only; `guide` gives the full current mapping:
 
-`world_declare` writes a `PROPOSED` record and refuses nothing: `not_yet_coherent` is what
-the rest of the world may still settle, `will_not_resolve` is a record in a slot nothing will
-ever settle (there is no retraction; a correction fills a different slot, so both survive),
-`cannot_be_read` is a sheet the parser refuses (a declaration in the same slot replaces it),
-and `supersedes` names the earlier proposals in this slot that acceptance will leave behind.
-Canon costs `litharness world accept` at the command line, a person's act.
+- Operator decisions: `roster accept`, `release approve`, `dismiss`, `resolve`,
+  `revive`, `enqueue`, `ingest`, `replan`, `revert` and `revert-plan`.
+- Direction: `litharness directive` records an operator's instruction; machine direction
+  has its own qualified path.
+- Quota-consuming work: `tick`, `architect seed`, `readers`, `listing`, `concept`,
+  `recruit`, `revoice` and `cover`. Run only with operator authorization and box coordination.
+- `prompts` loads exemplar material; use `why` for frozen input with shelf withholding.
+  Writer rehearsal is exposed, but roster declaration belongs to recruitment.
 
-Before the first declare, read `world` with `vocabulary`: it is the whole of what the world's
-language admits, and the lines under `how` are the traps measured on real seeds — write
-`order_key` as zero-padded digits, ids are normalised to underscores, `can_do` takes an
-`object`, a status sheet's rung column is named `rank`. Batch about twenty-five records per
-`world_declare_batch` call and read each item's report; `stop_on_incoherent` stops at the
-first record that will not resolve. The command-line form of the batch is
-`litharness world declare-batch --records '[...]'`, which is what the internal Architect holds.
+## Propose world records
+
+Before a declare, read `world` with `vocabulary`, including its `how` instructions.
+Use zero-padded `order_key` values; ids normalize to underscores, `can_do` takes an
+`object`, and a status sheet's rung column is `rank`.
+
+`world_declare` writes a proposed record and reports `not_yet_coherent`,
+`will_not_resolve`, `cannot_be_read` or `supersedes` as applicable. These distinguish
+unsettled world context, a slot that cannot resolve, an unreadable sheet and proposals that
+acceptance would supersede. There is no general retraction; inspect the report before
+correcting a slot.
+
+Batch roughly twenty-five records per `world_declare_batch` call and read every item.
+`stop_on_incoherent` stops at the first record that cannot resolve. The corresponding CLI
+form is `litharness world declare-batch --records '[...]'`.

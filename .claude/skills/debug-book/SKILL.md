@@ -1,334 +1,179 @@
 ---
 name: debug-book
-description: Answer "why did this book or scene come out the way it did" from LitHarness's stored provenance. Use when a scene reads badly, a book drifted from its direction, a scene contradicts canon, a unit never produced prose, or a run cost more than expected. Read-only — start here before reading source or opening the database.
+description: Diagnose a LitHarness book or scene from stored provenance through the CLI. Use for prose defects, canon or plan drift, unfinished scenes, unexpected usage, and attribution gaps. Start with the stored views; prefer the MCP read profile when available.
 ---
 
 # Debugging a LitHarness book
 
-LitHarness drafts books by running an LLM pipeline one bounded unit of work at a time. Every
-unit leaves a durable record in a **single SQLite file**: the exact prompt that was sent, the
-policy decision that accepted or refused what came back, the gates it passed, what the
-context packet could not fit, the plan statement that steered it, and an event log written in
-the same transaction as every state change.
+Use the stored views before investigating implementation. They join frozen application
+inputs, policy decisions, gates, omissions, plan provenance and events. They do not capture
+every provider transport setting or prove why a model wrote a sentence. Do not open the
+database directly for this workflow.
 
-This skill is how you read that record. **You do not need to read the source, and you must
-not open the database directly** — every verb below prints stored rows, and the joins that
-matter are already done for you.
+## Diagnostic boundary
 
-## Before anything else: the one rule
+Nothing a dossier tells you may become a prompt, directive, finding or plan item in the
+production loop. Report the evidence and its gaps. Production editorial direction has its
+own qualified path in `application/editorial.py`; a diagnostic is not authorization to
+bypass it. AGENTS.md defines the separate scope of operator-authorized isolated research.
 
-**These verbs are read-only and they are fenced.** Nothing you learn here may be turned into
-input for generation. `plan/serial-pilot-1.md` §6 and stage-0 §97.1 keep diagnostics on the
-operator's side of the loop: a rejection carries no explanation back into the system, and a
-located defect does not become a note in the next prompt. Diagnose, report to the human, and
-stop. Writing a finding, a directive, or a plan item because of something a dossier told you
-is the one thing this workflow forbids — ~~the feedback that reaches a prompt has its own
-gated path (`feedback`)~~ **the direction that reaches a prompt has its own gated path,
-`application/editorial.py` (the one CLAUDE.md names); the verb this sentence cited was
-removed in 530f40e (stage-0 §241)**, and routing around it destroys the measurement it
-exists to protect.
+The commands below inspect records. Commands such as `directive`, `ingest`, `enqueue`,
+`replan`, `revert` and `resolve` are outside this diagnostic workflow.
 
-No verb in this skill writes a row. If you find yourself reaching for `directive`, `ingest`,
-`enqueue`, `replan`, `revert`, or `resolve`, you have left the workflow.
+## Choose the store and scene
 
-## Setup
-
-Everything runs through one command. From the repo root:
+From the repository root:
 
 ```bash
 uv run litharness --database book.db status
 ```
 
-`--database` names the store; it defaults to `litharness.db` in the working directory, or to
-the path in `LITHARNESS_DATABASE` when that is set — the flag-free form. Every verb below
-takes it in the same position, **before** the verb: placed after the verb, argparse exits 2
-with a usage dump and nothing runs. Examples here omit it for brevity — add it if the store is
-not at the default path.
+Place `--database` before the verb. It defaults to `LITHARNESS_DATABASE`, then to
+`litharness.db` in the working directory. Examples below omit it for brevity.
 
-**A wrong path looks like an idle system.** A read verb pointed at a path that does not exist
-creates and migrates a fresh database there and answers as if the store were empty:
-`status --json` on a path that is not there exits 0 and the file appears afterwards. Check
-that the path exists before trusting a quiet answer.
+Check that the intended path exists. Legacy CLI reads, including `status` and `why`,
+open the store through a path that can create a missing database and apply migrations.
+The MCP read profile and CLI `world` read views instead refuse missing stores and pending
+migrations. Prefer MCP when the read must not create or migrate anything.
 
-**Exit codes are the contract**, and they are the same on every verb:
+`litharness-mcp` provides the agent workflow, including `scene_trace`, through
+`mcp__litharness__<tool>`. See [the MCP skill](../litharness-mcp/SKILL.md)
+for connection, tool paging and trace instructions.
 
-| code | meaning |
-|---|---|
-| `0` | the verb answered, and nothing needs a human |
-| `1` | needs attention — a gap, a blocking finding, a parked unit. Not an error |
-| `2` | operational fault — database locked or missing, bad argument. Retry or fix the path |
+| exit | meaning |
+| --- | --- |
+| 0 | answered without an attention condition |
+| 1 | a result needs attention: a gap, blocking finding or parked unit |
+| 2 | operational fault or invalid argument; inspect the error before retrying |
 
-A `1` from a diagnostic verb is a *result*, not a failure. Read the output.
+Most branch-scoped commands default to the only book. With multiple books, they name the
+`--book` and `--branch` pairs to supply. `plans --json` also returns `book_id` and
+`branch_id`. `--scene` accepts a logical id or a 1-based place in reading order; an exact
+id wins. An unknown scene exits 1 and lists known scenes.
 
-**Book and branch ids.** Most verbs default to the only book in the store, so you usually
-pass nothing. When a store holds more than one, a branch-scoped verb exits 2 and names the
-ids on stderr as `--book`/`--branch` pairs to pass back. To get them directly:
+## Pick the first view
 
-```bash
-uv run litharness plans --json
-```
-
-The first two keys are `book_id` and `branch_id`.
-
-**Naming a scene.** `--scene` takes either a logical id (`scene-3`) or a 1-based place in
-reading order (`3`). Both resolve; the id wins if a book names its scenes something else. An
-unknown `--scene` exits 1 and lists the known scenes on stderr.
-
-**The same surface in-process.** The repository also ships `litharness-mcp`, a read-only MCP
-server over the same views, started with `uv run litharness-mcp --database <absolute path> --profile read`.
-Its tools are registered as `mcp__litharness__<tool>` for the tool names `store_info`,
-`guide`, `book`, `scene`, `status`, `why`, `findings`, `events`, `plans`, `state`, `queue`, `world`,
-`characters`, `roster`, `release_show`, `verify` and `export_markdown`. Every tool result
-carries `attention: true` where the CLI would exit 1, and the server refuses an absent path
-instead of creating one. Register it for a Claude Code session with
-`claude mcp add -s project litharness -- uv run --project <absolute repo path> --no-sync litharness-mcp --database <absolute db path>`;
-a person must approve it once.
-
----
-
-## Symptom → first command
-
-| symptom | start here |
-|---|---|
-| a scene reads flat, generic, or wrong | `why --scene N` — ~~read the **feedback set** and the **gate ladder**~~ **read the gate ladder and the plan item; the feedback set left with its verb in 530f40e (stage-0 §241)** |
-| the book drifted from what the director asked for | `plans`, then `events --type PlanChanged` |
-| a scene contradicts established canon | `state`, then the dossier's **`context_omitted`** list |
+| symptom | first view |
+| --- | --- |
+| a scene reads badly | `why --scene N`, then the prose through MCP `scene` |
+| the book drifted from direction | `plans`, then `events --type PlanChanged` |
+| a scene contradicts canon | `state`, then the frozen prompt and `context_omitted` |
 | a scene was never written | `jobs`, `exceptions`, then `events` |
-| a run cost more than expected | `status`, then `why --scene N --json` and read `decision` |
-| ~~a tournament picked the wrong draft~~ | ~~`why --scene N` — read **`span_candidates`**~~ **no tournament exists any more: the flag that minted one and the dossier key that showed it were removed in 530f40e (stage-0 §241)** |
-| something changed and nobody knows when | `events --since <cursor>` |
-| the store itself may be damaged | `verify` |
+| usage is unexpected | `status`, then `why --scene N --json` |
+| a change has no clear origin | `events --since <cursor>` |
+| attribution or store integrity is in doubt | `verify` |
 
----
-
-## Workflow 1 — a scene reads flat
+## Read a scene dossier
 
 ```bash
 uv run litharness why --scene 3
 ```
 
-This is the scene dossier: every stored row that explains one scene, joined. Read it in this
-order.
+1. Read `gates`: PASS/FAIL, rule, verdict source, and `blocking` or `advisory`.
+   An advisory failure does not refuse the draft. Read each `detail` and its limitation;
+   a passing gate is not a prose-quality verdict.
+2. Read `job_plan`, the scene item in the job's recorded plan revision. Missing, invalid
+   and unavailable history remain explicit. The `plan item` block (`plan_item`) is the
+   current plan. Neither stored item alone proves what was rendered into the prompt.
+3. Read `selected by` (`selected_by`): the beat's function, such as `rising` or
+   `complication`, its ordinal, template and plan epoch.
+4. Read the frozen application strings under `--- system ---` and `--- prompt ---`.
+   These are stored inputs, with exemplar material withheld; provider-added instructions
+   and an optional revision call's input may be uncaptured.
+5. Use MCP `scene_trace` to locate the passage in raw, retained pre-revision and accepted
+   text. Its source map pages the recorded input sources of new jobs; old jobs keep their
+   provenance gaps. Source matches and changed bytes do not establish model causation.
 
-1. ~~**`feedback`** — what was frozen onto the prompt at enqueue. This is the reader→writer
-   loop's one channel into generation.~~ **Step removed: the reader→writer channel and its
-   verb went in 530f40e, and the dossier has no such field, so a dossier now starts at
-   `gates` (stage-0 §241). The live editorial path is `application/editorial.py`; it is not
-   a dossier field and this skill does not read it.**
-   - ~~`0 item(s)` with `(an explicit empty set: drafted with no feedback)` means the loop was
-     live and had nothing to say. **This is the normal case**, and it means nobody's reading
-     shaped this scene. If the prose is flat, the loop is not why.~~
-   - ~~`ABSENT - no scene feedback row` means no row was written for that revision at all —
-     usually a scene older than the loop, or prose committed by a path that records none. A
-     different fact from an empty set, and the dossier keeps the two apart on purpose.~~
-   - ~~Items present means direction reached the prompt; each reads
-     `role:axis_id->preferred_pole`.~~
-2. **`gates`** — the ladder that ran on the returned draft. `PASS`/`FAIL`, the rule id, the
-   verdict source, and whether it was `blocking` or `advisory`.
-   - An **advisory** gate can fail without stopping anything. A craft gate is advisory until
-     calibration evidence promotes it, so a failing advisory gate is information, not the
-     cause of an acceptance.
-   - The `detail` line under a gate carries the measured number and its caveat. Read the
-     caveat: several of these measure something narrower than their name suggests.
-3. ~~**`craft`** — advisory measurements recorded against this scene. Numbers only, no verdict.
-   Cross-book context: `uv run litharness craft`.~~ **Step removed: the craft measurements
-   and their verb went in 530f40e; the dossier carries no such key (stage-0 §241).**
-4. **`job_plan`** — the scene item in the job's recorded plan revision, with its availability
-   and scope checks. It is historical plan text, not a verified copy of the final rendered
-   instruction: rendering can wrap or supplement it. **`plan_item`** is today's plan, labelled
-   current_plan; a later edit must not be mistaken for original steering. Missing historical
-   provenance is not evidence that the writer had no instruction. Inspect the frozen prompt.
-5. **`selected by`** — why this beat, from the payload's own record: which beat of how many,
-   its function (`rising`, `complication`, …), the template, and the plan epoch.
-6. **the prompt itself**, printed last and whole, after `--- system ---` and `--- prompt ---`.
-   This is the exact text that was sent, not a re-render. If the prose is flat and the prompt
-   asked for something else, the generator is the story. If the prompt is thin, the *packet*
-   is the story — go to Workflow 3.
+Add `--json` for the dossier object. A refusal belongs to an attempt; do not substitute
+the current accepted scene for text a gate refused.
 
-Add `--json` for the same content as one object. See **Fields** below.
-
-~~For a whole-book view of one measurable trait beside the feedback that was live when each
-scene drafted, `blame` reads the same rows across every scene:~~ **Removed: the verb, its
-axes and the feedback rows it read across went in 530f40e; there is no whole-book trait view
-now, and `why` per scene is the whole of the read side (stage-0 §241).**
-
-~~`uv run litharness blame --book <id> --branch <id> --axis interiority`~~
-
-~~`--axis` is one of `em_dash`, `interiority`, `stat_flatten`, and `--book`/`--branch` are
-required here (this verb does not default to the only book). It prints a counter value and a
-provenance shape per scene and **never a score** — there is no aggregate here to read as a
-quality number, and nothing it prints can refuse anything.~~
-
-## Workflow 2 — the book drifted from the directive
+## Check plan drift and chronology
 
 ```bash
-uv run litharness plans
 uv run litharness plans --json
-```
-
-The plan's lineage, newest first, with the proposal that produced each step and the directive
-behind it. A revision reading `imported; no proposal produced it` is the plan the book started
-with — the root, not a step with its history missing.
-
-Then find *when*:
-
-```bash
 uv run litharness events --type PlanChanged
 uv run litharness directives --status applied
 ```
 
-`directives` defaults to `--status received`, which is the *unread* inbox and is empty on a
-book that has already acted on its direction. Ask for `applied` (or `interpreted`, `conflicted`,
-`superseded`) to read the text of a directive the book has taken. `plans` prints the directive id behind each
-step, so you can match them up.
+Plans are newest first, with the producing proposal and directive. An imported root has no
+proposal. `directives` defaults to `--status received`; use `applied`, `interpreted`,
+`conflicted` or `superseded` to inspect direction already handled.
 
-`events` prints the log in write order with a sequence number on every line. Because plan
-changes, job outcomes and policy decisions all land in the same log, this is the one view
-that shows the order things actually happened in across tables. Read it in passes:
+Events are in write order and carry sequence cursors. Page with `--limit` and `--since`;
+the latter also accepts an ISO-8601 instant. `--type` is repeatable. JSON retains payloads;
+the text form truncates long values.
 
-```bash
-uv run litharness events --limit 20
-# ...ends with: (20 of 137 matching event(s); next --since 20)
-uv run litharness events --since 20 --limit 20
-```
+Compare each scene's `job_plan` with its `plan_item`. Different plan items identify plan
+drift; prompt differences alone may come from rendering. Equality does not establish that
+the plan caused a prose defect.
+Attempt numbers can restart after revival; use recorded event chronology.
 
-`--since` also takes an ISO-8601 instant (`--since 2026-08-13`), and `--type` is repeatable.
-`--json` carries each payload whole; the text form truncates long ones to one line.
-
-To close the loop, take a scene drafted after the change and one before it, and compare the
-`plan item` and `selected by` blocks of their dossiers.
-
-## Workflow 3 — a scene ignores canon
-
-Canon is objective story state: what the book holds as true, in story order. The integrity
-gate refuses drafts that contradict it and the context packet hands it to the generator as
-established fact.
+## Check what the writer could know
 
 ```bash
-uv run litharness state
 uv run litharness state --subject <character-or-thing>
-```
-
-Each line marks its provenance: `given` is the author's word (imported), `read` is this
-system's own extraction from prose it generated. If canon is missing here, the scene was never
-told it and the generator is not at fault.
-
-If the canon **is** on record, the scene was probably not shown it:
-
-```bash
 uv run litharness why --scene 3
 ```
 
-Read **`context_omitted`**. This is the honest half of the context packet — the items the
-budget or a visibility rule kept out, each with the reason (`budget`, `not visible to POV`,
-…). The packet drops the *oldest* prose rather than the least relevant, so by mid-book a scene
-is routinely drafted knowing little of the book before it. A scene that contradicts canon
-sitting on this list is explained.
+State marks provenance as `given` for imported declarations or `read` for extraction
+from generated prose. This is current recorded state. Its presence or absence does not
+establish what an earlier writer request contained.
 
-Also read `context`: `N item(s), used/budget token(s)` and the per-section counts. A used
-figure at the budget means the packet was full. Raising `--context-budget` on the run is a
-human's decision to make, not yours.
+Inspect `context_omitted` for exclusions and their reasons, such as `budget` or POV
+visibility. Inspect `context` for token accounting and section counts, then verify the
+relevant instruction in the frozen prompt. An omitted item might also be expressed elsewhere
+in that request; a full budget does not prove why a scene contradicted it.
 
-## Workflow 4 — a scene was never written
+For disclosure conflicts, the MCP skill explains how to compare the trace's recorded story
+key with the `world` threads view. Current declarations and planned reveals do not replace
+the frozen packet or grant permission to reveal a claim.
+
+## Check unfinished work and usage
 
 ```bash
-uv run litharness jobs
 uv run litharness jobs --status parked
 uv run litharness exceptions
-```
-
-A **finding** is something a detector reported and policy usually clears by itself. An
-**exception** is something policy could not resolve and is waiting on a human. They are
-different queues and they read differently.
-
-```bash
 uv run litharness findings --json
 uv run litharness events --type JobFailed
 ```
 
-Then look at what the refusals said. `why` shows the accepting decision plus an `attempts`
-line when the job took more than one — refusals are recorded as fully as acceptances, so the
-ladder across attempts is readable. For a scene that never landed at all, `why` reports
-`prose ABSENT` and exits 1.
+Findings are detector reports; exceptions are unresolved conditions awaiting an operator.
+The dossier includes `attempts` and their decisions. An unfinished scene reports
+`prose` absent and exits 1.
 
-## Workflow 5 — the run cost more than expected
+For usage, inspect `decision`: `provider`, `model`, `invocations`, `total_tokens`,
+`cost_usd` (null when unreported) and `policy_config_digest`. Compare those records before
+attributing a change to the model. `verify` rebuilds revisions from canonical records and
+reports attribution gaps; it does not judge the writing.
 
-```bash
-uv run litharness status
-uv run litharness why --scene 3 --json
-```
+## Dossier fields
 
-The dossier's `decision` block carries `provider`, `model`, `invocations`, `total_tokens`,
-`cost_usd` (null where the provider reports no dollars) and `policy_config_digest`. A run that
-behaves differently at the same model usually differs in that digest — a threshold change
-reads as a different config rather than as unexplained drift.
-
-## ~~Workflow 6 — a tournament picked the wrong draft~~ Workflow 6 — removed
-
-~~When a book is drafted with `--plan-search`, each span produces K alternative plan statements
-and K candidate drafts, and exactly one is committed. The losers are kept.~~ **The tournament
-went in 530f40e with the flag that minted it and the dossier key that listed its candidates:
-a book has one draft per span and `why` shows that one (stage-0 §241).**
-
-~~`uv run litharness why --scene 3`~~
-
-~~`candidates` lists every one with its `alternative_index`, its status (`selected` /
-`discarded`), its length, and **the statement it was drafted under** — which is what the
-tournament was actually selecting between. The prose is only its evidence.~~
-
-## Workflow 7 — is the store itself sound
-
-```bash
-uv run litharness verify
-```
-
-Rebuilds every revision from canonical records and reports revisions that no policy decision
-explains. Exit 1 with a list means attribution gaps — the same gaps `why` reports per scene as
-`decision ABSENT`.
-
----
-
-## Fields
-
-What the dossier's keys mean, in `--json` order. Absences are always explicit: a missing row
-is `null` and is named in `absent`, while an empty list is a recorded emptiness.
+A missing optional row is `null`; an empty list is recorded emptiness. Nested views such
+as `job_plan` also carry their own availability status.
 
 | key | meaning |
-|---|---|
-| `scene.accepted_in` | the revision that introduced the prose now at head — the repair if one rewrote it, not the first draft |
-| `scene.lineage_depth` | how far along the branch that revision sits |
-| `decision` | the policy decision that accepted it: outcome, attempt, model, spend, config digest, reason, and `gates` |
-| `decision.gates[].blocking` | whether failing it would have refused the draft. Advisory gates annotate |
-| `decision.gates[].verdict_source` | `deterministic`, `calibrated_critic`, `uncalibrated_critic`, `human`. A blocking gate can never source its verdict from the generating model |
-| `attempts` | every decision on the same job, refusals included, in attempt order |
-| `job` | the queued unit: kind, status, attempts, input digest |
-| `prompt.system` / `prompt.prompt` | the exact strings sent, frozen at enqueue |
-| `selected_by` | why this beat was chosen: beat function, ordinal, template, plan epoch, story position |
-| `context` | the packet's size against its budget, and per-section counts |
-| `context_omitted` | what the packet could not hold, and why. **Read this for anything the scene should have known** |
-| ~~`payload_feedback`~~ | ~~the feedback set frozen onto the prompt: `items`, `digest`, `dropped`~~ **not emitted: the key left with the feedback channel in 530f40e (stage-0 §241)** |
-| ~~`scene_feedback`~~ | ~~the same set projected onto the accepted revision. `null` means no row was written~~ **not emitted: same removal (stage-0 §241)** |
-| `plan_item` | the current per-scene statement and whether a director locked it |
-| `plan_item_scope` | explicitly current_plan |
-| `job_plan` | the job-bound historical plan revision/item, availability and scope checks |
-| ~~`craft_metrics`~~ | ~~advisory numbers measured against this revision~~ **not emitted: the key left with the craft programme in 530f40e (stage-0 §241)** |
-| `findings` | what detectors said about this scene, open and closed |
-| `draft_before_revision` | the writer's own text, when the §185 reviser replaced it: both models, the mark count §180 took out of it, and `content` — the prose `--no-revise` would have committed. `null` means the accepted prose *is* the writer's, which is not a gap and is not in `absent` |
-| ~~`span_candidates`~~ | ~~every tournament draft for this span, winner and losers~~ **not emitted: the key left with the tournament in 530f40e (stage-0 §241)** |
-| `absent` | every piece the store does not hold for this scene |
+| --- | --- |
+| `scene.accepted_in` | revision that introduced the prose now at head, including a later repair |
+| `scene.lineage_depth` | that revision's depth on the branch |
+| `decision` | accepting decision, attempt, model, usage, configuration, reason and gates |
+| `decision.gates[].blocking` | whether failure refuses the draft |
+| `decision.gates[].verdict_source` | `deterministic`, `calibrated_critic`, `uncalibrated_critic` or `human`; a blocking verdict cannot come from the generating model |
+| `attempts` | decisions on the attributed job, refusals included, in attempt order |
+| `job` | unit kind, status, attempt count and input digest |
+| `prompt.system` / `prompt.prompt` | frozen application input strings, subject to shelf withholding |
+| `selected_by` | beat function, ordinal, template, epoch and recorded story position |
+| `context` / `context_omitted` | packet accounting and excluded items with reasons |
+| `plan_item` / `plan_item_scope` | current scene-plan item and its explicit scope |
+| `job_plan` | job-bound historical plan item, scope checks and availability |
+| `findings` | open and closed detector reports for the scene |
+| `draft_before_revision` | retained pre-revision `content` and model attribution when available; absence is not proof that no revision call occurred |
+| `absent` | missing top-level dossier evidence |
 
-~~`absent` may contain `prose`, `decision`, `prompt`, `plan_item`, `scene_feedback`. The first
-three mean the dossier could not answer its own question and the verb exits 1; the last two
-are ordinary facts about some books and exit 0.~~ **`absent` may contain `prose`, `decision`,
-`prompt`, `plan_item`. The first three mean the dossier could not answer its own question and
-the verb exits 1; the fourth is an ordinary fact about some books and exits 0 (stage-0 §241).**
+The `absent` list can include `prose`, `decision`, `prompt` and `plan_item`. The first
+three make `why` exit 1; missing current plan text alone does not.
 
-## Reporting back
+## Report the evidence
 
-Say which rows you read and what they say. Quote the prompt or the gate detail rather than
-paraphrasing — the value of this record is that it is verbatim. If the answer is "the store
-does not hold that", say so and name what is absent; the write side does not persist the
-context packet's *contents* (only counts and the omission list) or the raw provider envelope,
-so some questions genuinely have no stored answer, and guessing at one is worse than the gap.
-
-Then stop. The fix is a human's call.
+Name the scene, job or decision and the rows or stages inspected. Quote only the needed
+permitted excerpt, distinguish a recorded fact from an inference, and name uncaptured or
+withheld evidence. Do not turn a diagnostic into a literary score or an automatic story edit.
