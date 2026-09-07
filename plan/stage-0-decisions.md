@@ -25068,3 +25068,89 @@ the operator's to change. No publication to the public MCP registry: outward-fac
 server is bound to a local store. **Anti-scope:** no tool, prompt or rule changed; the locked-
 store test was made load-proof (a shortened busy timeout under `monkeypatch`, after it failed
 once under the coverage lane on a loaded box) and says so in its docstring.
+
+### 241.2. An outside agent held the surface for five small tasks and never reached for the shell; what it paid, what it called, and what the surface gained
+
+**2026-09-07, same day.** The operator: build the follow-ups, and test with small tasks rather
+than a book. Measured first, by the house's own rule, before anything was added.
+
+**Measured first.** Five tasks, each one `claude -p` call on `claude-sonnet-5` (not the pinned
+writer model; a representative outside agent, and cheaper), the server attached through
+`--mcp-config` and `--strict-mcp-config`, `--allowedTools mcp__litharness__*` and no other
+allowance, the repository's `CLAUDE.md` kept out the way `providers/cli.py` keeps it out, the
+framing "no shell, no files; say which tool you wanted if one is missing", `--max-turns 16`.
+Stores: a copy of the litrpg fixture and copies of `runs/ab/pilot25/draw6/serial.db` (six
+scenes, four drafted, one unit parked on a contradiction and one poisoned on
+`progression_unmoved`; migrated copies of two older pilots were prepared and not needed). The
+runner, the envelopes, the summaries and the server's access logs are under
+`runs/dogfood/2026-09-07-mcp/` on this box (local, ignored). Per task — turns, tool calls,
+dollars, seconds, the tools in call order:
+
+| task | turns | calls | USD | s | tools |
+| --- | --- | --- | --- | --- | --- |
+| is anything stuck (pilot 25) | 10 | 8 | 0.346 | 38.6 | store_info, status, queue, queue, findings, why, why, book |
+| which scene has no prose and why (pilot 25) | 8 | 6 | 0.228 | 39.9 | store_info, book, why, why, why, why |
+| canon versus a drafted scene (pilot 25) | 10 | 7 | 0.293 | 104.1 | store_info, book, characters, state, scene, scene, findings |
+| reading state in five lines (fixture) | 7 | 4 | 0.145 | 21.6 | store_info, book, status, queue |
+| propose a rung above the ladder (pilot 25, propose profile) | 9 | 7 | 0.241 | 65.6 | store_info, world ×4, world_declare_batch, world |
+
+Zero tool faults, zero permission denials, zero "the tool I need does not exist" in any answer,
+and every call answered in at most 237 ms (`world_declare_batch`), most under 20 ms. The
+first two tasks found the parked unit (`state.contradiction.v1` on `tom_vance`'s `strike` at
+s4) and the poisoned one (`Coat was named as moving here; grey_coat reads 1 at s5 before and
+after`) and quoted both gate details verbatim, with the job, exception and finding ids a
+person needs; the third read the protagonist's baseline sheet off `state` and the scene's text
+off `scene`; the propose task read `vocabulary`, `summary`, `ladders` and `cast`, declared
+`band_ten precedes band_eleven` and its `manifests_as` in one batch, read a clean `check`,
+and said unprompted that canon costs a person's `world accept`. **What the log showed that
+the answers did not:** `why` was called four times in one task and twice in another, each
+time with the full frozen prompt (39,580 characters on that pilot), when the gate ladder was
+what the task needed; `queue` was called twice for one answer; `book` was the second call in three tasks of five,
+the last call in the first (which reached the scene list through `why` before it), and
+unneeded in the propose task. The tools the agent chose were the ones the skill names, in
+the order the skill gives.
+
+**What shipped, on the measurement.** `book` (title, premise, head, every scene with its
+chapter, whether drafted, and length; `attention` while a scene is empty) and `scene` (one
+scene's prose; the dossier keeps withholding it) — `views.book_view`, `views.scene_view`,
+`test_the_book_and_scene_tools_answer_the_reading_state`. Paging with a visible bound:
+`state` and `findings` take `limit`/`offset` and report `total`/`truncated`,
+`export_markdown` cuts at `max_chars` and reports `chars`, `why` takes `include_prompt` and
+keeps the prompt's sizes when it drops the text
+(`test_state_and_findings_page_with_a_visible_bound`,
+`test_the_why_tool_can_withhold_the_prompt_and_keep_its_sizes`,
+`test_export_markdown_cuts_at_max_chars_and_says_so`). The result shape taught in the tool
+list: `RESULT_KEYS` names the keys every result carries, each description ends with them,
+`guide` returns them for one tool, and `test_every_result_carries_the_keys_the_tool_list_documents`
+holds every tool to its row on the fixture. The access log: one line per call on stderr and
+in the file `LITHARNESS_MCP_LOG` names — actor, tool, argument digest, elapsed, outcome
+(`ok`, `attention`, `result:<kind>`, `fault:<type>`) — never an argument
+(`test_every_call_leaves_one_access_log_line`). Prompts `debug_scene`, `book_health` and
+`propose_world`, the skill's workflows as a host's slash commands, and resources
+`litharness://store`, `litharness://guide`, `litharness://book/{book_id}` and
+`litharness://export/{book_id}`, listed and read over stdio in
+`test_the_stdio_server_lists_exactly_the_profile_tools` and held to the tools they name by
+`test_the_prompts_walk_the_tools_they_name_and_end_with_the_fence`. `store_info` names the
+prompts and resources beside the tools; the skill, the README and the `debug-book` skill name
+the two new tools. The locked-store test shortens the busy timeout under `monkeypatch` (it
+failed once under the coverage lane on a loaded box).
+
+**Refused, and why.** Typed returns: the SDK derives an output schema from a `TypedDict` and
+then validates the result against it, dropping every key the model does not name, and wraps a
+union with the `error_kind` results in a `result` envelope; either loses the status report's
+keys or changes the contract for every ambiguous-store answer, so the shape is documented and
+tested rather than typed. The host's `anthropic/maxResultSizeChars`: the host already
+persists a result past its cap to a file the model reads, and a bound the agent can see
+(`limit`, `max_chars`, `include_prompt`) is the better answer. Server-side change
+notifications: a watcher is a resident handle. Defaulting `include_prompt` to false: the
+prompt is what `why` exists to show. **Still gated on the operator:** refusing the fatal
+declare traps at `world_declare` (a doctrine change on the Architect's live rail), and moving
+the Architect onto the server — this dogfood measured an outside agent under an MCP
+allowance with the built-in tools present and unallowed, not the `--tools ""` containment
+§241 names, so those probes stay owed.
+
+**No bar declared.** Five tasks on one model are a measurement of one afternoon, pointed at
+and not made a target; the dollars and turns above are what they were, not what they should be.
+
+**Anti-scope.** No prompt, rule or writer instruction changed; nothing here measures a book;
+the internal agents are where §241 left them.

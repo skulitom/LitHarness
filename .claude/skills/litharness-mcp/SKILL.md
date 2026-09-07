@@ -38,7 +38,10 @@ claude mcp add -s project litharness -- uv run --project /abs/path/to/LitHarness
 <absolute path>` in the checkout. `--roster-database` names the installation's roster store
 (`LITHARNESS_ROSTER_DATABASE` also works; the book's own store is the default), `--profile`
 picks `read` (the default) or `propose`, and `--client NAME` is recorded on every proposal the
-server writes. `litharness-mcp --help` lists them.
+server writes. `litharness-mcp --help` lists them. Every call leaves one line on the server's
+stderr — actor, tool, an argument digest, elapsed time, outcome — and, when
+`LITHARNESS_MCP_LOG` names a file, appends it there too, because a host swallows a child's
+stderr; that file is how the operator sees what agents ask.
 
 ## First call
 
@@ -59,20 +62,29 @@ Read profile (every one opens the store read-only):
 | tool | answers |
 | --- | --- |
 | `store_info` | what this server is bound to, and the books in it |
-| `guide` | every CLI verb with its tier, tool, reason and CLI form |
+| `guide` | every CLI verb with its tier, tool, reason and CLI form; with `tool`, the keys that tool's result always carries |
+| `book` | the book at a glance: title, premise, every scene with whether it is drafted and how long, grouped by chapter, the head revision. Call it second |
+| `scene` | one scene's prose as it stands, with its place in the book. The dossier withholds prose and sends you here |
 | `status` | queue depth, attention counts, digest and spend; blocked books with the sentence the next tick refuses with |
-| `why` | one scene's dossier: the frozen prompt, the decision that took it, the gate ladder, the plan item, findings, what the packet omitted. `scene` is a logical id (`scene-3`) or a 1-based place in reading order (`3`) |
-| `findings` | what the evaluators say is wrong, worst first; `blocking` counts what a gate refuses on |
+| `why` | one scene's dossier: the frozen prompt, the decision that took it, the gate ladder, the plan item, findings, what the packet omitted. `scene` is a logical id (`scene-3`) or a 1-based place in reading order (`3`); `include_prompt=false` keeps the prompt's sizes and drops its text |
+| `findings` | what the evaluators say is wrong, worst first; `blocking` counts what a gate refuses on; `limit`/`offset` page it |
 | `events` | the event log in write order from a cursor (`since`), bounded by `limit`, with `next_since` to resume |
 | `plans` | the plan's lineage, newest first, and the proposal behind each revision |
-| `state` | what the book holds as true, in story order: position, provenance (`read` from its own prose or `given`), authority, subject, predicate, the sentence, the note, who may know it |
+| `state` | what the book holds as true, in story order: position, provenance (`read` from its own prose or `given`), authority, subject, predicate, the sentence, the note, who may know it; `limit`/`offset` page it and `total` says how many there are |
 | `queue` | job counts by status (always present), the units in one status, open exceptions, and captured direction with its author |
 | `world` | one of the world's views by name: `summary`, `show`, `rules`, `ladders`, `abilities`, `cast`, `threads`, `vocabulary`, `presence`, `check` |
 | `characters` | everything canon holds about each person; an empty cast carries a `hint` |
 | `roster` | the installation's writer roster: `show`, `check`, `vocabulary`, or `rehearse` a candidate dossier; dossier prose is never returned |
 | `release_show` | the operator-gated release queue for the book; there is no post anywhere |
 | `verify` | rebuild every revision from canonical records; the ones no decision explains |
-| `export_markdown` | a reading copy of the book as it stands, gaps and all |
+| `export_markdown` | a reading copy of the book as it stands, gaps and all, cut at `max_chars` with `truncated` saying so; prefer `scene` for one scene |
+
+Large results are paged or cut rather than dropped: `state` and `findings` take `limit` and
+`offset` and report `total`; `export_markdown` reports `chars` and `truncated`; `why` takes
+`include_prompt`. The server also offers prompts (`debug_scene`, `book_health`, and
+`propose_world` under the propose profile), which the host lists as slash commands and which
+walk the workflows below, and resources (`litharness://store`, `litharness://guide`,
+`litharness://book/{book_id}`, `litharness://export/{book_id}`) a host can attach to context.
 
 Propose profile (`--profile propose`): `store_info`, `guide`, `world`, and two writes —
 `world_declare` (one record) and `world_declare_batch` (a list of records, reported one by

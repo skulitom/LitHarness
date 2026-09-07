@@ -17,6 +17,7 @@ import hashlib
 import inspect
 import json
 import os
+import re
 import sqlite3
 import sys
 import threading
@@ -39,13 +40,19 @@ from litharness.mcp_server import (
     DESCRIPTIONS,
     FENCE,
     PROFILES,
+    PROMPTS,
     PROPOSE_TOOLS,
     READ_TOOLS,
+    RESOURCES,
+    RESULT_KEYS,
+    SURFACE_ONLY_TOOLS,
     TIERS,
     VERB_HELP,
     WORLD_VIEWS,
     Binding,
     make_tools,
+    prompt_names,
+    prompt_text,
 )
 
 REPO = Path(__file__).resolve().parent.parent
@@ -110,8 +117,12 @@ def _leaf_help() -> dict[tuple[str, ...], str]:
     return helps
 
 
+#: The server's own keys on a result: the contract's two, and the paging four (§241.2).
+SERVER_KEYS = {"attention", "next", "total", "offset", "limit", "truncated"}
+
+
 def _payload(result: dict[str, Any]) -> dict[str, Any]:
-    return {key: value for key, value in result.items() if key not in {"attention", "next"}}
+    return {key: value for key, value in result.items() if key not in SERVER_KEYS}
 
 
 # --- the tier table against the parser ------------------------------------------------
@@ -157,9 +168,10 @@ def test_no_profile_registers_an_operator_or_paid_verb() -> None:
             assert kinds <= {"read", "propose"}, (profile, tool, kinds)
     assert set(PROPOSE_TOOLS) - set(READ_TOOLS) == {"world_declare", "world_declare_batch"}
     assert "why" not in PROPOSE_TOOLS and "export_markdown" not in PROPOSE_TOOLS
-    # `store_info` and `guide` are the surface's own; every other read tool wraps a verb.
+    # The surface's own tools wrap no single verb; every other read tool wraps one.
     wrapped = {tier.tool for tier in TIERS.values() if tier.kind == "read"}
-    assert wrapped == set(READ_TOOLS) - {"store_info", "guide"}
+    assert wrapped == set(READ_TOOLS) - set(SURFACE_ONLY_TOOLS)
+    assert set(SURFACE_ONLY_TOOLS) <= set(READ_TOOLS)
 
 
 def test_the_server_exposes_no_accept_tool() -> None:
@@ -288,6 +300,8 @@ def test_a_read_tool_opens_the_store_read_only_and_leaves_no_file_behind(db: Pat
     calls: dict[str, dict[str, Any]] = {
         "store_info": {},
         "guide": {},
+        "book": {},
+        "scene": {"scene": "1"},
         "status": {},
         "why": {"scene": "1"},
         "findings": {},
@@ -658,20 +672,192 @@ def test_the_stdio_server_lists_exactly_the_profile_tools(db_fd: Path) -> None:
             listed = await client.list_tools()
             info = await client.call_tool("store_info", {})
             why = await client.call_tool("why", {"scene": "1"}) if profile == "read" else None
+            prompts = await client.list_prompts()
+            resources = await client.list_resources()
+            templates = await client.list_resource_templates()
+            guide = await client.read_resource("litharness://guide")
+            extras = {
+                "prompts": [item.name for item in prompts.prompts],
+                "resources": [str(item.uri) for item in resources.resources],
+                "templates": [item.uri_template for item in templates.resource_templates],
+                "guide": json.loads(guide.contents[0].text),
+            }
             return (
                 list(listed.tools),
                 json.loads(info.content[0].text),
                 {} if why is None else json.loads(why.content[0].text),
+                extras,
             )
 
-    tools, info, why = anyio.run(probe, "read")
+    tools, info, why, extras = anyio.run(probe, "read")
     assert [tool.name for tool in tools] == list(READ_TOOLS)
+    assert extras["prompts"] == list(PROMPTS["read"])
+    assert set(extras["resources"]) == {"litharness://store", "litharness://guide"}
+    assert set(extras["templates"]) == {
+        "litharness://book/{book_id}",
+        "litharness://export/{book_id}",
+    }
+    assert extras["guide"]["fence"] == FENCE
     for tool in tools:
         assert tool.annotations is not None and tool.annotations.read_only_hint is True
         assert tool.description == DESCRIPTIONS[tool.name]
     assert info["profile"] == "read" and len(info["books"]) == 1
     assert why["attention"] is True and "prose" in why["absent"]
 
-    proposed, info, _ = anyio.run(probe, "propose")
+    proposed, info, _, extras = anyio.run(probe, "propose")
+    assert extras["prompts"] == list(PROMPTS["propose"]) and extras["templates"] == []
     assert [tool.name for tool in proposed] == list(PROPOSE_TOOLS)
     assert info["tools"] == list(PROPOSE_TOOLS)
+
+
+# --- §241.2: the book and scene tools, paging, the prompt switch, the access log -----------
+
+
+def test_the_book_and_scene_tools_answer_the_reading_state(db: Path) -> None:
+    tools = make_tools(binding(db))
+    book = tools["book"]()
+    assert book["total"] == 6 and book["drafted"] == 0 and book["attention"] is True
+    assert book["title"] and book["premise"]
+    assert [row["ordinal"] for row in book["scenes"]] == [1, 2, 3, 4, 5, 6]
+    assert {row["chapter"] for row in book["scenes"]} == {1, 2}
+    assert book["next"] == ["status", "queue"]
+    one = tools["scene"](scene="2")
+    assert one["logical_id"] == book["scenes"][1]["logical_id"]
+    assert one["text"] is None and one["drafted"] is False and one["next"] == ["why"]
+    assert tools["scene"](scene="99")["error_kind"] == "unknown_scene"
+
+
+def test_state_and_findings_page_with_a_visible_bound(db: Path) -> None:
+    tools = make_tools(binding(db))
+    everything = tools["state"](limit=0)
+    assert everything["total"] == len(everything["records"]) > 3
+    assert everything["truncated"] is False
+    first = tools["state"](limit=2)
+    assert len(first["records"]) == 2 and first["truncated"] is True and first["offset"] == 0
+    second = tools["state"](limit=2, offset=2)
+    assert second["records"][0] == everything["records"][2]
+    last = tools["state"](limit=2, offset=everything["total"] - 1)
+    assert len(last["records"]) == 1 and last["truncated"] is False
+    paged = tools["findings"](limit=1)
+    assert paged["total"] == paged["shown"] and paged["truncated"] is (paged["total"] > 1)
+
+
+def test_the_why_tool_can_withhold_the_prompt_and_keep_its_sizes(db: Path) -> None:
+    tools = make_tools(binding(db))
+    with SqliteStore.open_existing(db) as store:
+        book_id, branch_id, _ = store.branches()[0]
+        payload = {
+            "prompt": "Write the scene.",
+            "system": "You write.",
+            "logical_id": "scene-1",
+            "book_id": book_id,
+            "branch_id": branch_id,
+        }
+        store.enqueue(
+            Job(
+                job_id="prompt-probe",
+                job_kind=SCENE_DRAFT,
+                payload=payload,
+                input_digest=input_digest_for(payload),
+            )
+        )
+    full = tools["why"](scene="scene-1")
+    assert full["prompt"]["prompt"] == "Write the scene."
+    slim = tools["why"](scene="scene-1", include_prompt=False)
+    assert slim["prompt"]["prompt"] is None
+    assert slim["prompt"]["prompt_chars"] == len("Write the scene.")
+    assert slim["prompt"]["system_chars"] == len("You write.")
+    assert tuple(_payload(slim)) == dossier_mod.DOSSIER_KEYS
+
+
+def test_export_markdown_cuts_at_max_chars_and_says_so(db: Path) -> None:
+    tools = make_tools(binding(db))
+    whole = tools["export_markdown"]()
+    assert whole["truncated"] is False and whole["chars"] == len(whole["markdown"])
+    cut = tools["export_markdown"](max_chars=50)
+    assert len(cut["markdown"]) == 50 and cut["truncated"] is True
+    assert cut["chars"] == whole["chars"]
+
+
+def test_every_result_carries_the_keys_the_tool_list_documents(db: Path) -> None:
+    """The shape is taught rather than typed (module docstring): every tool's result on the
+    fixture holds every key its `RESULT_KEYS` row names, and every description names them."""
+    calls: dict[str, dict[str, Any]] = {
+        "store_info": {},
+        "guide": {},
+        "book": {},
+        "scene": {"scene": "1"},
+        "status": {},
+        "why": {"scene": "1"},
+        "findings": {},
+        "events": {},
+        "plans": {},
+        "state": {},
+        "queue": {},
+        "world": {"view": "summary"},
+        "characters": {},
+        "roster": {"view": "vocabulary"},
+        "release_show": {},
+        "verify": {},
+        "export_markdown": {},
+        "world_declare": {"subject": "keys", "predicate": "is_a", "value": "Probe"},
+        "world_declare_batch": {"items": [{"subject": "k2", "predicate": "is_a", "value": "P"}]},
+    }
+    assert set(calls) == set(RESULT_KEYS) == set(READ_TOOLS) | set(PROPOSE_TOOLS)
+    read = make_tools(binding(db))
+    propose = make_tools(binding(db, "propose"))
+    for name, arguments in calls.items():
+        tools = propose if name.startswith("world_declare") else read
+        result = tools[name](**arguments)
+        missing = set(RESULT_KEYS[name]) - set(result)
+        assert not missing, (name, missing)
+        assert "attention" in result
+        for key in RESULT_KEYS[name]:
+            assert key in DESCRIPTIONS[name], (name, key)
+    described = read["guide"](tool="why")["tool"]
+    assert described["result_keys"] == list(dossier_mod.DOSSIER_KEYS)
+    assert described["registered"] is True
+    with pytest.raises(Exception, match="no tool named"):
+        read["guide"](tool="post")
+
+
+def test_every_call_leaves_one_access_log_line(
+    db: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """The operator's measurement of what agents ask (§241.2): actor, tool, an argument
+    digest (never the arguments), elapsed, outcome — on stderr, and in the file the
+    environment names, so a host that swallows a child's stderr still leaves a record."""
+    log = tmp_path / "access.log"
+    monkeypatch.setenv(mcp_server.ACCESS_LOG_ENV, str(log))
+    tools = make_tools(binding(db))
+    tools["status"]()
+    tools["why"](scene="1")
+    tools["why"](scene="99")
+    with pytest.raises(Exception, match="no tool named"):
+        tools["guide"](tool="nope")
+    err = capsys.readouterr().err
+    lines = [line for line in err.splitlines() if line.startswith("litharness-mcp")]
+    assert len(lines) == 4
+    assert lines[0].startswith("litharness-mcp mcp:read:test status ") and lines[0].endswith(" ok")
+    assert lines[1].endswith(" attention")
+    assert lines[2].endswith(" result:unknown_scene")
+    assert lines[3].endswith(" fault:ValueError")
+    assert "99" not in lines[2] and "nope" not in lines[3], "arguments never reach the log"
+    assert len(log.read_text(encoding="utf-8").splitlines()) == 4
+
+
+def test_the_prompts_walk_the_tools_they_name_and_end_with_the_fence() -> None:
+    for name in prompt_names():
+        text = prompt_text(name, scene="scene-3")
+        for tool in re.findall(r"`([a-z_]+)`", text):
+            if tool in RESULT_KEYS:
+                profile = "propose" if name == "propose_world" else "read"
+                assert tool in PROFILES[profile], (name, tool)
+    assert prompt_text("debug_scene", scene="scene-3").endswith(FENCE)
+    assert prompt_text("book_health").endswith(FENCE)
+    assert "world accept" in prompt_text("propose_world")
+    with pytest.raises(ValueError, match="no prompt named"):
+        prompt_text("post")
+    assert set(prompt_names()) == set(PROMPTS["read"]) | set(PROMPTS["propose"])
+    for profile, uris in RESOURCES.items():
+        assert "litharness://store" in uris and "litharness://guide" in uris, profile

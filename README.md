@@ -255,7 +255,11 @@ root). From another project, register it by hand:
 claude mcp add -s project litharness -- uv run --project /abs/path/to/LitHarness --no-sync litharness-mcp --database /abs/path/to/book.db
 ```
 
-`.claude/skills/litharness-mcp/SKILL.md` is the agent's guide to the tools.
+`.claude/skills/litharness-mcp/SKILL.md` is the agent's guide to the tools. Beside the verbs'
+own tools it offers `book` (every scene, drafted or not) and `scene` (one scene's prose),
+pages `state` and `findings` with a visible bound, names each result's keys in the tool list,
+serves the skill's workflows as prompts and the guide and reading copy as resources, and
+leaves one access-log line per call on stderr and in the file `LITHARNESS_MCP_LOG` names.
 Every tool result carries `attention: true` where the CLI would exit 1, and every read tool's
 description ends with the rule the `debug-book` skill keeps: nothing a dossier tells you may
 become a prompt, directive, finding or plan item.

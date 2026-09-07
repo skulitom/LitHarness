@@ -77,7 +77,7 @@ unknown `--scene` exits 1 and lists the known scenes on stderr.
 **The same surface in-process.** The repository also ships `litharness-mcp`, a read-only MCP
 server over the same views, started with `uv run litharness-mcp --database <absolute path> --profile read`.
 Its tools are registered as `mcp__litharness__<tool>` for the tool names `store_info`,
-`guide`, `status`, `why`, `findings`, `events`, `plans`, `state`, `queue`, `world`,
+`guide`, `book`, `scene`, `status`, `why`, `findings`, `events`, `plans`, `state`, `queue`, `world`,
 `characters`, `roster`, `release_show`, `verify` and `export_markdown`. Every tool result
 carries `attention: true` where the CLI would exit 1, and the server refuses an absent path
 instead of creating one. Register it for a Claude Code session with

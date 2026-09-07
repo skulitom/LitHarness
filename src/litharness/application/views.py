@@ -22,10 +22,11 @@ from typing import Any, Literal, Protocol, TypedDict
 
 import litharness_contracts as lc
 
-from litharness.application.dossier import finding_row
+from litharness.application.dossier import finding_row, scene_node, scenes_of
 from litharness.application.ports import (
     DirectiveInbox,
     ExceptionRepository,
+    ExportStore,
     FindingRepository,
     JobQueue,
     ProvenanceReader,
@@ -38,7 +39,9 @@ from litharness.domain import extraction
 from litharness.domain import state as state_mod
 from litharness.domain.directives import DirectiveStatus
 from litharness.domain.jobs import JobStatus
+from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.plan_refinement import PlanProposalStatus, StoredPlanProposal
+from litharness.domain.plans import premise_of
 
 
 class BadSince(ValueError):
@@ -398,9 +401,104 @@ def verify_view(store: ProvenanceReader) -> VerifyView:
     }
 
 
+class SceneRow(TypedDict):
+    logical_id: str
+    title: str | None
+    ordinal: int
+    chapter: int
+    position_key: str
+    drafted: bool
+    chars: int
+    words: int
+    content_sha256: str | None
+    lock: str
+
+
+class BookView(TypedDict):
+    book_id: str
+    branch_id: str
+    title: str
+    premise: str | None
+    head_revision_id: str
+    scenes: list[SceneRow]
+    drafted: int
+    total: int
+    words: int
+    chapters: int
+
+
+class SceneView(SceneRow):
+    book_id: str
+    branch_id: str
+    text: str | None
+
+
+def _scene_row(node: Node, ordinal: int, *, scenes_per_chapter: int) -> SceneRow:
+    content = node.content or ""
+    return {
+        "logical_id": node.logical_id,
+        "title": node.title,
+        "ordinal": ordinal,
+        "chapter": (ordinal - 1) // max(scenes_per_chapter, 1) + 1,
+        "position_key": node.position_key,
+        "drafted": bool(content),
+        "chars": len(content),
+        "words": len(content.split()),
+        "content_sha256": node.content_sha256,
+        "lock": node.lock.value,
+    }
+
+
+def book_view(
+    store: ExportStore, book_id: str, branch_id: str, *, scenes_per_chapter: int
+) -> BookView | None:
+    """The book at a glance (stage-0 §241.2): its title and premise, and every scene with
+    whether it is drafted and how long it is, grouped into chapters the way the loop groups
+    them. `None` when the branch has no head. Never the prose: `scene_view` is one scene's."""
+    head = store.head(book_id, branch_id)
+    if head is None:
+        return None
+    scenes = scenes_of(head)
+    rows = [
+        _scene_row(node, index + 1, scenes_per_chapter=scenes_per_chapter)
+        for index, node in enumerate(scenes)
+    ]
+    root = next((node for node in head.nodes if node.kind is NodeKind.BOOK), None)
+    return {
+        "book_id": book_id,
+        "branch_id": branch_id,
+        "title": (root.title if root is not None and root.title else None) or book_id,
+        "premise": premise_of(store.plan_items(book_id, branch_id)),
+        "head_revision_id": head.revision_id,
+        "scenes": rows,
+        "drafted": sum(1 for row in rows if row["drafted"]),
+        "total": len(rows),
+        "words": sum(row["words"] for row in rows),
+        "chapters": max((row["chapter"] for row in rows), default=0),
+    }
+
+
+def scene_view(
+    store: ExportStore, book_id: str, branch_id: str, *, scene: str, scenes_per_chapter: int
+) -> SceneView | None:
+    """One scene's prose as it stands, with its place in the book. `None` when the branch
+    has no head or names no such scene; the caller says which. The dossier (`why`) withholds
+    prose on purpose and sends a reader here."""
+    head = store.head(book_id, branch_id)
+    if head is None:
+        return None
+    node = scene_node(head, scene)
+    if node is None:
+        return None
+    ordinal = [item.logical_id for item in scenes_of(head)].index(node.logical_id) + 1
+    row = _scene_row(node, ordinal, scenes_per_chapter=scenes_per_chapter)
+    return {**row, "book_id": book_id, "branch_id": branch_id, "text": node.content or None}
+
+
 __all__ = [
     "NO_CAST_HINT",
     "BadSince",
+    "BookView",
     "CharactersView",
     "DirectivesView",
     "EventsView",
@@ -408,9 +506,12 @@ __all__ = [
     "FindingsView",
     "JobsView",
     "PlansView",
+    "SceneRow",
+    "SceneView",
     "StateRow",
     "StateView",
     "VerifyView",
+    "book_view",
     "characters_view",
     "directives_view",
     "event_row",
@@ -421,6 +522,7 @@ __all__ = [
     "parse_since",
     "plans_view",
     "proposal_row",
+    "scene_view",
     "state_row",
     "state_view",
     "verify_view",
