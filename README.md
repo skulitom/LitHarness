@@ -257,6 +257,13 @@ claude mcp add -s project litharness -- uv run --project /abs/path/to/LitHarness
 
 `.claude/skills/litharness-mcp/SKILL.md` is the agent's guide to the tools. Beside the verbs'
 own tools it offers `book` (every scene, drafted or not) and `scene` (one scene's prose),
+and `scene_trace` (the attributed job's frozen input, raw output and accepted revision,
+joined by recorded identities). Start with its stage hashes and gaps, then request one
+stage with `stage` and page it with `offset`/`max_chars`. This distinguishes where text is
+recorded without declaring why it reads poorly. Frozen job input is not a capture of the
+provider's full transport. Raw drafts exposed to an exemplar shelf are withheld; the generic
+event tool also withholds raw draft text while preserving its recorded identity. Shelf-bearing
+prompts are withheld in full when their boundaries are not verified. The server
 pages `state` and `findings` with a visible bound, names each result's keys in the tool list,
 serves the skill's workflows as prompts and the guide and reading copy as resources, and
 leaves one access-log line per call on stderr and in the file `LITHARNESS_MCP_LOG` names.

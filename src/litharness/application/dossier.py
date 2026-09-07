@@ -48,6 +48,7 @@ DOSSIER_KEYS: tuple[str, ...] = (
     "absent",
 )
 
+
 def finding_row(item: Finding) -> dict[str, Any]:
     """One finding as an agent reads it. Shared by `findings --json` and the dossier, so
     the two verbs an agent chains cannot describe the same row differently."""
@@ -520,53 +521,22 @@ def render_dossier(dossier: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-#: The first block of a rendered context packet, one per section `ContextPacket.render`
-#: can open with (`domain/context.py`). A shelf is spliced *before* the packet and joined to
-#: it by one blank line, so the earliest of these after the shelf heading is where the
-#: packet begins and the shelf ends.
-_PACKET_OPENERS: tuple[str, ...] = (
-    "Premise: ",
-    "Locked constraints and promises",
-    "Planned story",
-    "World rules and limits",
-    "Open threads the book still owes:",
-    "Who is in this story:",
-    "Established facts",
-    "True, and the reader has not been told",
-    "Now write ",
-)
-
-#: What stands where the shelf stood. A count and never a word: the payload already records
-#: which exemplars were shown, by name and digest, under its own `exemplars` key.
-SHELF_WITHHELD = "[exemplar shelf withheld: {chars} character(s) shown to the writer]"
+#: A packet-like heading can also appear inside an exemplar. Without stored boundaries,
+#: withholding the entire prompt is the only safe inference from its shelf heading.
 PROMPT_WITHHELD = (
-    "[prompt withheld: an exemplar shelf was spliced into it and its end could not be located]"
+    "[prompt withheld: an exemplar shelf was spliced into it without a verified boundary]"
 )
 
 _SHELF_HEADINGS = (exemplars_mod.OPENINGS_HEADING, exemplars_mod.BLURBS_HEADING)
 
 
 def _cut_shelf(prompt: str) -> str | None:
-    """`prompt` with any shelf block removed, or None when a shelf is there and its end is not
-    findable — the caller then withholds the whole prompt rather than risk a word of it."""
-    for heading in _SHELF_HEADINGS:
-        while heading in prompt:
-            start = prompt.index(heading)
-            tail = prompt[start:]
-            ends = [
-                position
-                for position in (tail.find("\n\n" + opener) for opener in _PACKET_OPENERS)
-                if position != -1
-            ]
-            if not ends:
-                return None
-            cut = min(ends)
-            prompt = prompt[:start] + SHELF_WITHHELD.format(chars=cut) + tail[cut:]
-    return prompt
+    """Return None for a shelf-bearing prompt; headings cannot verify its boundaries."""
+    return None if any(heading in prompt for heading in _SHELF_HEADINGS) else prompt
 
 
 def redact_shelf(dossier: dict[str, Any]) -> dict[str, Any]:
-    """The dossier with an exemplar shelf cut out of everything that could carry one.
+    """Withhold shelf-bearing prompt text without guessing where its source prose ends.
 
     **Why a tool result differs from what the operator's `why` prints.** The shelf is
     openings the operator placed by hand, shown to the writer as register (stage-0 §196), never
@@ -584,6 +554,7 @@ def redact_shelf(dossier: dict[str, Any]) -> dict[str, Any]:
         body = prompt.get("prompt")
         system = prompt.get("system")
         cleaned = _cut_shelf(body) if isinstance(body, str) else body
+        withheld = isinstance(body, str) and cleaned is None
         if isinstance(system, str):
             system = system.replace("\n" + exemplars_mod.SHELF_SYSTEM, "").replace(
                 exemplars_mod.SHELF_SYSTEM, ""
@@ -591,8 +562,14 @@ def redact_shelf(dossier: dict[str, Any]) -> dict[str, Any]:
         redacted["prompt"] = {
             **prompt,
             "system": system,
-            "prompt": PROMPT_WITHHELD if cleaned is None else cleaned,
+            "prompt": PROMPT_WITHHELD if withheld else cleaned,
         }
+        if withheld and isinstance(body, str):
+            redacted["prompt"].update(
+                system_chars=len(prompt.get("system") or ""),
+                prompt_chars=len(body),
+                withheld="exemplar_shelf_boundary_not_recorded",
+            )
     kept = dossier.get("draft_before_revision")
     if isinstance(kept, dict) and isinstance(kept.get("content"), str):
         content = kept["content"]
@@ -604,7 +581,6 @@ def redact_shelf(dossier: dict[str, Any]) -> dict[str, Any]:
 __all__ = [
     "DOSSIER_KEYS",
     "PROMPT_WITHHELD",
-    "SHELF_WITHHELD",
     "UNANSWERED",
     "decision_row",
     "finding_row",

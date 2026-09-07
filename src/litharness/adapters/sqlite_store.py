@@ -964,6 +964,17 @@ class SqliteStore:
             )
         ]
 
+    def read_job_log(self, book_id: str, branch_id: str, job_id: str) -> list[StoredEvent]:
+        """Filter before deserializing payloads: a trace needs one job, not every draft."""
+        return [
+            StoredEvent(sequence=row["sequence"], event=self._event_from_row(row))
+            for row in self._connection.execute(
+                "SELECT * FROM events WHERE book_id = ? AND branch_id = ? "
+                "AND json_extract(payload, '$.job_id') = ? ORDER BY sequence",
+                (book_id, branch_id, job_id),
+            )
+        ]
+
     @staticmethod
     def _event_from_row(row: sqlite3.Row) -> Event:
         return Event(

@@ -35,6 +35,7 @@ from litharness.application import exemplars as exemplars_mod
 from litharness.application import world_agent
 from litharness.application.handlers import SCENE_DRAFT
 from litharness.cli import EXIT_ATTENTION, EXIT_OK, build_parser, main
+from litharness.domain.events import Event, EventType
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.mcp_server import (
     DESCRIPTIONS,
@@ -144,8 +145,7 @@ def test_the_tier_table_names_every_verb_that_builds_a_registry_as_excluded() ->
 
     def spends(function: ast.FunctionDef) -> bool:
         return any(
-            isinstance(node, ast.Name) and node.id in spending_names
-            for node in ast.walk(function)
+            isinstance(node, ast.Name) and node.id in spending_names for node in ast.walk(function)
         )
 
     paid = set()
@@ -293,15 +293,14 @@ def test_a_relative_database_is_anchored_on_the_project_directory_the_host_names
 
 def test_a_read_tool_opens_the_store_read_only_and_leaves_no_file_behind(db: Path) -> None:
     before = hashlib.sha256(db.read_bytes()).hexdigest()
-    siblings = sorted(
-        p for p in db.parent.iterdir() if not p.name.endswith(("-wal", "-shm"))
-    )
+    siblings = sorted(p for p in db.parent.iterdir() if not p.name.endswith(("-wal", "-shm")))
     tools = make_tools(binding(db))
     calls: dict[str, dict[str, Any]] = {
         "store_info": {},
         "guide": {},
         "book": {},
         "scene": {"scene": "1"},
+        "scene_trace": {"scene": "1"},
         "status": {},
         "why": {"scene": "1"},
         "findings": {},
@@ -322,9 +321,7 @@ def test_a_read_tool_opens_the_store_read_only_and_leaves_no_file_behind(db: Pat
         assert isinstance(result, dict) and "attention" in result, name
     assert hashlib.sha256(db.read_bytes()).hexdigest() == before
     # SQLite's own WAL sidecars (`-wal`, `-shm`) may appear for a reader; no store does.
-    after = sorted(
-        p for p in db.parent.iterdir() if not p.name.endswith(("-wal", "-shm"))
-    )
+    after = sorted(p for p in db.parent.iterdir() if not p.name.endswith(("-wal", "-shm")))
     assert after == siblings
     for view in WORLD_VIEWS:
         assert tools["world"](view=view)["view"] == view
@@ -520,8 +517,9 @@ def test_a_marker_shelf_never_appears_in_a_tool_result(db: Path) -> None:
     assert marker not in rendered
     assert exemplars_mod.SHELF_SYSTEM not in rendered
     assert exemplars_mod.OPENINGS_HEADING not in rendered
-    assert result["prompt"]["prompt"].startswith("[exemplar shelf withheld: ")
-    assert result["prompt"]["prompt"].endswith("Premise: a person climbs.\n\nNow write scene-1.")
+    assert result["prompt"]["prompt"] == dossier_mod.PROMPT_WITHHELD
+    assert result["prompt"]["prompt_chars"] == len(prompt)
+    assert result["prompt"]["system_chars"] == len(system)
     assert result["prompt"]["system"] == "You write scenes."
     # The operator's own `why` still prints the shelf: that is the diagnostic channel.
     with SqliteStore.open_read_only(db) as store:
@@ -531,6 +529,18 @@ def test_a_marker_shelf_never_appears_in_a_tool_result(db: Path) -> None:
         assert node is not None
         raw = dossier_mod.scene_dossier(store, book_id, branch_id, node, head)
     assert marker in raw["prompt"]["prompt"]
+    slim = make_tools(binding(db))["why"](scene="scene-1", include_prompt=False)
+    assert slim["prompt"]["prompt_chars"] == len(prompt)
+    assert slim["prompt"]["system_chars"] == len(system)
+
+
+def test_a_packet_heading_inside_an_exemplar_is_not_a_verified_boundary() -> None:
+    marker = "Premise: this paragraph still belongs to the synthetic source."
+    body = f"{exemplars_mod.OPENINGS_HEADING}\n\nOpening.\n\n{marker}\n\nPremise: own context."
+    result = dossier_mod.redact_shelf({"prompt": {"system": "", "prompt": body}})
+    assert marker not in json.dumps(result)
+    assert result["prompt"]["prompt"] == dossier_mod.PROMPT_WITHHELD
+    assert result["prompt"]["prompt_chars"] == len(body)
 
 
 def test_a_shelf_whose_end_cannot_be_found_withholds_the_whole_prompt() -> None:
@@ -546,6 +556,77 @@ def test_a_shelf_whose_end_cannot_be_found_withholds_the_whole_prompt() -> None:
         "draft_before_revision": None,
     }
     assert dossier_mod.redact_shelf(untouched) == untouched
+
+
+def test_events_withhold_raw_candidate_text_without_altering_the_stored_record(db: Path) -> None:
+    marker = "Zebulon Quandary polished the seventeenth brass owl."
+    digest = hashlib.sha256(marker.encode()).hexdigest()
+    with SqliteStore.open_existing(db) as store:
+        book_id, branch_id, head_id = store.branches()[0]
+        store.append_events(
+            [
+                Event(
+                    event_type=EventType.MANUSCRIPT_CANDIDATE_CREATED,
+                    project_id=mcp_server.DEFAULT_PROJECT_ID,
+                    created_at="2026-09-07T14:00:00Z",
+                    book_id=book_id,
+                    branch_id=branch_id,
+                    revision_id=head_id,
+                    payload={
+                        "job_id": "shelf-refusal",
+                        "decision_id": "refused",
+                        "logical_id": "scene-1",
+                        "accepted": False,
+                        "raw_draft": {"text": marker, "sha256": digest, "provider": "fake"},
+                    },
+                )
+            ]
+        )
+    result = make_tools(binding(db))["events"](types=["ManuscriptCandidateCreated"])
+    assert marker not in json.dumps(result)
+    assert result["events"][0]["payload"]["raw_draft"]["sha256"] == digest
+    assert result["events"][0]["payload"]["raw_draft_withheld"]
+    with SqliteStore.open_read_only(db) as store:
+        retained = store.read_job_log(book_id, branch_id, "shelf-refusal")
+    assert retained[0].event.payload["raw_draft"]["text"] == marker
+
+
+def test_scene_trace_reads_frozen_input_in_explicit_bounded_pages(db: Path) -> None:
+    prompt = "The original frozen input, including its final sentence."
+    with SqliteStore.open_existing(db) as store:
+        book_id, branch_id, revision_id = store.branches()[0]
+        payload = {
+            "prompt": prompt,
+            "system": "A frozen system.",
+            "revision_id": revision_id,
+            "logical_id": "scene-1",
+            "book_id": book_id,
+            "branch_id": branch_id,
+        }
+        store.enqueue(
+            Job(
+                job_id="trace-queued",
+                job_kind=SCENE_DRAFT,
+                payload=payload,
+                input_digest=input_digest_for(payload),
+            )
+        )
+    trace = make_tools(binding(db))["scene_trace"]
+    summary = trace(scene="1")
+    assert summary["excerpt"] is None and prompt not in json.dumps(summary)
+    assert (
+        summary["stages"]["prompt"]["original_sha256"]
+        == hashlib.sha256(prompt.encode()).hexdigest()
+    )
+    first = trace(scene="scene-1", stage="prompt", max_chars=17)
+    assert first["excerpt"]["text"] == prompt[:17]
+    assert first["excerpt"]["next_offset"] == 17 and first["excerpt"]["truncated"] is True
+    rest = trace(scene="1", stage="prompt", offset=17)
+    assert rest["excerpt"]["text"] == prompt[17:] and rest["excerpt"]["truncated"] is False
+    assert trace(scene="99")["error_kind"] == "unknown_scene"
+    for bad in ({"stage": "invented"}, {"offset": -1}, {"max_chars": 0}, {"max_chars": 20001}):
+        with pytest.raises(Exception, match=next(iter(bad))):
+            trace(scene="1", **bad)
 
 
 # --- the propose profile --------------------------------------------------------------
@@ -683,6 +764,13 @@ def test_the_stdio_server_lists_exactly_the_profile_tools(db_fd: Path) -> None:
             listed = await client.list_tools()
             info = await client.call_tool("store_info", {})
             why = await client.call_tool("why", {"scene": "1"}) if profile == "read" else None
+            trace = (
+                await client.call_tool(
+                    "scene_trace", {"scene": "1", "stage": "raw_draft", "max_chars": 100}
+                )
+                if profile == "read"
+                else None
+            )
             prompts = await client.list_prompts()
             resources = await client.list_resources()
             templates = await client.list_resource_templates()
@@ -692,6 +780,7 @@ def test_the_stdio_server_lists_exactly_the_profile_tools(db_fd: Path) -> None:
                 "resources": [str(item.uri) for item in resources.resources],
                 "templates": [item.uri_template for item in templates.resource_templates],
                 "guide": json.loads(guide.contents[0].text),
+                "trace": None if trace is None else json.loads(trace.content[0].text),
             }
             return (
                 list(listed.tools),
@@ -714,6 +803,9 @@ def test_the_stdio_server_lists_exactly_the_profile_tools(db_fd: Path) -> None:
         assert tool.description == DESCRIPTIONS[tool.name]
     assert info["profile"] == "read" and len(info["books"]) == 1
     assert why["attention"] is True and "prose" in why["absent"]
+    assert extras["trace"]["request"]["provider_transport_captured"] is False
+    assert extras["trace"]["excerpt"]["text"] is None
+    assert "raw_draft" in extras["trace"]["absent"]
 
     proposed, info, _, extras = anyio.run(probe, "propose")
     assert extras["prompts"] == list(PROMPTS["propose"]) and extras["templates"] == []
@@ -798,6 +890,7 @@ def test_every_result_carries_the_keys_the_tool_list_documents(db: Path) -> None
         "guide": {},
         "book": {},
         "scene": {"scene": "1"},
+        "scene_trace": {"scene": "1"},
         "status": {},
         "why": {"scene": "1"},
         "findings": {},

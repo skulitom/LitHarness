@@ -65,6 +65,7 @@ Read profile (every one opens the store read-only):
 | `guide` | every CLI verb with its tier, tool, reason and CLI form; with `tool`, the keys that tool's result always carries |
 | `book` | the book at a glance: title, premise, every scene with whether it is drafted and how long, grouped by chapter, the head revision. Call it second |
 | `scene` | one scene's prose as it stands, with its place in the book. The dossier withholds prose and sends you here |
+| `scene_trace` | one scene's attributed or unfinished job: frozen input, raw draft, retained pre-revision draft and accepted text joined by decision/revision IDs; hashes and gaps by default, one bounded excerpt with `stage` |
 | `status` | queue depth, attention counts, digest and spend; blocked books with the sentence the next tick refuses with |
 | `why` | one scene's dossier: the frozen prompt, the decision that took it, the gate ladder, the plan item, findings, what the packet omitted. `scene` is a logical id (`scene-3`) or a 1-based place in reading order (`3`); `include_prompt=false` keeps the prompt's sizes and drops its text |
 | `findings` | what the evaluators say is wrong, worst first; `blocking` counts what a gate refuses on; `limit`/`offset` page it |
@@ -85,6 +86,34 @@ Large results are paged or cut rather than dropped: `state` and `findings` take 
 `propose_world` under the propose profile), which the host lists as slash commands and which
 walk the workflows below, and resources (`litharness://store`, `litharness://guide`,
 `litharness://book/{book_id}`, `litharness://export/{book_id}`) a host can attach to context.
+
+### Trace a prose problem
+
+After `book`, `scene` and `why`, call `scene_trace` for the scene. Its default answer gives
+stage identities without dumping the chapter and prompts into context. The trace covers
+the current scene's attributed job (or its unfinished job), not every job ever aimed at it.
+Use a `decision_id` from `attempts` to inspect another recorded decision on that job; attempt
+numbers can restart after revival and are not reliable chronology.
+
+Request `stage` = `system`, `prompt`, `raw_draft`, `pre_revision_draft` or `accepted`, with
+`offset` and `max_chars` (1 to 20000), to read that stage in chunks. Follow `next_offset`
+until it is null. Stage metadata distinguishes original hashes/sizes from delivered,
+redacted text. A missing capture, ambiguous event or hash mismatch is a gap to report.
+Do not substitute the current manuscript for a refused candidate: its event names a base
+revision, not accepted candidate text. The accepted stage belongs to the selected decision's
+resulting revision. An optional revision call's input is not the frozen drafting prompt.
+
+Locate whether a passage already appears in raw output or appears only later. Different
+bytes establish a change, not its literary effect or cause. Frozen job input preserves
+the application's text; it does not capture provider-added instructions or omitted transport
+settings. Nothing is reconstructed from today's plan, writer dossier or configuration.
+
+Shelf-bearing prompts are withheld in full because a heading inside source prose cannot
+establish where the application's own context resumes; original sizes remain available.
+Raw and pre-revision drafts exposed to an exemplar shelf are withheld, including rejected
+drafts that might copy it without a heading. Their identities remain visible. The generic
+`events` tool always withholds raw draft text; local event storage remains unchanged. These
+are diagnostic reads under the same fence below, not a route into automatic story direction.
 
 Propose profile (`--profile propose`): `store_info`, `guide`, `world`, and two writes —
 `world_declare` (one record) and `world_declare_batch` (a list of records, reported one by

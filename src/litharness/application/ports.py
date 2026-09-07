@@ -751,6 +751,10 @@ class DossierStore(
 ):
     """What one scene's dossier is joined from (`application/dossier.py`)."""
 
+    def read_job_log(self, book_id: str, branch_id: str, job_id: str) -> Sequence[StoredEvent]:
+        """One job's recorded events in write order, without loading other jobs' prose."""
+        ...
+
 
 class StatusReportStore(
     # Flat rather than `StatusStore, PlanningStore`: those two list `BranchReader` and

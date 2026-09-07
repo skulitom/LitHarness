@@ -77,6 +77,7 @@ from litharness.application import export as export_mod
 from litharness.application import operations as operations_mod
 from litharness.application import release as release_mod
 from litharness.application import roster as roster_mod
+from litharness.application import scene_trace as scene_trace_mod
 from litharness.application import status as status_mod
 from litharness.application import views as views_mod
 from litharness.application import world as world_mod
@@ -118,6 +119,7 @@ READ_TOOLS: tuple[str, ...] = (
     "guide",
     "book",
     "scene",
+    "scene_trace",
     "status",
     "why",
     "findings",
@@ -135,7 +137,7 @@ READ_TOOLS: tuple[str, ...] = (
 
 #: The tools that wrap no single command-line verb: the surface's own. Every other read tool
 #: is a verb's `--json`, and `TIERS` says which.
-SURFACE_ONLY_TOOLS: tuple[str, ...] = ("store_info", "guide", "book", "scene")
+SURFACE_ONLY_TOOLS: tuple[str, ...] = ("store_info", "guide", "book", "scene", "scene_trace")
 
 #: The Architect's shape: the world's read views and the two declares, and no dossier tool
 #: beside a write tool. The structural half of §97.1 — no tool a finding could be routed
@@ -440,6 +442,19 @@ RESULT_KEYS: dict[str, tuple[str, ...]] = {
         "blocked",
     ),
     "why": dossier_mod.DOSSIER_KEYS,
+    "scene_trace": (
+        "book_id",
+        "branch_id",
+        "logical_id",
+        "head_revision_id",
+        "job_id",
+        "decision",
+        "attempts",
+        "request",
+        "stages",
+        "excerpt",
+        "absent",
+    ),
     "findings": (
         "book_id",
         "branch_id",
@@ -547,14 +562,24 @@ DESCRIPTIONS: dict[str, str] = {
         "frozen prompt is withheld, by count, never quoted; `include_prompt=false` keeps the "
         f"prompt's sizes and drops its text. {_keys('why')} {FENCE}"
     ),
+    "scene_trace": (
+        "READ. Trace one scene's current attributed or unfinished drafting job. The default "
+        "returns identities, recorded decisions and stage hashes without full text. Select "
+        "a decision_id from attempts, and stage=system, prompt, raw_draft, pre_revision_draft "
+        "or accepted to page that stage with offset/max_chars (at most 20000 characters). "
+        "Frozen job input is labelled separately from an uncaptured provider transport. "
+        "Missing or ambiguous evidence stays missing; rejected drafts are not accepted prose. "
+        "Shelf-exposed raw drafts are withheld; prompt shelves are redacted. Byte differences "
+        f"do not measure quality. {_keys('scene_trace')} {FENCE}"
+    ),
     "findings": (
         f"READ. {VERB_HELP[('findings',)]}. `attention` is true when any finding blocks; "
         f"`limit` and `offset` page the list and `total` counts it. {_keys('findings')} {FENCE}"
     ),
     "events": (
         f"READ. {VERB_HELP[('events',)]}. `since` is a sequence number from an earlier result's "
-        f"`next_since`, or an ISO-8601 instant; `types` filters event types. {_keys('events')} "
-        + FENCE
+        "`next_since`, or an ISO-8601 instant; `types` filters event types. Raw draft text is "
+        f"withheld; use the scoped scene_trace tool for its safe view. {_keys('events')} " + FENCE
     ),
     "plans": f"READ. {VERB_HELP[('plans',)]}. {_keys('plans')} {FENCE}",
     "state": (
@@ -917,9 +942,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             "profile": binding.profile,
             "verbs": rows,
             "spends": sorted(
-                " ".join(path)
-                for path, tier in TIERS.items()
-                if tier.reason.startswith("spends")
+                " ".join(path) for path, tier in TIERS.items() if tier.reason.startswith("spends")
             ),
             "fence": FENCE,
             "attention": False,
@@ -1025,8 +1048,8 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             dossier["prompt"] = {
                 "system": None,
                 "prompt": None,
-                "system_chars": len(frozen.get("system") or ""),
-                "prompt_chars": len(frozen.get("prompt") or ""),
+                "system_chars": frozen.get("system_chars", len(frozen.get("system") or "")),
+                "prompt_chars": frozen.get("prompt_chars", len(frozen.get("prompt") or "")),
                 "withheld": "include_prompt=false",
             }
         absent = set(dossier["absent"])
@@ -1036,6 +1059,45 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             "attention": bool(absent & set(dossier_mod.UNANSWERED)),
             "next": hints,
         }
+
+    @guarded
+    def scene_trace(
+        scene: str,
+        decision_id: str | None = None,
+        stage: str | None = None,
+        offset: int = 0,
+        max_chars: int = 12_000,
+        book_id: str | None = None,
+        branch_id: str | None = None,
+    ) -> dict[str, Any]:
+        with open_read() as store:
+            resolved = branch(store, book_id, branch_id)
+            if isinstance(resolved, dict):
+                return resolved
+            head = store.head(*resolved)
+            if head is None:
+                return no_head(*resolved)
+            node = dossier_mod.scene_node(head, scene)
+            if node is None:
+                return unknown_scene(
+                    scene, [item.logical_id for item in dossier_mod.scenes_of(head)]
+                )
+            view = scene_trace_mod.build_scene_trace(
+                store,
+                *resolved,
+                node,
+                head,
+                decision_id=decision_id,
+                stage=stage,
+                offset=offset,
+                max_chars=max_chars,
+            )
+        missing = set(view["absent"]) - {"system", "pre_revision_draft"}
+        restricted = any(
+            value["withheld"] or value["absent_reason"] == "ambiguous_pre_revision_draft"
+            for value in view["stages"].values()
+        )
+        return {**view, "attention": bool(missing) or restricted, "next": ["why", "scene"]}
 
     @guarded
     def findings(
@@ -1051,9 +1113,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             resolved = branch(store, book_id, branch_id)
             if isinstance(resolved, dict):
                 return resolved
-            view = views_mod.findings_view(
-                store, *resolved, logical_id=scene, open_only=open_only
-            )
+            view = views_mod.findings_view(store, *resolved, logical_id=scene, open_only=open_only)
         finally:
             store.close()
         page, paging = _page(view["findings"], limit=limit, offset=offset)
@@ -1073,6 +1133,20 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             )
         finally:
             store.close()
+        # Rejected raw output has not cleared the exemplar-leak gate. The general event
+        # stream cannot safely expose it, even when copied text has no shelf heading.
+        # Keep local records untouched; the scoped trace checks the job's shelf exposure.
+        for row in view["events"]:
+            payload = row["payload"]
+            raw = payload.get("raw_draft")
+            if isinstance(raw, dict):
+                row["payload"] = {
+                    **payload,
+                    "raw_draft": {
+                        key: raw[key] for key in ("sha256", "provider", "model") if key in raw
+                    },
+                    "raw_draft_withheld": "use scene_trace; raw candidates may contain shelf text",
+                }
         return {**view, "attention": False}
 
     @guarded
@@ -1116,9 +1190,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
         try:
             jobs = views_mod.jobs_view(store, status=JobStatus(status) if status else None)
             exceptions = views_mod.exceptions_view(store)
-            directives = views_mod.directives_view(
-                store, status=DirectiveStatus(directive_status)
-            )
+            directives = views_mod.directives_view(store, status=DirectiveStatus(directive_status))
         finally:
             store.close()
         return {
@@ -1365,6 +1437,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
         "guide": guide,
         "book": book,
         "scene": scene,
+        "scene_trace": scene_trace,
         "status": status,
         "why": why,
         "findings": findings,
@@ -1398,7 +1471,11 @@ def prompt_text(name: str, **arguments: str) -> str:
             "`absent`. If prose is absent, `queue` shows the unit that stopped and why.\n"
             f"3. `scene` with scene=`{scene}` for the text, and `state` with the subjects it "
             "names, to see whether what it contradicts was ever on record.\n"
-            "4. Report what the rows say, quoting the gate detail or the plan item rather than "
+            f"4. `scene_trace` with scene=`{scene}`: inspect stage identities and absences, then "
+            "page the needed stage. Check whether the passage already exists in raw_draft or "
+            "only in accepted text. A changed hash identifies changed bytes, not a cause or a "
+            "quality judgment. Frozen job input is not the full provider transport.\n"
+            "5. Report what the rows say, quoting the gate detail or the plan item rather than "
             "paraphrasing, and name what the store does not hold.\n"
             f"{FENCE}"
         )
