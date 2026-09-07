@@ -1,13 +1,28 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "prose-attention-events-v1",
-  "statement": "Event-activated source-derived attention may change narration while preserving the complete chapter. Initial-only exposure, carried before-states and matched writer material diagnose delivery; unqualified conjecture.",
-  "status": "registered",
+  "statement": "After a documented initial identifier amendment, one source-compatible event-activated trajectory was used in four complete matched chapter draws. Both conditions contain enacted attention and repeated explanatory conclusions; no prose treatment effect, quality ranking or production authority is established. Unqualified diagnostic observation.",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
       "path": "research/quality-measurement/prose-attention-events/PREREG.md",
       "sha256": "0eef21463a967e9bd7fbfcd7492e5033f7d8d2f2e56fc48542f6fa2e45f70069"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-attention-events/AMENDMENT.md",
+      "sha256": "a9c06f34aa5d12a68cb476c6e932946dc6b76dc9f36df665ab6fa3247bb5ccc2"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-attention-events/RESULTS.md",
+      "sha256": "0503469179704f06c14cca7751c3f04647d9761c6cf0f3f67ec5ce43d7f5c8d8"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-attention-events/execution.json",
+      "sha256": "ed400f904b0d082c8a9caa1a116d153e8ce66c56da6ffd5568a3232393282401"
     }
   ]
 }

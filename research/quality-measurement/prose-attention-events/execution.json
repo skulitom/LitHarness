@@ -1,0 +1,198 @@
+{
+  "schema": "local-prose-diagnostic.v1",
+  "status": "observed",
+  "registration_commit": "a59cae5b3720c40f55197eb30286ec4445d68a8f",
+  "amendment_commit": "5e72aa72886fc087cf4a2661bc6081dcb3a16650",
+  "protocol_deviation": "Retained initial response used visible source groups; deterministic visible-member expansion before updates. Update input removed competing source_id metadata. No wording changes or redraw.",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "requested_model": "gpt-6-astra",
+  "reasoning_effort": "high",
+  "completed_calls": 6,
+  "registered_calls": 6,
+  "matched_source_and_trace_verified": true,
+  "source_units": 42,
+  "required_narration": 31,
+  "attention_states": 13,
+  "updates_with_activation_in_foreground": 12,
+  "outputs": [
+    {
+      "id": "initial-1",
+      "kind": "attention_state",
+      "usage": {
+        "input_tokens": 5101,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 276,
+        "reasoning_output_tokens": 205
+      },
+      "wall_ms": 13877,
+      "sha256": {
+        "request.json": "c1457cba22afd8408fbe15ae9c5b445fc57734044075b7fc08f2db546dd1b7f7",
+        "raw.json": "c878cb1ccc9aefd36aed28742a7b698006bce45b611b0a44ac88c063bf487681",
+        "result.json": "49f46bbf43b088ddca512b613408e81c0baf5df5f05aea6ef5a47c439f6d807f",
+        "txt": "6e3c7c0d7f259e77bca2b2979e95333b5d99d7b7fa25bb0f3c439c929050fd58"
+      },
+      "original_structural_validation": "failed_source_group_ids",
+      "documented_normalization": "all_and_only_visible_group_members; wording_unchanged"
+    },
+    {
+      "id": "updates-1",
+      "kind": "attention_state",
+      "usage": {
+        "input_tokens": 9549,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1139,
+        "reasoning_output_tokens": 145
+      },
+      "wall_ms": 38062,
+      "sha256": {
+        "request.json": "3067f04514d591ff4fee05c490070bc00ffef4fa9b73f146901543ac07d0411c",
+        "raw.json": "626d2917916d9aad044dae2fe5976029dbbd1536fdce88ed79776138883ec696",
+        "result.json": "5399b259ee193ae111a73a0e13bf02ac3af8a9adc0148cdd367e25334ade9e81",
+        "txt": "0e775b1cc7e1c3e239f022741efd626053dbd61719a72f58eab1e4256387fe8f"
+      }
+    },
+    {
+      "id": "background-1",
+      "kind": "chapter",
+      "usage": {
+        "input_tokens": 9859,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2244,
+        "reasoning_output_tokens": 165
+      },
+      "wall_ms": 80722,
+      "sha256": {
+        "request.json": "19891b983f6a0b591f2791e9cf0f04ee302111205584e312da5b7538d59a7cc6",
+        "raw.json": "a538188c085e9f1b49c2823ea610dedcf2efce7bec259c6a79d2696552c761f2",
+        "result.json": "2782d52fcd8acf840105937970e1397c70447a784c62e2739885db22b5261c24",
+        "txt": "68631aaadbd4788a9cffeedd36772caa8f0dc75f1e5e08a0567ab41d46ba84c1"
+      },
+      "words": 1674,
+      "paragraphs": 77,
+      "within_length_aim": true,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true
+    },
+    {
+      "id": "operative-1",
+      "kind": "chapter",
+      "usage": {
+        "input_tokens": 9942,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2466,
+        "reasoning_output_tokens": 225
+      },
+      "wall_ms": 88439,
+      "sha256": {
+        "request.json": "09a30d18ba65f2597457cfe99cabad82ed8d469530bc0abf5684b8c47e00b0dd",
+        "raw.json": "ce6f57b92445e355456a15cc536f125091226184cbbccc80c0be6f29a21d80c1",
+        "result.json": "715eba693cebbb8ef663ee816679bd1d1c49229bad7e3e7134b53833880e7615",
+        "txt": "9d9a86430f2335771af868f8d1d9b7e840c4252d0d906ff0d939a010bdbf2967"
+      },
+      "words": 1801,
+      "paragraphs": 82,
+      "within_length_aim": false,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true
+    },
+    {
+      "id": "operative-2",
+      "kind": "chapter",
+      "usage": {
+        "input_tokens": 9942,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2401,
+        "reasoning_output_tokens": 213
+      },
+      "wall_ms": 84705,
+      "sha256": {
+        "request.json": "7bfdd798df46e484227b46dbe42d5edd339b99237d9cbda2ba3831108dab5bfa",
+        "raw.json": "dcb6855c9994d1c1ec95b8e61873a4b172089194578205edff5338504d7d9cb4",
+        "result.json": "764f26d17df2e45666a082a1a433c62fde62aeeb44539825187e69dc25984d79",
+        "txt": "3457687ab7029c4f84902e0c97dbe41f573ff2aea8c15927b850c7b7427bf477"
+      },
+      "words": 1758,
+      "paragraphs": 86,
+      "within_length_aim": true,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true
+    },
+    {
+      "id": "background-2",
+      "kind": "chapter",
+      "usage": {
+        "input_tokens": 9859,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2442,
+        "reasoning_output_tokens": 335
+      },
+      "wall_ms": 86114,
+      "sha256": {
+        "request.json": "dc3996367a454c435cd7243aafbcd3c0dc49301887ffa18753540f80bff1778c",
+        "raw.json": "6d737526438d514827ac65dc553af7d128a32efb0e71287f6e16c13a88e6c572",
+        "result.json": "db46ca9eaec2a122757faa6b6ae130a31354d9b66fad67b0ba0a051f30381dc8",
+        "txt": "41a38bcf26c59490a2a234a7949fac396db211902a7c7bec8596274e8a350681"
+      },
+      "words": 1700,
+      "paragraphs": 75,
+      "within_length_aim": true,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true
+    }
+  ],
+  "usage": {
+    "input_tokens": 54252,
+    "cached_input_tokens": 13440,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 10968,
+    "reasoning_output_tokens": 1288
+  },
+  "accounted_tokens": 66508,
+  "token_stop": 125000,
+  "reading": {
+    "complete_chapters": 4,
+    "source_correspondences": 168,
+    "attention_state_correspondences": 52
+  },
+  "ranking": null,
+  "local_artifacts": {
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\manifest.json": "f06f02ab38146660f74f87a7d2069d1ab37fabe5f4824660f7c527b4f91ab8f9",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\normalization-manifest.json": "9b9a35d38dea90cbd71391ff3a9ed5b1aaca96c103d9c40e7ca7fbd4840e3b5d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\updates-manifest.json": "b7051ec5ed01222ab353cdaf19e99ff7d137e19d5f569261106324e21db043e4",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\draft-manifest.json": "ef1e3d2648aafa97827fa6a2d28d1b8cb2aea0d96a84bb9159f1dc206cf584ec",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\temporal-review.json": "52c15ca22cf47ce1f02ac2456d55bcc0fe4c3dff3173113a61d367904907ba3a",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\READING.md": "36feef9cda2c6052e1f1c53abc72504145ec68329afa33efa9d9fdd11f2f3e61",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\reading-records.json": "0eb0625442aa9a9ee05d661de1803162b211a648caedf1b5437a051a14938a32",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\comparison.html": "cb8e728b13524f2f8a190ff9d3170d511a1e46871e117c75367a80291532b30f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-tools\\build_review.py": "06ef0c64f929f6ae13fa5161f60cd8dbaa8723ff092531e7c1eed0c0800c8779",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-tools\\manual_readings.py": "56a2a95f18aab608947d3bac1ee69dd80792caadee8475e0d66d56ef244cc886",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-tools\\record_temporal_review.py": "e78302f17e8eb8356d1937d33c109174ffb68079121286f250364e8ae9af5bc7",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-tools\\initial.log": "c5f85a27957f285e3717aa7c42ec702d3b3cbc681d5aaa409583e3bb6823472e",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-tools\\updates.log": "090b41741f1441722fff5dee1535838c4215d7bbd3b08443a550dabec1d8f937",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-tools\\draft.log": "df995280f27f2dce020a4331cfdab5b86ffec36f8a457632f4cdec4898025208",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-tools\\registration-handoff.log": "d36ed2a3e69faf65dea83af3e512b02ebbacd553c6e2e50415f1e2aa51c9ee34",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-tools\\amendment-handoff.log": "d99f7428b07f162a99f6711211bb3f0331f83a7a383fc38081038f9a49feb709",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-tools\\final-handoff.log": "3caa1a93d459584cd7eedd0a2b8d89a4278aeb6f0a68c0f359fbc258cd5b37f3",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\browser-qa\\QA.md": "5fabb266433ba3ffba89185b71369dd53469c748da559d404684478ac3c296cf",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\browser-qa\\page-2026-09-07T03-55-45-709Z.yml": "6acc311f8fade545dbd7da366af9399378ede5b95d784755ecc8753a59cdc40f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\browser-qa\\page-2026-09-07T03-57-39-622Z.yml": "58aea65f251a71bdc7051db0c58acdcf55d61a450f99bc65b967e57a6e232973",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\browser-qa\\page-2026-09-07T03-57-55-184Z.yml": "03da567aa559287d2dfc604200a7a5325d7b5e87288e244099fac58f00973025",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\browser-qa\\page-2026-09-07T03-58-51-627Z.yml": "a3ff5c937dd0ce17f7637a6000df599a5f53989246f2b6d01e91bc2a2b12ad2b",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\browser-qa\\page-2026-09-07T03-59-19-853Z.yml": "2b7b91920fd6cfea2652d57f9fd3ff45ca8d2a99881571a1878f409b83c641bf",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\browser-qa\\page-2026-09-07T03-59-43-112Z.yml": "4cbc4586d2fa10a84c6b24f9b88ea74ce8892cc8d5fae8e4076f7622c2141266",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\browser-qa\\page-2026-09-07T04-00-16-408Z.yml": "7f2e44a425ee522bd0b5beedd56b1dc6ed1f2d5705134b254539e3b02c4a6df6",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\browser-qa\\prose-attention-events-desktop.png": "5b60896da9d90dff9e67a85e94bb837c10e9be54100f58ba5c192aaef1141ad0",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-events-20260907\\browser-qa\\prose-attention-events-mobile.png": "9b7a50fed0d85998a76fd695d02df99f557bfa9224c735be015a19d8002a3fc9"
+  }
+}
