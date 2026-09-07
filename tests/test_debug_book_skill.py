@@ -17,52 +17,17 @@ import json
 import re
 from pathlib import Path
 
+from litharness import mcp_server
+from litharness.application import dossier as dossier_mod
 from litharness.cli import EXIT_ATTENTION, EXIT_OK, build_parser, main
 
 SKILL = Path(__file__).resolve().parent.parent / ".claude" / "skills" / "debug-book" / "SKILL.md"
 
-#: `why --json`'s keys, in emission order. `litharness.application.dossier.DOSSIER_KEYS` is
-#: the canonical home once that module lands; import it from there then and delete this
-#: tuple. Until it does, the test below checks the tuple against the verb's real output, so
-#: it is a pointer that is verified rather than a count restated.
-DOSSIER_KEYS = (
-    "book_id",
-    "branch_id",
-    "logical_id",
-    "scene",
-    "decision",
-    "attempts",
-    "job",
-    "prompt",
-    "selected_by",
-    "context",
-    "context_omitted",
-    "plan_item",
-    "findings",
-    "draft_before_revision",
-    "absent",
-)
+#: `why --json`'s keys and the read server's tool names, from their canonical homes: the
+#: dossier module builds the dict, and the server registers the tools (stage-0 §241).
+DOSSIER_KEYS = dossier_mod.DOSSIER_KEYS
+MCP_TOOLS = mcp_server.READ_TOOLS
 
-#: The read-only MCP server's tool names, as registered under `mcp__litharness__<tool>`.
-#: `litharness.mcp_server.READ_TOOLS` is the canonical home once the server lands; import
-#: it from there then and delete this tuple.
-MCP_TOOLS = (
-    "store_info",
-    "guide",
-    "status",
-    "why",
-    "findings",
-    "events",
-    "plans",
-    "state",
-    "queue",
-    "world",
-    "characters",
-    "roster",
-    "release_show",
-    "verify",
-    "export_markdown",
-)
 
 #: Ordinary words the skill sets in backticks that are neither verbs, keys, tools, nor
 #: values the parser admits. Each carries the reason it is prose; the test refuses a member

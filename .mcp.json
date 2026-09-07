@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "litharness": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--project",
+        "${CLAUDE_PROJECT_DIR:-.}",
+        "--no-sync",
+        "litharness-mcp",
+        "--database",
+        "${LITHARNESS_DATABASE:-litharness.db}",
+        "--profile",
+        "${LITHARNESS_MCP_PROFILE:-read}",
+        "--client",
+        "claude-code"
+      ],
+      "env": {
+        "LITHARNESS_ROSTER_DATABASE": "${LITHARNESS_ROSTER_DATABASE:-}"
+      }
+    }
+  }
+}

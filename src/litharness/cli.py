@@ -5343,6 +5343,17 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="litharness",
         description="Operate the LitHarness Conductor.",
+        # **Where an agent reading `--help` is sent** (stage-0 §241): the read verbs are also
+        # served in-process, and the flag order below is the first thing a fresh agent gets
+        # wrong. Named here rather than in a verb's help because this line is the one every
+        # `--help` prints.
+        epilog=(
+            "Global options go before the verb; LITHARNESS_DATABASE names the store when a "
+            "flag cannot. Exit 0 answered, 1 needs a person (a result, not an error), 2 an "
+            "operational fault. Other agents: `litharness-mcp --help` serves the read verbs "
+            "over MCP (the repository's .mcp.json registers it for a Claude Code session), and "
+            "`.claude/skills/litharness-mcp/SKILL.md` says how to use it."
+        ),
     )
     parser.add_argument(
         "--database",

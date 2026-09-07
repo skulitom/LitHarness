@@ -27,7 +27,8 @@ from typing import Any
 import pytest
 
 from litharness import cli, mcp_server
-from litharness.adapters.sqlite_store import BUSY_TIMEOUT_MS, SqliteStore
+from litharness.adapters import sqlite_store
+from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application import dossier as dossier_mod
 from litharness.application import exemplars as exemplars_mod
 from litharness.application import world_agent
@@ -258,6 +259,26 @@ def test_the_binding_reads_the_environment_the_cli_reads(
     assert bound.actor == "mcp:read:probe"
 
 
+def test_a_relative_database_is_anchored_on_the_project_directory_the_host_names(
+    db: Path, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """`.mcp.json` names the store relatively (`litharness.db` unless `LITHARNESS_DATABASE`
+    says otherwise) and the host does not document the working directory a project server
+    gets; it does set `CLAUDE_PROJECT_DIR`, so a relative path is anchored there (§241.1). An
+    absolute path is untouched, and with the variable unset the working directory is the
+    anchor, as for any command."""
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    monkeypatch.chdir(elsewhere)
+    monkeypatch.setenv(mcp_server.PROJECT_DIR_ENV, str(db.parent))
+    bound = Binding.resolve(["--database", db.name])
+    assert bound.database == db.resolve()
+    assert Binding.resolve(["--database", str(db)]).database == db.resolve()
+    monkeypatch.delenv(mcp_server.PROJECT_DIR_ENV)
+    with pytest.raises(SystemExit):
+        Binding.resolve(["--database", db.name])
+
+
 def test_a_read_tool_opens_the_store_read_only_and_leaves_no_file_behind(db: Path) -> None:
     before = hashlib.sha256(db.read_bytes()).hexdigest()
     siblings = sorted(
@@ -307,8 +328,16 @@ def test_a_read_tool_answers_while_another_connection_holds_begin_immediate(db: 
         holder.close()
 
 
-def test_a_write_tool_reports_a_locked_database_as_retryable_and_does_not_loop(db: Path) -> None:
-    """One fault, one sentence, no retry: the operator's own contract at `cli.main`."""
+def test_a_write_tool_reports_a_locked_database_as_retryable_and_does_not_loop(
+    db: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """One fault, one sentence, no retry: the operator's own contract at `cli.main`.
+
+    The store's busy timeout is shortened for the test: `open_existing` reads the constant
+    when it opens, so the wait is 300 ms here rather than five seconds, and the bound below
+    is then several waits wide — a retry loop of any length fails it, while a loaded box
+    under coverage tracing (where the five-second version failed once) does not."""
+    monkeypatch.setattr(sqlite_store, "BUSY_TIMEOUT_MS", 300)
     holder = sqlite3.connect(str(db), isolation_level=None)
     holder.execute("BEGIN IMMEDIATE")
     tools = make_tools(binding(db, "propose"))
@@ -316,7 +345,7 @@ def test_a_write_tool_reports_a_locked_database_as_retryable_and_does_not_loop(d
         started = time.monotonic()
         with pytest.raises(Exception, match="locked by the ticking session") as raised:
             tools["world_declare"](subject="x", predicate="is_a", value="Thing")
-        assert time.monotonic() - started < BUSY_TIMEOUT_MS / 1000 + 3
+        assert time.monotonic() - started < 5 * sqlite_store.BUSY_TIMEOUT_MS / 1000 + 2
         assert type(raised.value).__name__ in {"ToolError", "ServerFault"}
     finally:
         holder.execute("ROLLBACK")

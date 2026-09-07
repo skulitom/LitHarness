@@ -246,13 +246,16 @@ The same read verbs are served to other agents in-process by `litharness-mcp` (s
 a stdio MCP server behind the `mcp` extra (`uv sync --extra mcp`). It binds one store at
 start, opens it read-only for every read, refuses an absent path instead of creating one, and
 never migrates, accepts, spends or posts; `--profile propose` registers the Architect's shape
-(the world views and the two `declare` tools) and nothing else. Register it for a Claude Code
-session with:
+(the world views and the two `declare` tools) and nothing else. `.mcp.json` at the repository
+root registers it for any Claude Code session started here: approve it once, and set
+`LITHARNESS_DATABASE` to the store first (else it serves `litharness.db` in the repository
+root). From another project, register it by hand:
 
 ```bash
 claude mcp add -s project litharness -- uv run --project /abs/path/to/LitHarness --no-sync litharness-mcp --database /abs/path/to/book.db
 ```
 
+`.claude/skills/litharness-mcp/SKILL.md` is the agent's guide to the tools.
 Every tool result carries `attention: true` where the CLI would exit 1, and every read tool's
 description ends with the rule the `debug-book` skill keeps: nothing a dossier tells you may
 become a prompt, directive, finding or plan item.

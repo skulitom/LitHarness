@@ -79,6 +79,11 @@ SERVER_NAME = "litharness"
 DATABASE_ENV = "LITHARNESS_DATABASE"
 ROSTER_DATABASE_ENV = "LITHARNESS_ROSTER_DATABASE"
 CONTINUITY_EVALUATOR_ENV = "LITHARNESS_CONTINUITY_EVALUATOR"
+#: The directory a host says the project lives in. Claude Code sets it for a server it launches
+#: from a project's `.mcp.json` and does not document the working directory that server gets,
+#: so a relative `--database` is resolved against this when it is set and against the working
+#: directory otherwise; an absolute path is untouched either way (§241.1).
+PROJECT_DIR_ENV = "CLAUDE_PROJECT_DIR"
 #: The parser's `--project` default, pinned equal by test for the same reason.
 DEFAULT_PROJECT_ID = "00000000-0000-5000-8000-000000000000"
 
@@ -519,10 +524,12 @@ class Binding:
         args = parser.parse_args(argv)
         if args.database is None:
             parser.error(f"--database (or ${DATABASE_ENV}) is required")
-        database = Path(args.database).resolve()
-        roster = (
-            Path(args.roster_database).resolve() if args.roster_database is not None else database
-        )
+        base = Path(os.environ[PROJECT_DIR_ENV]) if os.environ.get(PROJECT_DIR_ENV) else Path.cwd()
+        # `base / absolute` is the absolute path; only a relative one is anchored.
+        database = (base / args.database).resolve()
+        roster = database
+        if args.roster_database is not None:
+            roster = (base / args.roster_database).resolve()
         for path in (database, roster):
             if not path.is_file():
                 parser.error(

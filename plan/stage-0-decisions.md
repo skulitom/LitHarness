@@ -25004,8 +25004,8 @@ failures) is not enforceable inside a tool call; §221's readership port stays C
 a dossier into the wrong cell of a registered arm. No `prompts` tool: it renders every role and
 loads the shelf from `LITHARNESS_EXEMPLARS`. No per-call database, roster, exemplar or holder
 argument (§151, §196). No parser-derived tool schemas with a deny list, no in-process `cli.main`
-under a redirected stdout, no resident store handle, no retry loop, no committed `.mcp.json`
-(it would bake an absolute path), no `mcp` 1.x. No refusal at `declare`: "warned, never
+under a redirected stdout, no resident store handle, no retry loop, ~~no committed `.mcp.json`
+(it would bake an absolute path)~~ **a committed `.mcp.json` after all, once the host's variable expansion removed the absolute path (§241.1)**, no `mcp` 1.x. No refusal at `declare`: "warned, never
 refused" (`cmd_world`, `worlds.slot_warnings`) is a documented doctrine on the Architect's live
 rail, and a domain-owned slot table that refuses the known traps is its own entry. No
 `--records-file` or stdin on the batch verb: a path would be the first one the Architect ever
@@ -25030,3 +25030,41 @@ Windows argv ceiling), and §109's owed re-run of
 `test_live_the_shipped_allowances_enforce_their_own_boundaries` after the `claude` upgrade
 stays owed. No reader-observation tool. RS1 untouched beyond the shelf redaction. The
 measurement programme untouched.
+
+### 241.1. A server nobody is told about is not a surface: the registration, the skill, and the help line
+
+**2026-09-07, same day.** The operator's follow-up: other agents also need to find it easily.
+Measured by asking where an agent in this repository learns anything: the skills listing every
+session receives (`.claude/skills/*/SKILL.md`), `AGENTS.md`, the README, and `litharness
+--help`. §241 had reached the README and one paragraph of the `debug-book` skill, and nothing
+else; a session would have had to read the README to know the server existed.
+
+**What shipped.** `.mcp.json` at the repository root, the project-scope registration a Claude
+Code session reads without being told, naming the server `litharness` and launching
+`litharness-mcp` through `uv run --project ${CLAUDE_PROJECT_DIR:-.} --no-sync` with the store
+from `${LITHARNESS_DATABASE:-litharness.db}` and the profile from
+`${LITHARNESS_MCP_PROFILE:-read}`. §241's refusal of a committed file rested on its baking an
+absolute path; the host's documented `${VAR:-default}` expansion (verified against the Claude
+Code docs the same day) removes that reason, so the refusal is corrected in place above. The
+docs are silent on the working directory such a server gets, so `Binding.resolve` anchors a
+relative `--database` on `CLAUDE_PROJECT_DIR` when the host sets it (`PROJECT_DIR_ENV`), and
+the file carries no path of this machine's
+(`test_the_repository_registers_the_server_for_a_session`). A skill,
+`.claude/skills/litharness-mcp/SKILL.md`, listed to every session: how to connect from here,
+from another project and by hand; the first call; every tool in one line; the result contract;
+the fence in the server's words; what is deliberately absent and where it lives; the declare
+traps pointed at `world vocabulary`. Walked by `test_the_skill_names_every_tool_and_no_tool_that_does_not_exist`,
+`test_the_skill_names_only_verbs_the_parser_has` and
+`test_the_skill_carries_the_fence_in_the_servers_words`, so it cannot drift the way the
+`debug-book` skill did. `AGENTS.md` gained a section; `litharness --help` gained an epilog
+naming the flag order, the exit contract and the server, because that line is the one every
+`--help` prints. The `debug-book` skill's own drift test now imports `DOSSIER_KEYS` and
+`READ_TOOLS` from their canonical homes.
+
+**Refused.** No `enableAllProjectMcpServers` in a committed `.claude/settings.json`: approving
+a server is the person's act the host asks for, and a repository must not answer it for them.
+No user-scope registration on this machine: standing configuration outside the repository is
+the operator's to change. No publication to the public MCP registry: outward-facing, and the
+server is bound to a local store. **Anti-scope:** no tool, prompt or rule changed; the locked-
+store test was made load-proof (a shortened busy timeout under `monkeypatch`, after it failed
+once under the coverage lane on a loaded box) and says so in its docstring.
