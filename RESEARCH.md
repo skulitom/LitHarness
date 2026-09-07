@@ -262,9 +262,13 @@ method improves prose. No trial below has qualified a literary-quality improveme
 | Let one source-derived concern recede and return across several events | Four complete drafts retained. Both guided draws add response checks and later recall an earlier responder, then explain failed reach; source-only drafts also contain concern-related returns. The proposed return follows the source answer, and exact writer checkpoint timing is uncertain. No isolated persistence effect or prose gain established. | `OBSERVED` | [registration](research/quality-measurement/prose-persistent-concern/PREREG.md), [results](research/quality-measurement/prose-persistent-concern/RESULTS.md) |
 | Derive anticipations from strictly earlier facts, before the incoming event is visible | Three proposals and four complete drafts retained after removing future hints in earlier source annotations. Both guided drafts use anticipations before incoming observations/action; opening inventory and explanatory restatement remain. Source-only drafts also generate expectations. Planner containment is addressed; no prose gain or isolated timing effect established. | `OBSERVED` | [registration](research/quality-measurement/prose-prospective-attention/PREREG.md), [results](research/quality-measurement/prose-prospective-attention/RESULTS.md) |
 
-The next registered comparison crosses lossless editorial-span separation with removal of
-the word target: [source contract registration](research/quality-measurement/prose-source-contract/PREREG.md).
-Eight fresh chapters, two per cell; no production authority or candidate selection.
+The [source contract comparison](research/quality-measurement/prose-source-contract/RESULTS.md)
+crossed lossless editorial-span separation with removal of the word target. All eight retained
+chapters still add rescue and recall explanations; shorter output and local wording changes
+do not establish a prose fix. One internal CLI sampling retry qualifies the batch. Its
+[token-accounting correction](research/quality-measurement/prose-source-contract/TOKEN-ACCOUNTING.md)
+also applies to earlier reports using input + output + reasoning: that sum is a conservative
+counter which includes the reasoning component twice, not a non-duplicated usage total.
 
 For subsequent tests in this sequence, record the hypothesis, fixed comparison, source/code
 hashes and stop rules before calls. Retain every request and raw response, including transport

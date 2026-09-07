@@ -1,0 +1,294 @@
+{
+  "schema": "local-prose-diagnostic.v1",
+  "status": "observed",
+  "registration_commit": "277dd3cdab21a885975e79d25c550db3b1a89f08",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "requested_model": "gpt-6-astra",
+  "reasoning_effort": "high",
+  "resolved_model": null,
+  "completed_calls": 8,
+  "registered_calls": 8,
+  "matched_source_verified": true,
+  "factors": [
+    "editorial span placement and role",
+    "word target present or absent"
+  ],
+  "source_units": 42,
+  "required_narration": 31,
+  "partitioned_units": 8,
+  "outputs": [
+    {
+      "id": "embedded-target-1",
+      "usage": {
+        "input_tokens": 7909,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2413,
+        "reasoning_output_tokens": 333
+      },
+      "wall_ms": 102096,
+      "words": 1684,
+      "paragraphs": 83,
+      "length_instruction": "target",
+      "internal_sampling_retry_reported": false,
+      "model_refresh_timeout_reported": false,
+      "analytics_send_failure_reported": false,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true,
+      "sha256": {
+        "request.json": "e8918547ab5012a0b2ac4447053997bf3e51681f25bc479f55995829bfda69e3",
+        "raw.json": "6077b3faefc9405210948d4ec001c474164d1d499945c6dec8af6da2d01fa605",
+        "result.json": "8b9cabc2eb5d8716f7937a54139f4ae1474edfdb443e6da4d57fe11f30648dbb",
+        "txt": "be3d41047820659568095106bad187fec721cafd47d1a9621a26652689572937"
+      }
+    },
+    {
+      "id": "separated-target-1",
+      "usage": {
+        "input_tokens": 8021,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2362,
+        "reasoning_output_tokens": 273
+      },
+      "wall_ms": 109955,
+      "words": 1687,
+      "paragraphs": 85,
+      "length_instruction": "target",
+      "internal_sampling_retry_reported": false,
+      "model_refresh_timeout_reported": false,
+      "analytics_send_failure_reported": false,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true,
+      "sha256": {
+        "request.json": "3664c6623992921a28857a5909c1f4a472b6b6c76d50dd297c19cc4108fd2a8f",
+        "raw.json": "59ce8637f9bc5ad1f50d647bfca9c4c3c589e2f1178c461c351c94207dfb7ccf",
+        "result.json": "fc2a0b2394173741bd241461238bc1e15e1dd5dc4312bb015ab105cbdeabdbe3",
+        "txt": "7558835b5656c82d9083cdc677dd077dda5d2a3b4ac0251df53bc4b88ea18172"
+      }
+    },
+    {
+      "id": "separated-free-1",
+      "usage": {
+        "input_tokens": 8414,
+        "cached_input_tokens": 7808,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1842,
+        "reasoning_output_tokens": 0
+      },
+      "wall_ms": 165536,
+      "words": 1472,
+      "paragraphs": 77,
+      "length_instruction": "free",
+      "internal_sampling_retry_reported": true,
+      "model_refresh_timeout_reported": false,
+      "analytics_send_failure_reported": false,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true,
+      "sha256": {
+        "request.json": "cf9919bdd6f57b7d8661b751f12f146424a1f16fe9a1b6652cefe8e1d8a050c4",
+        "raw.json": "d7d7210c5a78c40adf1eee066da42adcfcce2640425118864ea215c0b77962c7",
+        "result.json": "f596bcf57ec86df2aeba656eb8d3f2d01a79d5b8262c6d682a5c2b8549fcd1e2",
+        "txt": "a6fbb591f263ba2899d64da7c8d3ab25e27621b7eb6213fdd9ad42460e1a3e9b"
+      }
+    },
+    {
+      "id": "embedded-free-1",
+      "usage": {
+        "input_tokens": 7899,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2410,
+        "reasoning_output_tokens": 516
+      },
+      "wall_ms": 110651,
+      "words": 1495,
+      "paragraphs": 86,
+      "length_instruction": "free",
+      "internal_sampling_retry_reported": false,
+      "model_refresh_timeout_reported": false,
+      "analytics_send_failure_reported": false,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true,
+      "sha256": {
+        "request.json": "d114ba1701f27af972bd1d347976148032d0cdf3f1120e9b205f013dd9f19514",
+        "raw.json": "22ac2de13c141fe03cb30c67ef8d018e8fca027656fff6d9f33954104db17219",
+        "result.json": "ef2aae4d1da333b89c8061c8e6a929f6632a69d51888bfb3678832f9df6fc02b",
+        "txt": "fb53fae9aadd98f7cc34faf1a60d98fa9db3385368dcf15f44ec3a31439da0a5"
+      }
+    },
+    {
+      "id": "embedded-free-2",
+      "usage": {
+        "input_tokens": 7899,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2308,
+        "reasoning_output_tokens": 516
+      },
+      "wall_ms": 102497,
+      "words": 1435,
+      "paragraphs": 82,
+      "length_instruction": "free",
+      "internal_sampling_retry_reported": false,
+      "model_refresh_timeout_reported": false,
+      "analytics_send_failure_reported": false,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true,
+      "sha256": {
+        "request.json": "418b3fade4a5bd58c8db74d18c020cf05482e01a704d35961e96fe1d7066bf5f",
+        "raw.json": "96f390df69a2f640231cf037c4841a8306643de2445cfdc11bdc95e7e411fae4",
+        "result.json": "ab72b153fadaaf16d30176b789e70e90f2630eee169910c273989782d1d32b7b",
+        "txt": "7d337c93dbee33035a22a2551c5f10236de3d4afd1d7f01d3079e6d000c2c10f"
+      }
+    },
+    {
+      "id": "separated-free-2",
+      "usage": {
+        "input_tokens": 8011,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2506,
+        "reasoning_output_tokens": 516
+      },
+      "wall_ms": 116775,
+      "words": 1604,
+      "paragraphs": 87,
+      "length_instruction": "free",
+      "internal_sampling_retry_reported": false,
+      "model_refresh_timeout_reported": false,
+      "analytics_send_failure_reported": true,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true,
+      "sha256": {
+        "request.json": "f448c34fca5843f11e8da0290d1d7c9d5720cb4869459ef128b28616ad436d26",
+        "raw.json": "ea9b8f4b124b3836e6b0a978dc774cfef2b714280716e8d647cf56900f0fb70b",
+        "result.json": "0db9fb904a5d9eaf711c19cb86875539226059fc259fe645db45ce8eac4e27b4",
+        "txt": "5b39a739a70308c8458a7e01fa2a2ab2e21748ec1add98be65e0edec05b4bcfe"
+      }
+    },
+    {
+      "id": "separated-target-2",
+      "usage": {
+        "input_tokens": 8021,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2426,
+        "reasoning_output_tokens": 278
+      },
+      "wall_ms": 113354,
+      "words": 1741,
+      "paragraphs": 88,
+      "length_instruction": "target",
+      "internal_sampling_retry_reported": false,
+      "model_refresh_timeout_reported": true,
+      "analytics_send_failure_reported": false,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true,
+      "sha256": {
+        "request.json": "6bcbb050f1718815c23a873554e704d33dbf9b03e34c4a09c7a9a80441183afc",
+        "raw.json": "87d2d4cec49a1f2e902c1aa3ce9a7f3b06789ec5b24ab7903cb7dc52f763ab58",
+        "result.json": "5c896a8d94a813318f765731e1da13d8a05e6ceb3954b713fcef7b757bf40b10",
+        "txt": "617e23abc501aca1cc4ffa811331e0da8c4bb1cd8d9861ee127a59e27274c12a"
+      }
+    },
+    {
+      "id": "embedded-target-2",
+      "usage": {
+        "input_tokens": 7909,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2438,
+        "reasoning_output_tokens": 340
+      },
+      "wall_ms": 106825,
+      "words": 1696,
+      "paragraphs": 88,
+      "length_instruction": "target",
+      "internal_sampling_retry_reported": false,
+      "model_refresh_timeout_reported": false,
+      "analytics_send_failure_reported": false,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true,
+      "sha256": {
+        "request.json": "9185d71f1c9361b83f7e0161d02f20eab4fc005f8c0526f20fe1e7cb5da7312a",
+        "raw.json": "53c0fafe1fc9fd0527f652296388eac5bb26bf18cafd8bf1ed5195a24706eebf",
+        "result.json": "25224c5f7dec0f3b59a8ee5fbeee0f742287b897acbdf3b56d8b9500327825f6",
+        "txt": "ceb13175074d5844538f863b9ba734ea6a47982f852bd3edbe52016147845731"
+      }
+    }
+  ],
+  "usage": {
+    "input_tokens": 64083,
+    "cached_input_tokens": 15872,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 18705,
+    "reasoning_output_tokens": 2772
+  },
+  "registered_stop_counter_tokens": 85560,
+  "reported_input_plus_output_tokens": 82788,
+  "internal_sampling_retry_slots": [
+    "separated-free-1"
+  ],
+  "no_retry_condition_met": false,
+  "token_stop": 125000,
+  "reading": {
+    "complete_chapters": 8,
+    "source_correspondences": 336
+  },
+  "ranking": null,
+  "local_artifacts": {
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\manifest.json": "46e203dc780934f0ecffbb3f254e63b04a57b9e9131acdfbe7b3e139ec42dd78",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\READING.md": "0f2560ba39434854d44471df996a6e3c18774c68362a7ebd4f06d87b76b6446c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\reading-records.json": "420d423dcab99842d6ad08c230b2180949662ade179a5d0e3378711a93cb7641",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\comparison.html": "ec713f272c56b541ef389028ca290fcf6c4fe05ae36ddd811f144efa24f38c69",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\comparison-summary.txt": "1076a21259d663edaf07565c767dfa8e5533291c9c2e1a3090bd067be6b85cf6",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\embedded-free-1\\reading.json": "e6dc6914ec8d3691d01c79c51661a70c6c1705ab41f8f6e8d4f111aa74d609ad",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\embedded-free-2\\reading.json": "19df86f94623ae52e02a46cff70fb6032346ce6ff811e9a8d70ff13ba16ff3da",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\embedded-target-1\\reading.json": "cfe0d6fb318154948e6b2dce458a4da4cf2d0ca66ebfdb8c486e74d76844d22e",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\embedded-target-2\\reading.json": "420a1e5068ab51de17ce4cf97ef9008cbe74be778c7b5776c337e55a24dd0f4b",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\separated-free-1\\reading.json": "fd1eab176bda7c157f5b325fcf2a702a474cd7c47d501d0a8317f04f78317823",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\separated-free-2\\reading.json": "d48d3778a1fe013c0daf8e5aad30b129be615cfded032291c0c22dad523d582c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\separated-target-1\\reading.json": "2be959f0351f8cb9c941bf9567686b21a04a4b35b59cab916fd87c9052a10226",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\separated-target-2\\reading.json": "b8cdae650d846c6d206ae9530c7650f7d0963859bc2c69dbc764e2da03177141",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\agent_readings.py": "253d61aa117109491acdc3820a466b1dbb11fab4f8c61d71c2c8c41271a91c60",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\build_review.py": "12c045a91a6d3f8f921c38aa659a043e34f2eab813190fc4b0e5f6508fa49541",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\manual_readings.py": "cc6443bc90859e537c5ce87d74b62876aa2615ad12d22758906ea6acfdf7020f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\prepare_source.py": "a89053c2868cdad8b61a5296ea690c545ed77ee4fdcf2b74ecaca929c770058c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\update_claim.py": "3f05d5069635c999ce63d1e80e516332fd69c6b2d5259f9f60313737c7ca2a1c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\handoff-notes.md": "7d123423794f4eb8610a4894d118351e02176cabc7c4f916c6beb932c3cdfe25",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\source-review.md": "8d37737449866c1f96d755e17cfc7f78123e31e208e744a889789c09f3cd7e9b",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\browser-check.log": "defd58b188bd8750fe2bc3ec859a9680ecacfaf83ba7448b7f4244f99aa42fe0",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\derive.log": "b181837c610f340110d7539e27e3f9bc54506127d3b92ae3251eb160c59b2d96",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\draft.log": "505aba27245d7a5d7f6e70f6aa9ffaa42588abe9a137c37f0075c9bc558b16d4",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\final-browser-snapshot.log": "acffa05b794ffae83f85617dedde1d4aa1893f0f0279b1b2f5bb920724dedc5e",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\final-handoff-resynced.log": "272a2f41329da10c27f13612a0ad06cc2d86248a0c79436763e775744759181f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\final-handoff-startup-isolated.log": "cccb0dd26db8f7ef6067f4a8781dec9ce2cb440c881a97e0e79c3d60e861c1d8",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\final-handoff.log": "3eaf9ae74fbe7790e4ccd42c46677332af7e7f837df10dcd04d98837ab6000f7",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\prereg-handoff.log": "a1e62f3d3acdff45d962b7b0c823a53828c6f4c7a6fb80cebaa647f45c38b29f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\template.html": "838e129a5e6aad0f88bca2dd4d1a48e0bbd366245243448b39356488a93e9f0f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-tools\\browser_qa.js": "67e387d1b95ce9e4de4bb1b2689d288b96657599075b23ec01efa03da15af61c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\browser-qa\\console-2026-09-07T12-11-35-821Z.log": "6cc7cad249831923d4c8b93b6605af7e0fbb13db627ad2a1002eacb5ebad8ea8",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\browser-qa\\matrix.json": "b06bc7bfc8617f77cb2ead6df2122267be2e5f1629429468dbf8ea2889c0f8a8",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\browser-qa\\page-2026-09-07T12-11-36-828Z.yml": "15cbff2c77bc5f51fa78ec5296c00b7aa93d9c90ca7f95f16bc2c269469f73a6",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\browser-qa\\page-2026-09-07T12-13-04-474Z.yml": "3ec2aa18607813b38c5d9eb0bad60d6673c9c2cf9081ff1bb8c2ccc0f4ad2553",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\browser-qa\\QA.md": "098371c95f01b21bc8ab9399e02df20abb9d8b3d1a2910b5feff6965cf0b345d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\browser-qa\\source-contract-desktop.png": "a4b981e4ee478a0745d7a884f24117fd012be12a6f9f0d7d448e4d4a8a5da424",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-source-contract-20260907\\browser-qa\\source-contract-narrow.png": "9117dd49a535d28a83c7fcd545c46adf28a31f57cfa5cad7c77e6577c57b8ed4",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-deeper-investigation-20260907\\diagnostic-locations.md": "2cbcf1c235eb1fea8077ead6e20b051bb8b46f4d48dab5389c561f5e2973c38a",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-deeper-investigation-20260907\\independent-close-read.md": "e21d4ec06186ef168dc88e0c44ba2231063891c3dfe0624233089872d254ddd2",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-deeper-investigation-20260907\\prior-experiment-audit.md": "36eb47da9f165b9ee7b051df539062d99af1be3138459cb5d5207ff385fd270b",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-deeper-investigation-20260907\\production-transfer-audit.md": "0c4a6eae6b4a0cd0a85ee97b9d9a0029aaf9a109410ee6e74ca529d218728130",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-deeper-investigation-20260907\\token-accounting-audit.md": "2755bdb8232c5573e85a6b252ef3de8948025cb7983fe6c9d40deddc203541f2",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-deeper-investigation-20260907\\writer-input-audit.md": "13c9e60b479ff0c3567c759867db981940a84993c693a029b1b98868615eb3bb"
+  }
+}
