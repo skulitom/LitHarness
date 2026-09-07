@@ -1,0 +1,18 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-source-contract-v1",
+  "statement": "A fixed comparison crosses editorial-span placement with the presence of a chapter word target. Located outcomes diagnose source realization; they do not establish literary quality or production authority.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-source-contract/PREREG.md",
+      "sha256": "f16ea37117d87a26930855c0f918b01d7920df010bc8766e24875d723960a52e"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-source-contract/LITERATURE.md",
+      "sha256": "e73be7652929bdfd57d1f9a10a5f6c4e7604a9729b18d56fdc57327255ad49d4"
+    }
+  ]
+}

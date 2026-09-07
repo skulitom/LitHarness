@@ -1,0 +1,173 @@
+{
+  "schema": "local-prose-diagnostic.v1",
+  "status": "observed",
+  "registration_commit": "cf2c6e00b9f10287ab560f8b40ba2412472bbb7e",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "requested_model": "gpt-6-astra",
+  "reasoning_effort": "high",
+  "completed_calls": 5,
+  "registered_calls": 5,
+  "matched_source_verified": true,
+  "only_request_difference": "concern_schedule",
+  "source_units": 42,
+  "required_narration": 31,
+  "concerns": 1,
+  "checkpoints": 3,
+  "outputs": [
+    {
+      "id": "concern-1",
+      "kind": "concern",
+      "usage": {
+        "input_tokens": 11642,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 602,
+        "reasoning_output_tokens": 501
+      },
+      "wall_ms": 25141,
+      "sha256": {
+        "request.json": "3cc422782672a0c8e1a17672da94a817f13aff4ec929610d1fef6d5171e87b33",
+        "raw.json": "30f3b716e1061db473ab3ceb387c2e701b8e8bbef4081498b03e72ef521630c7",
+        "result.json": "ea1974dd52f2802aacb20ee81a4d49d4e7ba0ca704e39bf9a12ac25116e46f8d",
+        "txt": "d0d32734344d09bddd1b7a7f34b0630028e9299fa5011c26cfc0e980233c8399"
+      }
+    },
+    {
+      "id": "source-1",
+      "kind": "chapter",
+      "usage": {
+        "input_tokens": 7889,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2503,
+        "reasoning_output_tokens": 404
+      },
+      "wall_ms": 94662,
+      "sha256": {
+        "request.json": "299dc474dd9883fc587c18f963a4f2faa53ae00b214722ca2f820e668b957354",
+        "raw.json": "5d16511da086380739577643e53b53d2d8f65103bdb1d63782178350c305ffc2",
+        "result.json": "21f49807930b14fd537bebfa76570ed4d2e6f7dc152683c2bbff0650642007c3",
+        "txt": "4cfb9cfcbf3b0eba5515b96072ab26d1ba3ce803ef432520bb1ee74b6cb0c72c"
+      },
+      "words": 1687,
+      "paragraphs": 80,
+      "within_length_aim": true,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true
+    },
+    {
+      "id": "persistent-1",
+      "kind": "chapter",
+      "usage": {
+        "input_tokens": 8012,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2429,
+        "reasoning_output_tokens": 310
+      },
+      "wall_ms": 84406,
+      "sha256": {
+        "request.json": "4470f8ae97fffecc7aedf81cb630e1031f38d1b324f45e8a2fca0a961019a8d7",
+        "raw.json": "f107af6679972c40a91e3ef17faa3ad17d45458d7635e77a4a702705e0e3d931",
+        "result.json": "7f6b140f4ac80006f9c1c6cafb02b5ce1f623d3e67379bfe1826eb945a51389f",
+        "txt": "a0bf94287e6397c477f2167fe956a3d28a2bd0125d87a7231a1d37f0cbd83281"
+      },
+      "words": 1716,
+      "paragraphs": 85,
+      "within_length_aim": true,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true
+    },
+    {
+      "id": "persistent-2",
+      "kind": "chapter",
+      "usage": {
+        "input_tokens": 8012,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2487,
+        "reasoning_output_tokens": 330
+      },
+      "wall_ms": 95440,
+      "sha256": {
+        "request.json": "70884daf40df5258aa3a96645faaf08f62f0cfe52cf42c646dc615a1a0b128d6",
+        "raw.json": "060557e472a37e966b083571498fd5d3567b4513b12829678f756b3761f01bbd",
+        "result.json": "44539e5ce6f01a17ab172255e539983c34754269222ae5a607f5698a79b0b877",
+        "txt": "1cd1d8c547373fc6d11187cdfb42bb1e8af44768c85f23636eab7228a59bd917"
+      },
+      "words": 1737,
+      "paragraphs": 84,
+      "within_length_aim": true,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true
+    },
+    {
+      "id": "source-2",
+      "kind": "chapter",
+      "usage": {
+        "input_tokens": 7889,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2234,
+        "reasoning_output_tokens": 157
+      },
+      "wall_ms": 77438,
+      "sha256": {
+        "request.json": "d8198e26e7082c0005b65bf063f4b37e7974da6fc508035655ee419a92353966",
+        "raw.json": "44aed691bcef3fffacafff2038b81f919fb7bdaa4f3c9861f7a21daf31642a80",
+        "result.json": "fd5a32b8b9a69519ccb73a9bdf5ff7967b21d00cd2fe02f15bb7379016b40cc0",
+        "txt": "69103b51b3e128a18bd34605ac77b11b0e31c38a7d0d3acea0d0ca82578f9cd7"
+      },
+      "words": 1669,
+      "paragraphs": 85,
+      "within_length_aim": true,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true
+    }
+  ],
+  "usage": {
+    "input_tokens": 43444,
+    "cached_input_tokens": 10752,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 10255,
+    "reasoning_output_tokens": 1702
+  },
+  "accounted_tokens": 55401,
+  "token_stop": 105000,
+  "reading": {
+    "complete_chapters": 4,
+    "source_correspondences": 168,
+    "attention_correspondences": 20
+  },
+  "ranking": null,
+  "local_artifacts": {
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\manifest.json": "2b3029011e05f84bca4b59d876e8ad96d8617c8827f9cfa25c2806d7874845c3",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\draft-manifest.json": "0b55f7ce95553940ff9b7607ed3f05a21a5e3666cd3645ff8ffe55f372318802",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\temporal-review.json": "60e3055ca999eb75e062cb683fb1d6d737177873a8c2cfac8433767f0b36ea41",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\READING.md": "89b303a716a20eccdd0ffbecd8a2ace4a8297aa93bd308d394eefd23a04e8f96",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\reading-records.json": "b7591a6a2e5698892ee8eda7b3d464d42aafd679df8a4a5cc26ddfd7cd6cbbdc",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\comparison.html": "8ce4575e0db8cdb44021ce589e4840a627b2a64698f9c122223c5e9531ae4bf0",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-tools\\build_review.py": "5aba568f0b380530f5aa5ebdbe5d9c911327c3fe973d8484813411b11bcc9ca6",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-tools\\template.html": "01b058d4a7b20aad4685ce29485bfec72370312e4a4d8a1a6079da16bea739fc",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-tools\\manual_readings.py": "489bdbc9b0ddfa4e07f85394ac4061d37fab6868b30bd28c090ea81e80d62bcb",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-tools\\record_temporal_review.py": "77f67331ac2a8bebe85bb1327212c2f4f3e05319d49b1c2071f304d46c5a0a8b",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-tools\\derive.log": "92a778da68059d5552028a41ff99eaf006b18930166e4d93ff5c48ff899d35c6",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-tools\\draft.log": "c1d80ee782bdf4b618497fe04054c16d72836d9ab0c060756c95f62582ccdc7d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-tools\\registration-handoff.log": "d1a095ccfbddb85998bd545d43561505c3e2376b5b235af7eb320d631817cb20",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-tools\\final-handoff.log": "6be5cbcf5b8448795a42f5594cd12dfba3a1b62e2566bd63488a67148304047f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\browser-qa\\QA.md": "9a3520b76e1fbe463d210793b9ec40974f125597b242b05b37a89110b63f3137",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\browser-qa\\page-2026-09-07T10-15-42-623Z.yml": "d85e26e9a8e40cb72164b89791d4a90e8d33343e4ff8477089f8aaacae6fa845",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\browser-qa\\page-2026-09-07T10-17-51-861Z.yml": "657190b742298c69b9185973467c15548feed178799a76f24e1bba8fcd481146",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\browser-qa\\page-2026-09-07T10-18-22-112Z.yml": "74035d6ad3456e17051783ad56c17b1abd61f7abb4eaae6ce43e7850f5e69215",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\browser-qa\\page-2026-09-07T10-18-37-114Z.yml": "264e64734f4bb234aef649ec57c92a4795abfe6473a3fdd8d86c9a42b2b23bbf",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\browser-qa\\page-2026-09-07T10-19-00-705Z.yml": "e09a11bedc3a1ba81d91690bcfe2099d88ed4184953979cb5d81ee3f35507f46",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\browser-qa\\page-2026-09-07T10-19-43-324Z.yml": "57124b94deb4640bf0b4415194c4ccf3f6c92729c1277e2b68ebd756574d4cb0",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\browser-qa\\prose-persistent-concern-desktop.png": "def5af84036b4f424cc68d17cbee0a7b5c6601abc24b1798edddae46ee6e9598",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-persistent-concern-20260907\\browser-qa\\prose-persistent-concern-mobile.png": "d108aa4028655b6d5806e6910a232c2985c40095f2ae1ceaadd0c8ef8c84fc6d"
+  }
+}

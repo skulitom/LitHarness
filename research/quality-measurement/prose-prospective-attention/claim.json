@@ -1,0 +1,23 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-prospective-attention-v1",
+  "statement": "Prefix-only anticipation proposals and fresh chapter comparisons test a prospective attention package. Recorded observations do not establish a prose gain, isolated timing effect or production authority.",
+  "status": "observed",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-prospective-attention/PREREG.md",
+      "sha256": "a7c16a3d5fc6f211996e2d8e34632aa4d60fdf144de5e2cc939989c4dd9dd17e"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-prospective-attention/RESULTS.md",
+      "sha256": "a5c27fd2b68dbb5e991dc9659de9092c05363db2163024720d1b25daceb03119"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-prospective-attention/execution.json",
+      "sha256": "b6b34154aa1d9b50c969a2b074a402d9b65a1cf798af4f68527e751cb864c3bc"
+    }
+  ]
+}
