@@ -270,6 +270,12 @@ do not establish a prose fix. One internal CLI sampling retry qualifies the batc
 also applies to earlier reports using input + output + reasoning: that sum is a conservative
 counter which includes the reasoning component twice, not a non-duplicated usage total.
 
+The [original production scene comparison](research/quality-measurement/prose-production-obligations/PREREG.md)
+registers four fresh subscription scene-one calls: exact archived input versus removal of
+four duplicated payoff bodies. Every body survives verbatim in the open-thread ledger;
+unique questions, deadlines and payoff windows remain. This tests a duplication-removal
+package on one scene fixture, with no quality ranking or production prompt change.
+
 For subsequent tests in this sequence, record the hypothesis, fixed comparison, source/code
 hashes and stop rules before calls. Retain every request and raw response, including transport
 and format failures; record amendments without replacing failed draws. Finish a results file

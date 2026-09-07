@@ -1,0 +1,18 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-production-obligations-v1",
+  "statement": "A fixed original-production scene comparison tests removal of four duplicated payoff bodies while retaining their verbatim counterparts, unique questions and timing rules. Located readings cannot establish literary quality or production authority.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "path": "research/quality-measurement/prose-production-obligations/PREREG.md",
+      "kind": "registration",
+      "sha256": "88319c77fa53f99bd80ef80f49e700b1d92e9158a68fc3c88cf9a53c24e87492"
+    },
+    {
+      "path": "research/quality-measurement/prose-production-obligations/RUNBOOK.md",
+      "kind": "registration",
+      "sha256": "66c12a5e703465ec9f971b07a3f8a37775fb7ffc57488c88ccd9c218c49ce376"
+    }
+  ]
+}
