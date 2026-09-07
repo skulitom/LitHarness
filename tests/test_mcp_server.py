@@ -347,11 +347,21 @@ def test_a_write_tool_reports_a_locked_database_as_retryable_and_does_not_loop(
 ) -> None:
     """One fault, one sentence, no retry: the operator's own contract at `cli.main`.
 
-    The store's busy timeout is shortened for the test: `open_existing` reads the constant
-    when it opens, so the wait is 300 ms here rather than five seconds, and the bound below
-    is then several waits wide — a retry loop of any length fails it, while a loaded box
-    under coverage tracing (where the five-second version failed once) does not."""
+    Count transaction attempts to detect retries, and retain a generous timing bound for
+    the shortened busy timeout. Initialize error mapping before timing: production imports
+    the MCP SDK at server startup, but these direct handler calls bypass that startup.
+    """
     monkeypatch.setattr(sqlite_store, "BUSY_TIMEOUT_MS", 300)
+    mcp_server._tool_error("initialize the transport before measuring lock handling")
+    transaction = SqliteStore.transaction
+    attempts = 0
+
+    def counted_transaction(store: SqliteStore) -> SqliteStore._Transaction:
+        nonlocal attempts
+        attempts += 1
+        return transaction(store)
+
+    monkeypatch.setattr(SqliteStore, "transaction", counted_transaction)
     holder = sqlite3.connect(str(db), isolation_level=None)
     holder.execute("BEGIN IMMEDIATE")
     tools = make_tools(binding(db, "propose"))
@@ -360,6 +370,7 @@ def test_a_write_tool_reports_a_locked_database_as_retryable_and_does_not_loop(
         with pytest.raises(Exception, match="locked by the ticking session") as raised:
             tools["world_declare"](subject="x", predicate="is_a", value="Thing")
         assert time.monotonic() - started < 5 * sqlite_store.BUSY_TIMEOUT_MS / 1000 + 2
+        assert attempts == 1
         assert type(raised.value).__name__ in {"ToolError", "ServerFault"}
     finally:
         holder.execute("ROLLBACK")
