@@ -1,0 +1,13 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-persistent-concern-v1",
+  "statement": "One source-derived concern that recedes and returns may change narration across intervening events. Fresh source-only comparison tests the whole guidance package; unqualified conjecture.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-persistent-concern/PREREG.md",
+      "sha256": "f644c61c79a638937dee831b1edc932e93222b824c75dfe55c8670ffcf063bd3"
+    }
+  ]
+}
