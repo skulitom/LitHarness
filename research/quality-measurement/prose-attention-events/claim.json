@@ -1,0 +1,13 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-attention-events-v1",
+  "statement": "Event-activated source-derived attention may change narration while preserving the complete chapter. Initial-only exposure, carried before-states and matched writer material diagnose delivery; unqualified conjecture.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-attention-events/PREREG.md",
+      "sha256": "0eef21463a967e9bd7fbfcd7492e5033f7d8d2f2e56fc48542f6fa2e45f70069"
+    }
+  ]
+}
