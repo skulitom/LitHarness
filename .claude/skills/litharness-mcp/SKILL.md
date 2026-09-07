@@ -65,6 +65,7 @@ Read profile (every one opens the store read-only):
 | `guide` | every CLI verb with its tier, tool, reason and CLI form; with `tool`, the keys that tool's result always carries |
 | `book` | the book at a glance: title, premise, every scene with whether it is drafted and how long, grouped by chapter, the head revision. Call it second |
 | `scene` | one scene's prose as it stands, with its place in the book. The dossier withholds prose and sends you here |
+| `lookup` | the record behind an id another tool handed you: a decision, finding, exception, directive, release entry, queued unit, world record, or a manuscript or plan revision |
 | `status` | queue depth, attention counts, digest and spend; blocked books with the sentence the next tick refuses with |
 | `why` | one scene's dossier: the frozen prompt, the decision that took it, the gate ladder, the plan item, findings, what the packet omitted. `scene` is a logical id (`scene-3`) or a 1-based place in reading order (`3`); `include_prompt=false` keeps the prompt's sizes and drops its text |
 | `findings` | what the evaluators say is wrong, worst first; `blocking` counts what a gate refuses on; `limit`/`offset` page it |
@@ -72,7 +73,7 @@ Read profile (every one opens the store read-only):
 | `plans` | the plan's lineage, newest first, and the proposal behind each revision |
 | `state` | what the book holds as true, in story order: position, provenance (`read` from its own prose or `given`), authority, subject, predicate, the sentence, the note, who may know it; `limit`/`offset` page it and `total` says how many there are |
 | `queue` | job counts by status (always present), the units in one status, open exceptions, and captured direction with its author |
-| `world` | one of the world's views by name: `summary`, `show`, `rules`, `ladders`, `abilities`, `cast`, `threads`, `vocabulary`, `presence`, `check` |
+| `world` | one of the world's views by name: `summary`, `show`, `rules`, `ladders`, `abilities`, `cast`, `threads`, `vocabulary`, `presence`, `check`; `subjects` lists several subjects for `show` in one call, and `ladders` carries each rung's `manifests_as` |
 | `characters` | everything canon holds about each person; an empty cast carries a `hint` |
 | `roster` | the installation's writer roster: `show`, `check`, `vocabulary`, or `rehearse` a candidate dossier; dossier prose is never returned |
 | `release_show` | the operator-gated release queue for the book; there is no post anywhere |

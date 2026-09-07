@@ -256,7 +256,8 @@ claude mcp add -s project litharness -- uv run --project /abs/path/to/LitHarness
 ```
 
 `.claude/skills/litharness-mcp/SKILL.md` is the agent's guide to the tools. Beside the verbs'
-own tools it offers `book` (every scene, drafted or not) and `scene` (one scene's prose),
+own tools it offers `book` (every scene, drafted or not), `scene` (one scene's prose) and
+`lookup` (the record behind any id another tool handed out),
 pages `state` and `findings` with a visible bound, names each result's keys in the tool list,
 serves the skill's workflows as prompts and the guide and reading copy as resources, and
 leaves one access-log line per call on stderr and in the file `LITHARNESS_MCP_LOG` names.

@@ -480,6 +480,14 @@ def ladders(records: Sequence[lc.StateRecord]) -> list[dict[str, Any]]:
     """
     out: list[dict[str, Any]] = []
     people = sorted(worlds.entities_with_role(records, "cast"))
+    # **What standing on a rung looks like, on the rung** (stage-0 §241.3). An agent asked
+    # to describe the ladders walked `show` for every rung to find its `manifests_as` and
+    # ran out of turns fourteen calls later; the fact belongs beside the rung it is about.
+    manifests = {
+        record.subject: record.value
+        for record in records
+        if record.predicate == worlds.MANIFESTS_PREDICATE
+    }
     for criterion, label in sorted(worlds.criteria(records).items()):
         chain = worlds.ladder_of(records, criterion)
         if not chain:
@@ -503,7 +511,12 @@ def ladders(records: Sequence[lc.StateRecord]) -> list[dict[str, Any]]:
                 "criterion": criterion,
                 "label": label,
                 "rungs": [
-                    {"rung": rung, "position": index + 1, "grants": grants.get(rung, "")}
+                    {
+                        "rung": rung,
+                        "position": index + 1,
+                        "grants": grants.get(rung, ""),
+                        "manifests_as": manifests.get(rung),
+                    }
                     for index, rung in enumerate(chain)
                 ],
                 "standing": standing,

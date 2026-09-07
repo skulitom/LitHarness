@@ -25154,3 +25154,73 @@ and not made a target; the dollars and turns above are what they were, not what 
 
 **Anti-scope.** No prompt, rule or writer instruction changed; nothing here measures a book;
 the internal agents are where §241 left them.
+
+### 241.3. A hundred Opus agents held the surface on twenty-five tasks: one task loop, three named gaps, and the harness's own turn tax
+
+**2026-09-07, evening.** The operator: run more checks — a hundred Opus agents rather than a
+larger batch — then fix the cause; the whole-volume draw was stopped at his word (its store
+untouched, the verdict beside it in `runs/volume1/OPERATOR-VERDICT.md`) and this batch ran
+after it released the box. Nothing here is a quality claim about a book.
+
+**Measured first.** Twenty-five task types, four repeats each, one `claude -p` call per run on
+`claude-opus-5`, the server attached by `--mcp-config`, `--allowedTools mcp__litharness__*`
+and no other allowance, `--max-turns 20`, three runs at a time under the box lock, a $300 cap.
+Stores: copies of the litrpg fixture, `runs/ab/pilot25/draw6/serial.db` (four of six scenes,
+one parked and one poisoned unit), `runs/pilots/databases/serial4.db` (eight of eight), a
+two-book store, and a copy with one migration deliberately pending; propose runs on fresh
+copies. The battery, runner, waiter, every transcript (stream-json, so each agent's arguments
+are readable), every access log, the grader and the analysis are under
+`runs/dogfood/2026-09-07-mcp-opus/` (local, ignored). One validation run preceded the batch.
+
+The outcome: 97 of 100 runs passed the grader, at $62.91 in total (mean $0.63, from $0.36 for a
+four-call glance to $1.04 for the propose-a-character task); no run timed out, no permission
+was denied, no tool faulted outside the store built to fault (`MigrationsPending`, thirteen
+times, each answered with the CLI verb that clears it); every call answered in under a
+quarter of a second. Four grader verdicts were false negatives (`Scene 1` for `scene-1`) and
+were re-graded from the saved answers, which is why the grader's widening is recorded here
+rather than hidden. Argument choices, read off the transcripts: `why` was called 54 times and
+asked for the frozen prompt only 6 times; `state` and `findings` were paged 36 times; ten
+calls in a hundred runs repeated an identical earlier call. The harness's own cost: 156
+`ToolSearch` turns to load deferred tool schemas, about one and a half per run, before any
+tool ran — not this surface's to change, and named so nobody reads it as ours.
+
+**The one task that failed, and its cause.** *Describe every ladder, its rungs and who stands
+where*: three of four runs exhausted their twenty turns. Each read `ladders`, then `show` for
+every rung in turn — fourteen calls on two ladders — because the rung's `manifests_as` (what
+standing there looks like) was not on the rung. The passing run did the same walk and finished
+with a turn to spare. The propose-a-character task passed every time at a mean of 26 calls
+for the same reason: sixteen `show` calls, one subject at a time, to read the cast and the
+grants. **Fixed:** `world.ladders` puts each rung's `manifests_as` on the rung
+(`test_show_takes_several_subjects_in_one_call_and_ladders_carry_their_manifestations`), and
+the `world` tool's `show` takes `subjects`, a list, answering keyed by subject.
+
+**The gaps the agents named in their answers, and what was done with each.** Two runs wanted
+a decision by its id (`verify` and `queue` hand out decision, job, finding and exception ids
+and nothing opened one): **`lookup`**, one tool resolving any id the store mints by its
+prefix — `dec-`, `f-`, `exc-`, `dir-`, `rel-`, `beat-`, `rec-`, or a 64-character revision
+or plan-revision hash — into the row the matching view prints, with the tools to call next
+(`test_lookup_resolves_the_ids_other_tools_hand_out`); a job's payload keys are named and its
+prompt is not, because the prompt is the dossier's to show. Two runs said `plans` gave
+lineage and counts and nothing mapped a statement to its scene: **`plans(items=true)`** returns
+the head plan's items. One run read `verify`'s revision count against `plans`' and found no
+tool reconciled them: the two are manuscript and plan revisions, and `verify`'s description
+now says so. Three runs wanted the prose checked against canon on demand: the check ran when
+the scene was drafted and its verdicts are the findings, so `findings`' description now says
+what a finding is; no on-demand detector tool was added (a detector run is the evaluator's,
+and the read profile stays a reader). One run wanted a per-tick cost estimate; the store holds
+spend per decision and today's ceiling, not a price, and nothing was added. One propose run
+wanted to read prose; that profile has no dossier tool by design (§241).
+
+**Confirmed on the fixed surface** (six Opus runs, `runs/dogfood/2026-09-07-mcp-opus-confirm/`,
+$5.04): the ladders task passed both runs at six and seven calls, each reading `show` with
+`subjects` once instead of per rung; the propose-a-character task passed at eleven and
+thirteen calls against its earlier mean of twenty-six; both findings-and-verify runs called
+`lookup`, twice each, for the ids they had been handed.
+
+**Refused.** Raising `--max-turns` for the battery to make the ladders task pass: the loop
+was the finding. Defaulting `include_prompt` to false: the agents already chose it 48 times in
+54. A `cost` tool: nothing in the store is a price.
+
+**No bar declared.** A pass rate on one afternoon's battery is a measurement of that battery.
+**Anti-scope.** No prompt, rule or writer instruction changed; the internal agents are where
+§241 left them; nothing here touches the volume draw or its store.
