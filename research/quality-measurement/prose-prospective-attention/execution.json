@@ -1,0 +1,225 @@
+{
+  "schema": "local-prose-diagnostic.v1",
+  "status": "observed",
+  "registration_commit": "2d31db949f884f91329006dba7006fc9d2e069d3",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "requested_model": "gpt-6-astra",
+  "reasoning_effort": "high",
+  "resolved_model": null,
+  "completed_calls": 7,
+  "registered_calls": 7,
+  "matched_source_verified": true,
+  "only_request_difference": "prospective_attention",
+  "source_units": 42,
+  "required_narration": 31,
+  "prefix_units": [
+    4,
+    23,
+    34
+  ],
+  "expectations": 3,
+  "outputs": [
+    {
+      "id": "expectation-1",
+      "kind": "expectation",
+      "usage": {
+        "input_tokens": 5098,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 139,
+        "reasoning_output_tokens": 92
+      },
+      "wall_ms": 9459,
+      "sha256": {
+        "request.json": "b3c0f4303271566414076a09e4c38d8f2a922ebc38310d017a6cebe6e0dff5ce",
+        "raw.json": "8c0325b3d6e05958b8bc5dfaeebdba2cd77f22aad86ac2abc9619a7e7faa9b2d",
+        "result.json": "feffc12fb294077eaa2bf3ceb0a3096265eb87f60d8611c34b5b05cc03358d6b",
+        "txt": "838d5a211098890bfc1fa3eeb35f969bbd6385f6db84de3f2ae06446f0a0ade9"
+      },
+      "prefix_units": 4
+    },
+    {
+      "id": "expectation-2",
+      "kind": "expectation",
+      "usage": {
+        "input_tokens": 5954,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 203,
+        "reasoning_output_tokens": 149
+      },
+      "wall_ms": 15028,
+      "sha256": {
+        "request.json": "c4cb2bfe00454d6e6d20f7125e3c6529815f42ab8be535019ce905dceac25d9a",
+        "raw.json": "f831b04f6d34e03fbe390888583786d1ebb1353d389e87353be46f088d05a10b",
+        "result.json": "5bc87f61314477d311740b05d094406b2fbc74e1d428862bc49e60b240348cab",
+        "txt": "7fd384b5fa969951ded58cd48e0786913c759aa79edfd55852fa9a320a80545d"
+      },
+      "prefix_units": 23
+    },
+    {
+      "id": "expectation-3",
+      "kind": "expectation",
+      "usage": {
+        "input_tokens": 6563,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 198,
+        "reasoning_output_tokens": 150
+      },
+      "wall_ms": 11074,
+      "sha256": {
+        "request.json": "8449b9f61b1d67b0274cc15d7efa67b9220da41e78cf1041336d412150ffb47f",
+        "raw.json": "5b68d6af15c1ffe9c54ec589fd945eb1db24191a843b73f176882a166b673712",
+        "result.json": "821e6bf0bad8e0d90acee884d1c117a529ca2f54cc6a3d47e9e63461e0f85a30",
+        "txt": "7627ca81f10720ed162eef801c223345421954a78c7803abf2b75ffffa2f3999"
+      },
+      "prefix_units": 34
+    },
+    {
+      "id": "source-1",
+      "kind": "chapter",
+      "usage": {
+        "input_tokens": 7883,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2309,
+        "reasoning_output_tokens": 257
+      },
+      "wall_ms": 105064,
+      "sha256": {
+        "request.json": "c5d399ebbef82d658ea8b04dbe56157254f058cde8914a5862760f07b7932ae6",
+        "raw.json": "e3df545d7e84111457f7071533ca3d26bd5ee3686a539a67b0c49b9c8a8fc001",
+        "result.json": "93094d533699cb81edd2529467eea305bf5b72ceb12526bd6c9e7c84a82d0b4b",
+        "txt": "01bd20880e35c95342f0c84b7b4064c1887c4e08e3a373ea0e7a1c92fac21f96"
+      },
+      "words": 1635,
+      "paragraphs": 80,
+      "within_length_aim": true,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true
+    },
+    {
+      "id": "prospective-1",
+      "kind": "chapter",
+      "usage": {
+        "input_tokens": 8065,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2393,
+        "reasoning_output_tokens": 289
+      },
+      "wall_ms": 87507,
+      "sha256": {
+        "request.json": "8db6957381527c5178d56172499de408a55baccea2567c8d55a15ab17d9a7257",
+        "raw.json": "634d9f8ba065ed17247600adbcb27f7862b585fd5f9d18b18751078588677ca0",
+        "result.json": "cb1e7b72f8f2c9557df1b2aac33bc2ec2aadf38679d57d2ea5568cb6b97bb759",
+        "txt": "9d6d6eb0782107d21225e585b25210e99f2c687707544477fe5adbdd395cef2e"
+      },
+      "words": 1678,
+      "paragraphs": 80,
+      "within_length_aim": true,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true
+    },
+    {
+      "id": "prospective-2",
+      "kind": "chapter",
+      "usage": {
+        "input_tokens": 8065,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2514,
+        "reasoning_output_tokens": 393
+      },
+      "wall_ms": 105385,
+      "sha256": {
+        "request.json": "2e7a919616ba43a18ee6f8d7f5fe0fa1b44cffff3abf22de1f0f7114bc82cc47",
+        "raw.json": "987559520cdd29d5ef570449c9c3cd2af951eb8a3b0051a9029ee4f263af2b82",
+        "result.json": "4b833a6113a2f0128f7e2f4ca2679c80b036214d3e24733d7969f7cca31f3353",
+        "txt": "7e3779cefc0641074324ce0441fc291e4f8f0d00453c03ecb7212bf9447927bf"
+      },
+      "words": 1698,
+      "paragraphs": 80,
+      "within_length_aim": true,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true
+    },
+    {
+      "id": "source-2",
+      "kind": "chapter",
+      "usage": {
+        "input_tokens": 7883,
+        "cached_input_tokens": 2688,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2450,
+        "reasoning_output_tokens": 303
+      },
+      "wall_ms": 108306,
+      "sha256": {
+        "request.json": "782acd7308e9d3238fe61d1a5eba12624fc2074a9630bbd8011f7cb4ba8051bd",
+        "raw.json": "8230e57f6510d30ba079b6a638731b691eb96e63559328cf2d7fa649b055845d",
+        "result.json": "2def58ad51f6930505250229994373a8751efce78ecfbb920377130c15f14682",
+        "txt": "a2c361a192b6d681a09ca7f58a5d14f1e872c439b3086c4a52090a0124cc2a32"
+      },
+      "words": 1732,
+      "paragraphs": 84,
+      "within_length_aim": true,
+      "expected_display_occurrences": 10,
+      "actual_display_occurrences": 10,
+      "display_word_sequence_matches": true
+    }
+  ],
+  "usage": {
+    "input_tokens": 49511,
+    "cached_input_tokens": 16128,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 10206,
+    "reasoning_output_tokens": 1633
+  },
+  "accounted_tokens": 61350,
+  "token_stop": 125000,
+  "reading": {
+    "complete_chapters": 4,
+    "source_correspondences": 168,
+    "attention_correspondences": 24
+  },
+  "ranking": null,
+  "local_artifacts": {
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\manifest.json": "c9885da1ac4e742b722d0829db29b5686a005fa7f471941ce213bcad181fff44",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\draft-manifest.json": "66cdc455541929d2e1de387904ed3bdd605cfccf1dff28999d83418d1b324b7d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\temporal-review.json": "42430814646cfa100d8218a6f443b945f92c2a335ced0f64af8e02e4a8818510",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\READING.md": "8e85d9d92a0f5485e15daeedb6e1e4c92a10c79bbeedf80c1af66e0e1c9d8eda",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\reading-records.json": "dfe9554f1fcfcc2bf04b8eba53e51b6a6338b749429ae6d3c6190f2f6706ad0f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\comparison.html": "276abc2fb08d48b47b94ba48662d40691d66a716eaa24f03bfe51798e41b824f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\build_review.py": "e77d095f002995dc72f428fe470645684ca15e2cbf803721dca035f6646d4fa6",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\inspect_prefixes.py": "6d8bfb49904b9879c672ee63185d22bd3c27dde2c5316543f96922710a773267",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\make_template.py": "02db2769a12b3174fdb1dff2af6ec0a4deea92f5ee11b157e078b3f4bbceb306",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\manual_readings.py": "001c2fd6f9ab137803fba79c38948024586c7a3362ea54e788de8054b6d6cda4",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\prepare_source.py": "9939fba5da8f362495e441812ab69c158744cbea7ab44212030794faeedff6a5",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\read_passage.py": "50c239b7cfea0cfdcf1ef51e373bd557c53644bbb5a07012daa1298e1d70a775",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\record_temporal_review.py": "36172d81253fe8e72c395c52bc5312391c3bd6fc9ae5117c3f7a3c5e8b1ac335",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\update_claim.py": "f0d3fc9484b2a67b66ab4f1e25a0d313cf42dc0a62513c45f2fd10d3a1423319",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\derive.log": "35dcf76092847e2aa83f2cd1bab791bd518913430f8ffd034ac6eea242a3686b",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\draft.log": "96efc5122501a2b2dfb0ef63bdc61e63b544e762f17c07c8017f8092e7341502",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\final-handoff.log": "d5a7eb7e4ec1fd68af65d306561d0d0566ab6f7d95978a70d5b39c511e50cf55",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\registration-final-handoff.log": "adc44d27921740bb0d13a7dfbe8243d7a3347eb23fdfab709364db3f5a4e1c0b",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\registration-handoff.log": "4d0444805f8ad77b241ec5c86d59f6414004c6915c3a85f2a0c1033de3c95c98",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-tools\\template.html": "40f4d73d238e8f7aac2f8f5ec5c7b87e38f3e48719233e14bd46c2a2220ff480",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\browser-qa\\QA.md": "7849e150292ff0de28e4e9b9a738ba9b79f251a59aff5a0f260cc84c25242519",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\browser-qa\\page-2026-09-07T11-00-37-968Z.yml": "35db8e4f9385ccc42114927656c49adedc87d3ee9222c7085e37efd4069201f7",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\browser-qa\\page-2026-09-07T11-01-13-679Z.yml": "d4d255e761b0df34d49bf1899f9dd97dd49bdf360c58856ec6492acd5435698f",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\browser-qa\\page-2026-09-07T11-01-43-612Z.yml": "bc13d0ded9c767baf0f91f4672c12e2a5e15fc66a9f5155647e05c386741805d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\browser-qa\\page-2026-09-07T11-03-11-879Z.yml": "a7f6adc60a92fc31d0db948eef5ae3a4b5772f164db544dee1d87e5b5d0a764d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\browser-qa\\page-2026-09-07T11-03-15-226Z.yml": "124672de3a8131b155a0b9acddbdddfb8ebcb42d88e339a8c945adace2bcd5ef",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\browser-qa\\page-2026-09-07T11-04-12-617Z.yml": "78006ece8dc6b8746739520134432340661228005cef259e8b2e1ba50b983416",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\browser-qa\\page-2026-09-07T11-04-14-253Z.yml": "52a9dbe8da319ead2dcbea2e1309e1bf43e4ab9950e3c3898440cf37935c6827",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\browser-qa\\page-2026-09-07T11-04-17-538Z.yml": "9ca80adc7f33b1c40fc941612ef451de44b76c5ad1af87fbf49b4b9ff6216d78",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\browser-qa\\prose-prospective-attention-desktop.png": "cd0eed224e83b1de336403c4160a580054e94ab6dd28887361b9b1a656749b77",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-prospective-attention-20260907\\browser-qa\\prose-prospective-attention-mobile.png": "81b93343a30ccd9840ba78a2c21deb298fd7c648f1ef8c5ae052c65533b13b35"
+  }
+}
