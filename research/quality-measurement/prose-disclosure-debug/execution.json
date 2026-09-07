@@ -1,0 +1,267 @@
+{
+  "schema": "local-implementation-inspection.v1",
+  "date": "2026-09-07",
+  "status": "observed_implementation_only",
+  "starting_commit": "fda2d609579a0880d1c053e07a8a9924c569df68",
+  "model_calls": 0,
+  "generation_behavior_changed": false,
+  "prose_quality_effect_established": false,
+  "source": {
+    "book_id": "153f15f9-97f7-4720-a30f-de7da051186b",
+    "branch_id": "b4076791-2b8e-4c49-9f49-5a8b2ea5c929",
+    "job_id": "beat-2c70980362f0426bfd63cb30",
+    "scene": "scene-1",
+    "claim_subject": "claim_edge",
+    "claim_record_id": "rec-w13845db145c6b8c17716178d",
+    "frozen_story_key": "s1",
+    "manuscript_reading_key": "0000010",
+    "reader_disclosures_in_retained_store": 0,
+    "other_audience_disclosures_for_claim": 5,
+    "planned_reveal_for_claim": null,
+    "imported_seed_records": 334
+  },
+  "verification": {
+    "first_probe": {
+      "script": "runs/ab/prose-disclosure-debug-20260907/verify_tools.py",
+      "exit_code": 1,
+      "failure": "before == after database-file-family assertion",
+      "cli_result_matched_mcp_before_failure": true,
+      "planned_json_not_written": true,
+      "in_process_hash_dictionaries_not_persisted": true,
+      "retained_original_state_audit_preserved": true
+    },
+    "followup_logical_limits": "334 seed rows and selected retained inputs/results verified; no complete pre-incident dump establishes full logical equivalence",
+    "fixed_probe": {
+      "completed": true,
+      "main_database_unchanged": true,
+      "file_family_exactly_unchanged": false,
+      "cli_result_matches_mcp": true,
+      "snapshots": {
+        "before": {
+          "serial.db": {
+            "sha256": "f11823ca25791ccc5278deca2dbdd8fb41c42537cccb2d17e83840fbd8516969",
+            "bytes": 1458176
+          },
+          "serial.db-wal": null,
+          "serial.db-shm": null
+        },
+        "after_mcp": {
+          "serial.db": {
+            "sha256": "f11823ca25791ccc5278deca2dbdd8fb41c42537cccb2d17e83840fbd8516969",
+            "bytes": 1458176
+          },
+          "serial.db-wal": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "serial.db-shm": {
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb",
+            "bytes": 32768
+          }
+        },
+        "after_cli": {
+          "serial.db": {
+            "sha256": "f11823ca25791ccc5278deca2dbdd8fb41c42537cccb2d17e83840fbd8516969",
+            "bytes": 1458176
+          },
+          "serial.db-wal": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "serial.db-shm": {
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb",
+            "bytes": 32768
+          }
+        },
+        "finally": {
+          "serial.db": {
+            "sha256": "f11823ca25791ccc5278deca2dbdd8fb41c42537cccb2d17e83840fbd8516969",
+            "bytes": 1458176
+          },
+          "serial.db-wal": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "serial.db-shm": {
+            "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb",
+            "bytes": 32768
+          }
+        }
+      }
+    },
+    "focused_regressions": {
+      "command": "uv run pytest tests/test_agent_surface.py tests/test_disclosure_diagnostics.py tests/test_scene_trace.py tests/test_mcp_server.py -q -n 0",
+      "exit_code": 0,
+      "count": null,
+      "note": "Quiet output supplied no numeric summary; not a prose-quality test"
+    },
+    "handoff": {
+      "command": "uv run python tools/check.py handoff",
+      "exit_code": 0,
+      "status": "passed",
+      "passed": 4391,
+      "skipped": 19,
+      "suite_seconds": 109.67,
+      "coverage_percent": 89.05
+    }
+  },
+  "artifacts": [
+    {
+      "path": "runs/ab/prose-disclosure-debug-20260907/audit_state.py",
+      "sha256": "937012212ec486716e9c1d0686a267508c27684dfdd4b9a88f9fa36f7a3564c4",
+      "kind": "local_inspection"
+    },
+    {
+      "path": "runs/ab/prose-disclosure-debug-20260907/state-audit.md",
+      "sha256": "fa6638d10199ecebac68360caea56db329d3d1a1e5c89c32c9e31f8e186ad0c6",
+      "kind": "local_inspection"
+    },
+    {
+      "path": "runs/ab/prose-disclosure-debug-20260907/verify_tools.py",
+      "sha256": "d2bbf0a922accddbbdb4ede30a81771aa60119a4fb9514395c53abd438ed3e11",
+      "kind": "local_inspection"
+    },
+    {
+      "path": "runs/ab/prose-disclosure-debug-20260907/storage-side-effect-audit.md",
+      "sha256": "2b2fd1dc0bd6a5d112e8f277cbb0df5b03d1a00a56c135280ef0637ec96b201d",
+      "kind": "local_inspection"
+    },
+    {
+      "path": "runs/ab/prose-disclosure-debug-20260907/verify_tools_v2.py",
+      "sha256": "c4c5ffca7bc4a83cd20ae8ba7c3f769943e9f79496963b2047230762e9670b51",
+      "kind": "local_inspection"
+    },
+    {
+      "path": "runs/ab/prose-disclosure-debug-20260907/tool-verification-v2.json",
+      "sha256": "c43175cb0cf068d34b912164f723381db74c6104fc2d51f7c158b727f7b7b8d8",
+      "kind": "local_inspection"
+    },
+    {
+      "path": "runs/ab/prose-disclosure-debug-20260907/record_execution.py",
+      "sha256": "f3869ae18a986928e9da282f5bed48eef98f0fbb2f2325a6d55b11158227ffd4",
+      "kind": "local_inspection"
+    },
+    {
+      "path": "runs/ab/prose-disclosure-debug-20260907/handoff.log",
+      "sha256": "5c7173df218b789307db21355b7b2877193fd7f7053f1fcf926c3526ebe7527c",
+      "kind": "local_inspection"
+    },
+    {
+      "path": "runs/ab/prose-disclosure-debug-20260907/handoff-status.json",
+      "sha256": "f4249e0aa8d6f6068db200eb730ace6c6da81f0ce06c3dfb0f727ab09cd51964",
+      "kind": "local_inspection"
+    },
+    {
+      "path": "runs/ab/chapter-rule-context-20260905/request-4.json",
+      "sha256": "4cb3c1292b764ed9087a43fbbd903f9848688a16e1ec3bf15b2d23802722b13f",
+      "kind": "retained_source"
+    },
+    {
+      "path": "runs/ab/chapter-rule-context-20260905/provider-4.json",
+      "sha256": "e512b7626b3e3fc833f05aaa7897aedd1631f6675f11704c8ac66e9c52279135",
+      "kind": "retained_source"
+    },
+    {
+      "path": "runs/ab/chapter-rule-context-20260905/starting-world.json",
+      "sha256": "ff423c013c0bf23979b6305c924756c026e032a738ab3943830e8027ae215546",
+      "kind": "retained_source"
+    },
+    {
+      "path": "runs/ab/agent-scene-trace-20260907/original-scene-1.json",
+      "sha256": "f52bca4f5302f253a5df7fa9115bcf2e9631d2e2efaea4fbf74cc9ce6bf8515a",
+      "kind": "retained_source"
+    },
+    {
+      "path": "src/litharness/domain/worlds.py",
+      "sha256": "5cee3d1334a4426572309f99714aaf74be06941de5fa2e07c4ca268b544e8e3b",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "src/litharness/application/world.py",
+      "sha256": "5ffb782cf39388cfbfe326051c58e49827f9ab8a7c0609a3babbc11e9d54aedd",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "src/litharness/application/scene_trace.py",
+      "sha256": "7ffe556822a4a756cb5034d616fbd119beea3198d6368038ec89372f1779df43",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "src/litharness/cli.py",
+      "sha256": "a6b0f0d59b5c82e50eb751fdcf4018a12a0d3e347996d53267b2e0a754ad03e6",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "src/litharness/mcp_server.py",
+      "sha256": "7cc3ae89e3553b685f73d01a1bed576d109890a2a3456decd19ded484f28a0b3",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "src/litharness/adapters/sqlite_store.py",
+      "sha256": "e42d7632101af39e0c65548317f0736a89d5f7b69c3e436a35c8d918b536bc84",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "src/litharness/domain/context.py",
+      "sha256": "7cc77d9bde20255d606a591c9d6e2a9d3a375561f7e895eef24cbd5e60fdc06a",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "src/litharness/application/planner.py",
+      "sha256": "45e298ab50d6f81994c5f4ee93c353bd882326c62d14d27a130de44f859eba06",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "tests/test_disclosure_diagnostics.py",
+      "sha256": "1978d8365030593c474650855c6634c92ffb08d6ea61b6260edbc5a046015b0d",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "tests/test_scene_trace.py",
+      "sha256": "3e071b4b8fd8354e008d1553e891303a6fd9b68cd6953238a2c7e880313ea57a",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "tests/test_mcp_server.py",
+      "sha256": "6fa36b3ce88d365c746b50cdb89d984d7b2093a08c96bff4612ac693b5bbd948",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "tests/test_agent_surface.py",
+      "sha256": "128329dbf14465678758426bbc27c0635e821038d282974dc1e82305dcd338bb",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "tests/test_packet_order_key_spaces.py",
+      "sha256": "f00a0a24e93fa7d763c6d92f0714b9ae64c6ebe212c49f7c5dfb5318b475fe2c",
+      "kind": "implementation_or_regression"
+    },
+    {
+      "path": "research/quality-measurement/prose-disclosure-debug/RUNBOOK.md",
+      "sha256": "34118692cabfd5a03eaa5ae3a80cb568f16666f29738e3f05c4d7546ba3a8d31",
+      "kind": "documentation"
+    },
+    {
+      "path": "research/quality-measurement/prose-disclosure-debug/RESULTS.md",
+      "sha256": "7405a01e00321da1f88df71a0f529a27eb5f2142066db23f5a5e4f160df6827d",
+      "kind": "documentation"
+    },
+    {
+      "path": "README.md",
+      "sha256": "7455149b131dd4bd8de18b222fad9c787a90cdd79aa8342d9a8ac5f2ebdbb4a6",
+      "kind": "documentation"
+    },
+    {
+      "path": "RESEARCH.md",
+      "sha256": "ee13837d98b84df407674e5ebaad2670f3f56efcc845a5403c84fb99374a4f7e",
+      "kind": "documentation"
+    },
+    {
+      "path": ".claude/skills/litharness-mcp/SKILL.md",
+      "sha256": "01a58d72af92ae5b7c8ca36b5429542f4dd52514a079a1caef541c784d569299",
+      "kind": "documentation"
+    }
+  ],
+  "rebuild": "uv run python -X utf8 runs/ab/prose-disclosure-debug-20260907/record_execution.py",
+  "availability": "Source text, databases and raw inspection artifacts are ignored local files, not distributed with a clone"
+}

@@ -34,6 +34,26 @@ def _hash(text: str) -> str:
     return sha256(text.encode("utf-8")).hexdigest()
 
 
+def _story_order(payload: dict[str, Any], request_absent: str | None) -> dict[str, Any]:
+    """Read the frozen drafting cutoff without deriving it from current reading order."""
+    result: dict[str, Any] = {
+        "source": "job_payload.selected_by.story_order_key",
+        "status": "not_recorded",
+        "key": None,
+    }
+    if request_absent is not None:
+        return {**result, "status": "unavailable", "reason": request_absent}
+    selected = payload.get("selected_by")
+    if not isinstance(selected, dict) or "story_order_key" not in selected:
+        return result
+    key = selected["story_order_key"]
+    if key is None:
+        return {**result, "status": "unpositioned"}
+    if not isinstance(key, str) or not key.strip():
+        return {**result, "status": "invalid_recorded_value"}
+    return {**result, "status": "recorded", "key": key}
+
+
 def _has_shelf_heading(text: object) -> bool:
     return isinstance(text, str) and any(heading in text for heading in _SHELF_HEADINGS)
 
@@ -422,6 +442,7 @@ def build_scene_trace(
             "scope": "current_attributed_or_unfinished_job",
             "input_digest": job.input_digest if job is not None else None,
             "provider_transport_captured": False,
+            "story_order": _story_order(payload, request_absent),
             "available": request_absent is None and originals["prompt"] is not None,
             "absent_reason": request_absent
             or ("prompt_not_recorded" if originals["prompt"] is None else None),

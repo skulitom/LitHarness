@@ -267,6 +267,17 @@ prompts are withheld in full when their boundaries are not verified. The server
 pages `state` and `findings` with a visible bound, names each result's keys in the tool list,
 serves the skill's workflows as prompts and the guide and reading copy as resources, and
 leaves one access-log line per call on stderr and in the file `LITHARNESS_MCP_LOG` names.
+For a disclosure problem, `scene_trace.request.story_order` identifies the frozen drafting
+key. Pass a recorded key to `world` with `view=threads`, `at`, and optionally `subject`.
+The equivalent CLI is `world threads --at STORY_KEY --subject CLAIM_ID`. The result explains
+each claim's disclosure classification using record IDs, audiences and position comparisons,
+with planned reveals kept separate. It reads current declarations, including labelled proposals;
+it does not reconstruct the old writer packet, inspect scene-plan prose, or authorize a reveal.
+Missing, invalid and deliberately unpositioned job keys remain distinct; a manuscript
+reading-order position is not a substitute story key.
+CLI `world` read views also use a read-only connection: they refuse missing databases and
+pending migrations instead of creating or upgrading a store. SQLite may still create
+empty WAL/shared-memory sidecars while reading a WAL database.
 Every tool result carries `attention: true` where the CLI would exit 1, and every read tool's
 description ends with the rule the `debug-book` skill keeps: nothing a dossier tells you may
 become a prompt, directive, finding or plan item.

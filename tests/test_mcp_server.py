@@ -652,6 +652,67 @@ def test_world_declare_through_the_server_mints_proposed_only_and_carries_the_ma
     assert actors == {"mcp:propose:test"}
 
 
+@pytest.mark.parametrize("reader_key", [None, "s5"])
+def test_thread_disclosure_diagnostics_match_cli_and_preserve_the_store(
+    db: Path, capsys: pytest.CaptureFixture[str], reader_key: str | None
+) -> None:
+    import litharness_contracts as lc
+
+    from litharness.domain import worlds
+
+    def record(subject: str, predicate: str, **values: Any) -> lc.StateRecord:
+        return worlds.world_record(
+            subject, predicate, authority=lc.StateAuthority.ACCEPTED_CANON, **values
+        )
+
+    claim = record("probe_secret", worlds.CLAIM_CONTENT, value="A private mechanism.")
+    character = record("mara", worlds.DISCLOSED_TO, object_ref="probe_secret", order_key="0030")
+    rows = [
+        claim,
+        character,
+        record("probe_secret", worlds.QUESTION_PREDICATE, value="How does it work?"),
+        record("probe_secret", worlds.REVEAL_SCENE, value=1),
+        worlds.world_record("other_secret", worlds.CLAIM_CONTENT, value="A proposed fact."),
+    ]
+    if reader_key is not None:
+        rows.append(
+            record(
+                "reader_event",
+                worlds.DISCLOSED_TO,
+                object_ref="probe_secret",
+                value=worlds.READER,
+                order_key=reader_key,
+            )
+        )
+    with SqliteStore.open(db) as store:
+        book_id, branch_id, _ = store.branches()[0]
+        store.record_state_records(book_id, branch_id, rows, created_at="2026-09-07T00:00:00Z")
+    before = hashlib.sha256(db.read_bytes()).hexdigest()
+    tools = make_tools(binding(db))
+    view = tools["world"](view="threads", subject="probe_secret", at="s1")["result"]
+    (row,) = view["disclosures"]
+    assert row["claim"]["record_id"] == claim.record_id
+    assert row["claim"]["canon"] is True
+    assert row["hidden_by_disclosure_rule"] is True
+    assert row["reason"] == (
+        "no_reader_disclosure" if reader_key is None else "reader_not_disclosed"
+    )
+    assert row["planned_reveal_scene"] == 1
+    assert row["other_disclosures"][0]["record_id"] == character.record_id
+    assert row["other_disclosures"][0]["comparison"] == "incomparable"
+    if reader_key is not None:
+        assert row["reader_disclosures"][0]["comparison"] == "future"
+    assert view["frozen_writer_context"] is False and view["scene_plan_checked"] is False
+    assert view["scope"] == "current_in_force_declarations"
+    assert run(db, "world", "threads", "--at", "s1", "--subject", "probe_secret") == EXIT_OK
+    assert json.loads(capsys.readouterr().out) == view
+    proposal = tools["world"](view="threads", subject="other_secret")["result"]
+    assert proposal["disclosures"][0]["claim"]["canon"] is False
+    assert proposal["disclosures"][0]["claim"]["authority"] == "proposed"
+    assert tools["world"](view="threads", subject="absent")["result"]["disclosures"] == []
+    assert hashlib.sha256(db.read_bytes()).hexdigest() == before
+
+
 def test_world_declare_batch_reports_each_item_and_stops_only_when_asked(db: Path) -> None:
     tools = make_tools(binding(db, "propose"))
     items = [

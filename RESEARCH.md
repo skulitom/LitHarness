@@ -281,6 +281,16 @@ with no reported retry, no quality ranking and no production prompt change. This
 duplication cleanup did not remove the located problem; shared source-authority tensions
 remain a proposed diagnostic, not an established cause.
 
+The [disclosure follow-up](research/quality-measurement/prose-disclosure-debug/RESULTS.md)
+traces one conflict to an imported canon claim: the frozen scene plan requires its event,
+while the prompt's hidden block prohibits it. There is no reader-disclosure record; five
+other-audience records also use keys incompatible with the frozen drafting cutoff. New
+`world threads` diagnostics explain that classification and `scene_trace` exposes the
+recorded story key without substituting manuscript reading order. The first CLI parity
+check exposed a writable read path and changed SQLite's file layout; that failure, the
+limited logical audit and the corrected read verification are retained. No generation or
+prose-quality comparison ran, and no disclosure permissions were inferred or applied.
+
 For subsequent tests in this sequence, record the hypothesis, fixed comparison, source/code
 hashes and stop rules before calls. Retain every request and raw response, including transport
 and format failures; record amendments without replacing failed draws. Finish a results file

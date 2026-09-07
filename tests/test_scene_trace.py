@@ -223,6 +223,29 @@ def _trace(store: SqliteStore, **options: Any) -> dict[str, Any]:
     return build_scene_trace(store, BOOK, BRANCH, head.node(SCENE), head, **options)
 
 
+@pytest.mark.parametrize(
+    ("selected", "status", "key"),
+    [
+        ({"story_order_key": "s17"}, "recorded", "s17"),
+        ({"story_order_key": None}, "unpositioned", None),
+        ({}, "not_recorded", None),
+        (None, "not_recorded", None),
+        ({"story_order_key": 17}, "invalid_recorded_value", None),
+    ],
+)
+def test_story_cutoff_comes_from_the_frozen_job_not_reading_order(
+    store: SqliteStore, selected: Any, status: str, key: str | None
+) -> None:
+    base, job = _seed(store, payload_extra={"selected_by": selected})
+    _accept(store, base, job)
+    assert base.node(SCENE).position_key != "s17"
+    assert _trace(store)["request"]["story_order"] == {
+        "source": "job_payload.selected_by.story_order_key",
+        "status": status,
+        "key": key,
+    }
+
+
 def test_frozen_input_does_not_become_the_current_plan(store: SqliteStore) -> None:
     base, job = _seed(store)
     _accept(store, base, job)
@@ -518,6 +541,7 @@ def test_revision_budget_refusal_without_an_event_does_not_borrow_the_writer_req
         assert result["stages"][stage]["absent_reason"] == "revision_request_not_recorded"
         assert result["excerpt"]["text"] is None
         assert result["request"]["available"] is False
+        assert result["request"]["story_order"]["status"] == "unavailable"
 
 
 def test_later_acceptance_at_a_lower_attempt_remains_the_default(store: SqliteStore) -> None:

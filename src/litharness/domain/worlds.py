@@ -43,6 +43,7 @@ import unicodedata
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from hashlib import sha256
+from typing import Literal
 
 import litharness_contracts as lc
 
@@ -875,6 +876,24 @@ def _reached(key: str, at: str) -> bool:
     return state_mod.comparable(key, at) and key <= at
 
 
+DisclosureComparison = Literal[
+    "unpositioned", "reached", "future", "incomparable", "missing_cutoff"
+]
+DisclosureReason = Literal[
+    "false_claim", "no_reader_disclosure", "reader_disclosed", "reader_not_disclosed"
+]
+
+
+def _disclosure_comparison(key: str | None, at: str | None) -> DisclosureComparison:
+    if key is None:
+        return "unpositioned"
+    if at is None:
+        return "missing_cutoff"
+    if not state_mod.comparable(key, at):
+        return "incomparable"
+    return "reached" if _reached(key, at) else "future"
+
+
 def _disclosed_by(key: str | None, at: str | None) -> bool:
     """Whether a reader-disclosure at `key` has landed by the time the book stands at `at`.
 
@@ -923,11 +942,93 @@ def _disclosed_by(key: str | None, at: str | None) -> bool:
       position at all — unlocatable, so *not yet*;
     - **a position in `at`'s own space** — compared, at or before is told, after is not yet.
     """
-    if key is None:
-        return True
-    if at is None:
-        return False
-    return _reached(key, at)
+    return _disclosure_comparison(key, at) in ("unpositioned", "reached")
+
+
+@dataclass(frozen=True, slots=True)
+class DisclosureEvidence:
+    """One supplied disclosure row and its position comparison, without interpretation.
+
+    A reached position alone does not identify its audience. Only evidence in a diagnostic's
+    `reader_disclosures` participates in the reader-disclosure rule. The original record keeps
+    its audience, identity, authority and provenance available to a caller.
+    """
+
+    record: lc.StateRecord
+    position: str | None
+    comparison: DisclosureComparison
+
+
+@dataclass(frozen=True, slots=True)
+class ClaimDisclosureDiagnostic:
+    """The disclosure rule applied to one nonblank `claim.content` record.
+
+    `hidden` has the same meaning as membership in `undisclosed_claims` for these supplied
+    records. It does not attest that a writer packet carried the record: authority, temporal,
+    POV and budget filtering belong to the caller. Non-reader audiences, including blank ones,
+    remain visible as `other_disclosures` and never satisfy reader disclosure.
+    """
+
+    record: lc.StateRecord
+    false_claim: bool
+    hidden: bool
+    reason: DisclosureReason
+    reader_disclosures: tuple[DisclosureEvidence, ...]
+    other_disclosures: tuple[DisclosureEvidence, ...]
+
+
+def disclosure_diagnostics(
+    records: Sequence[lc.StateRecord], *, at: str | None = None
+) -> tuple[ClaimDisclosureDiagnostic, ...]:
+    """Explain the existing disclosure rule without changing state or inferring a reveal.
+
+    One row per nonblank claim record, in `state.in_story_order` order. Supporting disclosure
+    rows retain their supplied order and match the claim's subject by exact `object_ref`.
+    As in `undisclosed_claims`, the caller owns authority and scope filtering. A question,
+    `reveal_scene`, belief, or prose plan cannot substitute for a reader-disclosure record.
+    """
+    reader: dict[str, list[DisclosureEvidence]] = {}
+    other: dict[str, list[DisclosureEvidence]] = {}
+    for record in records:
+        if record.predicate != DISCLOSED_TO or not record.object_ref:
+            continue
+        position = state_mod.order_key_of(record)
+        evidence = DisclosureEvidence(
+            record=record,
+            position=position,
+            comparison=_disclosure_comparison(position, at),
+        )
+        by_claim = reader if str(record.value or "").strip() == READER else other
+        by_claim.setdefault(record.object_ref, []).append(evidence)
+
+    wrong = false_claims(records)
+    result: list[ClaimDisclosureDiagnostic] = []
+    for record in state_mod.in_story_order(records):
+        if record.predicate != CLAIM_CONTENT or not str(record.value or "").strip():
+            continue
+        reader_rows = tuple(reader.get(record.subject, ()))
+        is_false = record.subject in wrong
+        disclosed = any(_disclosed_by(row.position, at) for row in reader_rows)
+        reason: DisclosureReason
+        if is_false:
+            reason = "false_claim"
+        elif not reader_rows:
+            reason = "no_reader_disclosure"
+        elif disclosed:
+            reason = "reader_disclosed"
+        else:
+            reason = "reader_not_disclosed"
+        result.append(
+            ClaimDisclosureDiagnostic(
+                record=record,
+                false_claim=is_false,
+                hidden=not is_false and not disclosed,
+                reason=reason,
+                reader_disclosures=reader_rows,
+                other_disclosures=tuple(other.get(record.subject, ())),
+            )
+        )
+    return tuple(result)
 
 
 def undisclosed_claims(
@@ -2029,7 +2130,11 @@ __all__ = [
     "VIEW_WITHHOLDS",
     "WORLD_RULE_PREDICATE",
     "CardinalityShape",
+    "ClaimDisclosureDiagnostic",
     "Coverage",
+    "DisclosureComparison",
+    "DisclosureEvidence",
+    "DisclosureReason",
     "IllegalWorld",
     "Protagonist",
     "capabilities",
@@ -2040,6 +2145,7 @@ __all__ = [
     "criteria",
     "criterion_brief",
     "criterion_of_rung",
+    "disclosure_diagnostics",
     "disclosures",
     "entities_with_role",
     "entity_roles",

@@ -378,7 +378,7 @@ VERB_HELP: dict[tuple[str, ...], str] = {
     ("world", "ladders"): "ordinal criteria, their rungs lowest-first, and who stands where",
     ("world", "abilities"): "what a person can do here, and who holds what",
     ("world", "cast"): "who is in this world, by role, and who the protagonist is",
-    ("world", "threads"): "open questions, where each is answered, what is still untold",
+    ("world", "threads"): "open questions, reveal intentions and why each claim is still untold",
     ("world", "vocabulary"): "every predicate and role this world's language admits",
     ("world", "presence"): "which coined names have reached the page and which have not",
     ("world", "check"): "what is wrong by arithmetic; exits 1 when anything is",
@@ -568,6 +568,8 @@ DESCRIPTIONS: dict[str, str] = {
         "a decision_id from attempts, and stage=system, prompt, raw_draft, pre_revision_draft "
         "or accepted to page that stage with offset/max_chars (at most 20000 characters). "
         "Frozen job input is labelled separately from an uncaptured provider transport. "
+        "request.story_order gives the frozen drafting key for a world threads disclosure "
+        "query; its missing/unpositioned statuses must not be replaced by reading order. "
         "Missing or ambiguous evidence stays missing; rejected drafts are not accepted prose. "
         "Shelf-exposed raw drafts are withheld; prompt shelves are redacted. Byte differences "
         f"do not measure quality. {_keys('scene_trace')} {FENCE}"
@@ -595,6 +597,10 @@ DESCRIPTIONS: dict[str, str] = {
     "world": (
         "READ. Ask this world a question, by `view`. "
         + _views_help("world", WORLD_VIEWS)
+        + " `threads` exposes disclosure reasons and supporting record IDs; `subject` narrows "
+        "that view to one claim. Pass its exact story key as `at`, not a reading-order position. "
+        "This is current declaration state, not a frozen writer context; it does not check "
+        "scene-plan prose or authorize disclosure. "
         + f" `attention` is true when `check` is not ok. {_keys('world')} "
         + FENCE
     ),
@@ -1475,7 +1481,11 @@ def prompt_text(name: str, **arguments: str) -> str:
             "page the needed stage. Check whether the passage already exists in raw_draft or "
             "only in accepted text. A changed hash identifies changed bytes, not a cause or a "
             "quality judgment. Frozen job input is not the full provider transport.\n"
-            "5. Report what the rows say, quoting the gate detail or the plan item rather than "
+            "5. For a disclosure conflict, use a recorded request.story_order key as `at` in "
+            "`world` view=`threads`, with `subject` for the claim. Read the disclosure reasons "
+            "and supporting records. This is current declaration state, not the frozen packet; "
+            "a planned reveal or a character audience does not establish reader disclosure.\n"
+            "6. Report what the rows say, quoting the gate detail or the plan item rather than "
             "paraphrasing, and name what the store does not hold.\n"
             f"{FENCE}"
         )

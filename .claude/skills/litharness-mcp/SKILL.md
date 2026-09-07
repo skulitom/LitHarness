@@ -108,6 +108,18 @@ bytes establish a change, not its literary effect or cause. Frozen job input pre
 the application's text; it does not capture provider-added instructions or omitted transport
 settings. Nothing is reconstructed from today's plan, writer dossier or configuration.
 
+For conflicting disclosure instructions, read `request.story_order` from `scene_trace`.
+Only status=`recorded` supplies an exact key to pass as `at` to `world(view=threads)`;
+`unpositioned` records an intentional null, while `not_recorded`, `unavailable` and
+`invalid_recorded_value` identify gaps. Do not substitute the scene's reading-order
+`position_key`. Use `subject` to inspect a single claim. `disclosures` gives its source
+record, disclosure-rule reason, reader and other-audience records, and the comparison of
+each position with `at`. `planned_reveal_scene` is intent, not proof of disclosure.
+The inspector reads current in-force declarations, including labelled proposals. It does
+not reconstruct the frozen packet, establish which facts reached it, inspect scene-plan
+prose, or authorize a reveal. Compare the result with the retained prompt through the trace;
+report missing records and conflicting instructions without turning them into canon.
+
 Shelf-bearing prompts are withheld in full because a heading inside source prose cannot
 establish where the application's own context resumes; original sizes remain available.
 Raw and pre-revision drafts exposed to an exemplar shelf are withheld, including rejected
