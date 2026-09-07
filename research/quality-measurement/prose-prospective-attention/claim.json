@@ -1,0 +1,13 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-prospective-attention-v1",
+  "statement": "Anticipations derived without the incoming event may change how prose encounters that event. Unqualified conjecture; source-only comparison tests the whole guidance package.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-prospective-attention/PREREG.md",
+      "sha256": "a7c16a3d5fc6f211996e2d8e34632aa4d60fdf144de5e2cc939989c4dd9dd17e"
+    }
+  ]
+}
