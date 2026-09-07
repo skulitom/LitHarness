@@ -805,8 +805,11 @@ def test_an_unreadable_sheet_is_a_complaint_and_a_refusal_never_a_traceback(
     parser's refusal is right (`MalformedSheet`'s docstring); what was owed was a sentence.
     Now `declare` says the sheet cannot be read, `check` lists it as a complaint and still
     answers, `accept` refuses it without `--force`, and a declaration in the same slot
-    replaces it and accepts."""
-    from litharness.cli import EXIT_FAULT
+    replaces it and accepts.
+
+    `check` exits 1 since stage-0 §241, as its help always said: a world that contradicts
+    itself is a result to read, not an operational fault. `accept` still refuses at 2."""
+    from litharness.cli import EXIT_ATTENTION, EXIT_FAULT
 
     db = seeded(tmp_path)
     capsys.readouterr()
@@ -833,7 +836,7 @@ def test_an_unreadable_sheet_is_a_complaint_and_a_refusal_never_a_traceback(
     payload = json.loads(capsys.readouterr().out)
     assert payload["cannot_be_read"] and "repeat a value key" in payload["cannot_be_read"][0]
 
-    assert main(["--database", db, "world", "check"]) == EXIT_FAULT
+    assert main(["--database", db, "world", "check"]) == EXIT_ATTENTION
     check = json.loads(capsys.readouterr().out)
     assert any("cannot be read" in complaint for complaint in check["complaints"])
     assert check["ok"] is False

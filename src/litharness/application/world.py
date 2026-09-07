@@ -46,6 +46,53 @@ VIEWS: tuple[str, ...] = (
     "vocabulary",
 )
 
+#: Every read view the CLI's `world` suite offers, including the two that predate `VIEWS`
+#: (`summary` reads the whole store, `show` is the provenance view). The agent surface's
+#: `world` tool is typed over this tuple and a test holds it equal to the parser's subtree
+#: minus the writes and the person-gate (stage-0 §241).
+WORLD_VIEWS: tuple[str, ...] = ("summary", "show", *VIEWS)
+
+
+def view(
+    records: Sequence[lc.StateRecord],
+    in_force: Sequence[lc.StateRecord],
+    *,
+    name: str,
+    scenes: Mapping[str, str] | None = None,
+    subject: str | None = None,
+    holder: str | None = None,
+    at: str | None = None,
+) -> Any:
+    """One read view by name: the dispatch `cmd_world` held, so the CLI and the agent surface
+    answer the same question with the same function (stage-0 §241).
+
+    `records` is everything ever declared on the branch and `in_force` is what the world
+    says now (`integrity.in_force`); `show` and `summary` are the two that read the former,
+    for the reasons `cmd_world` gives. `presence` needs the scenes' prose, which only the
+    caller holds. An unknown name is a `ValueError`, never a default view.
+    """
+    if name == "summary":
+        return summary(records, in_force)
+    if name == "show":
+        return declarations(records, subject=subject)
+    if name == "rules":
+        return rules(in_force)
+    if name == "ladders":
+        return ladders(in_force)
+    if name == "abilities":
+        return abilities(in_force, holder=holder)
+    if name == "cast":
+        return cast(in_force)
+    if name == "threads":
+        return threads(in_force, at=at)
+    if name == "vocabulary":
+        return vocabulary()
+    if name == "presence":
+        return presence(in_force, scenes or {})
+    if name == "check":
+        return check(in_force)
+    raise ValueError(f"no world view named {name!r}; the views are {', '.join(WORLD_VIEWS)}")
+
 
 def vocabulary() -> dict[str, Any]:
     """Every word this world's language admits, so an agent can find out rather than guess.
@@ -373,6 +420,11 @@ def vocabulary() -> dict[str, Any]:
             "record` and the first position stands. Nothing can move a record in story time, "
             "and a fact that has not changed is not worth restating at a later position — the "
             "restatement is dropped either way.",
+            "`world declare-batch --records '[{\"subject\": ..., \"predicate\": ..., "
+            '"value": ..., "object": ..., "order_key": ...}, ...]\' declares several records '
+            "in one call, reports each one the way `declare` does, and ends with `check`; a "
+            "record the batch refuses is named by its index and the rest still land. Keep a "
+            "batch to about twenty-five records so the report stays readable.",
         ],
     }
 

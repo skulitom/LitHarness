@@ -42,10 +42,14 @@ Issues = "https://github.com/skulitom/LitHarness/issues"
 
 [project.scripts]
 litharness = "litharness.cli:main"
+# The agent surface (stage-0 §241): a stdio MCP server over the read verbs, a second
+# composition root beside `cli.py` rather than a verb on it, so neither imports the other.
+litharness-mcp = "litharness.mcp_server:main"
 
 [project.optional-dependencies]
 dev = [
   "hypothesis>=6.130",
+  "mcp>=2.0,<3",
   "mypy>=1.15",
   "numpy>=2.2",
   "pillow>=11.0",
@@ -53,6 +57,14 @@ dev = [
   "pytest-cov>=6.0",
   "pytest-xdist>=3.8",
   "ruff>=0.9",
+]
+# The MCP server other agents hold (stage-0 §241). Its own extra for `cover`'s reason: the
+# manuscript engine keeps one runtime dependency, and `litharness-mcp` imports the SDK only
+# when it starts, so an installation without this extra loses nothing but that one command
+# and gets a one-line refusal from it. Pinned below 3 because 2.x replaced 1.x's `fastmcp`
+# module wholesale; the pin is the API the server is written against, not a version taste.
+mcp = [
+  "mcp>=2.0,<3",
 ]
 # Cover generation is a Codex CLI session followed by local, deterministic typography. Pillow
 # belongs to that finishing step, not to the manuscript engine, so ordinary installations keep

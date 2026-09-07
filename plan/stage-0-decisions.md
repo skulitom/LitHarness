@@ -24887,3 +24887,146 @@ The whole-serial reading copy (`export.as_html`) is unchanged: it is the operato
 surface and shows the stored text with its leaks, which is what a defect harvest reads. Posting,
 an author-note field, a tag list: §221 stands, the tool never posts. **Anti-scope:** no prompt,
 rule or writer instruction changed; nothing here is a quality claim about any chapter.
+
+## 241. The command line was an agent surface only for the two agents it was hand-fitted to; a read-only in-process server over lifted application views is what an outside agent can hold, and a seed's cost was one shell round-trip per record
+
+**2026-09-07.** The operator asked how the MCP side of this software could be made much more
+useful to other agents, and then for the changes. There was no MCP side: the agent-facing
+surface was `cli.py`, held by the Architect and the Recruiter through enumerated Bash
+allowances under `claude -p` (§146.9), and by an outside coding agent through the `debug-book`
+skill. This entry records what a six-lens survey of that surface measured, what shipped, and
+what was refused. **Nothing here is a quality claim about any book.**
+
+**Measured first** (this worktree, throwaway stores built from the contracts fixtures; pointers,
+never counts restated). The parser (`build_parser()`) is the verb census and `grep -n
+'"--json"' src/litharness/cli.py` the `--json` census; the brief's own count of the latter did
+not match the grep. A read verb pointed at an absent path minted and migrated a fresh store
+and reported an idle system at exit 0 (`SqliteStore.open` creates, then migrates), so a mistyped
+path read as a quiet system. `--database` placed after the verb exited 2 with a usage dump,
+which is why the two internal agents are fed the path through `LITHARNESS_DATABASE` and why
+their allowances can be prefix matches at all. `why --scene N --json` answered a complete
+dossier at exit 1 on an undrafted scene, as designed, with nothing in the output saying so.
+`world check` exited 2 (`cmd_world`) against its own help line, so the Architect's tool harness
+showed an error banner over a valid verdict. `characters --json` printed prose on an empty cast;
+`jobs` printed nothing at all on an empty queue, which is also what a failed call prints; a
+`--since` that parsed as nothing matched nothing at exit 0. The exemplar shelf (§196) is spliced
+whole into the frozen scene prompt (`planner.render_prompt`) and `why` prints that payload, so
+a tool that returned the dossier would return the shelf. The `debug-book` skill named three
+verbs the parser rejects (`craft`, `blame`, `feedback`), one flag (`--plan-search`) and four
+dossier keys `scene_dossier` never emits, all removed in 530f40e, and no test walked the skill.
+On the store: transactions are pinned to the opening thread (`SqliteStore._Transaction`); a
+`mode=ro` URI connection wrapped in `SqliteStore` answered `status.collect` and every world
+view; **it accepts a `BEGIN IMMEDIATE`** (a WAL reader may take one) **and refuses the write
+itself** ("attempt to write a readonly database"), so the test pins the write, not the begin.
+On the SDK: the installed `mcp` 2.x runs a synchronous tool on an anyio worker thread and
+replaced 1.x's `mcp.server.fastmcp` module wholesale. On the Architect's cost: a seed declared
+one record per shell round-trip, each round-trip carrying the harness tax `providers/cli.py`
+documents; the pilot databases under `runs/` hold the timings and are not restated here.
+Three designs (in-process server over the application layer; a parser-derived server; the CLI
+first, then a thin server) were judged from three lenses; two chose the first, and the third's
+objections (an import cycle `tests/test_architecture.py` would catch, a view-list gap, scope)
+are closed in what shipped.
+
+**What shipped.**
+
+- `litharness-mcp` (`src/litharness/mcp_server.py`, a second console script and a second
+  composition root beside `cli.py`; `_layer` in `tests/test_architecture.py` places it in the
+  entrypoint layer). It imports `application`, `adapters` and `domain` and never `cli` or
+  `providers`, so nothing reachable from it can spend; `test_the_server_module_imports_no_provider_no_cli_and_opens_no_socket`
+  reads that by `ast`. Two profiles as module tuples: `READ_TOOLS` (store_info, guide, status,
+  why, findings, events, plans, state, queue, world, characters, roster, release_show, verify,
+  export_markdown) and `PROPOSE_TOOLS` (store_info, guide, world, world_declare,
+  world_declare_batch — the Architect's shape, with no dossier tool beside a write tool).
+  `TIERS` classifies every parser leaf as read, propose, operator or excluded with a reason and
+  its CLI form; `test_every_parser_verb_has_exactly_one_tier` holds it equal to the parser and
+  `test_the_tier_table_names_every_verb_that_builds_a_registry_as_excluded` derives the paid
+  set from `cli.py` by `ast`. `world accept` is in no profile
+  (`test_the_server_exposes_no_accept_tool`), and the world tool's views and the Architect's
+  Bash allowance are two renderings of one omission
+  (`test_the_tier_tables_architect_members_are_the_architects_allowance`). No tool takes a
+  database, roster, exemplar or holder argument; the binding is made once at start and refuses
+  an absent store. Every read description ends with §97.1's fence and its factual half is the
+  parser's own help, pinned by `test_every_tool_description_carries_the_parsers_help`.
+- The store's two new opens (`SqliteStore.open_read_only`, `open_existing`; `MigrationsPending`
+  beside `MigrationsMissing`; `pending_migrations`): neither creates a file nor applies a
+  migration, and the read-only one is `mode=ro`. `test_a_read_only_open_refuses_a_write`,
+  `test_a_read_only_open_refuses_a_store_with_pending_migrations`,
+  `test_open_existing_never_migrates`. One store per tool call on the SDK's worker thread
+  (`test_a_tool_handler_runs_on_a_worker_thread_and_still_transacts`); a locked store is one
+  typed fault, never retried
+  (`test_a_write_tool_reports_a_locked_database_as_retryable_and_does_not_loop`).
+- The result contract: `attention: true` carries the CLI's exit-1 meaning; an ambiguous store
+  and an unknown scene are typed results (`export.AmbiguousBranch`, `export.NoBook`), never a
+  message parsed back (`test_an_unknown_scene_and_an_ambiguous_store_are_results_not_faults`).
+- Lifted into `application/` so the CLI and the server print one dict from one function:
+  `dossier.py` (the `why` dossier, `DOSSIER_KEYS`, and `redact_shelf`, which withholds a
+  spliced shelf by character count and strips the shelf's system sentence —
+  `test_a_marker_shelf_never_appears_in_a_tool_result` builds the splice the planner builds);
+  `views.py` (findings, events and plans moved byte for byte,
+  `test_findings_events_and_plans_json_are_byte_identical_after_the_lift`; state, jobs,
+  exceptions, directives, characters and verify given their first dict shapes, now printed by
+  `--json`); `operations.py` (`declare_world_record`, `declare_world_records`, reporting
+  `supersedes` from `integrity.disagreement_key` and writing a `STATE_CANDIDATES_EXTRACTED`
+  event carrying the actor and `payload.via`,
+  `test_a_declare_writes_an_event_carrying_its_actor`); `status.report` and `world.view`.
+  `test_the_views_the_server_returns_are_the_dicts_the_cli_prints` compares every one against
+  the command line. **The state row's shape is a decision made here**: position, provenance
+  (`read` or `given`), authority, canon, subject, predicate, the sentence `state.describe`
+  writes, the note, and who may know it (`views.StateRow`).
+- On the command line: `world check` exits 1 as its help always said
+  (`test_world_check_exits_one_as_its_help_says`; the pin in `test_world_slots.py` corrected
+  with the reason); `characters --json` is an object on an empty cast, with a hint that names
+  the paid step as paid; a `--since` that parses as nothing is refused at exit 2
+  (`views.BadSince`); `jobs --json` always carries counts; `world declare-batch --records
+  '<json array>'` (inline only) declares several records in one call and ends with `check`,
+  and joins the Architect's allowance through
+  `test_the_architects_allowance_is_every_world_command_except_accept`, with one `how` line in
+  `world vocabulary` and no change to `_TOOLS` or any prompt ceiling.
+- Docs: the `debug-book` skill corrected in place with strikethroughs pointing here and walked
+  by `test_every_verb_and_key_the_debug_book_skill_names_still_exists`; a row in
+  `docs/system-model.md`; `CONTRIBUTING.md`'s composition-root sentence corrected in place; the
+  README's operating table. `mcp>=2.0,<3` as the `mcp` extra and in `dev`, imported only where
+  the server starts, so an installation without it loses one command and gets one refusing line
+  (`test_a_missing_mcp_extra_is_one_line_and_exit_2`). The one stdio round trip
+  (`test_the_stdio_server_lists_exactly_the_profile_tools`) skips without the extra.
+
+**Refused, and why.** No operator tier under any flag — `world accept`, `roster accept`/
+`refuse`, `release approve`/`record-posted`/`withdraw`, `dismiss`, `resolve`, `revive`,
+`enqueue`, `ingest`, `replan`, `revert`, `revert-plan`, `reader-mechanism qualify`/`withdraw`,
+`init`, `new`, `extend`, `import`, `backup`, `propagate`: each mints a person's judgment as a
+decision row or selects one item out of a set the agent can see (§105.1, §107.5, §61(5)), and a
+flag would be a deny list dressed as a gate (§146.9). No `directive` tool: `cmd_directive`
+records no author and `is_machine_author` knows only a director's prefix, so a machine's
+direction would read as a person's — the laundering path `plan/director-role.md` §1 closed.
+No paid tool and no spend flag: the box rule (one CLI arm at a time, silent-ish `claude -p`
+failures) is not enforceable inside a tool call; §221's readership port stays CLI-side. No
+`roster_declare`: a recruit run stamps the shelf and the form, and a caller choosing them files
+a dossier into the wrong cell of a registered arm. No `prompts` tool: it renders every role and
+loads the shelf from `LITHARNESS_EXEMPLARS`. No per-call database, roster, exemplar or holder
+argument (§151, §196). No parser-derived tool schemas with a deny list, no in-process `cli.main`
+under a redirected stdout, no resident store handle, no retry loop, no committed `.mcp.json`
+(it would bake an absolute path), no `mcp` 1.x. No refusal at `declare`: "warned, never
+refused" (`cmd_world`, `worlds.slot_warnings`) is a documented doctrine on the Architect's live
+rail, and a domain-owned slot table that refuses the known traps is its own entry. No
+`--records-file` or stdin on the batch verb: a path would be the first one the Architect ever
+held, unmeasured on the installed matcher. No new `EventType`: the contract enum is pinned, so
+a proposal's provenance rides `STATE_CANDIDATES_EXTRACTED` with `actor` and `payload.via`.
+
+**Corrections in place.** `world check`'s help was right and its code was wrong. The skill's
+dead verbs, flag and keys are struck with pointers here. The survey's claim that a `mode=ro`
+connection refuses `BEGIN IMMEDIATE` was wrong on this SQLite; what it refuses is the write.
+
+**No bar declared.** Nothing here is a quantity made a target; the seed timings stay in the
+pilot databases.
+
+**Anti-scope.** No prompt, rule or writer instruction changed except the one `how` line in
+`world.vocabulary()`; `_TOOLS`, the Architect's task text and every prompt ceiling are
+untouched. No quality claim. The Architect and Recruiter stay on their Bash allowances and
+`providers/cli.py` still passes an empty `mcpServers` (§11, §103); moving either onto the
+server is its own entry, with the live probes on the installed `claude` (an in-list tool under
+`--tools ""` plus `--strict-mcp-config`; an absent `world_accept` as tool-not-available rather
+than a permission denial; the harness tax with tool definitions attached; inline JSON under the
+Windows argv ceiling), and §109's owed re-run of
+`test_live_the_shipped_allowances_enforce_their_own_boundaries` after the `claude` upgrade
+stays owed. No reader-observation tool. RS1 untouched beyond the shelf redaction. The
+measurement programme untouched.

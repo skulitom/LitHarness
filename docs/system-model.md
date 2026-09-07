@@ -107,6 +107,7 @@ five above.
 | --- | --- | --- | --- |
 | The store | `adapters/sqlite_store.py` (facade) and the capability repositories beside it | a migration is never edited; state and its events commit together; `state_records` slices inside one order-key space with `litharness_key_space` | `test_store.py`; `test_architecture.py::test_dependencies_only_point_outward_to_inward`, `test_internal_module_graph_has_no_cycles` |
 | The model | `providers/cli.py` (the frontier pin, and the two flags that keep `CLAUDE.md` out of every call: §109) | `providers/registry.py`, bound only in `cli.py` | `test_providers.py` under `LITHARNESS_LIVE_PROVIDERS=1`; `test_architecture.py::test_the_registry_still_satisfies_the_port_the_application_asks_for` |
+| The agent surface (stage-0 §241) | `mcp_server.py` (an entrypoint beside `cli.py`: `READ_TOOLS`, `PROPOSE_TOOLS`, `TIERS`, `FENCE`), over `application/dossier.py`, `application/views.py`, `application/operations.py`, `status.report` and `world.view` — the one source both surfaces print | reads open `SqliteStore.open_read_only`, writes `open_existing`; no profile creates, migrates, accepts, spends or posts; the tier table equals the parser | `test_mcp_server.py::test_no_profile_registers_an_operator_or_paid_verb`, `test_the_server_exposes_no_accept_tool`, `test_a_read_tool_opens_the_store_read_only_and_leaves_no_file_behind`, `test_a_marker_shelf_never_appears_in_a_tool_result`, `test_the_views_the_server_returns_are_the_dicts_the_cli_prints` |
 
 ## The evaluator boundary and the release queue (stage-0 §221)
 

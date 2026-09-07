@@ -568,6 +568,25 @@ def collect(
     )
 
 
+class NoBook(ValueError):
+    """The store holds no branch at all. A `ValueError` still, so `cli.main` exits 2 as it
+    always has; a type of its own so a caller that wants to answer rather than fail can
+    catch it without reading the sentence (stage-0 §241)."""
+
+
+class AmbiguousBranch(ValueError):
+    """More than one branch, or none, matches what the caller named.
+
+    Carries `known` — every (book_id, branch_id) the store holds — so a machine caller can
+    return the pairs as a result instead of parsing them back out of the message. The
+    message text is the one `resolve_branch` always printed, unchanged.
+    """
+
+    def __init__(self, message: str, *, known: list[tuple[str, str]]) -> None:
+        super().__init__(message)
+        self.known = known
+
+
 def resolve_branch(
     store: ExportStore, book_id: str | None, branch_id: str | None
 ) -> tuple[str, str]:
@@ -587,12 +606,16 @@ def resolve_branch(
     if len(candidates) == 1:
         return candidates[0]
     if not branches:
-        raise ValueError("no book in this store; `litharness import` is what puts one in")
+        raise NoBook("no book in this store; `litharness import` is what puts one in")
     known = "\n".join(f"  --book {book} --branch {branch}" for book, branch, _ in branches)
+    pairs = [(book, branch) for book, branch, _ in branches]
     if not candidates:
-        raise ValueError(f"no branch matches that book and branch. Known branches:\n{known}")
-    raise ValueError(
-        f"{len(candidates)} branches match; name one with --book and --branch:\n{known}"
+        raise AmbiguousBranch(
+            f"no branch matches that book and branch. Known branches:\n{known}", known=pairs
+        )
+    raise AmbiguousBranch(
+        f"{len(candidates)} branches match; name one with --book and --branch:\n{known}",
+        known=pairs,
     )
 
 

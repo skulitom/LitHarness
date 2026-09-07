@@ -38,13 +38,14 @@ from litharness.domain.generation import (
     CompletionResult,
     Resolution,
 )
-from litharness.domain.jobs import Job
-from litharness.domain.plan_refinement import PlanApplication, PlanRevision
+from litharness.domain.jobs import Job, JobStatus
+from litharness.domain.plan_refinement import PlanApplication, PlanRevision, StoredPlanProposal
 from litharness.domain.policy import PolicyDecision
 from litharness.domain.promises import Promise
 from litharness.domain.release import ReleaseEntry, ReleaseStatus
 from litharness.domain.reviser import PreRevisionDraft
 from litharness.domain.revision import Revision
+from litharness.domain.writers import RosterStatus
 
 
 class BranchReader(Protocol):
@@ -656,6 +657,139 @@ class ApplicationStore(
     """Aggregate accepted by the composition root and pluggable work selectors."""
 
 
+class StoredEvent(Protocol):
+    """One row of the event log as the store hands it back: its sequence, and the event.
+
+    Structural, so the adapter's dataclass of the same name satisfies it without this layer
+    importing the adapter; the sequence is the cursor `events --since` resumes from.
+    """
+
+    @property
+    def sequence(self) -> int: ...
+
+    @property
+    def event(self) -> Event: ...
+
+
+class ProvenanceReader(Protocol):
+    """The reads the forensic verbs make that no port above named (stage-0 §241).
+
+    `why`, `events`, `plans`, `verify`, `state` and the roster views read these off the
+    concrete store because the verbs grew inside `cli.py`, where the concrete store is in
+    scope. Lifting the verbs into `application/` so a second entrypoint can hold them means
+    naming what they read, one line of reason each, and typing them against this rather than
+    against `SqliteStore`. Every method is a read; the writer halves stay where they are.
+    """
+
+    def lineage(self, revision_id: str) -> list[str]:
+        """Revision ids from this one back to the root: the walk `why` attributes prose by."""
+        ...
+
+    def decision_for_revision(self, revision_id: str) -> PolicyDecision | None:
+        """The decision that accepted a revision, or None — the gap `verify` counts."""
+        ...
+
+    def decisions_for_job(self, job_id: str) -> list[PolicyDecision]:
+        """Every attempt on one unit, refusals included, in attempt order."""
+        ...
+
+    def jobs_by_status(self, status: JobStatus, limit: int = ...) -> list[Job]:
+        """The units in one status: what `jobs --status` lists and the dossier searches."""
+        ...
+
+    def pre_revision_drafts(
+        self, book_id: str, branch_id: str, *, logical_id: str | None = ...
+    ) -> list[PreRevisionDraft]:
+        """The writer's text a reviser replaced (§187), for the dossier's pair."""
+        ...
+
+    def read_log(self, *, since: int = ...) -> Sequence[StoredEvent]:
+        """The event log in write order from a cursor: `events`' one source. A `Sequence`,
+        because `list` is invariant and the adapter returns its own row type."""
+        ...
+
+    def state_record_times(self, book_id: str, branch_id: str) -> dict[str, str]:
+        """When each state record was declared, which `integrity.in_force` orders by."""
+        ...
+
+    def plan_history(self, book_id: str, branch_id: str) -> list[PlanRevision]:
+        """The plan's lineage, newest first."""
+        ...
+
+    def plan_proposals(self, book_id: str, branch_id: str) -> list[StoredPlanProposal]:
+        """Every proposal made against the plan, with the status each reached."""
+        ...
+
+    def verify_integrity(self) -> int:
+        """Rebuild every revision from canonical records; the count that rebuilt cleanly."""
+        ...
+
+    def unattributed_revisions(self) -> list[str]:
+        """Revisions no policy decision explains (§19)."""
+        ...
+
+    def roster_rows(
+        self,
+        *,
+        writer_id: str | None = ...,
+        name: str | None = ...,
+        status: RosterStatus | None = ...,
+        specialization: str | None = ...,
+    ) -> list[dict[str, Any]]:
+        """The roster as rows, which the roster views render and never interpret."""
+        ...
+
+
+class DossierStore(
+    ManuscriptReader,
+    PlanReader,
+    JobReader,
+    DecisionRepository,
+    FindingRepository,
+    ProvenanceReader,
+    Protocol,
+):
+    """What one scene's dossier is joined from (`application/dossier.py`)."""
+
+
+class StatusReportStore(
+    # Flat rather than `StatusStore, PlanningStore`: those two list `BranchReader` and
+    # `JobQueue` in opposite orders, and Python refuses the MRO. Same members, one order.
+    ManuscriptReader,
+    DirectiveInbox,
+    JobQueue,
+    JobReader,
+    DecisionRepository,
+    FindingRepository,
+    PlanReader,
+    StateRepository,
+    SummaryRepository,
+    PromiseRepository,
+    EventRepository,
+    OperationsRepository,
+    ExceptionRepository,
+    AudienceRepository,
+    Protocol,
+):
+    """`status.report`: the status store plus what `plan_progress` reads to name a blocked
+    book, so the report and the tick's selector refuse with the same sentence."""
+
+
+class ToolStore(ApplicationStore, ReleaseQueue, ProvenanceReader, Protocol):
+    """Everything the agent surface may reach (stage-0 §241), as one name.
+
+    The server binds a concrete store to this the way `cli.py` binds one to
+    `ApplicationStore`; each tool then types against the narrowest member it needs. There is
+    no provider here and no `TextGenerator`: nothing behind this protocol can spend.
+    """
+
+
+class WorldProposalStore(StateRepository, StateWriter, Protocol):
+    """What `operations.declare_world_record` needs: the records already on the branch, and
+    the one write that appends a proposal beside them with its event in the same transaction.
+    No `promote_state_records` here — acceptance is the person-gate and stays in `cli.py`."""
+
+
 class Named(Protocol):
     """Anything that can say which provider it is.
 
@@ -709,6 +843,7 @@ __all__ = [
     "ApplicationStore",
     "AudienceRepository",
     "ConductorStore",
+    "DossierStore",
     "DraftStore",
     "EvaluationStore",
     "ExportStore",
@@ -719,10 +854,14 @@ __all__ = [
     "PlanRefinementStore",
     "PlanningStore",
     "PromiseRepository",
+    "ProvenanceReader",
     "ReaderControlStore",
     "ReleaseQueue",
     "ReleaseStore",
     "RepairStore",
+    "StatusReportStore",
     "StatusStore",
+    "StoredEvent",
     "TextGenerator",
+    "ToolStore",
 ]

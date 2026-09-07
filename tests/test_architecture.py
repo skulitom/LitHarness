@@ -85,7 +85,11 @@ def _layer(module: str) -> str | None:
     parts = module.split(".")
     if len(parts) < 2:
         return None
-    if parts[1] in {"cli", "__main__"}:
+    # `mcp_server` is the second composition root (stage-0 §241): it binds a concrete store to
+    # the application's ports the way `cli` does and binds no provider. Same layer, so the
+    # table above holds it to the same direction; `test_mcp_server.py` reads its imports by
+    # `ast` for the narrower rule that it never reaches `cli` or `providers`.
+    if parts[1] in {"cli", "__main__", "mcp_server"}:
         return "entrypoint"
     return parts[1] if parts[1] in ALLOWED_DEPENDENCIES else None
 
@@ -372,6 +376,30 @@ def test_internal_module_graph_has_no_cycles() -> None:
     for module in sorted(graph):
         cycle = visit(module)
         assert cycle is None, "internal import cycle: " + " -> ".join(cycle)
+
+
+def test_the_mcp_server_module_is_an_entrypoint_in_the_layer_table() -> None:
+    """The second composition root (stage-0 §241) is held to the entrypoint's direction, not
+    left unclassified where `test_dependencies_only_point_outward_to_inward` would skip it."""
+    assert _layer("litharness.mcp_server") == "entrypoint"
+    assert "litharness.mcp_server" in _modules()
+
+
+def test_the_store_still_satisfies_the_provenance_reader_port(tmp_path: Path) -> None:
+    """`ProvenanceReader`, `DossierStore` and `ToolStore` (stage-0 §241) name what the lifted
+    forensic verbs read; the concrete store has to fit them structurally or the lift typed
+    against a port nothing implements. mypy checks the fit where the server binds them; this
+    pins it at runtime the way the registry test beside it does."""
+    from litharness.adapters.sqlite_store import SqliteStore
+    from litharness.application.ports import DossierStore, ProvenanceReader, ToolStore
+
+    with SqliteStore.open(tmp_path / "port.db") as store:
+        reader: ProvenanceReader = store
+        dossier: DossierStore = store
+        tool_store: ToolStore = store
+        assert reader.unattributed_revisions() == []
+        assert dossier.branches() == []
+        assert tool_store.job_counts_by_status() == {}
 
 
 def test_the_registry_still_satisfies_the_port_the_application_asks_for() -> None:

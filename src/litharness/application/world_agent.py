@@ -82,6 +82,10 @@ ALLOWED_TOOLS: tuple[str, ...] = (
     "Bash(litharness world presence:*)",
     "Bash(litharness world check:*)",
     "Bash(litharness world declare:*)",
+    # The batch form (stage-0 §241): the same `declare`, several records per call, so a
+    # seed is no longer one shell round-trip per record. Inline JSON only; it takes no
+    # path, which is what keeps this list a prefix match on a command line (§146.9).
+    "Bash(litharness world declare-batch:*)",
 )
 
 MAX_OUTPUT_TOKENS = 16000

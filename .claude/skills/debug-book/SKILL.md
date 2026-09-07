@@ -22,8 +22,11 @@ input for generation. `plan/serial-pilot-1.md` §6 and stage-0 §97.1 keep diagn
 operator's side of the loop: a rejection carries no explanation back into the system, and a
 located defect does not become a note in the next prompt. Diagnose, report to the human, and
 stop. Writing a finding, a directive, or a plan item because of something a dossier told you
-is the one thing this workflow forbids — the feedback that reaches a prompt has its own
-gated path (`feedback`), and routing around it destroys the measurement it exists to protect.
+is the one thing this workflow forbids — ~~the feedback that reaches a prompt has its own
+gated path (`feedback`)~~ **the direction that reaches a prompt has its own gated path,
+`application/editorial.py` (the one CLAUDE.md names); the verb this sentence cited was
+removed in 530f40e (stage-0 §241)**, and routing around it destroys the measurement it
+exists to protect.
 
 No verb in this skill writes a row. If you find yourself reaching for `directive`, `ingest`,
 `enqueue`, `replan`, `revert`, or `resolve`, you have left the workflow.
@@ -36,9 +39,16 @@ Everything runs through one command. From the repo root:
 uv run litharness --database book.db status
 ```
 
-`--database` names the store; it defaults to `litharness.db` in the working directory. Every
-verb below takes it in the same position, **before** the verb. Examples here omit it for
-brevity — add it if the store is not at the default path.
+`--database` names the store; it defaults to `litharness.db` in the working directory, or to
+the path in `LITHARNESS_DATABASE` when that is set — the flag-free form. Every verb below
+takes it in the same position, **before** the verb: placed after the verb, argparse exits 2
+with a usage dump and nothing runs. Examples here omit it for brevity — add it if the store is
+not at the default path.
+
+**A wrong path looks like an idle system.** A read verb pointed at a path that does not exist
+creates and migrates a fresh database there and answers as if the store were empty:
+`status --json` on a path that is not there exits 0 and the file appears afterwards. Check
+that the path exists before trusting a quiet answer.
 
 **Exit codes are the contract**, and they are the same on every verb:
 
@@ -51,8 +61,8 @@ brevity — add it if the store is not at the default path.
 A `1` from a diagnostic verb is a *result*, not a failure. Read the output.
 
 **Book and branch ids.** Most verbs default to the only book in the store, so you usually
-pass nothing. When a store holds more than one, the verb lists the ids and asks. To get them
-directly:
+pass nothing. When a store holds more than one, a branch-scoped verb exits 2 and names the
+ids on stderr as `--book`/`--branch` pairs to pass back. To get them directly:
 
 ```bash
 uv run litharness plans --json
@@ -61,7 +71,18 @@ uv run litharness plans --json
 The first two keys are `book_id` and `branch_id`.
 
 **Naming a scene.** `--scene` takes either a logical id (`scene-3`) or a 1-based place in
-reading order (`3`). Both resolve; the id wins if a book names its scenes something else.
+reading order (`3`). Both resolve; the id wins if a book names its scenes something else. An
+unknown `--scene` exits 1 and lists the known scenes on stderr.
+
+**The same surface in-process.** The repository also ships `litharness-mcp`, a read-only MCP
+server over the same views, started with `uv run litharness-mcp --database <absolute path> --profile read`.
+Its tools are registered as `mcp__litharness__<tool>` for the tool names `store_info`,
+`guide`, `status`, `why`, `findings`, `events`, `plans`, `state`, `queue`, `world`,
+`characters`, `roster`, `release_show`, `verify` and `export_markdown`. Every tool result
+carries `attention: true` where the CLI would exit 1, and the server refuses an absent path
+instead of creating one. Register it for a Claude Code session with
+`claude mcp add -s project litharness -- uv run --project <absolute repo path> --no-sync litharness-mcp --database <absolute db path>`;
+a person must approve it once.
 
 ---
 
@@ -69,12 +90,12 @@ reading order (`3`). Both resolve; the id wins if a book names its scenes someth
 
 | symptom | start here |
 |---|---|
-| a scene reads flat, generic, or wrong | `why --scene N` — read the **feedback set** and the **gate ladder** |
+| a scene reads flat, generic, or wrong | `why --scene N` — ~~read the **feedback set** and the **gate ladder**~~ **read the gate ladder and the plan item; the feedback set left with its verb in 530f40e (stage-0 §241)** |
 | the book drifted from what the director asked for | `plans`, then `events --type PlanChanged` |
 | a scene contradicts established canon | `state`, then the dossier's **`context_omitted`** list |
 | a scene was never written | `jobs`, `exceptions`, then `events` |
 | a run cost more than expected | `status`, then `why --scene N --json` and read `decision` |
-| a tournament picked the wrong draft | `why --scene N` — read **`span_candidates`** |
+| ~~a tournament picked the wrong draft~~ | ~~`why --scene N` — read **`span_candidates`**~~ **no tournament exists any more: the flag that minted one and the dossier key that showed it were removed in 530f40e (stage-0 §241)** |
 | something changed and nobody knows when | `events --since <cursor>` |
 | the store itself may be damaged | `verify` |
 
@@ -89,16 +110,19 @@ uv run litharness why --scene 3
 This is the scene dossier: every stored row that explains one scene, joined. Read it in this
 order.
 
-1. **`feedback`** — what was frozen onto the prompt at enqueue. This is the reader→writer
-   loop's one channel into generation.
-   - `0 item(s)` with `(an explicit empty set: drafted with no feedback)` means the loop was
+1. ~~**`feedback`** — what was frozen onto the prompt at enqueue. This is the reader→writer
+   loop's one channel into generation.~~ **Step removed: the reader→writer channel and its
+   verb went in 530f40e, and the dossier has no such field, so a dossier now starts at
+   `gates` (stage-0 §241). The live editorial path is `application/editorial.py`; it is not
+   a dossier field and this skill does not read it.**
+   - ~~`0 item(s)` with `(an explicit empty set: drafted with no feedback)` means the loop was
      live and had nothing to say. **This is the normal case**, and it means nobody's reading
-     shaped this scene. If the prose is flat, the loop is not why.
-   - `ABSENT - no scene feedback row` means no row was written for that revision at all —
+     shaped this scene. If the prose is flat, the loop is not why.~~
+   - ~~`ABSENT - no scene feedback row` means no row was written for that revision at all —
      usually a scene older than the loop, or prose committed by a path that records none. A
-     different fact from an empty set, and the dossier keeps the two apart on purpose.
-   - Items present means direction reached the prompt; each reads
-     `role:axis_id->preferred_pole`.
+     different fact from an empty set, and the dossier keeps the two apart on purpose.~~
+   - ~~Items present means direction reached the prompt; each reads
+     `role:axis_id->preferred_pole`.~~
 2. **`gates`** — the ladder that ran on the returned draft. `PASS`/`FAIL`, the rule id, the
    verdict source, and whether it was `blocking` or `advisory`.
    - An **advisory** gate can fail without stopping anything. A craft gate is advisory until
@@ -106,8 +130,9 @@ order.
      cause of an acceptance.
    - The `detail` line under a gate carries the measured number and its caveat. Read the
      caveat: several of these measure something narrower than their name suggests.
-3. **`craft`** — advisory measurements recorded against this scene. Numbers only, no verdict.
-   Cross-book context: `uv run litharness craft`.
+3. ~~**`craft`** — advisory measurements recorded against this scene. Numbers only, no verdict.
+   Cross-book context: `uv run litharness craft`.~~ **Step removed: the craft measurements
+   and their verb went in 530f40e; the dossier carries no such key (stage-0 §241).**
 4. **`plan item`** — the per-scene statement that steered the draft, verbatim. `ABSENT` means
    the book has no outline for this scene (normal for a book run with `--no-outline`, and for
    the golden fixture books, which carry only book-wide statements). A scene with no statement
@@ -121,17 +146,17 @@ order.
 
 Add `--json` for the same content as one object. See **Fields** below.
 
-For a whole-book view of one measurable trait beside the feedback that was live when each
-scene drafted, `blame` reads the same rows across every scene:
+~~For a whole-book view of one measurable trait beside the feedback that was live when each
+scene drafted, `blame` reads the same rows across every scene:~~ **Removed: the verb, its
+axes and the feedback rows it read across went in 530f40e; there is no whole-book trait view
+now, and `why` per scene is the whole of the read side (stage-0 §241).**
 
-```bash
-uv run litharness blame --book <id> --branch <id> --axis interiority
-```
+~~`uv run litharness blame --book <id> --branch <id> --axis interiority`~~
 
-`--axis` is one of `em_dash`, `interiority`, `stat_flatten`, and `--book`/`--branch` are
+~~`--axis` is one of `em_dash`, `interiority`, `stat_flatten`, and `--book`/`--branch` are
 required here (this verb does not default to the only book). It prints a counter value and a
 provenance shape per scene and **never a score** — there is no aggregate here to read as a
-quality number, and nothing it prints can refuse anything.
+quality number, and nothing it prints can refuse anything.~~
 
 ## Workflow 2 — the book drifted from the directive
 
@@ -237,18 +262,18 @@ The dossier's `decision` block carries `provider`, `model`, `invocations`, `tota
 behaves differently at the same model usually differs in that digest — a threshold change
 reads as a different config rather than as unexplained drift.
 
-## Workflow 6 — a tournament picked the wrong draft
+## ~~Workflow 6 — a tournament picked the wrong draft~~ Workflow 6 — removed
 
-When a book is drafted with `--plan-search`, each span produces K alternative plan statements
-and K candidate drafts, and exactly one is committed. The losers are kept.
+~~When a book is drafted with `--plan-search`, each span produces K alternative plan statements
+and K candidate drafts, and exactly one is committed. The losers are kept.~~ **The tournament
+went in 530f40e with the flag that minted it and the dossier key that listed its candidates:
+a book has one draft per span and `why` shows that one (stage-0 §241).**
 
-```bash
-uv run litharness why --scene 3
-```
+~~`uv run litharness why --scene 3`~~
 
-`candidates` lists every one with its `alternative_index`, its status (`selected` /
+~~`candidates` lists every one with its `alternative_index`, its status (`selected` /
 `discarded`), its length, and **the statement it was drafted under** — which is what the
-tournament was actually selecting between. The prose is only its evidence.
+tournament was actually selecting between. The prose is only its evidence.~~
 
 ## Workflow 7 — is the store itself sound
 
@@ -280,18 +305,20 @@ is `null` and is named in `absent`, while an empty list is a recorded emptiness.
 | `selected_by` | why this beat was chosen: beat function, ordinal, template, plan epoch, story position |
 | `context` | the packet's size against its budget, and per-section counts |
 | `context_omitted` | what the packet could not hold, and why. **Read this for anything the scene should have known** |
-| `payload_feedback` | the feedback set frozen onto the prompt: `items`, `digest`, `dropped` |
-| `scene_feedback` | the same set projected onto the accepted revision. `null` means no row was written |
+| ~~`payload_feedback`~~ | ~~the feedback set frozen onto the prompt: `items`, `digest`, `dropped`~~ **not emitted: the key left with the feedback channel in 530f40e (stage-0 §241)** |
+| ~~`scene_feedback`~~ | ~~the same set projected onto the accepted revision. `null` means no row was written~~ **not emitted: same removal (stage-0 §241)** |
 | `plan_item` | the per-scene statement and whether a director locked it |
-| `craft_metrics` | advisory numbers measured against this revision |
+| ~~`craft_metrics`~~ | ~~advisory numbers measured against this revision~~ **not emitted: the key left with the craft programme in 530f40e (stage-0 §241)** |
 | `findings` | what detectors said about this scene, open and closed |
 | `draft_before_revision` | the writer's own text, when the §185 reviser replaced it: both models, the mark count §180 took out of it, and `content` — the prose `--no-revise` would have committed. `null` means the accepted prose *is* the writer's, which is not a gap and is not in `absent` |
-| `span_candidates` | every tournament draft for this span, winner and losers |
+| ~~`span_candidates`~~ | ~~every tournament draft for this span, winner and losers~~ **not emitted: the key left with the tournament in 530f40e (stage-0 §241)** |
 | `absent` | every piece the store does not hold for this scene |
 
-`absent` may contain `prose`, `decision`, `prompt`, `plan_item`, `scene_feedback`. The first
+~~`absent` may contain `prose`, `decision`, `prompt`, `plan_item`, `scene_feedback`. The first
 three mean the dossier could not answer its own question and the verb exits 1; the last two
-are ordinary facts about some books and exit 0.
+are ordinary facts about some books and exit 0.~~ **`absent` may contain `prose`, `decision`,
+`prompt`, `plan_item`. The first three mean the dossier could not answer its own question and
+the verb exits 1; the fourth is an ordinary fact about some books and exits 0 (stage-0 §241).**
 
 ## Reporting back
 

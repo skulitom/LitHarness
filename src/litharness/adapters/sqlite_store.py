@@ -41,6 +41,9 @@ from litharness.adapters.sqlite_errors import (
 from litharness.adapters.sqlite_errors import (
     MigrationsMissing as MigrationsMissing,
 )
+from litharness.adapters.sqlite_errors import (
+    MigrationsPending as MigrationsPending,
+)
 from litharness.adapters.sqlite_jobs import SqliteJobRepository
 from litharness.adapters.sqlite_plans import SqlitePlanRepository
 from litharness.adapters.sqlite_release import SqliteReleaseRepository
@@ -106,6 +109,62 @@ def migrations_dir() -> Path:
     if any(packaged.glob("*.sql")):
         return packaged
     return Path(__file__).resolve().parents[3] / "migrations"
+
+
+def _available_migrations(directory: Path) -> list[Path]:
+    """The migration set, sorted as `migrate` applies it; empty is the fault `migrate` refuses."""
+    available = sorted(directory.glob("*.sql"))
+    if not available:
+        # An empty migration set is never legitimate, and silence here is the worst
+        # available failure: `migrate` would return cleanly, `open` would hand back a
+        # store with no tables, and the first write would fail with "no such table"
+        # somewhere far from the cause. On a restored host it would look like data loss.
+        raise MigrationsMissing(
+            f"no .sql migrations found in {directory}; the store cannot be opened "
+            "against an empty schema. Check the package layout — under an editable "
+            "install the migrations sit beside the repo root, and in a wheel they are "
+            "force-included at litharness/migrations."
+        )
+    return available
+
+
+def pending_migrations(connection: sqlite3.Connection, directory: Path) -> list[str]:
+    """The migrations `directory` holds that this store has not applied, in `migrate`'s order.
+
+    Answerable over a read-only connection, which is the reason it is a function and not a
+    step inside `migrate`: the opens that never migrate (stage-0 §241) need to say how far the
+    store lags without touching it. A store with no `schema_migrations` table has applied
+    nothing, so everything is pending.
+    """
+    available = [path.name for path in _available_migrations(directory)]
+    has_table = connection.execute(
+        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'schema_migrations'"
+    ).fetchone()
+    applied: set[str] = set()
+    if has_table is not None:
+        applied = {row[0] for row in connection.execute("SELECT name FROM schema_migrations")}
+    return [name for name in available if name not in applied]
+
+
+def _existing_database(path: str | Path) -> Path:
+    """The path as a file that is already there, resolved; the refusal an open-without-create
+    makes before touching anything. `SqliteStore.open` creates; these opens never do."""
+    resolved = Path(path).resolve()
+    if not resolved.is_file():
+        raise FileNotFoundError(
+            f"{resolved} does not exist; `litharness --database {resolved} init` creates it"
+        )
+    return resolved
+
+
+def _refuse_pending(connection: sqlite3.Connection, resolved: Path, migrations: Path) -> None:
+    pending = pending_migrations(connection, migrations)
+    if pending:
+        raise MigrationsPending(
+            f"{len(pending)} migration(s) pending on {resolved} ({pending[0]} first); this "
+            f"open never migrates. Run `litharness --database {resolved} status` at the CLI "
+            "to apply them, then retry"
+        )
 
 
 def _split_statements(script: str) -> list[str]:
@@ -300,6 +359,67 @@ class SqliteStore:
             raise
         return store
 
+    @classmethod
+    def open_read_only(
+        cls, path: str | Path, *, migrations: Path | None = None, allow_pending: bool = False
+    ) -> SqliteStore:
+        """Open a store that already exists, for reading only, and never migrate it.
+
+        **The open an agent-facing process gets** (stage-0 §241). `open` creates the file when
+        it is absent and applies every migration it finds, which is right for `init` and for
+        the operator's own verbs and wrong for anything answering questions on the operator's
+        behalf: a read verb pointed at a mistyped path minted a 700 KB store and reported an
+        idle system at exit 0. Three refusals replace that, each before anything is touched:
+        an absent file is `FileNotFoundError`; the connection is `mode=ro`, so a `BEGIN
+        IMMEDIATE` on it is refused by SQLite itself rather than by a promise in this class;
+        and a store whose `schema_migrations` lags the migration set is `MigrationsPending`
+        naming the count and the verb that applies them — unless `allow_pending`, which is
+        how a status view can still say *how far* it lags.
+
+        No `journal_mode`, `synchronous` or `foreign_keys` pragma: the first two write the
+        header and the third is a writer's concern. `busy_timeout` is kept so a reader beside
+        a ticking session waits its turn rather than failing on the first contended page.
+        """
+        resolved = _existing_database(path)
+        connection = sqlite3.connect(
+            f"{resolved.as_uri()}?mode=ro", uri=True, isolation_level=None, check_same_thread=False
+        )
+        try:
+            connection.row_factory = sqlite3.Row
+            connection.execute(f"PRAGMA busy_timeout={BUSY_TIMEOUT_MS}")
+            store = cls(connection)
+            if not allow_pending:
+                _refuse_pending(connection, resolved, migrations or migrations_dir())
+        except BaseException:
+            connection.close()
+            raise
+        return store
+
+    @classmethod
+    def open_existing(cls, path: str | Path, *, migrations: Path | None = None) -> SqliteStore:
+        """Open a store that already exists, read-write, and never migrate it.
+
+        `open`'s pragmas and `open`'s transaction discipline, minus the two acts that belong
+        to the operator: creating the file and moving the schema. The one write path an
+        agent-facing process holds (`world declare`, stage-0 §241) goes through this, so a
+        proposal can land beside a ticking session and a schema can only ever be advanced
+        by a verb a person ran.
+        """
+        resolved = _existing_database(path)
+        connection = sqlite3.connect(str(resolved), isolation_level=None, check_same_thread=False)
+        try:
+            connection.row_factory = sqlite3.Row
+            connection.execute("PRAGMA journal_mode=WAL")
+            connection.execute("PRAGMA foreign_keys=ON")
+            connection.execute("PRAGMA synchronous=FULL")
+            connection.execute(f"PRAGMA busy_timeout={BUSY_TIMEOUT_MS}")
+            store = cls(connection)
+            _refuse_pending(connection, resolved, migrations or migrations_dir())
+        except BaseException:
+            connection.close()
+            raise
+        return store
+
     def migrate(self, directory: Path) -> None:
         self._connection.execute(
             "CREATE TABLE IF NOT EXISTS schema_migrations "
@@ -308,19 +428,7 @@ class SqliteStore:
         applied = {
             row["name"] for row in self._connection.execute("SELECT name FROM schema_migrations")
         }
-        available = sorted(directory.glob("*.sql"))
-        if not available:
-            # An empty migration set is never legitimate, and silence here is the worst
-            # available failure: `migrate` would return cleanly, `open` would hand back a
-            # store with no tables, and the first write would fail with "no such table"
-            # somewhere far from the cause. On a restored host it would look like data loss.
-            raise MigrationsMissing(
-                f"no .sql migrations found in {directory}; the store cannot be opened "
-                "against an empty schema. Check the package layout — under an editable "
-                "install the migrations sit beside the repo root, and in a wheel they are "
-                "force-included at litharness/migrations."
-            )
-        for path in available:
+        for path in _available_migrations(directory):
             if path.name in applied:
                 continue
             # Statements are executed individually rather than through `executescript`,

@@ -17,11 +17,20 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
-from litharness.application.ports import StatusStore
+from litharness.application.planner import plan_progress
+from litharness.application.ports import StatusReportStore, StatusStore
 from litharness.domain.budget import BudgetPolicy, Spend
 from litharness.domain.directives import DirectiveStatus
+from litharness.domain.draft import DraftPolicy
 from litharness.domain.extraction import speaks_system_voice
 from litharness.domain.jobs import JobStatus
+from litharness.domain.serials import SerialShape
+
+#: The serial shape a report assumes when its caller states none: the parser's own
+#: `--chapter-scenes` / `--arc-chapters` defaults, pinned equal to them by
+#: `test_the_status_reports_default_shape_is_the_parsers_default`. Named here rather than
+#: read from the parser because this layer may not import the entrypoint.
+DEFAULT_SERIAL_SHAPE = SerialShape(4, 6)
 
 
 @dataclass(frozen=True, slots=True)
@@ -155,6 +164,43 @@ class Status:
             + self._against_plan(),
         ]
         return "\n".join(lines)
+
+
+def report(
+    store: StatusReportStore,
+    now: float,
+    *,
+    policy: DraftPolicy | None = None,
+    shape: SerialShape | None = None,
+    budget: BudgetPolicy | None = None,
+    continuity_evaluator: bool = True,
+) -> Status:
+    """`collect`, with the blocked books asked of the same function the tick's selector asks.
+
+    Lifted from `cmd_status` (stage-0 §241) so the agent surface and the CLI print one
+    report. `plan_progress` has carried the refusal since §155.2 and the selector honours
+    it; computed under the policy and serial shape the tick runs under, because the answer
+    depends on both, and the sentence reported is the one the next tick refuses with. A
+    caller that states no policy or shape gets the parser's defaults, not a second opinion.
+    """
+    blocked = []
+    for book_id, branch_id, _ in store.branches():
+        progress = plan_progress(
+            store,
+            book_id,
+            branch_id,
+            policy=policy or DraftPolicy(),
+            serial_shape=shape or DEFAULT_SERIAL_SHAPE,
+        )
+        if progress.blocked_reason is not None:
+            blocked.append(BlockedBook(book_id, branch_id, progress.blocked_reason))
+    return collect(
+        store,
+        now,
+        budget=budget,
+        continuity_evaluator=continuity_evaluator,
+        blocked=blocked,
+    )
 
 
 def collect(

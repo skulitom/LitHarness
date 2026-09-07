@@ -225,17 +225,37 @@ Useful operating views:
 | Command | Purpose |
 | --- | --- |
 | `status [--json]` | queue depth, attention, daily usage, and spend |
-| `jobs [--status parked]` | queued or blocked work |
-| `why --scene N` | the prompt, decision, and evidence behind one scene |
-| `events` | append-only state-change history |
-| `plans` | immutable plan lineage and its proposals |
-| `state`, `characters`, `world summary` | current canon and world state |
+| `jobs [--status parked] [--json]` | queued or blocked work; the JSON form always carries counts |
+| `exceptions [--json]`, `directives [--json]` | what policy could not resolve; captured direction with its author |
+| `why --scene N [--json]` | the prompt, decision, and evidence behind one scene |
+| `events [--since CURSOR] [--json]` | append-only state-change history |
+| `plans [--json]` | immutable plan lineage and its proposals |
+| `state [--json]`, `characters [--json]`, `world summary` | current canon and world state |
+| `world declare-batch --records '[...]'` | several world proposals in one call, reported one by one, ending with `world check` |
 | `prompts [--role ROLE]` | labelled representative requests: role, material, schema, tools, and effective size |
 | `prompts --role scene --scene N` | the exact frozen scene request, provenance, section pressure, omissions, and repeated material |
-| `verify` | rebuild revisions and verify hashes and policy coverage |
+| `verify [--json]` | rebuild revisions and verify hashes and policy coverage |
 | `backup PATH` | online SQLite backup, safe while ticking |
 
-Run `uv run litharness COMMAND --help` for the authoritative option list.
+Run `uv run litharness COMMAND --help` for the authoritative option list. `--database` goes
+before the verb; `LITHARNESS_DATABASE` names the store when a flag cannot. Exit codes are the
+contract on every verb: 0 answered, 1 needs a person (a result, not an error), 2 an operational
+fault.
+
+The same read verbs are served to other agents in-process by `litharness-mcp` (stage-0 §241),
+a stdio MCP server behind the `mcp` extra (`uv sync --extra mcp`). It binds one store at
+start, opens it read-only for every read, refuses an absent path instead of creating one, and
+never migrates, accepts, spends or posts; `--profile propose` registers the Architect's shape
+(the world views and the two `declare` tools) and nothing else. Register it for a Claude Code
+session with:
+
+```bash
+claude mcp add -s project litharness -- uv run --project /abs/path/to/LitHarness --no-sync litharness-mcp --database /abs/path/to/book.db
+```
+
+Every tool result carries `attention: true` where the CLI would exit 1, and every read tool's
+description ends with the rule the `debug-book` skill keeps: nothing a dossier tells you may
+become a prompt, directive, finding or plan item.
 
 ## Direct and recover
 

@@ -40,17 +40,20 @@ import litharness_contracts as lc
 
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
-from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore, StoredEvent
+from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
 from litharness.application import concept as concept_mod
 from litharness.application import covers, recruiter, revoice, titles, world_agent
+from litharness.application import dossier as dossier_mod
 from litharness.application import exemplars as exemplars_mod
 from litharness.application import export as export_module
 from litharness.application import library as library_module
+from litharness.application import operations as operations_mod
 from litharness.application import overview as overview_mod
 from litharness.application import readers as readers_mod
 from litharness.application import release as release_mod
 from litharness.application import roster as roster_mod
 from litharness.application import status as status_module
+from litharness.application import views as views_mod
 from litharness.application import world as world_mod
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.directive_planner import DIRECTIVE_PLAN, make_directive_plan_handler
@@ -90,7 +93,7 @@ from litharness.application.outline import (
     render_outline_request,
 )
 from litharness.application.plan_refinement import accept_plan_proposal
-from litharness.application.planner import make_plan_selector, plan_progress
+from litharness.application.planner import make_plan_selector
 from litharness.application.planner import render_prompt as render_scene_prompt
 from litharness.application.repair import (
     EVALUATE_REVISION,
@@ -155,11 +158,10 @@ from litharness.domain.findings import Finding, Severity
 from litharness.domain.findings import Status as finding_status
 from litharness.domain.generation import CompletionRequest, CompletionResult
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
-from litharness.domain.nodes import Node, NodeKind
+from litharness.domain.nodes import NodeKind
 from litharness.domain.plan_refinement import (
     PlanProposalStatus,
     PlanRevision,
-    StoredPlanProposal,
     rollback_proposal,
 )
 from litharness.domain.plans import (
@@ -167,7 +169,6 @@ from litharness.domain.plans import (
     FIRST_PERSON_PLAN_ID,
     import_plan,
     premise_of,
-    scene_plan_for,
 )
 from litharness.domain.policy import (
     GateKind,
@@ -177,7 +178,7 @@ from litharness.domain.policy import (
     decision_id_for,
 )
 from litharness.domain.promises import Promise, normalise_kind, promise_id_for
-from litharness.domain.revision import Revision, append_scenes, import_manuscript, new_book
+from litharness.domain.revision import append_scenes, import_manuscript, new_book
 from litharness.domain.salience import (
     build_state_continuity_items,
     ecological_manifest,
@@ -763,23 +764,17 @@ def cmd_status(args: argparse.Namespace) -> int:
         # board at rest were the same screen. Computed under the policy and serial shape
         # `cmd_tick` hands its selector, because the answer depends on both: the sentence
         # printed here is the sentence the next tick refuses with, not a second opinion.
-        policy = _draft_policy(args)
-        shape = SerialShape(args.chapter_scenes, args.arc_chapters)
-        blocked = []
-        for book_id, branch_id, _ in store.branches():
-            progress = plan_progress(store, book_id, branch_id, policy=policy, serial_shape=shape)
-            if progress.blocked_reason is not None:
-                blocked.append(
-                    status_module.BlockedBook(book_id, branch_id, progress.blocked_reason)
-                )
-        report = status_module.collect(
+        # `status.report` holds that loop now (§241), so the agent surface prints this same
+        # report; the CLI still hands it the flags only the CLI holds.
+        report = status_module.report(
             store,
             _now(),
+            policy=_draft_policy(args),
+            shape=SerialShape(args.chapter_scenes, args.arc_chapters),
             budget=_budget(args),
             # The CLI is the only caller that knows whether the sibling evaluator is wired,
             # so it is the only one that can report the pack being off.
             continuity_evaluator=args.continuity_evaluator_command is not None,
-            blocked=blocked,
         )
     finally:
         store.close()
@@ -829,6 +824,10 @@ def cmd_directive(args: argparse.Namespace) -> int:
 def cmd_directives(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
+        if args.json:
+            view = views_mod.directives_view(store, status=DirectiveStatus(args.status))
+            _say(json.dumps(view, ensure_ascii=False, indent=2))
+            return EXIT_OK
         items = store.directives_by_status(DirectiveStatus(args.status))
     finally:
         store.close()
@@ -901,6 +900,14 @@ def cmd_directors(args: argparse.Namespace) -> int:
 def cmd_jobs(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
+        if args.json:
+            # Counts even on an empty queue: the text form printed nothing at all there, and
+            # nothing is what a failed call prints too (§241).
+            view = views_mod.jobs_view(
+                store, status=JobStatus(args.status) if args.status else None
+            )
+            _say(json.dumps(view, ensure_ascii=False, indent=2))
+            return EXIT_OK
         if args.status:
             jobs = store.jobs_by_status(JobStatus(args.status))
             for job in jobs:
@@ -951,6 +958,10 @@ def cmd_exceptions(args: argparse.Namespace) -> int:
     """The queue §4.3 promised the director: what policy could not resolve."""
     store = _store(args)
     try:
+        if args.json:
+            view = views_mod.exceptions_view(store)
+            _say(json.dumps(view, ensure_ascii=False, indent=2))
+            return EXIT_ATTENTION if view["open"] else EXIT_OK
         items = store.open_exceptions()
     finally:
         store.close()
@@ -981,23 +992,6 @@ def cmd_resolve(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
-def _finding_row(item: Finding) -> dict[str, Any]:
-    """One finding as an agent reads it. Shared by `findings --json` and the dossier, so
-    the two verbs an agent chains cannot describe the same row differently."""
-    return {
-        "finding_id": item.finding_id,
-        "severity": item.severity.value,
-        "status": item.status.value,
-        "blocks": item.blocks,
-        "category": item.category,
-        "subtype": item.subtype,
-        "rule_or_critic_id": item.rule_or_critic_id,
-        "logical_id": item.logical_id,
-        "message": item.message,
-        "deterministic": item.deterministic,
-    }
-
-
 def cmd_findings(args: argparse.Namespace) -> int:
     """What the evaluators say is wrong, worst first.
 
@@ -1009,24 +1003,15 @@ def cmd_findings(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        view = views_mod.findings_view(
+            store, book_id, branch_id, logical_id=args.node, open_only=not args.all
+        )
         items = store.findings(book_id, branch_id, logical_id=args.node, open_only=not args.all)
     finally:
         store.close()
-    blocking = sum(1 for item in items if item.blocks)
+    blocking = view["blocking"]
     if args.json:
-        print(
-            json.dumps(
-                {
-                    "book_id": book_id,
-                    "branch_id": branch_id,
-                    "open_only": not args.all,
-                    "findings": [_finding_row(item) for item in items],
-                    "shown": len(items),
-                    "blocking": blocking,
-                },
-                indent=2,
-            )
-        )
+        print(json.dumps(view, indent=2))
         return EXIT_ATTENTION if blocking else EXIT_OK
     for item in items:
         flag = "BLOCKS" if item.blocks else "      "
@@ -1158,461 +1143,6 @@ def cmd_dismiss(args: argparse.Namespace) -> int:
 #: decision to print. Every gap is named in the `absent` list; only these three mean the
 #: question went unanswered. A book drafted with `--no-outline` has no plan statement,
 #: which is not a fault — it is a fact about that book, printed and exit 0.
-UNANSWERED = ("prose", "decision", "prompt")
-
-
-def _gate_row(gate: GateOutcome) -> dict[str, Any]:
-    """One rung of the ladder as stored. `_gate_to_row` in the store is the write side."""
-    return {
-        "gate": gate.gate.value,
-        "rule_or_critic_id": gate.rule_or_critic_id,
-        "passed": gate.passed,
-        "blocking": gate.blocking,
-        "verdict_source": gate.verdict_source.value,
-        "vetoes": [veto.value for veto in gate.vetoes],
-        "detail": gate.detail,
-        "calibration_id": gate.calibration_id,
-    }
-
-
-def _decision_row(decision: PolicyDecision) -> dict[str, Any]:
-    """One policy decision, whole. A refusal is carried as fully as an acceptance."""
-    return {
-        "decision_id": decision.decision_id,
-        "outcome": decision.outcome.value,
-        "attempt": decision.attempt,
-        "job_id": decision.job_id,
-        "logical_id": decision.logical_id,
-        "base_revision_id": decision.base_revision_id,
-        "resulting_revision_id": decision.resulting_revision_id,
-        "provider": decision.provider,
-        "model": decision.model,
-        "profile": decision.profile,
-        "fell_back_from": list(decision.fell_back_from),
-        "invocations": decision.invocations,
-        "total_tokens": decision.total_tokens,
-        "cost_usd": decision.cost_usd,
-        "policy_config_digest": decision.policy_config_digest,
-        "reason": decision.reason,
-        "gates": [_gate_row(gate) for gate in decision.gates],
-    }
-
-
-def _scenes_of(revision: Revision) -> list[Node]:
-    return [
-        node
-        for node in revision.in_reading_order()
-        if node.kind is NodeKind.SCENE and not node.tombstoned
-    ]
-
-
-def _scene_node(head: Revision, wanted: str) -> Node | None:
-    """The scene `--scene` names: a logical id, or a 1-based place in reading order.
-
-    Both, because the two callers differ. A logical id is what every other verb prints and
-    what an agent chains from; an ordinal is what a human reading the book has. `new_book`
-    mints `scene-3`, so a digit resolves through that id first and falls back to counting —
-    an imported book whose scenes are named otherwise still answers `--scene 3`.
-    """
-    scenes = _scenes_of(head)
-    by_id = {node.logical_id: node for node in scenes}
-    if wanted in by_id:
-        return by_id[wanted]
-    if wanted.isdigit():
-        derived = f"scene-{int(wanted)}"
-        if derived in by_id:
-            return by_id[derived]
-        index = int(wanted) - 1
-        if 0 <= index < len(scenes):
-            return scenes[index]
-    return None
-
-
-def _introduced_in(store: SqliteStore, head: Revision, logical_id: str) -> tuple[str | None, int]:
-    """The revision that put the head's current prose into this scene, and how deep it sits.
-
-    Walked oldest-first along the lineage and remembered on every *change* of the node's
-    content hash, so a scene a repair rewrote reports the repair rather than the first
-    draft — the decision an operator wants is the one that produced the text they are
-    reading. Revisions predating the node are skipped rather than assumed empty.
-    """
-    previous: str | None = None
-    introduced: str | None = None
-    depth = 0
-    for index, revision_id in enumerate(reversed(store.lineage(head.revision_id))):
-        try:
-            node = store.load_revision(revision_id).node(logical_id)
-        except KeyError:
-            continue
-        if node.content_sha256 != previous:
-            previous = node.content_sha256
-            if node.content:
-                introduced, depth = revision_id, index + 1
-    return introduced, depth
-
-
-def _payload_prompt(job: Job | None) -> dict[str, Any] | None:
-    """The frozen prompt off the job payload, or None when the unit carries no prose to send.
-
-    A payload with no prompt is not always a defect — an evaluation unit has none at
-    all —
-    but for a scene dossier it is still a gap, which is why this returns None rather than an
-    empty string and lets the caller record the absence.
-    """
-    if job is None:
-        return None
-    prompt = job.payload.get("prompt")
-    if not isinstance(prompt, str) or not prompt:
-        return None
-    system = job.payload.get("system")
-    return {"system": system if isinstance(system, str) else None, "prompt": prompt}
-
-
-#: The states a unit can be in without an accepted revision naming it, in the order the
-#: dossier prefers one: still working, then stopped by policy, then stopped by exhaustion.
-_UNFINISHED_UNIT_STATUSES = (
-    JobStatus.RUNNING,
-    JobStatus.QUEUED,
-    JobStatus.PARKED,
-    JobStatus.POISONED,
-    JobStatus.FAILED,
-    JobStatus.CANCELLED,
-)
-
-
-def _unit_for_scene(
-    store: SqliteStore, book_id: str, branch_id: str, logical_id: str
-) -> Job | None:
-    """The drafting unit that names this scene and has not produced an accepted revision.
-
-    Read off the job's own payload — the planner writes `logical_id`, `book_id` and
-    `branch_id` there when it mints the unit — so a scene's parked or poisoned job is found
-    the way the accepting decision would have found it, by the scene it was for. The first
-    match in `_UNFINISHED_UNIT_STATUSES` order wins; a book holds at most a handful of these.
-    """
-    for status in _UNFINISHED_UNIT_STATUSES:
-        for job in store.jobs_by_status(status, limit=1000):
-            payload = job.payload
-            if (
-                job.job_kind == SCENE_DRAFT
-                and payload.get("logical_id") == logical_id
-                and payload.get("book_id") == book_id
-                and payload.get("branch_id") == branch_id
-            ):
-                return job
-    return None
-
-
-def _scene_dossier(
-    store: SqliteStore, book_id: str, branch_id: str, node: Node, head: Revision
-) -> dict[str, Any]:
-    """Every stored row that explains one scene, joined, with the gaps named.
-
-    **Nothing here is computed from the prose.** Every field is a column somebody wrote at
-    the time, which is what makes the answer a record rather than a re-reading: the prompt is
-    the one actually sent (frozen at enqueue, invariant I5), the gate ladder is the one that
-    ran. A dossier that re-rendered the prompt from live tables would be answering a
-    question about today.
-    """
-    logical_id = node.logical_id
-    absent: list[str] = []
-    introduced, depth = _introduced_in(store, head, logical_id)
-    if introduced is None:
-        absent.append("prose")
-
-    decision = None if introduced is None else store.decision_for_revision(introduced)
-    if introduced is not None and decision is None:
-        absent.append("decision")
-
-    job_id = decision.job_id if decision else None
-    job: Job | None = None
-    if job_id:
-        with suppress(KeyError):
-            job = store.load_job(job_id)
-    if job is None and decision is None:
-        # **A scene nobody has accepted still has a unit, and until §234 this verb could
-        # not find it.** The job was reached only through the decision that accepted the
-        # revision, so a parked or poisoned unit — the two the skill lists under *a scene was
-        # never written* — read as `ABSENT - no queued unit is on record`, while `jobs`
-        # counted it one line away. Pilot 25 draw 6 held one of each. The unit is found by
-        # the scene it names, its latest decision stands in for the one that never accepted,
-        # and the frozen prompt on its payload is printed exactly as for a drafted scene.
-        job = _unit_for_scene(store, book_id, branch_id, logical_id)
-        if job is not None:
-            job_id = job.job_id
-            decision = store.latest_decision_for(job.job_id)
-    prompt = _payload_prompt(job)
-    if prompt is None:
-        absent.append("prompt")
-
-    payload: dict[str, Any] = dict(job.payload) if job is not None else {}
-    plan_item = scene_plan_for(store.plan_items(book_id, branch_id), logical_id)
-    if plan_item is None:
-        absent.append("plan_item")
-
-    # **The text the reviser replaced, when there is one** (§187). Scoped to the revision that
-    # introduced this scene's prose, so what comes back is the *pair*: this row's text against
-    # the node content beside it. Absence is not a gap and is deliberately not on `absent` —
-    # a scene drafted with the stage held back, or drafted before §187, has no such text
-    # because the accepted prose is the writer's own. Nothing is computed from either string
-    # here; §97.1 keeps this verb on the operator's side and a diff is a reader's act.
-    kept = (
-        [
-            item
-            for item in store.pre_revision_drafts(book_id, branch_id, logical_id=logical_id)
-            if item.revision_id == introduced
-        ]
-        if introduced is not None
-        else []
-    )
-
-    return {
-        "book_id": book_id,
-        "branch_id": branch_id,
-        "logical_id": logical_id,
-        "scene": {
-            "title": node.title,
-            "position_key": node.position_key,
-            "accepted_in": introduced,
-            "lineage_depth": depth or None,
-            "head_revision_id": head.revision_id,
-            "chars": len(node.content or ""),
-            "content_sha256": node.content_sha256,
-            "lock": node.lock.value,
-        },
-        "decision": _decision_row(decision) if decision else None,
-        "attempts": [
-            _decision_row(item) for item in (store.decisions_for_job(job_id) if job_id else [])
-        ],
-        "job": None
-        if job is None
-        else {
-            "job_id": job.job_id,
-            "job_kind": job.job_kind,
-            "status": job.status.value,
-            "attempts": job.attempts,
-            "priority": job.priority,
-            "input_digest": job.input_digest,
-        },
-        "prompt": prompt,
-        "selected_by": payload.get("selected_by"),
-        "context": payload.get("context"),
-        "context_omitted": payload.get("context_omitted"),
-        "plan_item": None
-        if plan_item is None
-        else {
-            "plan_item_id": plan_item.logical_id,
-            "text": plan_item.text,
-            "locked": plan_item.locked,
-            "authority": plan_item.authority.value,
-        },
-        "findings": [
-            _finding_row(item)
-            for item in store.findings(book_id, branch_id, logical_id=logical_id, open_only=False)
-        ],
-        "draft_before_revision": None
-        if not kept
-        else {
-            "draft_id": kept[0].draft_id,
-            "attempt": kept[0].attempt,
-            "drafted_by": kept[0].drafted_by,
-            "revised_by": kept[0].revised_by,
-            "chars": len(kept[0].content),
-            "content_sha256": kept[0].content_sha256,
-            "em_dashes_removed": kept[0].em_dashes_removed,
-            "recorded_at": kept[0].recorded_at,
-            # **The text itself, so the diff needs no second tool.** The report that
-            # commissioned this had to open a copy of the store to reach what no verb could
-            # answer; `why --json` beside `export` is now the whole pair.
-            "content": kept[0].content,
-        },
-        "absent": absent,
-    }
-
-
-def _render_dossier(dossier: dict[str, Any]) -> str:
-    """The same dict `--json` prints, as lines. One source, so the two cannot disagree."""
-    scene: dict[str, Any] = dossier["scene"]
-    lines = [
-        f"{dossier['logical_id']}  {scene['title'] or '(untitled)'}  "
-        f"[{dossier['book_id']}/{dossier['branch_id']}]"
-    ]
-
-    def field(label: str, value: str) -> None:
-        lines.append(f"  {label:<13} {value}")
-
-    # **An undrafted scene is a different report, not a report full of gaps.** Saying "no
-    # policy decision explains this revision" of a scene that has no revision would send a
-    # reader looking for an attribution failure that is not there; the scene simply has not
-    # been written. `absent` already draws the line — the renderer has to draw it too.
-    undrafted = scene["accepted_in"] is None
-    decision: dict[str, Any] | None = dossier["decision"]
-    if undrafted:
-        field("prose", "ABSENT - no accepted revision carries this scene yet")
-        if decision is None:
-            field("decision", "n/a - nothing has been accepted here, so nothing decided it")
-    else:
-        field(
-            "accepted in",
-            f"{scene['accepted_in']}  (step {scene['lineage_depth']} of the lineage)",
-        )
-        field("prose", f"{scene['chars']} char(s), sha256 {scene['content_sha256']}")
-
-    if decision is None and not undrafted:
-        field(
-            "decision",
-            "ABSENT - no policy decision explains this revision (§19; `verify` counts these)",
-        )
-    elif decision is not None:
-        cost = (
-            "cost not reported" if decision["cost_usd"] is None else f"${decision['cost_usd']:.4f}"
-        )
-        # On an undrafted scene this is the latest decision on a unit that never accepted
-        # (§234): the refusal an operator reads, and never a claim that prose exists.
-        standing_in = "  (latest on an unfinished unit; nothing accepted)" if undrafted else ""
-        field(
-            "decision",
-            f"{decision['decision_id']}  {decision['outcome']}  attempt {decision['attempt']}"
-            f"{standing_in}",
-        )
-        field(
-            "",
-            f"{decision['provider'] or '?'}/{decision['model'] or '?'}  "
-            f"profile {decision['profile'] or '?'}",
-        )
-        field(
-            "",
-            f"{decision['invocations']} call(s), {decision['total_tokens']} token(s), {cost}",
-        )
-        field("", f"config {decision['policy_config_digest'] or '(none)'}")
-        if decision["reason"]:
-            field("", f"reason: {decision['reason']}")
-        if not decision["gates"]:
-            field("gates", "(none recorded on this decision)")
-        for index, gate in enumerate(decision["gates"]):
-            mark = "PASS" if gate["passed"] else "FAIL"
-            weight = "blocking" if gate["blocking"] else "advisory"
-            field(
-                "gates" if index == 0 else "",
-                f"{mark}  {gate['gate']:<10}{gate['rule_or_critic_id']:<26}"
-                f"{gate['verdict_source']}  {weight}",
-            )
-            if gate["vetoes"]:
-                field("", f"        vetoes: {', '.join(gate['vetoes'])}")
-            if gate["detail"]:
-                field("", f"        {gate['detail']}")
-
-    attempts: list[dict[str, Any]] = dossier["attempts"]
-    if len(attempts) > 1:
-        # The ladder across attempts, not just the rung that landed. A scene accepted on the
-        # third try was refused twice and those refusals are on record.
-        ladder = ", ".join(f"{item['attempt']}:{item['outcome']}" for item in attempts)
-        field("attempts", f"{len(attempts)} decision(s) on this job - {ladder}")
-
-    job: dict[str, Any] | None = dossier["job"]
-    if job is None:
-        field("job", "ABSENT - no queued unit is on record for this scene")
-    else:
-        field(
-            "job",
-            f"{job['job_id']}  {job['job_kind']}  {job['status']}  {job['attempts']} attempt(s)",
-        )
-
-    selected = dossier["selected_by"]
-    if isinstance(selected, dict):
-        field(
-            "selected by",
-            f"beat {selected.get('ordinal')}/{selected.get('of_total')} "
-            f"{selected.get('beat_function')}  template {selected.get('template_id')}",
-        )
-        field(
-            "",
-            f"plan epoch {selected.get('plan_epoch')}  "
-            f"predicate {selected.get('predicate')}  "
-            f"story order {selected.get('story_order_key')}",
-        )
-
-    context = dossier["context"]
-    if isinstance(context, dict):
-        field(
-            "context",
-            f"{context.get('items')} item(s), {context.get('tokens')}/"
-            f"{context.get('budget')} token(s)  query {context.get('query_id')}",
-        )
-        sections = context.get("sections")
-        if isinstance(sections, dict) and sections:
-            field("", "  ".join(f"{name} {count}" for name, count in sorted(sections.items())))
-
-    omitted = dossier["context_omitted"]
-    if isinstance(omitted, list):
-        # **Printed even when empty.** This is the honest half of the packet: a baseline that
-        # packs by priority rather than relevance drops things a scorer would have kept, and
-        # a scene that ignores canon is usually a scene whose canon is on this list.
-        field("omitted", f"{len(omitted)} context item(s) the packet could not hold")
-        for item in omitted:
-            if isinstance(item, dict):
-                field("", f"  {item.get('source')}  {item.get('reason')}")
-
-    plan_item = dossier["plan_item"]
-    if plan_item is None:
-        field("plan item", "ABSENT - the plan holds no statement for this scene")
-    else:
-        field(
-            "plan item",
-            f"{plan_item['plan_item_id']}  "
-            f"{'locked' if plan_item['locked'] else 'unlocked'}  {plan_item['authority']}",
-        )
-        field("", plan_item["text"])
-
-    findings: list[dict[str, Any]] = dossier["findings"]
-    blocking = sum(1 for item in findings if item["blocks"])
-    field("findings", f"{len(findings)} recorded, {blocking} blocking")
-    for item in findings:
-        field(
-            "",
-            f"  {item['finding_id']}  {item['severity']:<8}{item['status']:<20}"
-            f"{item['rule_or_critic_id'] or item['category']}",
-        )
-        field("", f"    {item['message']}")
-
-    # **Named and not printed, which is the rule this renderer already keeps for prose.**
-    # `scene` above prints a length and a hash and sends the reader to `export` for the text;
-    # the draft is prose too and gets the same treatment. `--json` carries both strings, so the
-    # diff the attribution report could not compute is two verbs away and neither of them
-    # opens the database. The prompt at the bottom is printed whole because a prompt is not
-    # prose. Silence here means the accepted prose is the writer's own.
-    kept: dict[str, Any] | None = dossier["draft_before_revision"]
-    if kept is not None:
-        field(
-            "draft",
-            f"{kept['chars']} char(s), sha256 {kept['content_sha256']} "
-            f"({kept['em_dashes_removed']} em dash(es) removed)",
-        )
-        field(
-            "",
-            f"written by {kept['drafted_by']}, replaced by {kept['revised_by']} "
-            f"on attempt {kept['attempt']}",
-        )
-        field("", "the text is in `--json`; the prose that replaced it is in `export`")
-
-    if dossier["absent"]:
-        field("absent", ", ".join(dossier["absent"]))
-
-    prompt = dossier["prompt"]
-    lines.append("")
-    if prompt is None:
-        lines.append("(no rendered prompt on record for this scene)")
-    else:
-        # **Last, and whole.** The prompt is the thing this verb exists to show and also the
-        # longest thing here, so it follows the summary rather than burying it.
-        lines.append(f"--- system ({len(prompt['system'] or '')} char(s)) ---")
-        lines.append(prompt["system"] or "(none)")
-        lines.append("")
-        lines.append(f"--- prompt ({len(prompt['prompt'])} char(s)) ---")
-        lines.append(prompt["prompt"])
-    return "\n".join(lines)
-
-
 def cmd_why(args: argparse.Namespace) -> int:
     """Every stored row that explains one scene, joined into one dossier.
 
@@ -1634,35 +1164,20 @@ def cmd_why(args: argparse.Namespace) -> int:
         if head is None:
             print(f"litharness: no head for {book_id}/{branch_id}", file=sys.stderr)
             return EXIT_ATTENTION
-        node = _scene_node(head, args.scene)
+        node = dossier_mod.scene_node(head, args.scene)
         if node is None:
-            known = ", ".join(item.logical_id for item in _scenes_of(head)) or "(none)"
+            known = ", ".join(item.logical_id for item in dossier_mod.scenes_of(head)) or "(none)"
             print(
                 f"litharness: no scene {args.scene} in this book. Known scenes: {known}",
                 file=sys.stderr,
             )
             return EXIT_ATTENTION
-        dossier = _scene_dossier(store, book_id, branch_id, node, head)
+        dossier = dossier_mod.scene_dossier(store, book_id, branch_id, node, head)
     finally:
         store.close()
 
-    print(json.dumps(dossier, indent=2) if args.json else _render_dossier(dossier))
-    return EXIT_ATTENTION if set(dossier["absent"]) & set(UNANSWERED) else EXIT_OK
-
-
-def _event_row(stored: StoredEvent) -> dict[str, Any]:
-    return {
-        "sequence": stored.sequence,
-        "event_type": stored.event.event_type.value,
-        "created_at": stored.event.created_at,
-        "actor": stored.event.actor,
-        "book_id": stored.event.book_id,
-        "branch_id": stored.event.branch_id,
-        "revision_id": stored.event.revision_id,
-        "causation_id": stored.event.causation_id,
-        "correlation_id": stored.event.correlation_id,
-        "payload": stored.event.payload,
-    }
+    print(json.dumps(dossier, indent=2) if args.json else dossier_mod.render_dossier(dossier))
+    return EXIT_ATTENTION if set(dossier["absent"]) & set(dossier_mod.UNANSWERED) else EXIT_OK
 
 
 def cmd_events(args: argparse.Namespace) -> int:
@@ -1678,56 +1193,40 @@ def cmd_events(args: argparse.Namespace) -> int:
     so a prefix like 2026-08-13 is a valid one. Output is bounded by `--limit` and the cursor
     says where to resume, because an agent reading a long log needs both.
     """
+    # A `--since` that is neither a number nor an ISO instant is refused (`views.BadSince`, a
+    # `ValueError`, so `main` prints it at exit 2) rather than matching nothing at exit 0.
     store = _store(args)
     try:
-        since = int(args.since) if args.since and args.since.isdigit() else 0
-        stored = store.read_log(since=since)
+        view = views_mod.events_view(
+            store, since=args.since, types=args.type or (), book_id=args.book, limit=args.limit
+        )
     finally:
         store.close()
 
-    if args.since and not args.since.isdigit():
-        stored = [item for item in stored if item.event.created_at >= args.since]
-    wanted = set(args.type or ())
-    if wanted:
-        stored = [item for item in stored if item.event.event_type.value in wanted]
-    if args.book:
-        stored = [item for item in stored if item.event.book_id == args.book]
-    matched = len(stored)
-    shown = stored if args.limit <= 0 else stored[: args.limit]
-    cursor = shown[-1].sequence if shown else since
-
     if args.json:
-        print(
-            json.dumps(
-                {
-                    "events": [_event_row(item) for item in shown],
-                    "matched": matched,
-                    "shown": len(shown),
-                    "next_since": cursor,
-                },
-                indent=2,
-            )
-        )
+        print(json.dumps(view, indent=2))
         return EXIT_OK
 
-    for item in shown:
-        event = item.event
-        scope = event.revision_id or event.book_id or "-"
+    for row in view["events"]:
+        scope = row["revision_id"] or row["book_id"] or "-"
         print(
-            f"{item.sequence:>6}  {event.created_at}  {event.event_type.value:<28}"
-            f"{event.actor:<12}{scope}"
+            f"{row['sequence']:>6}  {row['created_at']}  {row['event_type']:<28}"
+            f"{row['actor']:<12}{scope}"
         )
-        if event.payload:
-            rendered = json.dumps(event.payload, sort_keys=True, ensure_ascii=False)
+        if row["payload"]:
+            rendered = json.dumps(row["payload"], sort_keys=True, ensure_ascii=False)
             if len(rendered) > 96:
                 rendered = f"{rendered[:96]}... (--json carries it whole)"
             print(f"        {rendered}")
-    if not shown:
+    if not view["events"]:
         # An empty log and a filter that matched nothing look identical otherwise, and they
         # are different answers to "what happened".
         print("(no event matches; nothing was written, or nothing was filtered in)")
         return EXIT_OK
-    print(f"({len(shown)} of {matched} matching event(s); next --since {cursor})")
+    print(
+        f"({view['shown']} of {view['matched']} matching event(s); "
+        f"next --since {view['next_since']})"
+    )
     return EXIT_OK
 
 
@@ -2859,15 +2358,22 @@ def cmd_characters(args: argparse.Namespace) -> int:
     try:
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
         records = store.state_records(book_id, branch_id)
+        view = views_mod.characters_view(store, book_id, branch_id, subject=args.subject)
     finally:
         store.close()
+
+    if args.json:
+        # An object in both cases (§241): the empty cast used to print prose here, which is
+        # what a machine reading `--json` cannot parse.
+        _say(json.dumps(view, ensure_ascii=False, indent=2))
+        return EXIT_OK
 
     people = characters_mod.cast(records)
     if args.subject:
         people = tuple(c for c in people if c.subject == args.subject)
     if not people:
         print("no cast on record for this branch")
-        print("  run `architect seed`, inspect `world check`, then `world accept`")
+        print("  run `architect seed` (paid), inspect `world check`, then `world accept`")
         return EXIT_OK
 
     if args.csv:
@@ -2877,10 +2383,6 @@ def cmd_characters(args: argparse.Namespace) -> int:
             writer.writeheader()
             writer.writerows(rows)
         print(f"{len(rows)} character(s) -> {args.csv}")
-        return EXIT_OK
-
-    if args.json:
-        print(json.dumps([c.to_jsonable() for c in people], ensure_ascii=False, indent=2))
         return EXIT_OK
 
     print(characters_mod.render(people))
@@ -3211,11 +2713,11 @@ def _stored_scene_prompt(args: argparse.Namespace) -> int:
         if head is None:
             print(f"litharness: no head for {book_id}/{branch_id}", file=sys.stderr)
             return EXIT_ATTENTION
-        node = _scene_node(head, args.scene)
+        node = dossier_mod.scene_node(head, args.scene)
         if node is None:
             print(f"litharness: no scene {args.scene} in this book", file=sys.stderr)
             return EXIT_ATTENTION
-        dossier = _scene_dossier(store, book_id, branch_id, node, head)
+        dossier = dossier_mod.scene_dossier(store, book_id, branch_id, node, head)
     finally:
         store.close()
     frozen = dossier["prompt"]
@@ -4334,6 +3836,21 @@ def _report_completion(completed: int, unfinished: Sequence[str]) -> None:
         print(f"  not finished: {reason}")
 
 
+def _print_declaration(result: Mapping[str, Any]) -> None:
+    """One declaration's report as a person reads it: the verdict line on stdout, the three
+    report lists on stderr under the headings `world vocabulary` explains."""
+    verb = "declared" if result["new"] else "already on record"
+    print(f"{verb}: {result['says']}  [{result['authority']}]")
+    if result["supersedes"]:
+        print(f"  supersedes: {len(result['supersedes'])} earlier proposal(s) in this slot")
+    for complaint in result["not_yet_coherent"]:
+        print(f"  ! not yet coherent: {complaint}", file=sys.stderr)
+    for warning in result["will_not_resolve"]:
+        print(f"  !! will not resolve: {warning}", file=sys.stderr)
+    for sentence in result["cannot_be_read"]:
+        print(f"  !! cannot be read: {sentence}", file=sys.stderr)
+
+
 def cmd_world(args: argparse.Namespace) -> int:
     """The Architect's tools: ask this world a question, or declare something new in it.
 
@@ -4550,14 +4067,6 @@ def cmd_world(args: argparse.Namespace) -> int:
             print(json.dumps(world_mod.presence(in_force, scenes), ensure_ascii=False, indent=2))
             return EXIT_OK
         if args.view == "declare":
-            record = worlds_domain.world_record(
-                worlds_domain.normalise_id(args.subject),
-                args.predicate,
-                value=_scalar(args.value),
-                object_ref=(worlds_domain.normalise_id(args.object) if args.object else None),
-                order_key=args.order_key,
-                note=args.note,
-            )
             # **Warned, never refused, and that is the whole point of a staging area.**
             # A question owes an answer, a rung owes a chain, an edge owes both ends — so
             # an Architect building a world one record at a time is in a transiently
@@ -4566,72 +4075,92 @@ def cmd_world(args: argparse.Namespace) -> int:
             # and it worked around the tool rather than saying what it meant, leaving a
             # 317-record world with zero questions in it. `world accept` is the gate, and
             # it is the gate because that is where a proposal becomes canon.
-            complaints = worlds_domain.validate([*records, record])
-            fresh = worlds_domain.validate(records)
-            new_complaints = [c for c in complaints if c not in fresh]
-            # **The second list is the one that matters, and it is second because the first
-            # one lies about it.** `not_yet_coherent` is a promise that the rest of the world
-            # will settle this, and for a question awaiting its answer or a rung awaiting its
-            # chain that promise is kept. A record written into the wrong slot reads
-            # identically in that list and nothing will ever settle it: there is no
-            # retraction, and `integrity.disagreement_key` makes a correction that changes the
-            # subject, the edge or the story position a *different* slot, so `world accept`
-            # carries both. Serial Pilot 13's first seed read a membership complaint about six
-            # `consequence` edges, took it for transient, and left six dead records in canon;
-            # Serial Pilot 12's read eleven complaints naming standings and diagnosed the CLI.
-            # Both were told something true under a heading that made it sound temporary.
-            warnings = worlds_domain.slot_warnings(record)
-            # A sheet declaration the parser refuses is said at declare time as well: it is
-            # neither transient nor permanent, since a declaration in the same slot replaces
-            # it, so it gets its own key rather than either list above.
-            unreadable_lines = list(extraction.unreadable_sheets([record]).values())
-            written = store.record_state_records(book_id, branch_id, [record], created_at=stamp)
-            payload: Any = {
-                "record_id": record.record_id,
-                "authority": record.authority.value,
-                "new": bool(written),
-                "says": state_mod.describe(record),
-                "not_yet_coherent": new_complaints,
-                "will_not_resolve": list(warnings),
-                "cannot_be_read": unreadable_lines,
-            }
+            #
+            # The checks, the three report lists and the write live in
+            # `operations.declare_world_record` since §241, so the batch verb below and the
+            # agent surface's tool run this same function; what prints here is its dict.
+            # `not_yet_coherent` is what the rest of the world may still settle;
+            # `will_not_resolve` is a record in a slot nothing will ever settle (there is no
+            # retraction, and a correction fills a different slot — Serial Pilot 13 left six
+            # dead records in canon reading the first list as if it were the second);
+            # `cannot_be_read` is a sheet the parser refuses, which a declaration in the same
+            # slot replaces; `supersedes` names the earlier proposals in this slot that
+            # `world accept` will leave behind.
+            result = operations_mod.declare_world_record(
+                store,
+                book_id,
+                branch_id,
+                operations_mod.WorldDeclaration(
+                    args.subject,
+                    args.predicate,
+                    value=_scalar(args.value),
+                    object=args.object,
+                    order_key=args.order_key,
+                    note=args.note,
+                ),
+                stamp=stamp,
+                actor=args.holder,
+                project_id=args.project,
+            )
             if args.json:
-                print(json.dumps(payload, ensure_ascii=False, indent=2))
+                print(json.dumps(result, ensure_ascii=False, indent=2))
             else:
-                verb = "declared" if written else "already on record"
-                print(f"{verb}: {payload['says']}  [{record.authority.value}]")
-                for complaint in new_complaints:
-                    print(f"  ! not yet coherent: {complaint}", file=sys.stderr)
-                for warning in warnings:
-                    print(f"  !! will not resolve: {warning}", file=sys.stderr)
-                for sentence in unreadable_lines:
-                    print(f"  !! cannot be read: {sentence}", file=sys.stderr)
+                _print_declaration(result)
             return EXIT_OK
+        if args.view == "declare-batch":
+            try:
+                items = json.loads(args.records)
+            except ValueError as error:
+                raise ValueError(f"--records is not JSON: {error}") from error
+            if not isinstance(items, list):
+                raise ValueError("--records must be a JSON array of declarations")
+            batch = operations_mod.declare_world_records(
+                store,
+                book_id,
+                branch_id,
+                items,
+                stamp=stamp,
+                actor=args.holder,
+                project_id=args.project,
+                stop_on_incoherent=args.stop_on_incoherent,
+            )
+            after = store.state_records(book_id, branch_id)
+            check = world_mod.check(
+                integrity.in_force(after, declared_at=store.state_record_times(book_id, branch_id))
+            )
+            if args.json:
+                print(json.dumps({**batch, "check": check}, ensure_ascii=False, indent=2))
+            else:
+                for row in batch["results"]:
+                    if "refused" in row:
+                        print(f"#{row['index']} refused: {row['refused']}", file=sys.stderr)
+                        continue
+                    print(f"#{row['index']} ", end="")
+                    _print_declaration(row)
+                print(
+                    f"({batch['declared']} declared, {batch['refused']} refused, "
+                    f"{batch['not_attempted']} not attempted; check "
+                    f"{'ok' if check['ok'] else 'not ok'}, {len(check['complaints'])} complaint(s))"
+                )
+            return EXIT_ATTENTION if batch["refused"] else EXIT_OK
     finally:
         store.close()
 
-    if args.view == "show":
-        payload = world_mod.declarations(records, subject=args.subject)
-    elif args.view == "rules":
-        payload = world_mod.rules(in_force)
-    elif args.view == "ladders":
-        payload = world_mod.ladders(in_force)
-    elif args.view == "abilities":
-        payload = world_mod.abilities(in_force, holder=args.holder)
-    elif args.view == "cast":
-        payload = world_mod.cast(in_force)
-    elif args.view == "threads":
-        payload = world_mod.threads(in_force, at=args.at)
-    elif args.view == "vocabulary":
-        payload = world_mod.vocabulary()
-    elif args.view == "check":
-        payload = world_mod.check(in_force)
-    else:
-        payload = world_mod.summary(records, in_force)
+    payload = world_mod.view(
+        records,
+        in_force,
+        name=args.view,
+        subject=getattr(args, "subject", None),
+        holder=getattr(args, "holder", None),
+        at=getattr(args, "at", None),
+    )
 
     print(json.dumps(payload, ensure_ascii=False, indent=2))
     if args.view == "check" and not payload["ok"]:
-        return EXIT_FAULT
+        # Exit 1, as this view's help has always said: a world that contradicts itself is a
+        # result to read, not an operational fault. It exited 2 until §241, which made the
+        # Architect's tool harness show an error banner over a valid verdict.
+        return EXIT_ATTENTION
     return EXIT_OK
 
 
@@ -4657,6 +4186,12 @@ def cmd_state(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        if args.json:
+            view = views_mod.state_view(
+                store, book_id, branch_id, subject=args.subject, predicate=args.predicate
+            )
+            _say(json.dumps(view, ensure_ascii=False, indent=2))
+            return EXIT_OK
         records = store.state_records(book_id, branch_id, subject=args.subject)
     finally:
         store.close()
@@ -5181,17 +4716,6 @@ def cmd_propagate(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
-def _proposal_row(stored: StoredPlanProposal) -> dict[str, Any]:
-    """The proposal behind one plan revision. A revision no proposal produced reads as null,
-    which is the root of the lineage rather than a step whose proposal went missing."""
-    return {
-        "proposal_id": stored.proposal.proposal_id,
-        "summary": stored.proposal.summary,
-        "rollback_of": stored.proposal.rollback_of,
-        "directives": [reading.directive_id for reading in stored.proposal.readings],
-    }
-
-
 def cmd_plans(args: argparse.Namespace) -> int:
     """The plan's lineage, newest first, and the proposal that produced each step.
 
@@ -5208,6 +4732,7 @@ def cmd_plans(args: argparse.Namespace) -> int:
     store = _store(args)
     try:
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
+        view = views_mod.plans_view(store, book_id, branch_id)
         history = store.plan_history(book_id, branch_id)
         proposals = store.plan_proposals(book_id, branch_id)
     finally:
@@ -5220,34 +4745,7 @@ def cmd_plans(args: argparse.Namespace) -> int:
     }
     conflicted = [item for item in proposals if item.status is PlanProposalStatus.CONFLICTED]
     if args.json:
-        print(
-            json.dumps(
-                {
-                    "book_id": book_id,
-                    "branch_id": branch_id,
-                    "revisions": [
-                        {
-                            "plan_revision_id": revision.plan_revision_id,
-                            "head": index == 0,
-                            "items": len(revision.items),
-                            "locked": sum(1 for item in revision.items if item.locked),
-                            "proposal": None
-                            if applied.get(revision.plan_revision_id) is None
-                            else _proposal_row(applied[revision.plan_revision_id]),
-                        }
-                        for index, revision in enumerate(history)
-                    ],
-                    "conflicted": [
-                        {
-                            "proposal_id": item.proposal.proposal_id,
-                            "error": item.error or "conflicted",
-                        }
-                        for item in conflicted
-                    ],
-                },
-                indent=2,
-            )
-        )
+        print(json.dumps(view, indent=2))
         return EXIT_OK
     for index, revision in enumerate(history):
         locked = sum(1 for item in revision.items if item.locked)
@@ -5822,10 +5320,13 @@ def cmd_verify(args: argparse.Namespace) -> int:
     """
     store = _store(args)
     try:
-        count = store.verify_integrity()
-        unattributed = store.unattributed_revisions()
+        view = views_mod.verify_view(store)
     finally:
         store.close()
+    count, unattributed = view["rebuilt"], view["unattributed"]
+    if args.json:
+        print(json.dumps(view, indent=2))
+        return EXIT_ATTENTION if unattributed else EXIT_OK
     print(f"{count} revision(s) rebuild cleanly")
     if unattributed:
         print(f"{len(unattributed)} revision(s) no policy decision explains:")
@@ -6065,6 +5566,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=DirectiveStatus.RECEIVED.value,
         choices=[state.value for state in DirectiveStatus],
     )
+    directives.add_argument("--json", action="store_true", help="machine-readable output")
     directives.set_defaults(func=cmd_directives)
 
     directors_cmd = sub.add_parser(
@@ -6082,6 +5584,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     jobs = sub.add_parser("jobs", help="queue depth, or the units in one status")
     jobs.add_argument("--status", choices=[state.value for state in JobStatus])
+    jobs.add_argument("--json", action="store_true", help="machine-readable output")
     jobs.set_defaults(func=cmd_jobs)
 
     revive = sub.add_parser("revive", help="return a parked unit to the queue")
@@ -6097,6 +5600,7 @@ def build_parser() -> argparse.ArgumentParser:
     enqueue.set_defaults(func=cmd_enqueue)
 
     exceptions = sub.add_parser("exceptions", help="what policy could not resolve")
+    exceptions.add_argument("--json", action="store_true", help="machine-readable output")
     exceptions.set_defaults(func=cmd_exceptions)
 
     resolve = sub.add_parser("resolve", help="close an exception (does not requeue the unit)")
@@ -6278,6 +5782,7 @@ def build_parser() -> argparse.ArgumentParser:
     state.add_argument("--predicate", help="one predicate, e.g. status_snapshot")
     state.add_argument("--book")
     state.add_argument("--branch")
+    state.add_argument("--json", action="store_true", help="machine-readable output")
     state.set_defaults(func=cmd_state)
 
     characters = sub.add_parser(
@@ -6334,6 +5839,34 @@ def build_parser() -> argparse.ArgumentParser:
     declare.add_argument("--book")
     declare.add_argument("--branch")
     declare.set_defaults(func=cmd_world)
+
+    # **The batch verb, and why it takes its records inline and nowhere else** (stage-0 §241).
+    # A seed declared one record per shell round-trip, so the Architect's cost was mostly the
+    # harness tax on a few hundred calls. `--records` is a JSON array typed on the command
+    # line: no file argument and no stdin, because the Architect's allowance is a prefix match
+    # on the literal command line (§146.9) and a path would be the first one it ever held.
+    declare_batch = world_sub.add_parser(
+        "declare-batch",
+        help="offer this world several records in one call (PROPOSED, never canon); "
+        "--records is a JSON array of {subject, predicate, value, object, order_key, note}",
+    )
+    declare_batch.add_argument(
+        "--records",
+        required=True,
+        help="a JSON array; each item takes the slots `declare` takes, with value already "
+        "typed (a number is a number, an object is a sheet)",
+    )
+    declare_batch.add_argument(
+        "--stop-on-incoherent",
+        dest="stop_on_incoherent",
+        action="store_true",
+        help="stop after the first record that will not resolve or cannot be read, rather "
+        "than declaring the rest beside it",
+    )
+    declare_batch.add_argument("--json", action="store_true")
+    declare_batch.add_argument("--book")
+    declare_batch.add_argument("--branch")
+    declare_batch.set_defaults(func=cmd_world)
 
     accept = world_sub.add_parser(
         "accept",
@@ -6969,6 +6502,7 @@ def build_parser() -> argparse.ArgumentParser:
     export.set_defaults(func=cmd_export)
 
     verify = sub.add_parser("verify", help="rebuild every revision from canonical records")
+    verify.add_argument("--json", action="store_true", help="machine-readable output")
     verify.set_defaults(func=cmd_verify)
 
     return parser

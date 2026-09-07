@@ -25,6 +25,9 @@ describes how to work here, not how a production model should write a book.
 - `src/litharness/providers/` owns model transport. Tests structurally disable billing
   providers through `LITHARNESS_ENV=test`.
 - `src/litharness/cli.py` is the composition root and operator interface.
+- `src/litharness/mcp_server.py` is the second composition root: the read-only MCP server
+  other agents hold (`litharness-mcp`, behind the `mcp` extra). It binds a store and never a
+  provider, and its tool table is tested equal to the parser.
 - `research/quality-measurement/` is an isolated research surface, never a production import.
 - Context assembly and long-serial endurance are first-party LitHarness responsibilities.
 - `litharness-contracts` is a pinned git dependency; one LitHarness checkout is sufficient.
