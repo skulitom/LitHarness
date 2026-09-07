@@ -854,3 +854,63 @@ def test_an_unreadable_sheet_is_a_complaint_and_a_refusal_never_a_traceback(
     assert main(["--database", db, "world", "accept"]) == EXIT_OK
     out = capsys.readouterr().out
     assert "accepted 1" in out and "left proposed" in out
+
+
+def test_accept_leaves_the_planners_schedule_as_the_proposal_it_is(fake, tmp_path, capsys) -> None:  # type: ignore[no-untyped-def]
+    """The first whole-volume draw: `world accept` after a grow promoted the outline's
+    milestone snapshots beside the Architect's proposals, so the writer was handed the
+    schedule as canon and `sheet_of` read it as the book's position. The planner's records
+    are the outline's to revise; accept carries the Architect's and says what it left."""
+    from datetime import UTC, datetime
+
+    from litharness.adapters.sqlite_store import SqliteStore
+    from litharness.application import export as export_module
+    from litharness.application.outline import milestone_records
+    from litharness.domain.beats import Beat
+
+    db = seeded(tmp_path)
+    assert (
+        main(
+            [
+                *("--database", db, "world", "declare", "sera", "status_sheet"),
+                *("--value", json.dumps(_SHEET_VALUE)),
+            ]
+        )
+        == EXIT_OK
+    )
+    beat = Beat(
+        logical_id="scene-5",
+        ordinal=5,
+        of_total=24,
+        title=None,
+        function="rising",
+        template_id="template.arc-24.v0",
+        story_order_key="s000005",
+    )
+    planned = milestone_records(
+        [(beat, {"attunement": 2, "threads": 1})],
+        subject="sera",
+        seed={"attunement": 1, "threads": 2},
+    )
+    store = SqliteStore.open(db)
+    try:
+        book_id, branch_id = export_module.resolve_branch(store, None, None)
+        assert store.record_state_records(
+            book_id, branch_id, planned, created_at=datetime.now(tz=UTC).isoformat()
+        ) == 1
+    finally:
+        store.close()
+    capsys.readouterr()
+    assert main(["--database", db, "world", "accept"]) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "1 planned milestone(s) left as the outline's schedule" in out
+    store = SqliteStore.open(db)
+    try:
+        by_id = {record.record_id: record for record in store.state_records(book_id, branch_id)}
+    finally:
+        store.close()
+    assert by_id["milestone-s000005"].authority is lc.StateAuthority.PROPOSED
+    assert any(
+        record.predicate == "status_sheet" and record.authority is lc.StateAuthority.ACCEPTED_CANON
+        for record in by_id.values()
+    )

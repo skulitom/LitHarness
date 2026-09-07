@@ -365,6 +365,39 @@ def _edges_on_record(known: Sequence[lc.StateRecord], order_key: str) -> set[tup
     }
 
 
+def _standing_now(
+    known: Sequence[lc.StateRecord], subject: str, criterion: str, order_key: str
+) -> str | None:
+    """The rung of `criterion` the placed edges put `subject` on as of `order_key`.
+
+    Canon and proposals both, at positions this scene can place and not past it, the
+    outline's own rung schedule left out exactly as `_edges_on_record` leaves it; the
+    un-keyed edge is the opening state and the floor, and the latest placed edge wins.
+    """
+    canon = _canon_of(known)
+    best: tuple[str, str] | None = None
+    for record in known:
+        if (
+            record.predicate != worlds_mod.STANDS_AT_PREDICATE
+            or record.subject != subject
+            or record.object_ref is None
+            or not _placeable(record, order_key)
+            or (
+                record.authority is lc.StateAuthority.PROPOSED
+                and record.predicate_registry_version != GRAPH_REGISTRY_VERSION
+            )
+        ):
+            continue
+        if worlds_mod.criterion_of_rung(canon, record.object_ref) != criterion:
+            continue
+        key = state_mod.order_key_of(record) or ""
+        if key > order_key:
+            continue
+        if best is None or key >= best[0]:
+            best = (key, record.object_ref)
+    return best[1] if best else None
+
+
 def _standing_from_line(
     sheet: Sheet,
     read: Mapping[str, object],
@@ -396,7 +429,6 @@ def _standing_from_line(
     which is every book written before §204.
     """
     canon = _canon_of(known)
-    on_record = _edges_on_record(known, order_key)
     minted: list[lc.StateRecord] = []
     # **A numeric rung column states the rung by its index** (§236): a drawn system's own
     # sheet prints `Ticket 2`, and the index names a rung of the one system whose columns
@@ -422,7 +454,16 @@ def _standing_from_line(
         if criterion is None:
             continue
         key = (subject, worlds_mod.STANDS_AT_PREDICATE, rung)
-        if key in on_record or key in {_edge_key(row) for row in minted}:
+        # **A rung already on record is a repetition only while it is where the book
+        # stands.** The first whole-volume draw struck its protagonist from Mark Four back
+        # to Mark One; the opening standing at Mark One was on record, un-keyed, so the
+        # line's Mark One "added nothing", the latest placed edge stayed Mark Four, and the
+        # next chapter's writer was handed a rung the page had lost. What repeats is the
+        # standing the placed edges put the subject on *now*, not any rung ever held.
+        if (
+            _standing_now(known, subject, criterion, order_key) == rung
+            or key in {_edge_key(row) for row in minted}
+        ):
             continue
         start, end = span
         minted.append(

@@ -3918,6 +3918,32 @@ def cmd_world(args: argparse.Namespace) -> int:
             # what lets it be recognised as already answered. Canon is never replaced by this,
             # so `carried` is still only ever a subset of the proposals.
             replaced = integrity.superseded(records, declared_at=declared_at)
+            # **The planner's schedule is a proposal by design and never a declaration** (the
+            # outline mints `milestone-*`/`standing-*` records PROPOSED so the packet never
+            # hands a milestone to a scene as fact). The first whole-volume draw found this
+            # command promoting them beside the Architect's proposals: from then on the
+            # writer was handed the schedule as canon, `sheet_of` read it as the book's
+            # position, and, the records carrying no registry version, `extraction` read the
+            # book as somebody else's vocabulary and wrote nothing for eleven scenes. They
+            # are left as the schedule they are; the outline is what revises them.
+            planned = [
+                record
+                for record in proposals
+                if record.predicate_registry_version == extraction.PLANNED_POSITION_VERSION
+            ]
+            if planned:
+                proposals = [record for record in proposals if record not in planned]
+                print(
+                    f"  {len(planned)} planned milestone(s) left as the outline's schedule; "
+                    "accept never carries the planner's proposals"
+                )
+                if not proposals:
+                    completed, unfinished = _finish_drawn_systems(
+                        store, book_id, branch_id, stamp
+                    )
+                    print("nothing else proposed; canon is unchanged")
+                    _report_completion(completed, unfinished)
+                    return EXIT_OK
             carried = [record for record in proposals if record.record_id not in set(replaced)]
             # **A sheet the parser cannot read is refused outright, with no --force** (found
             # by the fit census): forced into canon it would take the floor, the packet and

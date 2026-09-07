@@ -666,6 +666,34 @@ def presence(records: Sequence[lc.StateRecord], scenes: Mapping[str, str]) -> di
     }
 
 
+def as_accepted(records: Sequence[lc.StateRecord]) -> list[lc.StateRecord]:
+    """The records as `world accept` would carry them: every proposal as canon, and beside
+    them the configuration accept mints to finish a drawn system (§165).
+
+    **The first whole-volume draw found the preview reading a world accept had not finished
+    yet** (runs/volume1, 2026-09-07). The seed put `mark_one` in the rank column; `check`
+    and `accept` both previewed clean and accepted it, and the same `check` a minute later
+    named two faults. Nothing had changed but the four records `_finish_drawn_systems`
+    minted at accept: until a drawn system has its scale it is not a system, its rung
+    column is read as an ordinal that may hold a rung's id, and §213.1's fault cannot be
+    seen. `completion_records` invents nothing — it reads the scale off the numbers the
+    world already declared — so running it here previews exactly what accept will carry,
+    and both previews read that.
+    """
+    as_canon = [
+        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+        for record in records
+    ]
+    completions, _ = gamesystem.completion_records(as_canon)
+    return [
+        *as_canon,
+        *(
+            dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
+            for record in completions
+        ),
+    ]
+
+
 def would_breach(records: Sequence[lc.StateRecord]) -> list[str]:
     """What the drafting gate would refuse on this world alone, before any scene (§200).
 
@@ -678,10 +706,7 @@ def would_breach(records: Sequence[lc.StateRecord]) -> list[str]:
     Nothing is minted and `ok` does not move; `world accept` refuses on this list the
     way it refuses on `machinery_names`.
     """
-    as_canon = tuple(
-        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
-        for record in records
-    )
+    as_canon = tuple(as_accepted(records))
     subject = DetectorInput(book_id="", branch_id="", logical_id="world", records=as_canon)
     findings = integrity.detect_contradictions(subject) + integrity.detect_cardinality_violations(
         subject
@@ -708,10 +733,7 @@ def snapshot_faults(records: Sequence[lc.StateRecord]) -> list[str]:
 
     Nothing is minted and `ok` does not move; the list is its own key beside `would_breach`.
     """
-    as_canon = [
-        dataclasses.replace(record, authority=lc.StateAuthority.ACCEPTED_CANON)
-        for record in extraction.readable(records)
-    ]
+    as_canon = as_accepted(extraction.readable(records))
     sheet = extraction.sheet_for(as_canon)
     if sheet is None:
         return []
@@ -764,6 +786,46 @@ def snapshot_faults(records: Sequence[lc.StateRecord]) -> list[str]:
                     "and the arithmetic reads the edges, so declare the edge"
                 )
     return sorted(faults)
+
+
+def unplaceable_positions(records: Sequence[lc.StateRecord]) -> list[dict[str, Any]]:
+    """Every keyed record whose position no scene cutoff can place, and so is omitted from
+    every scene's packet (§165, §167).
+
+    **Found on the first whole-volume draw** (runs/volume1, 2026-09-07): the Architect keyed
+    twenty-three of its records — five notices, seven reveals, four standings, a choice and
+    snapshots — as `0110`, `0200`, `0810`, the schedule space, and ten more as `s000005`,
+    the scene space. The packet omitted the first set at scene one with the reason "not in
+    the scene key space this cutoff reads", and would have at every scene after; the
+    disclosure schedule was decoration. `world check` reported nothing, because a key in the
+    schedule space is legal. This names them where `world declare` can still re-key them,
+    and it moves nothing: a position is the Architect's to state, and the fix is a
+    declaration in the space the cutoff reads.
+    """
+    out: list[dict[str, Any]] = []
+    for record in records:
+        key = state_mod.order_key_of(record)
+        if key is None:
+            continue
+        space = state_mod.key_space(key)
+        if space == state_mod.SCENE_KEYS:
+            continue
+        out.append(
+            {
+                "subject": record.subject,
+                "predicate": str(record.predicate),
+                "order_key": key,
+                "space": space or "none",
+                "why": (
+                    "a schedule-space key: the progression schedule reads it, no scene cutoff "
+                    "does, so every scene omits it and a reveal keyed here never discloses "
+                    "(§167)"
+                    if space == state_mod.SCHEDULE_KEYS
+                    else "a key in neither space; it compares with nothing"
+                ),
+            }
+        )
+    return out
 
 
 def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
@@ -879,6 +941,7 @@ def check(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
         "manifested": len(coverage.covered),
         "needing_manifestation": len(coverage.features),
         "unmanifested": list(coverage.missing),
+        "unplaceable": unplaceable_positions(records),
     }
 
 

@@ -1559,3 +1559,35 @@ def _canon_ladder() -> list[lc.StateRecord]:
             )
         )
     return out
+
+
+def test_the_planners_schedule_carries_its_own_registry_version() -> None:
+    """The first whole-volume draw: the outline's milestone snapshots and standings were
+    proposals with no registry version; `world accept` promoted them, and from then on
+    `extraction.has_story_vocabulary` read the book as somebody else's numbering and wrote
+    nothing for eleven scenes. The schedule is this house's own vocabulary and says so."""
+    from litharness.application.outline import milestone_records, standing_milestone_records
+    from litharness.domain import extraction
+    from litharness.domain.beats import Beat
+
+    beat = Beat(
+        logical_id="scene-5",
+        ordinal=5,
+        of_total=24,
+        title=None,
+        function="rising",
+        template_id="template.arc-24.v0",
+        story_order_key="s000005",
+    )
+    milestones = milestone_records(
+        [(beat, {"rank": 2, "credit": 3})], subject="wes", seed={"rank": 1, "credit": 2}
+    )
+    standings = standing_milestone_records([(beat, "mark_two")], subject="wes", criterion="mark")
+    planned = [*milestones, *standings]
+    assert planned and all(
+        record.predicate_registry_version == extraction.PLANNED_POSITION_VERSION
+        and record.authority is lc.StateAuthority.PROPOSED
+        for record in planned
+    )
+    promoted = [replace(record, authority=lc.StateAuthority.ACCEPTED_CANON) for record in planned]
+    assert extraction.has_story_vocabulary(promoted) is False

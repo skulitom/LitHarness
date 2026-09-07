@@ -187,3 +187,62 @@ def test_the_check_previews_a_line_the_arithmetic_cannot_read_and_says_the_numbe
     )
     assert world.check([*records, numbered, edge])["snapshot_faults"] == []
     assert world.check(records)["snapshot_faults"] == []
+
+
+def test_the_preview_reads_the_scale_accept_would_mint_before_naming_a_rung() -> None:
+    """The first whole-volume draw (runs/volume1, 2026-09-07): the Architect drew a system and
+    put `mark_one` in the rank column; `check` and `accept` previewed clean, accepted it, and
+    the same `check` a minute later named the fault. Until accept mints the drawn system's
+    scale the rank column reads as an ordinal, so the preview has to read the world as accept
+    will carry it — completion records beside the proposals — or §213.1's refusal never fires
+    on a seed, which is the one place it exists to fire."""
+    from litharness.domain import extraction
+    from litharness.domain.systems import MAGNITUDE_SCALE, SYSTEM_DIGEST
+
+    system = _system()
+    drawn = [
+        record
+        for record in gamesystem.records_for(system)
+        if record.predicate not in {MAGNITUDE_SCALE, SYSTEM_DIGEST}
+    ]
+    # A depth somebody already holds, so the scale accept would mint is read and not invented.
+    drawn.append(worlds.world_record("mira", worlds.CAN_DO, object_ref="cap_read", value=3))
+    assert gamesystem.completion_records(drawn)[0], "the fixture must still need finishing"
+    named = worlds.world_record(
+        "kell", extraction.STATUS_PREDICATE, value={"rank": "r_first", "cap_read": 1}
+    )
+    faults = world.check([*drawn, named])["snapshot_faults"]
+    assert any("'r_first' in the rank column" in fault and "is 1 of 3" in fault for fault in faults)
+    assert world.snapshot_faults([*drawn, named]) == faults
+    numbered = worlds.world_record(
+        "kell", extraction.STATUS_PREDICATE, value={"rank": 1, "cap_read": 1}
+    )
+    edge = worlds.world_record("kell", worlds.CAN_DO, object_ref="cap_read", value=1)
+    assert world.check([*drawn, numbered, edge])["snapshot_faults"] == []
+    # The completed set is a preview only: nothing was minted into the records handed in.
+    assert all(record.predicate not in {MAGNITUDE_SCALE, SYSTEM_DIGEST} for record in drawn)
+
+
+def test_the_check_names_every_keyed_record_no_scene_cutoff_can_place() -> None:
+    """The first whole-volume draw's seed keyed its notices and reveals as `0110`, the
+    schedule space, and the packet omitted every one at every scene while `world check`
+    said nothing. The check now names them, and moves nothing."""
+    system = _system()
+    records = [_accepted(record) for record in gamesystem.records_for(system)]
+    scheduled = worlds.world_record(
+        "kell", "stands_at", object_ref="r_second", order_key="0300"
+    )
+    placed = worlds.world_record(
+        "kell", "stands_at", object_ref="r_third", order_key="s000003"
+    )
+    unkeyed = worlds.world_record("kell", "stands_at", object_ref="r_first")
+    report = world.check([*records, scheduled, placed, unkeyed])
+    (row,) = report["unplaceable"]
+    assert (row["subject"], row["predicate"], row["order_key"], row["space"]) == (
+        "kell",
+        "stands_at",
+        "0300",
+        "schedule",
+    )
+    assert "every scene omits it" in row["why"]
+    assert report["ok"] is True

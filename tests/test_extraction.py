@@ -1678,3 +1678,40 @@ def test_a_scene_that_prints_the_line_twice_keeps_the_state_it_leaves() -> None:
     # A subject canon has never named is no subject of this book's, whatever it printed.
     assert extraction_mod._last_line_each(text, {"rook"}) == [kept[0]]
     assert extraction_mod._last_line_each(text, set()) == []
+
+
+def test_a_return_to_a_rung_once_held_is_read_off_the_line() -> None:
+    """The first whole-volume draw: struck from Mark Four back to Mark One, the line printed
+    Mark 1 for six scenes and no standing was minted, because the un-keyed opening standing
+    at Mark One was "already on record". What repeats is where the placed edges put the
+    subject now; a return is a move, and the next writer is handed the rung the page has."""
+    known = _ordinal_line_world()
+    rose = _standings(_read_scene("[STATUS] silas — Grade Second Seal | Marks 3\n", known))
+    assert [record.object_ref for record in rose] == ["second_seal"]
+    after = [*known, *rose]
+    # Back to the rung the book opened on, two scenes later: minted, at the later position.
+    returned = _standings(
+        _read_scene(
+            "[STATUS] silas — Grade Third Seal | Marks 1\n",
+            after,
+            logical_id="scene-5",
+            at="s5",
+        )
+    )
+    assert [record.object_ref for record in returned] == ["third_seal"]
+    assert returned[0].story_position is not None
+    assert returned[0].story_position.order_key == "s5"
+    standing = worlds.standing_of([*after, *returned], "silas", at="s5")
+    assert standing == {"assay_grade": "third_seal"}
+    # And saying it again the scene after is the repetition it always was.
+    assert (
+        _standings(
+            _read_scene(
+                "[STATUS] silas — Grade Third Seal | Marks 1\n",
+                [*after, *returned],
+                logical_id="scene-6",
+                at="s6",
+            )
+        )
+        == []
+    )

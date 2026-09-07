@@ -60,7 +60,7 @@ from litharness.application.model_context import StoryStateView, at_scene, plann
 from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.ports import OutlineStore, TextGenerator
-from litharness.domain import genre, house, staging, world_brief
+from litharness.domain import extraction, genre, house, staging, world_brief
 from litharness.domain import serials as serials_mod
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_mod
@@ -111,7 +111,13 @@ OUTLINE_PRIORITY = 300
 #: Words per statement, asked for rather than enforced. A statement is an instruction to the
 #: generator, not prose, and one that runs long starts writing the scene instead of placing it.
 TARGET_WORDS = 25
-CONCEPT_TIMEOUT_SECONDS = 900.0
+#: **Raised from 900 on the first whole-volume draw** (runs/volume1, 2026-09-07): the first
+#: arc's outline took 592 s on a fresh world; the second arc's, planned against twelve
+#: drafted chapters of state and summaries, ran past 900 s twice and was retried as a
+#: transient failure each time, fifteen paid minutes a try with nothing kept. The Architect's
+#: grow already carries 1800 s for the same reason: a call that reads the whole book grows
+#: with the book.
+CONCEPT_TIMEOUT_SECONDS = 1800.0
 
 #: Added to the request only when canon declares a protagonist. **Position and fact, and the
 #: boundary is asserted rather than trusted**: whether the reader should like them, whether they
@@ -772,6 +778,7 @@ def standing_milestone_records(
             object_ref=rung,
             authority=lc.StateAuthority.PROPOSED,
             story_position=lc.StoryPosition(order_key=str(beat.story_order_key)),
+            predicate_registry_version=extraction.PLANNED_POSITION_VERSION,
         )
         for beat, rung in schedule
     ]
@@ -880,6 +887,7 @@ def milestone_records(
             value={**numeric_seed, **dict(values)},
             authority=lc.StateAuthority.PROPOSED,
             story_position=lc.StoryPosition(order_key=str(beat.story_order_key)),
+            predicate_registry_version=extraction.PLANNED_POSITION_VERSION,
         )
         for beat, values in schedule
     ]
