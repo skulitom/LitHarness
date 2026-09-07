@@ -1,13 +1,23 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "prose-attention-v1",
-  "statement": "Using a source-derived attention trajectory to govern narrative emphasis may change repeated explanations while preserving the full chapter. Matched trace exposure diagnostic; unqualified conjecture.",
-  "status": "registered",
+  "statement": "The single proposed attention trace passed structural checks but was not accepted as a temporally coherent operative trajectory. The source-review gate prevented all four chapter calls. No prose effect, quality ranking or production authority follows; unqualified diagnostic observation.",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
       "path": "research/quality-measurement/prose-attention/PREREG.md",
       "sha256": "a7f5e163169a7588861e81cbbb2dd6924f719869e9940cba0fe82a6446bbaebe"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-attention/RESULTS.md",
+      "sha256": "59cd5eaae72d04ef16446cb31a9b2072209ab0c638cb215811329d86145f7da3"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-attention/execution.json",
+      "sha256": "2f08718455996d9517ef080ffaaf73b9aa0f284f573de47f37c54e723de0e248"
     }
   ]
 }

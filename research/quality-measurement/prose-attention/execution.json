@@ -1,0 +1,61 @@
+{
+  "schema": "local-prose-diagnostic.v1",
+  "status": "observed",
+  "disposition": "stopped_before_writer_calls",
+  "registration_commit": "72b37028f1700f59325f0009702acf7287e5dc1a",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "requested_model": "gpt-6-astra",
+  "resolved_model": null,
+  "reasoning_effort": "high",
+  "completed_calls": 1,
+  "registered_calls": 5,
+  "skipped_calls": [
+    "background-1",
+    "operative-1",
+    "operative-2",
+    "background-2"
+  ],
+  "writer_requests": 0,
+  "trace_structural_validation": "passed",
+  "trace_temporal_review": "not_accepted",
+  "reviewed_intervals": 6,
+  "usage": {
+    "input_tokens": 8354,
+    "cached_input_tokens": 2688,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1491,
+    "reasoning_output_tokens": 516
+  },
+  "accounted_tokens": 10361,
+  "token_stop": 95000,
+  "wall_ms": 58542,
+  "output_sha256": {
+    "request.json": "c9982aad87852934e0d72b647ab1dc4927a2816ef3bb2b5b01ebc7cc0f153165",
+    "raw.json": "57fc519d88da9ebba41b79c0f17e469cc20825d473bf1ba3479e996759f4087e",
+    "result.json": "18e09cafaed0eb333e4ce19fd1aece37cb3642e35bbb31076697b5f7c9d398ba",
+    "txt": "396d8a7d654a2b3971203c348e956bc4bef12983a275fd8f67ba211de143ee75"
+  },
+  "ranking": null,
+  "local_artifacts": {
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\manifest.json": "711d4dc078ab32dcdc77d26ff30f7f37a2ee53340b0a103c0187792de49024ac",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\trace-review.json": "e45016ed881ca76e2e9451a235a36127808bdd907bf7193320a659726f8798d2",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\freeze-rejection.json": "ad525c58192448e35c8df3a663b31b8bf7bc9a784f73b05115eafa76748827ca",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\comparison.html": "b64797556a71233efd7c4693503299627b650aa3b1ef43b49f67501459d886ae",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-tools\\trace.log": "dc21c20f53a7a9fc0480c76c1c7e905ba3f8e0322efd58df5389e3752926d09b",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-tools\\review_trace.py": "7a9fca37eb740ea992c36697c1dda308e05273880857e7bd790a97d20ff62d09",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-tools\\build_stopped_review.py": "afd6dbc59b2eee6dd4bd5d8d062377f6c0f67bf60f12ee13222bb0fe372f9754",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-tools\\registration-handoff.log": "340ce70bb64c7f138520ce2afc9403a92bae23c469210e49a3bf1eabbf88cf64",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-tools\\final-handoff.log": "6c4292e060e180a37e0ba619a6ba9c13535f72a05ca216308b6e89681ccc0f0c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\browser-qa\\QA.md": "a22336298d2e6c646d1041e5cd6791662ea20b06efa5015bc02c8ecf945c6eb3",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\development-notes.md": "aa1e89db47787d99c29df1abb608fb06dd3505f16ef2a2edee6ba365b50a46b8",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\browser-qa\\page-2026-09-07T03-21-02-566Z.yml": "9ec56cf656ee793de81a3c08eaacbbbe2efc7ea69217b5c9bea7d199ffba52e0",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\browser-qa\\page-2026-09-07T03-22-31-918Z.yml": "35adb36524db26f56edc6dc55a93fa56eae430a34892a3f06da193ea0d6025a1",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\browser-qa\\page-2026-09-07T03-23-05-752Z.yml": "148c4ae544cc74b6b1fd6029cedf1245606e31e8ec1925e277f93c2b5faa8915",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\browser-qa\\page-2026-09-07T03-23-07-494Z.yml": "867ec4132cd49a8f7ede4a244039ab018ce8614bc6dac458e3801ddd85a691be",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\browser-qa\\page-2026-09-07T03-23-39-326Z.yml": "2e08762e51dced1c494740d8fe752c652a7cc1041a6dcfffd642121b48d10f74",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\browser-qa\\page-2026-09-07T03-23-41-019Z.yml": "217a8c145abf7377b67412b5c3c7d042e2f3078b9162496959a741e87e64ec3c",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\browser-qa\\prose-attention-desktop.png": "eeb609b32f83b3935c699a37d5e532eaf00d6aade6b5248a6ae98e6cfbd30655",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-attention-20260907\\browser-qa\\prose-attention-mobile.png": "31d18be54e8a4d33749085bb18a5bc3c012c4fafd3127b8aa6a0900b5044b270"
+  }
+}
