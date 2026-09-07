@@ -77,6 +77,7 @@ from litharness.application import export as export_mod
 from litharness.application import operations as operations_mod
 from litharness.application import release as release_mod
 from litharness.application import roster as roster_mod
+from litharness.application import scene_trace as scene_trace_mod
 from litharness.application import status as status_mod
 from litharness.application import views as views_mod
 from litharness.application import world as world_mod
@@ -119,6 +120,7 @@ READ_TOOLS: tuple[str, ...] = (
     "book",
     "scene",
     "lookup",
+    "scene_trace",
     "status",
     "why",
     "findings",
@@ -136,7 +138,14 @@ READ_TOOLS: tuple[str, ...] = (
 
 #: The tools that wrap no single command-line verb: the surface's own. Every other read tool
 #: is a verb's `--json`, and `TIERS` says which.
-SURFACE_ONLY_TOOLS: tuple[str, ...] = ("store_info", "guide", "book", "scene", "lookup")
+SURFACE_ONLY_TOOLS: tuple[str, ...] = (
+    "store_info",
+    "guide",
+    "book",
+    "scene",
+    "lookup",
+    "scene_trace",
+)
 
 #: The Architect's shape: the world's read views and the two declares, and no dossier tool
 #: beside a write tool. The structural half of §97.1 — no tool a finding could be routed
@@ -377,7 +386,7 @@ VERB_HELP: dict[tuple[str, ...], str] = {
     ("world", "ladders"): "ordinal criteria, their rungs lowest-first, and who stands where",
     ("world", "abilities"): "what a person can do here, and who holds what",
     ("world", "cast"): "who is in this world, by role, and who the protagonist is",
-    ("world", "threads"): "open questions, where each is answered, what is still untold",
+    ("world", "threads"): "open questions, reveal intentions and why each claim is still untold",
     ("world", "vocabulary"): "every predicate and role this world's language admits",
     ("world", "presence"): "which coined names have reached the page and which have not",
     ("world", "check"): "what is wrong by arithmetic; exits 1 when anything is",
@@ -442,6 +451,20 @@ RESULT_KEYS: dict[str, tuple[str, ...]] = {
         "blocked",
     ),
     "why": dossier_mod.DOSSIER_KEYS,
+    "scene_trace": (
+        "book_id",
+        "branch_id",
+        "logical_id",
+        "head_revision_id",
+        "job_id",
+        "decision",
+        "attempts",
+        "request",
+        "stages",
+        "source_map",
+        "excerpt",
+        "absent",
+    ),
     "findings": (
         "book_id",
         "branch_id",
@@ -556,6 +579,25 @@ DESCRIPTIONS: dict[str, str] = {
         "frozen prompt is withheld, by count, never quoted; `include_prompt=false` keeps the "
         f"prompt's sizes and drops its text. {_keys('why')} {FENCE}"
     ),
+    "scene_trace": (
+        "READ. Trace one scene's current attributed or unfinished drafting job. The default "
+        "returns identities, recorded decisions and stage hashes without full text. Select "
+        "a decision_id from attempts, and stage=system, prompt, raw_draft, pre_revision_draft "
+        "or accepted to page that stage with offset/max_chars (at most 20000 characters). "
+        "Frozen job input is labelled separately from an uncaptured provider transport. "
+        "request.story_order gives the frozen drafting key for a world threads disclosure "
+        "query; its missing/unpositioned statuses must not be replaced by reading order. "
+        "source_map verifies the full recorded job digest, stage hashes and spans, without "
+        "source text or current-state "
+        "lookups. source_limit=0 returns its summary; source_limit=1..100 and source_offset "
+        "page entries. source_id filters item_id or source_logical_id by exact equality. "
+        "Legacy jobs report not_recorded. Sources establish input provenance, not semantic "
+        "support; renderer fragments may contain derived inputs that are not individually mapped. "
+        "Missing or ambiguous evidence stays missing; rejected drafts are not accepted prose. "
+        "Shelf-exposed raw drafts, prompt shelves and source metadata are withheld. "
+        "Byte differences "
+        f"do not measure quality. {_keys('scene_trace')} {FENCE}"
+    ),
     "findings": (
         f"READ. {VERB_HELP[('findings',)]}: the integrity detectors' recorded verdicts per "
         "scene (contradiction, duplicate, overdue) and any evaluator's ingested findings; the "
@@ -565,8 +607,8 @@ DESCRIPTIONS: dict[str, str] = {
     ),
     "events": (
         f"READ. {VERB_HELP[('events',)]}. `since` is a sequence number from an earlier result's "
-        f"`next_since`, or an ISO-8601 instant; `types` filters event types. {_keys('events')} "
-        + FENCE
+        "`next_since`, or an ISO-8601 instant; `types` filters event types. Raw draft text is "
+        f"withheld; use the scoped scene_trace tool for its safe view. {_keys('events')} " + FENCE
     ),
     "plans": (
         f"READ. {VERB_HELP[('plans',)]}. `items=true` adds the head plan's items themselves: "
@@ -588,6 +630,10 @@ DESCRIPTIONS: dict[str, str] = {
         "`show` in one call (the result is then keyed by subject); `ladders` carries each "
         "rung's `manifests_as`. "
         + _views_help("world", WORLD_VIEWS)
+        + " `threads` exposes disclosure reasons and supporting record IDs; `subject` narrows "
+        "that view to one claim. Pass its exact story key as `at`, not a reading-order position. "
+        "This is current declaration state, not a frozen writer context; it does not check "
+        "scene-plan prose or authorize disclosure. "
         + f" `attention` is true when `check` is not ok. {_keys('world')} "
         + FENCE
     ),
@@ -850,7 +896,7 @@ def _job_row(job: Any) -> dict[str, Any]:
 
 
 def _resolve_id(store: SqliteStore, ident: str) -> Found | None:
-    """The record an id names, by the prefix the store mints it with (stage-0 §241.3): an
+    """The record an id names, by the prefix the store mints it with (stage-0 §241.4): an
     agent reading `status`, `queue` or `verify` is handed decision, job, finding, exception and
     revision ids and had no way to open one. Each loader raises on an unknown id; the next
     kind is tried only where the prefix leaves it open."""
@@ -1082,9 +1128,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             "profile": binding.profile,
             "verbs": rows,
             "spends": sorted(
-                " ".join(path)
-                for path, tier in TIERS.items()
-                if tier.reason.startswith("spends")
+                " ".join(path) for path, tier in TIERS.items() if tier.reason.startswith("spends")
             ),
             "fence": FENCE,
             "attention": False,
@@ -1218,8 +1262,8 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             dossier["prompt"] = {
                 "system": None,
                 "prompt": None,
-                "system_chars": len(frozen.get("system") or ""),
-                "prompt_chars": len(frozen.get("prompt") or ""),
+                "system_chars": frozen.get("system_chars", len(frozen.get("system") or "")),
+                "prompt_chars": frozen.get("prompt_chars", len(frozen.get("prompt") or "")),
                 "withheld": "include_prompt=false",
             }
         absent = set(dossier["absent"])
@@ -1229,6 +1273,60 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             "attention": bool(absent & set(dossier_mod.UNANSWERED)),
             "next": hints,
         }
+
+    @guarded
+    def scene_trace(
+        scene: str,
+        decision_id: str | None = None,
+        stage: str | None = None,
+        offset: int = 0,
+        max_chars: int = 12_000,
+        source_id: str | None = None,
+        source_offset: int = 0,
+        source_limit: int = 0,
+        book_id: str | None = None,
+        branch_id: str | None = None,
+    ) -> dict[str, Any]:
+        with open_read() as store:
+            resolved = branch(store, book_id, branch_id)
+            if isinstance(resolved, dict):
+                return resolved
+            head = store.head(*resolved)
+            if head is None:
+                return no_head(*resolved)
+            node = dossier_mod.scene_node(head, scene)
+            if node is None:
+                return unknown_scene(
+                    scene, [item.logical_id for item in dossier_mod.scenes_of(head)]
+                )
+            view = scene_trace_mod.build_scene_trace(
+                store,
+                *resolved,
+                node,
+                head,
+                decision_id=decision_id,
+                stage=stage,
+                offset=offset,
+                max_chars=max_chars,
+                source_id=source_id,
+                source_offset=source_offset,
+                source_limit=source_limit,
+            )
+        missing = set(view["absent"]) - {"system", "pre_revision_draft"}
+        restricted = any(
+            value["withheld"] or value["absent_reason"] == "ambiguous_pre_revision_draft"
+            for value in view["stages"].values()
+        )
+        restricted = (
+            restricted
+            or view["source_map"]["status"]
+            in {
+                "invalid_recorded_value",
+                "withheld",
+            }
+            or view["source_map"]["reason"] == "input_digest_not_recorded"
+        )
+        return {**view, "attention": bool(missing) or restricted, "next": ["why", "scene"]}
 
     @guarded
     def findings(
@@ -1244,9 +1342,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             resolved = branch(store, book_id, branch_id)
             if isinstance(resolved, dict):
                 return resolved
-            view = views_mod.findings_view(
-                store, *resolved, logical_id=scene, open_only=open_only
-            )
+            view = views_mod.findings_view(store, *resolved, logical_id=scene, open_only=open_only)
         finally:
             store.close()
         page, paging = _page(view["findings"], limit=limit, offset=offset)
@@ -1266,6 +1362,20 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             )
         finally:
             store.close()
+        # Rejected raw output has not cleared the exemplar-leak gate. The general event
+        # stream cannot safely expose it, even when copied text has no shelf heading.
+        # Keep local records untouched; the scoped trace checks the job's shelf exposure.
+        for row in view["events"]:
+            payload = row["payload"]
+            raw = payload.get("raw_draft")
+            if isinstance(raw, dict):
+                row["payload"] = {
+                    **payload,
+                    "raw_draft": {
+                        key: raw[key] for key in ("sha256", "provider", "model") if key in raw
+                    },
+                    "raw_draft_withheld": "use scene_trace; raw candidates may contain shelf text",
+                }
         return {**view, "attention": False}
 
     @guarded
@@ -1278,7 +1388,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             if isinstance(resolved, dict):
                 return resolved
             view = views_mod.plans_view(store, *resolved)
-            # The items themselves, on request (stage-0 §241.3): two agents said `plans` gave
+            # The items themselves, on request (stage-0 §241.4): two agents said `plans` gave
             # lineage and counts and nothing mapped a statement to its scene.
             rows = (
                 [
@@ -1330,9 +1440,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
         try:
             jobs = views_mod.jobs_view(store, status=JobStatus(status) if status else None)
             exceptions = views_mod.exceptions_view(store)
-            directives = views_mod.directives_view(
-                store, status=DirectiveStatus(directive_status)
-            )
+            directives = views_mod.directives_view(store, status=DirectiveStatus(directive_status))
         finally:
             store.close()
         return {
@@ -1372,7 +1480,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
                         if node.kind is NodeKind.SCENE
                     }
             if subjects and view == "show":
-                # Several subjects in one call (§241.3): an agent modelling a character on
+                # Several subjects in one call (§241.4): an agent modelling a character on
                 # the cast read sixteen subjects one `show` at a time.
                 result = {
                     name: world_mod.declarations(records, subject=name) for name in subjects
@@ -1588,6 +1696,7 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
         "book": book,
         "scene": scene,
         "lookup": lookup,
+        "scene_trace": scene_trace,
         "status": status,
         "why": why,
         "findings": findings,
@@ -1616,12 +1725,26 @@ def prompt_text(name: str, **arguments: str) -> str:
             "store's own record with the litharness tools and nothing else.\n"
             "1. `store_info`, then `book`: confirm the scene exists and whether it is drafted.\n"
             f"2. `why` with scene=`{scene}`: read `decision.gates` (a FAIL on a blocking gate is "
-            "the reason; an advisory one is information), `plan_item` (what the scene was "
-            "told to do), `context_omitted` (what it was never shown), `findings`, and "
+            "the reason; an advisory one is information), `plan_item` (the current plan), "
+            "`job_plan` (the snapshot in the job's recorded plan revision), `context_omitted`, "
+            "`findings`, and "
             "`absent`. If prose is absent, `queue` shows the unit that stopped and why.\n"
             f"3. `scene` with scene=`{scene}` for the text, and `state` with the subjects it "
             "names, to see whether what it contradicts was ever on record.\n"
-            "4. Report what the rows say, quoting the gate detail or the plan item rather than "
+            f"4. `scene_trace` with scene=`{scene}`: inspect stage identities and absences, then "
+            "page the needed stage. Check whether the passage already exists in raw_draft or "
+            "only in accepted text. A changed hash identifies changed bytes, not a cause or a "
+            "quality judgment. Frozen job input is not the full provider transport.\n"
+            "Use `source_map` for recorded input provenance: source_limit=1..100 pages verified "
+            "entries and source_id filters an exact item_id or source_logical_id. Compare the "
+            "frozen prompt with job_plan to establish actual rendering; neither the current "
+            "plan nor the stored plan snapshot proves prompt equivalence. Missing maps stay "
+            "not_recorded. Renderer fragments do not identify every upstream input.\n"
+            "5. For a disclosure conflict, use a recorded request.story_order key as `at` in "
+            "`world` view=`threads`, with `subject` for the claim. Read the disclosure reasons "
+            "and supporting records. This is current declaration state, not the frozen packet; "
+            "a planned reveal or a character audience does not establish reader disclosure.\n"
+            "6. Report what the rows say, quoting the gate detail or the plan item rather than "
             "paraphrasing, and name what the store does not hold.\n"
             f"{FENCE}"
         )

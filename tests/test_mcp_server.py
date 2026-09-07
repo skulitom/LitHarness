@@ -35,6 +35,7 @@ from litharness.application import exemplars as exemplars_mod
 from litharness.application import world_agent
 from litharness.application.handlers import SCENE_DRAFT
 from litharness.cli import EXIT_ATTENTION, EXIT_OK, build_parser, main
+from litharness.domain.events import Event, EventType
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.mcp_server import (
     DESCRIPTIONS,
@@ -144,8 +145,7 @@ def test_the_tier_table_names_every_verb_that_builds_a_registry_as_excluded() ->
 
     def spends(function: ast.FunctionDef) -> bool:
         return any(
-            isinstance(node, ast.Name) and node.id in spending_names
-            for node in ast.walk(function)
+            isinstance(node, ast.Name) and node.id in spending_names for node in ast.walk(function)
         )
 
     paid = set()
@@ -293,9 +293,7 @@ def test_a_relative_database_is_anchored_on_the_project_directory_the_host_names
 
 def test_a_read_tool_opens_the_store_read_only_and_leaves_no_file_behind(db: Path) -> None:
     before = hashlib.sha256(db.read_bytes()).hexdigest()
-    siblings = sorted(
-        p for p in db.parent.iterdir() if not p.name.endswith(("-wal", "-shm"))
-    )
+    siblings = sorted(p for p in db.parent.iterdir() if not p.name.endswith(("-wal", "-shm")))
     tools = make_tools(binding(db))
     calls: dict[str, dict[str, Any]] = {
         "store_info": {},
@@ -303,6 +301,7 @@ def test_a_read_tool_opens_the_store_read_only_and_leaves_no_file_behind(db: Pat
         "book": {},
         "scene": {"scene": "1"},
         "lookup": {"id": "nope"},
+        "scene_trace": {"scene": "1"},
         "status": {},
         "why": {"scene": "1"},
         "findings": {},
@@ -323,9 +322,7 @@ def test_a_read_tool_opens_the_store_read_only_and_leaves_no_file_behind(db: Pat
         assert isinstance(result, dict) and "attention" in result, name
     assert hashlib.sha256(db.read_bytes()).hexdigest() == before
     # SQLite's own WAL sidecars (`-wal`, `-shm`) may appear for a reader; no store does.
-    after = sorted(
-        p for p in db.parent.iterdir() if not p.name.endswith(("-wal", "-shm"))
-    )
+    after = sorted(p for p in db.parent.iterdir() if not p.name.endswith(("-wal", "-shm")))
     assert after == siblings
     for view in WORLD_VIEWS:
         assert tools["world"](view=view)["view"] == view
@@ -348,11 +345,21 @@ def test_a_write_tool_reports_a_locked_database_as_retryable_and_does_not_loop(
 ) -> None:
     """One fault, one sentence, no retry: the operator's own contract at `cli.main`.
 
-    The store's busy timeout is shortened for the test: `open_existing` reads the constant
-    when it opens, so the wait is 300 ms here rather than five seconds, and the bound below
-    is then several waits wide — a retry loop of any length fails it, while a loaded box
-    under coverage tracing (where the five-second version failed once) does not."""
+    Count transaction attempts to detect retries, and retain a generous timing bound for
+    the shortened busy timeout. Initialize error mapping before timing: production imports
+    the MCP SDK at server startup, but these direct handler calls bypass that startup.
+    """
     monkeypatch.setattr(sqlite_store, "BUSY_TIMEOUT_MS", 300)
+    mcp_server._tool_error("initialize the transport before measuring lock handling")
+    transaction = SqliteStore.transaction
+    attempts = 0
+
+    def counted_transaction(store: SqliteStore) -> SqliteStore._Transaction:
+        nonlocal attempts
+        attempts += 1
+        return transaction(store)
+
+    monkeypatch.setattr(SqliteStore, "transaction", counted_transaction)
     holder = sqlite3.connect(str(db), isolation_level=None)
     holder.execute("BEGIN IMMEDIATE")
     tools = make_tools(binding(db, "propose"))
@@ -361,6 +368,7 @@ def test_a_write_tool_reports_a_locked_database_as_retryable_and_does_not_loop(
         with pytest.raises(Exception, match="locked by the ticking session") as raised:
             tools["world_declare"](subject="x", predicate="is_a", value="Thing")
         assert time.monotonic() - started < 5 * sqlite_store.BUSY_TIMEOUT_MS / 1000 + 2
+        assert attempts == 1
         assert type(raised.value).__name__ in {"ToolError", "ServerFault"}
     finally:
         holder.execute("ROLLBACK")
@@ -510,8 +518,9 @@ def test_a_marker_shelf_never_appears_in_a_tool_result(db: Path) -> None:
     assert marker not in rendered
     assert exemplars_mod.SHELF_SYSTEM not in rendered
     assert exemplars_mod.OPENINGS_HEADING not in rendered
-    assert result["prompt"]["prompt"].startswith("[exemplar shelf withheld: ")
-    assert result["prompt"]["prompt"].endswith("Premise: a person climbs.\n\nNow write scene-1.")
+    assert result["prompt"]["prompt"] == dossier_mod.PROMPT_WITHHELD
+    assert result["prompt"]["prompt_chars"] == len(prompt)
+    assert result["prompt"]["system_chars"] == len(system)
     assert result["prompt"]["system"] == "You write scenes."
     # The operator's own `why` still prints the shelf: that is the diagnostic channel.
     with SqliteStore.open_read_only(db) as store:
@@ -521,6 +530,18 @@ def test_a_marker_shelf_never_appears_in_a_tool_result(db: Path) -> None:
         assert node is not None
         raw = dossier_mod.scene_dossier(store, book_id, branch_id, node, head)
     assert marker in raw["prompt"]["prompt"]
+    slim = make_tools(binding(db))["why"](scene="scene-1", include_prompt=False)
+    assert slim["prompt"]["prompt_chars"] == len(prompt)
+    assert slim["prompt"]["system_chars"] == len(system)
+
+
+def test_a_packet_heading_inside_an_exemplar_is_not_a_verified_boundary() -> None:
+    marker = "Premise: this paragraph still belongs to the synthetic source."
+    body = f"{exemplars_mod.OPENINGS_HEADING}\n\nOpening.\n\n{marker}\n\nPremise: own context."
+    result = dossier_mod.redact_shelf({"prompt": {"system": "", "prompt": body}})
+    assert marker not in json.dumps(result)
+    assert result["prompt"]["prompt"] == dossier_mod.PROMPT_WITHHELD
+    assert result["prompt"]["prompt_chars"] == len(body)
 
 
 def test_a_shelf_whose_end_cannot_be_found_withholds_the_whole_prompt() -> None:
@@ -536,6 +557,77 @@ def test_a_shelf_whose_end_cannot_be_found_withholds_the_whole_prompt() -> None:
         "draft_before_revision": None,
     }
     assert dossier_mod.redact_shelf(untouched) == untouched
+
+
+def test_events_withhold_raw_candidate_text_without_altering_the_stored_record(db: Path) -> None:
+    marker = "Zebulon Quandary polished the seventeenth brass owl."
+    digest = hashlib.sha256(marker.encode()).hexdigest()
+    with SqliteStore.open_existing(db) as store:
+        book_id, branch_id, head_id = store.branches()[0]
+        store.append_events(
+            [
+                Event(
+                    event_type=EventType.MANUSCRIPT_CANDIDATE_CREATED,
+                    project_id=mcp_server.DEFAULT_PROJECT_ID,
+                    created_at="2026-09-07T14:00:00Z",
+                    book_id=book_id,
+                    branch_id=branch_id,
+                    revision_id=head_id,
+                    payload={
+                        "job_id": "shelf-refusal",
+                        "decision_id": "refused",
+                        "logical_id": "scene-1",
+                        "accepted": False,
+                        "raw_draft": {"text": marker, "sha256": digest, "provider": "fake"},
+                    },
+                )
+            ]
+        )
+    result = make_tools(binding(db))["events"](types=["ManuscriptCandidateCreated"])
+    assert marker not in json.dumps(result)
+    assert result["events"][0]["payload"]["raw_draft"]["sha256"] == digest
+    assert result["events"][0]["payload"]["raw_draft_withheld"]
+    with SqliteStore.open_read_only(db) as store:
+        retained = store.read_job_log(book_id, branch_id, "shelf-refusal")
+    assert retained[0].event.payload["raw_draft"]["text"] == marker
+
+
+def test_scene_trace_reads_frozen_input_in_explicit_bounded_pages(db: Path) -> None:
+    prompt = "The original frozen input, including its final sentence."
+    with SqliteStore.open_existing(db) as store:
+        book_id, branch_id, revision_id = store.branches()[0]
+        payload = {
+            "prompt": prompt,
+            "system": "A frozen system.",
+            "revision_id": revision_id,
+            "logical_id": "scene-1",
+            "book_id": book_id,
+            "branch_id": branch_id,
+        }
+        store.enqueue(
+            Job(
+                job_id="trace-queued",
+                job_kind=SCENE_DRAFT,
+                payload=payload,
+                input_digest=input_digest_for(payload),
+            )
+        )
+    trace = make_tools(binding(db))["scene_trace"]
+    summary = trace(scene="1")
+    assert summary["excerpt"] is None and prompt not in json.dumps(summary)
+    assert (
+        summary["stages"]["prompt"]["original_sha256"]
+        == hashlib.sha256(prompt.encode()).hexdigest()
+    )
+    first = trace(scene="scene-1", stage="prompt", max_chars=17)
+    assert first["excerpt"]["text"] == prompt[:17]
+    assert first["excerpt"]["next_offset"] == 17 and first["excerpt"]["truncated"] is True
+    rest = trace(scene="1", stage="prompt", offset=17)
+    assert rest["excerpt"]["text"] == prompt[17:] and rest["excerpt"]["truncated"] is False
+    assert trace(scene="99")["error_kind"] == "unknown_scene"
+    for bad in ({"stage": "invented"}, {"offset": -1}, {"max_chars": 0}, {"max_chars": 20001}):
+        with pytest.raises(Exception, match=next(iter(bad))):
+            trace(scene="1", **bad)
 
 
 # --- the propose profile --------------------------------------------------------------
@@ -559,6 +651,67 @@ def test_world_declare_through_the_server_mints_proposed_only_and_carries_the_ma
             if item.event.payload.get("via") == "mcp world_declare"
         }
     assert actors == {"mcp:propose:test"}
+
+
+@pytest.mark.parametrize("reader_key", [None, "s5"])
+def test_thread_disclosure_diagnostics_match_cli_and_preserve_the_store(
+    db: Path, capsys: pytest.CaptureFixture[str], reader_key: str | None
+) -> None:
+    import litharness_contracts as lc
+
+    from litharness.domain import worlds
+
+    def record(subject: str, predicate: str, **values: Any) -> lc.StateRecord:
+        return worlds.world_record(
+            subject, predicate, authority=lc.StateAuthority.ACCEPTED_CANON, **values
+        )
+
+    claim = record("probe_secret", worlds.CLAIM_CONTENT, value="A private mechanism.")
+    character = record("mara", worlds.DISCLOSED_TO, object_ref="probe_secret", order_key="0030")
+    rows = [
+        claim,
+        character,
+        record("probe_secret", worlds.QUESTION_PREDICATE, value="How does it work?"),
+        record("probe_secret", worlds.REVEAL_SCENE, value=1),
+        worlds.world_record("other_secret", worlds.CLAIM_CONTENT, value="A proposed fact."),
+    ]
+    if reader_key is not None:
+        rows.append(
+            record(
+                "reader_event",
+                worlds.DISCLOSED_TO,
+                object_ref="probe_secret",
+                value=worlds.READER,
+                order_key=reader_key,
+            )
+        )
+    with SqliteStore.open(db) as store:
+        book_id, branch_id, _ = store.branches()[0]
+        store.record_state_records(book_id, branch_id, rows, created_at="2026-09-07T00:00:00Z")
+    before = hashlib.sha256(db.read_bytes()).hexdigest()
+    tools = make_tools(binding(db))
+    view = tools["world"](view="threads", subject="probe_secret", at="s1")["result"]
+    (row,) = view["disclosures"]
+    assert row["claim"]["record_id"] == claim.record_id
+    assert row["claim"]["canon"] is True
+    assert row["hidden_by_disclosure_rule"] is True
+    assert row["reason"] == (
+        "no_reader_disclosure" if reader_key is None else "reader_not_disclosed"
+    )
+    assert row["planned_reveal_scene"] == 1
+    assert row["other_disclosures"][0]["record_id"] == character.record_id
+    assert row["other_disclosures"][0]["comparison"] == "incomparable"
+    if reader_key is not None:
+        assert row["reader_disclosures"][0]["comparison"] == "future"
+    assert view["frozen_writer_context"] is False and view["scene_plan_checked"] is False
+    assert view["scope"] == "current_in_force_declarations"
+    assert run(db, "world", "threads", "--at", "s1", "--subject", "probe_secret") == EXIT_OK
+    assert json.loads(capsys.readouterr().out) == view
+    proposal = tools["world"](view="threads", subject="other_secret")["result"]
+    assert proposal["disclosures"][0]["claim"]["canon"] is False
+    assert proposal["disclosures"][0]["claim"]["authority"] == "proposed"
+    assert tools["world"](view="threads", subject="absent")["result"]["disclosures"] == []
+    assert hashlib.sha256(db.read_bytes()).hexdigest() == before
 
 
 def test_world_declare_batch_reports_each_item_and_stops_only_when_asked(db: Path) -> None:
@@ -673,6 +826,13 @@ def test_the_stdio_server_lists_exactly_the_profile_tools(db_fd: Path) -> None:
             listed = await client.list_tools()
             info = await client.call_tool("store_info", {})
             why = await client.call_tool("why", {"scene": "1"}) if profile == "read" else None
+            trace = (
+                await client.call_tool(
+                    "scene_trace", {"scene": "1", "stage": "raw_draft", "max_chars": 100}
+                )
+                if profile == "read"
+                else None
+            )
             prompts = await client.list_prompts()
             resources = await client.list_resources()
             templates = await client.list_resource_templates()
@@ -682,6 +842,7 @@ def test_the_stdio_server_lists_exactly_the_profile_tools(db_fd: Path) -> None:
                 "resources": [str(item.uri) for item in resources.resources],
                 "templates": [item.uri_template for item in templates.resource_templates],
                 "guide": json.loads(guide.contents[0].text),
+                "trace": None if trace is None else json.loads(trace.content[0].text),
             }
             return (
                 list(listed.tools),
@@ -704,6 +865,9 @@ def test_the_stdio_server_lists_exactly_the_profile_tools(db_fd: Path) -> None:
         assert tool.description == DESCRIPTIONS[tool.name]
     assert info["profile"] == "read" and len(info["books"]) == 1
     assert why["attention"] is True and "prose" in why["absent"]
+    assert extras["trace"]["request"]["provider_transport_captured"] is False
+    assert extras["trace"]["excerpt"]["text"] is None
+    assert "raw_draft" in extras["trace"]["absent"]
 
     proposed, info, _, extras = anyio.run(probe, "propose")
     assert extras["prompts"] == list(PROMPTS["propose"]) and extras["templates"] == []
@@ -789,6 +953,7 @@ def test_every_result_carries_the_keys_the_tool_list_documents(db: Path) -> None
         "book": {},
         "scene": {"scene": "1"},
         "lookup": {"id": "nope"},
+        "scene_trace": {"scene": "1"},
         "status": {},
         "why": {"scene": "1"},
         "findings": {},
@@ -865,7 +1030,7 @@ def test_the_prompts_walk_the_tools_they_name_and_end_with_the_fence() -> None:
         assert "litharness://store" in uris and "litharness://guide" in uris, profile
 
 
-# --- §241.3: what the Opus dogfood asked for ------------------------------------------------
+# --- §241.4: what the Opus dogfood asked for ------------------------------------------------
 
 
 def test_lookup_resolves_the_ids_other_tools_hand_out(db: Path) -> None:
@@ -937,7 +1102,7 @@ def test_show_takes_several_subjects_in_one_call_and_ladders_carry_their_manifes
 
 def test_plans_carry_the_head_plans_items_on_request(db: Path) -> None:
     """Two agents said `plans` gave lineage and counts and nothing mapped a statement to its
-    scene (§241.3). The items ride along when asked, never by default."""
+    scene (§241.4). The items ride along when asked, never by default."""
     tools = make_tools(binding(db))
     bare = tools["plans"]()
     assert "items" not in bare

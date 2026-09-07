@@ -20900,12 +20900,15 @@ column. `test_the_draft_the_reviser_replaced_is_kept_beside_the_prose_that_repla
 both halves.
 
 **The record is write-only at the application boundary, and that is a property of the layer rather
-than a promise.** `ManuscriptWriter.commit_revision` gained a keyword; no protocol in
+than a promise.** `ManuscriptWriter.commit_revision` gained a keyword; ~~no protocol in
 `application/ports.py` offers a way to read a kept draft back. So no workflow that coordinates
 through those protocols can name this text at all — it cannot reach a context packet, a scene
 summary, a detector input or a prompt. The reader is on the concrete `SqliteStore`, and `cli.py`'s
-scene dossier is its one caller. That is §97.1 and the `debug-book` rule enforced by where the
-method is rather than by a sentence saying so.
+scene dossier is its one caller.~~ **Since §241 the dossier lives in `application/`, so one
+named port, `KeptDraftReader`, offers the read and nothing else does; its callers are the
+dossier and the scene trace, held to that list by the test below (§241.4). The property is
+kept as a named list of readers rather than an absence of them.** That is §97.1 and the
+`debug-book` rule enforced by where the method is rather than by a sentence saying so.
 `test_the_kept_draft_is_write_only_at_the_application_boundary` holds it.
 
 **`litharness why` prints it**, named and not printed whole: length, hash, both models, the
@@ -25155,7 +25158,51 @@ and not made a target; the dollars and turns above are what they were, not what 
 **Anti-scope.** No prompt, rule or writer instruction changed; nothing here measures a book;
 the internal agents are where §241 left them.
 
-### 241.3. A hundred Opus agents held the surface on twenty-five tasks: one task loop, three named gaps, and the harness's own turn tax
+### 241.3. A scene trace joins the stored stages before an agent attributes a prose defect
+
+The MCP usefulness branch's tip, `0fa1408`, was verified as an ancestor of main after
+fetching origin. The remaining debugging gap was a join: the drafting handler already
+records raw provider text on candidate and acceptance events, but `why` exposed the frozen
+job input and optional pre-revision draft without those raw events. An agent had to page the
+general event log and match identifiers itself. Its refusal events can contain text that
+did not clear the exemplar-leak gate, so exposing `raw_draft.text` there also bypassed the
+prompt shelf's redaction.
+
+`application/scene_trace.py` now backs a read-profile-only `scene_trace` tool. The default
+response identifies the current scene's attributed (or unfinished) job, its decisions,
+stored input and text stages. A requested stage returns a bounded excerpt; hashes describe
+bytes, not quality. Matching uses book, branch, logical scene, job, decision and revision
+identities. A refusal's base revision is never presented as accepted candidate text. Missing
+captures and ambiguous events remain explicit. A revision-stage decision does not inherit
+the drafting call's input. Frozen job text is identified as such; provider-added instructions
+and uncaptured transport settings are not reconstructed from current configuration.
+
+`read_job_log` filters the SQL query before deserializing other jobs' prose. Raw and
+pre-revision drafts from shelf-exposed jobs are withheld while their identities remain
+available. MCP `events` withholds raw draft text and points to the scoped trace; the local
+event log and operator CLI retain their original records. The guide and `debug_scene`
+workflow teach the join and its limitations. No new migration, model call, prose rewriting,
+quality metric or story-direction permission follows from this tool.
+
+The earlier prompt redactor's inferred boundary is also corrected: an exemplar can itself
+contain a paragraph beginning with a packet heading. Those strings cannot prove where the
+shelf ends. `why` and the trace now withhold the whole shelf-bearing prompt, preserving
+original character counts (and trace hashes), until a verified boundary is available.
+
+`test_scene_trace.py` covers provenance and absence cases. The MCP read-only/registry/stdio
+checks include the new tool; `test_scene_trace_reads_frozen_input_in_explicit_bounded_pages`
+and `test_events_withhold_raw_candidate_text_without_altering_the_stored_record` exercise
+bounded retrieval and the refused-raw route at the tool boundary.
+
+Verification: the complete handoff passed with 4304 tests passed, 19 skipped and 88.99%
+coverage, plus lint, types, lock/diff checks, wheel build and history audit. A read-only probe
+of the retained chapter-one database matched the frozen system/prompt and raw stage against
+request-4.json and provider-4.json, and the database hash stayed unchanged. Its raw stage
+contains 5181 characters and accepted stage 5157; those lengths describe stored text and
+do not establish prose quality. Logs and the trace snapshot remain under
+runs/ab/agent-scene-trace-20260907. No generation call was made for this tooling change.
+
+### 241.4. A hundred Opus agents held the surface on twenty-five tasks: one task loop, three named gaps, and the harness's own turn tax
 
 **2026-09-07, evening.** The operator: run more checks — a hundred Opus agents rather than a
 larger batch — then fix the cause; the whole-volume draw was stopped at his word (its store
@@ -25220,6 +25267,13 @@ thirteen calls against its earlier mean of twenty-six; both findings-and-verify 
 **Refused.** Raising `--max-turns` for the battery to make the ladders task pass: the loop
 was the finding. Defaulting `include_prompt` to false: the agents already chose it 48 times in
 54. A `cost` tool: nothing in the store is a price.
+
+**Corrected in place, found while merging.** §188.4 made the kept draft write-only at the
+application boundary and its dossier the one caller on the concrete store; §241's lift of the
+dossier put the read on `ProvenanceReader`, a general port, and the scene trace (§241.3) became a
+second caller. The read is now its own port, `KeptDraftReader`, with its two callers named and
+pinned by `test_the_kept_draft_is_write_only_at_the_application_boundary`; §188.4 is corrected
+in place.
 
 **No bar declared.** A pass rate on one afternoon's battery is a measurement of that battery.
 **Anti-scope.** No prompt, rule or writer instruction changed; the internal agents are where

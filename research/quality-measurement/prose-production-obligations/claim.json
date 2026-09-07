@@ -1,0 +1,33 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-production-obligations-v1",
+  "statement": "Four original-production scene draws retain extra explanatory passes after removal of four duplicate payoff bodies, while preserving their verbatim counterparts and timing rules in input. The located problem survives both treatment draws; no root cause, literary quality gain or production authority is established.",
+  "status": "observed",
+  "artifacts": [
+    {
+      "path": "research/quality-measurement/prose-production-obligations/PREREG.md",
+      "kind": "registration",
+      "sha256": "88319c77fa53f99bd80ef80f49e700b1d92e9158a68fc3c88cf9a53c24e87492"
+    },
+    {
+      "path": "research/quality-measurement/prose-production-obligations/RUNBOOK.md",
+      "kind": "registration",
+      "sha256": "66c12a5e703465ec9f971b07a3f8a37775fb7ffc57488c88ccd9c218c49ce376"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-production-obligations/RESULTS.md",
+      "sha256": "acd7025c8f5f651e50d647fb53e6231e5deb097496678a4bcfd96cfa20d2ff42"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-production-obligations/DEVIATIONS.md",
+      "sha256": "054e545a8f2d7801374eef02eca45b15b09ee8ebb5b502ea3fc610471043590e"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-production-obligations/execution.json",
+      "sha256": "6fa4b894dda6f49f3c2668f68f226963e620d8114303fc43f43027abbfa7df58"
+    }
+  ]
+}

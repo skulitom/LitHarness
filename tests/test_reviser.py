@@ -787,6 +787,34 @@ def test_the_kept_draft_is_write_only_at_the_application_boundary() -> None:
         assert readers == [], f"{protocol.__name__} offers a way to read a kept draft back"
     assert hasattr(SqliteStore, "pre_revision_drafts")
 
+    # **Since stage-0 §241 the dossier lives in `application/`, so one port offers the read**
+    # (§241.4): `KeptDraftReader`, and no other protocol defines it — the aggregates that
+    # include it inherit it from there. Its callers are a named list, not an absence.
+    import ast
+    import inspect
+    from pathlib import Path
+
+    from litharness import application
+
+    defining = [
+        name
+        for name, protocol in vars(ports).items()
+        if inspect.isclass(protocol) and "pre_revision_drafts" in vars(protocol)
+    ]
+    assert defining == ["KeptDraftReader"], defining
+
+    callers: set[str] = set()
+    for path in Path(inspect.getsourcefile(application) or "").parent.glob("*.py"):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if (
+                isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Attribute)
+                and node.func.attr == "pre_revision_drafts"
+            ):
+                callers.add(path.name)
+    assert callers == {"dossier.py", "scene_trace.py"}, callers
+
 
 # ------------------------------------------------------------------------- the control arm
 

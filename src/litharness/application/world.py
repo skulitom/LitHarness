@@ -84,7 +84,7 @@ def view(
     if name == "cast":
         return cast(in_force)
     if name == "threads":
-        return threads(in_force, at=at)
+        return threads(in_force, at=at, subject=subject)
     if name == "vocabulary":
         return vocabulary()
     if name == "presence":
@@ -420,7 +420,7 @@ def vocabulary() -> dict[str, Any]:
             "record` and the first position stands. Nothing can move a record in story time, "
             "and a fact that has not changed is not worth restating at a later position — the "
             "restatement is dropped either way.",
-            "`world declare-batch --records '[{\"subject\": ..., \"predicate\": ..., "
+            '`world declare-batch --records \'[{"subject": ..., "predicate": ..., '
             '"value": ..., "object": ..., "order_key": ...}, ...]\' declares several records '
             "in one call, reports each one the way `declare` does, and ends with `check`; a "
             "record the batch refuses is named by its index and the rest still land. Keep a "
@@ -480,7 +480,7 @@ def ladders(records: Sequence[lc.StateRecord]) -> list[dict[str, Any]]:
     """
     out: list[dict[str, Any]] = []
     people = sorted(worlds.entities_with_role(records, "cast"))
-    # **What standing on a rung looks like, on the rung** (stage-0 §241.3). An agent asked
+    # **What standing on a rung looks like, on the rung** (stage-0 §241.4). An agent asked
     # to describe the ladders walked `show` for every rung to find its `manifests_as` and
     # ran out of turns fourteen calls later; the fact belongs beside the rung it is about.
     manifests = {
@@ -563,26 +563,76 @@ def cast(records: Sequence[lc.StateRecord]) -> dict[str, Any]:
     }
 
 
-def threads(records: Sequence[lc.StateRecord], *, at: str | None = None) -> dict[str, Any]:
+def threads(
+    records: Sequence[lc.StateRecord], *, at: str | None = None, subject: str | None = None
+) -> dict[str, Any]:
     """Open questions, where each is answered, and what the reader has not been told yet.
 
     `at` is a story position: what is still open *as of* that point, which is the question a
-    writer drafting scene seven has and a writer drafting scene one does not.
+    writer drafting scene seven has and a writer drafting scene one does not. It only
+    controls disclosure comparison here: this view is not a frozen writer packet or a
+    reconstruction of historical state. Proposals remain labelled as proposals.
     """
     reveals = worlds.reveal_scenes(records)
+
+    def evidence(item: worlds.DisclosureEvidence) -> dict[str, Any]:
+        return {
+            **declarations((item.record,))[0],
+            "comparison": item.comparison,
+        }
+
+    reports = [
+        item
+        for item in worlds.disclosure_diagnostics(records, at=at)
+        if subject is None or item.record.subject == subject
+    ]
     return {
+        "scope": "current_in_force_declarations",
+        "disclosure_at": at,
+        "subject": subject,
+        "frozen_writer_context": False,
+        "scene_plan_checked": False,
         "questions": [
             {"question": question, "asks": text, "answered_at_scene": reveals.get(question)}
             for question, text in sorted(worlds.questions(records).items())
+            if subject is None or question == subject
         ],
         "undisclosed": [
             {"subject": record.subject, "says": state_mod.describe(record)}
             for record in worlds.undisclosed_claims(records, at=at)
+            if subject is None or record.subject == subject
         ],
         "open": [
             {"subject": record.subject, "says": state_mod.describe(record)}
             for record in state_mod.open_threads(records)
+            if subject is None or record.subject == subject
         ],
+        "disclosures": [
+            {
+                "claim": declarations((item.record,))[0],
+                "hidden_by_disclosure_rule": item.hidden,
+                "reason": item.reason,
+                "planned_reveal_scene": reveals.get(item.record.subject),
+                "reader_disclosures": [evidence(row) for row in item.reader_disclosures],
+                "other_disclosures": [evidence(row) for row in item.other_disclosures],
+                "false_claim_records": declarations(
+                    tuple(
+                        row
+                        for row in records
+                        if row.subject == item.record.subject
+                        and row.predicate == worlds.CLAIM_FALSE
+                        and row.value is True
+                    )
+                ),
+            }
+            for item in reports
+        ],
+        "interpretation": (
+            "A planned reveal is intent, not recorded reader disclosure. Other audiences do "
+            "not disclose to the reader. Classification uses the declarations supplied to "
+            "this view; writer eligibility also depends on canon, time, POV and context "
+            "packing. This view neither checks scene-plan prose nor authorizes a reveal."
+        ),
     }
 
 

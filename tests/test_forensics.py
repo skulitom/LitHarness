@@ -403,6 +403,8 @@ def test_the_dossier_json_names_every_absence_in_a_list(db, capsys) -> None:
         "context",
         "context_omitted",
         "plan_item",
+        "plan_item_scope",
+        "job_plan",
         "findings",
         "draft_before_revision",
         "absent",

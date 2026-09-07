@@ -262,9 +262,67 @@ method improves prose. No trial below has qualified a literary-quality improveme
 | Let one source-derived concern recede and return across several events | Four complete drafts retained. Both guided draws add response checks and later recall an earlier responder, then explain failed reach; source-only drafts also contain concern-related returns. The proposed return follows the source answer, and exact writer checkpoint timing is uncertain. No isolated persistence effect or prose gain established. | `OBSERVED` | [registration](research/quality-measurement/prose-persistent-concern/PREREG.md), [results](research/quality-measurement/prose-persistent-concern/RESULTS.md) |
 | Derive anticipations from strictly earlier facts, before the incoming event is visible | Three proposals and four complete drafts retained after removing future hints in earlier source annotations. Both guided drafts use anticipations before incoming observations/action; opening inventory and explanatory restatement remain. Source-only drafts also generate expectations. Planner containment is addressed; no prose gain or isolated timing effect established. | `OBSERVED` | [registration](research/quality-measurement/prose-prospective-attention/PREREG.md), [results](research/quality-measurement/prose-prospective-attention/RESULTS.md) |
 
-The next registered comparison crosses lossless editorial-span separation with removal of
-the word target: [source contract registration](research/quality-measurement/prose-source-contract/PREREG.md).
-Eight fresh chapters, two per cell; no production authority or candidate selection.
+The [source contract comparison](research/quality-measurement/prose-source-contract/RESULTS.md)
+crossed lossless editorial-span separation with removal of the word target. All eight retained
+chapters still add rescue and recall explanations; shorter output and local wording changes
+do not establish a prose fix. One internal CLI sampling retry qualifies the batch. Its
+[token-accounting correction](research/quality-measurement/prose-source-contract/TOKEN-ACCOUNTING.md)
+also applies to earlier reports using input + output + reasoning: that sum is a conservative
+counter which includes the reasoning component twice, not a non-duplicated usage total.
+
+The [original production scene comparison](research/quality-measurement/prose-production-obligations/RESULTS.md)
+completed four fresh subscription scene-one calls: exact archived input versus removal of
+four duplicated payoff bodies, each preserved verbatim elsewhere with all timing rules.
+Both treatment draws retain extra explanatory passes. All four open on the scheme, retain
+the paid endpoint and leave the withdrawn student's name unstated; those shared outcomes
+cannot be credited to deletion. Public rule announcements and changed reading/withdrawal
+timing expose additional information-delivery problems. All raw results are retained,
+with no reported retry, no quality ranking and no production prompt change. This specific
+duplication cleanup did not remove the located problem; shared source-authority tensions
+remain a proposed diagnostic, not an established cause.
+
+The [disclosure follow-up](research/quality-measurement/prose-disclosure-debug/RESULTS.md)
+traces one conflict to an imported canon claim: the frozen scene plan requires its event,
+while the prompt's hidden block prohibits it. There is no reader-disclosure record; five
+other-audience records also use keys incompatible with the frozen drafting cutoff. New
+`world threads` diagnostics explain that classification and `scene_trace` exposes the
+recorded story key without substituting manuscript reading order. The first CLI parity
+check exposed a writable read path and changed SQLite's file layout; that failure, the
+limited logical audit and the corrected read verification are retained. No generation or
+prose-quality comparison ran, and no disclosure permissions were inferred or applied.
+
+The [scoped disclosure comparison](research/quality-measurement/prose-disclosure-permission/RESULTS.md)
+completed all four subscription calls with no reported retry. The verified move preserves
+the fact, seven other hidden bullets and the scene plan, but both permission draws retain
+explanatory detours. Both also add another student's early reward before the complete
+scheme has been read; neither control explicitly does so. This is a located batch difference,
+not a quality gain or general effect. All four preserve scheme prices and the paid endpoint
+and leave the victim unnamed. No future-answer component was explicitly disclosed; added
+current public rule wording remains a separate issue. The source and reading qualifications,
+including the preliminary presentation, are retained. No automatic disclosure policy or
+production change was adopted.
+
+The subsequent [provenance tooling work](research/quality-measurement/prose-debug-provenance/RESULTS.md)
+separates a job's historical plan from the current plan and records inserted-item source
+maps for new drafting requests. A read-only inspection of an isolated chapter-one database
+copy found both historical plan items available and equal to the current items; both old
+jobs correctly reported absent source maps. Prompt bytes and sampling material are preserved
+by the implementation checks. This delivers diagnostic capability, not a prose-quality result.
+
+The [chapter-one forensic audit](research/quality-measurement/prose-chapter-one-forensics/RESULTS.md)
+then traced a cost from the frozen production rule through its less specific scene-plan and
+draft descriptions into protected reconstruction unit F28. All eight source-contract requests
+preserve the draft's ambiguity and omit the original memory-loss operation. Those trials test
+rendition of their protected input, not restoration of the canonical cost. This is a scope
+qualification, not evidence that a corrected plan improves prose. No new generation ran.
+
+The [Recall clarification comparison](research/quality-measurement/prose-recall-clarification/RESULTS.md)
+then changed only that cost clause in four fixed-prefix second-scene continuations. Both
+clarified draws state the exact memory operation and immediately paraphrase it; both fresh
+controls also communicate bounded memory loss before purchase. Located explanation and
+source-compatibility problems remain. This delivers the registered clarification, not a
+reliable prose cure or an effect on the fixed first paragraph. A prospective decision-rationale
+test remains a conjecture; no production change or candidate selection follows.
 
 For subsequent tests in this sequence, record the hypothesis, fixed comparison, source/code
 hashes and stop rules before calls. Retain every request and raw response, including transport

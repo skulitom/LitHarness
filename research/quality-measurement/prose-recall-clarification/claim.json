@@ -1,0 +1,28 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-recall-clarification-v1",
+  "statement": "All four registered fixed-prefix continuations completed with the exact single-clause edit verified. Both clarified outputs deliver the bounded memory operation and retain located explanatory paraphrases; fresh controls also communicate memory loss. This is an observed one-fixture comparison, not a reliable prose cure or production authority.",
+  "status": "observed",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-recall-clarification/PREREG.md",
+      "sha256": "b50126dd387dc796b5ebae7b3624ed033dc49e0222728025170afc2e6576b8a0"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-recall-clarification/RUNBOOK.md",
+      "sha256": "7cb0c1fb2270f65f4ce9a748a6489f0759bff618e447cb0425911c72a62bd49b"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-recall-clarification/execution.json",
+      "sha256": "5b399ea732900d5f25344fe378423a39dfd39a4b5fd1f7cc9c9d2851a5c0ba49"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-recall-clarification/validation.json",
+      "sha256": "4b64e7674fd627097696d951f10c770103c9932827e20f439848713a288c9411"
+    }
+  ]
+}

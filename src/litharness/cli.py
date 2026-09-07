@@ -3869,7 +3869,11 @@ def cmd_world(args: argparse.Namespace) -> int:
     that is the rail enforced by `world accept` — an agent with this tool cannot put a fact
     into a book, only offer one.
     """
-    store = _store(args)
+    store = (
+        SqliteStore.open_read_only(args.database)
+        if args.view in world_mod.WORLD_VIEWS
+        else _store(args)
+    )
     stamp = _stamp(_now())
     try:
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
@@ -5820,7 +5824,7 @@ def build_parser() -> argparse.ArgumentParser:
         ("ladders", "ordinal criteria, their rungs lowest-first, and who stands where"),
         ("abilities", "what a person can do here, and who holds what"),
         ("cast", "who is in this world, by role, and who the protagonist is"),
-        ("threads", "open questions, where each is answered, what is still untold"),
+        ("threads", "open questions, reveal intentions and why each claim is still untold"),
         ("vocabulary", "every predicate and role this world's language admits"),
         ("presence", "which coined names have reached the page and which have not"),
         ("check", "what is wrong by arithmetic; exits 1 when anything is"),
@@ -5829,12 +5833,14 @@ def build_parser() -> argparse.ArgumentParser:
         view.add_argument("--book")
         view.add_argument("--branch")
         view.add_argument("--json", action="store_true", help="ignored; output is JSON")
-        if name == "show":
+        if name in {"show", "threads"}:
             view.add_argument("--subject", help="one subject id")
         if name == "abilities":
             view.add_argument("--holder", help="one subject id")
         if name == "threads":
-            view.add_argument("--at", help="a story position; what is open as of there")
+            view.add_argument(
+                "--at", help="exact story key for disclosure comparison; not a historical snapshot"
+            )
         view.set_defaults(func=cmd_world)
 
     declare = world_sub.add_parser(

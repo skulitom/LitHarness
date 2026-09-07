@@ -29,6 +29,7 @@ from litharness.application import dossier as dossier_mod
 from litharness.application import operations as operations_mod
 from litharness.application import status as status_mod
 from litharness.application import views as views_mod
+from litharness.application import world as world_mod
 from litharness.application import world_agent
 from litharness.cli import EXIT_ATTENTION, EXIT_FAULT, EXIT_OK, build_parser, main
 from litharness.domain.serials import SerialShape
@@ -53,6 +54,36 @@ def _json_out(capsys: pytest.CaptureFixture[str]) -> object:
 
 
 # --- the opens that never create or migrate ------------------------------------------
+
+
+@pytest.mark.parametrize("view", world_mod.WORLD_VIEWS)
+def test_cli_world_read_views_refuse_missing_stores_without_creating_them(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], view: str
+) -> None:
+    path = tmp_path / "missing.db"
+    assert run(path, "world", view) == EXIT_FAULT
+    assert "does not exist" in capsys.readouterr().err
+    assert not list(tmp_path.iterdir())
+
+
+def test_cli_world_read_preserves_journal_mode_and_refuses_pending_migrations(
+    db: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # A read through writable startup used to switch this file to WAL mode.
+    with sqlite3.connect(db) as connection:
+        assert connection.execute("PRAGMA journal_mode=DELETE").fetchone()[0] == "delete"
+    connection.close()
+    before = hashlib.sha256(db.read_bytes()).hexdigest()
+    assert run(db, "world", "threads") == EXIT_OK
+    capsys.readouterr()
+    assert hashlib.sha256(db.read_bytes()).hexdigest() == before
+    assert not Path(str(db) + "-wal").exists()
+
+    lagging = _lagging_copy(db, tmp_path)
+    before = hashlib.sha256(lagging.read_bytes()).hexdigest()
+    assert run(lagging, "world", "threads") == EXIT_FAULT
+    assert "migration(s) pending" in capsys.readouterr().err
+    assert hashlib.sha256(lagging.read_bytes()).hexdigest() == before
 
 
 def test_a_read_only_open_refuses_an_absent_path_and_creates_no_file(tmp_path: Path) -> None:

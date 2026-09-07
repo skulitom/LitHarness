@@ -48,11 +48,8 @@ Use `SqliteStore` as a context manager in new embedded or long-lived code.
 - `application` coordinates through structural ports in `application/ports.py` and imports
   **neither `adapters` nor `providers`**. It names what it needs — `DraftStore`,
   `TextGenerator` — and the composition root supplies something that fits.
-- `cli.py` is the outer composition and operator surface, and ~~the only place that binds a
-  concrete `SqliteStore` and `ProviderRegistry` to those ports~~ **one of two places that bind
-  a concrete `SqliteStore` to those ports — `mcp_server.py`, the agent surface, is the other
-  (stage-0 §241) — and the only place that binds a `ProviderRegistry`**, which is what keeps
-  the agent surface unable to spend.
+- `cli.py` and `mcp_server.py` bind concrete stores to those ports. Only `cli.py` binds a
+  `ProviderRegistry`; the MCP agent surface cannot spend model quota.
 
 The generation vocabulary (`CompletionRequest`, `CompletionResult`, `Usage`, `Resolution`)
 lives in `domain/generation.py` so both sides can name it without either importing the other;

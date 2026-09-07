@@ -36,6 +36,10 @@ reversals are preserved in [plan/stage-0-decisions.md](plan/stage-0-decisions.md
 operator manual. What the research has established so far, by question and with a pointer for
 every result, is [RESEARCH.md](RESEARCH.md).
 
+For task-specific reading paths, use the [contributor guide](CONTRIBUTING.md) or
+[research navigation](research/quality-measurement/README.md). Start with the relevant
+workflow; the full plans and decision archive are reference material.
+
 ## Install
 
 Python 3.11+ and [uv](https://docs.astral.sh/uv/) are required. The contracts package and golden
@@ -256,11 +260,41 @@ claude mcp add -s project litharness -- uv run --project /abs/path/to/LitHarness
 ```
 
 `.claude/skills/litharness-mcp/SKILL.md` is the agent's guide to the tools. Beside the verbs'
-own tools it offers `book` (every scene, drafted or not), `scene` (one scene's prose) and
-`lookup` (the record behind any id another tool handed out),
+own tools it offers `book` (every scene, drafted or not), `scene` (one scene's prose),
+`lookup` (the record behind any id another tool handed out), and `scene_trace` (the attributed job's frozen input, raw output and accepted revision,
+joined by recorded identities). Start with its stage hashes and gaps, then request one
+stage with `stage` and page it with `offset`/`max_chars`. This distinguishes where text is
+recorded without declaring why it reads poorly. Frozen job input is not a capture of the
+provider's full transport. Raw drafts exposed to an exemplar shelf are withheld; the generic
+event tool also withholds raw draft text while preserving its recorded identity. Shelf-bearing
+prompts are withheld in full when their boundaries are not verified. The server
 pages `state` and `findings` with a visible bound, names each result's keys in the tool list,
 serves the skill's workflows as prompts and the guide and reading copy as resources, and
 leaves one access-log line per call on stderr and in the file `LITHARNESS_MCP_LOG` names.
+For a disclosure problem, `scene_trace.request.story_order` identifies the frozen drafting
+key. Pass a recorded key to `world` with `view=threads`, `at`, and optionally `subject`.
+The equivalent CLI is `world threads --at STORY_KEY --subject CLAIM_ID`. The result explains
+each claim's disclosure classification using record IDs, audiences and position comparisons,
+with planned reveals kept separate. It reads current declarations, including labelled proposals;
+it does not reconstruct the old writer packet, inspect scene-plan prose, or authorize a reveal.
+Missing, invalid and deliberately unpositioned job keys remain distinct; a manuscript
+reading-order position is not a substitute story key.
+`why.plan_item` is explicitly the current plan. `why.job_plan` uses only the plan revision
+recorded by the drafting job, with missing and mismatched history named separately. The
+historical plan item is not assumed to equal the final rendered instruction.
+New drafting jobs also retain `prompt_sources`: item identities, authority, visibility,
+source hashes and exact character spans in the frozen system/prompt. `scene_trace.source_map`
+reports availability and counts; request `source_limit` (1–100) and `source_offset` to page
+entries, optionally filtering an exact `source_id`. Use the returned stage and offsets with
+the existing excerpt parameters to inspect the input. Rules and locks map to the system
+message; shelf insertion shifts prompt offsets and shelf exposure withholds source entries.
+Older jobs report `not_recorded`; current state is never substituted for missing provenance.
+The map identifies inserted packet items and producing renderer fragments. Derived fragments
+and aggregate cast/world items do not expose complete upstream declaration lineage. Source
+matches establish input provenance, not why the model chose a passage or its literary quality.
+CLI `world` read views also use a read-only connection: they refuse missing databases and
+pending migrations instead of creating or upgrading a store. SQLite may still create
+empty WAL/shared-memory sidecars while reading a WAL database.
 Every tool result carries `attention: true` where the CLI would exit 1, and every read tool's
 description ends with the rule the `debug-book` skill keeps: nothing a dossier tells you may
 become a prompt, directive, finding or plan item.

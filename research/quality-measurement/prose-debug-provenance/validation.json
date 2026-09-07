@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "command": "uv run python tools/check.py handoff",
+  "exit_code": 0,
+  "passed": 4557,
+  "skipped": 19,
+  "suite_seconds": 108.31,
+  "coverage_percent": 89.12,
+  "corpus_history": {
+    "status": "clean",
+    "commits": 991,
+    "data_blobs": 401
+  },
+  "model_calls": 0,
+  "direct_api_calls": 0,
+  "tested_sources": {
+    "src/litharness/application/dossier.py": "ea2e06f38cd104f950fba4ccbba1b52b4ec232b2720ea41e4af565822703a61f",
+    "src/litharness/application/handlers.py": "2595dd5edc46d812dbc9c35c63afaca5400a5e2588d198861707824e7a7c880c",
+    "src/litharness/application/planner.py": "417ebf196951ec00c8ecb24eae8cdcd14a6d80c931bd026009a498bc9ee0ed39",
+    "src/litharness/application/prompt_source_view.py": "c0800fa340f7c149c8c732690e93bed145abe4a16df4e3e6347d9e4923fb829e",
+    "src/litharness/application/prompt_sources.py": "85b31e2491d42cb68712e9d12aaec942a09442f23a8e2373ee60990e12e62aa9",
+    "src/litharness/application/scene_trace.py": "46c66b4dc780f6343a2aab44d8d49c39ee61a6063bc5e2288cd53399f83cde3a",
+    "src/litharness/domain/context.py": "5b28f2266176a7c4f55086886475c11bf44ae781319a0c27e6f81a1d7751b87f",
+    "src/litharness/mcp_server.py": "b0ba1b8bab246a044702c7f6011dc1700a95f74326b839d97d5496430c574b43",
+    "tests/test_context_render_sources.py": "505b6fd71a6e19c975b099433bd026daa02dc6df77b28262700333f26dcbc46b",
+    "tests/test_dossier_plan.py": "2dfb781408fb40534ded0ff5f79ce7f5b5bb4d9f903efc241f37b9e9d55fa93c",
+    "tests/test_forensics.py": "3386c3478e3ef8ad9119657e93b23f731da31552f6a7e7847f763aaad483ca6a",
+    "tests/test_planner.py": "c30731f694a3deb1ef6c35d757a78eb4bf127a398cfad87ae287e6ca0d3020ee",
+    "tests/test_prompt_source_sampling.py": "e8c7188b27724cde2613212f3c1d48ccefc3454f03922066033bbd313dc52154",
+    "tests/test_prompt_source_view.py": "b9caab2dfade5284d1925d83f3416da573112c748597802389ac2715b4d5fa43",
+    "tests/test_prompt_sources.py": "9f4726d237c9b6007cfd0143ba97eb001ae376d2eb450ee72b5fe29520df5d49",
+    "tests/test_scene_trace.py": "3307e4a46b044c2793e8742b9b947b8b3ea3943e2b2773c06169cfb99c8115f5"
+  },
+  "artifacts": {
+    "runs/debugging-provenance-20260907/handoff-1.log": "c1ffeafa1ce4555e48d363cf0d463e1279b9e5bc290c6144f197668d8e1f94e9",
+    "runs/debugging-provenance-20260907/handoff-1-status.json": "7ec2b8785f13135b587cbeead133bf9dcd2ade522803d310ad28dc0cb64a3312",
+    "runs/debugging-provenance-20260907/run_handoff.py": "64a84db9ae92563f92d92ff9df538d6998165c59a4d83e7d4efbfc187e6dac83",
+    "research/quality-measurement/prose-debug-provenance/inspection.json": "f9219d49f67d48f323d6bcaea865915d6b3c396f8396eae16139975bae61f6cd",
+    "research/quality-measurement/prose-debug-provenance/RESULTS.md": "6d33fdd96b522726b178f7266feb40590c0ecc1cb491911ab6fba937dfb3131f"
+  },
+  "scope": "Implementation and retained chapter inspection; no prose-quality or causal-effect claim."
+}

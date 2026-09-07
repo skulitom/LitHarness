@@ -2,7 +2,7 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "prose-source-contract-v1",
   "statement": "A fixed comparison crosses editorial-span placement with the presence of a chapter word target. Located outcomes diagnose source realization; they do not establish literary quality or production authority.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,31 @@
       "kind": "registration",
       "path": "research/quality-measurement/prose-source-contract/LITERATURE.md",
       "sha256": "e73be7652929bdfd57d1f9a10a5f6c4e7604a9729b18d56fdc57327255ad49d4"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-source-contract/RESULTS.md",
+      "sha256": "fae4b911d4a31c8e073359233cb0ce59a8cd79580c019066028fcdc39c9a4208"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-source-contract/DEVIATIONS.md",
+      "sha256": "c37b90c3842334f17f732746da3b1eb068ba91d12f5da8e2081c7f0c77bcc09f"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-source-contract/TOKEN-ACCOUNTING.md",
+      "sha256": "8b54564dd55997b5fe95795c24cc7dd5df451be2bdf9bca6f459bb9b30697382"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-source-contract/PRODUCTION-BASELINE.md",
+      "sha256": "9d76a58247ba7948e105dd8b89192dfd1dda1a99f18066c086671ffb90f7d1e0"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/prose-source-contract/execution.json",
+      "sha256": "2bfef5ee02af8a5031aa26df8eec627879205e5277c3d4489366a7bd8bc29f41"
     }
   ]
 }
