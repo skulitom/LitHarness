@@ -25410,3 +25410,28 @@ Check parsing and exact discovery transport, inspect the concept for contradicti
 record failures without choosing another candidate. This is a live integration check, not a
 comparison, a reader-interest measurement or certification of chapter prose. Do not resume
 the stopped volume or draft further chapters as part of this smoke.
+
+**First live smoke and visible amendment.** The 26d5901 run completed concept generation,
+retaining the original discovery material exactly, after two unparsed mechanical responses.
+It did not solve the requested experience: its system explicitly became an institution and
+its advancement a public grade. Its mechanical arc also opened *after* the discovery's
+chapter-one action. This is a located reading of generated material, not a quality label.
+Raw available artifacts, hashes and validation are retained under the registered local run
+root. The malformed mechanical answers had only diagnostic excerpts on stderr: that
+provenance gap is recorded, not silently reconstructed. No chapter was drafted or ranked.
+
+Version `magical-discovery.v2` now explicitly asks for LitRPG personal capability tracked by
+a game system independently of licences, employment and institutional rank. The original v1
+direction remains renderable for saved concepts. Concept development retains the source
+opening as `first_arc.opens` in code, closing the accidental already-completed-prologue
+interpretation without prescribing the opening's content. `--out` now records every
+mechanical response and its request, including malformed attempts and an exemplar-presence
+flag. `tests/test_concept.py` exercises both preservation boundaries and retained failed
+attempts. The largest discovery-backed seed also has its own prompt-budget ceiling.
+
+**Next engineering smoke, fixed before dispatch.** Repeat the same one-concept procedure on
+v2 under `runs/magical-discovery-smoke-v2-20260908/`, with the same empty brief, writer, person,
+arc length, subscription authentication, four-invocation ceiling and no exemplars. Retain the
+first result, all format failures and the treatment, and check both exact-material boundaries.
+This is another integration smoke under changed author direction, not a controlled claim of
+literary improvement. No chapters, reader ranking or automatic candidate selection.

@@ -134,6 +134,15 @@ def _roles() -> dict[str, str]:
             world_agent.render_seed_request("a listing", WRITER, concept=_TWO_SYSTEM_CONCEPT).system
             or ""
         ),
+        "architect seed, discovery": (
+            world_agent.render_seed_request(
+                "a listing", WRITER,
+                concept=replace(
+                    _TWO_SYSTEM_CONCEPT,
+                    discovery=discovery.Discovery("Place.", "Action.", "Growth."),
+                ),
+            ).system or ""
+        ),
         "title writer": overview.title_system(WRITER),
         "title lookup": titles.render_check_request("a title").system or "",
         "architect seed": world_agent.render_seed_request("a listing", WRITER).system or "",
@@ -272,6 +281,9 @@ BUDGET: dict[str, int] = {
     # prevent this route from accumulating another unbounded craft essay.
     "discovery writer": 16,
     "concept development": 16,
+    # The largest new seed variant includes both a second system and the three
+    # instructions that make its representation serve the retained discovery treatment.
+    "architect seed, discovery": 51,
     # **The tells rewriter, new on 2026-09-02** (§199): the three lines every rewrite carries and
     # the one line for the family, four.
     "tells rewriter": 4,

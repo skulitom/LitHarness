@@ -60,7 +60,7 @@ from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
 CONCEPT_PROFILE = "writer.concept.v0"
-DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v1"
+DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v2"
 
 #: The plan item id the concept is persisted under; one per book, like `plan-premise`.
 CONCEPT_PLAN_ID = "plan-concept"
@@ -270,6 +270,18 @@ class Concept:
     # ------------------------------------------------------------------ reading one back
 
     @classmethod
+    def from_development(cls, payload: Mapping[str, Any], discovery: Discovery) -> Concept:
+        """Keep the supplied opening as the arc's opening, not an already-finished prologue.
+
+        The development call supplies mechanics and the arc's later movement. It cannot
+        replace the source treatment or silently start the arc after chapter one.
+        """
+        arc = {**_mapping(payload, "first_arc"), "opens": discovery.opening}
+        return cls.from_payload({
+            **payload, "first_arc": arc, "discovery": discovery.to_jsonable(),
+        })
+
+    @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> Concept:
         """A concept off a model answer or a file, or `MalformedConcept` naming the field."""
         system = _mapping(payload, "system")
@@ -457,7 +469,8 @@ class Concept:
                 f"itself: {self.second_system.manner}"
             )
             lines.append(f"What carries over from the first: {self.second_system.kept}")
-        lines.append(f"The first arc opens: {self.first_arc.opens}")
+        if self.discovery is None or self.first_arc.opens != self.discovery.opening:
+            lines.append(f"The first arc opens: {self.first_arc.opens}")
         lines.append(f"Its middle: {self.first_arc.middle}")
         lines.append(f"It closes: {self.first_arc.closes}")
         lines.append("What the book owes, and the scene each is due by:")
@@ -659,20 +672,22 @@ def render_concept_request(
         task = (
             "Develop the supplied discovery treatment into the requested book concept. "
             "Preserve its magical encounter, character pursuit and growth direction while "
-            "making their mechanics coherent. The treatment is planned action, not prose.\n"
+            "making their mechanics coherent.\n"
             "Use person_before and want for this character; exception for their distinctive "
             "magical advantage, which need not be exclusive in the universe; first_use for "
             "their effective use of it in chapter one.\n"
-            "Describe the system's appearance and feedback in manner and look; it need not "
-            "be a speaking authority. steps is the known span of advancement, not a final "
-            "ceiling; strongest_known shows what greater capability can do. pays names "
+            "system describes the game system that tracks actual personal capability, "
+            "independently of institutional approval. Its appearance and feedback go in "
+            "manner and look; it need not speak. steps is the known span of advancement, "
+            "not a final ceiling; strongest_known shows what greater capability can do. pays names "
             "a useful change in what this character can do, including beyond their initial "
             "advantage.\n"
             "threat is the story's obstacle or danger and first_reach its encounter; a "
             "mass killing or world invasion is not required. The turn develops the pursuit; "
             "use second_system only if the treatment calls for it, preserving earned "
             "capabilities across any transition.\n"
-            "first_arc gives its opening, middle and close as events. debts names two to "
+            "first_arc develops the supplied opening into a middle and close; the opening "
+            "has not happened yet and remains chapter one. debts names two to "
             "four questions with due_scene within the requested arc. Return only the "
             "schema fields; the original discovery treatment is retained separately."
         )

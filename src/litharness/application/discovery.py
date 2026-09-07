@@ -14,17 +14,27 @@ from typing import Any
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v1"
-VERSION = "magical-discovery.v1"
+PROFILE = "writer.discovery.v2"
+VERSION = "magical-discovery.v2"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
-DIRECTION = (
+_V1_DIRECTION = (
     "Create a magical fantasy experience with progression: an unfamiliar world worth "
     "exploring, magic someone can discover and use, and growing capability that opens "
     "possibilities they want to pursue. Let the character act on curiosity and desire as "
     "well as danger. Rules, costs and institutions support that experience; satisfying "
     "their procedures alone does not deliver it. Respect the author's specific brief."
 )
+DIRECTION = (
+    "Create a LitRPG fantasy experience: an unfamiliar world worth exploring, magic "
+    "someone can discover and use, and growing capability that opens possibilities "
+    "they want to pursue. Progression develops the character's own magical or physical "
+    "capabilities; the game system tracks those changes independently of employment, "
+    "licences or institutional rank. Make discovery and the practiced use of magic drive "
+    "advancement. Let the character act on curiosity and desire as well as danger, within "
+    "the author's specific brief."
+)
+DIRECTIONS = {"magical-discovery.v1": _V1_DIRECTION, VERSION: DIRECTION}
 
 SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -54,11 +64,12 @@ class Discovery:
     world: str
     opening: str
     growth: str
+    version: str = VERSION
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> Discovery:
         version = payload.get("version", VERSION)
-        if version != VERSION:
+        if not isinstance(version, str) or version not in DIRECTIONS:
             raise ValueError(f"unsupported discovery version: {version!r}")
         values: dict[str, str] = {}
         for key in ("world", "opening", "growth"):
@@ -66,11 +77,11 @@ class Discovery:
             if not isinstance(value, str) or not value.strip():
                 raise ValueError(f"discovery.{key} must be non-empty story material")
             values[key] = value.strip()
-        return cls(**values)
+        return cls(**values, version=version)
 
     def to_jsonable(self) -> dict[str, str]:
         return {
-            "version": VERSION,
+            "version": self.version,
             "world": self.world,
             "opening": self.opening,
             "growth": self.growth,
@@ -78,7 +89,7 @@ class Discovery:
 
     def render(self) -> str:
         return (
-            f"Intended fantasy experience ({VERSION}): {DIRECTION}\n"
+            f"Intended fantasy experience ({self.version}): {DIRECTIONS[self.version]}\n"
             f"The world to discover: {self.world}\n"
             f"The opening's action: {self.opening}\n"
             f"What growing capability makes possible: {self.growth}\n"

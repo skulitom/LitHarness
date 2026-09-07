@@ -429,6 +429,11 @@ def test_an_unparsed_concept_answer_spends_an_attempt_and_the_next_draw_is_kept(
     assert "Sure, here is" in err, "the answer's first words are on stderr"
     assert len(call.seen) == 3  # type: ignore[attr-defined]
     assert (out / "concept.json").exists()
+    failed = json.loads((out / "concept-trace-1.json").read_text())
+    succeeded = json.loads((out / "concept-trace-2.json").read_text())
+    assert failed["response"] == "Sure, here is the concept in prose."
+    assert failed["request"] == succeeded["request"]
+    assert not failed["contains_exemplar_material"]
 
 
 def test_a_concept_that_never_parses_is_a_fault_after_the_bounded_draws(
@@ -493,6 +498,8 @@ def test_discovery_precedes_mechanics_and_survives_cli_persistence(
     assert "A gardener explores the sky." in first.prompt
     retained = concept.Concept.from_text((out / "concept.json").read_text(encoding="utf-8"))
     assert retained.discovery == discovery.Discovery.from_payload(_discovery())
+    assert retained.first_arc.opens == retained.discovery.opening
+    assert retained.render().count(retained.discovery.opening) == 1
     assert json.loads((out / "discovery-trace.json").read_text())["response"] == json.dumps(
         _discovery()
     )
@@ -584,6 +591,10 @@ def test_legacy_concepts_are_not_rewritten_and_bad_discovery_does_not_disappear(
     for bad in (None, {}, {**_discovery(), "version": "unknown"}):
         with pytest.raises(concept.MalformedConcept, match="discovery"):
             concept.Concept.from_payload({**_example(), "discovery": bad})
+    v1 = discovery.Discovery.from_payload({**_discovery(), "version": "magical-discovery.v1"})
+    assert v1.version == v1.to_jsonable()["version"] == "magical-discovery.v1"
+    assert "Create a magical fantasy experience with progression" in v1.render()
+    assert discovery.DIRECTION not in v1.render()
 
 
 @pytest.mark.parametrize("refused_profile", [discovery.PROFILE, concept.DISCOVERY_CONCEPT_PROFILE])

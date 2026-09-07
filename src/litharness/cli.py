@@ -2161,6 +2161,33 @@ def cmd_listing(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _write_concept_trace(
+    out: Path | None, name: str, request: CompletionRequest, result: CompletionResult,
+    *, has_exemplars: bool = False,
+) -> None:
+    """Retain each response, including malformed attempts, under the requested output root."""
+    if out is None:
+        return
+    out.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "profile": request.profile,
+        "contains_exemplar_material": has_exemplars,
+        "request": {
+            "system": request.system,
+            "prompt": request.prompt,
+            "schema": request.schema,
+            "max_output_tokens": request.max_output_tokens,
+        },
+        "response": result.text,
+        "provider": result.provider,
+        "model": result.model,
+        "usage": dataclasses.asdict(result.usage),
+    }
+    (out / name).write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+
+
 def cmd_concept(args: argparse.Namespace) -> int:
     """One writer develops a discovery treatment, then its mechanical concept.
 
@@ -2188,28 +2215,7 @@ def cmd_concept(args: argparse.Namespace) -> int:
             print(f"litharness: {refusal}", file=sys.stderr)
             return EXIT_FAULT
         # This stage sees no exemplar shelf, so its trace has an independent boundary.
-        if args.out:
-            args.out.mkdir(parents=True, exist_ok=True)
-            (args.out / "discovery-trace.json").write_text(
-                json.dumps(
-                    {
-                        "profile": discovery_mod.PROFILE,
-                        "request": {
-                            "system": discovery_request.system,
-                            "prompt": discovery_request.prompt,
-                            "schema": discovery_request.schema,
-                        },
-                        "response": discovery_result.text,
-                        "provider": discovery_result.provider,
-                        "model": discovery_result.model,
-                        "usage": dataclasses.asdict(discovery_result.usage),
-                    },
-                    ensure_ascii=False,
-                    indent=2,
-                )
-                + "\n",
-                encoding="utf-8",
-            )
+        _write_concept_trace(args.out, "discovery-trace.json", discovery_request, discovery_result)
         try:
             if not isinstance(discovery_result.parsed, Mapping):
                 raise ValueError("expected the discovery story material as JSON")
@@ -2236,6 +2242,10 @@ def cmd_concept(args: argparse.Namespace) -> int:
             if result is None:
                 print(f"litharness: {refusal}", file=sys.stderr)
                 return EXIT_FAULT
+            _write_concept_trace(
+                args.out, f"concept-trace-{_attempt + 1}.json", request, result,
+                has_exemplars=shelf is not None,
+            )
             if not isinstance(result.parsed, Mapping):
                 # **An unparsed answer spends an attempt, and says what came back.** Two of the
                 # first six concept draws came back unparsed and the command exited with one
@@ -2254,9 +2264,7 @@ def cmd_concept(args: argparse.Namespace) -> int:
             try:
                 # Downstream generation cannot silently rewrite or drop the treatment.
                 drawn.append(
-                    dataclasses.replace(
-                        concept_mod.Concept.from_payload(result.parsed), discovery=discovery
-                    )
+                    concept_mod.Concept.from_development(result.parsed, discovery)
                 )
             except concept_mod.MalformedConcept as error:
                 print(f"litharness: the concept is unusable: {error}", file=sys.stderr)
