@@ -1,0 +1,535 @@
+{
+  "schema": "local-prose-diagnostic.v1",
+  "status": "observed",
+  "registration_commit": "eddacd266084eb2d36b949ff26ca9013670739d6",
+  "cli_version": "codex-cli 0.153.4",
+  "authentication": "chatgpt",
+  "requested_model": "gpt-6-astra",
+  "reasoning_effort": "high",
+  "resolved_model": null,
+  "cost_usd": null,
+  "registered_calls": 4,
+  "requested_calls": 4,
+  "completed_calls": 4,
+  "all_registered_slots_completed": true,
+  "order": [
+    "control-1",
+    "single-1",
+    "single-2",
+    "control-2"
+  ],
+  "outputs": [
+    {
+      "id": "control-1",
+      "condition": "control",
+      "status": "completed",
+      "sha256": {
+        "request.json": "27fe11ce1ecbc3b84cbf1205379c0181c55af5d91129a602592aa5c9c217166a",
+        "raw.json": "87587d0fce89847147c25d1e3c591d7cbb2b51f8aecd3108e888c39454417750",
+        "result.json": "eb5f957221f0663ac3617fba70c99512b4631225a5e63b98f362d5508c95c58e",
+        "txt": "05aca9a6e5eb2e5b6412cfae69574c0812f2d46a779afeb17a9639ea6873fac9",
+        "audit.json": "e401c120d40e7fab3ff65e16dddd62cf1596c5d49737f1f1aa963e15ddba214c"
+      },
+      "artifact_problems": {},
+      "request_matches_frozen_slot": true,
+      "audit_matches_artifacts": true,
+      "text": {
+        "chars": 5233,
+        "utf8_bytes": 5341,
+        "sha256": "8b7a49b161cae9bdd386591d3902141920dafa4e76376d3d2d6be0e3c8ff64ae"
+      },
+      "words": 904,
+      "paragraphs": 72,
+      "text_file_matches_result_plus_newline": true,
+      "usage": {
+        "input_tokens": 15587,
+        "cached_input_tokens": 0,
+        "output_tokens": 2131,
+        "reasoning_output_tokens": 950
+      },
+      "usage_invalid_fields": [],
+      "reported_input_plus_output_tokens": 17718,
+      "wall_ms": 119686,
+      "exit_code": 0,
+      "error_type": null,
+      "error": {
+        "chars": null,
+        "utf8_bytes": null,
+        "sha256": null
+      },
+      "stderr": {
+        "chars": 158,
+        "utf8_bytes": 158,
+        "sha256": "184a274e417ff8301882ccf017ed4f82822b78d83c6ee7ffa4472738d742248a",
+        "internal_sampling_retry_reported": false,
+        "categories": [
+          {
+            "category": "shell_snapshot_unavailable",
+            "line_count": 1,
+            "sha256": "184a274e417ff8301882ccf017ed4f82822b78d83c6ee7ffa4472738d742248a",
+            "line_sha256": [
+              "184a274e417ff8301882ccf017ed4f82822b78d83c6ee7ffa4472738d742248a"
+            ]
+          }
+        ]
+      },
+      "stdout": {
+        "chars": 6285,
+        "utf8_bytes": 6393,
+        "sha256": "a7e9b8956d89650c007275a1f2cb08d881b1dff5cb9529d7d7b3b1be92c70800",
+        "jsonl_valid": true,
+        "completed_turns": 1,
+        "final_messages": 1,
+        "final_text_matches_result": true
+      },
+      "internal_sampling_retry_reported": false,
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null
+    },
+    {
+      "id": "single-1",
+      "condition": "single",
+      "status": "completed",
+      "sha256": {
+        "request.json": "a128e82fc119b4fd23c56199641ca674480b2b3a7d18b3277047b4e98896d821",
+        "raw.json": "eb517a76f54c5483f39c2ea5fc6789a2afb3713ff05e0d26747973a39b185acb",
+        "result.json": "1d146d459a3235e2f4e33412e30b0f727466b5882a85883877ab44306bfaeef0",
+        "txt": "3b4284e1a00178ca1c0d5a753e3ca27defc28a8ba4432011ff74f7b91737f4c4",
+        "audit.json": "6dfd51db1071a74428ac953516d77b9db38ce8b7aaa63b67149590b9cb18d9a6"
+      },
+      "artifact_problems": {},
+      "request_matches_frozen_slot": true,
+      "audit_matches_artifacts": true,
+      "text": {
+        "chars": 5104,
+        "utf8_bytes": 5184,
+        "sha256": "6a56ceb4536ccaca308fb1f0b3f278f77a7bd31a1d608a4d74e6c2cb71bb9191"
+      },
+      "words": 893,
+      "paragraphs": 74,
+      "text_file_matches_result_plus_newline": true,
+      "usage": {
+        "input_tokens": 15442,
+        "cached_input_tokens": 2688,
+        "output_tokens": 1934,
+        "reasoning_output_tokens": 789
+      },
+      "usage_invalid_fields": [],
+      "reported_input_plus_output_tokens": 17376,
+      "wall_ms": 102563,
+      "exit_code": 0,
+      "error_type": null,
+      "error": {
+        "chars": null,
+        "utf8_bytes": null,
+        "sha256": null
+      },
+      "stderr": {
+        "chars": 158,
+        "utf8_bytes": 158,
+        "sha256": "bb99acf7ec8dea47a2c381ba93332d64735b731d59efa727a4e9839a362bfdcd",
+        "internal_sampling_retry_reported": false,
+        "categories": [
+          {
+            "category": "shell_snapshot_unavailable",
+            "line_count": 1,
+            "sha256": "bb99acf7ec8dea47a2c381ba93332d64735b731d59efa727a4e9839a362bfdcd",
+            "line_sha256": [
+              "bb99acf7ec8dea47a2c381ba93332d64735b731d59efa727a4e9839a362bfdcd"
+            ]
+          }
+        ]
+      },
+      "stdout": {
+        "chars": 6159,
+        "utf8_bytes": 6239,
+        "sha256": "d801dea67077f8d6af36de36c1232bb2305b0264c5f729db814e3d3faf5c4825",
+        "jsonl_valid": true,
+        "completed_turns": 1,
+        "final_messages": 1,
+        "final_text_matches_result": true
+      },
+      "internal_sampling_retry_reported": false,
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null
+    },
+    {
+      "id": "single-2",
+      "condition": "single",
+      "status": "completed",
+      "sha256": {
+        "request.json": "c04c03a129e3e09d166be8b1bfe54b27338bbe5c19788b228bcc0ddc05a016e3",
+        "raw.json": "7a1e573fbcb4b2e2a5d0405ed6732e4acdc0510e7e1122e6a81d848c82f47acc",
+        "result.json": "fbcb266be8d2b8bb50ac20f49f639482e9c1e9806e26b74a2e9b8a4006e249e7",
+        "txt": "a586df7e64a7086aca3c6a577c1c8ee0c40e8ddb626edbc7ffb623d86002216b",
+        "audit.json": "95b376de4e7ed5c78f5744fa770c8f550782fd209d576bf4875cc4c21bad8d1b"
+      },
+      "artifact_problems": {},
+      "request_matches_frozen_slot": true,
+      "audit_matches_artifacts": true,
+      "text": {
+        "chars": 5150,
+        "utf8_bytes": 5206,
+        "sha256": "0fdee5605b07feb9ffd060f78f87a5f1c2a82dba56822536a2c1219270f86d15"
+      },
+      "words": 903,
+      "paragraphs": 63,
+      "text_file_matches_result_plus_newline": true,
+      "usage": {
+        "input_tokens": 15442,
+        "cached_input_tokens": 0,
+        "output_tokens": 1891,
+        "reasoning_output_tokens": 768
+      },
+      "usage_invalid_fields": [],
+      "reported_input_plus_output_tokens": 17333,
+      "wall_ms": 110483,
+      "exit_code": 0,
+      "error_type": null,
+      "error": {
+        "chars": null,
+        "utf8_bytes": null,
+        "sha256": null
+      },
+      "stderr": {
+        "chars": 158,
+        "utf8_bytes": 158,
+        "sha256": "4f7d24632a1c94c9aac2e43e3f1b6680a3b35398fa4e61e5c6f926f298163eb0",
+        "internal_sampling_retry_reported": false,
+        "categories": [
+          {
+            "category": "shell_snapshot_unavailable",
+            "line_count": 1,
+            "sha256": "4f7d24632a1c94c9aac2e43e3f1b6680a3b35398fa4e61e5c6f926f298163eb0",
+            "line_sha256": [
+              "4f7d24632a1c94c9aac2e43e3f1b6680a3b35398fa4e61e5c6f926f298163eb0"
+            ]
+          }
+        ]
+      },
+      "stdout": {
+        "chars": 6179,
+        "utf8_bytes": 6235,
+        "sha256": "0f599bdb341e34e94f0bf5766303f240bfe2463a5f1633c27898115435ef863f",
+        "jsonl_valid": true,
+        "completed_turns": 1,
+        "final_messages": 1,
+        "final_text_matches_result": true
+      },
+      "internal_sampling_retry_reported": false,
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null
+    },
+    {
+      "id": "control-2",
+      "condition": "control",
+      "status": "completed",
+      "sha256": {
+        "request.json": "6d4cf3c69b5412d957806e043607fd91658fb5ada82893eac13005fc4f77eca6",
+        "raw.json": "9eb02b0d8bcb9c4f28915df5157a0065375f5eefcbc6241765cf7d63e390f1a6",
+        "result.json": "eccf4217f344cf432b7e541c2f8aad49a210aef0cc53c3bde3eec35981962d28",
+        "txt": "dcc94f4d8f5ac9ebbe0b9f44055a00ce2a7fbaa56dec51471e8807e7eac72355",
+        "audit.json": "1759a7b5bfba6d93caf3f9103e0f629695ca5b26e42ad8d8336991c0569b5556"
+      },
+      "artifact_problems": {},
+      "request_matches_frozen_slot": true,
+      "audit_matches_artifacts": true,
+      "text": {
+        "chars": 5383,
+        "utf8_bytes": 5459,
+        "sha256": "0e77763accc63db4411edabb6592931e92e73310d6651df07a812d9644898ec4"
+      },
+      "words": 934,
+      "paragraphs": 69,
+      "text_file_matches_result_plus_newline": true,
+      "usage": {
+        "input_tokens": 15587,
+        "cached_input_tokens": 2688,
+        "output_tokens": 2149,
+        "reasoning_output_tokens": 959
+      },
+      "usage_invalid_fields": [],
+      "reported_input_plus_output_tokens": 17736,
+      "wall_ms": 113748,
+      "exit_code": 0,
+      "error_type": null,
+      "error": {
+        "chars": null,
+        "utf8_bytes": null,
+        "sha256": null
+      },
+      "stderr": {
+        "chars": 158,
+        "utf8_bytes": 158,
+        "sha256": "1107fec494e11af56b135bbef2b957310cb3a3873e195744360f4266e92b8d5e",
+        "internal_sampling_retry_reported": false,
+        "categories": [
+          {
+            "category": "shell_snapshot_unavailable",
+            "line_count": 1,
+            "sha256": "1107fec494e11af56b135bbef2b957310cb3a3873e195744360f4266e92b8d5e",
+            "line_sha256": [
+              "1107fec494e11af56b135bbef2b957310cb3a3873e195744360f4266e92b8d5e"
+            ]
+          }
+        ]
+      },
+      "stdout": {
+        "chars": 6427,
+        "utf8_bytes": 6503,
+        "sha256": "9486c61b39b470bffb959b9aeaa765eb684dd889e81ecb024ba6e8c87c6d7788",
+        "jsonl_valid": true,
+        "completed_turns": 1,
+        "final_messages": 1,
+        "final_text_matches_result": true
+      },
+      "internal_sampling_retry_reported": false,
+      "requested_model": "gpt-6-astra",
+      "resolved_model": null
+    }
+  ],
+  "usage": {
+    "input_tokens": 62058,
+    "cached_input_tokens": 5376,
+    "output_tokens": 8105,
+    "reasoning_output_tokens": 3466
+  },
+  "usage_component_slot_coverage": {
+    "input_tokens": 4,
+    "cached_input_tokens": 4,
+    "output_tokens": 4,
+    "reasoning_output_tokens": 4
+  },
+  "reported_input_plus_output_tokens": 70163,
+  "reported_input_plus_output_slot_coverage": 4,
+  "usage_semantics": {
+    "cached_input_tokens_subset_of": "input_tokens",
+    "reasoning_output_tokens_subset_of": "output_tokens",
+    "missing_components": "unavailable, not zero",
+    "account_or_subscription_window_consumption_verified": false
+  },
+  "token_stop": 100000,
+  "token_counter": "input_tokens + output_tokens",
+  "source_timeout": 300.0,
+  "transport_timeout_seconds": 900,
+  "wall_ms_reported_total": 446480,
+  "wall_ms_slot_coverage": 4,
+  "internal_sampling_retry_slots": [],
+  "no_retry_condition_met": true,
+  "sampling_attempt_count": null,
+  "source": {
+    "source_file_path": "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-tools\\source.json",
+    "source_file_sha256": "466e7c77473ccd1beec03c3b577b7d1962b4ba492eed35eebbf0bc2afe358166",
+    "source_file_matches_manifest": true,
+    "original_request_path": "C:\\DEV\\LitHarness\\runs\\ab\\chapter-rule-context-20260905\\request-4.json",
+    "original_request_sha256": "4cb3c1292b764ed9087a43fbbd903f9848688a16e1ec3bf15b2d23802722b13f",
+    "expected_original_request_sha256": "4cb3c1292b764ed9087a43fbbd903f9848688a16e1ec3bf15b2d23802722b13f",
+    "original_request_matches_control": true,
+    "original_request_hash_matches": true,
+    "source_control_matches_request": true,
+    "control": {
+      "system": {
+        "chars": 12093,
+        "utf8_bytes": 12133,
+        "sha256": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3"
+      },
+      "prompt": {
+        "chars": 34583,
+        "utf8_bytes": 34640,
+        "sha256": "2db42b49841cc280e3b26b495048a98f71c15786a6829db1ab3145fe958cd0fc"
+      },
+      "timeout": 300.0
+    },
+    "single": {
+      "system": {
+        "chars": 12093,
+        "utf8_bytes": 12133,
+        "sha256": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3"
+      },
+      "prompt": {
+        "chars": 33884,
+        "utf8_bytes": 33937,
+        "sha256": "fbc5f6ce3406d521328e30f87fe40e4284337018d589a4711d8c250b9f1a53ec"
+      },
+      "timeout": 300.0
+    },
+    "only_reviewed_prompt_spans_deleted": true,
+    "cuts": [
+      {
+        "ordinal": 1,
+        "start": 6542,
+        "end": 6653,
+        "chars": 111,
+        "utf8_bytes": 111,
+        "text_sha256": "62e1b67f3bcd112a7d97127ba59e7cafbfb7f3a7f2ae884bea59e313d61cb02a",
+        "witness_chars": 109,
+        "witness_sha256": "2bb6665897170c811d3b27a39dfebd940c0be6ff8408116eb2a3a2c166fde2e0",
+        "witness_control_occurrences": 2,
+        "witness_single_occurrences": 1
+      },
+      {
+        "ordinal": 2,
+        "start": 6727,
+        "end": 6967,
+        "chars": 240,
+        "utf8_bytes": 242,
+        "text_sha256": "7907dc357be5ee3a4aa3c3a607de0dc77b4c7bcb84ee9984568f527cef4173cf",
+        "witness_chars": 238,
+        "witness_sha256": "ea3d4cf0254a9013dba2a3ce133f380d1dd16db1f4b11e6bd59956a5717ba789",
+        "witness_control_occurrences": 2,
+        "witness_single_occurrences": 1
+      },
+      {
+        "ordinal": 3,
+        "start": 7023,
+        "end": 7181,
+        "chars": 158,
+        "utf8_bytes": 160,
+        "text_sha256": "7ad00488e3b5306d9c3ebeab8554d78401217b41a99aa4a0588fee084ce9373e",
+        "witness_chars": 156,
+        "witness_sha256": "6e3892f588e33a7920042f286966791106994893cffc881abe42acc6615efdef",
+        "witness_control_occurrences": 2,
+        "witness_single_occurrences": 1
+      },
+      {
+        "ordinal": 4,
+        "start": 7258,
+        "end": 7448,
+        "chars": 190,
+        "utf8_bytes": 190,
+        "text_sha256": "4a785ed347eefcd7f6bfcded5984765cea089883d9c89088c1688cb4f644f5d3",
+        "witness_chars": 188,
+        "witness_sha256": "a6df183713cc96930faf713395fd7e1dda217174d89d03b4d8f95125af39f4f6",
+        "witness_control_occurrences": 2,
+        "witness_single_occurrences": 1
+      }
+    ]
+  },
+  "frozen_artifacts": [
+    {
+      "path": "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-production-obligations\\PREREG.md",
+      "expected_sha256": "88319c77fa53f99bd80ef80f49e700b1d92e9158a68fc3c88cf9a53c24e87492",
+      "sha256": "88319c77fa53f99bd80ef80f49e700b1d92e9158a68fc3c88cf9a53c24e87492",
+      "matches": true
+    },
+    {
+      "path": "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose-production-obligations\\RUNBOOK.md",
+      "expected_sha256": "66c12a5e703465ec9f971b07a3f8a37775fb7ffc57488c88ccd9c218c49ce376",
+      "sha256": "66c12a5e703465ec9f971b07a3f8a37775fb7ffc57488c88ccd9c218c49ce376",
+      "matches": true
+    },
+    {
+      "path": "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_codex.py",
+      "expected_sha256": "1c99fc6b20c28f982640d9ebfd1405bd193be81124d6e883c901cae00426e563",
+      "sha256": "1c99fc6b20c28f982640d9ebfd1405bd193be81124d6e883c901cae00426e563",
+      "matches": true
+    },
+    {
+      "path": "C:\\DEV\\LitHarness\\research\\quality-measurement\\prose_production_obligations.py",
+      "expected_sha256": "6554c5007324d1f73d502271903ae8e6fb390b0bb3853fbb67979bb7114ed725",
+      "sha256": "6554c5007324d1f73d502271903ae8e6fb390b0bb3853fbb67979bb7114ed725",
+      "matches": true
+    },
+    {
+      "path": "C:\\DEV\\LitHarness\\runs\\ab\\chapter-rule-context-20260905\\request-4.json",
+      "expected_sha256": "4cb3c1292b764ed9087a43fbbd903f9848688a16e1ec3bf15b2d23802722b13f",
+      "sha256": "4cb3c1292b764ed9087a43fbbd903f9848688a16e1ec3bf15b2d23802722b13f",
+      "matches": true
+    },
+    {
+      "path": "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-20260907\\control-1\\system.txt",
+      "expected_sha256": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3",
+      "sha256": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3",
+      "matches": true
+    },
+    {
+      "path": "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-20260907\\control-2\\system.txt",
+      "expected_sha256": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3",
+      "sha256": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3",
+      "matches": true
+    },
+    {
+      "path": "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-20260907\\single-1\\system.txt",
+      "expected_sha256": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3",
+      "sha256": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3",
+      "matches": true
+    },
+    {
+      "path": "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-20260907\\single-2\\system.txt",
+      "expected_sha256": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3",
+      "sha256": "98416791f08423494dad5005f83c20d6d83a94a0f647b1133a2c7994fbabc9c3",
+      "matches": true
+    },
+    {
+      "path": "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-tools\\input-audit.md",
+      "expected_sha256": "52cac39d42ad81f3d545344674941cdfd2914eeabdb56062b7ea717b2ff61f87",
+      "sha256": "52cac39d42ad81f3d545344674941cdfd2914eeabdb56062b7ea717b2ff61f87",
+      "matches": true
+    },
+    {
+      "path": "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-tools\\prepare_source.py",
+      "expected_sha256": "423a12a322472fb7524dffeeb2d1e5ed0efb803a075ae285b6119dfdc09e6ea6",
+      "sha256": "423a12a322472fb7524dffeeb2d1e5ed0efb803a075ae285b6119dfdc09e6ea6",
+      "matches": true
+    },
+    {
+      "path": "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-tools\\source.json",
+      "expected_sha256": "466e7c77473ccd1beec03c3b577b7d1962b4ba492eed35eebbf0bc2afe358166",
+      "sha256": "466e7c77473ccd1beec03c3b577b7d1962b4ba492eed35eebbf0bc2afe358166",
+      "matches": true
+    },
+    {
+      "path": "C:\\DEV\\LitHarness\\tests\\test_prose_production_obligations.py",
+      "expected_sha256": "64eadd5107f1bbbc5e3631a9b1a0b9eaa998c36db6ccbb90237e512d53de0eb1",
+      "sha256": "64eadd5107f1bbbc5e3631a9b1a0b9eaa998c36db6ccbb90237e512d53de0eb1",
+      "matches": true
+    },
+    {
+      "path": "C:\\Program Files\\nodejs\\node.exe",
+      "expected_sha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237",
+      "sha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237",
+      "matches": true
+    },
+    {
+      "path": "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
+      "expected_sha256": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+      "sha256": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+      "matches": true
+    },
+    {
+      "path": "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\node_modules\\@openai\\codex-win32-x64\\package.json",
+      "expected_sha256": "8002fa9caa5677007dc55b8e0628198b4411bf2d4542027ec5814653b91acce3",
+      "sha256": "8002fa9caa5677007dc55b8e0628198b4411bf2d4542027ec5814653b91acce3",
+      "matches": true
+    },
+    {
+      "path": "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\node_modules\\@openai\\codex-win32-x64\\vendor\\x86_64-pc-windows-msvc\\bin\\codex.exe",
+      "expected_sha256": "444a3f0008050605cae73cd9b7a2dcac61294062dfaab56dd20430fd6498518b",
+      "sha256": "444a3f0008050605cae73cd9b7a2dcac61294062dfaab56dd20430fd6498518b",
+      "matches": true
+    },
+    {
+      "path": "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\package.json",
+      "expected_sha256": "302ed64d0846795501768be9f60f78133688c0c09162c76e80a8a04b045664cb",
+      "sha256": "302ed64d0846795501768be9f60f78133688c0c09162c76e80a8a04b045664cb",
+      "matches": true
+    }
+  ],
+  "frozen_artifacts_verified": true,
+  "manifest_path": "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-20260907\\manifest.json",
+  "manifest_sha256": "dd73bfdc100e503e6b328c76ae0696e69cc66b371a2ea56930474f36464eecc0",
+  "descriptive_counts": {
+    "words": "str.split whitespace tokens",
+    "paragraphs": "nonempty blocks separated by blank lines"
+  },
+  "ranking": null,
+  "local_artifacts": {
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-20260907\\browser-qa\\production-obligations.png": "da16dee8dc64e11ad5026969fbdc555e8556eab27d161eb1024ae7134f3d9cc7",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-20260907\\comparison.html": "95090911cd7c63dba6783933fd1785e6d2b244e591225875a2ff4782693e00d9",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-20260907\\control-1-reading.md": "6a1c10cf71e176a82c73f712903b417da21e3d137e17d06024605a18a29ef91d",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-20260907\\READING.md": "66141fcb68c6cf926c01c6dc94e1fcb5735fb855b62a3b0cc53685388249d520",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-20260907\\single-1-reading.md": "16769cf0a8b6f460cf46fa5abd776992475c456a8923c0df19ac939d48647f8a",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-tools\\build_comparison.py": "f180cedf73aea0b985786cff3f5f8aa1f16738632ed65a3b9b44f1b8611909f0",
+    "C:\\DEV\\LitHarness\\runs\\ab\\prose-production-obligations-tools\\summarize_execution.py": "cecdef47eaa71a3078cae4f85a0f66904552a090889527dd67f6f2bf3003aecb"
+  }
+}
