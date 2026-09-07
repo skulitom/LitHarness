@@ -66,14 +66,20 @@ uv sync --extra cover
 
 ## Start a serial
 
-The concept comes first (stage-0 §197 to §199). One writer invents the book before its
-listing — who the person was, the one power nobody else has and the first time it works in
-chapter one, what they want in their own words, the system's manner and look, how far the
-ladder goes and what a step buys, what kills people in the first days, the turn and where it
-falls, the first arc in three events, and two to four debts with the scene each is due by.
-It is written to disk so the listing, the world seed and the outline are all drawn from the
-same settled concept, and a concept that names its system with one of this house's own
-machinery words is redrawn:
+New concepts begin with magical discovery (stage-0 §243). The writer first invents a world
+to explore, the opening's connected action with magic, and capabilities that open further
+possibilities. A second call develops the mechanics and arc from that treatment. The setting,
+activity, powers and conflict are invented for each book; no fixed adventure is supplied.
+The default experience applies even with an empty brief. `--brief` adds the author's specific
+direction. Both calls use the configured subscription CLI and the ordinary quota checks.
+
+The original discovery treatment is retained inside `concept.json` and reaches the listing,
+world seed and growth, arc outlines, and protected scene intentions. Later arcs develop its
+possibilities from accepted history instead of replaying chapter one. `discovery-trace.json`
+records the first call independently of any exemplar shelf. A missing treatment stops concept
+generation before mechanics. Existing concept files remain readable without alteration.
+These are generation and persistence guarantees, **not a validated reader-interest gate**.
+No model ranks candidates or certifies that the resulting chapter is good.
 
 ```bash
 uv run litharness --database book.db --writer halloran \
@@ -122,7 +128,9 @@ the milestone schedule. Status formatting remains available; a changed state is 
 result, while an unchanged panel appears only when the scene needs it. Legacy planning defaults
 and explicit author locks remain in place.
 The outline receives the complete concept, including what carries over when the story moves
-under a second system, so its progression schedule can account for those intentions.
+under a second system, so its progression schedule can account for those intentions. For new
+discovery-backed concepts, numerical milestones describe consequences of planned action;
+they may be empty when no tracked quantity changes. Stat movement is not proof of progression.
 Declared world rules, costs, prerequisites, limits and exceptions are protected context.
 The writer receives their existing text as operating constraints above scene-plan guidance,
 with author locks retaining precedence; these facts are not duplicated in the ordinary fact

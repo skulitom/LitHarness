@@ -1,0 +1,107 @@
+"""Invent the fantasy experience before asking for its mechanical representation.
+
+This is author-directed generation, not a reader, a quality gate, or candidate selection.
+The same writer makes one treatment, then the concept stage develops it. Its original
+material travels with the concept as revisable intention, never as established history.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Mapping
+from dataclasses import dataclass
+from typing import Any
+
+from litharness.domain.generation import CompletionRequest
+from litharness.domain.writers import Writer
+
+PROFILE = "writer.discovery.v1"
+VERSION = "magical-discovery.v1"
+
+# Product direction supplied by the operator, not a claim about all readers or genres.
+DIRECTION = (
+    "Create a magical fantasy experience with progression: an unfamiliar world worth "
+    "exploring, magic someone can discover and use, and growing capability that opens "
+    "possibilities they want to pursue. Let the character act on curiosity and desire as "
+    "well as danger. Rules, costs and institutions support that experience; satisfying "
+    "their procedures alone does not deliver it. Respect the author's specific brief."
+)
+
+SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["world", "opening", "growth"],
+    "properties": {key: {"type": "string"} for key in ("world", "opening", "growth")},
+}
+
+_TASK = (
+    "Invent one story treatment before designing its statistics or interface.\n"
+    f"{DIRECTION}\n"
+    "world: describe a particular place, beings or magical phenomenon the character can "
+    "encounter, and something there they want to investigate or attempt.\n"
+    "opening: develop the first chapter's connected action, including who wants what, "
+    "their encounter with magic, what they try, and what its result lets them do or pursue.\n"
+    "growth: describe capabilities they can work toward, how using them changes their "
+    "choices, and what remains theirs through setbacks. Ground the next possibility in "
+    "something the opening encounters.\n"
+    "Choose the setting, activity and conflict for this story; neither combat nor an "
+    "apocalypse is compulsory. Leave room for surprise beyond the first arc. Return "
+    "concrete story material in the three fields, without ratings or advice to a writer."
+)
+
+
+@dataclass(frozen=True, slots=True)
+class Discovery:
+    world: str
+    opening: str
+    growth: str
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> Discovery:
+        version = payload.get("version", VERSION)
+        if version != VERSION:
+            raise ValueError(f"unsupported discovery version: {version!r}")
+        values: dict[str, str] = {}
+        for key in ("world", "opening", "growth"):
+            value = payload.get(key)
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(f"discovery.{key} must be non-empty story material")
+            values[key] = value.strip()
+        return cls(**values)
+
+    def to_jsonable(self) -> dict[str, str]:
+        return {
+            "version": VERSION,
+            "world": self.world,
+            "opening": self.opening,
+            "growth": self.growth,
+        }
+
+    def render(self) -> str:
+        return (
+            f"Intended fantasy experience ({VERSION}): {DIRECTION}\n"
+            f"The world to discover: {self.world}\n"
+            f"The opening's action: {self.opening}\n"
+            f"What growing capability makes possible: {self.growth}\n"
+            "These are story intentions, not past events or a checklist for every scene. "
+            "Continue beyond the opening without replaying its discoveries. Established "
+            "facts and author locks still constrain realization."
+        )
+
+
+def render_request(
+    brief: str, writer: Writer | None = None, *, person: str | None = None
+) -> CompletionRequest:
+    prompt = (
+        f"Author's brief:\n{brief.strip() or 'Invent a new story within the intended experience.'}"
+    )
+    if person in ("first", "third"):
+        prompt += f"\nNarrative person: {person}."
+    return CompletionRequest(
+        system=f"{writer.render()}\n\n{_TASK}" if writer else _TASK,
+        prompt=prompt,
+        schema=SCHEMA,
+        profile=PROFILE,
+        max_output_tokens=2400,
+        timeout_seconds=600.0,
+        call_class="generation",
+    )

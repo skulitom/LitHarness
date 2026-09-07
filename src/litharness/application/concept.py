@@ -1,5 +1,9 @@
 """The concept: the book invented before its listing, one stage above where the pipeline began.
 
+New `concept` commands first invent a discovery treatment and develop the mechanical
+concept from it (stage-0 §243). Historical concepts remain readable; the earlier design
+and its limitations below explain that compatibility path, not the default invention task.
+
 **What was measured, and it is the first fault the settled-listing loop found in the listing
 itself** (`plan/serial-pilot-21.md` §5.4). Four draws under one listing gave the system its
 voice, the chapter its story, the narrator his and the listener theirs, and the fourth read's
@@ -49,12 +53,14 @@ from typing import Any
 
 import litharness_contracts as lc
 
+from litharness.application.discovery import Discovery
 from litharness.application.overview import FIRST_PERSON_ASK
 from litharness.domain import schema_words
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
 CONCEPT_PROFILE = "writer.concept.v0"
+DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v1"
 
 #: The plan item id the concept is persisted under; one per book, like `plan-premise`.
 CONCEPT_PLAN_ID = "plan-concept"
@@ -259,6 +265,7 @@ class Concept:
     first_arc: FirstArc
     debts: tuple[Debt, ...]
     second_system: SecondSystem | None = None
+    discovery: Discovery | None = None
 
     # ------------------------------------------------------------------ reading one back
 
@@ -308,6 +315,12 @@ class Concept:
                 )
             )
         threat = _mapping(payload, "threat")
+        discovery = None
+        if "discovery" in payload:
+            try:
+                discovery = Discovery.from_payload(_mapping(payload, "discovery"))
+            except ValueError as error:
+                raise MalformedConcept(str(error)) from error
         return cls(
             person_before=_text(payload, "person_before"),
             exception=_text(payload, "exception"),
@@ -333,6 +346,7 @@ class Concept:
             ),
             debts=tuple(debts),
             second_system=second,
+            discovery=discovery,
         )
 
     @classmethod
@@ -350,6 +364,7 @@ class Concept:
 
     def to_jsonable(self) -> dict[str, Any]:
         return {
+            **({"discovery": self.discovery.to_jsonable()} if self.discovery else {}),
             "person_before": self.person_before,
             "exception": self.exception,
             "first_use": self.first_use,
@@ -411,19 +426,28 @@ class Concept:
         (`house.MACHINERY_WORDS`): the listing writer reads this block and a word here reaches a
         reader at one remove.
         """
+        advantage_label = (
+            "Their magical advantage"
+            if self.discovery else "What they alone have, from the first chapter"
+        )
+        threat_label = (
+            "The obstacle or danger"
+            if self.discovery else "What kills people here, in the first days"
+        )
         lines = [
             f"Who they were the day before: {self.person_before}",
-            f"What they alone have, from the first chapter: {self.exception}",
+            f"{advantage_label}: {self.exception}",
             f"The first time it works, in chapter one: {self.first_use}",
             f"What they want, in their own words: {self.want}",
             f"The system, {self.system.name}. How it shows itself: {self.system.manner}",
             f"What it looks like: {self.system.look}",
             (
-                f"How far up it goes: {self.system.steps} steps. Where the strongest person "
+                f"{'The known span of advancement' if self.discovery else 'How far up it goes'}: "
+                f"{self.system.steps} steps. Where the strongest person "
                 f"anyone has heard of stands: {self.system.strongest_known}"
             ),
             f"What a step up buys: {self.system.pays}",
-            f"What kills people here, in the first days: {self.threat.what}",
+            f"{threat_label}: {self.threat.what}",
             f"Where it first reaches them: {self.threat.first_reach}",
             f"The turn, {self.turn.when}: {self.turn.event}",
         ]
@@ -440,7 +464,8 @@ class Concept:
         for debt in self.debts:
             due = f" (by scene {debt.due_scene})" if debt.due_scene is not None else ""
             lines.append(f"- {debt.subject}: {debt.owed}{due}")
-        return "\n".join(_sentence(line) for line in lines)
+        body = "\n".join(_sentence(line) for line in lines)
+        return f"{self.discovery.render()}\n\n{body}" if self.discovery else body
 
     def render_for_listing(self) -> str:
         """Material under the listing's brief: the book the listing is selling."""
@@ -542,12 +567,27 @@ THREAT_RULE = (
     "does to people is on the page before it reaches the person."
 )
 
+DISCOVERY_ARC_RULE = (
+    "Develop this arc's pursuits and magical encounters from book_concept.discovery. "
+    "The opening treatment belongs to chapter one; later arcs explore further possibilities "
+    "from what the character has already learned and kept. Plan concrete uses of capability "
+    "and something worth pursuing beyond them. Costs and setbacks can complicate that pursuit; "
+    "a changed statistic or a new permission alone does not fulfill it. Vary the chapter's "
+    "activity and pace; do not repeat one discovery-and-reward sequence in every scene."
+)
 
-def outline_rules(arc_index: int | None) -> list[str]:
+
+def outline_rules(arc_index: int | None, *, discovery_backed: bool = False) -> list[str]:
     """The concept's rules for one outline call, by which arc it plans."""
     if arc_index is None or arc_index <= 1:
-        return [FIRST_ARC_RULE, FIRST_USE_RULE, THREAT_RULE, TURN_RULE]
-    return [LATER_ARC_RULE, TURN_RULE]
+        rules = [FIRST_ARC_RULE, FIRST_USE_RULE, TURN_RULE]
+        if not discovery_backed:
+            rules.insert(2, THREAT_RULE)
+    else:
+        rules = [LATER_ARC_RULE, TURN_RULE]
+    if discovery_backed:
+        rules.append(DISCOVERY_ARC_RULE)
+    return rules
 
 
 # ------------------------------------------------------------------------------- the request
@@ -596,6 +636,7 @@ def render_concept_request(
     scenes: int,
     person: str | None = None,
     blurbs: str | None = None,
+    discovery: Discovery | None = None,
 ) -> CompletionRequest:
     """One concept, from a brief that may be empty.
 
@@ -609,12 +650,39 @@ def render_concept_request(
     prompt = f"What this book is to be about:\n{ask}\nThe first arc is {scenes} scenes."
     if blurbs:
         prompt = f"{blurbs}\n\n{prompt}"
+    if discovery is not None:
+        prompt = f"{discovery.render()}\n\n{prompt}"
+    system = _system(writer)
+    if discovery is not None:
+        # Replace the invention task, rather than appending conflicting demands. The
+        # schema remains readable by historical books; its fields now develop this story.
+        task = (
+            "Develop the supplied discovery treatment into the requested book concept. "
+            "Preserve its magical encounter, character pursuit and growth direction while "
+            "making their mechanics coherent. The treatment is planned action, not prose.\n"
+            "Use person_before and want for this character; exception for their distinctive "
+            "magical advantage, which need not be exclusive in the universe; first_use for "
+            "their effective use of it in chapter one.\n"
+            "Describe the system's appearance and feedback in manner and look; it need not "
+            "be a speaking authority. steps is the known span of advancement, not a final "
+            "ceiling; strongest_known shows what greater capability can do. pays names "
+            "a useful change in what this character can do, including beyond their initial "
+            "advantage.\n"
+            "threat is the story's obstacle or danger and first_reach its encounter; a "
+            "mass killing or world invasion is not required. The turn develops the pursuit; "
+            "use second_system only if the treatment calls for it, preserving earned "
+            "capabilities across any transition.\n"
+            "first_arc gives its opening, middle and close as events. debts names two to "
+            "four questions with due_scene within the requested arc. Return only the "
+            "schema fields; the original discovery treatment is retained separately."
+        )
+        system = f"{writer.render()}\n\n{task}" if writer else task
     return CompletionRequest(
         prompt=prompt,
-        system=_system(writer),
+        system=system,
         schema=CONCEPT_SCHEMA,
         max_output_tokens=MAX_OUTPUT_TOKENS,
-        profile=CONCEPT_PROFILE,
+        profile=DISCOVERY_CONCEPT_PROFILE if discovery else CONCEPT_PROFILE,
         call_class="generation",
         timeout_seconds=600.0,
     )
@@ -648,6 +716,7 @@ __all__ = [
     "CONCEPT_PLAN_ID",
     "CONCEPT_PROFILE",
     "CONCEPT_SCHEMA",
+    "DISCOVERY_CONCEPT_PROFILE",
     "FIRST_ARC_RULE",
     "FIRST_USE_RULE",
     "INSIDE_FIRST_ARC",

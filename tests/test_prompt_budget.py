@@ -35,6 +35,7 @@ import pytest
 
 from litharness.application import (
     concept,
+    discovery,
     exemplars,
     overview,
     planner,
@@ -115,6 +116,14 @@ def _roles() -> dict[str, str]:
         # rendering is shown to the listing writer as material, so a machinery word in this
         # task is one remove from a reader.
         "concept writer": concept._system(WRITER),
+        "discovery writer": discovery.render_request("", WRITER).system or "",
+        "concept development": concept.render_concept_request(
+            "",
+            WRITER,
+            scenes=6,
+            discovery=discovery.Discovery("Place.", "Action.", "Growth."),
+        ).system
+        or "",
         # **The tells rewriter, one sentence at a time** (§199): reader-facing, since its answer
         # replaces a sentence on the page; three lines and one family's line, the largest of
         # the five shown.
@@ -259,6 +268,10 @@ BUDGET: dict[str, int] = {
     # after read 18 found the ladder reaching the page as a number going up for no reason and
     # the arrival of the System met with a clipboard.
     "concept writer": 18,
+    # Two distinct calls replace system-first invention for new concepts. Explicit caps
+    # prevent this route from accumulating another unbounded craft essay.
+    "discovery writer": 16,
+    "concept development": 16,
     # **The tells rewriter, new on 2026-09-02** (§199): the three lines every rewrite carries and
     # the one line for the family, four.
     "tells rewriter": 4,
@@ -934,6 +947,7 @@ def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -
 READER_FACING = (
     "listing writer",
     "concept writer",
+    "discovery writer",
     "tells rewriter",
     "title writer",
     "measurement reader",
@@ -993,6 +1007,7 @@ def test_prompt_inspector_covers_every_production_communication_role(
     assert {
         "listing",
         "concept",
+        "discovery",
         "title",
         "title-lookup",
         "architect-seed",

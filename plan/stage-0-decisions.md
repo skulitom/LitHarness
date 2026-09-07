@@ -25359,3 +25359,54 @@ its arguments from a run folder. Neither instrument ranks, gates or reaches a pr
 open items above (2, 5, 7, 8) are where the next long draw will fail first; the harvest's
 "what the next arc must carry" is the continuation brief an outline should be handed and
 is not.
+
+
+## 243. Magical discovery precedes mechanical concept development
+
+2026-09-08. Operator direction: make magical fantasy discovery and progression a persistent,
+general purpose of generation, rather than a special brief for one run. The retained forensic
+inspection of *The Order Stays Open* is local under
+`runs/order-stays-open-review-20260907/REPORT.md`; its administrative concept and contradictory
+state inputs motivated this implementation. It is not a quality label or a validated theory
+of reader response.
+
+**Implementation.** The default `concept` command now asks the same writer for one discovery
+treatment before showing the mechanical concept schema. `application/discovery.py` holds the
+versioned direction and three fields of concrete story material: world, opening, growth. No
+preset setting, cast, class, combat quota or plot is supplied. The second call develops the
+mechanics around it; code retains the original treatment in the concept instead of trusting
+an echoed copy. Both calls use the existing budgeted provider path. Invalid discovery stops
+the command; mechanical-format retries reuse the retained treatment. The first request and
+response are independently recorded by `--out`, without exemplar material.
+
+The treatment round-trips through the existing unlocked book plan, reaches the listing, seed,
+grow, every arc outline and protected scene intentions, and remains planned rather than
+accepted history. Current-state and author-lock precedence is unchanged. Later arcs are asked
+to develop further possibilities from what has been learned and kept, without replaying the
+opening. Legacy concepts retain their old serialization and remain readable.
+
+For this route, the old one-person-only exception, compulsory lethal arrival, speaking system,
+and final numerical ceiling are no longer instructions. Existing schema fields can express a
+distinctive advantage, an obstacle, nonverbal feedback and a known span of advancement instead.
+The outline accepts an empty or unchanged numeric schedule when the actions do not change
+tracked quantities; unknown fields, invalid values and impossible states still refuse it.
+The house clarity rule now allows objects their literal magical capabilities instead of
+banning speech and action even when canon declares them.
+
+**Evidence boundary.** This implements author direction and inspectable data flow. Nonempty
+fields do not establish wonder, semantic consistency or reader interest. There is no quality
+score, candidate ranking, automatic reader steering or claim that every output will succeed.
+The hypothesis that this route improves Chapter 1 remains unvalidated; any live comparison
+needs a registered run and retained outputs. `tests/test_concept.py` covers call ordering,
+failure handling, persisted transport and later-arc propagation; `tests/test_outline.py`
+covers the relaxed movement requirement with unchanged numeric integrity.
+
+**Prospective engineering smoke.** After the implementation checks pass, run one fresh
+`concept` command with the empty brief, tanaka from `runs/roster/roster.db`, third person,
+and a 24-scene arc under `runs/magical-discovery-smoke-20260908/`. Use the signed-in
+subscription CLI with API-key and alternate billing-provider environment settings removed,
+no exemplars, and the standard bounded format retries only. Retain all outputs and usage.
+Check parsing and exact discovery transport, inspect the concept for contradictions, and
+record failures without choosing another candidate. This is a live integration check, not a
+comparison, a reader-interest measurement or certification of chapter prose. Do not resume
+the stopped volume or draft further chapters as part of this smoke.

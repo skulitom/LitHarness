@@ -242,6 +242,14 @@ def render_seed_request(
         prompt = f"{prompt}\n\n{concept.render_for_seed()}"
         if concept.second_system is not None:
             seed = f"{_SEED}\n{_SECOND_SYSTEM}"
+        if concept.discovery is not None:
+            seed = (
+                "Build the places, beings, magical effects and usable capabilities needed "
+                "by the supplied discovery treatment; then represent their mechanics. "
+                "Grant effects must change what the character can do in that world. "
+                "Keep future discoveries as planned or hidden material, not completed events.\n\n"
+                f"{seed}"
+            )
     return CompletionRequest(
         prompt=prompt,
         system=system_for(seed, writer),
@@ -257,11 +265,14 @@ def render_seed_request(
 
 
 def render_grow_request(
-    chapter: str, *, logical_id: str, writer: Writer | None = None
+    chapter: str, *, logical_id: str, writer: Writer | None = None, concept: Concept | None = None
 ) -> CompletionRequest:
     """Keep the world after one chapter: what it established, and what it now owes."""
+    prompt = f"The chapter just drafted ({logical_id}):\n\n{chapter.strip()}"
+    if concept is not None and concept.discovery is not None:
+        prompt += f"\n\n{concept.discovery.render()}"
     return CompletionRequest(
-        prompt=f"The chapter just drafted ({logical_id}):\n\n{chapter.strip()}",
+        prompt=prompt,
         system=system_for(_GROW, writer),
         max_output_tokens=MAX_OUTPUT_TOKENS,
         profile=GROW_PROFILE,

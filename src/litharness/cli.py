@@ -43,6 +43,7 @@ from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
 from litharness.application import bookaudit, covers, recruiter, revoice, titles, world_agent
 from litharness.application import concept as concept_mod
+from litharness.application import discovery as discovery_mod
 from litharness.application import dossier as dossier_mod
 from litharness.application import exemplars as exemplars_mod
 from litharness.application import export as export_module
@@ -2161,13 +2162,10 @@ def cmd_listing(args: argparse.Namespace) -> int:
 
 
 def cmd_concept(args: argparse.Namespace) -> int:
-    """The concept stage: one writer invents the book before its listing (stage-0 §197).
+    """One writer develops a discovery treatment, then its mechanical concept.
 
-    One call, one concept, no readers and no title: the artifact is cheap and the operator can
-    read it before the listing, the seed and the chapters are paid for. `--out` writes it as
-    the settled file `listing --concept` and `new --concept` read, byte for byte, which is what
-    makes a redraw under one concept a redraw. Nothing here ranks: a second draw is a second
-    book.
+    Both calls share the ordinary quota checks and spend record. No reader, ranking or
+    quality verdict participates. The retained treatment survives mechanical-format retries.
     """
     stamp = _stamp(_now())
     brief = _read_text(args.brief_file) if args.brief_file else (args.brief or "")
@@ -2182,12 +2180,50 @@ def cmd_concept(args: argparse.Namespace) -> int:
         spend = _StageSpend()
         calls = _ProviderCalls(registry=registry, store=store, args=args, stamp=stamp, run=run)
         shelf = _selected_shelf(args)
+        discovery_request = discovery_mod.render_request(
+            brief, writer, person=getattr(args, "person", None)
+        )
+        discovery_result, refusal = _completion_call(discovery_request, calls=calls, spend=spend)
+        if discovery_result is None:
+            print(f"litharness: {refusal}", file=sys.stderr)
+            return EXIT_FAULT
+        # This stage sees no exemplar shelf, so its trace has an independent boundary.
+        if args.out:
+            args.out.mkdir(parents=True, exist_ok=True)
+            (args.out / "discovery-trace.json").write_text(
+                json.dumps(
+                    {
+                        "profile": discovery_mod.PROFILE,
+                        "request": {
+                            "system": discovery_request.system,
+                            "prompt": discovery_request.prompt,
+                            "schema": discovery_request.schema,
+                        },
+                        "response": discovery_result.text,
+                        "provider": discovery_result.provider,
+                        "model": discovery_result.model,
+                        "usage": dataclasses.asdict(discovery_result.usage),
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+        try:
+            if not isinstance(discovery_result.parsed, Mapping):
+                raise ValueError("expected the discovery story material as JSON")
+            discovery = discovery_mod.Discovery.from_payload(discovery_result.parsed)
+        except ValueError as error:
+            print(f"litharness: discovery is unusable: {error}", file=sys.stderr)
+            return EXIT_FAULT
         request = concept_mod.render_concept_request(
             brief,
             writer,
             scenes=args.scenes,
             person=getattr(args, "person", None),
             blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
+            discovery=discovery,
         )
         # **One rail, the listing's, and a bounded loop.** A concept that names its system
         # with one of this house's machinery words is redrawn, because everything downstream
@@ -2216,7 +2252,12 @@ def cmd_concept(args: argparse.Namespace) -> int:
                 )
                 continue
             try:
-                drawn.append(concept_mod.Concept.from_payload(result.parsed))
+                # Downstream generation cannot silently rewrite or drop the treatment.
+                drawn.append(
+                    dataclasses.replace(
+                        concept_mod.Concept.from_payload(result.parsed), discovery=discovery
+                    )
+                )
             except concept_mod.MalformedConcept as error:
                 print(f"litharness: the concept is unusable: {error}", file=sys.stderr)
                 return EXIT_FAULT
@@ -2244,7 +2285,7 @@ def cmd_concept(args: argparse.Namespace) -> int:
             )
         gate = GateOutcome(
             gate=GateKind.SHAPE,
-            rule_or_critic_id=concept_mod.CONCEPT_PROFILE,
+            rule_or_critic_id=request.profile,
             passed=True,
             blocking=False,
             detail=(
@@ -2259,13 +2300,13 @@ def cmd_concept(args: argparse.Namespace) -> int:
                 decision_id=decision_id_for(f"concept:{stamp}", 0, (gate,)),
                 outcome=Outcome.ACCEPT,
                 gates=(gate,),
-                profile=concept_mod.CONCEPT_PROFILE,
+                profile=request.profile,
                 provider=spend.provider,
                 model=spend.model,
                 invocations=spend.invocations,
                 total_tokens=spend.total_tokens,
                 cost_usd=spend.cost_usd,
-                reason="one writer invented one book; nothing ranked or chose among candidates",
+                reason="one discovery treatment developed into a concept; no quality selection",
             ),
             decided_at=stamp,
         )
@@ -2549,7 +2590,10 @@ def cmd_architect(args: argparse.Namespace) -> int:
                     return EXIT_OK
                 node = drafted[-1]
             request = world_agent.render_grow_request(
-                node.content or "", logical_id=node.logical_id, writer=writer
+                node.content or "",
+                logical_id=node.logical_id,
+                writer=writer,
+                concept=concept_mod.concept_of(store.plan_items(book_id, branch_id)),
             )
 
         registry = build_default_registry()
@@ -2983,7 +3027,13 @@ def cmd_prompts(args: argparse.Namespace) -> int:
             writer,
             scenes=SerialShape().scenes_per_arc,
             blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
+            discovery=discovery_mod.Discovery(
+                world="An unfamiliar place shaped by magic.",
+                opening="The character attempts something with a newly discovered power.",
+                growth="Using that power opens a further pursuit.",
+            ),
         ),
+        "discovery": discovery_mod.render_request(premise, writer),
         "title": overview_mod.render_title_request("A debtor takes the road below.", writer),
         "title-lookup": titles.render_check_request("The Deep Ledger", writer),
         "architect-seed": world_agent.render_seed_request("A debtor takes the road below.", writer),
@@ -6314,8 +6364,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     concept = sub.add_parser(
         "concept",
-        help="invent the book before its listing: one writer, one concept, written to disk "
-        "for `listing --concept` (stage-0 §197)",
+        help="invent magical discovery, then develop its mechanics and arc for `listing --concept`",
     )
     concept.add_argument(
         "--brief",
@@ -6342,7 +6391,9 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="which grammatical person the book is told in; `first` asks for it as a position",
     )
-    concept.add_argument("--out", type=Path, help="write concept.json and concept.txt here")
+    concept.add_argument(
+        "--out", type=Path, help="write concept.json, concept.txt and discovery-trace.json here"
+    )
     concept.add_argument("--json", action="store_true")
     concept.set_defaults(func=cmd_concept)
 

@@ -17,7 +17,7 @@ import litharness_contracts as lc
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
-from litharness.application import concept, export, outline, overview, world_agent
+from litharness.application import concept, discovery, export, outline, overview, world_agent
 from litharness.cli import EXIT_FAULT, EXIT_OK, main
 from litharness.domain import house
 from litharness.domain import writers as writers_domain
@@ -416,7 +416,7 @@ def test_an_unparsed_concept_answer_spends_an_attempt_and_the_next_draw_is_kept(
     line; the loop is now the retry, and the answer's shape is on stderr for the next one."""
     from litharness import cli
 
-    call = _scripted(None, _example())
+    call = _scripted(_discovery(), None, _example())
     monkeypatch.setattr(cli, "_completion_call", call)
     db = tmp_path / "book.db"
     out = tmp_path / "concept"
@@ -427,7 +427,7 @@ def test_an_unparsed_concept_answer_spends_an_attempt_and_the_next_draw_is_kept(
     err = capsys.readouterr().err
     assert "came back unparsed" in err and "3999 output tokens" in err
     assert "Sure, here is" in err, "the answer's first words are on stderr"
-    assert len(call.seen) == 2  # type: ignore[attr-defined]
+    assert len(call.seen) == 3  # type: ignore[attr-defined]
     assert (out / "concept.json").exists()
 
 
@@ -436,7 +436,7 @@ def test_a_concept_that_never_parses_is_a_fault_after_the_bounded_draws(
 ) -> None:
     from litharness import cli
 
-    call = _scripted(None)
+    call = _scripted(_discovery(), *([None] * cli.CONCEPT_DRAW_ATTEMPTS))
     monkeypatch.setattr(cli, "_completion_call", call)
     db = tmp_path / "book.db"
     assert main(["--database", str(db), "init"]) == EXIT_OK
@@ -444,6 +444,191 @@ def test_a_concept_that_never_parses_is_a_fault_after_the_bounded_draws(
     argv = ["--database", str(db), "concept", "--writer", "ferreira", "--scenes", "6"]
     assert main([*argv, "--out", str(tmp_path / "concept")]) == EXIT_FAULT
     err = capsys.readouterr().err
-    assert len(call.seen) == cli.CONCEPT_DRAW_ATTEMPTS  # type: ignore[attr-defined]
+    assert len(call.seen) == cli.CONCEPT_DRAW_ATTEMPTS + 1  # type: ignore[attr-defined]
     assert f"no concept parsed in {cli.CONCEPT_DRAW_ATTEMPTS} draw(s)" in err
     assert not (tmp_path / "concept" / "concept.json").exists()
+
+
+def _discovery() -> dict[str, object]:
+    return {
+        "world": "Reefs float through the mountain passes and carry living weather.",
+        "opening": "A gardener wakes a dormant seed to reach a reef before it departs.",
+        "growth": "She can learn to grow shelter in the air and travel with the reefs.",
+    }
+
+
+def test_discovery_precedes_mechanics_and_survives_cli_persistence(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from litharness import cli
+    from litharness.application.planner import packet_for
+
+    # A second-stage answer tries to replace the treatment; the first stage owns it.
+    answer = {**_example(), "discovery": dict.fromkeys(_discovery(), "replacement")}
+    call = _scripted(_discovery(), answer)
+    monkeypatch.setattr(cli, "_completion_call", call)
+    db, out = tmp_path / "book.db", tmp_path / "concept"
+    assert main(["--database", str(db), "init"]) == EXIT_OK
+    assert (
+        main(
+            [
+                "--database",
+                str(db),
+                "concept",
+                "--brief",
+                "A gardener explores the sky.",
+                "--scenes",
+                "6",
+                "--out",
+                str(out),
+            ]
+        )
+        == EXIT_OK
+    )
+    first, second = call.seen  # type: ignore[attr-defined]
+    assert first.profile == discovery.PROFILE
+    assert first.schema is discovery.SCHEMA
+    assert second.profile == concept.DISCOVERY_CONCEPT_PROFILE
+    assert str(_discovery()["world"]) in second.prompt
+    assert "A gardener explores the sky." in first.prompt
+    retained = concept.Concept.from_text((out / "concept.json").read_text(encoding="utf-8"))
+    assert retained.discovery == discovery.Discovery.from_payload(_discovery())
+    assert json.loads((out / "discovery-trace.json").read_text())["response"] == json.dumps(
+        _discovery()
+    )
+    assert (
+        main(
+            [
+                "--database",
+                str(db),
+                "new",
+                "Reefs",
+                "--premise",
+                "A gardener explores the sky.",
+                "--scenes",
+                "6",
+                "--concept",
+                str(out / "concept.json"),
+            ]
+        )
+        == EXIT_OK
+    )
+    with SqliteStore.open(db) as store:
+        book_id, branch_id = export.resolve_branch(store, None, None)
+        stored = concept.concept_of(store.plan_items(book_id, branch_id))
+        assert stored == retained
+        head = store.head(book_id, branch_id)
+        assert head is not None
+        beat = beats_for(head, arc_template(6))[0]
+        packet = packet_for(store, head, beat)
+        assert retained.discovery.render() in packet.render()
+        assert str(_discovery()["opening"]) not in "\n".join(
+            item.text for item in packet.sections.get("facts", ())
+        )
+
+
+@pytest.mark.parametrize("answer", [None, {}, {**_discovery(), "growth": ""}])
+def test_missing_discovery_stops_before_mechanics(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, answer: dict[str, object] | None
+) -> None:
+    from litharness import cli
+
+    call = _scripted(answer)
+    monkeypatch.setattr(cli, "_completion_call", call)
+    db, out = tmp_path / "book.db", tmp_path / "concept"
+    assert main(["--database", str(db), "init"]) == EXIT_OK
+    assert main(["--database", str(db), "concept", "--out", str(out)]) == EXIT_FAULT
+    assert len(call.seen) == 1  # type: ignore[attr-defined]
+    assert not (out / "concept.json").exists()
+    assert (out / "discovery-trace.json").exists()
+
+
+def test_discovery_material_reaches_seed_grow_listing_and_later_arcs() -> None:
+    payload = {**_example(), "discovery": _discovery()}
+    drawn = concept.Concept.from_payload(payload)
+    assert drawn.discovery is not None
+    material = drawn.discovery.render()
+    assert material in drawn.render_for_listing()
+    assert material in world_agent.render_seed_request("listing", concept=drawn).prompt
+    assert (
+        material
+        in world_agent.render_grow_request("chapter", logical_id="scene-1", concept=drawn).prompt
+    )
+
+    class Base:
+        plan_revision_id = "plan-1"
+        items: tuple[lc.PlanItem, ...] = ()
+
+    base = Base()
+    revision = new_book("b", "main", title="Book", scenes=6)
+    for arc_index in (1, 2, 5):
+        request = outline.render_outline_request(
+            "listing",
+            beats_for(revision, arc_template(6)),
+            base=base,  # type: ignore[arg-type]
+            concept=drawn,
+            serial_arc_index=arc_index,
+            seed={"level": 1},
+        )
+        parsed = json.loads(request.prompt)
+        assert parsed["book_concept"]["discovery"] == drawn.discovery.to_jsonable()
+        assert concept.DISCOVERY_ARC_RULE in parsed["rules"]
+        assert not any("numbers must actually move" in rule for rule in parsed["rules"])
+
+
+def test_legacy_concepts_are_not_rewritten_and_bad_discovery_does_not_disappear() -> None:
+    legacy = concept.Concept.from_payload(_example())
+    assert legacy.discovery is None
+    assert "discovery" not in legacy.to_jsonable()
+    assert "magical-discovery" not in legacy.render()
+    for bad in (None, {}, {**_discovery(), "version": "unknown"}):
+        with pytest.raises(concept.MalformedConcept, match="discovery"):
+            concept.Concept.from_payload({**_example(), "discovery": bad})
+
+
+@pytest.mark.parametrize("refused_profile", [discovery.PROFILE, concept.DISCOVERY_CONCEPT_PROFILE])
+def test_either_stage_refusal_stops_without_publishing_a_concept(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, refused_profile: str
+) -> None:
+    from litharness import cli
+
+    scripted = _scripted(_discovery())
+    seen = []
+
+    def call(request, *, calls, spend):
+        seen.append(request.profile)
+        if request.profile == refused_profile:
+            return None, "quota exhausted"
+        return scripted(request, calls=calls, spend=spend)
+
+    monkeypatch.setattr(cli, "_completion_call", call)
+    db, out = tmp_path / "book.db", tmp_path / "concept"
+    assert main(["--database", str(db), "init"]) == EXIT_OK
+    assert main(["--database", str(db), "concept", "--out", str(out)]) == EXIT_FAULT
+    assert seen[-1] == refused_profile
+    assert not (out / "concept.json").exists()
+
+
+def test_outline_handler_accepts_discovery_action_without_invented_stat_movement(
+    tmp_path: Path,
+) -> None:
+    from litharness.application.outline import make_outline_handler
+    from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
+    from tests.test_outline import START, StubPlanner, _job, a_book, payload_for
+
+    drawn = concept.Concept.from_payload({**_example(), "discovery": _discovery()})
+    with SqliteStore.open(tmp_path / "outline.db") as store:
+        a_book(store, scenes=6, extra_plan_items=(drawn.plan_item(),))
+        response = {**payload_for(6), "milestones": []}
+        registry = StubPlanner(response)
+        before = store.plan_revision(BOOK_ID, BRANCH_ID)
+        make_outline_handler(registry, store, PROJECT_ID)(_job(store), START)
+        after = store.plan_revision(BOOK_ID, BRANCH_ID)
+        assert before is not None and after is not None
+        assert before.plan_revision_id != after.plan_revision_id
+        assert len([item for item in after.items if item.kind is lc.PlanKind.SCENE_PLAN]) == 6
+        assert concept.concept_of(after.items) == drawn
+        assert not any(
+            row.record_id.startswith("milestone-")
+            for row in store.state_records(BOOK_ID, BRANCH_ID)
+        )

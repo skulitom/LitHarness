@@ -62,6 +62,24 @@ def store(tmp_path) -> SqliteStore:
 SEED = {"level": 1, "hp": 18, "hp_max": 18, "mp": 4, "mp_max": 4, "gold": 12}
 
 
+def test_discovery_schedule_allows_no_stat_change_but_keeps_integrity_checks() -> None:
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=6)
+    beats = beats_for(revision, arc_template(6))
+    assert _milestones({"milestones": []}, beats, SEED, require_movement=False) == []
+    unchanged = {"milestones": [{"ordinal": 2, "state": SEED}]}
+    assert _milestones(unchanged, beats, SEED, require_movement=False) == [(beats[1], SEED)]
+    for state in ({"invented_power": 9}, {"hp": 999}, {"hp": True}):
+        with pytest.raises(OutlineOutputError):
+            _milestones(
+                {"milestones": [{"ordinal": 2, "state": state}]},
+                beats,
+                SEED,
+                require_movement=False,
+            )
+    with pytest.raises(OutlineOutputError, match="no progression schedule"):
+        _milestones({"milestones": []}, beats, SEED)
+
+
 def a_book(  # type: ignore[no-untyped-def]
     store: SqliteStore,
     scenes: int = 12,

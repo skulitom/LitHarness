@@ -209,7 +209,8 @@ def test_the_clause_does_not_collide_with_the_floor_above_it() -> None:
     clause = _clause()
     assert house.CLARITY in reviser.revision_system()
     assert "Every sentence can be followed the first time it is read." in house.CLARITY
-    assert "somebody works it out, or does not" in house.CLARITY
+    # Literal magical action is allowed; attribution must still be followable.
+    assert "who perceives or acts" in house.CLARITY
     assert "follow" not in clause.lower()
     assert "explain" in clause.lower() and _GLOSS in clause
 

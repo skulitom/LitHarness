@@ -423,8 +423,13 @@ def render_outline_request(
                     "Also return milestones: what starting_state should have become by the "
                     "end of certain scenes.",
                     "Use only the keys starting_state already has. Do not invent statistics.",
-                    "The numbers must actually move. A schedule where every milestone "
-                    "repeats the starting values plans a book in which nothing changes.",
+                    (
+                        "Derive numeric changes from the planned actions. Return an empty "
+                        "milestones list when this arc has no changes to these fields."
+                        if concept is not None and concept.discovery is not None
+                        else "The numbers must actually move. A schedule where every milestone "
+                        "repeats the starting values plans a book in which nothing changes."
+                    ),
                     (
                         "Place milestones where the planned events change the state; let "
                         "those events determine the fields, values and timing."
@@ -432,7 +437,12 @@ def render_outline_request(
                         else "Place four to eight milestones, spread across the book, at scenes "
                         "where the statement you wrote would plausibly change them."
                     ),
-                    "Costs as well as gains: spending and losing are progression too.",
+                    (
+                        "Record costs and gains accurately; numerical movement is bookkeeping, "
+                        "not evidence that the intended growth has happened."
+                        if concept is not None and concept.discovery is not None
+                        else "Costs as well as gains: spending and losing are progression too."
+                    ),
                 ]
                 if seed
                 else []
@@ -468,7 +478,13 @@ def render_outline_request(
                 if protagonist is not None
                 else []
             )
-            + (concept_mod.outline_rules(serial_arc_index) if concept is not None else []),
+            + (
+                concept_mod.outline_rules(
+                    serial_arc_index, discovery_backed=concept.discovery is not None
+                )
+                if concept is not None
+                else []
+            ),
         },
         ensure_ascii=False,
         sort_keys=True,
@@ -544,7 +560,11 @@ def _statements(payload: Mapping[str, Any], expected: int) -> list[str]:
 
 
 def _milestones(
-    payload: Mapping[str, Any], beats: Sequence[Beat], seed: Mapping[str, Any]
+    payload: Mapping[str, Any],
+    beats: Sequence[Beat],
+    seed: Mapping[str, Any],
+    *,
+    require_movement: bool = True,
 ) -> list[tuple[Beat, dict[str, float]]]:
     """The schedule as (beat, state) pairs, or a refusal naming what was wrong.
 
@@ -554,6 +574,10 @@ def _milestones(
     the seed would reproduce that exactly while looking like a fix, so at least one milestone
     has to differ from the starting sheet and consecutive milestones may not be identical.
     This is `_statements`' distinctness rule applied to the numbers.
+
+    Discovery-backed concepts disable that movement requirement: actions determine the
+    schedule, and an empty or unchanged sheet is not a quality verdict. Numeric integrity
+    still applies. Legacy callers retain the movement requirement for compatibility.
 
     **The keys are the seed's and no others.** A model free to invent stats would add an `xp`
     or a `stamina` the book's canon has never held, and `render_status_line` would then ask
@@ -566,7 +590,7 @@ def _milestones(
     exactly when the sheet is not entitled to answer.
     """
     raw = payload.get("milestones")
-    if not isinstance(raw, list) or not raw:
+    if not isinstance(raw, list) or (not raw and require_movement):
         raise OutlineOutputError("outline carries no progression schedule")
     by_ordinal = {beat.ordinal: beat for beat in beats}
     numeric_seed = {key: value for key, value in seed.items() if isinstance(value, int | float)}
@@ -616,13 +640,13 @@ def _milestones(
 
     out.sort(key=lambda pair: pair[0].ordinal)
     merged = [{**numeric_seed, **values} for _, values in out]
-    if all(state == dict(numeric_seed) for state in merged):
+    if require_movement and all(state == dict(numeric_seed) for state in merged):
         raise OutlineOutputError(
             "every milestone restates the starting sheet; a schedule that schedules stasis "
             "is the frozen ledger it exists to end"
         )
     for earlier, later in pairwise(merged):
-        if earlier == later:
+        if require_movement and earlier == later:
             raise OutlineOutputError(
                 "two consecutive milestones are identical; a schedule with a flat stretch "
                 "tells those scenes to change nothing"
@@ -1002,7 +1026,8 @@ def _policy_digest() -> str:
             "profile": PROFILE,
             "target_words": TARGET_WORDS,
             "schema": OUTLINE_SCHEMA,
-            "concept_planning_version": 2,
+            "concept_planning_version": 3,
+            "discovery_rule": concept_mod.DISCOVERY_ARC_RULE,
             "concept_timeout_seconds": CONCEPT_TIMEOUT_SECONDS,
             "world_rules": world_brief.WORLD_RULES,
         }
@@ -1309,9 +1334,18 @@ def make_outline_handler(
                 # arcs are not each handed a fresh opening.
                 arc_index=arc_index,
             )
-            # Validated with the outline, so a schedule that plans stasis refuses the whole
-            # answer rather than landing beside a good outline. One call, one verdict.
-            schedule = _milestones(result.parsed, beats, seed) if seed else []
+            # Validate numeric integrity with the outline. Discovery-backed plans need not
+            # manufacture numerical movement to pass this structural check.
+            schedule = (
+                _milestones(
+                    result.parsed,
+                    beats,
+                    seed,
+                    require_movement=concept is None or concept.discovery is None,
+                )
+                if seed
+                else []
+            )
             # **Guarded exactly as the milestone schedule is, and for the same reason.** The
             # prompt asks for payoff windows only when the ledger has open rows, so a book that
             # owes nothing was asked for none — and validating an answer to a question that was
