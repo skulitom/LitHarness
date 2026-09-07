@@ -1,0 +1,13 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "prose-constraint-levels-v1",
+  "statement": "Progressively requiring an ending and detailed event sequence may reveal contributors to explanatory Chapter 1 prose. Unqualified diagnostic conjecture.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/prose-constraint-levels/PREREG.md",
+      "sha256": "f8f5f42ce7517b12c44d4d1e122778913bf16e7f6e596d56db2ed64cb1b3bbbd"
+    }
+  ]
+}
