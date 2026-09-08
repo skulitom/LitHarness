@@ -596,6 +596,12 @@ def _milestones(
     numeric_seed = {key: value for key, value in seed.items() if isinstance(value, int | float)}
     if not numeric_seed:
         raise OutlineOutputError("the starting sheet holds no numeric state to schedule")
+    # **A label the sheet already carries may be restated, never changed, and is not
+    # scheduled.** The request shows the whole starting sheet and asks for its keys only, so
+    # a model that copies `system: assay` beside the numbers has followed the rule; the first
+    # outline of *One Clean Want* (2026-09-08) was refused whole for exactly that. A changed
+    # label is a different sheet, not a milestone, and stays refused.
+    labels = {key: value for key, value in seed.items() if key not in numeric_seed}
 
     out: list[tuple[Beat, dict[str, float]]] = []
     seen: set[int] = set()
@@ -612,14 +618,28 @@ def _milestones(
             raise OutlineOutputError(f"scene {ordinal} carries more than one milestone")
         if not isinstance(state, Mapping) or not state:
             raise OutlineOutputError(f"milestone at scene {ordinal} carries no state")
-        unknown = sorted(set(state) - set(numeric_seed))
+        restated = {key for key in state if key in labels}
+        for key in sorted(restated):
+            if state[key] != labels[key]:
+                raise OutlineOutputError(
+                    f"milestone at scene {ordinal} changes {key} from {labels[key]!r} to "
+                    f"{state[key]!r}; a schedule moves the sheet's numbers, not its labels"
+                )
+        unknown = sorted(set(state) - set(numeric_seed) - restated)
         if unknown:
             raise OutlineOutputError(
                 f"milestone at scene {ordinal} invents {unknown}; the sheet holds "
                 f"{sorted(numeric_seed)} and a schedule may not add to it"
             )
+        if len(restated) == len(state):
+            raise OutlineOutputError(
+                f"milestone at scene {ordinal} carries no numeric state; restating "
+                f"{sorted(restated)} schedules nothing"
+            )
         values: dict[str, float] = {}
         for key, value in state.items():
+            if key in restated:
+                continue
             if isinstance(value, bool) or not isinstance(value, int | float):
                 raise OutlineOutputError(
                     f"milestone at scene {ordinal} sets {key} to {value!r}, which is not a number"

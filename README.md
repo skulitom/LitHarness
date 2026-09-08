@@ -79,7 +79,8 @@ After development, a scoped edit pass proposes local replacements for unnecessar
 across the concept's prose, including its discovery treatment. This covers quantities invented
 by either stage. Structured numeric fields, names and timing enums remain read-only. Code
 requires uniquely located short phrases, rejects overlapping edits and edits to bracketed
-system displays, and preserves surrounding text. An unusable response stops persistence.
+system displays, and preserves surrounding text. A replacement may keep a quantity the phrase
+already carried but may not add one. An unusable response stops persistence.
 With `--out`, original invention and development remain in their traces and proposed edits in
 `concept-precision-trace.json`; no quality score or candidate ranking chooses an answer.
 

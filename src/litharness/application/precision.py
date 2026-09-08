@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import json
 import re
+from collections import Counter
 from collections.abc import Mapping
 from typing import Any
 
@@ -106,7 +107,13 @@ def apply_edits(source_fields: Mapping[str, str], payload: Mapping[str, Any]) ->
             or any(mark in before + after for mark in "\r\n")
         ):
             raise ValueError("precision edit must stay within a line")
-        if not _QUANTITY.search(before) or _QUANTITY.search(after):
+        # A replacement may keep a quantity the phrase already carried (context quoted to
+        # locate the edit, or a value the instruction says to keep) but never add one, and
+        # it must drop at least one. The first Marrowgate draw (2026-09-08) was refused whole
+        # because one edit kept "the twelfth" gauge beside the hour it removed.
+        removed = Counter(match.group(0).lower() for match in _QUANTITY.finditer(before))
+        kept = Counter(match.group(0).lower() for match in _QUANTITY.finditer(after))
+        if not removed or kept - removed or sum(kept.values()) >= sum(removed.values()):
             raise ValueError("precision edit must remove an exact quantity, not invent one")
         if schema_words.named_in(after):
             raise ValueError("precision edit cannot introduce a reserved name")

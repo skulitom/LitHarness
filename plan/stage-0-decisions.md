@@ -25748,3 +25748,60 @@ permissions. `test_world_mechanics_do_not_require_institutional_conflict_or_earl
 covers the mechanical/narrative distinction. Existing prompt-demand budgets are retained.
 These tests establish input boundaries, not improved reading or candidate preference; the
 quality effect remains untested and the stopped diagnostic cannot support it.
+
+## 247. One fresh chapter after the discovery fixes: two validator refusals, one located read (2026-09-08)
+
+The operator asked for a new book, one chapter only, to exercise §243–§246 on a fresh store.
+Registered under `runs/fresh-chapter-20260908/`: `run_chapter.py` reuses the stand-up and tick
+loop of `tools/volume_run.py`, stops once the second scene's follow-up units have run, and
+retains the manifest, every command, the spend and the audit. Writer tanaka was held constant
+with the volume-one draw so the fixes were tested rather than a casting change; third person, a
+24-scene arc at two scenes a chapter, the exemplar shelf and rivals file of the volume run,
+subscription CLI only, the box lock held throughout. No readership ran and nothing was ranked.
+
+**The precision pass refused its own first result.** Discovery and development both parsed on
+the first response. The final quantity pass proposed eleven edits and `apply_edits` refused the
+payload whole because one replacement kept "the twelfth" — the gauge that starts the story — as
+context beside the hour it removed, and the rule read any quantity in a replacement as
+invented. Correction: a replacement may keep quantities the phrase already carried, may not
+add one, and must drop at least one
+(`test_a_replacement_may_keep_a_quantity_the_phrase_already_carried`). The three paid
+responses were replayed through the corrected validator by the run's `replay_concept.py`, with
+no model call; `replay-validation.json` records the trace hashes and that all eleven edits
+applied with the opening alias, protected structure and digit values preserved. The concept
+store therefore holds no decision row for the stage; the traces are its record.
+
+**The outline refused a label the sheet carries.** `_milestones` compared milestone keys
+against the sheet's numeric columns, while the request shows the whole starting sheet
+(`system: assay` beside nine numbers) and tells the model to use only its keys. The first
+outline was refused for restating the label; the second attempt happened not to. Correction: a
+restated label is tolerated and dropped from the schedule, a changed label is refused as a
+different sheet, an invented key is still named, and a milestone that is only labels is
+refused (`test_a_schedule_may_restate_a_label_the_sheet_carries_but_not_change_it`). Neither
+correction touched a request; frozen requests and their digests are unchanged.
+
+**The run.** Listing *One Clean Want*: 153 words, title free, kept with a 45-word sentence
+over the shelf's 27 after three draws, over all four rivals with ours first in a quarter of the
+pairs. Seed: 312 records, check clean, accepted first time, 2.56M recorded tokens. Outline
+accepted on attempt two. Two scenes accepted at the first attempt, 969 and 1,001 words, with
+clean evaluation and summary units; the sheet on the page equals the world's at both scenes and
+Grain moves 12 to 3 for the nine-grain Ask. Recorded spend: serial store $5.91 over five
+invocations, listing store $1.17 over thirteen, concept stage about 63k recorded tokens across
+three calls. The book is published to `book-library/one-clean-want/`.
+
+**Located on the page, for the operator's read, not measured:**
+
+- The world's graph line prints record ids: `[ASSAY] teddy Depth rung_wading`. The packet
+  showed the writer that exact line "as the book prints it" although the world declares
+  `rung_wading is_a Wading`, so the leak is in the standing-line rendering, not the model.
+- Incidental exact quantities are back on the page (a gauge capped fifty years ago, a dash
+  drawn three thousand times, two-forty in the morning). The concept's quantity pass does not
+  reach drafting; the scene packet carried only the shared rule.
+- Six of the declared cast are unnamed at chapter one; Wick is on the page as "a boy".
+- Four word-runs repeat across the two scenes ("she put everything out of her head", "the
+  water went still around her wrists"): the second Ask restages the first.
+- Discovery again framed the protagonist as a night-desk log-keeper, thirty-four and nine
+  years on the chair — the dossier lead of §245. §246's ownership change applies after
+  discovery, so this run does not test it.
+
+One draw, first results kept, no quality claim and no comparison with volume one.

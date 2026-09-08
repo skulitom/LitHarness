@@ -108,6 +108,28 @@ def test_article_unit_quantities_are_editable_without_counting_relative_spans(ph
     assert not prepared.has_quantities()
 
 
+def test_a_replacement_may_keep_a_quantity_the_phrase_already_carried():
+    """The refused Marrowgate draw: context quoted around the removed hour is not invention."""
+    source = discovery.Discovery(
+        "A valley.", "At two in the morning the twelfth gauge moves.", "A pursuit."
+    )
+    before = "At two in the morning the twelfth"
+    after = "In the small hours the twelfth"
+    prepared = source.with_precision_edits(
+        {"edits": [{"field": "opening", "before": before, "after": after}]}
+    )
+    assert prepared.opening == "In the small hours the twelfth gauge moves."
+    for after in (
+        "In the small hours the twelfth of twelve",
+        "At three in the morning the twelfth",
+        "Around two in the morning the twelfth",
+    ):
+        with pytest.raises(ValueError, match="invent"):
+            source.with_precision_edits(
+                {"edits": [{"field": "opening", "before": before, "after": after}]}
+            )
+
+
 @pytest.mark.parametrize("ordinal", ["third", "twenty-third", "one hundred and third", "23rd"])
 def test_ordinal_quantities_can_be_replaced_only_as_complete_spans(ordinal):
     source = discovery.Discovery("A valley.", f"She learned on the {ordinal} day.", "A pursuit.")

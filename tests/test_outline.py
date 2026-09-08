@@ -1134,6 +1134,32 @@ def test_a_schedule_may_not_invent_a_statistic() -> None:
         _milestones(with_schedule(12, invented), beats, SEED)
 
 
+def test_a_schedule_may_restate_a_label_the_sheet_carries_but_not_change_it() -> None:
+    """*One Clean Want* (2026-09-08): the seed sheet held `system: assay` beside its numbers,
+    the request asked for the sheet's keys and no others, and the first outline was refused
+    whole for copying the label. A restated label is not an invented statistic and is dropped
+    from the schedule; a changed label, or a milestone that is only labels, is refused, and
+    an invented key beside a restated label is still named."""
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=12)
+    beats = beats_for(revision, arc_template(12))
+    seed = {"system": "assay", **SEED}
+    restated = [
+        {"ordinal": 3, "state": {"system": "assay", "gold": 20}},
+        {"ordinal": 8, "state": {"gold": 21}},
+    ]
+    schedule = _milestones(with_schedule(12, restated), beats, seed)
+    assert [values for _, values in schedule] == [{"gold": 20}, {"gold": 21}]
+    changed = [{"ordinal": 3, "state": {"system": "marginalia", "gold": 20}}]
+    with pytest.raises(OutlineOutputError, match="changes system"):
+        _milestones(with_schedule(12, changed), beats, seed)
+    only_labels = [{"ordinal": 3, "state": {"system": "assay"}}]
+    with pytest.raises(OutlineOutputError, match="no numeric state"):
+        _milestones(with_schedule(12, only_labels), beats, seed)
+    invented = [{"ordinal": 3, "state": {"system": "assay", "xp": 400}}]
+    with pytest.raises(OutlineOutputError, match=r"invents \['xp'\]"):
+        _milestones(with_schedule(12, invented), beats, seed)
+
+
 def test_a_schedule_may_not_schedule_an_impossible_state() -> None:
     """The check the other three did not make, and §56.5 measured what it costs.
 
