@@ -99,6 +99,7 @@ from litharness.domain.draft import DraftPolicy, is_draftable
 from litharness.domain.events import payload_digest
 from litharness.domain.extraction import (
     Movable,
+    attested_position,
     change_example,
     gain_example,
     graph_line_for,
@@ -827,36 +828,13 @@ def packet_for(
     token_budget: int = DEFAULT_TOKEN_BUDGET,
     pov_character_id: str | None = None,
 ) -> ContextPacket:
-    """Load this book's plan and state and assemble the beat's packet.
+    """Assemble scene-entry context from plans, state and matching manuscript summaries.
 
-    The one place the packet touches the store. `assemble` stays pure so the golden
-    `GoldContextSuite` can grade it without a database, which is also what keeps the grading
-    honest — a test that had to build a store to ask "is the motive in the packet" would be
-    testing the store.
-
-    **The story-time cutoff is the beat's own key, and only where the planner is entitled to
-    state one.** This paragraph used to say no cutoff was passed at all, on the ground that
-    nothing defines a mapping from a manuscript scene to an `order_key` and that in the live
-    loop the question does not arise, because records are extracted from accepted prose and
-    so only ever describe scenes already written.
-
-    That reasoning is sound for extracted records and does not reach **seeded** ones. A want
-    or a fear that changes across a book is future-dated by construction, so a packet with no
-    cutoff hands scene one what the character will want in chapter two — the story's engine
-    given away before it starts. Measured on an eight-scene book seeded with two wants at
-    `s1` and `s5`: both arrived in the Established facts block while drafting scene 1.
-
-    **The claim is still not this module's**, and it is not minted here either. It is
-    `stated_position`, unchanged and called one layer over: a `BeatTemplate` that declares
-    itself chronological is a statement about the sheet the planner laid out, and
-    `beats_for` turns it into `story_order_key`. So this abstains in exactly the cases
-    `extraction` abstains in, for exactly its reasons — a book with a story vocabulary
-    somebody else chose gets no cutoff, and its packet is byte-identical to what it was
-    before this existed. Both golden fixtures are that book.
-
-    A record with no `story_position` survives any cutoff (`state.records_before`), which is
-    what keeps a world rule, a standing relationship or the fifteen-record ability-graph seed
-    — all of them true of the book rather than of a moment in it — in every packet.
+    Existing scene evidence supplies its coordinate; otherwise the beat's own coordinate
+    is used only where the book permits it. Without
+    that coordinate, scene entry withholds positioned facts and their dependent event
+    components; an unknown position is not permission to reveal future state. Unplaced
+    world definitions remain available, subject to authority and viewpoint visibility.
     """
     # **Only a summary of the prose that is actually there.** `scene_summaries` returns every
     # summary ever written for a scene, keyed by the content hash it was written from, and the
@@ -905,27 +883,14 @@ def packet_for(
         token_budget=token_budget,
         # See the docstring. `stated_position` is the entitlement check, not a new one: it
         # returns the beat's key only for a book whose story positions nobody else chose.
-        story_time_cutoff=stated_position(records, beat.story_order_key),
+        story_time_cutoff=(
+            attested_position(records, beat.logical_id)
+            or stated_position(records, beat.story_order_key)
+        ),
         state_moment=state_mod.StateMoment.ENTERING,
         project_state_changes=True,
         summaries=summaries,
-        # **Where the book stands, and it is a different question from the cutoff above.**
-        # The cutoff decides which records *exist yet* and is gated by `stated_position`, so it
-        # is `None` for any book whose story positions somebody else chose. This asks whether
-        # the reader has been *told* a thing, so it is entitled to the beat's key
-        # unconditionally where the cutoff abstains.
-        #
-        # ~~against positions the Architect minted from this book's own beat sheet~~ … ~~and a
-        # legacy world's schedule keeps working on an imported book~~. **Both false** (§165.3,
-        # fixed in §167): the beat's key is a scene key, an Architect's schedule is written in
-        # digits, and a schedule did not "keep working" — it read as wholly disclosed from scene
-        # one, on every book that had one. The key passed here is unchanged; what changed is that
-        # `undisclosed_claims` no longer compares it against a coordinate from another space.
-        #
-        # The two lines were written by different sessions within a day of each other and the
-        # merge is where they met. They agree: a non-chronological template mints no key, both
-        # go `None`, the cutoff returns everything and every scheduled answer stays hidden —
-        # which is the safe direction for each of them separately.
+        # Disclosure has its own coordinate check and keeps incomparable schedules hidden.
         disclosure_at=beat.story_order_key,
         # The promise ledger's open rows (§61 Add 2), surfaced in the THREADS section so
         # generation gets to SEE what the book owes and by when. Read-only, and `assemble`
@@ -1390,14 +1355,8 @@ def make_plan_selector(
                     # undrafted, which is true.
                     break
                 if packet.omitted:
-                    # **A book being written blind should not be quiet about it.** The
-                    # omissions have always been recorded on the job payload, where nothing
-                    # reads them; the daily digest is §4.3's operator report and `status`
-                    # already prints it. Measured: at the 900-word target this binds at
-                    # scene 5 and the packet holds three prior scenes, so by mid-book a scene
-                    # is drafted knowing almost nothing of the book before it — and it drops
-                    # the *oldest* prose rather than the least relevant, with no way to know
-                    # the difference (the first-party endurance suite measures this limit).
+                    # Count all omissions; the frozen payload distinguishes capacity,
+                    # temporal and visibility exclusions by their recorded reasons.
                     store.bump_digest(
                         datetime.fromtimestamp(now, tz=UTC).date().isoformat(),
                         "context_omitted",

@@ -138,6 +138,7 @@ def at_scene(
         excluded_predicates=tuple(extraction.CONFIGURATION_PREDICATES),
         moment=moment,
         logical_id=logical_id if moment is state.StateMoment.ENTERING and cutoff else None,
+        subject_anchors=worlds.change_anchors(records),
     )
     active, superseded = state.active_projection(
         eligible,
@@ -166,6 +167,7 @@ def current(
         eligible = state.eligible_records(
             records,
             excluded_predicates=tuple(extraction.CONFIGURATION_PREDICATES),
+            subject_anchors=worlds.change_anchors(records),
         )
         active, superseded = state.active_projection(
             eligible,

@@ -529,61 +529,6 @@ def test_a_serial_extends_in_place_without_moving_existing_scene_addresses(db) -
             assert after.version_ids[logical_id] == versions[logical_id]
 
 
-# --- the promotion path (§10.4) ------------------------------------------------------
-
-
-def _calibrate(db, **overrides: str) -> int:
-    args = {
-        "--metric": "craft.tricolon_rate.v0",
-        "--threshold": "4.0",
-        "--direction": "above",
-        "--holdout": "50",
-        "--flagged": "20",
-        "--correct": "20",
-        # 1 candidate and 2 clusters are the permissive answers, so the helper states them
-        # rather than letting a default supply evidence the caller never declared.
-        "--selection-family": "1",
-        "--clusters": "2",
-        # Required, and there is no default: a caller that says nothing about what its
-        # numbers are about must not be handed the class that may claim quality.
-        "--evidence-class": "judgment",
-    }
-    args.update(overrides)
-    return run(db, "calibrate", *[part for pair in args.items() for part in pair])
-
-
-def _answered(db, n: int = 50) -> None:
-    """Put `n` answered audit samples in the store, so a claimed holdout is a real one.
-
-    Every test below that expects BLOCKING-ELIGIBLE needs this now, and needing it *is* the
-    fix: `why_not_promotable` compares `holdout_size` against the answered samples the store
-    holds, and nothing had ever made that comparison. `--holdout 50 --flagged 20 --correct 20`
-    against an empty store cleared every floor and promoted, and the digest clause was
-    structurally unable to catch it because the digest of the empty set matches itself.
-    """
-    from litharness.domain.audit import AuditSample, Verdict
-
-    store = SqliteStore.open(db)
-    try:
-        for index in range(n):
-            sample = AuditSample(
-                sample_id=f"cli-holdout-{index}",
-                book_id="book-1",
-                branch_id="branch-1",
-                revision_id=f"rev-{index}",
-                logical_id=f"scene-{index}",
-                sampled_at="2026-08-01",
-                rate=1.0,
-                bucket=index,
-            )
-            store.record_audit_sample(sample)
-            store.record_verdict(
-                sample.sample_id, Verdict.KEEP_READING, at="2026-08-01", by="reader"
-            )
-    finally:
-        store.close()
-
-
 def test_ingesting_a_failed_evaluation_exits_non_zero(db, tmp_path, capsys) -> None:
     """The operator-facing half. A supervisor reading exit codes must not be told a book is
     clean by a run in which every detector failed — and EXIT_ATTENTION rather than EXIT_FAULT,

@@ -96,59 +96,8 @@ REGENERABLE: frozenset[Veto] = frozenset(
     }
 )
 
-#: Vetoes that end the unit *here*, without another generation and without an escalation.
-#:
-#: `CRAFT_BELOW_BAR` is the only member and the reasoning is the whole decision, so it is
-#: recorded rather than implied. A promoted craft gate refuses prose that a calibrated metric
-#: places on the failing side of its threshold. Each of the other three things the ladder
-#: could do to that refusal is worse:
-#:
-#: **Retry is rejection sampling against the gate.** Another attempt against the same context
-#: packet produces different text that is measured by the same metric, and the accepted
-#: candidate is by construction the one that beat it. At `max_attempts` that is best-of-three
-#: optimisation against a craft proxy — a weaker form of the coupling
-#: [plan/craft-corpus.md](../../../plan/craft-corpus.md) §4.2 calls non-negotiable to prevent,
-#: but the same shape, and it would arrive as a side effect of a retry class rather than as a
-#: decision anyone took.
-#:
-#: The amplification is arithmetic rather than a worry. If a candidate clears the gate with
-#: probability `q`, then `B` attempts return a passing one with probability `1 - (1-q)**B`:
-#: a gate a scene clears half the time is cleared by seven candidates in eight at `B = 3`.
-#: Three attempts do not observe a weak metric three times, they let it select the half of
-#: the generator's distribution it happens to favour — and the calibration that licensed it
-#: was measured on the *passive* distribution, so the retry invalidates the evidence that
-#: made the gate blocking in the first place.
-#:
-#: **Escalation breaks the product claim.** A gate firing on 5% of scenes is one director
-#: interruption per twenty accepted, in a system whose whole claim is that it runs without
-#: one. §4.2 already reserves escalation for what *policy could not resolve*, and a craft
-#: refusal is policy resolving: the scene does not go in.
-#:
-#: **Silently accepting is what the system does today.** That is the gap, not the fallback.
-#:
-#: Parking is the option that keeps all three properties. The refusal stands, the book
-#: continues — findings are node-scoped for exactly this reason, so a weak scene 3 does not
-#: stop scene 6 — and the parked unit is revivable, so the director's `revive` is the way
-#: past it, as it already is for a standing finding.
-#:
-#: **What it does not yet do, stated because the first draft of this comment claimed it
-#: did.** A parked unit is not an *unjudged sample*. `handlers` records craft metrics and
-#: draws the §10.5 audit sample inside the acceptance branch, after `commit_revision` — a
-#: refused candidate commits no revision, so it produces neither, and its text is discarded.
-#: So the gate does not currently fill the audit queue as a by-product of refusing, which
-#: would have been the best argument for this classification. Making it do so is not a
-#: one-liner: `AuditSample` is keyed `sha256(revision_id, logical_id)` and a refused
-#: candidate has no revision id, so it needs an address for text that was never accepted.
-#: Recorded as a gap rather than fixed in passing, because what `verdicts_digest` content-
-#: addresses would change with it.
-#:
-#: `CRAFT_OUT_OF_DISTRIBUTION` joins it for every one of the reasons above and for one more
-#: of its own. It comes from a corpus percentile rather than from human judgment, so the
-#: rejection-sampling argument binds harder: retrying against a distribution threshold is
-#: best-of-three optimisation toward the middle of the published range, which is a machine
-#: writing to be unremarkable. Parking refuses the scene and asks a human, which is the only
-#: honest response to "this is outside the range" from evidence that never claimed to know
-#: whether outside is worse.
+# These craft vetoes park the unit without a generation retry or escalation.
+# Keeping their policy behavior does not qualify a detector to emit them.
 PARKABLE: frozenset[Veto] = frozenset(
     {Veto.CRAFT_BELOW_BAR, Veto.CRAFT_OUT_OF_DISTRIBUTION}
 )

@@ -64,7 +64,7 @@ five above.
 
 | Fact | Home | The one reader | Pinned by |
 | --- | --- | --- | --- |
-| Where a scene sits in story time | the book's own evidence: a canon record citing the scene | `extraction.attested_position`, which abstains on ambiguity; `extraction.stated_position` accepts the planner's key only for a book with no vocabulary of its own (`has_story_vocabulary`, `OWN_POSITION_VERSIONS`) | `test_extraction.py::test_the_obvious_order_key_scheme_is_wrong_and_here_is_the_measurement`; `test_context_cutoff.py::test_an_undeclared_dated_record_turns_the_cutoff_off` |
+| Where a scene sits in story time | the book's own evidence: a canon record citing the scene | `extraction.attested_position`, which abstains on ambiguity; `extraction.stated_position` accepts the planner's key only for a book with no vocabulary of its own (`has_story_vocabulary`, `OWN_POSITION_VERSIONS`) | `test_extraction.py::test_the_obvious_order_key_scheme_is_wrong_and_here_is_the_measurement`; `test_context_cutoff.py::test_an_undeclared_coordinate_cannot_turn_abstention_into_future_state` |
 | The two order-key spaces (a scene's, and the schedule's) | `state.key_space`, `state.comparable` (§165, §167) | `state.records_before` in memory and `litharness_key_space` in SQL, tested against each other | `test_order_key_spaces.py::test_key_space_names_two_spaces_and_refuses_everything_else`; `test_packet_order_key_spaces.py::test_a_scheduled_record_does_not_pass_a_scene_cutoff` |
 
 ## Reading the page back
@@ -93,6 +93,21 @@ five above.
 | How many demands each prompt makes | `house.demands` counts; the ceilings live in the suite | `tests/test_prompt_budget.py` (`BUDGET`, `HOUSE_BUDGET`, `SCENE_CONDITIONAL_BUDGET`, `SCENE_MAXIMAL_BUDGET`), one row per role with the reason beside every change | `test_a_role_prompt_stays_inside_its_declared_budget`, `test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget`, `test_the_scene_floor_row_is_what_the_planner_actually_assembles` |
 
 ## The packet, the prompt, and the gate ladder
+
+Concepts are intended book plans. World creation receives `Concept.render_for_world`, which
+selects setting, background and mechanics while omitting fields for future scene actions,
+arc endings and promised answers. The supplied listing remains a promise to support, and the
+original author brief still constrains world building. Chapter reconciliation receives the
+chapter and author brief without replaying the treatment. The full concept remains with the
+planner. This is field
+routing, not a semantic classifier of arbitrary prose; existing accepted world rules are not
+automatically reclassified. The boundary is covered by
+`test_future_story_fields_cannot_return_as_world_declaration_material` in `test_concept.py`.
+
+An accepted change's component records depend on its occurrence record's time and visibility,
+even when the components carry no position themselves. Drafting, planning and repair apply
+this dependency before projecting prose. Drafting uses an evidence-attested scene coordinate
+when available; an unknown coordinate admits only unplaced records. The cases are covered in `test_change_context.py` and `test_repair_workflow.py`.
 
 | Fact | Home | The one reader | Pinned by |
 | --- | --- | --- | --- |

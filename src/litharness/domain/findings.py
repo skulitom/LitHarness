@@ -38,7 +38,7 @@ import enum
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from hashlib import sha256
-from typing import Any, Protocol, cast
+from typing import Any, cast
 
 import litharness_contracts as lc
 
@@ -196,19 +196,6 @@ def finding_id_for(rule_or_critic_id: str, logical_id: str, claim: dict[str, Any
     return f"f-{sha256(material.encode()).hexdigest()[:24]}"
 
 
-class Detector(Protocol):
-    """A deterministic check over a candidate and the state it is entering.
-
-    The port §8.4's arrangement requires. ContinuityEvaluation's pack satisfies it from
-    outside the process, by writing an `EvaluationArtifact` that
-    `adapters/evaluation_artifact.py` ingests; anything LitHarness owns satisfies it in
-    process. The gate cannot tell the difference and must not: a finding is a finding.
-    """
-
-    def __call__(self, subject: DetectorInput) -> Sequence[Finding]:
-        ...
-
-
 @dataclass(frozen=True, slots=True)
 class DetectorInput:
     """Everything a detector is allowed to see about one candidate.
@@ -277,7 +264,6 @@ __all__ = [
     "BLOCKING_SEVERITIES",
     "NON_BLOCKING_STATUSES",
     "UNRESOLVED_STATUSES",
-    "Detector",
     "DetectorInput",
     "Finding",
     "Severity",

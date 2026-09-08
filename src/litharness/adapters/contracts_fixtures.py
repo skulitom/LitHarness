@@ -124,22 +124,7 @@ __all__ = [
     "FixturesUnavailable",
     "fixture_context_gold",
     "fixture_findings",
-    "fixture_impact_gold",
     "fixture_manuscript",
     "fixture_plans",
     "fixture_state",
 ]
-
-
-def fixture_impact_gold(fixture_id: str) -> Path:
-    """The `GoldImpactSuite` beside them — which nodes a change must reach, and must not.
-
-    The sixth artifact each golden book ships, and the last with no reader: `context_gold.json`
-    went unreferenced until there was a packet to grade, and this went unreferenced until
-    there was a propagation prediction to score. `plan/stage-0-decisions.md` records that
-    pattern as the strongest form of consumer-first sequencing — the shape was not guessed.
-
-    Ground truth, not input. Node granularity, no character offsets, and in-sample by
-    construction.
-    """
-    return _fixture_file(fixture_id, "impact_gold.json")

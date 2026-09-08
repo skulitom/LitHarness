@@ -1,12 +1,4 @@
-"""The concept stage: one book invented before its listing, and what each stage below is told.
-
-Stage-0 §197. Draw 4 of pilot 21 (`plan/serial-pilot-21.md` §5.4) found no horizon a reader
-could feel and the listing at fault; nothing above the listing existed. These tests hold the
-shape of the fix: the schema can express the operator's example premise (a turn, two systems,
-grants kept across them); the concept is an unlocked plan item; the listing,
-the seed and the outline are each told it and render byte-identically without it; `new` opens
-its debts on the promise ledger. No model call, no network.
-"""
+"""Concept persistence and the separate listing, world and planning inputs. No model calls."""
 
 from __future__ import annotations
 
@@ -243,8 +235,8 @@ def test_the_seed_is_told_what_the_world_holds_and_a_second_system_only_when_nam
     plain = world_agent.render_seed_request("a listing", WRITER)
     with_one = world_agent.render_seed_request("a listing", WRITER, concept=one)
     with_two = world_agent.render_seed_request("a listing", WRITER, concept=two)
-    assert with_one.prompt.startswith("The listing this book was sold on:\n\na listing")
-    assert "What the book is to become, which the world has to be able to hold:" in with_one.prompt
+    assert one.render_for_world() in with_one.prompt
+    assert "a listing" in with_one.prompt
     assert with_one.system == plain.system, "one system: the seed's task is untouched"
     assert world_agent._SECOND_SYSTEM in (with_two.system or "")
     assert "the Accord" in with_two.prompt
@@ -272,9 +264,8 @@ def test_listing_material_omits_planning_only_fields_without_changing_the_concep
     assert drawn.person_before in listing
     assert drawn.want in listing
     assert "PRIVATE_" not in listing
-    # The full concept is still available to planning and world building.
+    # Future plans remain available to the planner, not the world-declaration agent.
     for field in ("PRIVATE_TURN", "PRIVATE_ENDING", "PRIVATE_ANSWER", "PRIVATE_SYSTEM"):
-        assert field in drawn.render_for_seed()
         assert field in json.dumps(drawn.for_outline())
     assert drawn.to_text() == before
 
@@ -667,16 +658,15 @@ def test_invention_validation_preserves_valid_treatment() -> None:
     assert discovery.Discovery.from_invention(payload) == discovery.Discovery.from_payload(payload)
 
 
-def test_discovery_material_reaches_seed_grow_listing_and_later_arcs() -> None:
+def test_discovery_material_reaches_listing_and_later_arcs_with_scoped_world_inputs() -> None:
     payload = {**_example(), "discovery": _discovery()}
     drawn = concept.Concept.from_payload(payload)
     assert drawn.discovery is not None
-    material = drawn.discovery.render()
     listing = drawn.render_for_listing()
     for value in (drawn.discovery.world, drawn.discovery.opening, drawn.discovery.growth):
         assert value in listing
     assert "These are story intentions" not in listing
-    assert material in world_agent.render_seed_request("listing", concept=drawn).prompt
+    assert drawn.discovery.world in world_agent.render_seed_request("listing", concept=drawn).prompt
     for request in (
         discovery.render_request(""),
         concept.render_concept_request("", scenes=6, discovery=drawn.discovery),
@@ -684,10 +674,6 @@ def test_discovery_material_reaches_seed_grow_listing_and_later_arcs() -> None:
         world_agent.render_grow_request("chapter", logical_id="scene-1", concept=drawn),
     ):
         assert request.system.count(house.QUANTITY_DETAIL) == 1
-    assert (
-        material
-        in world_agent.render_grow_request("chapter", logical_id="scene-1", concept=drawn).prompt
-    )
 
     class Base:
         plan_revision_id = "plan-1"
@@ -709,6 +695,65 @@ def test_discovery_material_reaches_seed_grow_listing_and_later_arcs() -> None:
         assert parsed["book_concept"]["discovery"] == drawn.discovery.to_jsonable()
         assert concept.DISCOVERY_ARC_RULE in parsed["rules"]
         assert not any("numbers must actually move" in rule for rule in parsed["rules"])
+
+
+@pytest.mark.parametrize("with_discovery", [False, True])
+@pytest.mark.parametrize("turn_before_opening", [False, True])
+def test_future_story_fields_cannot_return_as_world_declaration_material(
+    with_discovery: bool, turn_before_opening: bool,
+) -> None:
+    drawn = concept.Concept.from_payload(_example())
+    drawn = replace(
+        drawn,
+        discovery=discovery.Discovery("SETTING_MARKER", "OPENING_MARKER", "GROWTH_MARKER")
+        if with_discovery else None,
+        first_use="FIRST_USE_MARKER",
+        want="WANT_MARKER",
+        threat=replace(drawn.threat, first_reach="FIRST_REACH_MARKER"),
+        turn=concept.Turn(
+            "TURN_MARKER",
+            concept.BEFORE_CHAPTER_ONE if turn_before_opening else concept.INSIDE_FIRST_ARC,
+        ),
+        first_arc=concept.FirstArc("ARC_START_MARKER", "ARC_MIDDLE_MARKER", "ARC_END_MARKER"),
+        debts=(
+            concept.Debt("DEBT_SUBJECT_MARKER", "DEBT_ANSWER_MARKER", 4),
+            concept.Debt("SECOND_DEBT_MARKER", "SECOND_ANSWER_MARKER", 5),
+        ),
+        author_brief="AUTHOR_BRIEF_MARKER",
+    )
+    original = drawn.to_text()
+    seed = world_agent.render_seed_request("LISTING_MARKER", concept=drawn)
+    grow = world_agent.render_grow_request("CHAPTER_MARKER", logical_id="s1", concept=drawn)
+    for marker in (
+        "FIRST_USE_MARKER", "WANT_MARKER", "FIRST_REACH_MARKER", "ARC_START_MARKER",
+        "ARC_MIDDLE_MARKER", "ARC_END_MARKER", "DEBT_SUBJECT_MARKER", "DEBT_ANSWER_MARKER",
+        "SECOND_DEBT_MARKER", "SECOND_ANSWER_MARKER",
+    ):
+        assert marker not in seed.prompt
+        assert marker not in grow.prompt
+        assert marker in json.dumps(drawn.for_outline())
+    assert "LISTING_MARKER" in seed.prompt
+    assert "AUTHOR_BRIEF_MARKER" in seed.prompt
+    assert "AUTHOR_BRIEF_MARKER" in grow.prompt
+    assert ("TURN_MARKER" in seed.prompt) is turn_before_opening
+    assert drawn.system.name in seed.prompt
+    assert drawn.system.pays in seed.prompt
+    assert drawn.person_before in seed.prompt
+    assert drawn.threat.what in seed.prompt
+    assert drawn.second_system is not None
+    assert drawn.second_system.kept in seed.prompt
+    if with_discovery:
+        assert "SETTING_MARKER" in seed.prompt
+        for marker in ("OPENING_MARKER", "GROWTH_MARKER"):
+            assert marker not in seed.prompt
+            assert marker in json.dumps(drawn.for_outline())
+    assert grow.prompt.startswith("The chapter just drafted (s1):\n\nCHAPTER_MARKER")
+    assert "TURN_MARKER" not in grow.prompt
+    assert drawn.person_before not in grow.prompt
+    assert "OPENING_MARKER" not in grow.prompt
+    assert "GROWTH_MARKER" not in grow.prompt
+    assert concept.concept_of((drawn.plan_item(),)) == drawn
+    assert drawn.to_text() == original
 
 
 def test_a_supplied_treatment_owns_development_despite_different_writer_preferences() -> None:

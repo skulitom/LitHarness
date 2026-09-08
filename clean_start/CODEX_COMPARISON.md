@@ -211,6 +211,45 @@ unchanged. The library adds/formats scene breaks. The display leak and narrative
 were already in the original responses. All three manuscript revisions rebuild cleanly;
 ordinary shape and integrity passes did not detect the located reading problems.
 
+## Follow-up: isolate world input and remove obsolete scaffolding
+
+The next software change separates the world-builder's concept projection from the complete
+story plan. It omits detailed planned opening actions, future turns, arc outcomes and debts.
+Pre-opening history and system definitions remain available, alongside the supplied listing
+and original author brief. Chapter
+reconciliation no longer receives the original discovery treatment or asks for every declared
+name to reach the page. Vocabulary now describes world rules and manifestations as in-world
+properties rather than instructions for narration.
+
+An offline replay of the retained continuation concept produced a 5,207-character world
+projection instead of its 23,094-character full rendering. None of the complete excluded action
+or payoff fields appeared in the projection. Review rejected initially dropping the author
+brief and ignoring the supplied listing: explicit constraints and overview overrides must
+remain effective. The source digest, final rendered request and checks
+are retained in `runs/world-context-cleanup-20260908/input-boundary-report-final.json`. This verifies
+input routing, not literary improvement; free-text world fields can still contain intentions,
+and previously accepted unkeyed world rules are not automatically reclassified. No new model
+call or rewritten chapter is attributed to this change.
+
+The same change fixes a separate structural leak: unkeyed components of a future change
+could survive after its positioned occurrence record was excluded. Drafting, planning and
+repair now require the occurrence record to be visible at the same boundary. Unknown scene
+coordinates cannot admit positioned changes through drafting or repair. An old regression
+that explicitly expected future-state leakage was replaced with the conservative boundary
+contract, including a check through the actual drafting entry point. Recorded scene evidence
+supplies a coordinate when available; the fallback does not invent one for imported scenes. Participant and
+capability definitions remain independently available; proposed types cannot hide accepted
+facts. Regression fixtures cover time, POV, source evidence and the fallback paths.
+
+The cleanup removes unused exception/protocol exports, an unused fixture helper and orphaned
+calibration-test scaffolding that imported a deleted module. Historical essays beside the
+changed production prompts are replaced with their current contracts. Experiment artifacts,
+saved books and handoffs with unique evidence remain available.
+
+Software validation for this follow-up is recorded under
+`runs/world-context-cleanup-20260908/`: focused checks, intermediate failures, the final
+repository handoff in `handoff-verified.log`, and the reproducible `verify_inputs.py` replay.
+
 ## Provider decision
 
 The Codex chapters demonstrate a promising change in experience, but they do not eliminate

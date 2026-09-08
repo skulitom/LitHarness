@@ -424,10 +424,6 @@ VIEW_WITHHOLDS = "view.withholds"
 GRAPH_LINE_PREDICATE = "graph_line"
 
 
-class IllegalWorld(Exception):
-    """A world record set that this vocabulary cannot mean what it says."""
-
-
 def record_id_for(subject: str, predicate: str, object_ref: str | None, value: object) -> str:
     """Content-derived, and **edge-sensitive as well as value-sensitive**.
 
@@ -503,6 +499,23 @@ def normalise_id(name: str) -> str:
 
 def _canon(records: Sequence[lc.StateRecord]) -> tuple[lc.StateRecord, ...]:
     return tuple(record for record in records if state_mod.is_canon(record))
+
+
+def change_anchors(records: Sequence[lc.StateRecord]) -> dict[str, tuple[lc.StateRecord, ...]]:
+    """Accepted occurrence identities whose parts share their time and visibility.
+
+    Read the full source before filtering. A proposed type cannot turn existing accepted
+    facts into an event or acquire authority to hide them.
+    """
+    anchors: dict[str, list[lc.StateRecord]] = {}
+    for record in records:
+        if (
+            state_mod.is_canon(record)
+            and record.predicate == TYPE_PREDICATE
+            and record.value == CHANGE
+        ):
+            anchors.setdefault(record.subject, []).append(record)
+    return {subject: tuple(rows) for subject, rows in anchors.items()}
 
 
 def entity_roles(records: Sequence[lc.StateRecord]) -> dict[str, tuple[str, ...]]:
@@ -2135,11 +2148,11 @@ __all__ = [
     "DisclosureComparison",
     "DisclosureEvidence",
     "DisclosureReason",
-    "IllegalWorld",
     "Protagonist",
     "capabilities",
     "capabilities_of",
     "cardinality_shapes",
+    "change_anchors",
     "claims",
     "consequence_domains",
     "criteria",

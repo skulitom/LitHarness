@@ -57,7 +57,7 @@ from __future__ import annotations
 
 import enum
 import re
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 
 import litharness_contracts as lc
@@ -290,8 +290,12 @@ def reached_boundary(record: lc.StateRecord, boundary: StoryBoundary) -> bool:
     shape, and one string has one shape.
     """
     key = order_key_of(record)
-    if boundary.cutoff is None or key is None:
+    if key is None:
         return True
+    if boundary.cutoff is None:
+        # An unbounded inventory may include positioned records. Entering or repairing
+        # a scene without its coordinate cannot establish that any of them happened yet.
+        return boundary.moment is StateMoment.THROUGH
     if not comparable(key, boundary.cutoff):
         return False
     if key < boundary.cutoff:
@@ -328,6 +332,7 @@ def eligible_records(
     moment: StateMoment = StateMoment.THROUGH,
     logical_id: str | None = None,
     offset: int | None = None,
+    subject_anchors: Mapping[str, Sequence[lc.StateRecord]] | None = None,
 ) -> tuple[lc.StateRecord, ...]:
     """Canon a model may see at ``cutoff`` from ``pov_character_id``.
 
@@ -336,16 +341,33 @@ def eligible_records(
     lets a fact rejected from one section reappear through another.  Configuration predicates
     are supplied by the caller because the state vocabulary deliberately does not depend on
     the extraction vocabulary that declares them.
+
+    A reified occurrence's undated parts depend on its anchor being eligible too. Callers
+    supply anchors from the full source, before any temporal prefilter removes that anchor.
+    The dependency follows the record's subject, never its relationship objects.
     """
     excluded = frozenset(excluded_predicates)
     boundary = StoryBoundary(cutoff, moment, logical_id, offset)
-    return tuple(
+    eligible = tuple(
         record
         for record in records
         if is_canon(record)
         and record.predicate not in excluded
         and visible_to(record, pov_character_id)
         and reached_boundary(record, boundary)
+    )
+    if not subject_anchors:
+        return eligible
+    eligible_ids = {record.record_id for record in eligible}
+    established_subjects = {
+        subject
+        for subject, anchors in subject_anchors.items()
+        if any(anchor.record_id in eligible_ids for anchor in anchors)
+    }
+    return tuple(
+        record
+        for record in eligible
+        if record.subject not in subject_anchors or record.subject in established_subjects
     )
 
 

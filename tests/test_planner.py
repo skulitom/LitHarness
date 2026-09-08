@@ -630,8 +630,13 @@ def test_the_prompt_carries_the_context_packet_and_ends_with_the_instruction(
     assert "sealed letter must be read aloud at the will reading" in system
     assert "AUTHOR-LOCKED STORY DECISIONS" in system
     assert "rain-on-glass motif repeats deliberately in scenes 1, 3, and 6" not in prompt
-    # The open thread the resolution owes a payoff.
-    assert "sealed_letter_reading" in prompt
+    # The promise remains in the author lock above. This imported scene has no attested
+    # coordinate, so its dated thread record must not be presented as current world state.
+    assert "sealed_letter_reading" not in prompt
+    assert any(
+        item.item_id == "rec-letter-promise" and "coordinate unavailable" in item.reason
+        for item in packet.omitted
+    )
     assert prompt.rstrip().endswith("Dramatic function: resolution.")
 
 
@@ -2020,15 +2025,19 @@ def test_a_book_written_blind_says_so_in_the_digest(store: SqliteStore) -> None:
     assert store.digest(day).get("context_omitted", 0) > 0
 
 
-def test_a_packet_that_fits_says_nothing(store: SqliteStore) -> None:
-    """The counter must mean "this book is being written blind", so it cannot fire on a book
-    whose context fits — which is every six-scene fixture, and the reason this limit has been
-    invisible since it was written."""
+def test_a_packet_that_fits_still_records_temporal_omissions(store: SqliteStore) -> None:
+    """The omission counter includes deliberate exclusions; each retains its reason."""
     _fixture(store, "litrpg")
     make_plan_selector(project_id=PROJECT_ID)(store, "worker-a", START, 300.0)
 
     day = datetime.fromtimestamp(START, tz=UTC).date().isoformat()
-    assert store.digest(day).get("context_omitted", 0) == 0
+    [job] = [
+        item for item in store.jobs_by_status(JobStatus.QUEUED) if item.job_kind == SCENE_DRAFT
+    ]
+    omitted = job.payload["context_omitted"]
+    assert omitted
+    assert all("budget" not in item["reason"] for item in omitted)
+    assert store.digest(day).get("context_omitted", 0) == len(omitted)
 
 
 # --- the ladder reaches the writer (plan/stage-0-decisions.md §113) ---------------------------

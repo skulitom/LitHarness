@@ -218,13 +218,17 @@ def vocabulary() -> dict[str, Any]:
                 "two effects, the old at 0 and the new at 1; the sheet reads it from the "
                 "change's scene on, and that scene is asked to print the line after it"
             ),
-            "world_rule": "a rule this world runs on; --value the rule in plain words",
+            "world_rule": (
+                "a rule this world runs on; --value its in-world operation in plain words. "
+                "Scene instructions, intended actions and future endings belong in plans"
+            ),
             "consequence": (
                 "a second-order effect of a rule; the rule is the subject, --object one of "
                 "consequence_domains, --value the consequence in plain words"
             ),
             "manifests_as": (
-                "how it shows on the page; --value one line. On a change keyed at a scene "
+                "its observable in-world form; --value one line, not narration instructions. "
+                "On a change keyed at a scene "
                 "with a participant, the line the System prints where it happens, in its own "
                 "voice, under the label of the book's graph line"
             ),

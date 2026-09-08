@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 
 import litharness_contracts as lc
 import pytest
@@ -29,6 +30,7 @@ from litharness.application.repair import (
 )
 from litharness.domain.events import EventType
 from litharness.domain.findings import Finding, Severity, Status
+from litharness.domain.generation import CompletionRequest, CompletionResult
 from litharness.domain.jobs import JobStatus
 from litharness.domain.revision import import_manuscript, node_version_id
 from litharness.domain.state import import_state
@@ -36,6 +38,7 @@ from litharness.domain.text import content_hash
 from litharness.providers.fake import FakeProvider
 from litharness.providers.registry import ProviderRegistry
 from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID, make_revision
+from tests.helpers import canon
 from tests.test_draft import PROSE, START, seeded
 
 RULE_ID = "character.name.rook.v0"
@@ -163,6 +166,57 @@ def test_a_repair_sees_the_complete_scene_plan_facts_and_other_evidence() -> Non
     assert "gate toll ten_coins" in request.prompt
     assert "The keeper named ten coins" in request.prompt
     assert request.schema is not None and "replacement" in request.schema["properties"]
+
+
+@pytest.mark.parametrize("future_key", ["s3", "0120"])
+def test_a_repair_does_not_receive_undated_parts_of_a_future_change(
+    store: SqliteStore, future_key: str,
+) -> None:
+    revision = make_revision()
+    store.commit_revision(
+        revision,
+        created_at="2026-08-14T00:00:00Z",
+        state_records=(
+            canon("gain", "type", "change", order_key=future_key),
+            canon("gain", "participant", object_ref="mara"),
+            canon("gain", "effect", 1, object_ref="step"),
+            canon("gain", "manifests_as", "The new step takes hold."),
+            canon("mara", "is_a", "Mara"),
+        ),
+    )
+    finding = replace(
+        _located("future-gain", Severity.MAJOR, revision),
+        message="The gain cannot change the established name of mara.",
+    )
+    store.record_findings(
+        BOOK_ID, BRANCH_ID, (finding,),
+        created_at="2026-08-14T00:00:00Z", revision_id=revision.revision_id,
+    )
+    job = repair_job_for(
+        finding, book_id=BOOK_ID, branch_id=BRANCH_ID, revision_id=revision.revision_id,
+        repair_depth=1,
+    )
+    assert job is not None
+    store.enqueue(job)
+    captured: list[CompletionRequest] = []
+
+    class CaptureProvider(FakeProvider):
+        def complete(self, request: CompletionRequest) -> CompletionResult:
+            captured.append(request)
+            return super().complete(request)
+
+    registry = ProviderRegistry(CaptureProvider(responses=['{"replacement": "Mara"}']))
+    conductor = Conductor(
+        store=store, holder="worker-a", project_id=PROJECT_ID, registry=registry,
+        handlers={REPAIR_FINDING: make_repair_handler(registry, store, PROJECT_ID)},
+    )
+
+    assert conductor.tick(START).outcome is TickOutcome.RAN_JOB
+    [request] = captured
+    assert "mara is_a Mara" in request.prompt
+    assert "gain participant" not in request.prompt
+    assert "gain effect" not in request.prompt
+    assert "The new step takes hold." not in request.prompt
 
 
 def test_accepted_draft_is_evaluated_repaired_and_verified(store: SqliteStore) -> None:

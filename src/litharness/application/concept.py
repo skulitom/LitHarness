@@ -1,48 +1,9 @@
-"""The concept: the book invented before its listing, one stage above where the pipeline began.
+"""Invent and retain one book concept; project the material each downstream role needs.
 
-New `concept` commands first invent a discovery treatment and develop the mechanical
-concept from it (stage-0 §243). Historical concepts remain readable; the earlier design
-and its limitations below explain that compatibility path, not the default invention task.
-
-**What was measured, and it is the first fault the settled-listing loop found in the listing
-itself** (`plan/serial-pilot-21.md` §5.4). Four draws under one listing gave the system its
-voice, the chapter its story, the narrator his and the listener theirs, and the fourth read's
-engagement half found no horizon a reader could feel: *everybody on Earth got a sheet*, said
-once, then a shed, a second monster that was the first one again, and the first grade of a climb
-whose length the page never states. Both anchors close their first chapter on a scale — a
-numbered universe; a multiverse and a herald — and ours closed on an appointment. The cause was
-upstream of every prompt the loop had touched: the listing's own horizon was *off nights for
-good*, and the world seed is shown the listing and nothing above it
-(`world_agent.render_seed_request`), so the world it builds is the world the listing sold.
-Nothing in the pipeline held a book-level idea — no turn, no horizon, no shape for the first
-arc, no debt opened on purpose — and the operator's question of the same day, whether the
-pipeline could invent a premise with a turn in it, had the answer *no*: it executed briefed
-premises and invented none.
-
-**So: one writer, one concept, drawn before the listing and never chosen among.** The concept
-is material and not a rule essay one level up (§154): every field names a thing a later stage
-puts to work. The listing is written from it (`overview.render_overview_request`), the seed is
-told what the world has to be able to hold (`world_agent.render_seed_request`), the outline
-plans the first arc against it (`outline.render_outline_request`), and its debts open the
-promise ledger before scene one (`new --concept`), which is the ledger the listing path never
-wrote to. Nothing here ranks (§61(5)): one concept per book, drawn once; a second draw is a
-second book.
-
-**Where it lives.** The concept is an unlocked `BOOK_PLAN` item. The seed and outline
-read it through `concept_of`. Once a scene plan exists, drafting receives that handoff and
-the author's original brief rather than the full proposal. The explicit no-outline control
-retains the concept in its intentions section. Future plans are not past events or
-permission to disclose a secret early. Concept-backed books require scene plans before
-drafting, even when their short beat sheets contain no repeated function labels.
-
-**Two systems, and what this house can and cannot print yet.** The operator's example premise
-puts one person under a second system after a turn, keeping some of the first's grants. The
-concept can say so, the seed is asked to declare both, and the drafting side reads the one
-system whose columns the printed line has (`extraction._printing_system`). What is not built is
-the swap itself: a book whose printed line changes systems mid-serial needs a sheet with a
-position, and `extraction.sheet_for` still abstains to the default on two declared sheets. A
-two-system book therefore opens after its turn, or holds the turn past the first arc, until that
-half exists; the ledger entry says so.
+Concepts are unlocked BOOK_PLAN intentions, including discovery, future actions and debts.
+Listing and world-building receive separate projections; outlines retain the complete plan.
+Once scenes are planned, drafting uses their handoffs and the original author brief.
+Legacy concept files remain readable. See the decision ledger for the invention history.
 """
 
 from __future__ import annotations
@@ -488,7 +449,7 @@ class Concept:
     # ------------------------------------------------------------- what each stage is told
 
     def render(self) -> str:
-        """The complete concept as a person reads it and as the world seed is shown it.
+        """The complete concept for inspection and planning.
 
         Plain labels, and none of this system's own machinery words in them
         (`house.MACHINERY_WORDS`): these labels originally also reached the listing writer.
@@ -578,10 +539,39 @@ class Concept:
                 )
         return "\n".join(lines)
 
-    def render_for_seed(self) -> str:
-        """Material under the listing in the seed prompt: what the world has to be able to hold."""
-        heading = "What the book is to become, which the world has to be able to hold:"
-        return f"{heading}\n{self.render()}"
+    def render_for_world(self) -> str:
+        """World-building material, without the fields that schedule the story.
+
+        The complete concept remains an intended BOOK_PLAN. Copying its future actions
+        into world declarations lets them return to planning and drafting as accepted
+        world rules. Project fields here; do not try to classify their prose at read time.
+        """
+        lines = ["World-building material (properties to define, not events to schedule):"]
+        if self.discovery is not None:
+            lines.append(f"The setting: {self.discovery.world}")
+        lines.extend(
+            (
+                f"The person's background: {self.person_before}",
+                f"The magical possibility to support: {self.exception}",
+                f"The system, {self.system.name}: {self.system.manner}",
+                f"Its appearance: {self.system.look}",
+                f"Its advancement span: {self.system.steps} steps. "
+                f"Strongest known: {self.system.strongest_known}",
+                f"What advancement enables: {self.system.pays}",
+                f"The world's danger: {self.threat.what}",
+            )
+        )
+        if self.turn.when == BEFORE_CHAPTER_ONE:
+            lines.append(f"Already happened before the opening: {self.turn.event}")
+        if self.second_system is not None:
+            lines.append(
+                f"Additional system to define, {self.second_system.name}: "
+                f"{self.second_system.manner}"
+            )
+            lines.append(
+                f"Capabilities transferable between systems: {self.second_system.kept}"
+            )
+        return "\n".join(lines)
 
     def for_outline(self) -> dict[str, Any]:
         """The complete concept, including what survives its turn, with the horizon view.

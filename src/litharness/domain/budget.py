@@ -46,10 +46,6 @@ HARNESS_TAX_TOKENS: dict[str, int] = {
 DEFAULT_TAX_TOKENS = 24_000
 
 
-class BudgetExceeded(Exception):
-    """A ceiling would be crossed. Raised before the call, never after."""
-
-
 @dataclass(frozen=True, slots=True)
 class BudgetPolicy:
     """Ceilings. `None` means unbounded on that axis, which must be chosen, not defaulted
@@ -179,7 +175,6 @@ def check(
 __all__ = [
     "DEFAULT_TAX_TOKENS",
     "HARNESS_TAX_TOKENS",
-    "BudgetExceeded",
     "BudgetPolicy",
     "BudgetVerdict",
     "Spend",

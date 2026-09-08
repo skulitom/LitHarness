@@ -68,8 +68,9 @@ Claude. Codex ignores user configuration and project documents; world and roster
 a restricted local command bridge with the same command allowances and no shell access.
 Codex reports token usage but no dollar cost, so use token and invocation limits to bound
 these runs. See the [comparison record](clean_start/CODEX_COMPARISON.md) before treating a
-provider change as a prose-quality fix. This adapter is experimental: the recorded full-engine
-attempt stopped during world setup, before producing a chapter.
+provider change as a prose-quality fix. This adapter is experimental: the recorded continuation
+completed Chapter 1 after a mechanical repair to its seeded world; fresh-world reliability
+has not yet been established.
 Set `LITHARNESS_CODEX_TRACE_DIR` to a local run directory to retain each submitted request
 and full provider response, including failed tool turns. This is useful for commands such
 as Architect that do not otherwise persist the complete transport exchange.
@@ -101,9 +102,13 @@ already carried but may not add one. An unusable response stops persistence.
 With `--out`, original invention and development remain in their traces and proposed edits in
 `concept-precision-trace.json`; no quality score or candidate ranking chooses an answer.
 
-The prepared discovery treatment is retained inside `concept.json` and reaches the listing,
-world seed and growth, and arc outlines. Scene drafting receives the planner's scene handoff
-instead of the complete treatment. Later arcs develop its
+The prepared discovery treatment is retained inside `concept.json` for the listing and arc
+outlines. World creation receives a separate projection of setting, background and mechanics;
+detailed opening actions, future turns, arc endings and promised answers stay with the planner.
+The supplied listing and original author brief still constrain the world. Chapter reconciliation
+reads the drafted chapter, author brief and stored world without replaying the original
+treatment. Scene drafting receives the planner's scene handoff instead of the
+complete treatment. Later arcs develop its
 possibilities from accepted history instead of replaying chapter one. `discovery-trace.json`
 records the first call independently of any exemplar shelf; `concept-trace-N.json` records
 each development attempt, including failures. A missing treatment or a reserved name in it

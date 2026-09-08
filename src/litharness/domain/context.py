@@ -648,6 +648,7 @@ def assemble(
     #    The order of these three filters does not matter to the result and does to the
     #    reason: a record dropped for POV is a different fact about the system than one
     #    dropped for being a proposal, and both are recorded as such.
+    change_anchors = worlds_mod.change_anchors(state_records)
     eligible = state_mod.eligible_records(
         state_records,
         cutoff=story_time_cutoff,
@@ -656,6 +657,7 @@ def assemble(
         moment=state_moment,
         logical_id=state_logical_id,
         offset=state_offset,
+        subject_anchors=change_anchors,
     )
     eligible_ids = {record.record_id for record in eligible}
     boundary = state_mod.StoryBoundary(
@@ -679,6 +681,8 @@ def assemble(
             # omission carries a reason at all.
             key = state_mod.order_key_of(record)
             reason = (
+                "scene-to-story coordinate unavailable; positioned fact withheld"
+                if boundary.cutoff is None else
                 f"position {key!r} is not in the {state_mod.key_space(boundary.cutoff)} "
                 f"key space this cutoff reads, so it is unplaceable here"
                 if key is not None
@@ -693,6 +697,14 @@ def assemble(
                     record.record_id,
                     record.record_id,
                     f"not visible to POV {pov_character_id or '(none named)'}",
+                )
+            )
+        elif record.subject in change_anchors:
+            omitted.append(
+                Omission(
+                    record.record_id,
+                    record.record_id,
+                    f"change {record.subject!r} is not established or visible at this boundary",
                 )
             )
     if project_state_changes:

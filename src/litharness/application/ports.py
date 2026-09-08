@@ -459,18 +459,6 @@ class OutlineStore(
     day's spend it is checked against."""
 
 
-class ConductorStore(
-    JobQueue,
-    DirectiveInbox,
-    DecisionRepository,
-    EventRepository,
-    OperationsRepository,
-    ExceptionRepository,
-    Protocol,
-):
-    pass
-
-
 class PlanningStore(
     JobQueue,
     JobReader,
@@ -862,7 +850,6 @@ class TextGenerator(Protocol):
 __all__ = [
     "ApplicationStore",
     "AudienceRepository",
-    "ConductorStore",
     "DossierStore",
     "DraftStore",
     "EvaluationStore",

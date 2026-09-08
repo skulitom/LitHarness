@@ -43,6 +43,7 @@ from litharness.domain.context import FACTS, RULES, assemble
 from litharness.domain.draft import is_draftable
 from litharness.domain.extraction import (
     PLANNED_POSITION_VERSION,
+    attested_position,
     extract_state,
     has_story_vocabulary,
     stated_position,
@@ -57,8 +58,9 @@ from litharness.domain.revision import (
     import_manuscript,
     new_book,
 )
-from litharness.domain.state import import_state, order_key_of
+from litharness.domain.state import StateMoment, import_state, order_key_of
 from tests.conftest import BOOK_ID, BRANCH_ID
+from tests.helpers import canon
 
 CREATED = "2026-08-22T00:00:00Z"
 
@@ -77,7 +79,7 @@ def _want(record_id: str, value: str, order_key: str, *, declared: bool = True) 
 
     `declared` is the switch the trap test flips: without
     `PLANNED_POSITION_VERSION` the record reads as a story position somebody else chose, and
-    everything downstream abstains. See `test_an_undeclared_dated_record_turns_the_cutoff_off`.
+    scene entry must withhold positioned facts rather than expose the whole future.
     """
     return lc.StateRecord(
         record_id=record_id,
@@ -264,26 +266,21 @@ def test_a_record_the_extractor_wrote_for_a_later_scene_does_not_reach_an_earlie
         )
 
 
-# -- what must not change -----------------------------------------------------------------------
+# -- unknown coordinates must not license future facts ------------------------------------------
 
 
 @pytest.mark.parametrize("fixture_id", ["mystery", "litrpg"])
-def test_a_book_whose_story_positions_somebody_else_chose_gets_no_cutoff(
+def test_imported_scene_coordinates_require_evidence_or_keep_only_unplaced_facts(
     store: SqliteStore, fixture_id: str
 ) -> None:
-    """The abstention, in the same cases and for the same reason as `stated_position`.
-
-    Both golden fixtures carry an imported snapshot at `fixture.v1`, and the mystery's scene 5
-    is an analepsis attested at `s1` — the measured case that makes an ordinal-derived cutoff
-    wrong. So every beat of both books abstains, and every packet is byte-identical to the one
-    the no-cutoff `packet_for` produced.
-    """
+    """Imported coordinates cannot be replaced with an invented ordinal mapping."""
     revision = _import_fixture(store, fixture_id)
     records = store.state_records(revision.book_id, revision.branch_id)
     assert has_story_vocabulary(records)
 
     for beat in beats_for(revision, template_for(revision)):
         assert stated_position(records, beat.story_order_key) is None
+        attested = attested_position(records, beat.logical_id)
         before = assemble(
             revision,
             beat.logical_id,
@@ -291,8 +288,16 @@ def test_a_book_whose_story_positions_somebody_else_chose_gets_no_cutoff(
             state_records=records,
             query_id=f"beat:{beat.logical_id}",
             project_state_changes=True,
+            state_moment=StateMoment.ENTERING,
+            story_time_cutoff=attested,
         )
-        assert packet_for(store, revision, beat).render() == before.render()
+        packet = packet_for(store, revision, beat)
+        assert packet.render() == before.render()
+        if attested is None:
+            assert not any(
+                packet.contains_ref(record.record_id)
+                for record in records if order_key_of(record) is not None
+            )
 
 
 def test_the_unplaced_ability_graph_survives_the_cutoff(store: SqliteStore) -> None:
@@ -341,19 +346,10 @@ def test_a_book_with_no_dated_records_at_all_is_unchanged(store: SqliteStore) ->
 # -- the trap ------------------------------------------------------------------------------------
 
 
-def test_an_undeclared_dated_record_turns_the_cutoff_off(store: SqliteStore) -> None:
-    """Pinned because it is silent, and because it is the reason `PLANNED_POSITION_VERSION`
-    exists.
-
-    A dated canon record with no declaration is, to `has_story_vocabulary`, a story position
-    somebody else chose — so `stated_position` abstains, the cutoff is `None`, and the leak
-    the seeding was for comes back with nothing in the log to say why. It also turns off §12
-    step 5 extraction for the whole book at the same moment, which is the larger half of the
-    damage; `test_extraction_survives_a_declared_seed_position` measures that half.
-
-    The default direction is deliberate — forgetting the declaration loses coverage rather
-    than minting a false order — and this test is what makes forgetting visible.
-    """
+def test_an_undeclared_coordinate_cannot_turn_abstention_into_future_state(
+    store: SqliteStore,
+) -> None:
+    """Unresolved timing withholds facts rather than exposing the book's entire future."""
     head = _book_zero(
         store,
         [
@@ -364,7 +360,27 @@ def test_an_undeclared_dated_record_turns_the_cutoff_off(store: SqliteStore) -> 
     records = store.state_records(BOOK_ID, BRANCH_ID)
     assert has_story_vocabulary(records) is True
     assert stated_position(records, "s1") is None
-    assert packet_for(store, head, _beat(head, 1), token_budget=16000).contains_ref("w5")
+    packet = packet_for(store, head, _beat(head, 1), token_budget=16000)
+    assert not packet.contains_ref("w5")
+    assert any("coordinate unavailable" in item.reason for item in packet.omitted)
+
+
+@pytest.mark.parametrize("future_key", ["s3", "0120"])
+def test_the_drafting_entry_point_withholds_unplaceable_change_components(
+    store: SqliteStore, future_key: str,
+) -> None:
+    records = [
+        canon("gain", "type", "change", order_key=future_key),
+        canon("gain", "participant", object_ref="mara"),
+        canon("gain", "effect", 1, object_ref="step"),
+        canon("gain", "manifests_as", "The new step takes hold."),
+        canon("mara", "wants", "find home"),
+    ]
+    head = _book_zero(store, records)
+    packet = packet_for(store, head, _beat(head, 1), token_budget=16000)
+    assert not any(packet.contains_ref(row.record_id) for row in records[:4])
+    assert "The new step takes hold." not in packet.render()
+    assert "mara wants find home" in packet.render()
 
 
 def test_extraction_survives_a_declared_seed_position() -> None:

@@ -564,9 +564,15 @@ def make_repair_handler(
         ]
         scene_ordinal = scene_ids.index(logical_id) + 1
         cutoff = state_mod.scene_cutoff(all_records, scene_ordinal)
+        # An unknown coordinate cannot license every positioned record as current.
+        source = (
+            all_records if cutoff is not None else
+            tuple(row for row in all_records if state_mod.order_key_of(row) is None)
+        )
         records = state_mod.eligible_records(
-            all_records,
+            source,
             cutoff=cutoff,
+            subject_anchors=worlds_mod.change_anchors(all_records),
             moment=(
                 state_mod.StateMoment.WITHIN
                 if cutoff is not None
