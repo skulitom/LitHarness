@@ -25708,3 +25708,43 @@ historical framing helper now handles already-replaced prompts; its cache still 
 different argv. A fresh run should establish containment before testing self-contained,
 positive author intent and changes to dossier/world-design ownership. Those are hypotheses,
 not licensed editorial mechanisms or a promise of consistently engaging chapters.
+
+## 246. Treatment ownership downstream; live diagnostic stopped (2026-09-08)
+
+The operator authorized trying the §245 direction. The prospectively frozen local protocol
+under `runs/diagnostics/author-ownership-20260908/` planned three context canaries followed by
+three first-result chapters: positive direction alone, the same direction with the institutional
+clause, and positive direction with the saved writer dossier. All requests and differences
+were frozen before dispatch. This was an isolated diagnostic, not a committed REGISTERED
+quality claim or a reader mechanism qualified to steer a book.
+
+**The first canary was refused.** The native Claude result identifies `reasoning_extraction`
+and `stop_reason: refusal` for a query about synthetic markers visible in context. The protocol
+stopped immediately: one subscription CLI invocation, no answered canary, no new chapter,
+no retry, no fallback, no new live arm. Raw envelope, argv, cwd, inputs, hashes and the stop
+are retained; `REPORT.md` distinguishes refusal from a containment verdict. The raw envelope
+records 371 primary-model tokens and additional auxiliary usage; the stage-spend wrapper's
+zero is not evidence of zero usage on this failed call. The earlier isolation correction
+therefore remains unverified live, and there is no prose result from the planned comparison.
+
+**Independent, operator-directed ownership change.** Code inspection confirms that after a
+discovery treatment chooses story material, mechanical concept development and Architect
+seed/grow requests each receive the writer's dossier again. Discovery-backed calls now use
+the supplied treatment without reinjecting those preferences. Original discovery and prose
+drafting retain their writer, and legacy paths without discovery keep their cast input.
+This changes future request assembly; it edits neither accepted dossiers nor book state.
+
+World seeding also loses its unconditional claim that a book is better when something prices
+or withholds advancement. The structural grant-count contract remains, with a distinction
+between declaring an ability, giving it to a character, and introducing it in chapter one.
+This removes an imposed narrative preference without adding any required setting, conflict
+or sequence of events. Discovery development advances to `writer.concept.discovery.v5`;
+Architect profiles advance to `architect.seed.v1` and `architect.grow.v1`.
+
+`test_a_supplied_treatment_owns_development_despite_different_writer_preferences` holds the
+treatment/brief fixed across the built-in cast and checks complete downstream request equality,
+continued writer participation in invention, legacy behavior, source preservation and tool
+permissions. `test_world_mechanics_do_not_require_institutional_conflict_or_early_grant_exposition`
+covers the mechanical/narrative distinction. Existing prompt-demand budgets are retained.
+These tests establish input boundaries, not improved reading or candidate preference; the
+quality effect remains untested and the stopped diagnostic cannot support it.

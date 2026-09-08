@@ -46,6 +46,12 @@ system builds institutions"*, and pilot 14's scheduled progression beats duly la
 paperwork ranks. `_SYSTEM` is the occupant, and the reason this is an addition rather than a
 subtraction is §156.1: the institutional lean is not in our text, so there is nothing to take
 out.
+
+**Current ownership boundary (§246).** Once a discovery treatment exists, it supplies story
+choices to seed and grow; those roles no longer receive the writer dossier again. Initial
+invention and prose drafting still use it. The historical statement above about no textual
+institutional lean is superseded: the seed's unconditional praise of pricing or withholding
+advancement is removed. System declarations also do not require early narrative exposition.
 """
 
 from __future__ import annotations
@@ -59,8 +65,8 @@ if TYPE_CHECKING:
     from litharness.application.concept import Concept
 
 #: Frozen profiles, one per job, so seeding a world and growing one are separable on the rows.
-SEED_PROFILE = "architect.seed.v0"
-GROW_PROFILE = "architect.grow.v0"
+SEED_PROFILE = "architect.seed.v1"
+GROW_PROFILE = "architect.grow.v1"
 
 #: The whole allowance: every world command except `accept`, one entry per subcommand, and the
 #: omission is the containment (§146.9 measured that the matcher enforces it; the module
@@ -166,14 +172,13 @@ _SYSTEM = (
     "columns and nothing else, because a sheet that prints other numbers is a position in no "
     "system and leaves the one you declared unfinished. The line the book prints when a "
     "standing changes may carry a second phrase, in the system's words, for a grant gained.\n"
-    "Whatever else is in the world may recognise where somebody has got to, price it or "
-    "withhold it, and the book is better when something does — but it reads the ladder rather "
-    "than owning it, and the one this book is about climbs the system's.\n"
     "Declare what the system grants, in what order and at what cost, each grant countable and "
     "named in short plain words with no digits in them; at least one of them needs another one "
     "first, or what you have declared is a list rather than a graph; and no fewer than five "
     "grants and no more than eight, because a printed line holds that many columns and a "
     "system with more is refused at acceptance.\n"
+    "Declaring a grant does not "
+    "give it to the viewpoint character or require its introduction in chapter one.\n"
     "Somewhere up that ladder the system puts a fork nobody takes twice: declare it, the two or "
     "three ways of taking it, which of the grants each way opens and which rung it opens at, "
     "and leave what any of them costs to the world. A way may say what it looks like "
@@ -252,7 +257,9 @@ def render_seed_request(
             )
     return CompletionRequest(
         prompt=prompt,
-        system=system_for(seed, writer),
+        # The treatment owns story choices once supplied. The dossier remains part of
+        # invention and prose writing, not another instruction to choose a different world.
+        system=system_for(seed, None if concept is not None and concept.discovery else writer),
         max_output_tokens=MAX_OUTPUT_TOKENS,
         profile=SEED_PROFILE,
         call_class="generation",
@@ -273,7 +280,7 @@ def render_grow_request(
         prompt += f"\n\n{concept.discovery.render()}"
     return CompletionRequest(
         prompt=prompt,
-        system=system_for(_GROW, writer),
+        system=system_for(_GROW, None if concept is not None and concept.discovery else writer),
         max_output_tokens=MAX_OUTPUT_TOKENS,
         profile=GROW_PROFILE,
         call_class="generation",

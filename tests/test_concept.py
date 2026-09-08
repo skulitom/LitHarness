@@ -609,6 +609,46 @@ def test_discovery_material_reaches_seed_grow_listing_and_later_arcs() -> None:
         assert not any("numbers must actually move" in rule for rule in parsed["rules"])
 
 
+def test_a_supplied_treatment_owns_development_despite_different_writer_preferences() -> None:
+    drawn = concept.Concept.from_payload({**_example(), "discovery": _discovery()})
+    assert drawn.discovery is not None
+    original = drawn.to_text()
+    brief = "Keep the gardener's pursuit of the sky reefs."
+    development = concept.render_concept_request(brief, scenes=6, discovery=drawn.discovery)
+    seed = world_agent.render_seed_request("listing", concept=drawn)
+    grow = world_agent.render_grow_request("chapter", logical_id="scene-1", concept=drawn)
+    for writer in writers_domain.CAST.values():
+        assert concept.render_concept_request(
+            brief, writer, scenes=6, discovery=drawn.discovery
+        ) == development
+        assert world_agent.render_seed_request("listing", writer, concept=drawn) == seed
+        assert world_agent.render_grow_request(
+            "chapter", logical_id="scene-1", writer=writer, concept=drawn
+        ) == grow
+        # The writer still participates in initial invention; no accepted dossier is edited.
+        assert discovery.render_request(brief, writer).system.startswith(writer.render())
+    assert brief in development.prompt
+    assert drawn.discovery.render() in development.prompt
+    assert drawn.to_text() == original
+    assert seed.allowed_tools == grow.allowed_tools == world_agent.ALLOWED_TOOLS
+    legacy = concept.Concept.from_payload(_example())
+    for prior in (None, legacy):
+        assert world_agent.render_seed_request("listing", WRITER, concept=prior).system.startswith(
+            WRITER.render()
+        )
+        assert world_agent.render_grow_request(
+            "chapter", logical_id="scene-1", writer=WRITER, concept=prior
+        ).system.startswith(WRITER.render())
+
+
+def test_world_mechanics_do_not_require_institutional_conflict_or_early_grant_exposition() -> None:
+    request = world_agent.render_seed_request("listing")
+    assert "price it or withhold it" not in request.system
+    assert "the book is better when" not in request.system
+    assert "no fewer than five grants and no more than eight" in request.system
+    assert "require its introduction in chapter one" in request.system
+
+
 def test_legacy_concepts_are_not_rewritten_and_bad_discovery_does_not_disappear() -> None:
     legacy = concept.Concept.from_payload(_example())
     assert legacy.discovery is None

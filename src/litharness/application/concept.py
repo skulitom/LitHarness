@@ -61,7 +61,7 @@ from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
 CONCEPT_PROFILE = "writer.concept.v0"
-DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v4"
+DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v5"
 
 #: The plan item id the concept is persisted under; one per book, like `plan-premise`.
 CONCEPT_PLAN_ID = "plan-concept"
@@ -735,7 +735,9 @@ def render_concept_request(
             "four questions with due_scene within the requested arc. Return only the "
             "schema fields; the original discovery treatment is retained separately."
         )
-        system = f"{writer.render()}\n\n{task}" if writer else task
+        # Discovery already made the creative choices. Mechanical development receives
+        # that treatment and the author brief, without reopening the dossier's preferences.
+        system = task
     return CompletionRequest(
         prompt=prompt,
         system=system,
