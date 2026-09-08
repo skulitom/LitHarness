@@ -19,6 +19,7 @@ import litharness_contracts as lc
 
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_mod
+from litharness.domain.names import display_name, normalise_subject
 from litharness.domain.sheet import MalformedSheet
 
 #: Named so a later change to the graph line's grammar is a visible version bump. Deliberately
@@ -35,6 +36,44 @@ LABEL_WORDS = 3
 LABEL_CHARS = 24
 #: What a printed verb phrase can be, between a name and a thing on one line.
 PHRASE_WORDS = 6
+
+
+def resolve_standing_rung(records: Sequence[lc.StateRecord], printed: str) -> str | None:
+    """Resolve only accepted names of declared rungs; unknown names retain proposal identity."""
+    normalised = normalise_subject(printed)
+    canon = [record for record in records if state_mod.is_canon(record)]
+    if normalised in {
+        endpoint for record in canon for endpoint in (record.subject, record.object_ref)
+        if endpoint
+    }:
+        return normalised
+    rungs = {
+        rung for criterion in worlds_mod.criteria(canon)
+        for rung in worlds_mod.ladder_of(canon, criterion)
+    }
+    aliases = {
+        record.subject for record in canon
+        if record.subject in rungs and record.predicate == "is_a"
+        and isinstance(record.value, str)
+        and normalise_subject(record.value) == normalised
+    }
+    if len(aliases) > 1:
+        return None
+    return next(iter(aliases)) if aliases else normalised
+
+
+def standing_rung_name(records: Sequence[lc.StateRecord], subject: str) -> str:
+    """Use a declared rung name only when the standing reader maps it to this same id."""
+    for record in records:
+        if (
+            record.subject == subject and record.predicate == "is_a"
+            and state_mod.is_canon(record) and isinstance(record.value, str)
+            and record.value.strip()
+            and resolve_standing_rung(records, record.value) == subject
+        ):
+            return record.value.strip()
+    return display_name(records, subject)
+
 
 class MalformedGraphLine(MalformedSheet):
     """A book declared a graph line this module cannot build a parser from.

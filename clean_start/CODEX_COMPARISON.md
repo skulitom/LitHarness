@@ -161,16 +161,69 @@ remain unchanged. Offline fixtures additionally exposed stdout-only rate-limit m
 and missing usage being reported as zero. Both contracts were corrected without further model
 calls. `transport-audit-fixes.md` distinguishes observed run defects from fixture reproductions.
 
+## Subsequent authorized continuation: complete Chapter 1
+
+After the operator asked to continue, `legacy-continuation/` registered a separate allowance
+and retained the original concept, listing, title and failed run history. It reconstructed
+the accepted world through ordinary declarations in a fresh store, recording seven
+`level` → `rank` key corrections, moving the existing first standing to the opening, and
+adding an opening snapshot with no learned abilities. It replayed 297 declarations;
+ordinary acceptance reproduced the two derived system records. No model reseeded the world
+or drew another premise. This is a mechanically repaired continuation, not an autonomous
+end-to-end success or a matched comparison against the clean-start stories.
+
+The continuation produced **Climbing the Hanging Sea**, 2,108 words, at 20:17:54 UTC on
+2026-09-08. Chapter SHA-256:
+`594eb60bf6f5c52f053803ba658fd232f38b432c3c771c567765e2cc501a473e`.
+Both scenes were accepted on their first drafting attempt. Eight provider calls, including
+four health probes, reported 86,772 input-plus-output tokens. Every usage receipt is
+available; there was no model fallback or revision call. The earlier known usage floor
+remains separate. Registration, exact repair, all calls, scene dossiers and complete
+reading notes are retained under `legacy-continuation/`.
+
+Reading the complete chapter found magical discovery, usable learning and an actively
+wanted destination. The earlier decorative exact counts and dialogue-delivery explanations
+were not prominent in this artifact; its numerical clutter mainly comes from supplied
+game displays. Weaknesses remain: the canvas experiment has little particular motivation,
+the long rescue becomes a sequence of magic lessons, harness damage appears after an
+earlier soundness check without an intervening event, and dialogue introduces a payment
+contrast the protagonist did not raise. These are located readings, not reader labels or
+proof of reliable quality. See `reading-notes.md` and `independent-reading.md`.
+
+The frozen writer request identifies an application-context problem independently of
+automatic project files: entire future scene plans are stored as accepted world rules
+and repeated in the writer's high-priority rule block. The explicit no-payment obligation
+also appears in the scene plan. The prompt still says Mara has no assigned opening level
+while supplying a current Level 1 display; the mechanical baseline repair did not resolve
+that narrative contradiction. The chapter delays the announcement until the first Lean,
+but passing world-readiness checks did not certify mutually consistent story instructions.
+
+The first draft copied `[Record] mara Personal level rung_one` directly from the supplied
+standing example. That example also ran into the length instruction on the same line.
+The subsequent software correction renders an unambiguous declared rung name and resolves
+it back to the original stored identifier, retaining exact-ID precedence and refusing
+ambiguous aliases. It separates the example from the next instruction. The original chapter
+remains unchanged; this correction has not been credited with improving its prose.
+
+`raw-accepted-audit.json` verifies both accepted scene hashes against the original responses
+after existing transformations: one em dash becomes a comma in scene one; scene two is
+unchanged. The library adds/formats scene breaks. The display leak and narrative defects
+were already in the original responses. All three manuscript revisions rebuild cleanly;
+ordinary shape and integrity passes did not detect the located reading problems.
+
 ## Provider decision
 
-The clean chapters demonstrate a promising change in experience, but they do not eliminate
+The Codex chapters demonstrate a promising change in experience, but they do not eliminate
 the counts, explanatory narration or continuity errors. Codex is available as an explicit
 provider choice; the condition for declaring the problem solved and disabling Claude has
 not been established. Keep the independent launcher and all recorded outputs available.
 Do not delete the existing system or saved books on the strength of this sample.
 
-Implementation validation: the repository handoff passed (lint, types, lock/diff checks,
-4,808 tests passed and 20 skipped, coverage, wheel build and corpus-history audit). All
-eleven standalone clean-start tests also passed. These verify the adapter and repository;
-they do not certify the generated worlds or chapters. The final handoff output is retained
-in the local comparison directory as `handoff-final.log`.
+Implementation validation: the adapter and subsequent standing-display correction passed
+the repository handoff (lint, types, lock/diff checks, full tests with coverage, wheel build
+and corpus-history audit). The standalone clean-start tests also passed for the adapter.
+The display correction's regressions cover declared-label round trips, ambiguous aliases,
+exact-ID precedence, character-kind isolation, unchanged non-standing identities and names
+containing an edge phrase. These verify software behavior, not generated prose quality.
+The earlier adapter output is `handoff-final.log`; the later correction's complete output
+is `legacy-continuation/handoff-final.log` in the local comparison directory.

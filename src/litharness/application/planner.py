@@ -642,7 +642,7 @@ def render_prompt(
                 system,
                 (
                     "\nWhen the standing changes, print the line in this form, as the book "
-                    f"prints it:\n{standing_line}"
+                    f"prints it:\n{standing_line}\n"
                 ),
                 "standing_line",
             )

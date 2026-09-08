@@ -24,8 +24,8 @@ from litharness.domain import gamesystem as gamesystem_mod
 from litharness.domain import house as house_mod
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_mod
-from litharness.domain.graphline import graph_line_for
-from litharness.domain.names import display_name
+from litharness.domain.graphline import graph_line_for, resolve_standing_rung, standing_rung_name
+from litharness.domain.names import display_name, normalise_subject
 from litharness.domain.sheet import (
     MAX_SUFFIX,
     SHEET_PREDICATE,
@@ -178,7 +178,17 @@ def standing_example(records: Sequence[lc.StateRecord], *, at: str | None = None
     if len(standing) != 1:
         return None
     [(_, rung)] = standing.items()
-    return line.render(subjects[0], phrase, rung)
+    rendered = line.render(
+        display_name(records, subjects[0]), phrase, standing_rung_name(records, rung)
+    )
+    parsed = line.pattern.fullmatch(rendered)
+    if (
+        parsed is None or parsed.group("phrase") != phrase
+        or normalise_subject(parsed.group("subject")) != subjects[0]
+        or resolve_standing_rung(records, parsed.group("object")) != rung
+    ):
+        return None
+    return rendered
 
 
 def change_example(

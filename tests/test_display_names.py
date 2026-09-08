@@ -37,10 +37,12 @@ from litharness.domain.extraction import (
     Sheet,
     SheetField,
     display_name,
+    extract_graph_facts,
     extract_state,
     humanise_subject,
     render_status_line,
     sheet_for,
+    standing_example,
     system_voice_example,
 )
 from tests.helpers import canon as _canon
@@ -215,3 +217,94 @@ def test_a_subject_id_that_cannot_round_trip_is_still_never_raw() -> None:
     assert humanise_subject("tam__cawl") == "Tam Cawl"
     assert display_name((), "_tam") == "Tam"
     assert "_" not in render_status_line("tam__cawl", _VALUE, sheet=_SHEET)
+
+
+def _named_standing(
+    *, subject: str = "mara", name: str = "Mara", phrase: str = "Personal level",
+) -> list[lc.StateRecord]:
+    return [
+        _canon(subject, "is_a", name),
+        _canon(subject, worlds.ENTITY_ROLE_PREDICATE, "protagonist"),
+        _canon("level", worlds.TYPE_PREDICATE, worlds.CRITERION),
+        _canon("level", worlds.COMPARATOR_PREDICATE, "ordinal"),
+        _canon("rung_one", worlds.PRECEDES_PREDICATE, "level", object_ref="rung_two"),
+        _canon("rung_two", worlds.PRECEDES_PREDICATE, "level", object_ref="rung_three"),
+        _canon("rung_one", "is_a", "One"),
+        _canon(subject, worlds.STANDS_AT_PREDICATE, "level", object_ref="rung_one"),
+        _canon("record", worlds.GRAPH_LINE_PREDICATE, {
+            "label": "Record", "edges": [
+                {"phrase": phrase, "predicate": "stands_at"},
+                {"phrase": "learns", "predicate": "can_do"},
+            ],
+        }),
+    ]
+
+
+def _read_standing(line: str, records: list[lc.StateRecord]) -> tuple[lc.StateRecord, ...]:
+    return extract_graph_facts(
+        line, known=[record for record in records if record.predicate != "stands_at"],
+        project_id="p", book_id="b", branch_id="br", logical_id="s2", version_id="v",
+        order_key="s2",
+    )
+
+
+def test_standing_uses_declared_rung_label_and_reads_back_to_original_ids() -> None:
+    records = _named_standing()
+    line = standing_example(records)
+    assert line == "[Record] Mara Personal level One"
+    [extracted] = _read_standing(line, records)
+    assert (extracted.subject, extracted.object_ref, extracted.value) == (
+        "mara", "rung_one", "level"
+    )
+    assert extracted.authority is lc.StateAuthority.ACCEPTED_CANON
+
+
+def test_ambiguous_standing_alias_abstains_and_renderer_falls_back_safely() -> None:
+    records = [*_named_standing(), _canon("rung_two", "is_a", "One")]
+    assert _read_standing("[Record] Mara Personal level One", records) == ()
+    line = standing_example(records)
+    assert line == "[Record] Mara Personal level Rung One"
+    [extracted] = _read_standing(line, records)
+    assert extracted.object_ref == "rung_one"
+    assert extracted.authority is lc.StateAuthority.ACCEPTED_CANON
+
+
+@pytest.mark.parametrize("existing, authority", [
+    (_canon("one", "is_a", "Someone else"), lc.StateAuthority.PROPOSED),
+    (_canon("rung_three", worlds.PRECEDES_PREDICATE, "level", object_ref="one"),
+     lc.StateAuthority.ACCEPTED_CANON),
+])
+def test_exact_accepted_id_precedes_a_different_rungs_display_alias(existing, authority) -> None:
+    records = [*_named_standing(), existing]
+    [extracted] = _read_standing("[Record] Mara Personal level One", records)
+    assert extracted.object_ref == "one"
+    assert extracted.authority is authority
+    assert standing_example(records) == "[Record] Mara Personal level Rung One"
+
+
+def test_proposed_name_is_not_a_graph_endpoint_alias() -> None:
+    records = [record for record in _named_standing()
+               if not (record.subject == "rung_one" and record.predicate == "is_a")]
+    records.append(worlds.world_record("rung_one", "is_a", value="One"))
+    [extracted] = _read_standing("[Record] Mara Personal level One", records)
+    assert extracted.object_ref == "one" and extracted.authority is lc.StateAuthority.PROPOSED
+    assert standing_example(records) == "[Record] Mara Personal level Rung One"
+
+
+def test_a_character_kind_does_not_resolve_a_new_graph_subject_to_that_character() -> None:
+    records = _named_standing(subject="mira_kell", name="mender")
+    [extracted] = _read_standing("[Record] Mender Personal level One", records)
+    assert extracted.subject == "mender" and extracted.object_ref == "rung_one"
+    assert extracted.authority is lc.StateAuthority.PROPOSED
+
+
+def test_non_standing_graph_targets_keep_their_original_normalized_identity() -> None:
+    [extracted] = _read_standing("[Record] Mara learns One", _named_standing())
+    assert extracted.object_ref == "one" and extracted.authority is lc.StateAuthority.PROPOSED
+
+
+def test_standing_example_abstains_when_a_phrase_inside_the_name_splits_the_line() -> None:
+    records = _named_standing(
+        subject="keeper_of_embers", name="Keeper of Embers", phrase="of",
+    )
+    assert standing_example(records) is None

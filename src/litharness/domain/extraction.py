@@ -96,6 +96,7 @@ from litharness.domain.graphline import (
     graph_line_fault,
     graph_line_for,
     parse_graph_line,
+    resolve_standing_rung,
 )
 from litharness.domain.moves import (
     Movable,
@@ -648,7 +649,11 @@ def extract_graph_facts(
         if predicate is None:  # pragma: no cover - the alternation cannot produce one
             continue
         subject = normalise_subject(match.group("subject"))
-        target = normalise_subject(match.group("object"))
+        target = (
+            resolve_standing_rung(known, match.group("object"))
+            if predicate == worlds_mod.STANDS_AT_PREDICATE
+            else normalise_subject(match.group("object"))
+        )
         if not subject or not target:
             continue
         key = (subject, predicate, target)

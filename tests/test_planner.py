@@ -2162,10 +2162,12 @@ def test_the_writer_is_handed_the_next_rung_and_the_line_the_book_prints(
         packet=packet,
         standing=standing_target(records, at=beat.story_order_key),
         standing_line=standing_example(records, at=beat.story_order_key),
+        target_words=900,
     )
     assert "The book's plan has the standing reaching this later on:" in system
     assert "Move it toward that in this scene where the events warrant it" in system
-    assert "[ASSAY] rook now stands at third_seal" in system
+    assert "[ASSAY] Rook now stands at Third Seal" in system.splitlines()
+    assert "[ASSAY] Rook now stands at Third Seal\n Write approximately 900 words." in system
     # A filled line, never a form with braces: the measurement `system_voice_example` records.
     assert "{" not in system.split("print the line in this form")[-1]
 
