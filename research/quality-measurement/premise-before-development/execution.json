@@ -72,11 +72,11 @@
     },
     {
       "path": "runs/diagnostics/premise-before-development-20260908/artifacts.json",
-      "sha256": "3c208902a5fe990f0e791755811606256c3607e34676efb1005aa36331c9a30e"
+      "sha256": "a3641a09ca55232112641b5e500810bf8a63c827a215f116975ac8cb9af21642"
     },
     {
       "path": "runs/diagnostics/premise-before-development-20260908/comparison.html",
-      "sha256": "8587176c61c4a3dbd9f4306fa9e6467c34d34d827b6977d6a76e3b528d6acaee"
+      "sha256": "288e771cb30d2c9d64ca144847c897573c7b290fd8a0abcc010d2cbdd39c24e1"
     },
     {
       "path": "runs/diagnostics/premise-before-development-20260908/current/development/response.json",
@@ -120,5 +120,12 @@
     "experimental runner omitted the production reserved-name check; the premise-first trajectory would be stopped after discovery",
     "control treatment inspected before its final listing",
     "plain-text file saving normalizes trailing whitespace and final newline"
-  ]
+  ],
+  "handoff": {
+    "exit_code": 0,
+    "passed": 4685,
+    "skipped": 20,
+    "log": "runs/diagnostics/premise-before-development-20260908/handoff.log",
+    "sha256": "5185f3b1fa91ae2bd980b71c496a766af257e0ab8695f5308b4e5bb44d0f29d9"
+  }
 }
