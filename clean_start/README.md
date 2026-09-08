@@ -1,0 +1,44 @@
+# Clean start
+
+A standalone first-chapter generator. Python 3.11+, standard library only, and a native
+Claude Code installation signed in with a subscription. Nothing imports the old engine.
+
+[First-run record](FIRST_RUN.md): the initial complete chapter still exhibits the reported
+problems. This prototype establishes a baseline, not a demonstrated quality fix.
+
+```powershell
+python clean_start/chapter.py --out runs/clean-start-first
+```
+
+The default brief asks for a fresh magical-adventure LitRPG for Royal Road readers.
+Use `--brief-file path/to/brief.txt` to supply another author brief. The code contains no
+story, premise, writer persona, scene outline, example prose or rules about numbers.
+
+One new, tool-free Claude session receives a short replacement system prompt and the brief.
+It runs in an empty temporary directory with `--safe-mode`. Only normal operating-system
+and connection environment settings survive. Before generation, the CLI must report a
+`claude.ai` login. No API client, API credentials, fallback model, application retry,
+critic, candidate selection or revision pass is used. Managed Claude policies can still
+apply; this is not a claim to remove the model's training or every provider-side instruction.
+
+The first response is the experiment. The runner saves its exact request before starting,
+then the raw response, errors, completion metadata and unchanged chapter. Existing output
+directories are refused. A failed call stays failed; partial output is retained. `--dry-run`
+records a request without authenticating or generating. A finished response is not proof
+of a good chapter: refusals or other unsuitable text can still be returned by a model.
+
+```powershell
+python -m unittest discover -s clean_start/tests -v
+```
+
+These small tests cover transport and preservation, not prose quality. Read the complete
+chapter as a chapter: what draws attention, whether the action makes sense, whether magic
+and progression create an adventure, and whether the prose keeps interrupting itself to
+explain. Record concrete passages and limitations alongside the output. Do not edit the
+first response or silently generate until a preferred result appears.
+
+This first experiment tests the removal of the accumulated pipeline as a bundle. It does
+not isolate an individual cause or establish Royal Road appeal or serial endurance. The
+next architecture decision follows reading the result. Before removing the legacy system,
+preserve access to saved books and protect local state and concurrent changes. Git history
+can retain retired source; it need not be copied into a second archive tree.

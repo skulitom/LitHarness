@@ -4,6 +4,10 @@
 
 # LitHarness
 
+**Clean-start prototype:** [Generate a fresh Chapter 1 directly from an author brief](clean_start/README.md),
+using the Claude subscription with no legacy planning or drafting pipeline. This is an isolated
+experiment; the existing book engine and saved books remain available below.
+
 [![CI](https://github.com/skulitom/LitHarness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/skulitom/LitHarness/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
