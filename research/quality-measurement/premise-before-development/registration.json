@@ -1,0 +1,21 @@
+{
+  "schema": "litharness.generation-pilot-registration.v1",
+  "base_commit": "80d945379a1c03d3db02af3aa057f6cb219b2cbb",
+  "artifacts": [
+    {
+      "path": "research/quality-measurement/premise-before-development/RUNBOOK.md",
+      "sha256": "cc60d71e5a5b9556f4c0289b8f5b3388b06be81d96f41c1e1ebeba8064e2f71c"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/run.py",
+      "sha256": "7f01fca6adbd6084dfd475befb3e9e2538e907409363285d6386ddb247da1554"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/dry-run/validation.json",
+      "sha256": "1c32a74c07561b21eb48a0859a14dadfbbc8b2716206b669bb58fddaec198ccf"
+    }
+  ],
+  "generation_calls_before_registration": 0,
+  "quality_mechanism": false,
+  "automatic_production_adoption": false
+}
