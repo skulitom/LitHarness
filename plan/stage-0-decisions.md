@@ -17370,15 +17370,18 @@ furniture ask has not already asked for by name.
 printed line, which is the surface the operator's policy leaves whole, and narrowing it would
 delete aggregate columns from the artifact canon is read back from. It stays as §161 left it.
 
-Three tests in `tests/test_page_contract.py`:
-`test_the_licence_is_what_the_system_counts_in_a_person` holds the object and asserts the
-included side was *not* written down as an inventory;
-`test_the_furniture_rides_inside_the_sentence_and_buys_no_demand` holds the clause to one demand
-with the exemption inside it; and
-`test_no_word_of_the_chapter_under_read_became_prompt_text` is §97.1 made mechanical over the
-assembled scene system, the house floor and both beats.
-`test_exactness_is_licensed_to_the_systems_own_count_and_not_the_worlds` is corrected in place,
-its name kept, and now asserts both superseded forms absent.
+Historical test summary, visibly amended 2026-09-08 to retire the superseded citations:
+the scope tests in `tests/test_page_contract.py` held the personal-system restriction and
+its exemption for the printed line. Those tests were replaced under §244 rather than kept
+as assertions about a rule the product no longer uses. The retained
+`test_no_word_of_the_chapter_under_read_became_prompt_text` checks §97.1 over the assembled
+scene system, house floor and both beats.
+
+**2026-09-08 amendment (§244):** the restriction above is superseded by the operator's
+causal precision policy. The historical scope tests were replaced by
+`test_narrated_precision_has_a_causal_purpose_not_a_system_only_ban`,
+`test_omitting_an_incidental_quantity_does_not_license_changing_canon`, and
+`test_required_system_values_and_arithmetic_stay_exact`. The no-harvested-text test remains.
 
 ### 166.3 The included side is an address, never an inventory
 
@@ -25477,3 +25480,184 @@ concept preserves the original discovery and opening and has no reserved-name co
 hashes and usage are in its `validation.json`. This validates the revised transport and
 preservation path only. Incidental exact quantities remain conspicuous in the treatment;
 the operator explicitly requested a follow-up fix for that issue before handoff.
+
+## 244. Incidental precision is addressed before story material is preserved
+
+2026-09-08. The operator explicitly requested a fix for conspicuous exact counts, following
+the discovery smokes in §243. Their traces locate a coverage gap: discovery and concept
+development did not receive the house numbers rule, while the writer later received their
+exact quantities as source material. The scene rule itself allowed narrated numbers only for
+personal system values, a blanket restriction that also reaches useful causal quantities.
+This is an implementation diagnosis and author direction, not a qualified quality mechanism.
+
+`house.QUANTITY_DETAIL` replaces that rule's two sentences and numbered examples. It asks
+against incidental precision and against creating a calculation or countdown to justify it;
+narrated exactness must affect choice or action, required system values and arithmetic remain
+exact, and omission does not change established facts. Discovery and concept development
+receive the same two sentences before invention; their request profiles advance to v3.
+The fantasy-intent payload version remains v2 because that direction has not changed.
+World seed, growth, outline and drafting already receive the house floor. No extra editor,
+number quota, regex deletion, rounding or candidate ranking is introduced. Existing accepted
+prose and numeric state are untouched. The outline policy digest includes the quantity rule.
+
+`tests/test_concept.py` checks the shared rule at the actual generation boundaries;
+`tests/test_page_contract.py` checks its scope and preservation of the printed system line.
+The house prompt ceiling is unchanged; the two floor-free concept stages each gain exactly
+the two shared sentences. System prompt fixtures change while context bytes remain fixed.
+These tests establish delivery and mechanical integrity, not that models obey the prose rule.
+
+**Prospective one-call probe.** Under `runs/discovery-precision-20260908/`, repeat the default
+discovery request from `runs/magical-discovery-native-20260908/discovery-trace.json` with only
+the shared precision instruction inserted and the profile advanced. Use tanaka, empty brief,
+third person, native structured output, no exemplars, subscription authentication and a
+one-invocation ceiling. Assert the request difference before dispatch; retain raw output,
+usage, code diff and hashes. Read the first returned treatment for located residuals without
+a number-density target, quality score or selection. Do not draft a chapter or modify the
+stopped volume. A single new sample cannot establish a general improvement in reader interest.
+
+**First precision probe and visible revision.** The v3 request parsed on its first invocation
+and had no reserved-name collision, but still invented an exact shift length, history length
+and count of attempts with no stated need for those exact values. The response and 20,160
+recorded tokens remain in the registered folder. This is a located residual, not a measured
+effect size or a quality label. The instruction has been revised to put relative scale and
+duration first, reserving narrated precision for a value someone must compare, spend or act
+against, or a required system display. It explicitly separates a plan's quantities from the
+narrator's obligation to say them. The same protection of established values and arithmetic
+remains; the request profiles advance to v4, and the two-sentence footprint is unchanged.
+
+**Second precision probe, fixed before dispatch.** Repeat the same one-call procedure under
+`runs/discovery-precision-relative-20260908/`. Its comparator remains the original native
+discovery request, with only the revised shared instruction and profile changed. Retain the
+v3 failure and this first new response regardless of whether incidental precision remains.
+The same subscription, no-exemplar, budget, no-selection and no-chapter boundaries apply.
+
+**Transport amendment before dispatch.** The operator subsequently requested `--bare`, then
+explicitly chose `--safe-mode` when installed CLI help and official authentication docs
+confirmed bare mode disables subscription OAuth. Production now always passes safe mode,
+preserving tool allowances and subscription login while suppressing customizations. The
+second precision probe therefore changes transport as well as the instruction; its request
+text difference remains checked, but any result cannot be attributed to the wording alone.
+The v3 probe and the preceding native smoke used the earlier transport. No API credentials
+are introduced, and no live call is dispatched under the superseded mode requirement.
+
+The full checks also exposed a test bug: the harvested-word guard matched `dent` inside
+`incidental`. It now checks whole words, preserving the original exclusion without treating
+an unrelated word as borrowed text. Historical references to retired scope tests are visibly
+amended above so the evidence-reference audit continues to resolve every current citation.
+
+**Second precision probe: prompt instructions remain insufficient.** The v4/safe-mode call
+parsed, used the Max subscription, and passed the retained command-line check, but its source
+still contains exact ordinary distances, historical durations and work schedules. Its full
+response and 11,942 recorded tokens are retained. The administrative framing also remains a
+located concern. Neither this result nor the previous probe licenses a claim that prose is
+fixed. The context-isolation request itself is implemented and works with subscription auth.
+
+**A scoped source edit instead of another invention prompt.** Discovery material containing a
+numeric expression now receives one author-directed line edit before its preparation boundary.
+The response is a list of field/before/after replacements, not a score, ranking, critic report
+or new treatment. Code applies only unique, non-overlapping, single-line phrases at most 120
+characters long; the source phrase must contain a complete quantity and the replacement none.
+Bracketed displays are protected. The editor is instructed to retain exact game amounts and
+causally used values; the mechanical checks do not establish that semantic judgment. Invalid
+edits stop before development, and all calls share the existing quota path. No numeric
+expression skips this otherwise pointless extra call; that presence check is not a quality
+metric. The prepared treatment is what later stages preserve, while `--out` retains the raw
+treatment and edit proposal separately. Accepted manuscript and state are never edited here.
+
+This visibly supersedes §244's earlier no-extra-editor implementation description. The role
+is exposed by `prompts --role discovery-precision`, has a bounded prompt footprint and native
+schema, and `tests/test_discovery_precision.py` exercises exact application, ambiguous and
+partial matches, overlaps, system-line protection, preparation/persistence and quota failure.
+No extra agent performs candidate selection or reader judgment.
+
+**Prospective edit probe.** Under `runs/discovery-precision-edit-20260908/`, call this edit role
+once on the entire retained v4 treatment. Use native schemas, safe mode and the subscription
+with the same one-invocation ceiling. Retain the source hash, request, response, raw envelope,
+actual argv, usage and code diff, then apply its first returned edits or record their refusal.
+Inspect the replacements and prepared treatment; do not redraw, rank, publish or draft a
+chapter. This checks a targeted transformation on a known defect source, not generalization
+or reader interest.
+
+**Edit probe result and validator correction.** The first response proposed 14 local edits,
+including dispensable distances, work schedules and historical durations. Initial application
+refused because the locator recognized explicit number words but not article/unit phrases
+such as `a mile` and `an hour`. The locator now recognizes standard measured-unit expressions;
+tests also protect signed/compound values, inline bracketed displays, and reserved names.
+The same saved response, without another model call or selection, then applied all 14 edits.
+In this artifact the game amounts written with digits were retained unchanged. Raw response,
+initial refusal and `validation-reapplied.json` are all retained; response SHA-256 is
+`851f17b13bf7c90c2ea6567ef8b1dd3f8555e398880181b7b59d6c5eb8f80664`.
+This is a successful scoped transformation on one treatment, not proof that every unnecessary
+quantity is removed or that any chapter meets a reader-interest bar. The source's administrative
+framing and explanatory narration remain concerns to inspect in actual chapter generation.
+
+**Final integrated preparation smoke, registered before dispatch.** Run one fresh default
+`concept` under `runs/discovery-prepared-native-20260908/`, with the empty brief, tanaka from
+the same roster, third person and a 24-scene arc. Use safe mode, native schemas, subscription
+auth, no exemplars, and a five-invocation ceiling (discovery, conditional edit, at most three
+mechanical attempts). Retain the first result or failure and all intermediate traces. Check
+that the saved treatment equals applying the recorded edits to the original and that its
+opening is retained in the arc. Read for residuals but do not select or rank another result.
+No chapter or stopped-volume mutation is part of this integration check.
+
+**Integrated result and same-source continuation.** Discovery and precision editing both
+returned native JSON, using 22,904 recorded tokens across two subscription calls. Application
+stopped because the locator did not recognize an ordinal in a valid proposed phrase edit.
+The original failure, source and eight-edit response remain in the registered directory;
+no concept was saved. Generic spelled and digit ordinals now join the quantity syntax,
+with complete-span protection tested by
+`test_ordinal_quantities_can_be_replaced_only_as_complete_spans`. This is another validator
+correction, not a successful fresh end-to-end run or a quality finding.
+
+Continue this same run under its `continuation/` child directory by replaying the two saved
+responses after asserting unchanged requests, then allowing at most one new mechanical
+development call through the ordinary subscription/quota path. Retain the original database
+usage and failure files. Reapplication makes no new discovery or editor call and selects no
+candidate. Check prepared-source and opening preservation if development succeeds; record
+failure otherwise. The source still uses occupational and payment framing, so even a
+successful continuation cannot certify the requested fantasy experience.
+
+The edit boundary also rejects carriage-return line breaks and any partial quantity at
+either edge of a replacement, even when that replacement contains another complete quantity.
+These are scope checks, not an expanded narrative policy. The earlier fourteen-edit response
+still applies unchanged under the stricter validator, without another model invocation.
+
+**Continuation success exposed an ordering failure.** The same-source continuation completed
+in one new subscription call (39,031 recorded tokens), with native JSON, no reserved names,
+and exact prepared-source/opening preservation. However, its other prose fields invented
+new incidental ages, distances and durations after the edit. The success is limited to
+transport and persistence; editing discovery alone was too early to cover concept invention.
+The response, validation and hashes remain under the registered continuation directory.
+
+**Final preparation boundary.** One quantity pass now runs after mechanical development,
+covering the whole concept's prose and the retained discovery together. This replaces the
+earlier placement; it does not add another pass. The shared local-edit implementation lives
+in `application/precision.py`. Field addresses come from the actual concept; structural
+numeric values, system names, version and timing enums are read-only context. The opening
+has one editable address in discovery, and its arc alias is synchronized afterward. All
+other bytes outside accepted local replacements remain unchanged. Invalid edits stop before
+persistence. `concept-precision-trace.json` retains the proposal alongside original discovery
+and development traces; the operator role is now `concept-precision` with a twelve-sentence
+ceiling including protection for scene positions. This visibly supersedes the earlier role
+name and stage ordering in this entry. Regression tests exercise new quantities introduced
+in development, read-only structure, nested debt fields, alias consistency and quota refusal.
+
+**Prospective complete-concept edit check.** Under
+`runs/concept-precision-boundary-20260908/`, run the final edit role once on the entire retained
+continuation concept. Use safe mode, native JSON and verified subscription authentication;
+retain source/request/response hashes, raw envelope, usage and first result or refusal.
+Apply and inspect its edits without redrawing or selecting another response. This is a
+fixed-artifact transformation check, not a fresh end-to-end concept or chapter generation.
+
+**Complete-concept edit result.** The first response applied twelve replacements across
+person/background, system history, threat, turn, middle and a debt's prose. It reduced
+incidental ages, distances, durations and a success ratio; structured values and the opening
+alias remained unchanged, and digit-written game amounts were retained. The final validator
+reproduces the saved prepared concept exactly. One verified subscription call used 40,865
+recorded tokens; the response trace SHA-256 is
+`96e41558e961a495b951848912834e8f3957f9d46499089defba4187036d3671`.
+This supports the located transformation and catches the earlier stage-order defect. It
+does not establish general recall of unnecessary quantities, prevent reinvention in later
+world/outline/drafting calls, or certify a chapter's reading experience. Occupational framing
+and explanatory narration remain unresolved; the shared instruction alone is not evidence
+that downstream generation will comply.

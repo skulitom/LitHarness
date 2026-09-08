@@ -240,6 +240,7 @@ def test_claude_argv_carries_every_mandatory_flag() -> None:
     ClaudeCodeProvider(runner=runner).complete(CompletionRequest(prompt="x"))
     argv = " ".join(runner.argv)  # type: ignore[attr-defined]
     assert "--output-format json" in argv
+    assert "--safe-mode" in argv, "generation must not inherit user or project customizations"
     assert "--allowed-tools" in argv, "a tool-enabled agent could mutate canon directly"
     assert "--strict-mcp-config" in argv, "inherited MCP servers break reproducibility"
     assert '{"mcpServers":{}}' in argv
@@ -266,6 +267,7 @@ def test_claude_empty_allowance_removes_tools_without_rewriting_agent_permission
     ClaudeCodeProvider(runner=runner).complete(
         CompletionRequest(prompt="x", allowed_tools=allowance)
     )
+    assert "--safe-mode" in runner.argv  # type: ignore[attr-defined]
     argv = runner.argv  # type: ignore[attr-defined]
     assert argv[argv.index("--allowed-tools") + 1] == ",".join(allowance)
     if allowance:

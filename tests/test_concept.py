@@ -416,7 +416,7 @@ def test_an_unparsed_concept_answer_spends_an_attempt_and_the_next_draw_is_kept(
     line; the loop is now the retry, and the answer's shape is on stderr for the next one."""
     from litharness import cli
 
-    call = _scripted(_discovery(), None, _example())
+    call = _scripted(_discovery(), None, _example(), {"edits": []})
     monkeypatch.setattr(cli, "_completion_call", call)
     db = tmp_path / "book.db"
     out = tmp_path / "concept"
@@ -427,7 +427,7 @@ def test_an_unparsed_concept_answer_spends_an_attempt_and_the_next_draw_is_kept(
     err = capsys.readouterr().err
     assert "came back unparsed" in err and "3999 output tokens" in err
     assert "Sure, here is" in err, "the answer's first words are on stderr"
-    assert len(call.seen) == 3  # type: ignore[attr-defined]
+    assert len(call.seen) == 4  # type: ignore[attr-defined]
     assert (out / "concept.json").exists()
     failed = json.loads((out / "concept-trace-1.json").read_text())
     succeeded = json.loads((out / "concept-trace-2.json").read_text())
@@ -470,7 +470,7 @@ def test_discovery_precedes_mechanics_and_survives_cli_persistence(
 
     # A second-stage answer tries to replace the treatment; the first stage owns it.
     answer = {**_example(), "discovery": dict.fromkeys(_discovery(), "replacement")}
-    call = _scripted(_discovery(), answer)
+    call = _scripted(_discovery(), answer, {"edits": []})
     monkeypatch.setattr(cli, "_completion_call", call)
     db, out = tmp_path / "book.db", tmp_path / "concept"
     assert main(["--database", str(db), "init"]) == EXIT_OK
@@ -490,10 +490,11 @@ def test_discovery_precedes_mechanics_and_survives_cli_persistence(
         )
         == EXIT_OK
     )
-    first, second = call.seen  # type: ignore[attr-defined]
+    first, second, preparation = call.seen  # type: ignore[attr-defined]
     assert first.profile == discovery.PROFILE
     assert first.schema is discovery.SCHEMA
     assert second.profile == concept.DISCOVERY_CONCEPT_PROFILE
+    assert preparation.profile == concept.precision.PROFILE
     assert str(_discovery()["world"]) in second.prompt
     assert "A gardener explores the sky." in first.prompt
     retained = concept.Concept.from_text((out / "concept.json").read_text(encoding="utf-8"))
@@ -574,6 +575,13 @@ def test_discovery_material_reaches_seed_grow_listing_and_later_arcs() -> None:
     material = drawn.discovery.render()
     assert material in drawn.render_for_listing()
     assert material in world_agent.render_seed_request("listing", concept=drawn).prompt
+    for request in (
+        discovery.render_request(""),
+        concept.render_concept_request("", scenes=6, discovery=drawn.discovery),
+        world_agent.render_seed_request("listing", concept=drawn),
+        world_agent.render_grow_request("chapter", logical_id="scene-1", concept=drawn),
+    ):
+        assert request.system.count(house.QUANTITY_DETAIL) == 1
     assert (
         material
         in world_agent.render_grow_request("chapter", logical_id="scene-1", concept=drawn).prompt
@@ -595,6 +603,7 @@ def test_discovery_material_reaches_seed_grow_listing_and_later_arcs() -> None:
             seed={"level": 1},
         )
         parsed = json.loads(request.prompt)
+        assert request.system.count(house.QUANTITY_DETAIL) == 1
         assert parsed["book_concept"]["discovery"] == drawn.discovery.to_jsonable()
         assert concept.DISCOVERY_ARC_RULE in parsed["rules"]
         assert not any("numbers must actually move" in rule for rule in parsed["rules"])

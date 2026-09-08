@@ -53,14 +53,15 @@ from typing import Any
 
 import litharness_contracts as lc
 
+from litharness.application import precision
 from litharness.application.discovery import Discovery
 from litharness.application.overview import FIRST_PERSON_ASK
-from litharness.domain import schema_words
+from litharness.domain import house, schema_words
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
 CONCEPT_PROFILE = "writer.concept.v0"
-DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v2"
+DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v4"
 
 #: The plan item id the concept is persisted under; one per book, like `plan-premise`.
 CONCEPT_PLAN_ID = "plan-concept"
@@ -374,6 +375,48 @@ class Concept:
 
     # ------------------------------------------------------------------ writing one down
 
+    def precision_material(self) -> tuple[dict[str, str], dict[str, Any]]:
+        """Editable prose and read-only structure, with one address for the opening."""
+        fields: dict[str, str] = {}
+        protected: dict[str, Any] = {}
+        fixed = {"system.name", "second_system.name", "turn.when", "discovery.version"}
+        if self.discovery is not None:
+            fixed.add("first_arc.opens")
+
+        def visit(value: Any, path: str) -> None:
+            if isinstance(value, dict):
+                for key, child in value.items():
+                    visit(child, f"{path}.{key}" if path else key)
+            elif isinstance(value, list):
+                for index, child in enumerate(value):
+                    visit(child, f"{path}.{index}")
+            elif isinstance(value, str) and path not in fixed:
+                fields[path] = value
+            else:
+                protected[path] = value
+
+        visit(self.to_jsonable(), "")
+        return fields, protected
+
+    def has_quantities(self) -> bool:
+        fields, _ = self.precision_material()
+        return precision.has_quantities(fields)
+
+    def with_precision_edits(self, edits: Mapping[str, Any]) -> Concept:
+        """Prepare all invented prose after development; never edit structural values."""
+        fields, _ = self.precision_material()
+        prepared = precision.apply_edits(fields, edits)
+        payload = self.to_jsonable()
+        for path, text in prepared.items():
+            parts = path.split(".")
+            parent: Any = payload
+            for part in parts[:-1]:
+                parent = parent[int(part)] if isinstance(parent, list) else parent[part]
+            parent[parts[-1]] = text
+        if self.discovery is not None:
+            payload["first_arc"]["opens"] = payload["discovery"]["opening"]
+        return self.from_payload(payload)
+
     def to_jsonable(self) -> dict[str, Any]:
         return {
             **({"discovery": self.discovery.to_jsonable()} if self.discovery else {}),
@@ -673,6 +716,7 @@ def render_concept_request(
             "Develop the supplied discovery treatment into the requested book concept. "
             "Preserve its magical encounter, character pursuit and growth direction while "
             "making their mechanics coherent.\n"
+            f"{house.QUANTITY_DETAIL}\n"
             "Use person_before and want for this character; exception for their distinctive "
             "magical advantage, which need not be exclusive in the universe; first_use for "
             "their effective use of it in chapter one.\n"

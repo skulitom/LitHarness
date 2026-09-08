@@ -1028,6 +1028,7 @@ def _policy_digest() -> str:
             "schema": OUTLINE_SCHEMA,
             "concept_planning_version": 3,
             "discovery_rule": concept_mod.DISCOVERY_ARC_RULE,
+            "quantity_detail": house.QUANTITY_DETAIL,
             "concept_timeout_seconds": CONCEPT_TIMEOUT_SECONDS,
             "world_rules": world_brief.WORLD_RULES,
         }

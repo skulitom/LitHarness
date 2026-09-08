@@ -392,3 +392,16 @@ customizations is historical. The installed 2.1.261 also advertises `--safe-mode
 preserves authentication while disabling customizations. A separately registered diagnostic
 tests that mode with an explicit system-prompt replacement; production still uses append
 mode and its existing CLAUDE.md exclusions.
+
+**2026-09-08 production amendment.** The operator requested context isolation and selected
+`--safe-mode` after checking that `--bare` disables subscription OAuth, including tokens
+supplied through `CLAUDE_CODE_OAUTH_TOKEN`. Every production Claude Code invocation now
+includes safe mode; append framing, explicit tool allowances, MCP isolation and the original
+CLAUDE.md exclusions remain. Installed 2.1.263 help and the
+[CLI reference](https://code.claude.com/docs/en/cli-reference) document the isolation and
+authentication distinction. Managed policy still applies. Native schemas are also enabled
+for schema requests, whose payload is read from `structured_output`; prose keeps its text path.
+`test_claude_argv_carries_every_mandatory_flag` and
+`test_claude_empty_allowance_removes_tools_without_rewriting_agent_permissions` cover the
+mode and permissions. The registered live precision probe in stage-0 §244 also exercises
+subscription authentication with the changed transport; it is not a controlled quality claim.

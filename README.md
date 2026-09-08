@@ -68,12 +68,22 @@ uv sync --extra cover
 
 New concepts begin with magical discovery (stage-0 §243). The writer first invents a world
 to explore, the opening's connected action with magic, and capabilities that open further
-possibilities. A second call develops the mechanics and arc from that treatment. The setting,
+possibilities. Concept development then builds the mechanics and arc from that treatment. The setting,
 activity, powers and conflict are invented for each book; no fixed adventure is supplied.
 The default experience applies even with an empty brief. `--brief` adds the author's specific
-direction. Both calls use the configured subscription CLI and the ordinary quota checks.
+direction. All stages use the configured subscription CLI and the ordinary quota checks.
+Claude Code starts with `--safe-mode` to disable user/project customizations while keeping
+subscription authentication; `--bare` disables that authentication in the supported CLI.
 
-The original discovery treatment is retained inside `concept.json` and reaches the listing,
+After development, a scoped edit pass proposes local replacements for unnecessary precision
+across the concept's prose, including its discovery treatment. This covers quantities invented
+by either stage. Structured numeric fields, names and timing enums remain read-only. Code
+requires uniquely located short phrases, rejects overlapping edits and edits to bracketed
+system displays, and preserves surrounding text. An unusable response stops persistence.
+With `--out`, original invention and development remain in their traces and proposed edits in
+`concept-precision-trace.json`; no quality score or candidate ranking chooses an answer.
+
+The prepared discovery treatment is retained inside `concept.json` and reaches the listing,
 world seed and growth, arc outlines, and protected scene intentions. Later arcs develop its
 possibilities from accepted history instead of replaying chapter one. `discovery-trace.json`
 records the first call independently of any exemplar shelf; `concept-trace-N.json` records
@@ -81,6 +91,11 @@ each development attempt, including failures. A missing treatment or a reserved 
 stops generation before spending on mechanical retries. Existing concept files remain readable.
 These are generation and persistence guarantees, **not a validated reader-interest gate**.
 No model ranks candidates or certifies that the resulting chapter is good.
+
+Discovery and mechanical development share the scene writer's precision policy: incidental
+detail should not acquire exact counts or manufactured countdowns just to sound specific.
+Narrated precision needs a consequence for action or choice; required system values and their
+arithmetic stay exact. This does not round stored facts; accepted manuscript is untouched.
 
 ```bash
 uv run litharness --database book.db --writer halloran \

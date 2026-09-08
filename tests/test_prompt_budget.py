@@ -117,6 +117,9 @@ def _roles() -> dict[str, str]:
         # task is one remove from a reader.
         "concept writer": concept._system(WRITER),
         "discovery writer": discovery.render_request("", WRITER).system or "",
+        "concept precision": concept.precision.render_request(
+            {"opening": "An encounter."}
+        ).system or "",
         "concept development": concept.render_concept_request(
             "",
             WRITER,
@@ -279,8 +282,11 @@ BUDGET: dict[str, int] = {
     "concept writer": 18,
     # Two distinct calls replace system-first invention for new concepts. Explicit caps
     # prevent this route from accumulating another unbounded craft essay.
-    "discovery writer": 16,
-    "concept development": 16,
+    # §244: the shared two-sentence precision policy now reaches invention as well as
+    # drafting. The house rule is replaced in place; only these floor-free calls grow.
+    "discovery writer": 18,
+    "concept development": 18,
+    "concept precision": 12,
     # The largest new seed variant includes both a second system and the three
     # instructions that make its representation serve the retained discovery treatment.
     "architect seed, discovery": 51,
@@ -960,6 +966,8 @@ READER_FACING = (
     "listing writer",
     "concept writer",
     "discovery writer",
+    "concept development",
+    "concept precision",
     "tells rewriter",
     "title writer",
     "measurement reader",
@@ -1020,6 +1028,7 @@ def test_prompt_inspector_covers_every_production_communication_role(
         "listing",
         "concept",
         "discovery",
+        "concept-precision",
         "title",
         "title-lookup",
         "architect-seed",

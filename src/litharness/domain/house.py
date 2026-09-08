@@ -664,6 +664,17 @@ CLARITY = (
 #: nowhere else. Shipped unmeasured, and the counter that could read it is a separate registered
 #: act: §156's census counts a gloss only behind one of its trigger phrases, so it does not count
 #: this construction today and no number of its is claimed here.
+# Operator-directed precision policy, 2026-09-08 (§244). Replaces the blanket restriction
+# to personal system values and its numbered examples; also reaches invention before
+# incidental quantities become source material that later stages preserve.
+QUANTITY_DETAIL = (
+    "Use relative scale and duration for ordinary description. Give an exact quantity "
+    "only when a character must compare, spend or act against that value, or a required "
+    "system display gives it; do not manufacture a calculation or countdown to justify "
+    "incidental detail, treat a number in a plan as an instruction to narrate it, or "
+    "change established values and their arithmetic when leaving a quantity unspoken."
+)
+
 READER = (
     "Detail that only establishes "
     "who somebody is — the steps of a job, the order of a routine — is not why the reader "
@@ -676,13 +687,7 @@ READER = (
     "The reader is measuring themselves against the offer, and that is the whole of why they "
     "are here. A power with one use invites nobody in, and neither does one the reader meets "
     "as a summary of what it could be rather than on the page. A story that names its own "
-    "ceiling has told the reader where to stop.\n"
-    "An exact number belongs to what this world's own system counts in a person and to "
-    "nothing else; the line the book itself prints is not prose. A "
-    "puzzle box does not have thirty-one moves, a crate does "
-    "not hold forty-two bottles, and a wait is not four days: exactness spent on props, "
-    "tallies and durations teaches a reader that the numbers here mean nothing, which costs "
-    "the numbers that do."
+    f"ceiling has told the reader where to stop.\n{QUANTITY_DETAIL}"
 )
 
 #: **What the reader is accumulating, and it is the genre's own economics.** The operator,

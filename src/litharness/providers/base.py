@@ -8,12 +8,10 @@ consumes paid quota decides whether a test run may touch it, and the registry en
 that (`registry.py`). Making it a property of the adapter means a new provider cannot be
 added without answering the question.
 
-**Structured output is a per-adapter capability, not a shared one.** The retired Ollama
-and Codex adapters enforced a JSON Schema natively; `claude -p` does not — it returns
-fenced markdown, so its adapter strips fences, parses, and reports failure as
-`parsed is None` rather than raising. A parse failure is a *shape-gate* result (§4.2 ladder
-step 1) that earns a bounded retry with structured feedback, not an exception that kills
-the unit of work.
+**Structured output is implemented by each adapter.** Claude Code now receives native
+schemas and returns their payload separately from prose; historical text envelopes still
+use fence stripping. The shared parser reports an unusable payload as `parsed is None`
+rather than raising, so callers can apply their bounded format-failure policy.
 
 Every result carries the raw provider envelope, because §2 requires each generated claim to
 be traceable to exact inputs and tool/model versions, and the envelope is where the version
@@ -39,7 +37,7 @@ from litharness.domain.generation import (
     Usage,
 )
 
-#: ```json ... ``` or bare ``` ... ``` — what `claude -p` wraps JSON in.
+#: Markdown fences retained for historical text envelopes and text-based provider results.
 _FENCE = re.compile(r"^\s*```(?:json|JSON)?\s*\n(.*?)\n?\s*```\s*$", re.DOTALL)
 
 

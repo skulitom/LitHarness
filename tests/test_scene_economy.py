@@ -31,6 +31,8 @@ No model reads, ranks or judges anything here, and no bar is declared anywhere i
 
 from __future__ import annotations
 
+import re
+
 import pytest
 
 from litharness.application import planner
@@ -181,7 +183,8 @@ def test_no_word_of_the_read_9_chapter_became_prompt_text(word: str) -> None:
     read — or a word of the read itself — is that diagnostic laundered into a prompt with the
     evidence still inside, and it is the one thing the debugging workflow forbids outright.
     """
-    assert word not in house.READER.lower()
+    # A harvested word is a token: "dent" inside "incidental" is not that word.
+    assert word not in re.findall(r"\b\w+\b", house.READER.lower())
 
 
 @pytest.mark.parametrize("word", sorted(house.MACHINERY_WORDS))

@@ -1,19 +1,10 @@
 """The CLI-backed frontier adapter: local Claude Code, reduced to a completion endpoint.
 
-It shells out, so it takes an injected `runner`. That is not decoration — it is what
-makes the parsing testable against the real captured envelope without spawning a process
-or spending quota. Every flag below was verified against the installed CLI (`claude`
-2.1.227; the CLAUDE.md suppression against 2.1.236) and the numbers in
-`plan/provider-adapters.md` are measurements, not estimates.
-(The Codex fallback adapter that used to live beside this one is retired with provider
-plurality; its measurements stay in that document.)
-
-The per-invocation harness tax is the reason `invocations` exists on `CompletionResult`:
-`claude -p` carries ~24k input tokens of its own system prompt and tool definitions per
-call (~19k cache-read, ~5k rewritten every time; ~27k on 2.1.236, measured 2026-08-22 as
-21,352 read + ~5.3k written — the user-level skills and plugins ride along, and only
-`--bare` would drop them). Token accounting alone hides a cost that scales with call
-count.
+An injected runner makes envelope parsing testable without processes or quota. The
+installed CLI (2.1.263) supports native JSON schemas and subscription-compatible safe mode.
+Safe mode removes user/project customizations; explicit tool allowances still distinguish
+plain completions from world-management roles. Historical transport and context-overhead
+measurements are retained in `plan/provider-adapters.md`; they are not current token budgets.
 """
 
 from __future__ import annotations
@@ -131,10 +122,9 @@ class ClaudeCodeProvider:
       whatever MCP servers the machine has configured: slow, and not reproducible, which
       §11 requires.
     * `--no-session-persistence` — otherwise every scene leaves a session on disk.
-    * `--setting-sources user --settings {claudeMdExcludes}` — otherwise the call reads
-      the repository's CLAUDE.md (and project/local settings) from the working directory,
-      none of which the frozen prompt records. See the comment on `_argv` for what was
-      measured and why `--bare` could not be the answer.
+    * `--safe-mode` suppresses customizations while preserving subscription authentication.
+      Existing settings-source and CLAUDE.md exclusions remain explicit. Managed policy
+      still applies; `--bare` is not interchangeable because it disables subscription OAuth.
     * stdin closed — see `subprocess_runner`.
 
     **This runs against whatever authentication the local `claude` install already has**, and
@@ -178,6 +168,7 @@ class ClaudeCodeProvider:
             # `-p` with no positional prompt: the prompt arrives on stdin. See
             # `subprocess_runner` for the Windows command-line ceiling that forced this.
             "-p",
+            "--safe-mode",
             "--output-format",
             "json",
             "--model",
@@ -193,22 +184,8 @@ class ClaudeCodeProvider:
             "--no-session-persistence",
             "--permission-mode",
             "manual",
-            # A `-p` call loads the same context an interactive session would: any CLAUDE.md
-            # in the working directory or its ancestors, plus `~/.claude`'s settings, skills
-            # and plugins — and `--append-system-prompt` goes in *after* it. The loop runs
-            # from the repository root, and the repository carries a CLAUDE.md written for
-            # sessions rather than for the writer, so without these flags it would ride into
-            # every drafting call and the frozen prompt (§103) would no longer be the whole
-            # of what the model saw. Measured 2026-08-22 on `claude` 2.1.236 with a marker
-            # CLAUDE.md in the working directory: without either flag the model echoed the
-            # marker; with either one it did not. `--bare` is the documented full
-            # suppression and skips keychain reads, which is where a subscription login
-            # lives ("Not logged in"), so it is unusable here; `--system-prompt` is
-            # documented to ignore CLAUDE.md and was measured *not* to. Two mechanisms
-            # because each covers the other's gap: `claudeMdExcludes` is the documented
-            # CLAUDE.md control, and `--setting-sources user` is docs-silent on CLAUDE.md but
-            # also drops project and local settings.json — hooks, permissions, env — which
-            # this adapter never wanted. The live test checks the outcome, not the mechanism.
+            # Retain the original explicit exclusions alongside safe mode. The historical
+            # marker test and the new subscription smoke are recorded in provider-adapters.
             "--setting-sources",
             "user",
             "--settings",

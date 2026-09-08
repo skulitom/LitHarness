@@ -666,42 +666,23 @@ def test_an_unscheduled_scene_is_left_byte_identical() -> None:
 # --- the house numbers clause ----------------------------------------------------------
 
 
-def test_exactness_is_licensed_to_the_systems_own_count_and_not_the_worlds() -> None:
-    """§161's re-scope, and read 8 §4.2 is why the three middle words mattered.
-
-    *"What this world counts"* licensed a guild's glasses, a ledger's entries and a tax roll,
-    which are all things a world counts and all things the operator has now objected to four
-    books running. The scope is the world's own SYSTEM, which is a strictly smaller set — so
-    this is a narrowing and not a new permission, and §138's direction is preserved.
-
-    **Corrected in place by §166, the same day.** That scope was still wide enough to license
-    a world aggregate the sheet legitimately tracks, which is the sentence the operator then
-    named on pilot 15; the object narrowed again, to what the system counts *in a person*.
-    Both superseded forms are asserted absent here and the surviving one is asserted by
-    `test_the_licence_is_what_the_system_counts_in_a_person`.
-    """
-    assert "world's own system counts in a person and to nothing else" in house.READER
-    assert "belongs to what this world counts" not in house.READER
-    assert "own system counts and to nothing else" not in house.READER
+def test_narrated_precision_has_a_causal_purpose_not_a_system_only_ban() -> None:
+    """§244 replaces the old blanket restriction; this tests the ask, not its efficacy."""
+    assert house.QUANTITY_DETAIL in house.READER
+    assert "character must compare, spend or act against that value" in house.QUANTITY_DETAIL
+    assert "counts in a person and to nothing else" not in house.READER
 
 
-def test_the_numbers_clause_names_the_classes_that_actually_leaked() -> None:
-    """A tally replaced a habit, because a jar count is what read 8 measured and a habit is
-    not. The instances are invented rather than lifted: §97.1 forbids an operator's read from
-    becoming prompt text, and a numeral harvested from the book under read is that laundering
-    with the evidence left in."""
-    assert "tallies" in house.READER
-    assert "eleven repetitions" not in house.READER
+def test_precision_policy_carries_no_numbered_examples_or_density_target() -> None:
+    assert "relative scale and duration for ordinary description" in house.QUANTITY_DETAIL
+    assert not any(char.isdigit() for char in house.QUANTITY_DETAIL)
+    for old_example in ("thirty-one", "forty-two", "four days", "per paragraph"):
+        assert old_example not in house.READER
 
 
-def test_the_house_floor_did_not_grow_for_any_of_this() -> None:
-    """Every §161 edit to `house` is a re-scope of text that was already there.
-
-    `tests/test_prompt_budget.py` owns the ceiling; this asserts the shape the ceiling exists
-    to protect — that the numbers clause is still two sentences and bought nothing.
-    """
-    clause = [item for item in house.demands(house.READER) if "exact number" in item]
-    assert len(clause) == 1
+def test_precision_replaces_the_existing_two_sentence_rule() -> None:
+    assert len(house.demands(house.QUANTITY_DETAIL)) == 2
+    assert house.READER.count(house.QUANTITY_DETAIL) == 1
 
 
 @pytest.mark.parametrize("word", sorted(house.MACHINERY_WORDS))
@@ -723,38 +704,17 @@ _A_WORLDS_AGGREGATE_IN_PROSE = "Forty-two seams standing in Ashfen now"
 _A_PERSONS_OWN_CAPACITY_IN_PROSE = "Three minutes in her that weren't hers"
 
 
-def test_the_licence_is_what_the_system_counts_in_a_person() -> None:
-    """§166's narrowing, and the surface split is the whole of it.
-
-    The two fixture lines above are both licensed by §161's scope and the operator called one
-    of them wrong, so no wording of *what the system counts* could have told them apart: the
-    aggregate is a column of the book's own printed line. The licence therefore splits by
-    surface — the line carries every quantity the sheet holds, prose speaks a number only
-    where the system counts it in a person — and the object narrows to that address rather
-    than to a list of what may be spoken. A list of skills, levels and classes would be the
-    instance-list shape this module has twice been corrected for, and an enumeration of what
-    succeeds besides, which is `house`'s own standing constraint and §154's finding.
-    """
-    assert "counts in a person and to nothing else" in house.READER
-    # The included side is an address, never an inventory. The clause reaches numerals only, so
-    # a class NAME is governed by nothing in it — which is the point of not writing one down.
-    (scope,) = [item for item in house.demands(house.READER) if "exact number" in item]
-    for element in ("skill", "level", "class", "ability"):
-        assert element not in scope.lower()
+def test_omitting_an_incidental_quantity_does_not_license_changing_canon() -> None:
+    assert "change established values and their arithmetic" in house.QUANTITY_DETAIL
+    assert "calculation or countdown to justify incidental detail" in house.QUANTITY_DETAIL
+    assert "number in a plan as an instruction to narrate it" in house.QUANTITY_DETAIL
 
 
-def test_the_furniture_rides_inside_the_sentence_and_buys_no_demand() -> None:
-    """§161.5's third surgery pattern at its second use, and the reason it is needed here.
-
-    A scope narrowed to the person alone would forbid the very line `planner.py` renders
-    filled into the same system message. Written as its own sentence the exemption would be a
-    permission, and §138 measured a permission-only clause returning more than six times what
-    a prohibition-only one did, worse than silence. On a semicolon inside the sentence it
-    delimits instead, `house.demands` reads one clause, and no ceiling moved.
-    """
-    clause = [item for item in house.demands(house.READER) if "exact number" in item]
-    assert len(clause) == 1
-    assert clause[0].endswith("the line the book itself prints is not prose.")
+def test_required_system_values_and_arithmetic_stay_exact() -> None:
+    assert "or a required system display gives it" in house.QUANTITY_DETAIL
+    system = _scene_system(status_example="[STATUS] sera — Attunement 1 | Threads 2/3")
+    assert house.QUANTITY_DETAIL in system
+    assert "[STATUS] sera — Attunement 1 | Threads 2/3" in system
 
 
 @pytest.mark.parametrize("word", ("ashfen", "seams", "forty-two seams", "minutes in her"))
@@ -762,8 +722,7 @@ def test_no_word_of_the_chapter_under_read_became_prompt_text(word: str) -> None
     """§97.1, mechanically. The read is a defect harvest and a numeral lifted out of it would
     be that diagnostic laundered into a prompt with the evidence still inside.
 
-    The guard names the phrase and the proper noun rather than the bare numeral, because the
-    clause's own *forty-two bottles* is invented, predates this read, and stays.
+    The guard names the phrase and the proper noun; no harvested example is prompt text.
     """
     assembled = " ".join(
         (

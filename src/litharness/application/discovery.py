@@ -1,8 +1,8 @@
 """Invent the fantasy experience before asking for its mechanical representation.
 
 This is author-directed generation, not a reader, a quality gate, or candidate selection.
-The same writer makes one treatment, then the concept stage develops it. Its original
-material travels with the concept as revisable intention, never as established history.
+Concept development preserves the writer's treatment; a scoped quantity edit then prepares
+the combined material for persistence as intention, never as established history.
 """
 
 from __future__ import annotations
@@ -11,10 +11,12 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from litharness.application import precision
+from litharness.domain import house
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v2"
+PROFILE = "writer.discovery.v4"
 VERSION = "magical-discovery.v2"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
@@ -46,6 +48,7 @@ SCHEMA: dict[str, Any] = {
 _TASK = (
     "Invent one story treatment before designing its statistics or interface.\n"
     f"{DIRECTION}\n"
+    f"{house.QUANTITY_DETAIL}\n"
     "world: describe a particular place, beings or magical phenomenon the character can "
     "encounter, and something there they want to investigate or attempt.\n"
     "opening: develop the first chapter's connected action, including who wants what, "
@@ -97,6 +100,17 @@ class Discovery:
             "Continue beyond the opening without replaying its discoveries. Established "
             "facts and author locks still constrain realization."
         )
+
+    def has_quantities(self) -> bool:
+        return precision.has_quantities(
+            {key: getattr(self, key) for key in ("world", "opening", "growth")}
+        )
+
+    def with_precision_edits(self, payload: Mapping[str, Any]) -> Discovery:
+        fields = precision.apply_edits(
+            {key: getattr(self, key) for key in ("world", "opening", "growth")}, payload
+        )
+        return Discovery.from_payload({**fields, "version": self.version})
 
 
 def render_request(

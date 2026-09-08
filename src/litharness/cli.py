@@ -50,6 +50,7 @@ from litharness.application import export as export_module
 from litharness.application import library as library_module
 from litharness.application import operations as operations_mod
 from litharness.application import overview as overview_mod
+from litharness.application import precision as precision_mod
 from litharness.application import readers as readers_mod
 from litharness.application import release as release_mod
 from litharness.application import roster as roster_mod
@@ -2189,10 +2190,11 @@ def _write_concept_trace(
 
 
 def cmd_concept(args: argparse.Namespace) -> int:
-    """One writer develops a discovery treatment, then its mechanical concept.
+    """Invent discovery, develop its concept, then prepare incidental quantities.
 
-    Both calls share the ordinary quota checks and spend record. No reader, ranking or
-    quality verdict participates. The retained treatment survives mechanical-format retries.
+    The stages share the ordinary quota checks and spend record. No reader, ranking or
+    quality verdict participates. Mechanical-format retries preserve the original treatment;
+    a final scoped edit prepares all invented prose before persistence.
     """
     stamp = _stamp(_now())
     brief = _read_text(args.brief_file) if args.brief_file else (args.brief or "")
@@ -2300,6 +2302,24 @@ def cmd_concept(args: argparse.Namespace) -> int:
                 f"{len(drawn)} draw(s); expect it in the listing and the world",
                 file=sys.stderr,
             )
+        if concept.has_quantities():
+            precision_request = precision_mod.render_request(*concept.precision_material())
+            precision_result, refusal = _completion_call(
+                precision_request, calls=calls, spend=spend
+            )
+            if precision_result is None:
+                print(f"litharness: {refusal}", file=sys.stderr)
+                return EXIT_FAULT
+            _write_concept_trace(
+                args.out, "concept-precision-trace.json", precision_request, precision_result
+            )
+            try:
+                if not isinstance(precision_result.parsed, Mapping):
+                    raise ValueError("expected located precision edits as JSON")
+                concept = concept.with_precision_edits(precision_result.parsed)
+            except ValueError as error:
+                print(f"litharness: precision edits are unusable: {error}", file=sys.stderr)
+                return EXIT_FAULT
         gate = GateOutcome(
             gate=GateKind.SHAPE,
             rule_or_critic_id=request.profile,
@@ -2323,7 +2343,9 @@ def cmd_concept(args: argparse.Namespace) -> int:
                 invocations=spend.invocations,
                 total_tokens=spend.total_tokens,
                 cost_usd=spend.cost_usd,
-                reason="one discovery treatment developed into a concept; no quality selection",
+                reason=(
+                    "one discovery treatment developed and locally edited; no quality selection"
+                ),
             ),
             decided_at=stamp,
         )
@@ -3051,6 +3073,7 @@ def cmd_prompts(args: argparse.Namespace) -> int:
             ),
         ),
         "discovery": discovery_mod.render_request(premise, writer),
+        "concept-precision": precision_mod.render_request({"opening": "An encounter."}),
         "title": overview_mod.render_title_request("A debtor takes the road below.", writer),
         "title-lookup": titles.render_check_request("The Deep Ledger", writer),
         "architect-seed": world_agent.render_seed_request("A debtor takes the road below.", writer),

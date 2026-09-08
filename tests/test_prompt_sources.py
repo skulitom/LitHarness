@@ -54,14 +54,14 @@ def request_case(shelf=False):
 @pytest.mark.parametrize("shelf", [False, True])
 def test_composed_prompt_preserves_pre_instrumentation_bytes(shelf):
     # Prompt bytes retain the original instrumentation fixture. System hashes include
-    # the 2026-09-08 clarity correction allowing literal magical action by objects.
+    # the 2026-09-08 literal-magic clarification and replacement precision policy.
     expected = {
         False: (
-            "2984f10182fd7c84b20b90f9ea595e36426d6a6853e16268fc4dc0c15ba5defa",
+            "ee85221d4a4f6d5ad2ec13198f74e8fdd764b47cb57e0b90677a073208d92db5",
             "37be520580efa008ce4d4d302a46bab6d38ca33eeea8d21034fe27d39e065f10",
         ),
         True: (
-            "9318c9b97cba75ba1ea9ae9aa72cff419b424a048ccb8dfb87d361caf31bfc29",
+            "8e328a85286978bda573e2eebe8af69c0f43d8f86e441aced1640d89e573a1b0",
             "1df0c553b559be3c16e529e6d2fafc221bae23467fbacd71073abb3b91113385",
         ),
     }
