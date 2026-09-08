@@ -76,8 +76,9 @@ direction. Both calls use the configured subscription CLI and the ordinary quota
 The original discovery treatment is retained inside `concept.json` and reaches the listing,
 world seed and growth, arc outlines, and protected scene intentions. Later arcs develop its
 possibilities from accepted history instead of replaying chapter one. `discovery-trace.json`
-records the first call independently of any exemplar shelf. A missing treatment stops concept
-generation before mechanics. Existing concept files remain readable without alteration.
+records the first call independently of any exemplar shelf; `concept-trace-N.json` records
+each development attempt, including failures. A missing treatment or a reserved name in it
+stops generation before spending on mechanical retries. Existing concept files remain readable.
 These are generation and persistence guarantees, **not a validated reader-interest gate**.
 No model ranks candidates or certifies that the resulting chapter is good.
 

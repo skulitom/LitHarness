@@ -550,6 +550,23 @@ def test_missing_discovery_stops_before_mechanics(
     assert (out / "discovery-trace.json").exists()
 
 
+def test_reserved_discovery_name_stops_before_unrepairable_mechanical_retries(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from litharness import cli
+
+    answer = {**_discovery(), "growth": "She learns to use the Standing."}
+    call = _scripted(answer)
+    monkeypatch.setattr(cli, "_completion_call", call)
+    db, out = tmp_path / "book.db", tmp_path / "concept"
+    assert main(["--database", str(db), "init"]) == EXIT_OK
+    assert main(["--database", str(db), "concept", "--out", str(out)]) == EXIT_FAULT
+    assert len(call.seen) == 1  # type: ignore[attr-defined]
+    assert "reserved names: standing" in capsys.readouterr().err
+    assert not (out / "concept.json").exists()
+    assert json.loads((out / "discovery-trace.json").read_text())["response"] == json.dumps(answer)
+
+
 def test_discovery_material_reaches_seed_grow_listing_and_later_arcs() -> None:
     payload = {**_example(), "discovery": _discovery()}
     drawn = concept.Concept.from_payload(payload)

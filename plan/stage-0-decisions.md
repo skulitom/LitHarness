@@ -25435,3 +25435,45 @@ arc length, subscription authentication, four-invocation ceiling and no exemplar
 first result, all format failures and the treatment, and check both exact-material boundaries.
 This is another integration smoke under changed author direction, not a controlled claim of
 literary improvement. No chapters, reader ranking or automatic candidate selection.
+
+**Second smoke: transport failure, not a selected success.** The a42846a run returned a
+discovery treatment but all three mechanical attempts were unparsed. Full requests and
+responses are retained in `runs/magical-discovery-smoke-v2-20260908/`. The first response
+misnested later concept fields inside `system` and lacked a closing brace. Appending a brace
+would leave required fields in the wrong object; no guessed JSON repair was applied. Its
+source treatment also took a reserved machinery word as a name, which mechanical retries
+could not fix because that source is preserved. Discovery now checks that existing naming
+rail before spending on development and reports an actionable failure with its trace.
+
+The Claude Code adapter now passes schema requests through `--json-schema` and reads the
+`structured_output` envelope field. Plain prose retains its text path; an invalid native
+payload cannot fall back to contradictory result text. Historical envelopes lacking the
+field remain readable. The installed CLI is 2.1.263; the flag and envelope are documented in
+[Claude Code's programmatic usage](https://code.claude.com/docs/en/headless). This supersedes
+the adapter's obsolete assertion that print mode has no native structured output.
+
+**Prospective transport replay.** Under `runs/discovery-structured-output-20260908/`, replay
+exactly the first failed v2 mechanical request once through the revised subscription CLI
+adapter. Retain the request, raw envelope, usage, code diff and hashes; use the ordinary quota
+path with a one-invocation ceiling. Check syntactic and domain parsing only. The source name
+defect remains recorded; do not publish the concept or claim a prose improvement. This tests
+the schema transport, not reader interest, and spends no direct API quota.
+
+The replay returned `structured_output` on its first invocation, passed JSON and concept
+parsing, and preserved both the source and its opening exactly. The known source-name
+collision remained, as expected; this artifact was not promoted into a book. The raw CLI
+envelope and `validation.json` are retained under the registered replay root.
+
+**Final default-command integration smoke.** Run one fresh empty-brief concept with the
+same tanaka writer, third person and 24-scene arc under
+`runs/magical-discovery-native-20260908/`, now using native schema transport for both stages.
+Use subscription authentication, no exemplars, at most four CLI invocations, and the existing
+format/name checks. Retain failures and the first accepted result; no quality selection, no
+chapter generation, no change to the stopped volume. Record whether both stages parse and
+whether discovery material and opening reach the saved concept unchanged.
+
+The final default-command smoke completed both stages on their first responses. The saved
+concept preserves the original discovery and opening and has no reserved-name collision;
+hashes and usage are in its `validation.json`. This validates the revised transport and
+preservation path only. Incidental exact quantities remain conspicuous in the treatment;
+the operator explicitly requested a follow-up fix for that issue before handoff.

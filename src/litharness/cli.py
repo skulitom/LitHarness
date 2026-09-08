@@ -2220,6 +2220,15 @@ def cmd_concept(args: argparse.Namespace) -> int:
             if not isinstance(discovery_result.parsed, Mapping):
                 raise ValueError("expected the discovery story material as JSON")
             discovery = discovery_mod.Discovery.from_payload(discovery_result.parsed)
+            # Development preserves this source. Redrawing the next stage cannot repair a
+            # name inside it, so refuse here rather than spending every mechanical attempt.
+            if names := schema_words.named_in(
+                "\n".join((discovery.world, discovery.opening, discovery.growth))
+            ):
+                raise ValueError(
+                    f"discovery uses reserved names: {', '.join(names)}; "
+                    "rename them in the source before mechanical development"
+                )
         except ValueError as error:
             print(f"litharness: discovery is unusable: {error}", file=sys.stderr)
             return EXIT_FAULT

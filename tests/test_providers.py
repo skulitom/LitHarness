@@ -305,7 +305,43 @@ def test_claude_schema_request_adds_a_json_only_instruction() -> None:
     ClaudeCodeProvider(runner=runner).complete(CompletionRequest(prompt="x", schema=SCHEMA))
     argv = runner.argv  # type: ignore[attr-defined]
     system = argv[argv.index("--append-system-prompt") + 1]
-    assert "no code fence" in system, "the CLI has no native structured-output mode"
+    assert "no code fence" in system
+    assert json.loads(argv[argv.index("--json-schema") + 1]) == SCHEMA
+
+
+def test_claude_native_payload_is_the_answer_and_keeps_the_raw_envelope() -> None:
+    envelope = {
+        **CLAUDE_ENVELOPE,
+        "result": "Done.",
+        "structured_output": {"ok": True, "word": "café"},
+    }
+    result = ClaudeCodeProvider(runner=claude_runner(envelope)).complete(
+        CompletionRequest(prompt="x", schema=SCHEMA)
+    )
+    assert result.conforms
+    assert result.parsed == {"ok": True, "word": "café"}
+    assert json.loads(result.text) == result.parsed
+    assert result.raw == envelope
+    assert result.usage.cache_read_tokens == 19057
+
+
+@pytest.mark.parametrize("payload", [None, [], {"ok": "yes", "word": "x"}])
+def test_claude_invalid_native_payload_does_not_fall_back_to_result_text(payload) -> None:
+    envelope = {**CLAUDE_ENVELOPE, "structured_output": payload}
+    result = ClaudeCodeProvider(runner=claude_runner(envelope)).complete(
+        CompletionRequest(prompt="x", schema=SCHEMA)
+    )
+    assert result.parsed is None
+    assert not result.conforms
+
+
+def test_claude_prose_ignores_structured_metadata_and_does_not_request_a_schema() -> None:
+    runner = claude_runner(
+        {**CLAUDE_ENVELOPE, "result": "A scene.", "structured_output": {"ok": True}}
+    )
+    result = ClaudeCodeProvider(runner=runner).complete(CompletionRequest(prompt="x"))
+    assert result.text == "A scene."
+    assert "--json-schema" not in runner.argv  # type: ignore[attr-defined]
 
 
 # --- fake --------------------------------------------------------------------------

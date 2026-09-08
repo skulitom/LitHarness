@@ -218,6 +218,8 @@ class ClaudeCodeProvider:
             # Approval rules and available tools are different CLI surfaces. Keep scoped
             # allowances intact for agent roles; a pure completion has no built-in tools.
             argv += ["--tools", ""]
+        if request.schema is not None:
+            argv += ["--json-schema", json.dumps(request.schema, ensure_ascii=False)]
         system = self._system_prompt(request)
         if system:
             argv += ["--append-system-prompt", system]
@@ -225,11 +227,7 @@ class ClaudeCodeProvider:
 
     @staticmethod
     def _system_prompt(request: CompletionRequest) -> str:
-        """Role framing, plus a JSON-only instruction when a schema was asked for.
-
-        `claude -p` has no native structured-output mode — it returned fenced markdown when
-        asked for JSON — so the instruction plus fence-stripping is the whole mechanism.
-        """
+        """Keep recorded role framing; the CLI also receives the schema natively."""
         return request.effective_system
 
     def health(self) -> bool:
@@ -285,7 +283,13 @@ class ClaudeCodeProvider:
                 raw=json.dumps(envelope, ensure_ascii=False),
             )
 
-        text = strip_fences(str(envelope.get("result", "")))
+        # Current CLI schema calls return their payload separately from the result message.
+        # An invalid native payload must not fall back to possibly contradictory result text.
+        # Old captured envelopes without this field still use the original parser.
+        if request.schema is not None and "structured_output" in envelope:
+            text = json.dumps(envelope["structured_output"], ensure_ascii=False)
+        else:
+            text = strip_fences(str(envelope.get("result", "")))
         usage_block = envelope.get("usage") or {}
         model_usage = envelope.get("modelUsage") or {}
         # Against what this call *asked for*, not against the adapter's default: a request
