@@ -1,0 +1,125 @@
+{
+  "schema": "litharness.generation-pilot-execution.v1",
+  "registration_commit": "ea579ca250a74dcefd9ba23d4426957321298ecf",
+  "complete_registered_design": true,
+  "planned_completion_calls": 8,
+  "completed_completion_calls": 8,
+  "quota_refusals": 0,
+  "subscription_auth_method": "claude.ai",
+  "model": "claude-opus-5",
+  "safe_mode": true,
+  "quota": {
+    "invocations": 8,
+    "total_tokens": 75833,
+    "cost_usd": 1.2657209999999999,
+    "provider": "claude_code",
+    "model": "claude-opus-5",
+    "fell_back_from": []
+  },
+  "cli_reported_envelopes": {
+    "keep-1/treatment": {
+      "num_turns": 3,
+      "duration_ms": 116458,
+      "subtype": "success"
+    },
+    "omit-1/treatment": {
+      "num_turns": 3,
+      "duration_ms": 93288,
+      "subtype": "success"
+    },
+    "omit-2/treatment": {
+      "num_turns": 2,
+      "duration_ms": 102402,
+      "subtype": "success"
+    },
+    "keep-2/treatment": {
+      "num_turns": 3,
+      "duration_ms": 102308,
+      "subtype": "success"
+    },
+    "omit-1/opening": {
+      "num_turns": 1,
+      "duration_ms": 56679,
+      "subtype": "success"
+    },
+    "keep-1/opening": {
+      "num_turns": 1,
+      "duration_ms": 60547,
+      "subtype": "success"
+    },
+    "keep-2/opening": {
+      "num_turns": 1,
+      "duration_ms": 66759,
+      "subtype": "success"
+    },
+    "omit-2/opening": {
+      "num_turns": 1,
+      "duration_ms": 54171,
+      "subtype": "success"
+    }
+  },
+  "note": "Completion calls are outer CLI jobs; envelope num_turns reports internal structured-output turns. No runner retry or redraw.",
+  "eligibility": {
+    "keep-1": {
+      "structurally_usable": true,
+      "draft_eligible": true,
+      "treatment_chars": 8352,
+      "opening_nonempty": true
+    },
+    "omit-1": {
+      "structurally_usable": true,
+      "draft_eligible": true,
+      "treatment_chars": 5708,
+      "opening_nonempty": true
+    },
+    "omit-2": {
+      "structurally_usable": true,
+      "draft_eligible": true,
+      "treatment_chars": 9543,
+      "opening_nonempty": true
+    },
+    "keep-2": {
+      "structurally_usable": true,
+      "draft_eligible": true,
+      "treatment_chars": 6293,
+      "opening_nonempty": true
+    }
+  },
+  "no_production_prompt_change": true,
+  "no_accepted_book_change": true,
+  "full_handoff": {
+    "exit_code": 0,
+    "passed": 4689,
+    "skipped": 20
+  },
+  "artifacts": [
+    {
+      "path": "runs/diagnostics/discovery-setback-demand-20260908/artifacts.json",
+      "sha256": "fdc3938eb6ddd9770f6be10950ac0cb52fba25f32377c417112488d122a5a682"
+    },
+    {
+      "path": "runs/diagnostics/discovery-setback-demand-20260908/execution.json",
+      "sha256": "36231674105179a07738badcae5d96f165a70b59ad6bfa46c9ba05ffca83c24e"
+    },
+    {
+      "path": "runs/diagnostics/discovery-setback-demand-20260908/inspection.json",
+      "sha256": "e78d6ef54723ba84446be9698c2ced92eab79b7653ab489a6854d97e9536b575"
+    },
+    {
+      "path": "runs/diagnostics/discovery-setback-demand-20260908/verification.json",
+      "sha256": "f90694f4a3f48c44f00747d9bb32ce9583a148480ae26781d37290a106d55d7b"
+    },
+    {
+      "path": "runs/diagnostics/discovery-setback-demand-20260908/inspection-verification.json",
+      "sha256": "04c424d1c9ccb1e449ddc325c62f030fe6868965bf8ef5925cc67e7ffd94a007"
+    },
+    {
+      "path": "runs/diagnostics/discovery-setback-demand-20260908/comparison.html",
+      "sha256": "5c9405893d2d60bcbcb48a28e8509a723cbeba67c14385c850b5142516fd41de"
+    },
+    {
+      "path": "runs/diagnostics/discovery-setback-demand-20260908/handoff.log",
+      "sha256": "b7ce189df6bd59113e1e0526eee6cc4082f3559b8eb1e1ced10b03b8fdbf2faa"
+    }
+  ]
+}
