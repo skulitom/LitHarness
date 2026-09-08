@@ -1,5 +1,5 @@
-"""Provider adapters, pinned: local Claude Code for production, a deterministic fake for
-the model-free suite and for explicitly requested model-free runs.
+"""One explicitly selected provider: Claude by default, subscription Codex by opt-in,
+or a deterministic fake for explicitly requested model-free runs and tests.
 
 §1a requires a frontier generator — the objective is a reader who carries on — so there is
 no fallback chain and no sub-frontier tier: an unhealthy provider surfaces as
@@ -10,6 +10,7 @@ measurements stay recorded in `plan/provider-adapters.md`.
 """
 
 import os
+from pathlib import Path
 
 from litharness.providers.base import (
     BlockedProviderError,
@@ -26,6 +27,7 @@ from litharness.providers.base import (
     provider_error,
 )
 from litharness.providers.cli import ClaudeCodeProvider, CommandResult
+from litharness.providers.codex_cli import CodexCliProvider
 from litharness.providers.fake import FakeProvider
 from litharness.providers.registry import (
     BillingGuardViolation,
@@ -35,7 +37,11 @@ from litharness.providers.registry import (
 
 
 def build_default_registry() -> ProviderRegistry:
-    """The pinned provider: Claude Code, or the padded fake on explicit opt-in.
+    """Claude by default, Codex on explicit opt-in, or the deliberately selected padded fake.
+
+    ``LITHARNESS_PROVIDER=codex`` selects the subscription Codex adapter;
+    ``LITHARNESS_CODEX_BINARY`` can name its native executable. Selection is fixed for the
+    registry's lifetime and never becomes a fallback after a failed call.
 
     **The fake is never a silent generation backstop, and that is a fix rather than an
     omission.** It used to backstop generation, and a backstop that cannot clear the gate
@@ -71,6 +77,18 @@ def build_default_registry() -> ProviderRegistry:
         # Set here and nowhere else, because this is the road that drafts a book the loop
         # created rather than one it imported — see the field's own note.
         return ProviderRegistry(FakeProvider(pad_to_chars=pad, carry_status=True))
+    selected = os.environ.get("LITHARNESS_PROVIDER", "claude").strip().lower()
+    if selected == "codex":
+        binary = os.environ.get("LITHARNESS_CODEX_BINARY")
+        provider = CodexCliProvider()
+        if binary:
+            provider.binary = binary
+        trace_directory = os.environ.get("LITHARNESS_CODEX_TRACE_DIR")
+        if trace_directory:
+            provider.trace_directory = Path(trace_directory)
+        return ProviderRegistry(provider)
+    if selected not in {"claude", "claude_code"}:
+        raise ValueError(f"Unknown LITHARNESS_PROVIDER: {selected!r}")
     return ProviderRegistry(ClaudeCodeProvider())
 
 
@@ -78,6 +96,7 @@ __all__ = [
     "BillingGuardViolation",
     "BlockedProviderError",
     "ClaudeCodeProvider",
+    "CodexCliProvider",
     "CommandResult",
     "CompletionRequest",
     "CompletionResult",

@@ -275,7 +275,9 @@ _JSON_TYPES: dict[str, type | tuple[type, ...]] = {
 }
 
 
-def _type_matches(value: Any, expected: str) -> bool:
+def _type_matches(value: Any, expected: str | list[str]) -> bool:
+    if isinstance(expected, list):
+        return any(isinstance(kind, str) and _type_matches(value, kind) for kind in expected)
     kind = _JSON_TYPES.get(expected)
     if kind is None:
         return True

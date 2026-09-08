@@ -349,7 +349,11 @@ def vocabulary() -> dict[str, Any]:
             "status_snapshot": (
                 "where those columns stand; --value an object mapping each field name to "
                 "its number, or to what its kind asks for (an entity id for a name or an "
-                "ordinal, words for text, a list of [id, depth] for a set). A number column "
+                "ordinal, words for text, a list of [id, depth] for a set). For a drawn "
+                f"system, the rung's storage key `{gamesystem.RANK_KEY}` stays fixed even "
+                "when the criterion's is_a gives it a different printed label. Use that "
+                "storage key in snapshots and any explicit rung field name; the printed "
+                "label does not replace it. A number column "
                 "never takes an id: the rung column of a drawn system takes the rung's place "
                 "in its ladder counted from one, and a grant held on the opening line is also "
                 "a can_do edge for the same person, because the line is the printed form and "

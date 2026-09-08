@@ -5,7 +5,7 @@
 # LitHarness
 
 **Clean-start prototype:** [Generate a fresh Chapter 1 directly from an author brief](clean_start/README.md),
-using the Claude subscription with no legacy planning or drafting pipeline. This is an isolated
+using a Claude or Codex subscription with no legacy planning or drafting pipeline. This is an isolated
 experiment; the existing book engine and saved books remain available below.
 
 [![CI](https://github.com/skulitom/LitHarness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/skulitom/LitHarness/actions/workflows/ci.yml)
@@ -60,6 +60,19 @@ Production generation uses the signed-in local Claude Code CLI, pinned to the fr
 `src/litharness/providers/cli.py`. There is no automatic weaker fallback: if the provider is
 unavailable, work waits rather than silently degrading. Tests cannot reach a billing provider;
 for an explicit model-free local run, set `LITHARNESS_FAKE_PAD_CHARS=400`.
+
+To run the existing engine through the signed-in Codex subscription instead, set
+`LITHARNESS_PROVIDER=codex` and, if needed, `LITHARNESS_CODEX_BINARY` to the native executable.
+This selects `gpt-6-astra` with medium reasoning for the registry. It does not fall back to
+Claude. Codex ignores user configuration and project documents; world and roster agents use
+a restricted local command bridge with the same command allowances and no shell access.
+Codex reports token usage but no dollar cost, so use token and invocation limits to bound
+these runs. See the [comparison record](clean_start/CODEX_COMPARISON.md) before treating a
+provider change as a prose-quality fix. This adapter is experimental: the recorded full-engine
+attempt stopped during world setup, before producing a chapter.
+Set `LITHARNESS_CODEX_TRACE_DIR` to a local run directory to retain each submitted request
+and full provider response, including failed tool turns. This is useful for commands such
+as Architect that do not otherwise persist the complete transport exchange.
 
 Cover generation is separate. It uses signed-in Codex image-generation sessions, followed by
 deterministic local typography, and needs the `cover` extra:

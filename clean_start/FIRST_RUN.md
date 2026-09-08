@@ -66,3 +66,7 @@ across writers before adding any planning or editorial machinery back. It was no
 
 Implementation checks: all eight standalone offline tests and the repository handoff checks
 passed. Those verify software behavior, not the chapter's appeal.
+
+Follow-up, later on 2026-09-08: the exact brief was subsequently run through subscription
+Codex. See [the comparison record](CODEX_COMPARISON.md); the original run and decision above
+remain unchanged.

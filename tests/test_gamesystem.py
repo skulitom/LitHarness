@@ -308,6 +308,22 @@ def test_the_sheets_keys_are_the_systems_own_and_the_declaration_matches_them() 
     assert set(gs.starting_sheet(system, "silas").snapshot()) == set(system.value_keys)
 
 
+def test_world_vocabulary_exposes_the_rung_storage_key_beneath_its_printed_label() -> None:
+    from litharness.application import world
+
+    system = _system(criterion="level", rank_label="Level")
+    description = world.vocabulary()["predicates"]["status_snapshot"]
+    assert "storage key `" in description
+    key = description.split("storage key `", 1)[1].split("`", 1)[0]
+    assert key == system.columns[0].name
+    assert "printed label" in description
+    records = list(gs.records_for(system))
+    documented = worlds.world_record("silas", "status_snapshot", value={key: 1})
+    labelled = worlds.world_record("silas", "status_snapshot", value={"level": 1})
+    assert genre.system_gap(_canon([*records, documented])) is None
+    assert genre.system_gap(_canon([*records, labelled])) is not None
+
+
 def test_a_sheet_change_is_a_new_record_rather_than_an_edited_one() -> None:
     """§11's prohibition, kept by construction rather than by a rule somebody follows:
     `worlds.record_id_for` hashes the value slot, so a magnitude that moves gets a new id."""

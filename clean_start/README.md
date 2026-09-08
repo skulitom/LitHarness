@@ -1,10 +1,31 @@
 # Clean start
 
 A standalone first-chapter generator. Python 3.11+, standard library only, and a native
-Claude Code installation signed in with a subscription. Nothing imports the old engine.
+Claude Code or Codex installation signed in with a subscription. Neither launcher imports
+the old engine.
 
 [First-run record](FIRST_RUN.md): the initial complete chapter still exhibits the reported
 problems. This prototype establishes a baseline, not a demonstrated quality fix.
+
+The same brief can run through Codex, pinned to `gpt-6-astra` with medium reasoning:
+
+```powershell
+python -m clean_start.codex_chapter --codex C:/path/to/codex.exe --out runs/clean-start-codex
+```
+
+Codex must report a ChatGPT login. It runs in an empty temporary directory with user
+configuration, project documents, rules, memory, plugins and hooks disabled. Supported
+unused built-in tool and skill controls are disabled explicitly; a response containing
+tool activity is refused. This is not a claim to have inspected the complete live inventory. The
+replacement system and brief match the Claude baseline. The launcher records the requested
+model; Codex's JSONL does not independently identify the resolved model. CLI/platform context
+is not fully captured. A paired local marker test confirmed that the document setting
+suppressed an `AGENTS.md` instruction which appeared with document loading enabled.
+Disabling additional built-in features subsequently reduced the same greeting request's
+reported input from 5,356 to 3,754 tokens; residual CLI/platform context is still present.
+
+The [Codex comparison record](CODEX_COMPARISON.md) records complete chapters, remaining
+defects and transport failures. No API credentials, model fallback or application retry is used.
 
 ```powershell
 python clean_start/chapter.py --out runs/clean-start-first
