@@ -225,6 +225,11 @@ def test_the_listing_is_written_from_the_concept_and_renders_as_it_was_without_o
     assert with_it.profile == overview.CONCEPT_OVERVIEW_PROFILE
     assert without.profile == overview.OVERVIEW_PROFILE
     assert with_it.system != without.system, "a settled story needs a public pitch"
+    # The shorter task must retain the author's genre requirement even without a dossier.
+    no_dossier = overview.render_overview_request("", concept=drawn.render_for_listing())
+    assert "LitRPG" in no_dossier.system
+    assert "game system" in no_dossier.system
+    assert no_dossier.profile == with_it.profile
     assert without == overview.render_overview_request(
         "a brief", WRITER, person="first", concept=None
     )

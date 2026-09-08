@@ -36,7 +36,7 @@ from litharness.domain.writers import Writer
 
 #: Frozen profiles, one per stage, so a draft and a revision are separable on the decision rows.
 OVERVIEW_PROFILE = "writer.overview.v0"
-CONCEPT_OVERVIEW_PROFILE = "writer.overview.concept.v1"
+CONCEPT_OVERVIEW_PROFILE = "writer.overview.concept.v2"
 TITLE_PROFILE = "writer.title.v0"
 
 MAX_OUTPUT_TOKENS = 4000
@@ -460,14 +460,14 @@ _TASK = (
 # is a different task from inventing a premise under the legacy listing constraints.
 # This is author direction, not a validated reader-interest mechanism.
 _CONCEPT_TASK = (
-    "Write the public listing for the supplied fantasy serial, for someone who has read "
+    "Write the public listing for the supplied LitRPG fantasy serial, for someone who has read "
     "neither the book nor its plan. They are deciding whether to open chapter one.\n"
     "Give them an understandable situation and a reason to follow this person: what has "
     "changed, what they want to do about it, and why that matters to them. Select connected "
     "details from the material rather than summarising each field.\n"
-    "Make the magical adventure and progression promise concrete through what the person "
-    "could learn to do and what that would let them pursue. Use ordinary language before "
-    "special terminology; retain an unfamiliar name only when it helps the reader follow "
+    "Make the magical adventure and the game system's progression concrete through the "
+    "abilities this person can develop and what those let them pursue. Use ordinary language "
+    "before special terminology; retain an unfamiliar name only when it helps the reader follow "
     "the situation, without requiring a glossary or a lesson in the rules.\n"
     "Curiosity should concern what will happen, not what the sentences mean. The source "
     "includes developments a new reader has not reached: withhold their answers without "

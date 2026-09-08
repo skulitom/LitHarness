@@ -121,7 +121,8 @@ and its debts.
 For a supplied concept, the listing writer receives the character, pursuit and discovery
 treatment, without the separate mechanical fields, arc summaries or debt schedule. A
 separate public-listing brief asks it to introduce the story for someone who has not read it,
-explain the pursuit in ordinary language and promise what magical growth makes possible.
+explain the pursuit in ordinary language and promise what developing abilities through the
+game system makes possible. The LitRPG direction remains explicit even without a writer dossier.
 This changes future listing requests; it does not rewrite saved premises or certify appeal.
 
 ```bash
