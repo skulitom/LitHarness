@@ -1,0 +1,82 @@
+{
+  "schema": "litharness.generation-pilot-execution.v1",
+  "registration_commit": "4ecf840dc70bd2d3cd2baa5ff73c7f30aae18da4",
+  "complete_registered_design": false,
+  "planned_completion_calls": 4,
+  "completed_completion_calls": 3,
+  "local_preflight_refusals": 1,
+  "stop_reason": "the daily budget refused the call: 33808 tokens spent today plus a projected 27140 would exceed the daily ceiling of 60000",
+  "subscription_auth_method": "claude.ai",
+  "model": "claude-opus-5",
+  "safe_mode": true,
+  "quota": {
+    "invocations": 3,
+    "total_tokens": 33808,
+    "cost_usd": 0.537834,
+    "provider": "claude_code",
+    "model": "claude-opus-5",
+    "fell_back_from": []
+  },
+  "cli_reported_envelopes": {
+    "control-1": {
+      "num_turns": 2,
+      "duration_ms": 69714,
+      "subtype": "success"
+    },
+    "deletion-1": {
+      "num_turns": 3,
+      "duration_ms": 106272,
+      "subtype": "success"
+    },
+    "deletion-2": {
+      "num_turns": 3,
+      "duration_ms": 105236,
+      "subtype": "success"
+    }
+  },
+  "note": "Completion calls are outer CLI jobs; num_turns reports their internal structured-output turns. No runner retry or redraw occurred.",
+  "structural_validation": {
+    "control-1": {
+      "structurally_usable": true
+    },
+    "deletion-1": {
+      "structurally_usable": true
+    },
+    "deletion-2": {
+      "structurally_usable": true
+    }
+  },
+  "no_production_prompt_change": true,
+  "no_accepted_book_change": true,
+  "full_handoff": {
+    "exit_code": 0,
+    "passed": 4689,
+    "skipped": 20
+  },
+  "artifacts": [
+    {
+      "path": "runs/diagnostics/discovery-institution-cue-20260908/artifacts.json",
+      "sha256": "1cebed666353a4fab2c70106f02c85dbe2b8bab4102a8a7ecce37e87c184056b"
+    },
+    {
+      "path": "runs/diagnostics/discovery-institution-cue-20260908/execution.json",
+      "sha256": "17ecba3973b55fead8d0a8f2c772ee453d9311c2ef5428d99f50f36d76d050c8"
+    },
+    {
+      "path": "runs/diagnostics/discovery-institution-cue-20260908/inspection.json",
+      "sha256": "174b165061f976216f10ac0611b804f71b34569a5463187d0850c039148519a1"
+    },
+    {
+      "path": "runs/diagnostics/discovery-institution-cue-20260908/verification.json",
+      "sha256": "0a9086bfec40accfed81c5301a8816f3b86f40a498ce5257f3474105434060a8"
+    },
+    {
+      "path": "runs/diagnostics/discovery-institution-cue-20260908/comparison.html",
+      "sha256": "f8ff3d9fd2b340ac0d927d69fc58db3c052f1c83f334e7127d8e75444f46fb5e"
+    },
+    {
+      "path": "runs/diagnostics/discovery-institution-cue-20260908/handoff.log",
+      "sha256": "3a12a138fd7beca874d4702b4c3f4e015e91fcc6fa0fd783b94f4e0c8a85d97a"
+    }
+  ]
+}
