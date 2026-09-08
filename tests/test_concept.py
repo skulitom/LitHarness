@@ -11,6 +11,7 @@ its debts on the promise ledger. No model call, no network.
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import litharness_contracts as lc
@@ -221,7 +222,9 @@ def test_the_listing_is_written_from_the_concept_and_renders_as_it_was_without_o
     assert "The book this listing sells, as its writer conceived it:" in with_it.prompt
     assert "the Accord" in with_it.prompt
     assert with_it.prompt.startswith("What this book is to be about:\na brief")
-    assert with_it.system == without.system, "the task's demands are untouched"
+    assert with_it.profile == overview.CONCEPT_OVERVIEW_PROFILE
+    assert without.profile == overview.OVERVIEW_PROFILE
+    assert with_it.system != without.system, "a settled story needs a public pitch"
     assert without == overview.render_overview_request(
         "a brief", WRITER, person="first", concept=None
     )
@@ -241,6 +244,80 @@ def test_the_seed_is_told_what_the_world_holds_and_a_second_system_only_when_nam
     assert world_agent._SECOND_SYSTEM in (with_two.system or "")
     assert "the Accord" in with_two.prompt
     assert world_agent.render_seed_request("a listing", WRITER, concept=None) == plain
+
+
+@pytest.mark.parametrize("with_discovery", [False, True])
+def test_listing_material_omits_planning_only_fields_without_changing_the_concept(
+    with_discovery: bool,
+) -> None:
+    drawn = concept.Concept.from_payload(_example())
+    drawn = replace(
+        drawn,
+        discovery=discovery.Discovery("A world.", "An opening.", "More magic.")
+        if with_discovery
+        else None,
+        system=replace(drawn.system, look="PRIVATE_DISPLAY", strongest_known="PRIVATE_HORIZON"),
+        turn=concept.Turn("PRIVATE_TURN", concept.INSIDE_FIRST_ARC),
+        second_system=concept.SecondSystem("PRIVATE_SYSTEM", "PRIVATE_MANNER", "PRIVATE_KEPT"),
+        first_arc=replace(drawn.first_arc, middle="PRIVATE_MIDDLE", closes="PRIVATE_ENDING"),
+        debts=(concept.Debt("PRIVATE_QUESTION", "PRIVATE_ANSWER", 4),),
+    )
+    before = drawn.to_text()
+    listing = drawn.render_for_listing()
+    assert drawn.person_before in listing
+    assert drawn.want in listing
+    assert "PRIVATE_" not in listing
+    # The full concept is still available to planning and world building.
+    for field in ("PRIVATE_TURN", "PRIVATE_ENDING", "PRIVATE_ANSWER", "PRIVATE_SYSTEM"):
+        assert field in drawn.render_for_seed()
+        assert field in json.dumps(drawn.for_outline())
+    assert drawn.to_text() == before
+
+
+def test_listing_preserves_a_turn_that_is_part_of_the_opening_setup() -> None:
+    drawn = concept.Concept.from_payload(_example())
+    assert drawn.second_system is not None
+    listing = drawn.render_for_listing()
+    assert drawn.turn.event in listing
+    assert drawn.second_system.name in listing
+    assert drawn.second_system.kept in listing
+
+
+@pytest.mark.parametrize("supplied", [False, True])
+def test_listing_records_the_profile_it_actually_dispatched(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, supplied: bool,
+) -> None:
+    from litharness import cli
+
+    monkeypatch.setenv("LITHARNESS_FAKE_PAD_CHARS", "400")
+    requests, decisions = [], []
+    complete = cli._completion_call
+    record = SqliteStore.record_decision
+
+    def capture_call(request, **kwargs):
+        requests.append(request)
+        return complete(request, **kwargs)
+
+    def capture_decision(store, decision, **kwargs):
+        decisions.append(decision)
+        return record(store, decision, **kwargs)
+
+    monkeypatch.setattr(cli, "_completion_call", capture_call)
+    monkeypatch.setattr(SqliteStore, "record_decision", capture_decision)
+    db, out = tmp_path / "book.db", tmp_path / "listing"
+    assert main(["--database", str(db), "init"]) == EXIT_OK
+    args = ["--database", str(db), "listing", "--out", str(out)]
+    if supplied:
+        path = tmp_path / "concept.json"
+        path.write_text(concept.Concept.from_payload(_example()).to_text(), encoding="utf-8")
+        args.extend(["--concept", str(path)])
+    assert main(args) == EXIT_OK
+    expected = overview.CONCEPT_OVERVIEW_PROFILE if supplied else overview.OVERVIEW_PROFILE
+    assert requests[0].profile == expected
+    assert decisions[-1].profile == expected
+    assert decisions[-1].gates[0].rule_or_critic_id == expected
+    bundle = json.loads((out / "listing.json").read_text(encoding="utf-8"))
+    assert bundle["profile"] == expected
 
 
 def test_the_outline_plans_the_first_arc_against_the_concept_and_the_old_payload_without() -> None:
@@ -573,7 +650,10 @@ def test_discovery_material_reaches_seed_grow_listing_and_later_arcs() -> None:
     drawn = concept.Concept.from_payload(payload)
     assert drawn.discovery is not None
     material = drawn.discovery.render()
-    assert material in drawn.render_for_listing()
+    listing = drawn.render_for_listing()
+    for value in (drawn.discovery.world, drawn.discovery.opening, drawn.discovery.growth):
+        assert value in listing
+    assert "These are story intentions" not in listing
     assert material in world_agent.render_seed_request("listing", concept=drawn).prompt
     for request in (
         discovery.render_request(""),

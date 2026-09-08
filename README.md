@@ -116,7 +116,13 @@ Without a shelf there is no tells observation or exemplar-leak gate.
 The listing loop is then the entry point for the book. It writes the listing a reader sees
 from the concept, records experimental appetite observations without feeding them back into
 revision, checks the title for collisions, and creates the empty scenes carrying the concept
-and its debts:
+and its debts.
+
+For a supplied concept, the listing writer receives the character, pursuit and discovery
+treatment, without the separate mechanical fields, arc summaries or debt schedule. A
+separate public-listing brief asks it to introduce the story for someone who has not read it,
+explain the pursuit in ordinary language and promise what magical growth makes possible.
+This changes future listing requests; it does not rewrite saved premises or certify appeal.
 
 ```bash
 uv run litharness --database book.db listing \

@@ -1903,15 +1903,16 @@ def cmd_listing(args: argparse.Namespace) -> int:
             else None
         )
         drawn: list[str] = []
+        listing_request = overview_mod.render_overview_request(
+            brief,
+            writer,
+            person=getattr(args, "person", None),
+            blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
+            concept=concept.render_for_listing() if concept is not None else None,
+        )
         for _attempt in range(LISTING_DRAW_ATTEMPTS):
             drafted, refusal = _completion_call(
-                overview_mod.render_overview_request(
-                    brief,
-                    writer,
-                    person=getattr(args, "person", None),
-                    blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
-                    concept=concept.render_for_listing() if concept is not None else None,
-                ),
+                listing_request,
                 calls=calls,
                 spend=spend,
             )
@@ -2049,7 +2050,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
 
         gate = GateOutcome(
             gate=GateKind.SHAPE,
-            rule_or_critic_id=overview_mod.OVERVIEW_PROFILE,
+            rule_or_critic_id=listing_request.profile,
             passed=not listing_chained,
             blocking=False,
             detail=(
@@ -2074,7 +2075,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
                 decision_id=decision_id_for(f"listing:{stamp}:{title}", 0, (gate,)),
                 outcome=Outcome.ACCEPT,
                 gates=(gate,),
-                profile=overview_mod.OVERVIEW_PROFILE,
+                profile=listing_request.profile,
                 provider=spend.provider,
                 model=spend.model,
                 invocations=spend.invocations,
@@ -2093,6 +2094,7 @@ def cmd_listing(args: argparse.Namespace) -> int:
 
     bundle = {
         "brief": brief.strip(),
+        "profile": listing_request.profile,
         "writer": writer.name if writer else None,
         "draft": first,
         "listing": listing,

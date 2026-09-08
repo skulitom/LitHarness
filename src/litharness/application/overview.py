@@ -36,6 +36,7 @@ from litharness.domain.writers import Writer
 
 #: Frozen profiles, one per stage, so a draft and a revision are separable on the decision rows.
 OVERVIEW_PROFILE = "writer.overview.v0"
+CONCEPT_OVERVIEW_PROFILE = "writer.overview.concept.v1"
 TITLE_PROFILE = "writer.title.v0"
 
 MAX_OUTPUT_TOKENS = 4000
@@ -115,6 +116,9 @@ def runs_too_long(listing: str, *, ceiling: int | None) -> bool:
     """Whether a sentence in this listing outruns the shelf's longest; never with no shelf."""
     return ceiling is not None and longest_sentence(listing) > ceiling
 
+
+#: The following history belongs to the legacy invention-and-listing task. Supplied concepts
+#: now use _CONCEPT_TASK; none of these old measurements establish that task's efficacy.
 #: **Five instructions, and the count is the point.** With the house rules appended this
 #: call made sixteen demands of a hundred-word artifact, eleven of them rules written for
 #: scene prose: paragraph-level pronoun reference, puzzle-box move counts, what a scene must
@@ -452,7 +456,32 @@ _TASK = (
 )
 
 
-def _system(writer: Writer | None) -> str:
+# A supplied concept already owns the story. Selling it to someone who has not read it
+# is a different task from inventing a premise under the legacy listing constraints.
+# This is author direction, not a validated reader-interest mechanism.
+_CONCEPT_TASK = (
+    "Write the public listing for the supplied fantasy serial, for someone who has read "
+    "neither the book nor its plan. They are deciding whether to open chapter one.\n"
+    "Give them an understandable situation and a reason to follow this person: what has "
+    "changed, what they want to do about it, and why that matters to them. Select connected "
+    "details from the material rather than summarising each field.\n"
+    "Make the magical adventure and progression promise concrete through what the person "
+    "could learn to do and what that would let them pursue. Use ordinary language before "
+    "special terminology; retain an unfamiliar name only when it helps the reader follow "
+    "the situation, without requiring a glossary or a lesson in the rules.\n"
+    "Curiosity should concern what will happen, not what the sentences mean. The source "
+    "includes developments a new reader has not reached: withhold their answers without "
+    "withholding the setup needed to understand the pursuit.\n"
+    "Keep the supplied character, motives and story intact; do not invent stakes, powers "
+    "or promises to make the pitch more dramatic. Exact incidental counts and timestamps "
+    "do not belong in the listing.\n"
+    "Write about a hundred words of finished listing only, with no title, headings, tags, "
+    "author commentary or dashes; use first or third person, never address the reader as "
+    "the protagonist."
+)
+
+
+def _system(writer: Writer | None, *, supplied_concept: bool = False) -> str:
     """Who is writing, then the job. No scene floor: see `_TASK`.
 
     **`house.ACCUMULATION` was appended here and then removed, and the removal is the same
@@ -474,7 +503,8 @@ def _system(writer: Writer | None) -> str:
     thing this genre's reader is least here for — and one object with two callers is what
     keeps it from becoming two rules that drift.
     """
-    return f"{writer.render()}\n\n{_TASK}" if writer is not None else _TASK
+    task = _CONCEPT_TASK if supplied_concept else _TASK
+    return f"{writer.render()}\n\n{task}" if writer is not None else task
 
 
 #: The line a first-person book's listing carries, as material under the brief rather than as
@@ -504,9 +534,9 @@ def render_overview_request(
     it is and what it is for, and the task's demands are untouched.
 
     `concept` is the book as its writer conceived it before this listing
-    (`concept.Concept.render_for_listing`, stage-0 §197), shown under the brief as material:
-    the listing is written from it and the task's demands are untouched. `None` renders the
-    prompt as it was.
+    (`concept.Concept.render_for_listing`, stage-0 §197), shown under the brief as material.
+    A supplied concept selects the public-listing task rather than asking the writer to
+    invent or change the story again. `None` retains the legacy invention request.
 
     An empty brief is legitimate and is the control the retired Forge kept for the same reason:
     a book built from no direction at all is what a directed one is read against.
@@ -538,9 +568,9 @@ def render_overview_request(
         prompt = f"{blurbs}\n\n{prompt}"
     return CompletionRequest(
         prompt=prompt,
-        system=_system(writer),
+        system=_system(writer, supplied_concept=bool(concept)),
         max_output_tokens=MAX_OUTPUT_TOKENS,
-        profile=OVERVIEW_PROFILE,
+        profile=CONCEPT_OVERVIEW_PROFILE if concept else OVERVIEW_PROFILE,
         call_class="generation",
         timeout_seconds=600.0,
     )
@@ -642,6 +672,7 @@ def clean_title(text: str) -> str:
 
 
 __all__ = [
+    "CONCEPT_OVERVIEW_PROFILE",
     "MAX_OUTPUT_TOKENS",
     "OVERVIEW_PROFILE",
     "TITLE_PROFILE",

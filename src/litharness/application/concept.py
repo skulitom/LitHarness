@@ -475,11 +475,10 @@ class Concept:
     # ------------------------------------------------------------- what each stage is told
 
     def render(self) -> str:
-        """The concept as a person reads it, and as the listing writer and the seed are shown it.
+        """The complete concept as a person reads it and as the world seed is shown it.
 
         Plain labels, and none of this system's own machinery words in them
-        (`house.MACHINERY_WORDS`): the listing writer reads this block and a word here reaches a
-        reader at one remove.
+        (`house.MACHINERY_WORDS`): these labels originally also reached the listing writer.
         """
         advantage_label = (
             "Their magical advantage"
@@ -524,8 +523,43 @@ class Concept:
         return f"{self.discovery.render()}\n\n{body}" if self.discovery else body
 
     def render_for_listing(self) -> str:
-        """Material under the listing's brief: the book the listing is selling."""
-        return f"The book this listing sells, as its writer conceived it:\n{self.render()}"
+        """Material for a public pitch, without duplicating the complete planning dossier.
+
+        The treatment can contain developments; this is not a spoiler detector. Omit fields
+        whose sole purpose is scheduling, resolution or mechanical representation. The
+        listing task still has to introduce the situation and choose what to disclose.
+        """
+        lines = [
+            "The book this listing sells, as its writer conceived it:",
+            f"The person: {self.person_before}",
+            f"Their pursuit and why it matters: {self.want}",
+        ]
+        if self.discovery:
+            lines.extend(
+                (
+                    f"The world they encounter: {self.discovery.world}",
+                    f"Opening source material: {self.discovery.opening}",
+                    f"What growing capability makes possible: {self.discovery.growth}",
+                )
+            )
+        else:
+            lines.extend(
+                (
+                    f"Opening source material: {self.first_arc.opens}",
+                    f"Their magical advantage: {self.exception}",
+                    f"What growing capability makes possible: {self.system.pays}",
+                    f"The obstacle or danger: {self.threat.what}",
+                )
+            )
+        # A turn before the opening is part of the setup, even in legacy two-system books.
+        if self.turn.when == BEFORE_CHAPTER_ONE:
+            lines.append(f"What has already changed before the opening: {self.turn.event}")
+            if self.second_system:
+                lines.append(
+                    f"The magic after that change, {self.second_system.name}: "
+                    f"{self.second_system.manner}. What they retain: {self.second_system.kept}"
+                )
+        return "\n".join(lines)
 
     def render_for_seed(self) -> str:
         """Material under the listing in the seed prompt: what the world has to be able to hold."""

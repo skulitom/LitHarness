@@ -112,6 +112,7 @@ def _roles() -> dict[str, str]:
     """Every assembled system prompt this system actually sends, by the role that sends it."""
     return {
         "listing writer": overview._system(WRITER),
+        "listing writer, supplied concept": overview._system(WRITER, supplied_concept=True),
         # **Floorless like the listing, and reader-facing like it** (§197): the concept's
         # rendering is shown to the listing writer as material, so a machinery word in this
         # task is one remove from a reader.
@@ -375,6 +376,8 @@ BUDGET: dict[str, int] = {
     # sentence now names both failures, none and more than one, which `house.demands` reads as
     # two demands where it read one.
     "listing writer": 18,
+    # A settled concept needs a public pitch, not another story-invention task.
+    "listing writer, supplied concept": 18,
     # **Raised 42 -> 44 on 2026-08-29, for three sentences that replace an absence** (§163).
     # The seed ask named a ladder and named nothing that hands out its rungs, so the model
     # supplied the nearest issuer it knows and the book got an institution: pilot 14's
@@ -964,6 +967,7 @@ def test_the_maximal_assembled_scene_prompt_stays_inside_its_declared_budget() -
 #: whose output *replaces* drafted prose is where it would cost the most.
 READER_FACING = (
     "listing writer",
+    "listing writer, supplied concept",
     "concept writer",
     "discovery writer",
     "concept development",
