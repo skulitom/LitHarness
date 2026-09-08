@@ -25661,3 +25661,50 @@ does not establish general recall of unnecessary quantities, prevent reinvention
 world/outline/drafting calls, or certify a chapter's reading experience. Occupational framing
 and explanatory narration remain unresolved; the shared instruction alone is not evidence
 that downstream generation will comply.
+
+## 245. Chapter-one diagnostic and completion-context correction (2026-09-08)
+
+The operator asked to address the overall prose problem after the discovery and precision
+fixes. Three prospectively registered local diagnostics retained six first-result subscription
+CLI calls, using 69,246 recorded tokens and primary model claude-opus-5. No direct API, corpus
+input, accepted book/roster mutation, reroll, candidate ranking or quality qualification was
+performed. Artifacts remain under ignored roots:
+
+- `runs/diagnostics/discovery-dossier-20260908/`: discovery with and without the installed
+  tanaka dossier, followed by identical minimal chapter-drafting instructions on each resulting
+  treatment. Four calls, 53,732 tokens, two full chapters. `results-manifest.json` binds raw
+  requests, traces and outputs. `READING.md` contains located defect harvests, not labels.
+- `runs/diagnostics/direct-chapter-20260908/`: a chapter from general discovery direction and
+  the quantity instruction, without a treatment or production planning/state packet. One call,
+  10,757 tokens. Its `READING.md` records remaining explanatory narration, institutional
+  framing and physical/progression ambiguities, without promoting these to a measured result.
+- `runs/diagnostics/direct-positive-intent-20260908/`: exact direct request with only the
+  institution-independence clause removed. One call, 4,757 tokens. **Invalid prose comparison:**
+  the response announced a repository search and emitted a tool-call-shaped fragment; there
+  was no chapter. The first output and successful CLI envelope are both retained. The runbook
+  stops further live exploration this turn. `READING.md` records the invalidity explicitly.
+
+The combined report is the first directory's `REPORT.md`. Removing the dossier and bypassing
+the full loop did not eliminate the located defects in these individual samples. This does
+not establish a general causal effect, relative quality, or that the production loop is
+irrelevant. The with-dossier discovery also uses a reserved system name and is not a valid
+production concept. The clause-ablation response cannot support a claim about institutions.
+
+**Concrete transport fact and narrow correction.** The failed response names a local research
+directory absent from the supplied request and argv. Its name occurs in the checkout's Git
+status and project memory, but no effective-context snapshot establishes which, if either,
+reached the model. Task ambiguity is also possible: the general-direction request retained
+language referring to supplied story material. The adapter demonstrably appended its role
+to the default coding prompt; installed CLI help includes Git status among that prompt's
+dynamic sections. Tool-free calls now replace the default system prompt, with a neutral
+fallback for an empty role, and explicitly disable auto memory. Tool-using roles retain their
+agent framing. Safe mode, subscription auth behavior, native schemas and tool restrictions
+remain. This is an isolation-boundary correction, not an explanation of every prose defect.
+
+`test_claude_completion_replaces_coding_context_but_agents_keep_their_role` checks role handling.
+`test_live_claude_completion_does_not_inherit_git_status` adds a default-skipped canary. Live
+verification of the changed transport is pending; ordinary tests cannot establish it. The
+historical framing helper now handles already-replaced prompts; its cache still refuses
+different argv. A fresh run should establish containment before testing self-contained,
+positive author intent and changes to dossier/world-design ownership. Those are hypotheses,
+not licensed editorial mechanisms or a promise of consistently engaging chapters.

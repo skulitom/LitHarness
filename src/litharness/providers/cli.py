@@ -100,16 +100,18 @@ def subprocess_runner(
     return CommandResult(completed.returncode, completed.stdout, completed.stderr)
 
 
-#: Settings JSON passed on every call. Globs rather than one path so `.claude/CLAUDE.md`
-#: and `CLAUDE.local.md` in the working directory are covered as well as the root file.
-CLAUDE_MD_EXCLUDES = '{"claudeMdExcludes":["**/CLAUDE.md","**/CLAUDE.local.md"]}'
+#: Settings JSON passed on every call. Memory is independent of CLAUDE.md exclusions.
+#: Globs cover nested instruction files as well as the working-directory root file.
+CLAUDE_ISOLATION_SETTINGS = (
+    '{"claudeMdExcludes":["**/CLAUDE.md","**/CLAUDE.local.md"],"autoMemoryEnabled":false}'
+)
 
 
 @dataclass
 class ClaudeCodeProvider:
     """`claude -p` reduced from an agent to a single-shot completion.
 
-    Five flags are not optional, each for a reason that cost something to learn:
+    The transport boundaries are explicit:
 
     * `--tools ''` for an empty allowance removes built-in tools from a completion.
       `--allowed-tools` controls approval, not tool availability; an empty approval list
@@ -123,8 +125,10 @@ class ClaudeCodeProvider:
       §11 requires.
     * `--no-session-persistence` — otherwise every scene leaves a session on disk.
     * `--safe-mode` suppresses customizations while preserving subscription authentication.
-      Existing settings-source and CLAUDE.md exclusions remain explicit. Managed policy
+      Settings-source, CLAUDE.md exclusions and disabled auto memory remain explicit. Managed policy
       still applies; `--bare` is not interchangeable because it disables subscription OAuth.
+    * Tool-free calls replace the default coding system prompt, including its repository
+      context. Tool-using roles retain the CLI's agent framing and append their role.
     * stdin closed — see `subprocess_runner`.
 
     **This runs against whatever authentication the local `claude` install already has**, and
@@ -189,7 +193,7 @@ class ClaudeCodeProvider:
             "--setting-sources",
             "user",
             "--settings",
-            CLAUDE_MD_EXCLUDES,
+            CLAUDE_ISOLATION_SETTINGS,
         ]
         if not request.allowed_tools:
             # Approval rules and available tools are different CLI surfaces. Keep scoped
@@ -198,7 +202,14 @@ class ClaudeCodeProvider:
         if request.schema is not None:
             argv += ["--json-schema", json.dumps(request.schema, ensure_ascii=False)]
         system = self._system_prompt(request)
-        if system:
+        if not request.allowed_tools:
+            # Append keeps the coding identity and dynamic repository context. An empty
+            # role must also replace that default, including health and marker probes.
+            argv += [
+                "--system-prompt",
+                system or "Complete the task described in the user message.",
+            ]
+        elif system:
             argv += ["--append-system-prompt", system]
         return argv + list(self.extra_args)
 

@@ -405,3 +405,26 @@ for schema requests, whose payload is read from `structured_output`; prose keeps
 `test_claude_empty_allowance_removes_tools_without_rewriting_agent_permissions` cover the
 mode and permissions. The registered live precision probe in stage-0 §244 also exercises
 subscription authentication with the changed transport; it is not a controlled quality claim.
+
+**2026-09-08 completion-context correction (stage-0 §245).** A later tool-free prose diagnostic
+returned a repository-search announcement naming a local research directory absent from its
+request. The full effective model context was not captured, so the source of that path is
+unresolved. Installed 2.1.263 help explicitly identifies Git status, working directory and
+memory paths as dynamic sections of its default system prompt. Appending a writing role
+retains that coding context even when safe mode and empty tool availability are present.
+
+Tool-free calls now replace the default with `--system-prompt`; requests without an explicit
+system use a neutral task-completion instruction. Tool-using roles retain append framing.
+Explicit settings also set `autoMemoryEnabled:false`, independently of the CLAUDE.md exclusions,
+using the [documented memory control](https://code.claude.com/docs/en/memory#enable-or-disable-auto-memory).
+Safe mode, subscription authentication, native schemas and permissions are preserved.
+`test_claude_completion_replaces_coding_context_but_agents_keep_their_role` covers both paths;
+`test_live_claude_completion_does_not_inherit_git_status` adds an opt-in marker canary alongside
+the existing instruction-file canary. Neither live canary was run for this amendment: the
+registered diagnostic had reached its live stop boundary. Flag-level regression tests do
+not establish effective isolation or a prose improvement; those remain fresh live checks.
+
+The historical framing diagnostic accepts an already-replaced system prompt without adding
+another flag, and explicitly restores append framing for its control so the two arms remain
+distinct. Its cache still binds exact argv and refuses changed transport. Exact historical
+replays require the recorded revision, not current provider defaults.

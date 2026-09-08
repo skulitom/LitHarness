@@ -144,10 +144,16 @@ def transport_argv(argv: list[str], isolated: bool) -> list[str]:
     if isolated:
         if "--tools" not in result or result[result.index("--tools") + 1] != "":
             raise ValueError("isolated trial requires no built-in tools")
-        if result.count("--append-system-prompt") != 1:
+        if result.count("--append-system-prompt") == 1 and "--system-prompt" not in result:
+            result[result.index("--append-system-prompt")] = "--system-prompt"
+        elif result.count("--system-prompt") != 1 or "--append-system-prompt" in result:
             raise ValueError("expected exactly one nonempty system prompt")
-        result[result.index("--append-system-prompt")] = "--system-prompt"
-        result.append("--safe-mode")
+        if "--safe-mode" not in result:
+            result.append("--safe-mode")
+    elif result.count("--system-prompt") == 1 and "--append-system-prompt" not in result:
+        # The study's control is append framing even after the production default changes.
+        # Otherwise both arm labels would silently select the same transport.
+        result[result.index("--system-prompt")] = "--append-system-prompt"
     return result
 
 

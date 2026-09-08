@@ -36,7 +36,7 @@ from litharness.providers.base import (
     strip_fences,
 )
 from litharness.providers.cli import (
-    CLAUDE_MD_EXCLUDES,
+    CLAUDE_ISOLATION_SETTINGS,
     ClaudeCodeProvider,
     CommandResult,
     subprocess_runner,
@@ -249,16 +249,38 @@ def test_claude_argv_carries_every_mandatory_flag() -> None:
         "without it a -p call reads the repository's CLAUDE.md and project settings from "
         "the working directory, and the stored prompt is no longer the whole prompt"
     )
-    assert CLAUDE_MD_EXCLUDES in argv
+    assert CLAUDE_ISOLATION_SETTINGS in argv
     assert "--bare" not in argv, "--bare skips keychain reads and breaks subscription login"
 
 
 def test_the_claude_md_exclusion_is_well_formed_and_names_the_files_it_must() -> None:
     """The JSON is a string in argv, so a typo would reach the CLI rather than a parser."""
-    settings = json.loads(CLAUDE_MD_EXCLUDES)
+    settings = json.loads(CLAUDE_ISOLATION_SETTINGS)
     patterns = settings["claudeMdExcludes"]
     assert "**/CLAUDE.md" in patterns
     assert "**/CLAUDE.local.md" in patterns
+    assert settings["autoMemoryEnabled"] is False
+
+
+@pytest.mark.parametrize("system", ["", "Write the requested fiction."])
+@pytest.mark.parametrize("allowance", [(), ("Bash(litharness world show:*)",)])
+def test_claude_completion_replaces_coding_context_but_agents_keep_their_role(system, allowance):
+    runner = claude_runner(CLAUDE_ENVELOPE)
+    ClaudeCodeProvider(runner=runner).complete(
+        CompletionRequest(prompt="x", system=system, allowed_tools=allowance)
+    )
+    argv = runner.argv  # type: ignore[attr-defined]
+    if allowance:
+        assert "--system-prompt" not in argv
+        if system:
+            assert argv[argv.index("--append-system-prompt") + 1] == system
+        else:
+            assert "--append-system-prompt" not in argv
+    else:
+        assert "--append-system-prompt" not in argv
+        assert argv[argv.index("--system-prompt") + 1] == (
+            system or "Complete the task described in the user message."
+        )
 
 
 @pytest.mark.parametrize("allowance", [(), ("WebSearch",), ("Bash(litharness world show:*)",)])
@@ -306,7 +328,7 @@ def test_claude_schema_request_adds_a_json_only_instruction() -> None:
     runner = claude_runner(CLAUDE_ENVELOPE)
     ClaudeCodeProvider(runner=runner).complete(CompletionRequest(prompt="x", schema=SCHEMA))
     argv = runner.argv  # type: ignore[attr-defined]
-    system = argv[argv.index("--append-system-prompt") + 1]
+    system = argv[argv.index("--system-prompt") + 1]
     assert "no code fence" in system
     assert json.loads(argv[argv.index("--json-schema") + 1]) == SCHEMA
 
@@ -640,6 +662,26 @@ def test_live_claude_does_not_read_a_claude_md_from_the_working_directory(tmp_pa
     )
     assert "LEAKED" not in result.text, result.text
     assert "NONE" in result.text, result.text
+
+
+@live
+def test_live_claude_completion_does_not_inherit_git_status(tmp_path) -> None:
+    """Repository filenames must not reach a tool-free completion through CLI context."""
+    subprocess.run(["git", "init", "--quiet", str(tmp_path)], check=True)
+    (tmp_path / "GIT_CONTEXT_LEAKED").write_text("context probe\n", encoding="utf-8")
+
+    def in_marker_dir(argv, *, timeout, cwd=None, stdin=None):
+        return subprocess_runner(argv, timeout=timeout, cwd=str(tmp_path), stdin=stdin)
+
+    result = ClaudeCodeProvider(model="claude-haiku-4-5", runner=in_marker_dir).complete(
+        CompletionRequest(
+            prompt=(
+                "If your context contains a Git status entry whose filename starts with "
+                "GIT_CONTEXT_, reply with that whole filename. Otherwise reply only NONE."
+            )
+        )
+    )
+    assert result.text.strip() == "NONE", result.raw
 
 
 @live

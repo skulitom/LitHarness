@@ -80,6 +80,9 @@ def test_persona_change_preserves_rules_locks_length_and_plan():
 def test_isolated_transport_keeps_permission_and_mcp_controls_without_appending_twice():
     request = CompletionRequest(prompt="x", system="Write prose.")
     argv = ClaudeCodeProvider()._argv(request)
+    # The historical control appended its role; production now replaces it. Keep the
+    # original transformation covered without treating today's transport as that control.
+    argv[argv.index("--system-prompt")] = "--append-system-prompt"
     assert TRIAL["transport_argv"](argv, False) == argv
     result = TRIAL["transport_argv"](argv, True)
     assert "--append-system-prompt" not in result
@@ -89,6 +92,12 @@ def test_isolated_transport_keeps_permission_and_mcp_controls_without_appending_
     assert result[result.index("--tools") + 1] == ""
     assert "--strict-mcp-config" in result and "--no-session-persistence" in result
     assert "--append-system-prompt" in argv  # no mutation of the original argv
+    current = ClaudeCodeProvider()._argv(request)
+    assert TRIAL["transport_argv"](current, True) == current
+    control = TRIAL["transport_argv"](current, False)
+    assert control == argv
+    assert control != current
+    assert "--system-prompt" in current  # selecting a control does not mutate production
 
 
 def test_framing_cache_binds_transport_and_never_retries_missing_results(tmp_path):
