@@ -105,3 +105,7 @@ content-addressed claim record; ordinary implementation facts do not.
 Keep patches narrow and preserve unrelated work in a dirty tree. Add a focused regression
 test for the behavior being changed, then run `uv run python tools/check.py handoff` before
 handing off.
+
+Keep code comments focused on current contracts and non-obvious choices. Link to the decision
+ledger or registered experiment record for history; do not repeat retired instructions and
+experiment narratives beside live prompts.

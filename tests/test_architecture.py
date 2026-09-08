@@ -4,16 +4,9 @@ The project has a useful inward dependency direction today, but a diagram cannot
 convenient import from reversing it. These tests keep the domain independent, keep provider
 and adapter implementations from coupling to each other, and reject internal import cycles.
 
-**And they check the docstrings, because in this repo the docstrings are load-bearing.** The
-comments here carry the reasons, the refuted alternatives and their measurements, and readers
-— human and otherwise — act on them. Nothing type-checked a word of that, and the record says
-what happens: `jobs.priority` was documented as inert in four places for two stages after it
-stopped being, and a claim that a list of uncalled promises was empty survived exactly one
-commit. Prose decays like code and had none of code's guards.
-
-These are the cheapest approximations of a type-check for it — a symbol the prose names in
-backticks should be findable, and a test it cites as evidence should exist — and they are the
-two failures that actually happened.
+Comments and docstrings describe contracts that maintainers rely on. Symbol references
+must still resolve and cited tests must still exist; historical decisions belong in
+the decision ledger rather than beside every implementation.
 """
 
 from __future__ import annotations
@@ -228,8 +221,6 @@ PROSE_ALLOWED: dict[str, str] = {
     "to show what splitting ids on `_` contributes to a name count",
     "axes.Pole": "domain/axes.py, cut with the prose-axis channel (530f40e); promises.py "
     "cites it for the one property that survives — a kind carries no valence",
-    "comprehension_battery": "research/quality-measurement/comprehension_battery.py, outside "
-    "the scanned corpus; house.py cites the four readers it asked and what they quoted",
     "creature_saltmilk_doe": "an example subject id, beside `agency_the_drift`",
     "named_axes": "domain/discrimination.py, cut with the dead cluster (530f40e); "
     "directors.py names it to say what `prose_axes_named` deliberately is not",
