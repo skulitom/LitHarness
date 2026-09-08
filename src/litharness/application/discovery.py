@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from litharness.application import precision
-from litharness.domain import house
+from litharness.domain import house, schema_words
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
@@ -81,6 +81,23 @@ class Discovery:
                 raise ValueError(f"discovery.{key} must be non-empty story material")
             values[key] = value.strip()
         return cls(**values, version=version)
+
+    @classmethod
+    def from_invention(cls, payload: Mapping[str, Any]) -> Discovery:
+        """Validate a newly invented treatment before spending on later stages.
+
+        Keep stored material readable through from_payload; this entry point applies
+        the production name check to new generations, including isolated experiments.
+        """
+        treatment = cls.from_payload(payload)
+        if names := schema_words.named_in(
+            "\n".join((treatment.world, treatment.opening, treatment.growth))
+        ):
+            raise ValueError(
+                f"discovery uses reserved names: {', '.join(names)}; "
+                "rename them in the source before mechanical development"
+            )
+        return treatment
 
     def to_jsonable(self) -> dict[str, str]:
         return {

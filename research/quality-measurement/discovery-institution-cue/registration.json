@@ -1,0 +1,62 @@
+{
+  "schema": "litharness.generation-pilot-registration.v1",
+  "base_commit": "f5352653fdf415f9cb096ced0cd9795e04af31d7",
+  "artifacts": [
+    {
+      "path": "research/quality-measurement/discovery-institution-cue/RUNBOOK.md",
+      "sha256": "cf104d03b5d3a620b01314e64b9f948c8937c5e33f15f3c8ca71f25af4b04da4"
+    },
+    {
+      "path": "runs/diagnostics/discovery-institution-cue-20260908/run.py",
+      "sha256": "bd97dd7aaa9948de89429922d53af4400a7d4804cb1dfb610f839af1afd84464"
+    },
+    {
+      "path": "runs/diagnostics/discovery-institution-cue-20260908/offline/requests.json",
+      "sha256": "d1d72c893fc9a85483b36757f80583046ec0b71656bf13efb1f2d8145def0560"
+    },
+    {
+      "path": "runs/diagnostics/discovery-institution-cue-20260908/offline/validation.json",
+      "sha256": "c95742ef8f2a830e2d275dc9c6860a50fc14ced3db26dce15ee00f723194343f"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/premise-first/initial-premise.txt",
+      "sha256": "95b5746bd5b7dd7f4f0019c31130bcba63ab4c70e0a1f1d02fe743722ed6f464"
+    },
+    {
+      "path": "src/litharness/application/discovery.py",
+      "sha256": "2946d0d7514450423d6797ffdd7bd18cc672d0678ae766cb933ba5721587fbb9"
+    },
+    {
+      "path": "src/litharness/cli.py",
+      "sha256": "01b92dd796ee937d382d35fd601343429748851a52284bfecfd4b7db3a1d996f"
+    },
+    {
+      "path": "src/litharness/domain/house.py",
+      "sha256": "5ba3340ad9a6c90e748efd8997718f40b5fd9c066cc7b0c9d7182b482fcdc584"
+    },
+    {
+      "path": "src/litharness/domain/schema_words.py",
+      "sha256": "0abe05c72d60a541e3d5c6ef37c9c1e2c160301080f77e554ef01072bd0ed246"
+    },
+    {
+      "path": "src/litharness/providers/cli.py",
+      "sha256": "971774fed511116885fd613347fa889c02e709f97975cacd38f72fa70884b3ed"
+    },
+    {
+      "path": "runs/diagnostics/discovery-institution-cue-20260908/verify.py",
+      "sha256": "c7f659b823a8b0c45abffbdc51de463be7b2e8e3297d83a7aa20329e42a0d4eb"
+    },
+    {
+      "path": "runs/diagnostics/discovery-institution-cue-20260908/registration-handoff.log",
+      "sha256": "a18a28d2fe3e1d4d205d94d2dbdf530b2fdb8e184838a365afbf35c9b2ee663e"
+    }
+  ],
+  "generation_calls_before_registration": 0,
+  "quality_mechanism": false,
+  "automatic_production_adoption": false,
+  "pre_registration_handoff": {
+    "exit_code": 0,
+    "passed": 4689,
+    "skipped": 20
+  }
+}

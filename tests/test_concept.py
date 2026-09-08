@@ -650,6 +650,22 @@ def test_reserved_discovery_name_stops_before_unrepairable_mechanical_retries(
     assert json.loads((out / "discovery-trace.json").read_text())["response"] == json.dumps(answer)
 
 
+@pytest.mark.parametrize("field", ["world", "opening", "growth"])
+def test_invention_validation_rejects_reserved_names_without_breaking_stored_reads(
+    field: str,
+) -> None:
+    payload = {**_discovery(), field: "She learns to use the Standing."}
+    retained = discovery.Discovery.from_payload(payload)
+    assert getattr(retained, field) == payload[field]
+    with pytest.raises(ValueError, match="reserved names: standing"):
+        discovery.Discovery.from_invention(payload)
+
+
+def test_invention_validation_preserves_valid_treatment() -> None:
+    payload = _discovery()
+    assert discovery.Discovery.from_invention(payload) == discovery.Discovery.from_payload(payload)
+
+
 def test_discovery_material_reaches_seed_grow_listing_and_later_arcs() -> None:
     payload = {**_example(), "discovery": _discovery()}
     drawn = concept.Concept.from_payload(payload)
