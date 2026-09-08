@@ -15,7 +15,8 @@ from pathlib import Path
 MODEL = "claude-opus-5"
 SYSTEM = "Write original fiction. Return only the finished chapter, including its chapter heading."
 DEFAULT_BRIEF = (
-    "Write Chapter 1 of an original LitRPG adventure serial for Royal Road readers. "
+    "Write Chapter 1 of an original LitRPG adventure serial for Royal Road readers, choosing "
+    "portal fantasy, isekai, or system apocalypse, or a combination of them. "
     "The reading experience should be a magical adventure: exploring an unfamiliar world, "
     "discovering usable magic, and becoming more capable. Give the protagonist something "
     "they actively want to pursue. Invent the characters, setting, and story. "

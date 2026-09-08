@@ -88,8 +88,10 @@ New concepts begin with magical discovery (stage-0 §243). The writer first inve
 to explore, the opening's connected action with magic, and capabilities that open further
 possibilities. Concept development then builds the mechanics and arc from that treatment. The setting,
 activity, powers and conflict are invented for each book; no fixed adventure is supplied.
-The default experience applies even with an empty brief. `--brief` adds the author's specific
-direction. All stages use the configured subscription CLI and the ordinary quota checks.
+New books default to portal fantasy, isekai, or system apocalypse, with combinations allowed.
+The default applies even with an empty brief; `--brief` can choose another subgenre or premise.
+Stored treatments retain their original direction. All stages use the configured subscription
+CLI and the ordinary quota checks.
 Claude Code starts with `--safe-mode` to disable user/project customizations while keeping
 subscription authentication; `--bare` disables that authentication in the supported CLI.
 
@@ -197,8 +199,8 @@ visibility filter makes it available to the writer, not automatically known by t
 
 `--person` is a position, not a finding: `first` seeds one locked constraint every scene call
 carries, `third` and the default seed nothing. The operator's position since read 19 is third
-person. `--brief` still takes a story, a situation, a constraint somebody cares about — never
-a shelf label — and an empty brief is a valid control.
+person. `--brief` can specify a story, situation, constraint or subgenre; an empty brief uses
+the default genre direction.
 
 `--writer` names a compiled cast writer or any writer the roster has accepted. The roster lives
 in the open database unless `--roster-database` (or `LITHARNESS_ROSTER_DATABASE`) names the

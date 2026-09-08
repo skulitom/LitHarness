@@ -22,7 +22,7 @@ from litharness.domain import house, schema_words
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
-CONCEPT_PROFILE = "writer.concept.v0"
+CONCEPT_PROFILE = "writer.concept.v1"
 DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v5"
 
 #: The plan item id the concept is persisted under; one per book, like `plan-premise`.
@@ -696,8 +696,9 @@ def outline_rules(arc_index: int | None, *, discovery_backed: bool = False) -> l
 #: reader has been, an exception that is one person's) is the standing direction (§174, the
 #: hook memo) rather than taste.
 _TASK = (
-    "You are inventing the book before a word of it exists: what a reader of this shelf tells "
-    "a friend, months on, to make them start it. Answer the fields asked for and nothing else.\n"
+    "You are inventing a portal fantasy, isekai, or system apocalypse LitRPG, or a combination, "
+    "unless the author's brief calls for something else. Answer the fields asked for and "
+    "nothing else.\n"
     "Whoever it happens to is somebody this shelf's reader has been: one plain clause of who "
     "they were the day before.\n"
     "The exception is one power this person has that nobody else in the world has, and the "

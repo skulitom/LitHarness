@@ -16,8 +16,8 @@ from litharness.domain import house, schema_words
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v5"
-VERSION = "magical-discovery.v2"
+PROFILE = "writer.discovery.v6"
+VERSION = "magical-discovery.v3"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
 _V1_DIRECTION = (
@@ -27,7 +27,7 @@ _V1_DIRECTION = (
     "well as danger. Rules, costs and institutions support that experience; satisfying "
     "their procedures alone does not deliver it. Respect the author's specific brief."
 )
-DIRECTION = (
+_V2_DIRECTION = (
     "Create a LitRPG fantasy experience: an unfamiliar world worth exploring, magic "
     "someone can discover and use, and growing capability that opens possibilities "
     "they want to pursue. Progression develops the character's own magical or physical "
@@ -36,7 +36,21 @@ DIRECTION = (
     "advancement. Let the character act on curiosity and desire as well as danger, within "
     "the author's specific brief."
 )
-DIRECTIONS = {"magical-discovery.v1": _V1_DIRECTION, VERSION: DIRECTION}
+DIRECTION = (
+    "Create a LitRPG fantasy experience in portal fantasy, isekai, or system apocalypse, or "
+    "a combination, unless the author's brief calls for something else: an unfamiliar world "
+    "worth exploring, magic someone can discover and use, and growing capability that opens "
+    "possibilities they want to pursue. Progression develops the character's own magical or "
+    "physical capabilities; the game system tracks those changes independently of employment, "
+    "licences or institutional rank. Make discovery and the practiced use of magic drive "
+    "advancement. Let the character act on curiosity and desire as well as danger, within "
+    "the author's specific brief."
+)
+DIRECTIONS = {
+    "magical-discovery.v1": _V1_DIRECTION,
+    "magical-discovery.v2": _V2_DIRECTION,
+    VERSION: DIRECTION,
+}
 
 SCHEMA: dict[str, Any] = {
     "type": "object",

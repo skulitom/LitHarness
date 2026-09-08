@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from clean_start import chapter
+from clean_start import chapter, codex_chapter
 
 
 class ChapterTest(unittest.TestCase):
@@ -68,6 +68,30 @@ class ChapterTest(unittest.TestCase):
         self.assertNotIn("private", (self.out / "result.json").read_text())
         raw = json.loads((self.out / "stdout.json").read_bytes())
         self.assertEqual(raw["result"], self.text)
+
+    def test_both_launchers_share_genre_defaults_and_custom_briefs_replace_them(self):
+        self.assertIn("portal fantasy, isekai, or system apocalypse", chapter.DEFAULT_BRIEF)
+        self.assertEqual(codex_chapter.DEFAULT_BRIEF, chapter.DEFAULT_BRIEF)
+        custom = "A native-born gardener explores her own world. No portals or apocalypse.\n"
+        brief_file = self.root / "brief.txt"
+        brief_file.write_text(custom, encoding="utf-8")
+        for launcher, option in ((chapter, "--claude"), (codex_chapter, "--codex")):
+            for use_file in (False, True):
+                with self.subTest(launcher=launcher.__name__, use_file=use_file):
+                    argv = ["chapter", option, str(self.executable), "--out", str(self.out)]
+                    if use_file:
+                        argv += ["--brief-file", str(brief_file)]
+                    with (
+                        patch.object(launcher, "generate", return_value=self.out) as generate,
+                        patch.object(sys, "argv", argv),
+                        patch("builtins.print"),
+                    ):
+                        launcher.main()
+                    options = {"dry_run": False} if launcher is chapter else {}
+                    generate.assert_called_once_with(
+                        self.executable, self.out,
+                        custom if use_file else chapter.DEFAULT_BRIEF, **options,
+                    )
 
     def test_environment_drops_keys_routes_and_agent_settings(self):
         safe = chapter.subscription_environment({

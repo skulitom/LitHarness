@@ -168,6 +168,23 @@ def test_the_task_text_speaks_none_of_this_system_s_own_vocabulary() -> None:
     assert not found, found
 
 
+@pytest.mark.parametrize(
+    "brief",
+    ["", "A native-born gardener explores her own world. No portals or apocalypse."],
+)
+def test_new_invention_defaults_to_the_requested_genres_under_the_author_brief(brief: str) -> None:
+    for request in (
+        discovery.render_request(brief),
+        concept.render_concept_request(brief, scenes=6),
+    ):
+        assert "portal fantasy, isekai, or system apocalypse" in request.system
+        assert "or a combination" in request.system
+        assert "unless the author's brief calls for something else" in request.system
+        if brief:
+            assert brief in request.prompt
+    assert discovery.Discovery.from_invention(_discovery()).version == "magical-discovery.v3"
+
+
 # --- where it lives ------------------------------------------------------------------------
 
 
@@ -808,6 +825,28 @@ def test_legacy_concepts_are_not_rewritten_and_bad_discovery_does_not_disappear(
     assert v1.version == v1.to_jsonable()["version"] == "magical-discovery.v1"
     assert "Create a magical fantasy experience with progression" in v1.render()
     assert discovery.DIRECTION not in v1.render()
+
+
+def test_stored_v2_treatment_keeps_its_direction_when_developed_again() -> None:
+    payload = {**_discovery(), "version": "magical-discovery.v2"}
+    treatment = discovery.Discovery.from_payload(payload)
+    prior_direction = (
+        "Create a LitRPG fantasy experience: an unfamiliar world worth exploring, magic "
+        "someone can discover and use, and growing capability that opens possibilities "
+        "they want to pursue. Progression develops the character's own magical or physical "
+        "capabilities; the game system tracks those changes independently of employment, "
+        "licences or institutional rank. Make discovery and the practiced use of magic drive "
+        "advancement. Let the character act on curiosity and desire as well as danger, within "
+        "the author's specific brief."
+    )
+    assert treatment.render().splitlines()[0] == (
+        f"Intended fantasy experience (magical-discovery.v2): {prior_direction}"
+    )
+    request = concept.render_concept_request("Keep this story.", scenes=6, discovery=treatment)
+    assert treatment.render() in request.prompt
+    assert "portal fantasy, isekai, or system apocalypse" not in request.system + request.prompt
+    assert request.profile == concept.DISCOVERY_CONCEPT_PROFILE
+    assert treatment.to_jsonable() == payload
 
 
 @pytest.mark.parametrize("refused_profile", [discovery.PROFILE, concept.DISCOVERY_CONCEPT_PROFILE])

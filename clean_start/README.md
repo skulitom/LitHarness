@@ -17,8 +17,8 @@ Codex must report a ChatGPT login. It runs in an empty temporary directory with 
 configuration, project documents, rules, memory, plugins and hooks disabled. Supported
 unused built-in tool and skill controls are disabled explicitly; a response containing
 tool activity is refused. This is not a claim to have inspected the complete live inventory. The
-replacement system and brief match the Claude baseline. The launcher records the requested
-model; Codex's JSONL does not independently identify the resolved model. CLI/platform context
+recorded Codex comparisons used the Claude baseline's replacement system and brief. The launcher
+records the requested model; Codex's JSONL does not independently identify the resolved model. CLI/platform context
 is not fully captured. A paired local marker test confirmed that the document setting
 suppressed an `AGENTS.md` instruction which appeared with document loading enabled.
 Disabling additional built-in features subsequently reduced the same greeting request's
@@ -31,8 +31,10 @@ defects and transport failures. No API credentials, model fallback or applicatio
 python clean_start/chapter.py --out runs/clean-start-first
 ```
 
-The default brief asks for a fresh magical-adventure LitRPG for Royal Road readers.
-Use `--brief-file path/to/brief.txt` to supply another author brief. The code contains no
+Both launchers default to a magical-adventure LitRPG for Royal Road readers in portal fantasy,
+isekai, or system apocalypse, with combinations allowed. Use `--brief-file path/to/brief.txt`
+to replace that default completely, including choosing another subgenre. Saved experiment
+requests retain the brief used for their run. The code contains no
 story, premise, writer persona, scene outline, example prose or rules about numbers.
 
 One new, tool-free Claude session receives a short replacement system prompt and the brief.
