@@ -1,0 +1,67 @@
+{
+  "schema": "litharness.generation-pilot-registration.v1",
+  "base_commit": "d048dadbdcd39e8a334ce13798db26562b979c07",
+  "artifacts": [
+    {
+      "path": "research/quality-measurement/discovery-setback-demand/RUNBOOK.md",
+      "sha256": "29f28e7695c1216b2ac54568c4934e412815eaa725098cbcfcfc5104b58145e7"
+    },
+    {
+      "path": "runs/diagnostics/discovery-setback-demand-20260908/run.py",
+      "sha256": "c0c0cb636793f135b528ad85a17fe943f06077e3365f242ea6605b470995fce8"
+    },
+    {
+      "path": "runs/diagnostics/discovery-setback-demand-20260908/verify.py",
+      "sha256": "9c7c572361b66a9eb7e8e0bfd141c9e05f0769d877c1f7879f2a4a270f5cb273"
+    },
+    {
+      "path": "runs/diagnostics/discovery-setback-demand-20260908/offline/requests.json",
+      "sha256": "fc78e820deaed0505adb531a735b0158530a27c9f222957f73f4ed549e09ec6a"
+    },
+    {
+      "path": "runs/diagnostics/discovery-setback-demand-20260908/offline/validation.json",
+      "sha256": "30f6ca5b8fd6d6a188f07c404abd8310e5f5192b152ddf7c89527b60eb4fa6e6"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/premise-first/initial-premise.txt",
+      "sha256": "95b5746bd5b7dd7f4f0019c31130bcba63ab4c70e0a1f1d02fe743722ed6f464"
+    },
+    {
+      "path": "src/litharness/application/discovery.py",
+      "sha256": "2946d0d7514450423d6797ffdd7bd18cc672d0678ae766cb933ba5721587fbb9"
+    },
+    {
+      "path": "src/litharness/domain/house.py",
+      "sha256": "5ba3340ad9a6c90e748efd8997718f40b5fd9c066cc7b0c9d7182b482fcdc584"
+    },
+    {
+      "path": "src/litharness/domain/schema_words.py",
+      "sha256": "0abe05c72d60a541e3d5c6ef37c9c1e2c160301080f77e554ef01072bd0ed246"
+    },
+    {
+      "path": "src/litharness/domain/budget.py",
+      "sha256": "651c1d57329182dddd2aac612e067437c71c19b702944b724e20f38dd8ea3784"
+    },
+    {
+      "path": "src/litharness/providers/cli.py",
+      "sha256": "971774fed511116885fd613347fa889c02e709f97975cacd38f72fa70884b3ed"
+    },
+    {
+      "path": "src/litharness/cli.py",
+      "sha256": "01b92dd796ee937d382d35fd601343429748851a52284bfecfd4b7db3a1d996f"
+    },
+    {
+      "path": "runs/diagnostics/discovery-setback-demand-20260908/registration-handoff.log",
+      "sha256": "b00a22282c45da8b39decd9584db189ebf7608c45e5668def5c600bd9d975179"
+    }
+  ],
+  "generation_calls_before_registration": 0,
+  "planned_completion_calls": 8,
+  "automatic_production_adoption": false,
+  "quality_mechanism": false,
+  "pre_registration_handoff": {
+    "exit_code": 0,
+    "passed": 4689,
+    "skipped": 20
+  }
+}
