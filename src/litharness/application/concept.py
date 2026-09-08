@@ -29,8 +29,9 @@ wrote to. Nothing here ranks (§61(5)): one concept per book, drawn once; a seco
 second book.
 
 **Where it lives.** The concept is an unlocked `BOOK_PLAN` item. The seed and outline
-read it through `concept_of`; the scene packet renders it in a budgeted intentions section,
-separate from established facts and author locks. Future plans are not past events or
+read it through `concept_of`. Once a scene plan exists, drafting receives that handoff and
+the author's original brief rather than the full proposal. The explicit no-outline control
+retains the concept in its intentions section. Future plans are not past events or
 permission to disclose a secret early. Concept-backed books require scene plans before
 drafting, even when their short beat sheets contain no repeated function labels.
 
@@ -48,7 +49,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 import litharness_contracts as lc
@@ -267,11 +268,14 @@ class Concept:
     debts: tuple[Debt, ...]
     second_system: SecondSystem | None = None
     discovery: Discovery | None = None
+    author_brief: str = ""
 
     # ------------------------------------------------------------------ reading one back
 
     @classmethod
-    def from_development(cls, payload: Mapping[str, Any], discovery: Discovery) -> Concept:
+    def from_development(
+        cls, payload: Mapping[str, Any], discovery: Discovery, *, author_brief: str = ""
+    ) -> Concept:
         """Keep the supplied opening as the arc's opening, not an already-finished prologue.
 
         The development call supplies mechanics and the arc's later movement. It cannot
@@ -280,11 +284,15 @@ class Concept:
         arc = {**_mapping(payload, "first_arc"), "opens": discovery.opening}
         return cls.from_payload({
             **payload, "first_arc": arc, "discovery": discovery.to_jsonable(),
+            "author_brief": author_brief,
         })
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> Concept:
         """A concept off a model answer or a file, or `MalformedConcept` naming the field."""
+        author_brief = payload.get("author_brief", "")
+        if not isinstance(author_brief, str):
+            raise MalformedConcept("author_brief must be text")
         system = _mapping(payload, "system")
         steps = system.get("steps")
         if isinstance(steps, bool) or not isinstance(steps, int) or steps < MIN_STEPS:
@@ -360,6 +368,7 @@ class Concept:
             debts=tuple(debts),
             second_system=second,
             discovery=discovery,
+            author_brief=author_brief,
         )
 
     @classmethod
@@ -379,7 +388,9 @@ class Concept:
         """Editable prose and read-only structure, with one address for the opening."""
         fields: dict[str, str] = {}
         protected: dict[str, Any] = {}
-        fixed = {"system.name", "second_system.name", "turn.when", "discovery.version"}
+        fixed = {
+            "system.name", "second_system.name", "turn.when", "discovery.version", "author_brief",
+        }
         if self.discovery is not None:
             fixed.add("first_arc.opens")
 
@@ -420,6 +431,7 @@ class Concept:
     def to_jsonable(self) -> dict[str, Any]:
         return {
             **({"discovery": self.discovery.to_jsonable()} if self.discovery else {}),
+            **({"author_brief": self.author_brief} if self.author_brief else {}),
             "person_before": self.person_before,
             "exception": self.exception,
             "first_use": self.first_use,
@@ -462,7 +474,8 @@ class Concept:
         """The concept as the book carries it: a `BOOK_PLAN` item, unlocked.
 
         It remains revisable intent, never an author lock. The seed, outline and scene
-        packet read it through `concept_of`, with the packet labelling it as planned story.
+        packet read it through `concept_of`; the writer's view depends on whether a scene
+        plan already supplies the handoff.
         """
         return lc.PlanItem(
             logical_id=CONCEPT_PLAN_ID,
@@ -520,7 +533,11 @@ class Concept:
             due = f" (by scene {debt.due_scene})" if debt.due_scene is not None else ""
             lines.append(f"- {debt.subject}: {debt.owed}{due}")
         body = "\n".join(_sentence(line) for line in lines)
-        return f"{self.discovery.render()}\n\n{body}" if self.discovery else body
+        rendered = f"{self.discovery.render()}\n\n{body}" if self.discovery else body
+        return (
+            f"Author's original book brief:\n{self.author_brief}\n\n{rendered}"
+            if self.author_brief else rendered
+        )
 
     def render_for_listing(self) -> str:
         """Material for a public pitch, without duplicating the complete planning dossier.
@@ -598,7 +615,9 @@ class Concept:
             names.append(self.second_system.name)
         for name in names:
             found.update(schema_words.taken_as_a_name(name))
-        found.update(schema_words.named_in(self.render()))
+        # The author's instructions are not invented story names. They may themselves
+        # ask the model to avoid a reserved name.
+        found.update(schema_words.named_in(replace(self, author_brief="").render()))
         return tuple(sorted(found))
 
     def promise_entries(self) -> list[dict[str, Any]]:

@@ -17,6 +17,7 @@ import os
 import subprocess
 import sys
 from collections.abc import Sequence
+from pathlib import Path
 
 import pytest
 
@@ -624,6 +625,46 @@ def test_padding_the_fake_is_how_you_ask_for_a_model_free_loop(monkeypatch) -> N
     reg = build_default_registry()
     assert isinstance(reg.provider, FakeProvider)
     assert reg.provider.pad_to_chars == 400
+
+
+@pytest.mark.parametrize("failure", [None, "timeout", "malformed"])
+def test_claude_tool_free_calls_use_fresh_empty_directories_and_clean_up(failure):
+    locations = []
+
+    def run(argv, *, timeout, cwd=None, stdin=None):
+        assert cwd is not None
+        directory = Path(cwd)
+        locations.append(directory)
+        assert directory.is_dir() and not list(directory.iterdir())
+        assert directory.resolve() != Path.cwd().resolve()
+        assert "--safe-mode" in argv and "--bare" not in argv
+        assert stdin == "Write a scene."
+        (directory / "temporary-output").write_text("local artifact", encoding="utf-8")
+        if failure == "timeout":
+            raise subprocess.TimeoutExpired(argv, timeout)
+        return CommandResult(0, "{" if failure else json.dumps(CLAUDE_ENVELOPE))
+
+    provider = ClaudeCodeProvider(runner=run)
+    for _ in range(2):
+        if failure:
+            with pytest.raises(ProviderError):
+                provider.complete(CompletionRequest(prompt="Write a scene."))
+        else:
+            provider.complete(CompletionRequest(prompt="Write a scene."))
+    assert len(set(locations)) == 2
+    assert all(not path.exists() for path in locations)
+
+
+def test_claude_tool_using_roles_keep_the_callers_workspace():
+    def run(argv, *, timeout, cwd=None, stdin=None):
+        assert cwd is None
+        assert "--append-system-prompt" in argv
+        return CommandResult(0, json.dumps(CLAUDE_ENVELOPE))
+
+    ClaudeCodeProvider(runner=run).complete(CompletionRequest(
+        prompt="Inspect the world.", system="Manage this book's world.",
+        allowed_tools=("Bash(litharness world:*)",),
+    ))
 
 
 # --- opt-in live round trips -------------------------------------------------------

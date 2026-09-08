@@ -25805,3 +25805,30 @@ three calls. The book is published to `book-library/one-clean-want/`.
   discovery, so this run does not test it.
 
 One draw, first results kept, no quality claim and no comparison with volume one.
+
+## 248. Scene-sized handoffs replace duplicate concept context in drafting (2026-09-08)
+
+The operator requested a production pipeline change after discussing source-to-draft
+contamination. The existing outline call now produces structured scene briefs for concept-backed
+books, separating starting situation, pursuit, intended changes and later-story dependencies.
+Planning uses a planning contract instead of the prose house style, and discovery requests
+working planning language. A generated treatment remains revisable story material; author
+choices and established facts retain precedence.
+
+When a scene plan exists, drafting receives that handoff and established story context instead
+of a second complete concept/treatment block. Newly created concepts preserve the original
+author brief separately from model inventions and exclude it from precision edits. Ordinary
+saved plans remain usable; directive edits cannot accidentally restore the duplicate treatment.
+The explicit no-outline control keeps its full source. Plan acceptance still uses the existing
+policy decision, scoped unlocked records and transaction; accepted books are not rewritten.
+
+Tool-free Claude completions now run in empty temporary directories; world-management agents
+retain their workspace. Subscription-safe flags and the pinned model remain unchanged.
+
+The [handoff contract](scene-brief-handoff.md) owns the routing, compatibility and verification
+details. The focused production-path regression is
+`test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon`; transport cleanup
+is covered by `test_claude_tool_free_calls_use_fresh_empty_directories_and_clean_up`.
+These are implementation checks, not evidence that the prose is better or the complete model
+context is isolated. No model generation, quality ranking, extra agent or narrative template
+is part of this change.

@@ -117,6 +117,7 @@ from litharness.domain.genre import genre_block
 from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plans import premise_of, scene_plan_for, scene_plan_line
 from litharness.domain.revision import Revision
+from litharness.domain.scene_brief import render_plan
 from litharness.domain.serials import (
     Position,
     SerialShape,
@@ -879,12 +880,25 @@ def packet_for(
     records = store.state_records(revision.book_id, revision.branch_id)
     plan_items = store.plan_items(revision.book_id, revision.branch_id)
     concept = concept_mod.concept_of(plan_items)
+    scene_plan = scene_plan_for(plan_items, beat.logical_id)
+    intentions: dict[str, str] = {}
+    if concept is not None:
+        if scene_plan is None:
+            # The explicit no-outline control still needs a source for its story choices.
+            intentions[concept_mod.CONCEPT_PLAN_ID] = concept.render()
+        elif concept.author_brief:
+            # The planner has selected the scene material. Do not reintroduce the full
+            # proposal beside its handoff, even after a directive replaces the plan with
+            # ordinary text. Keep the operator's original words intact.
+            intentions[concept_mod.CONCEPT_PLAN_ID] = (
+                f"Author's original book brief:\n{concept.author_brief}"
+            )
 
     return assemble(
         revision,
         beat.logical_id,
         plan_items=plan_items,
-        story_intentions={concept_mod.CONCEPT_PLAN_ID: concept.render()} if concept else {},
+        story_intentions=intentions,
         state_records=records,
         query_id=f"beat:{beat.logical_id}",
         pov_character_id=pov_character_id,
@@ -1422,7 +1436,7 @@ def make_plan_selector(
                 # at the `scene_plan=` below. Bound first, wrap second: the bound says what
                 # the scene may not also contain, the wrap says what somebody in it does.
                 base_plan = (
-                    plan_item.text
+                    render_plan(plan_item.text)
                     if plan_item is not None
                     else (
                         staging.with_bound(

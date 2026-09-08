@@ -85,7 +85,8 @@ With `--out`, original invention and development remain in their traces and prop
 `concept-precision-trace.json`; no quality score or candidate ranking chooses an answer.
 
 The prepared discovery treatment is retained inside `concept.json` and reaches the listing,
-world seed and growth, arc outlines, and protected scene intentions. Later arcs develop its
+world seed and growth, and arc outlines. Scene drafting receives the planner's scene handoff
+instead of the complete treatment. Later arcs develop its
 possibilities from accepted history instead of replaying chapter one. `discovery-trace.json`
 records the first call independently of any exemplar shelf; `concept-trace-N.json` records
 each development attempt, including failures. A missing treatment or a reserved name in it
@@ -136,9 +137,16 @@ uv run litharness --database book.db listing \
 
 Books carrying a concept receive scene plans before drafting, including six-scene pilots.
 The planner sees which scenes share a chapter and chooses their events from the concept.
-The writer also receives the concept as planned story, separately from established facts
-and author locks. A missing or failed outline holds drafting for that book; `--no-outline`
-is the explicit control that permits drafting without one. These are generation and
+New concept-backed outlines return a structured brief for each scene: its starting situation,
+the character's pursuit, intended actions and consequences, and any later-story dependencies.
+The planner receives the whole concept and may revise provisional details while preserving
+the premise, author direction and established facts. The writer receives its scene brief,
+the original author brief, and established story context; the full treatment and distant arc
+summaries are no longer supplied again beside an existing scene plan. Planning uses its own
+instructions rather than the prose writer's house-style rules. See the
+[handoff contract](plan/scene-brief-handoff.md) for compatibility and verification limits.
+A missing or failed outline holds drafting for that book; `--no-outline`
+is the explicit control that permits drafting from the full concept without one. These are generation and
 meaning-preservation safeguards, not evidence of literary quality.
 Candidate and acceptance events preserve the exact provider draft and its SHA-256 before
 format cleanup or an explicitly requested revision, so changes can be traced afterwards.

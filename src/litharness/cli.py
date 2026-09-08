@@ -2268,7 +2268,9 @@ def cmd_concept(args: argparse.Namespace) -> int:
             try:
                 # Downstream generation cannot silently rewrite or drop the treatment.
                 drawn.append(
-                    concept_mod.Concept.from_development(result.parsed, discovery)
+                    concept_mod.Concept.from_development(
+                        result.parsed, discovery, author_brief=brief
+                    )
                 )
             except concept_mod.MalformedConcept as error:
                 print(f"litharness: the concept is unusable: {error}", file=sys.stderr)

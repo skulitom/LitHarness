@@ -25,6 +25,8 @@ from dataclasses import dataclass
 
 import litharness_contracts as lc
 
+from litharness.domain.scene_brief import render_plan
+
 #: The locked constraint a book told in the first person carries from creation. **A position,
 #: not a handling instruction**: it says which person the story is told in and stops, the way
 #: `Point of view: kell.` says whose scene it is and stops (`planner.render_prompt`). It travels
@@ -104,7 +106,7 @@ def scene_plan_line(statement: str) -> str:
     comparison while both callers render the line byte-identically, which is why this is a
     function rather than two f-strings that agree today.
     """
-    stripped = statement.strip()
+    stripped = render_plan(statement).strip()
     return f" This scene: {stripped}" if stripped else ""
 
 

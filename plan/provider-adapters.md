@@ -428,3 +428,11 @@ The historical framing diagnostic accepts an already-replaced system prompt with
 another flag, and explicitly restores append framing for its control so the two arms remain
 distinct. Its cache still binds exact argv and refuses changed transport. Exact historical
 replays require the recorded revision, not current provider defaults.
+
+**2026-09-08 workspace isolation (stage-0 §248).** Tool-free completions now execute in a
+fresh empty temporary directory, removed after the call, including timeout/error paths.
+Tool-using roles retain the caller's working directory. The subscription-safe flags and
+system-prompt split are unchanged. The lifecycle regressions in `tests/test_providers.py`
+verify the runner's actual `cwd`, empty directory and cleanup; this is an implementation
+check, not a new live canary or a guarantee that managed/global context is absent. The live
+marker tests intentionally inject their own test repository to exercise the flag boundary.

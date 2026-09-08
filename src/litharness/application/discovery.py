@@ -16,7 +16,7 @@ from litharness.domain import house, schema_words
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v4"
+PROFILE = "writer.discovery.v5"
 VERSION = "magical-discovery.v2"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
@@ -46,7 +46,8 @@ SCHEMA: dict[str, Any] = {
 }
 
 _TASK = (
-    "Invent one story treatment before designing its statistics or interface.\n"
+    "Invent one working story proposal in plain planning language about situations, "
+    "actions and consequences.\n"
     f"{DIRECTION}\n"
     f"{house.QUANTITY_DETAIL}\n"
     "world: describe a particular place, beings or magical phenomenon the character can "

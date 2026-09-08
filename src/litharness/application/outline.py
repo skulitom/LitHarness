@@ -93,6 +93,8 @@ from litharness.domain.policy import (
     decision_id_for,
 )
 from litharness.domain.promises import Promise, schedule_fault, window_fault
+from litharness.domain.scene_brief import SCHEMA as SCENE_BRIEF_SCHEMA
+from litharness.domain.scene_brief import SceneBrief
 from litharness.domain.text import content_hash
 from litharness.domain.world_brief import WorldBrief
 
@@ -100,7 +102,7 @@ from litharness.domain.world_brief import WorldBrief
 BOOK_OUTLINE = "book_outline"
 
 #: Frozen generation profile, recorded in provenance like every other model call here.
-PROFILE = "planner.outline.v0"
+PROFILE = "planner.outline.v1"
 
 #: Ranks above scene drafting (0) and below director direction (500+). A scene drafted before
 #: its statement exists would be drafted against the empty plan this module exists to fill, so
@@ -224,6 +226,40 @@ OUTLINE_SCHEMA: dict[str, Any] = {
         },
     },
 }
+
+
+CONCEPT_OUTLINE_SCHEMA: dict[str, Any] = {
+    **OUTLINE_SCHEMA,
+    "properties": {
+        **OUTLINE_SCHEMA["properties"],
+        "scenes": {
+            "type": "array",
+            "items": {
+                "type": "object", "additionalProperties": False,
+                "required": ["ordinal", "brief"],
+                "properties": {"ordinal": {"type": "integer"}, "brief": SCENE_BRIEF_SCHEMA},
+            },
+        },
+    },
+}
+
+SCENE_HANDOFF_RULES = (
+    "Return a brief for each scene: situation is its starting circumstance; pursuit is "
+    "what the viewpoint character tries to accomplish; changes lists the intended actions "
+    "and their consequences in causal order. Use plain planning facts, not dialogue, "
+    "comparisons, finished narration, or explanations of how a line should sound.",
+    "The writer will receive this scene's brief, the premise, the author's original brief, "
+    "and established story context. It will not receive book_concept or the original "
+    "treatment. Include the scene's necessary setup and causal connections in the brief.",
+    "future_dependencies contains only later-story commitments this scene must leave "
+    "possible, including identity, capability or disclosure limits where needed. Use an "
+    "empty list when none apply. These are planning constraints, not present events or "
+    "instructions to explain future developments in the scene.",
+    "Preserve the premise's pursuit and magical promise, the author's choices, established "
+    "history and world rules. The generated treatment is a working proposal: you may revise "
+    "incidental obstacles, props and choreography when planning the connected action. Its "
+    "wording and every invented detail are not separate requirements. Author locks prevail.",
+)
 
 
 def outline_job_id(book_id: str, branch_id: str, epoch: int, *, scope: str = "book") -> str:
@@ -478,6 +514,7 @@ def render_outline_request(
                 if protagonist is not None
                 else []
             )
+            + (list(SCENE_HANDOFF_RULES) if concept is not None else [])
             + (
                 concept_mod.outline_rules(
                     serial_arc_index, discovery_backed=concept.discovery is not None
@@ -490,22 +527,25 @@ def render_outline_request(
         sort_keys=True,
         indent=2,
     )
+    role = (
+        "You are the Narrative Planner for a novel. Given a premise and a beat sheet, "
+        + (
+            "plan the connected actions and consequences of each scene from the working "
+            "concept, so a writer can develop each chapter as a whole. "
+            if concept is not None
+            else "say in one sentence what happens in each scene, so that a writer drafting "
+            "any one scene knows what that scene is for and what the others are for. "
+        )
+        + "Return only the requested JSON."
+    )
     return CompletionRequest(
         prompt=prompt,
-        # The scene statements are what the writer is told a scene is *for*, so a statement
-        # that spends a scene on procedure buys the whole scene before a word is drafted.
-        system=house.with_house_rules(
-            "You are the Narrative Planner for a novel. Given a premise and a beat sheet, "
-            + (
-                "plan the connected actions and consequences of each scene from the settled "
-                "concept, so a writer can develop each chapter as a whole. "
-                if concept is not None
-                else "say in one sentence what happens in each scene, so that a writer drafting "
-                "any one scene knows what that scene is for and what the others are for. "
-            )
-            + "Return only the requested JSON."
+        # Planning has its own contract. Prose-style instructions belong to drafting.
+        system=(
+            f"{role}\n{house.QUANTITY_DETAIL}"
+            if concept is not None else house.with_house_rules(role)
         ),
-        schema=OUTLINE_SCHEMA,
+        schema=CONCEPT_OUTLINE_SCHEMA if concept is not None else OUTLINE_SCHEMA,
         max_output_tokens=8192,
         timeout_seconds=CONCEPT_TIMEOUT_SECONDS if concept is not None else 300.0,
         profile=PROFILE,
@@ -513,7 +553,9 @@ def render_outline_request(
     )
 
 
-def _statements(payload: Mapping[str, Any], expected: int) -> list[str]:
+def _statements(
+    payload: Mapping[str, Any], expected: int, *, structured: bool = False
+) -> list[str]:
     """The model's scenes as an ordinal-ordered list, or a refusal naming what was wrong.
 
     **Distinctness is checked here rather than hoped for**, and it is the one validation that
@@ -533,7 +575,15 @@ def _statements(payload: Mapping[str, Any], expected: int) -> list[str]:
         if not isinstance(entry, Mapping):
             raise OutlineOutputError("each scene must be an object")
         ordinal = entry.get("ordinal")
-        statement = entry.get("statement")
+        statement: object = entry.get("statement")
+        if structured:
+            brief = entry.get("brief")
+            if not isinstance(brief, Mapping) or set(entry) != {"ordinal", "brief"}:
+                raise OutlineOutputError("concept scenes require an ordinal and a structured brief")
+            try:
+                statement = SceneBrief.from_payload(brief).to_text()
+            except ValueError as error:
+                raise OutlineOutputError(str(error)) from error
         if not isinstance(ordinal, int) or isinstance(ordinal, bool):
             raise OutlineOutputError(f"scene ordinal {ordinal!r} is not an integer")
         if not 1 <= ordinal <= expected:
@@ -972,8 +1022,8 @@ def outline_proposal(
     refuses to touch a locked item — so a wrong outline would be unfixable by the same
     machinery that produced it.
     """
-    statements = _statements(payload, len(beats))
     concept_backed = concept_mod.concept_of(base.items) is not None
+    statements = _statements(payload, len(beats), structured=concept_backed)
     # **CREATE where the statement is absent, UPDATE where it is already there.** A
     # create-only proposal cannot outline a *partially* outlined book, and partial is a state
     # the system reaches on its own: a manuscript that gains a scene keeps the statements for
@@ -1046,7 +1096,9 @@ def _policy_digest() -> str:
             "profile": PROFILE,
             "target_words": TARGET_WORDS,
             "schema": OUTLINE_SCHEMA,
-            "concept_planning_version": 3,
+            "concept_planning_version": 4,
+            "concept_schema": CONCEPT_OUTLINE_SCHEMA,
+            "scene_handoff_rules": SCENE_HANDOFF_RULES,
             "discovery_rule": concept_mod.DISCOVERY_ARC_RULE,
             "quantity_detail": house.QUANTITY_DETAIL,
             "concept_timeout_seconds": CONCEPT_TIMEOUT_SECONDS,

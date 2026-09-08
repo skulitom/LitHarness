@@ -14,6 +14,7 @@ import subprocess
 import time
 from collections.abc import Sequence
 from dataclasses import dataclass
+from tempfile import TemporaryDirectory
 from typing import Any, Protocol
 
 from litharness.providers.base import (
@@ -230,9 +231,18 @@ class ClaudeCodeProvider:
     def complete(self, request: CompletionRequest) -> CompletionResult:
         started = time.monotonic()
         try:
-            outcome = self.runner(
-                self._argv(request), timeout=request.timeout_seconds, stdin=request.prompt
-            )
+            if request.allowed_tools:
+                outcome = self.runner(
+                    self._argv(request), timeout=request.timeout_seconds, stdin=request.prompt
+                )
+            else:
+                # A prose/schema completion has no workspace task. Give it no repository
+                # from which the CLI could assemble incidental working-directory context.
+                with TemporaryDirectory(prefix="litharness-completion-") as directory:
+                    outcome = self.runner(
+                        self._argv(request), timeout=request.timeout_seconds,
+                        stdin=request.prompt, cwd=directory,
+                    )
         except subprocess.TimeoutExpired as error:
             raise provider_error(
                 f"{self.name} timed out after {request.timeout_seconds}s",

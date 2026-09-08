@@ -22,10 +22,12 @@ from litharness.domain.jobs import JobStatus
 from litharness.domain.nodes import LockKind
 from litharness.domain.policy import Outcome
 from litharness.domain.revision import new_book
+from litharness.domain.scene_brief import SceneBrief
 from tests.conftest import PROJECT_ID
 from tests.test_concept import _example
 from tests.test_draft import PROSE, registry_with, seeded
 from tests.test_outline import DISTINCT, START, StubPlanner, a_book, with_schedule
+from tests.test_scene_brief import outlined_payload
 
 
 def _concept_book(store: SqliteStore):  # type: ignore[no-untyped-def]
@@ -40,23 +42,28 @@ def test_six_scene_concept_is_planned_before_its_first_draft(tmp_path: Path) -> 
         select = make_plan_selector(project_id=PROJECT_ID, scenes_per_chapter=2)
         job = select(store, "planner", START, 60.0)
         assert job is not None and job.job_kind == BOOK_OUTLINE
-        provider = StubPlanner(with_schedule(6))
+        response = {**with_schedule(6), "scenes": outlined_payload()["scenes"]}
+        provider = StubPlanner(response)
         make_outline_handler(provider, store, PROJECT_ID)(job, START)
         store.save_job(replace(job, status=JobStatus.SUCCEEDED))
 
         draft = select(store, "writer", START + 1, 60.0)
         assert draft is not None and draft.job_kind == SCENE_DRAFT
-        assert draft.payload["prompt"].endswith(DISTINCT[0])
+        assert DISTINCT[0] in draft.payload["prompt"]
         for index in range(6):
             item = plans.scene_plan_for(
                 store.plan_items(revision.book_id, revision.branch_id), f"scene-{index + 1}"
             )
-            assert item is not None and item.text == DISTINCT[index]
+            assert item is not None
+            brief = SceneBrief.from_text(item.text)
+            assert brief is not None and brief.changes == (DISTINCT[index],)
+            if index == 0:
+                assert draft.payload["prompt"].endswith(brief.render())
         assert "progression_beat" not in draft.payload["selected_by"]
         assert draft.payload["selected_by"]["scene_plan_mode"] == "concept"
         assert "Print that line exactly once" not in draft.payload["system"]
         assert "When this scene changes that state" in draft.payload["system"]
-        assert draft.payload["context"]["sections"]["intentions"] == 1
+        assert draft.payload["context"]["sections"].get("intentions", 0) == 0
         assert len(provider.requests) == 1
         request = provider.requests[0]
         assert "say in one sentence" not in request.system  # type: ignore[attr-defined]
@@ -83,7 +90,8 @@ def test_concept_chapter_ending_keeps_its_plan_and_author_locks(tmp_path: Path) 
         select = make_plan_selector(project_id=PROJECT_ID, scenes_per_chapter=2)
         outline = select(store, "planner", START, 60.0)
         assert outline is not None
-        make_outline_handler(StubPlanner(with_schedule(6)), store, PROJECT_ID)(outline, START)
+        response = {**with_schedule(6), "scenes": outlined_payload()["scenes"]}
+        make_outline_handler(StubPlanner(response), store, PROJECT_ID)(outline, START)
         store.save_job(replace(outline, status=JobStatus.SUCCEEDED))
         accepted = replace(
             revision,
@@ -97,7 +105,13 @@ def test_concept_chapter_ending_keeps_its_plan_and_author_locks(tmp_path: Path) 
         store.commit_revision(accepted, created_at="2026-08-16T00:01:00Z")
         ending = select(store, "writer", START + 1, 60.0)
         assert ending is not None and ending.payload["logical_id"] == "scene-2"
-        assert ending.payload["prompt"].endswith(DISTINCT[1])
+        item = plans.scene_plan_for(
+            store.plan_items(revision.book_id, revision.branch_id), "scene-2"
+        )
+        assert item is not None
+        brief = SceneBrief.from_text(item.text)
+        assert brief is not None and ending.payload["prompt"].endswith(brief.render())
+        assert DISTINCT[1] in ending.payload["prompt"]
         assert "read or been offered and has not yet answered" not in ending.payload["prompt"]
         assert lock.text in ending.payload["system"]
         assert lock.text in ending.payload["system"].split("AUTHOR-LOCKED STORY DECISIONS")[1]

@@ -581,6 +581,7 @@ def test_discovery_precedes_mechanics_and_survives_cli_persistence(
     assert "A gardener explores the sky." in first.prompt
     retained = concept.Concept.from_text((out / "concept.json").read_text(encoding="utf-8"))
     assert retained.discovery == discovery.Discovery.from_payload(_discovery())
+    assert retained.author_brief == "A gardener explores the sky."
     assert retained.first_arc.opens == retained.discovery.opening
     assert retained.render().count(retained.discovery.opening) == 1
     assert json.loads((out / "discovery-trace.json").read_text())["response"] == json.dumps(
@@ -792,12 +793,13 @@ def test_outline_handler_accepts_discovery_action_without_invented_stat_movement
 ) -> None:
     from litharness.application.outline import make_outline_handler
     from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
-    from tests.test_outline import START, StubPlanner, _job, a_book, payload_for
+    from tests.test_outline import START, StubPlanner, _job, a_book
+    from tests.test_scene_brief import outlined_payload
 
     drawn = concept.Concept.from_payload({**_example(), "discovery": _discovery()})
     with SqliteStore.open(tmp_path / "outline.db") as store:
         a_book(store, scenes=6, extra_plan_items=(drawn.plan_item(),))
-        response = {**payload_for(6), "milestones": []}
+        response = outlined_payload()
         registry = StubPlanner(response)
         before = store.plan_revision(BOOK_ID, BRANCH_ID)
         make_outline_handler(registry, store, PROJECT_ID)(_job(store), START)
