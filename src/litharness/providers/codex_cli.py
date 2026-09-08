@@ -596,7 +596,7 @@ def _validate_bridge_activity(
             raise ValueError("The MCP tool failed without a completed scoped command receipt")
     # Optional-tool diagnostics may legitimately answer without using a tool. These roles
     # explicitly require inspecting the stored world; no command means their task did not run.
-    if profile in {"architect.seed.v1", "architect.grow.v1"} and not any(
+    if profile.startswith(("architect.seed.v", "architect.grow.v")) and not any(
         executed(row) and row["returncode"] == 0 for row in finished
     ):
         raise ValueError("The architect returned without any successful scoped world command")

@@ -2200,6 +2200,11 @@ def cmd_concept(args: argparse.Namespace) -> int:
     """
     stamp = _stamp(_now())
     brief = _read_text(args.brief_file) if args.brief_file else (args.brief or "")
+    prior_concepts = [
+        prior.render_for_world()
+        for path in (getattr(args, "distinct_from", None) or [])
+        if (prior := _concept_from(path)) is not None
+    ]
     store = _store(args)
     try:
         writer, reason = _installed_writer(args, getattr(args, "writer", "") or "", store)
@@ -2212,7 +2217,7 @@ def cmd_concept(args: argparse.Namespace) -> int:
         calls = _ProviderCalls(registry=registry, store=store, args=args, stamp=stamp, run=run)
         shelf = _selected_shelf(args)
         discovery_request = discovery_mod.render_request(
-            brief, writer, person=getattr(args, "person", None)
+            brief, writer, person=getattr(args, "person", None), distinct_from=prior_concepts
         )
         discovery_result, refusal = _completion_call(discovery_request, calls=calls, spend=spend)
         if discovery_result is None:
@@ -4364,7 +4369,7 @@ def cmd_state(args: argparse.Namespace) -> int:
     read_here = 0
     for record in ordered:
         position = state_mod.order_key_of(record) or "-"
-        extracted = record.predicate_registry_version == extraction.REGISTRY_VERSION
+        extracted = record.predicate_registry_version in extraction.SYSTEM_VOICE_VERSIONS
         read_here += int(extracted)
         flags = "read" if extracted else "given"
         if not state_mod.is_canon(record):
@@ -6408,6 +6413,11 @@ def build_parser() -> argparse.ArgumentParser:
         "cares about; never a shelf label (§136). Empty is legitimate",
     )
     concept.add_argument("--brief-file", help="the brief as a file, or - for stdin")
+    concept.add_argument(
+        "--distinct-from", type=Path, action="append", default=[],
+        help="an earlier concept.json this book must differ from in protagonist, world and "
+        "core power; repeatable, used only during invention",
+    )
     concept.add_argument(
         "--writer",
         default=argparse.SUPPRESS,

@@ -54,14 +54,14 @@ def request_case(shelf=False):
 @pytest.mark.parametrize("shelf", [False, True])
 def test_composed_prompt_preserves_pre_instrumentation_bytes(shelf):
     # Prompt bytes retain the original instrumentation fixture. System hashes include
-    # the reviewed clarity/precision rules and standalone standing-example line.
+    # the reviewed clarity/precision rules and current-standing grammar example.
     expected = {
         False: (
-            "e90e542f0f715e5eafc164d0bde4836060c9eeb872927c2ad389e0eadef4c28a",
+            "6d7a980274259a860370c41345d80e24f1215a1ff8924cd7df77999a072afc14",
             "37be520580efa008ce4d4d302a46bab6d38ca33eeea8d21034fe27d39e065f10",
         ),
         True: (
-            "12c9f999bc97cd55bcee69a53d10d0ce5bbfb992e7a6256fdea35e2a92d1979e",
+            "23ddee913fd7add8e9e9fcaec8d4bcd81a4b17266f60f336ecda237d2ab785f1",
             "1df0c553b559be3c16e529e6d2fafc221bae23467fbacd71073abb3b91113385",
         ),
     }

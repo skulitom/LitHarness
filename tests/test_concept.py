@@ -182,7 +182,7 @@ def test_new_invention_defaults_to_the_requested_genres_under_the_author_brief(b
         assert "unless the author's brief calls for something else" in request.system
         if brief:
             assert brief in request.prompt
-    assert discovery.Discovery.from_invention(_discovery()).version == "magical-discovery.v3"
+    assert discovery.Discovery.from_invention(_discovery()).version == "magical-discovery.v4"
 
 
 # --- where it lives ------------------------------------------------------------------------
@@ -544,6 +544,51 @@ def test_a_concept_that_never_parses_is_a_fault_after_the_bounded_draws(
     assert not (tmp_path / "concept" / "concept.json").exists()
 
 
+def test_distinct_from_is_only_an_invention_constraint(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from litharness import cli
+
+    old = _example()
+    old["person_before"] = "PREVIOUS_PROTAGONIST_BOUNDARY"
+    path = tmp_path / "previous.json"
+    path.write_text(concept.Concept.from_payload(old).to_text(), encoding="utf-8")
+    call = _scripted(_discovery(), _example(), {"edits": []})
+    monkeypatch.setattr(cli, "_completion_call", call)
+    output = tmp_path / "new-concept"
+    assert main([
+        "--database", str(tmp_path / "new.db"), "concept", "--brief", "Fresh adventure.",
+        "--writer", "ferreira", "--distinct-from", str(path), "--out", str(output),
+    ]) == EXIT_OK
+    requests = call.seen  # type: ignore[attr-defined]
+    assert "PREVIOUS_PROTAGONIST_BOUNDARY" in requests[0].prompt
+    assert all("PREVIOUS_PROTAGONIST_BOUNDARY" not in request.prompt for request in requests[1:])
+    saved = concept.Concept.from_text((output / "concept.json").read_text(encoding="utf-8"))
+    assert saved.author_brief == "Fresh adventure."
+    assert "PREVIOUS_PROTAGONIST_BOUNDARY" not in saved.to_text()
+    assert "PREVIOUS_PROTAGONIST_BOUNDARY" not in world_agent.render_seed_request(
+        "New listing.", concept=saved
+    ).prompt
+
+
+def test_a_bad_distinct_from_file_refuses_before_opening_a_store(tmp_path: Path) -> None:
+    database = tmp_path / "new.db"
+    with pytest.raises(SystemExit, match=r"missing\.json"):
+        main([
+            "--database", str(database), "concept",
+            "--distinct-from", str(tmp_path / "missing.json"),
+        ])
+    assert not database.exists()
+
+
+def test_stored_v3_discovery_retains_its_original_direction() -> None:
+    old = discovery.Discovery.from_payload({**_discovery(), "version": "magical-discovery.v3"})
+    restored = discovery.Discovery.from_payload(old.to_jsonable())
+    assert restored == old
+    assert "Make discovery and the practiced use of magic drive advancement" in restored.render()
+    assert discovery.DIRECTION not in restored.render()
+
+
 def _discovery() -> dict[str, object]:
     return {
         "world": "Reefs float through the mountain passes and carry living weather.",
@@ -809,7 +854,7 @@ def test_world_mechanics_do_not_require_institutional_conflict_or_early_grant_ex
     request = world_agent.render_seed_request("listing")
     assert "price it or withhold it" not in request.system
     assert "the book is better when" not in request.system
-    assert "no fewer than five grants and no more than eight" in request.system
+    assert "five to eight grants per system" in request.system
     assert "require its introduction in chapter one" in request.system
 
 

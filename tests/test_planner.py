@@ -2176,9 +2176,52 @@ def test_the_writer_is_handed_the_next_rung_and_the_line_the_book_prints(
     assert "The book's plan has the standing reaching this later on:" in system
     assert "Move it toward that in this scene where the events warrant it" in system
     assert "[ASSAY] Rook now stands at Third Seal" in system.splitlines()
+    assert "replacing its rung with the one actually reached when advancement occurs" in system
     assert "[ASSAY] Rook now stands at Third Seal\n Write approximately 900 words." in system
     # A filled line, never a form with braces: the measurement `system_voice_example` records.
-    assert "{" not in system.split("print the line in this form")[-1]
+    assert "{" not in system.split("Use this current-standing line")[-1]
+
+
+@pytest.mark.parametrize("numeric_rank", [False, True])
+def test_the_selector_omits_only_rank_notices_already_carried_by_the_sheet(
+    store: SqliteStore, numeric_rank: bool,
+) -> None:
+    from tests.test_progression_gate import _canon
+
+    revision = new_book("standing-prompt", "main", title="The Crossing", scenes=6)
+    store.commit_revision(revision, created_at="2026-09-08T00:00:00Z")
+    store.record_plan_items(
+        revision.book_id, revision.branch_id,
+        [lc.PlanItem(
+            logical_id="premise", kind=lc.PlanKind.PREMISE,
+            text="A traveler crosses a wild frontier.",
+            authority=lc.PlanAuthority.INTENDED,
+        )],
+        created_at="2026-09-08T00:00:00Z",
+    )
+    if numeric_rank:
+        records = [
+            *_canon(),
+            next(r for r in _ladder_records() if r.predicate == worlds.GRAPH_LINE_PREDICATE),
+            worlds.world_record(
+                "ines_barrow", worlds.STANDS_AT_PREDICATE, object_ref="rung_fitter",
+                value="yard_ticket", order_key="s3", authority=lc.StateAuthority.PROPOSED,
+            ),
+        ]
+    else:
+        records = [*_ladder_records(), *_scheduled()]
+    store.record_state_records(
+        revision.book_id, revision.branch_id, records, created_at="2026-09-08T00:00:00Z",
+    )
+    assert standing_example(records, at="s1") is not None
+    job = make_plan_selector(outline=False, policy=DraftPolicy(require_starting_sheet=False))(
+        store, "worker", START, TICK,
+    )
+    assert job is not None and job.job_kind == SCENE_DRAFT
+    system = str(job.payload["system"])
+    assert ("Use this current-standing line" in system) is not numeric_rank
+    if numeric_rank:
+        assert "[STATUS] Ines Barrow — Ticket 1" in system
 
 
 def test_the_standing_block_carries_no_verb_and_no_adjective(store: SqliteStore) -> None:

@@ -410,7 +410,7 @@ def test_codex_scoped_bridge_pins_database_without_exposing_it_to_completion(mon
     assert "mcp_servers.litharness.default_tools_approval_mode" not in result.raw["settings"]
 
 
-@pytest.mark.parametrize("profile", ["architect.seed.v1", "architect.grow.v1"])
+@pytest.mark.parametrize("profile", ["architect.seed.v1", "architect.seed.v2", "architect.grow.v1"])
 def test_codex_architect_cannot_succeed_without_a_command_receipt(profile):
     with pytest.raises(ValueError, match="without any successful"):
         _validate_bridge_activity([], "", profile)

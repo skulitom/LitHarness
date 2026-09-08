@@ -26,8 +26,7 @@ def test_the_seed_states_the_ability_bound_the_completion_enforces() -> None:
     Architect's demand count is what it was (`tests/test_prompt_budget.py` owns the ceiling).
     The words are pinned to the constants so a moved bound cannot leave a stale sentence."""
     low, high = _NUMBER_WORDS[gamesystem.MIN_ABILITIES], _NUMBER_WORDS[gamesystem.MAX_ABILITIES]
-    assert f"no fewer than {low} grants and no more than {high}" in world_agent._SYSTEM
-    assert "refused at acceptance" in world_agent._SYSTEM
+    assert f"the engine accepts {low} to {high} grants per system" in world_agent._SYSTEM
     grants = [
         item for item in house.demands(world_agent._SYSTEM) if "Declare what the system" in item
     ]

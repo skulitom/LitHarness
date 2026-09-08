@@ -231,7 +231,7 @@ def state_row(record: lc.StateRecord) -> StateRow:
     """One canon record as the text view prints it: position, provenance, authority, and the
     sentence `state.describe` writes. `read` means this system extracted it from prose it
     generated; `given` means it was imported or declared."""
-    extracted = record.predicate_registry_version == extraction.REGISTRY_VERSION
+    extracted = record.predicate_registry_version in extraction.SYSTEM_VOICE_VERSIONS
     return {
         "order_key": state_mod.order_key_of(record),
         "provenance": "read" if extracted else "given",

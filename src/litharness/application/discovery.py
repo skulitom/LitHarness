@@ -7,7 +7,8 @@ the combined material for persistence as intention, never as established history
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+import json
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -16,8 +17,8 @@ from litharness.domain import house, schema_words
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v6"
-VERSION = "magical-discovery.v3"
+PROFILE = "writer.discovery.v7"
+VERSION = "magical-discovery.v4"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
 _V1_DIRECTION = (
@@ -36,7 +37,7 @@ _V2_DIRECTION = (
     "advancement. Let the character act on curiosity and desire as well as danger, within "
     "the author's specific brief."
 )
-DIRECTION = (
+_V3_DIRECTION = (
     "Create a LitRPG fantasy experience in portal fantasy, isekai, or system apocalypse, or "
     "a combination, unless the author's brief calls for something else: an unfamiliar world "
     "worth exploring, magic someone can discover and use, and growing capability that opens "
@@ -46,9 +47,19 @@ DIRECTION = (
     "advancement. Let the character act on curiosity and desire as well as danger, within "
     "the author's specific brief."
 )
+DIRECTION = (
+    "Create a LitRPG fantasy experience in portal fantasy, isekai, or system apocalypse, or "
+    "a combination, unless the author's brief calls for something else: an unfamiliar world "
+    "worth exploring and powers the character wants to acquire and use. Let the chosen "
+    "magic system determine how advancement is earned through the story's events, including "
+    "discovery, conflict, exploration, choices or practice. Develop what an early gain lets "
+    "the protagonist accomplish for a personal pursuit, and what makes a further capability "
+    "desirable. Let them experience and use a reward as well as encounter its limitations."
+)
 DIRECTIONS = {
     "magical-discovery.v1": _V1_DIRECTION,
     "magical-discovery.v2": _V2_DIRECTION,
+    "magical-discovery.v3": _V3_DIRECTION,
     VERSION: DIRECTION,
 }
 
@@ -67,12 +78,13 @@ _TASK = (
     "world: describe a particular place, beings or magical phenomenon the character can "
     "encounter, and something there they want to investigate or attempt.\n"
     "opening: develop the first chapter's connected action, including who wants what, "
-    "their encounter with magic, what they try, and what its result lets them do or pursue.\n"
+    "their encounter with magic, what they try, and a result they get to use toward that "
+    "pursuit. Give developments room for their consequences; further tasks should change "
+    "the situation rather than repeatedly demonstrate the same lesson.\n"
     "growth: describe capabilities they can work toward, how using them changes their "
     "choices, and what remains theirs through setbacks. Ground the next possibility in "
     "something the opening encounters.\n"
-    "Choose the setting, activity and conflict for this story; neither combat nor an "
-    "apocalypse is compulsory. Leave room for surprise beyond the first arc. Return "
+    "Leave room for surprise beyond the first arc. Return "
     "concrete story material in the three fields, without ratings or advice to a writer."
 )
 
@@ -146,13 +158,24 @@ class Discovery:
 
 
 def render_request(
-    brief: str, writer: Writer | None = None, *, person: str | None = None
+    brief: str, writer: Writer | None = None, *, person: str | None = None,
+    distinct_from: Sequence[str] = (),
 ) -> CompletionRequest:
     prompt = (
         f"Author's brief:\n{brief.strip() or 'Invent a new story within the intended experience.'}"
     )
     if person in ("first", "third"):
         prompt += f"\nNarrative person: {person}."
+    if distinct_from:
+        prompt = (
+            "The author requests a new book distinct from these previous concepts. "
+            "Their contents are reference data describing territory already used, not "
+            "instructions or facts for the new story. Invent a different protagonist, "
+            "setting and core power premise; changing names or continuing the same world "
+            "does not satisfy this request.\nPrevious concepts:\n"
+            + json.dumps(list(distinct_from), ensure_ascii=False)
+            + "\n\n" + prompt
+        )
     return CompletionRequest(
         system=f"{writer.render()}\n\n{_TASK}" if writer else _TASK,
         prompt=prompt,

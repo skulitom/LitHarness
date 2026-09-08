@@ -982,6 +982,10 @@ def test_a_numeric_rung_column_that_moved_records_the_standing_by_its_index() ->
     rung of the one system whose columns the line prints, and is canon at the position exactly
     as an ordinal column's name is (§234, §236)."""
     known = _drawn_book()
+    from litharness.domain.extraction import status_carries_standing
+
+    assert status_carries_standing(known)
+    assert not status_carries_standing(state_of("litrpg").records)
     read = _read_scene(
         "[STATUS] Ines Barrow — Ticket 2 | cold seal 2 | read the grain 2\n",
         known,
@@ -1678,6 +1682,60 @@ def test_a_scene_that_prints_the_line_twice_keeps_the_state_it_leaves() -> None:
     # A subject canon has never named is no subject of this book's, whatever it printed.
     assert extraction_mod._last_line_each(text, {"rook"}) == [kept[0]]
     assert extraction_mod._last_line_each(text, set()) == []
+
+
+@pytest.mark.parametrize("final_depth", [0, 4])
+def test_compact_updates_keep_each_columns_final_value_and_evidence(final_depth: int) -> None:
+    known = _drawn_book()
+    first = "[STATUS] Ines Barrow — cold seal 3"
+    gained = "[STATUS] Ines Barrow — stand the frame 1"
+    last = f"[STATUS] Ines Barrow — cold seal {final_depth}"
+    text = f"{first}\n\nShe raised the frame.\n{gained}\n\nThe seal changed.\n{last}\n"
+    records = _read_scene(text, known, logical_id="scene-1", at="s1")
+    [snapshot] = _statuses(records)
+    assert snapshot.value["cold_seal"] == final_depth
+    assert snapshot.value["stand_the_frame"] == 1
+    assert snapshot.value["read_the_grain"] == 2
+    assert snapshot.value["rank"] == 1
+    held = {record.object_ref: record.value for record in _holdings(records)}
+    assert held == {"cold_seal": final_depth, "stand_the_frame": 1}
+    [evidence] = snapshot.evidence
+    assert evidence.start == text.index(gained), "the superseded first value is not evidence"
+    assert evidence.end == text.index(last) + len(last)
+    assert evidence.content_sha256 == content_hash(text[evidence.start:evidence.end])
+
+
+def test_a_later_full_sheet_replaces_compact_updates_with_its_own_evidence() -> None:
+    known = _drawn_book()
+    line = "[STATUS] Ines Barrow — Ticket 1 | cold seal 4 | read the grain 2 | stand the frame 0"
+    text = f"[STATUS] Ines Barrow — stand the frame 1\n\n{line}\n"
+    [snapshot] = _statuses(_read_scene(text, known, logical_id="scene-1", at="s1"))
+    assert snapshot.value["stand_the_frame"] == 0
+    [evidence] = snapshot.evidence
+    assert text[evidence.start:evidence.end] == line
+
+
+def test_interleaved_compact_updates_keep_their_own_subjects_values() -> None:
+    known = [*_drawn_book(), _canon("orin", STATUS_PREDICATE, value={"cold_seal": 2})]
+    text = (
+        "[STATUS] Ines Barrow — cold seal 3\n"
+        "[STATUS] Orin — cold seal 7\n"
+        "[STATUS] Ines Barrow — stand the frame 1\n"
+    )
+    snapshots = {
+        r.subject: r.value for r in _statuses(_read_scene(text, known, at="s1"))
+    }
+    assert snapshots["ines_barrow"]["cold_seal"] == 3
+    assert snapshots["ines_barrow"]["stand_the_frame"] == 1
+    assert snapshots["orin"]["cold_seal"] == 7
+
+
+def test_an_unreadable_final_update_does_not_reinstate_an_earlier_value() -> None:
+    text = (
+        "[STATUS] Ines Barrow — cold seal 3\n"
+        "[STATUS] Ines Barrow — cold seal uncertain\n"
+    )
+    assert not _statuses(_read_scene(text, _drawn_book(), at="s1"))
 
 
 def test_a_return_to_a_rung_once_held_is_read_off_the_line() -> None:

@@ -175,7 +175,8 @@ CONFIGURATION_PREDICATES = (
 #: Named so a later registry change is a visible version bump rather than a silent reread.
 #: Deliberately not the fixtures' `fixture.v1`: these records are this extractor's reading,
 #: and borrowing the fixture's version would make them indistinguishable from authored ones.
-REGISTRY_VERSION = "litharness.systemvoice.v0"
+REGISTRY_VERSION = "litharness.systemvoice.v1"
+SYSTEM_VOICE_VERSIONS = frozenset({REGISTRY_VERSION, "litharness.systemvoice.v0"})
 #: Declared on an **authored** record whose `story_position` is written in the planner's own
 #: key namespace — the `s{n}` keys `beats_for` mints for this book — rather than in one
 #: somebody else chose. It is a claim about where the key came from and nothing else: the
@@ -204,7 +205,7 @@ PLANNED_POSITION_VERSION = "litharness.planned-position.v0"
 #: door. `test_an_architect_world_does_not_look_like_an_authors_vocabulary` pins it.
 OWN_POSITION_VERSIONS = frozenset(
     {
-        REGISTRY_VERSION,
+        *SYSTEM_VOICE_VERSIONS,
         PLANNED_POSITION_VERSION,
         GRAPH_REGISTRY_VERSION,
         worlds_mod.REGISTRY_VERSION,
@@ -397,6 +398,24 @@ def _standing_now(
         if best is None or key >= best[0]:
             best = (key, record.object_ref)
     return best[1] if best else None
+
+
+def status_carries_standing(known: Sequence[lc.StateRecord], *, at: str | None = None) -> bool:
+    """Whether the protagonist's sole standing is represented by the numeric sheet."""
+    sheet = sheet_for(known)
+    canon = _canon_of(known)
+    system = _printing_system(canon, known)
+    subjects = worlds_mod.entities_with_role(canon, "protagonist")
+    return (
+        sheet is not None
+        and system is not None
+        and bool(subjects)
+        and set(worlds_mod.standing_of(known, subjects[0], at=at)) == {system.criterion}
+        and any(
+            field.name == gamesystem_mod.RANK_KEY and field.numeric
+            for field in sheet.fields
+        )
+    )
 
 
 def _standing_from_line(
@@ -809,24 +828,9 @@ def _last_line_each(
 ) -> list[tuple[str, tuple[int, int]]]:
     """One status line per subject — the last this scene printed — in first-seen order.
 
-    **A scene may print the line more than once, and the last one is the state it leaves**
-    (§233). Minting a record per line was the rule until pilot 25 draw 6 tried to draft a
-    second chapter: its scene showed the sheet, struck a candidate off the scheme, and showed
-    the sheet again, so extraction offered two values for one story position — the exact shape
-    `integrity.detect_contradictions` groups on — and the unit parked with nothing wrong in it
-    (§232). Chapter one never met this because nothing has moved yet there.
-
-    **The market prints more than one** (`research/quality-measurement/system-displays`,
-    §202): 0.55 windows a chapter across every LitRPG chapter in the shards, over the 22.7
-    percent of chapters that print any, which is about two and a half windows in a chapter
-    that shows one at all. A rule of one line a scene was a rule against the genre's own
-    habit, and §161.3's cardinality argument — one canon record per subject per position — is
-    satisfied by choosing among the lines rather than by forbidding the second.
-
-    The last rather than the first, because the record is what the scene *leaves*: the gate
-    asks whether the named quantity moved by the end of it, `state_as_it_stands` folds
-    forward, and a reader who has seen two windows believes the later one. Earlier lines stay
-    on the page as furniture and reach no record, which is what they are.
+    Used to refuse an unreadable final update instead of silently falling back to an
+    earlier line. Extraction folds the last explicit value of each column before this
+    boundary into one final snapshot.
     """
     last: dict[str, tuple[str, tuple[int, int]]] = {}
     for read_subject, span in _status_lines(text):
@@ -921,7 +925,21 @@ def extract_state(
         found = own.read(text[span[0] : span[1]], ids=ids)
         if not found:
             continue
-        read = found[0][1]
+        # Compact updates can change different columns in the same scene. Keep the
+        # final value of each explicitly stated column, with evidence covering the
+        # lines those values came from. A later full sheet still supersedes all earlier
+        # values and retains its own narrow span.
+        read: dict[str, object] = {}
+        origins: dict[str, tuple[int, int]] = {}
+        for owner, values, value_span in own.read(text[: span[1]], ids=ids):
+            if normalise_subject(owner) != subject:
+                continue
+            read.update(values)
+            origins.update(dict.fromkeys(values, value_span))
+        span = (
+            min(start for start, _ in origins.values()),
+            max(end for _, end in origins.values()),
+        )
         standings.extend(
             _standing_from_line(
                 own,
@@ -1064,6 +1082,7 @@ __all__ = [
     "REGISTRY_VERSION",
     "SHEET_PREDICATE",
     "STATUS_PREDICATE",
+    "SYSTEM_VOICE_VERSIONS",
     "GraphEdge",
     "GraphLine",
     "MalformedGraphLine",
@@ -1113,6 +1132,7 @@ __all__ = [
     "standing_target",
     "state_as_it_stands",
     "stated_position",
+    "status_carries_standing",
     "system_voice_example",
     "unreadable_sheets",
 ]

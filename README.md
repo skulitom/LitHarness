@@ -118,10 +118,28 @@ stops generation before spending on mechanical retries. Existing concept files r
 These are generation and persistence guarantees, **not a validated reader-interest gate**.
 No model ranks candidates or certifies that the resulting chapter is good.
 
+For a new book that must differ from an earlier invention, pass
+`concept --distinct-from path/to/previous/concept.json` (repeatable). Discovery receives
+the earlier concepts' world and character projections as territory to avoid in the protagonist,
+setting and core power premise. These references do not enter later development or world
+creation; the saved discovery request records them. This supplies a novelty constraint, not
+an automatic judgment that the returned concept is distinct enough.
+
+New discovery requests develop an early gain's use toward a personal pursuit and the appeal
+of further capabilities. Advancement follows the chosen magic system through discovery,
+conflict, exploration, choices or practice. Earlier saved discoveries keep their original
+direction.
+
 Discovery and mechanical development share the scene writer's precision policy: incidental
 detail should not acquire exact counts or manufactured countdowns just to sound specific.
 Narrated precision needs a consequence for action or choice; required system values and their
 arithmetic stay exact. This does not round stored facts; accepted manuscript is untouched.
+
+New world seeds request hidden unacquired skills by default and establish language comprehension
+or translation. Concept-backed scenes may print compact updates with only the changed status
+columns; extraction keeps each column's final explicit value and carries forward omitted ones.
+Where the numeric sheet already records the system's rank, drafting does not also request a
+duplicate rank announcement. These changes affect future generation, not accepted chapters.
 
 ```bash
 uv run litharness --database book.db --writer halloran \

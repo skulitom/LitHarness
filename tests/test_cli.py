@@ -616,7 +616,8 @@ def test_state_narrows_to_one_subject(db, capsys) -> None:
     assert "status_snapshot" not in out, "another subject's records are not this subject's"
 
 
-def test_state_says_which_records_the_system_read_out_of_its_own_prose(db, capsys) -> None:
+@pytest.mark.parametrize("version", ["litharness.systemvoice.v0", "litharness.systemvoice.v1"])
+def test_state_says_which_records_the_system_read_out_of_its_own_prose(db, capsys, version) -> None:
     """Imported canon and extracted canon are different claims. One is the author's word and
     one is this system's reading of prose it generated, and an operator deciding whether to
     trust a fact needs to know which — the same reason a plan-placed story position carries a
@@ -638,7 +639,7 @@ def test_state_says_which_records_the_system_read_out_of_its_own_prose(db, capsy
                     value={"gold": 7},
                     story_position=lc.StoryPosition(order_key="s7"),
                     authority=lc.StateAuthority.ACCEPTED_CANON,
-                    predicate_registry_version="litharness.systemvoice.v0",
+                    predicate_registry_version=version,
                     note="story position s7 stated by the plan, not attested by the book",
                 )
             ],

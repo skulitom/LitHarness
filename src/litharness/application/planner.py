@@ -112,6 +112,7 @@ from litharness.domain.extraction import (
     standing_example,
     standing_target,
     stated_position,
+    status_carries_standing,
     system_voice_example,
 )
 from litharness.domain.genre import genre_block
@@ -431,56 +432,9 @@ def render_prompt(
         system = sources.prepend("system", f"{writer.render()}\n\n", system, "writer")
         sources.entries[-1]["source"]["writer_id"] = writer.writer_id
     if status_example:
-        # Values as well as shape. A model asked for a status line with no numbers in view
-        # invents them, and an invented balance is a contradiction the gate refuses and the
-        # repair loop pays for.
-        #
-        # **The line moved off the scene's end and onto the change, and that is §161's
-        # furniture contract.** It used to read "End the scene with a status line in this
-        # form", which is a footer: a scene could advance the sheet in its prose and report
-        # the result after the reader had already left the moment. Read 8 §4.2 measured what
-        # a progression that happens off the furniture becomes — §157's beats fired twice on
-        # schedule in pilot 14 and both landed as guild promotions, narrated. A number that
-        # moves where the reader cannot see the system say so has not moved for the reader.
-        #
-        # **"Exactly once" is load-bearing and it is not tidiness.** `extract_state`
-        # runs `sheet.pattern.finditer` over the scene and mints one ACCEPTED_CANON record
-        # per match, all at the same `order_key` — so a scene printing the line before and
-        # after a change writes two canon snapshots that disagree at one position, which is
-        # precisely the shape `integrity.detect_contradictions` groups on. Asking for the
-        # line at the moment of change *and* at the scene's end would have manufactured the
-        # contradictions the gate then refuses and the repair loop pays for. One line per
-        # scene keeps the read-back single-valued, and the placement rule decides where the
-        # one goes: at the change if there is one, at the end if there is not, so the
-        # guaranteed emission the footer form bought is not given up to get the placement.
-        # **The anchor moved from the number to the person, 2026-08-30 (§173).** Read 10, on
-        # the draw the gate passed: a status line arriving at a number-move is *noise*, and if
-        # the book has one it has to be part of the world the characters are interacting with.
-        # Both halves of the old placement were correct against the defect §161 wrote them for
-        # and both anchored on an **event in the machinery** — a line that appears because a
-        # number moved is a line the narrator emits. So the first placement is now a person
-        # reading it, and the two the contract already had are kept behind it: the cardinality
-        # is untouched, the guaranteed emission is untouched, and what moved is which of the
-        # three placements comes first. The rewrite adds no demand — `house.demands` reads one
-        # sentence either way, which `tests/test_prompt_budget.py`'s `status_example` row is
-        # what proves rather than an arithmetic performed here.
-        #
-        # **The example is the state the scene LEAVES where a beat named a move, 2026-08-30
-        # (§186).** Pilot 18 draw 3 is the located case and it cost two paid attempts: the plan
-        # read *Rating moves here*, this block handed over `Rating 2` and called it the state as
-        # it stands, and both drafts printed `Rating 2`. §169 measured why — a model copies a
-        # filled example character for character, which is the whole reason the example is
-        # filled rather than a template — so the one concrete artifact in the prompt was proof
-        # that the numbers had not moved, while the plan asked for a move; §184's gate now
-        # refuses that contradiction instead of publishing it, and refusing it was costing two
-        # attempts a scene.
-        #
-        # **One sentence swapped for one sentence, one line for one line.** The count cannot
-        # move because nothing is added: the two sentences below are the same string on both
-        # arms, and `tests/test_prompt_budget.py`'s `status_moved` row is the marginal zero.
-        # A scene whose plan named no move renders the identical bytes it rendered before —
-        # that is what `status_moved is None` means, and it is the control every measurement
-        # in §186 is against.
+        # Keep concrete values available for continuity. Legacy scheduled moves show
+        # their resulting sheet; concept-backed scenes may print only changed columns.
+        # Extraction folds the last explicit value of each column into one snapshot.
         stands, example = (
             (
                 f"which is the state this scene leaves once {status_moved.name} has moved "
@@ -494,8 +448,9 @@ def render_prompt(
             "Print that line exactly once, where somebody in the scene reads it; failing that, "
             "where one of its numbers changes, or at the scene's end. "
             if require_status
-            else "When this scene changes that state, show the updated line as its result. "
-            "Otherwise, show it only when someone needs to consult it in this scene. "
+            else "When this scene changes that state, show the affected columns in a compact "
+            "status update at the result. Omitted columns keep their established values. "
+            "Show a full sheet only when someone needs to consult it in this scene. "
         )
         system = sources.append(
             "system",
@@ -642,8 +597,9 @@ def render_prompt(
                 "system",
                 system,
                 (
-                    "\nWhen the standing changes, print the line in this form, as the book "
-                    f"prints it:\n{standing_line}\n"
+                    "\nUse this current-standing line as a grammar example, replacing its rung "
+                    "with the one actually reached when advancement occurs:\n"
+                    f"{standing_line}\n"
                 ),
                 "standing_line",
             )
@@ -1535,6 +1491,10 @@ def make_plan_selector(
                     standing_line=(
                         standing_example(records, at=beat.story_order_key)
                         if graph_line_for(records) is not None
+                        and not (
+                            status_line
+                            and status_carries_standing(records, at=beat.story_order_key)
+                        )
                         else None
                     ),
                     chapter=position,

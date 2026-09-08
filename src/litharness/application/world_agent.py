@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from litharness.application.concept import Concept
 
 #: Frozen profiles, one per job, so seeding a world and growing one are separable on the rows.
-SEED_PROFILE = "architect.seed.v1"
+SEED_PROFILE = "architect.seed.v2"
 GROW_PROFILE = "architect.grow.v1"
 
 # Explicit subcommands exclude acceptance. A broad world:* allowance would permit it.
@@ -68,9 +68,10 @@ _SYSTEM = (
     "standing changes may carry a second phrase, in the system's words, for a grant gained.\n"
     "Declare what the system grants, in what order and at what cost, each grant countable and "
     "named in short plain words with no digits in them; at least one of them needs another one "
-    "first, or what you have declared is a list rather than a graph; and no fewer than five "
-    "grants and no more than eight, because a printed line holds that many columns and a "
-    "system with more is refused at acceptance.\n"
+    "first, or what you have declared is a list rather than a graph; the engine accepts "
+    "five to eight grants per system.\n"
+    "Use a system-following status sheet with show_unheld set to false unless the author's "
+    "brief explicitly requests a complete skill tree on the page. "
     "Declaring a grant does not "
     "give it to the viewpoint character or require its introduction in chapter one.\n"
     "Somewhere up that ladder the system puts a fork nobody takes twice: declare it, the two or "
@@ -86,12 +87,14 @@ _SYSTEM = (
 
 _SEED = (
     "Build a world that supports the supplied material, including its places, beings, magical "
-    "effects and usable capabilities. Grant effects change what a character can do.\n\n"
+    "effects and usable capabilities.\n\n"
     f"{_TOOLS}\n\n"
     f"{_SYSTEM}\n\n"
     "Build enough world for the first chapters to stand on besides that: who is in it, how it "
-    "works, and what is true that nobody has been told yet. Stop when the book could be "
-    "written from what you have declared. Then say, in two or three sentences, what you built "
+    "works, and what is true that nobody has been told yet. Establish which people the "
+    "viewpoint character can understand and be understood by, including any translation "
+    "mechanism or language barrier the supplied story relies on. Then say, in two or three "
+    "sentences, what you built "
     "and what you deliberately left open."
 )
 
