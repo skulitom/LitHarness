@@ -1,0 +1,124 @@
+{
+  "schema": "litharness.generation-pilot-execution.v1",
+  "registration_commit": "fc199314b7a6d76ead6f058aa6d6e8823549c496",
+  "execution": {
+    "outcomes": {
+      "current": "completed",
+      "premise-first": "completed"
+    },
+    "attempted_calls": 9,
+    "spend": {
+      "invocations": 9,
+      "total_tokens": 103508,
+      "cost_usd": 1.5079575,
+      "provider": "claude_code",
+      "model": "claude-opus-5",
+      "fell_back_from": []
+    },
+    "existing_book_artifacts_unchanged": true
+  },
+  "validation": {
+    "registration_and_frozen_code_match": true,
+    "existing_book_artifacts_unchanged": true,
+    "shared_downstream_systems_match": true,
+    "final_requests_reconstructed_from_developed_concepts_only": true,
+    "precision_transformations_replay": true,
+    "all_calls_subscription_cli_safe_mode_tools_empty": true,
+    "attempted_calls": 9,
+    "models": [
+      "claude-opus-5"
+    ],
+    "production_discovery_gates": {
+      "current": {
+        "reserved_names": [],
+        "would_continue_in_cmd_concept": true,
+        "checked_after_pilot_only": true
+      },
+      "premise-first": {
+        "reserved_names": [
+          "standing"
+        ],
+        "would_continue_in_cmd_concept": false,
+        "checked_after_pilot_only": true
+      }
+    },
+    "full_production_equivalence": false,
+    "literary_quality_certified": false
+  },
+  "artifacts": [
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/manifest.json",
+      "sha256": "c56a4f3a7a4ddce5b669c12a80c5433caf52ea4f371a58ea825b5bcd9512f65b"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/run.py",
+      "sha256": "7f01fca6adbd6084dfd475befb3e9e2538e907409363285d6386ddb247da1554"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/execution.json",
+      "sha256": "08d5ec4b3d8e2387a7f40ddaa1b5838e94d7375329e81457db00b3c079c9d793"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/validation.json",
+      "sha256": "9a398f81332dc202b39d5c4da83d233582ad1167e07f8f181fef431532634aaa"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/inspection.json",
+      "sha256": "947ea3984787e195d70698c01c5b2fd52ce9dac524d3cce8d3d6cf7285dc9e26"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/REPORT.md",
+      "sha256": "3808032e76ba81864ef4a11ba7e649fe7f8309b91e3696715f29ad75abebee82"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/artifacts.json",
+      "sha256": "3c208902a5fe990f0e791755811606256c3607e34676efb1005aa36331c9a30e"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/comparison.html",
+      "sha256": "8587176c61c4a3dbd9f4306fa9e6467c34d34d827b6977d6a76e3b528d6acaee"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/current/development/response.json",
+      "sha256": "933553036a8a2118d5e7db025be8b3778cf9b22632ad3ebd4af135a61d4ad8cf"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/current/discovery/response.json",
+      "sha256": "6f997b3bbfed9b13f47505a73a1fd2026536ef1a3db7e0bc667941e2b4842a25"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/current/listing/response.json",
+      "sha256": "9b41aad4dd2b638c2ad259de7698f3cd8a2980036ff523db3154ca9e7df7fbac"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/current/precision/response.json",
+      "sha256": "fd133cc22e41e832844c8ecbe44d46f398e59765744314303cdec67d04674d00"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/premise-first/development/response.json",
+      "sha256": "0aadeeccddc224ab3b48a81e673258e3c2c37272a14049b91e0a41cc9ce17179"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/premise-first/discovery/response.json",
+      "sha256": "6c6565c8be7000f9afc3ab9404c42a47b9fb48e8196eb4d37c7a8b355aa73df5"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/premise-first/listing/response.json",
+      "sha256": "2ce970aaa5b7a007abe1174b9806a06ac2496d2c2d1e20e764fa8b0c18d55333"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/premise-first/precision/response.json",
+      "sha256": "afe75d4108ac5eb450acd221183a504af82daa7959b5153def7e0de68f641aff"
+    },
+    {
+      "path": "runs/diagnostics/premise-before-development-20260908/premise-first/premise/response.json",
+      "sha256": "7d727f0b4dc3ca6685f427d5c1185343b455af6fd54bc7fc5716d1f958675d32"
+    }
+  ],
+  "disposition": "exploratory observations only; no production adoption",
+  "deviations": [
+    "experimental runner omitted the production reserved-name check; the premise-first trajectory would be stopped after discovery",
+    "control treatment inspected before its final listing",
+    "plain-text file saving normalizes trailing whitespace and final newline"
+  ]
+}
