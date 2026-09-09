@@ -61,8 +61,9 @@ the scene brief can still contain generated wording; this is not a complete cont
 Historical concepts without an author brief remain readable. Existing ordinary scene plans
 remain readable and are not silently rewritten. They also use the restricted writer view.
 An author/directive edit that replaces a structured brief with ordinary text does not restore
-the duplicate concept block. With no scene plan, the explicit no-outline control uses the
-same story-foundation projection; an explicitly locked concept retains its full source.
+the duplicate concept block. With no scene plan, the explicit no-outline control also keeps
+only the original author brief from an unlocked concept; an explicitly locked concept retains
+its full source. The stored concept remains available to subsequent planning.
 Accepted manuscript, world canon, locks and existing plan revisions are
 unchanged; future outline calls use the new handoff.
 
@@ -186,3 +187,51 @@ preservation and later-chapter locks. Compact updates also identify themselves a
 announcement, preserving distinct warnings, choices and explicitly required notices. These
 clarifications address input scope and duplicate display instructions, not a validated pacing
 mechanism; the separate `continuation-contract` arm records their first generated outputs.
+
+## 2026-09-09 planning after an accepted opening
+
+The continuation audit under `runs/luke-story-momentum-20260909/` found that enabling the
+existing planner after an accepted opening still requested the whole arc, omitted that
+same-arc prose and anchored state before it. Planning now requests the contiguous unwritten
+suffix and supplies bounded history tied to accepted content hashes. Its response ordinals
+map to original story keys and chapter coordinates; original concept references remain in
+their original coordinates. Accepted prose and its plans are preserved. Gaps, conflicting
+locks and stale queued bases refuse before a call. Acceptance also checks the manuscript
+head in the same transaction as the plan change; replay preserves recorded acceptance.
+
+[test_continuation_outline.py](../tests/test_continuation_outline.py) exercises the actual
+accepted-opening, outline and subsequent writer handoffs, along with history, scope and
+concurrent-change boundaries. The existing plan stage is reused; no narrative role is added.
+
+Planning world briefs now classify explicit operating records as rules individually.
+Ordinary character facts keep their cast grouping even when that character also has a
+world rule. Existing rule meanings, consequences and complete constraints are preserved;
+no accepted personality record is silently reclassified. The regression coverage lives in
+[test_world_brief.py](../tests/test_world_brief.py). These are input-contract repairs, not a
+demonstrated literary mechanism; the registered generation retains first outputs and full
+readings to assess the resulting continuation.
+
+The first live outline stopped before drafting: the ordinary summary handler had minted
+new promises with book-template positions while serial planning used stable serial positions.
+CLI composition now passes the same serial shape into summary production. The continuation
+regression includes the actual summary handler rather than manually seeding all promise
+positions. The failed output remains in the run, and `continuation-positions` starts from
+the original checkpoint under the corrected producer. Existing mixed-coordinate promise
+rows are not silently rewritten by this producer fix.
+
+The `plain-writer` arm exposed a separate extraction defect: accepted updates such as
+`Grade: 1 | Sight: 1` and `Ember: 1` left stored progression unchanged. Declared-label readers
+now accept an optional colon while preserving exact labels, typed values, paired columns
+and omitted holdings. [test_status_delimiters.py](../tests/test_status_delimiters.py) covers
+parser boundaries, and [test_status_handoff.py](../tests/test_status_handoff.py) follows
+separate gains through acceptance into the next request. The stopped manuscript and failed
+handoff remain preserved; `plain-status` starts from the original Chapter 1 checkpoint.
+
+The no-outline writer now uses the same original-author-brief projection as the planned
+writer for an unlocked concept. The stored concept, accepted canon, premise, prior prose,
+status contract and independent author locks remain intact. The existing locked-source
+exception remains. [test_scene_brief.py](../tests/test_scene_brief.py) covers these boundaries.
+This removes a generated treatment from the writer's input, including unaccepted background
+and possible future events; existing concept debts still appear independently as threads.
+The isolated `brief-only` registration records this scope and its remaining inputs. It is
+not a claim that future directions are absent or that omission improves prose reliably.

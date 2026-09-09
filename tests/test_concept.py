@@ -665,8 +665,9 @@ def test_discovery_precedes_mechanics_and_survives_cli_persistence(
         assert head is not None
         beat = beats_for(head, arc_template(6))[0]
         packet = packet_for(store, head, beat)
-        assert retained.discovery.world in packet.render()
-        assert retained.discovery.growth in packet.render()
+        assert f"Author's original book brief:\n{retained.author_brief}" in packet.render()
+        assert retained.discovery.world not in packet.render()
+        assert retained.discovery.growth not in packet.render()
         assert retained.discovery.opening not in packet.render()
         assert str(_discovery()["opening"]) not in "\n".join(
             item.text for item in packet.sections.get("facts", ())

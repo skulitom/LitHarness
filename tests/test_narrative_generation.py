@@ -30,8 +30,8 @@ from tests.test_outline import DISTINCT, START, StubPlanner, a_book, with_schedu
 from tests.test_scene_brief import outlined_payload
 
 
-def _concept_book(store: SqliteStore):  # type: ignore[no-untyped-def]
-    intended = concept.Concept.from_payload(_example())
+def _concept_book(store: SqliteStore, *, author_brief: str = ""):  # type: ignore[no-untyped-def]
+    intended = concept.Concept.from_payload({**_example(), "author_brief": author_brief})
     revision = a_book(store, scenes=6, extra_plan_items=(intended.plan_item(),))
     return revision, intended
 
@@ -140,10 +140,18 @@ def test_missing_scene_plans_never_fall_through_to_generic_drafting(
 
 def test_explicit_no_outline_control_still_drafts_a_concept(tmp_path: Path) -> None:
     with SqliteStore.open(tmp_path / "book.db") as store:
-        _concept_book(store)
+        revision, intended = _concept_book(store)
         job = make_plan_selector(project_id=PROJECT_ID, outline=False)(store, "writer", START, 60.0)
         assert job is not None and job.job_kind == SCENE_DRAFT
-        assert "Planned story" in job.payload["prompt"]
+        assert intended.author_brief == ""
+        assert job.payload["selected_by"]["predicate"] == "draftable.with_predecessor.v1"
+        assert job.payload["context"]["sections"].get("intentions", 0) == 0
+        assert "Planned story" not in job.payload["prompt"]
+        assert "Author's original book brief" not in job.payload["prompt"]
+        assert intended.first_arc.closes not in job.payload["prompt"]
+        assert concept.concept_of(
+            store.plan_items(revision.book_id, revision.branch_id)
+        ) == intended
 
 
 @pytest.mark.parametrize(
@@ -259,25 +267,38 @@ def test_replanning_a_failed_predecessor_reissues_that_scene(tmp_path: Path) -> 
 
 
 def test_writer_receives_budgeted_story_intentions_separate_from_canon(tmp_path: Path) -> None:
+    author_brief = (
+        "Write a portal fantasy about a former student stranded in an unfamiliar world. "
+        "Keep his desire to find a home central to the adventure."
+    )
     with SqliteStore.open(tmp_path / "book.db") as store:
-        revision, intended = _concept_book(store)
+        revision, intended = _concept_book(store, author_brief=author_brief)
         beat = beats_for(revision, arc_template(6))[0]
         packet = packet_for(store, revision, beat)
         (item,) = packet.sections[context.INTENTIONS]
         assert item.source_logical_id == concept.CONCEPT_PLAN_ID
         assert item.authority is lc.StateAuthority.PROPOSED
         assert item.tokens == context.count_tokens(item.text)
+        assert item.text == f"Author's original book brief:\n{author_brief}"
         assert intended.first_use not in item.text
-        assert intended.person_before in item.text
-        assert intended.first_arc.closes in item.text
-        assert intended.want in item.text
+        assert intended.person_before not in item.text
+        assert intended.first_arc.closes not in item.text
+        assert intended.want not in item.text
         assert item not in packet.sections.get(context.FACTS, ())
         assert "not events that have already happened" in packet.render()
         assert intended.first_use not in packet.render_constraints()
 
         # A tight packet must refuse instead of silently dropping the book's intent.
+        mandatory_tokens = sum(
+            packed.tokens
+            for section in (context.PREMISE, context.CONSTRAINTS, context.INTENTIONS)
+            for packed in packet.sections.get(section, ())
+        )
         with pytest.raises(context.ContextBudgetTooSmall, match="planned story"):
-            packet_for(store, revision, beat, token_budget=1600)
+            packet_for(
+                store, revision, beat,
+                token_budget=packet.reserved_output + mandatory_tokens - 1,
+            )
 
 
 def test_tells_observation_preserves_negation_and_reports_excess() -> None:

@@ -52,12 +52,17 @@ def _world(initial_rank):
 @pytest.mark.parametrize("changed", [False, True])
 @pytest.mark.parametrize("concept_backed", [False, True])
 @pytest.mark.parametrize("initial_rank", [0, 1])
+@pytest.mark.parametrize("separator", [" ", ": ", ":", " : "])
 def test_unscheduled_result_survives_acceptance_and_next_writer_request(
-    tmp_path, monkeypatch, changed, concept_backed, initial_rank,
+    tmp_path, monkeypatch, changed, concept_backed, initial_rank, separator,
 ):
-    held = " | read the grain 2" if initial_rank else ""
-    opening = f"[STATUS] Mira Vale — Circle {initial_rank}{held}"
-    outcome = f"[STATUS] Mira Vale — Circle {initial_rank + 1} | stand the frame 1"
+    held = f" | read the grain{separator}2" if initial_rank else ""
+    acquired = "" if initial_rank else f" | read the grain{separator}2"
+    opening = f"[STATUS] Mira Vale — Circle{separator}{initial_rank}{held}"
+    outcome = (
+        f"[STATUS] Mira Vale — Circle{separator}{initial_rank + 1}{acquired}\n"
+        f"[STATUS] Mira Vale — stand the frame{separator}1"
+    )
     text = (
         "Mira lifted the latch and stopped when the wood split beside her thumb. She slid "
         "her hand clear, waiting for the loose door to settle. The passage beyond it was "
@@ -109,7 +114,7 @@ def test_unscheduled_result_survives_acceptance_and_next_writer_request(
         assert head.node("scene-1").content == text
         records = store.state_records(BOOK_ID, BRANCH_ID)
         expected = {"rank": initial_rank + int(changed)}
-        if initial_rank:
+        if initial_rank or changed:
             expected["read_the_grain"] = 2
         if changed:
             expected["stand_the_frame"] = 1
@@ -120,9 +125,10 @@ def test_unscheduled_result_survives_acceptance_and_next_writer_request(
         new_holdings = [record for record in extracted if record.predicate == worlds.CAN_DO]
         attained = "rung_fitter" if initial_rank else "rung_hand"
         assert [record.object_ref for record in new_standings] == ([attained] if changed else [])
-        assert [(record.object_ref, record.value) for record in new_holdings] == (
-            [("stand_the_frame", 1)] if changed else []
-        )
+        expected_holdings = {("stand_the_frame", 1)} if changed else set()
+        if changed and not initial_rank:
+            expected_holdings.add(("read_the_grain", 2))
+        assert {(record.object_ref, record.value) for record in new_holdings} == expected_holdings
         if changed:
             for record in [*new_standings, *new_holdings]:
                 [span] = record.evidence

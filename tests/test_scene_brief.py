@@ -116,19 +116,24 @@ def test_outline_rejects_unusable_concept_response_before_persisting(tmp_path, m
 
 
 @pytest.mark.parametrize("locked_concept", [False, True])
-def test_no_outline_writer_uses_foundations_unless_the_full_concept_is_author_locked(
-    tmp_path, locked_concept, monkeypatch
+@pytest.mark.parametrize("original", ["", "Keep the companion alive.\nUse third person."])
+def test_no_outline_writer_keeps_author_brief_and_author_locked_sources(
+    tmp_path, locked_concept, original, monkeypatch
 ):
-    original = "Keep the companion alive.\nUse third person."
     drawn = concept.Concept.from_payload({
         **_example(), "discovery": _discovery(), "author_brief": original,
     })
     source_item = replace(drawn.plan_item(), locked=locked_concept)
+    lock = lc.PlanItem(
+        logical_id="author-limit", kind=lc.PlanKind.CONSTRAINT,
+        text="The companion survives every crossing.",
+        authority=lc.PlanAuthority.INTENDED, locked=True,
+    )
     rule = accepted(worlds.world_record(
         "ice", worlds.WORLD_RULE_PREDICATE, value="Freezing a stone consumes heat from her hand."
     ))
     with SqliteStore.open(tmp_path / "no-outline.db") as store:
-        revision = a_book(store, scenes=6, extra_plan_items=(source_item,))
+        revision = a_book(store, scenes=6, extra_plan_items=(source_item, lock))
         store.record_state_records(BOOK_ID, BRANCH_ID, [rule], created_at="2026-09-08T00:00:00Z")
         registry = StubPlanner(outlined_payload())
         monkeypatch.setattr(cli, "build_default_registry", lambda: registry)
@@ -141,19 +146,25 @@ def test_no_outline_writer_uses_foundations_unless_the_full_concept_is_author_lo
         assert not registry.requests
         assert scene_plan_for(store.plan_items(BOOK_ID, BRANCH_ID), "scene-1") is None
         assert concept.concept_of(store.plan_items(BOOK_ID, BRANCH_ID)) == drawn
+        assert job.payload["selected_by"]["predicate"] == "draftable.with_predecessor.v1"
+        assert "scene_plan_mode" not in job.payload["selected_by"]
         beat = beats_for(revision, arc_template(6))[0]
         packet = planner.packet_for(store, revision, beat)
-        source = next(item for item in packet.sections[context.INTENTIONS]
-                      if item.source_logical_id == concept.CONCEPT_PLAN_ID)
-        assert source.authority is lc.StateAuthority.PROPOSED
+        sources = [item for item in packet.sections.get(context.INTENTIONS, ())
+                   if item.source_logical_id == concept.CONCEPT_PLAN_ID]
+        assert bool(sources) is (locked_concept or bool(original))
         system, prompt = job.payload["system"], job.payload["prompt"]
-        assert source.text in prompt
-        assert str(rule.value) in system
+        assert str(rule.value) in system and lock.text in system
+        assert store.plan_revision(BOOK_ID, BRANCH_ID).item("premise").text in prompt
         assert "1800 words" in system
         assert "chapter 1 (1 of this arc); scene 1 of 1" in prompt
         assert "Print that line exactly once" not in system
         assert "status update at the result" in system
         assert "no update is required" in system
+        if sources:
+            [source] = sources
+            assert source.authority is lc.StateAuthority.PROPOSED
+            assert source.text in prompt
         if locked_concept:
             assert source.text == drawn.render()
             assert original in source.text
@@ -161,21 +172,13 @@ def test_no_outline_writer_uses_foundations_unless_the_full_concept_is_author_lo
             assert drawn.first_use in source.text
             assert drawn.threat.first_reach in source.text
         else:
-            label, material = source.text.split("\n", 1)
-            assert "future intentions" in label
-            foundation = json.loads(material)
-            assert foundation == drawn.for_outline()
-            assert foundation["author_brief"] == original
-            assert foundation["discovery"]["world"] == drawn.discovery.world
-            assert foundation["discovery"]["growth"] == drawn.discovery.growth
-            assert foundation["person_before"] == drawn.person_before
-            assert foundation["want"] == drawn.want
-            assert foundation["system"] == drawn.to_jsonable()["system"]
-            assert "opening" not in foundation["discovery"]
-            assert "first_use" not in foundation
-            assert "first_reach" not in foundation["threat"]
-            assert "opens" not in foundation["first_arc"]
-            for excluded in (drawn.discovery.opening, drawn.first_use, drawn.threat.first_reach):
+            if original:
+                assert source.text == f"Author's original book brief:\n{original}"
+            for excluded in (
+                drawn.discovery.opening, drawn.discovery.growth, drawn.first_use,
+                drawn.threat.first_reach, drawn.first_arc.middle, drawn.first_arc.closes,
+                drawn.system.pays,
+            ):
                 assert excluded not in prompt
 
 

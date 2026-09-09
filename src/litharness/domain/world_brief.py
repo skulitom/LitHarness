@@ -48,8 +48,8 @@ from litharness.domain import worlds as worlds_mod
 #: The groups a brief sorts its facts into, in the order a planner reads them. **Rules first,
 #: and the order is the argument**: a statement that puts the world to work is a statement about
 #: a rule's consequence, so the rules and their cascades are what a planner needs before it
-#: needs to know who is in the book. `other` is last and is never empty by design — a world's
-#: history, bonds and cardinality shapes land there rather than being dropped.
+#: needs to know who is in the book. Unclassified history and bonds land in `other` rather
+#: than being dropped; explicit limits retain their complete scope and exceptions in `rules`.
 GROUPS: tuple[str, ...] = (
     "rules",
     "cast",
@@ -213,7 +213,11 @@ def brief_for(records: Sequence[lc.StateRecord]) -> WorldBrief | None:
         return None
 
     hidden = worlds_mod.hidden_record_ids(canon, at=None)
-    rules = set(worlds_mod.rules(canon))
+    rule_ids = worlds_mod.operating_rule_ids(canon) | frozenset(
+        record.record_id
+        for record in canon
+        if record.predicate == worlds_mod.CONSEQUENCE_PREDICATE
+    )
     roles = worlds_mod.entity_roles(canon)
     buckets: dict[str, list[str]] = {name: [] for name in GROUPS}
     for record in state_mod.in_story_order(canon):
@@ -225,7 +229,7 @@ def brief_for(records: Sequence[lc.StateRecord]) -> WorldBrief | None:
         text = line or state_mod.describe(record)
         if not text.strip():
             continue
-        buckets[_group_of(record.subject, rules, roles)].append(text)
+        buckets[_group_of(record, rule_ids, roles)].append(text)
 
     reveals = _reveals(canon)
     groups = tuple((name, tuple(buckets[name])) for name in GROUPS if buckets[name])
@@ -284,19 +288,21 @@ def ladder_for(records: Sequence[lc.StateRecord]) -> Ladder | None:
 
 
 def _group_of(
-    subject: str, rules: set[str], roles: Mapping[str, tuple[str, ...]]
+    record: lc.StateRecord,
+    rule_ids: frozenset[str],
+    roles: Mapping[str, tuple[str, ...]],
 ) -> str:
-    """A rule beats a role, and the first role in `GROUPS` order beats the rest.
+    """An explicit rule record beats a role; its subject's other facts keep their roles.
 
     A subject may be two things at once — the System is an `agency` and a `system` — and
     `worlds.entity_roles` refuses to pick one because forcing it would be the type hierarchy
     arriving through a dictionary. A *printed* brief has to pick one anyway, so it picks by the
     reading order above and the fact is printed once rather than twice.
     """
-    if subject in rules:
+    if record.record_id in rule_ids:
         return "rules"
     for name in GROUPS:
-        if any(_ROLE_GROUP.get(role) == name for role in roles.get(subject, ())):
+        if any(_ROLE_GROUP.get(role) == name for role in roles.get(record.subject, ())):
             return name
     return "other"
 

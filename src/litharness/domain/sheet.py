@@ -243,7 +243,8 @@ class Sheet:
         """Every status line in `text`, tolerant of omitted columns (§203).
 
         A line is the tag, a subject, an em dash and pairs separated by `|`. A pair is a
-        declared label followed by its value: a number (or two, for a paired column)
+        declared label followed by whitespace or a colon and its value: a number (or two,
+        for a paired column)
         for a numeric column, and for a typed column (§204) a name the book knows,
         words, or a list. Pairs are split on the declared labels themselves, longest
         first, so a two-word label reads. Pairs whose label the sheet never declared
@@ -259,18 +260,18 @@ class Sheet:
             value: dict[str, object] = {}
             for pair in match.group("pairs").split("|"):
                 pair = pair.strip()
-                field_ = next(
-                    (
-                        candidate
-                        for candidate in labels
-                        if pair[: len(candidate.label)].casefold() == candidate.label.casefold()
-                        and pair[len(candidate.label) : len(candidate.label) + 1].isspace()
-                    ),
-                    None,
-                )
+                field_ = None
+                rest = ""
+                for candidate in labels:
+                    if pair[: len(candidate.label)].casefold() != candidate.label.casefold():
+                        continue
+                    separator = _LABEL_VALUE_SEPARATOR.match(pair, len(candidate.label))
+                    if separator is not None:
+                        field_ = candidate
+                        rest = pair[separator.end():].strip()
+                        break
                 if field_ is None:
                     continue
-                rest = pair[len(field_.label) :].strip()
                 if field_.numeric:
                     numbers = _NUMBERS.match(rest)
                     if numbers is None:
@@ -355,6 +356,9 @@ _LINE = re.compile(
 )
 #: A numeric column's value: a number, then optionally a slash and its ceiling.
 _NUMBERS = re.compile(r"^(?P<current>\d+)(?:/(?P<ceiling>\d+))?$")
+#: A delimiter after an exact label; value parsers retain their own strict grammar.
+_VALUE_SEPARATOR = r"(?:[^\S\n]*:[^\S\n]*|[^\S\n]+)"
+_LABEL_VALUE_SEPARATOR = re.compile(_VALUE_SEPARATOR)
 #: A set member with a depth after its name: *Seamsight 2*.
 _TRAILING_NUMBER = re.compile(r"^(?P<name>.+?)[^\S\n]+(?P<depth>\d+)$")
 
@@ -365,10 +369,10 @@ def _compile_pattern(fields: tuple[SheetField, ...]) -> re.Pattern[str]:
     bracket. The name runs to an em dash, which is how both the fixture and the genre write
     it; `[^\\S\\n]` rather than `\\s` keeps the match on one line."""
     columns = [
-        rf"{re.escape(field_.label)}[^\S\n]+(?P<{field_.name}>\d+)"
+        rf"{re.escape(field_.label)}{_VALUE_SEPARATOR}(?P<{field_.name}>\d+)"
         + (rf"/(?P<{field_.name}{MAX_SUFFIX}>\d+)" if field_.paired else "")
         if field_.numeric
-        else rf"{re.escape(field_.label)}[^\S\n]+(?P<{field_.name}>[^|\n]+?)"
+        else rf"{re.escape(field_.label)}{_VALUE_SEPARATOR}(?P<{field_.name}>[^|\n]+?)"
         for field_ in fields
     ]
     return re.compile(
@@ -411,7 +415,9 @@ def sheet_from_line(text: str) -> Sheet | None:
 
 
 #: A pair as a first line writes it: words, then a number, optionally over a ceiling.
-_LOOSE_PAIR = re.compile(r"^(?P<label>[^\d|]+?)[^\S\n]+(?P<current>\d+)(?:/(?P<ceiling>\d+))?$")
+_LOOSE_PAIR = re.compile(
+    rf"^(?P<label>[^\d|]+?){_VALUE_SEPARATOR}(?P<current>\d+)(?:/(?P<ceiling>\d+))?$"
+)
 
 
 def declaration_from_snapshots(

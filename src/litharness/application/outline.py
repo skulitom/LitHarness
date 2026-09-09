@@ -48,6 +48,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping, Sequence
+from dataclasses import replace
 from datetime import UTC, datetime
 from itertools import pairwise
 from typing import Any
@@ -67,6 +68,8 @@ from litharness.domain import worlds as worlds_mod
 from litharness.domain.beats import Beat, TemplateMismatch, beats_for, template_for
 from litharness.domain.budget import BudgetPolicy
 from litharness.domain.budget import check as budget_check
+from litharness.domain.context import count_tokens
+from litharness.domain.draft import draft_block
 from litharness.domain.events import Event, EventType, payload_digest
 from litharness.domain.extraction import MAX_SUFFIX, impossible_fields, movable_names
 from litharness.domain.generation import CompletionRequest, CompletionResult, Resolution
@@ -126,6 +129,19 @@ TARGET_WORDS = 25
 #: grow already carries 1800 s for the same reason: a call that reads the whole book grows
 #: with the book.
 CONCEPT_TIMEOUT_SECONDS = 1800.0
+CONTINUATION_HISTORY_TOKENS = 8192
+CONTINUATION_HISTORY_SCENES = 8
+CONTINUATION_RULE = (
+    "continuation_scope identifies only unwritten scenes after accepted prose. Continue from "
+    "its accepted history and the state entering the first requested scene; do not replan "
+    "or repeat the accepted prefix. Response ordinals are local to this request; its mapping "
+    "retains original chapter and story coordinates. Earlier output requests in the original "
+    "author brief keep their original scope. Ongoing story directions and applicable author "
+    "locks remain binding. Generated first-arc suggestions do not replace established events. "
+    "Scene references in the unchanged book_concept, including debt due_scene values, use "
+    "the original arc ordinals in this mapping, not response ordinals. Express response "
+    "milestones and payoff windows using response ordinals."
+)
 
 #: Added to the request only when canon declares a protagonist. **Position and fact, and the
 #: boundary is asserted rather than trusted**: whether the reader should like them, whether they
@@ -325,6 +341,7 @@ def render_outline_request(
     serial_arc_index: int | None = None,
     prior_summaries: Sequence[tuple[str, str]] = (),
     arc_entry_state: StoryStateView | None = None,
+    continuation_scope: Mapping[str, Any] | None = None,
     concept: concept_mod.Concept | None = None,
     chapter_by_scene: Mapping[str, int] | None = None,
     target_scene_words: int | None = None,
@@ -440,6 +457,9 @@ def render_outline_request(
                 {"story_state_at_arc_entry": arc_entry_state.to_jsonable()}
                 if arc_entry_state is not None
                 else {}
+            ),
+            **(
+                {"continuation_scope": continuation_scope} if continuation_scope is not None else {}
             ),
             # The world this book runs on, and the one member of its cast this book is
             # about, when it has them. Spread rather than assigned so that a book without one
@@ -588,7 +608,8 @@ def render_outline_request(
                 )
                 if concept is not None
                 else []
-            ),
+            )
+            + ([CONTINUATION_RULE] if continuation_scope is not None else []),
         },
         ensure_ascii=False,
         sort_keys=True,
@@ -1065,6 +1086,7 @@ def outline_proposal(
     result: CompletionResult,
     counts: Sequence[str] = (),
     arc_index: int | None = None,
+    original_beats: Sequence[Beat] | None = None,
 ) -> PlanProposal:
     """The model's outline as plan edits, one `SCENE_PLAN` item per beat.
 
@@ -1091,6 +1113,7 @@ def outline_proposal(
     """
     concept_backed = concept_mod.concept_of(base.items) is not None
     statements = _statements(payload, len(beats), structured=concept_backed)
+    positions = {beat.logical_id: beat for beat in original_beats or beats}
     # **CREATE where the statement is absent, UPDATE where it is already there.** A
     # create-only proposal cannot outline a *partially* outlined book, and partial is a state
     # the system reaches on its own: a manuscript that gains a scene keeps the statements for
@@ -1119,8 +1142,11 @@ def outline_proposal(
                     statement
                     if concept_backed
                     else staging.with_bound(
-                        genre.with_beat(statement, beat.ordinal, len(beats), counts=counts),
-                        beat.ordinal,
+                        genre.with_beat(
+                            statement, positions[beat.logical_id].ordinal,
+                            positions[beat.logical_id].of_total, counts=counts,
+                        ),
+                        positions[beat.logical_id].ordinal,
                         arc_index=arc_index,
                     )
                 ),
@@ -1165,7 +1191,13 @@ def _policy_digest(*, target_scene_words: int | None = None) -> str:
                 if target_scene_words is not None else {}
             ),
             "schema": OUTLINE_SCHEMA,
-            "concept_planning_version": 11,
+            "concept_planning_version": 12,
+            "continuation_scope": {
+                "version": 1,
+                "rule": CONTINUATION_RULE,
+                "history_tokens": CONTINUATION_HISTORY_TOKENS,
+                "history_scenes": CONTINUATION_HISTORY_SCENES,
+            },
             "concept_schema": CONCEPT_OUTLINE_SCHEMA,
             "scene_handoff_rules": SCENE_HANDOFF_RULES,
             "author_lock_rule": AUTHOR_LOCK_RULE,
@@ -1246,6 +1278,79 @@ def _decision(
     )
 
 
+def _remaining_beats(head: Revision, beats: Sequence[Beat]) -> tuple[Beat, ...]:
+    """A contiguous accepted prefix is immutable; holes require operator resolution."""
+    first = next(
+        (index for index, beat in enumerate(beats)
+         if head.node(beat.logical_id).content is None),
+        len(beats),
+    )
+    for beat in beats[:first]:
+        if not (head.node(beat.logical_id).content or "").strip():
+            raise OutlineOutputError("accepted empty content is not a continuation anchor")
+    if first == len(beats):
+        return ()
+    reached = False
+    for node in head.in_reading_order():
+        if node.logical_id == beats[first].logical_id:
+            reached = True
+        if reached and node.kind is NodeKind.SCENE and node.content is not None:
+            raise OutlineOutputError(
+                "accepted prose follows an unwritten scene; resolve the manuscript gap "
+                "before outlining a continuation"
+            )
+    for beat in beats[first:]:
+        refusal = draft_block(head, beat.logical_id)
+        if refusal is not None:
+            raise OutlineOutputError(f"scene {beat.logical_id} is not eligible for drafting")
+    return tuple(beats[first:])
+
+
+def _continuation_history(
+    head: Revision,
+    first_scene: str,
+    summaries: Mapping[str, Mapping[str, str]],
+) -> dict[str, Any]:
+    """Bound history by text tokens and scene count; never clip the nearest accepted ending."""
+    prior = []
+    for node in head.in_reading_order():
+        if node.logical_id == first_scene:
+            break
+        if node.kind is NodeKind.SCENE and node.content:
+            prior.append(node)
+    selected: list[dict[str, str]] = []
+    omitted: list[str] = []
+    remaining = CONTINUATION_HISTORY_TOKENS
+    for distance, node in enumerate(reversed(prior)):
+        assert node.content is not None
+        digest = content_hash(node.content)
+        summary = summaries.get(node.logical_id, {}).get(digest)
+        text = node.content if distance == 0 else summary
+        kind = "accepted_prose" if distance == 0 else "derived_summary"
+        if distance == 0 and count_tokens(node.content) > remaining:
+            text, kind = summary, "derived_summary"
+        if text and len(selected) < CONTINUATION_HISTORY_SCENES:
+            size = count_tokens(text)
+            if size <= remaining:
+                selected.append({
+                    "scene": node.logical_id, "content_hash": digest,
+                    "kind": kind, "text": text,
+                })
+                remaining -= size
+                continue
+        if distance == 0:
+            raise OutlineOutputError(
+                "nearest accepted scene exceeds the continuation history budget and has "
+                "no current summary that fits; summarize it before outlining"
+            )
+        omitted.append(node.logical_id)
+    return {
+        "accepted_history": list(reversed(selected)),
+        "history_omitted_count": len(omitted),
+        "history_omitted_ids_digest": payload_digest({"scenes": omitted}),
+    }
+
+
 def make_outline_handler(
     registry: TextGenerator,
     store: OutlineStore,
@@ -1279,6 +1384,41 @@ def make_outline_handler(
         head = store.head(book_id, branch_id)
         if head is None:
             raise OutlineOutputError(f"book {book_id} has no manuscript to outline")
+
+        def refuse_scope(reason: str) -> Sequence[Event]:
+            gate = GateOutcome(
+                gate=GateKind.SHAPE, rule_or_critic_id="outline.continuation-scope.v1",
+                passed=False, verdict_source=VerdictSource.DETERMINISTIC, detail=reason,
+            )
+            refusal = PolicyDecision(
+                decision_id=decision_id_for(job.job_id, job.attempts, (gate,)),
+                outcome=Outcome.PARK, gates=(gate,), job_id=job.job_id,
+                base_revision_id=base.plan_revision_id, attempt=job.attempts,
+                profile=PROFILE,
+                policy_config_digest=_policy_digest(target_scene_words=target_scene_words),
+                reason=reason,
+            )
+            store.record_decision(refusal, decided_at=stamp)
+            return (policy_decision_event(
+                refusal, project_id=project_id, created_at=stamp, book_id=book_id,
+                branch_id=branch_id, revision_id=base.plan_revision_id, actor=actor,
+            ),)
+
+        frozen_head = job.payload.get("manuscript_revision_id")
+        frozen_plan = job.payload.get("base_plan_revision_id")
+        if (frozen_head is not None or frozen_plan is not None) and (
+            frozen_head != head.revision_id or frozen_plan != base.plan_revision_id
+        ):
+            previous = store.latest_decision_for(job.job_id)
+            if (previous is not None and previous.accepted
+                    and previous.base_revision_id == frozen_plan
+                    and previous.resulting_revision_id == base.plan_revision_id):
+                # This exact job already accepted its proposal. Returning its recorded
+                # decision preserves replay identity even after prose advances.
+                return ()
+            return refuse_scope(
+                "outline base changed after enqueue; replan to request the current continuation"
+            )
         arc_index = job.payload.get("arc_index")
         if arc_index is None:
             beats = beats_for(head, template_for(head))
@@ -1296,6 +1436,23 @@ def make_outline_handler(
                 raise OutlineOutputError(
                     f"job {job.job_id} cannot resolve serial arc {arc_index}: {error}"
                 ) from error
+
+        original_beats = beats
+        try:
+            remaining = _remaining_beats(head, original_beats)
+        except OutlineOutputError as error:
+            return refuse_scope(str(error))
+        continuation = bool(remaining and len(remaining) != len(original_beats))
+        if continuation and (frozen_head is None or frozen_plan is None):
+            return refuse_scope(
+                "legacy outline job has no frozen continuation base; replan to request "
+                "only the unwritten scenes"
+            )
+        # Local response ordinals retain the original story keys and dramatic functions.
+        beats = tuple(
+            replace(beat, ordinal=index, of_total=len(remaining))
+            for index, beat in enumerate(remaining, 1)
+        )
 
         # Already outlined: every beat has a statement. A no-op rather than a second call,
         # because a replayed job must converge and an outline is a whole-book generation.
@@ -1326,6 +1483,16 @@ def make_outline_handler(
                 decided_at=stamp,
             )
             return ()
+
+        if any(
+            item is not None and item.locked
+            for beat in beats
+            if (item := scene_plan_for(base.items, beat.logical_id)) is not None
+        ):
+            return refuse_scope(
+                "an unwritten scene already has a locked plan; resolve that plan scope "
+                "before requesting a replacement outline"
+            )
 
         # The book's canon starting sheet, if it has one. `speaks_system_voice` is the same
         # question `render_prompt` asks before requesting a status line, and asking it the
@@ -1368,7 +1535,7 @@ def make_outline_handler(
         # vocabulary does not recognise and `protagonist_brief` returns None for one that names
         # nobody, and the request then carries neither field at all.
         prior_summaries: list[tuple[str, str]] = []
-        if arc_index is not None:
+        if arc_index is not None and not continuation:
             current_ids = {beat.logical_id for beat in beats}
             stored_summaries = store.scene_summaries(book_id, branch_id)
             reached_current_arc = False
@@ -1397,6 +1564,29 @@ def make_outline_handler(
             for scene, chapter in chapter_by_scene.items()
         ):
             raise OutlineOutputError("chapter_by_scene must map scene ids to positive chapters")
+        continuation_scope = None
+        if continuation:
+            try:
+                history = _continuation_history(
+                    head, beats[0].logical_id, store.scene_summaries(book_id, branch_id),
+                )
+            except OutlineOutputError as error:
+                return refuse_scope(str(error))
+            continuation_scope = {
+                "manuscript_revision_id": head.revision_id,
+                "base_plan_revision_id": base.plan_revision_id,
+                "original_scene_count": len(original_beats),
+                "requested_scenes": [
+                    {
+                        "ordinal": local.ordinal, "original_ordinal": original.ordinal,
+                        "scene": local.logical_id, "story_order_key": local.story_order_key,
+                        **({"chapter": chapter_by_scene[local.logical_id]}
+                           if local.logical_id in chapter_by_scene else {}),
+                    }
+                    for local, original in zip(beats, remaining, strict=True)
+                ],
+                **history,
+            }
         request = render_outline_request(
             premise,
             beats,
@@ -1408,6 +1598,7 @@ def make_outline_handler(
             serial_arc_index=arc_index if isinstance(arc_index, int) else None,
             prior_summaries=prior_summaries,
             arc_entry_state=entry_state,
+            continuation_scope=continuation_scope,
             concept=concept,
             chapter_by_scene=chapter_by_scene,
             target_scene_words=target_scene_words,
@@ -1488,6 +1679,7 @@ def make_outline_handler(
                 # The job's own `arc_index`, already validated above, so a serial's later
                 # arcs are not each handed a fresh opening.
                 arc_index=arc_index,
+                original_beats=original_beats,
             )
             # Validate numeric integrity with the outline. Discovery-backed plans need not
             # manufacture numerical movement to pass this structural check.
@@ -1563,6 +1755,7 @@ def make_outline_handler(
                 created_at=stamp,
                 actor=result.provider,
                 decision=decision,
+                expected_manuscript_revision_id=head.revision_id,
             )
         except PlanConflict as error:
             stale = _decision(

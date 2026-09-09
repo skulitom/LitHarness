@@ -53,6 +53,7 @@ from litharness.domain.promises import (
     parse_due_hint,
     promise_id_for,
 )
+from litharness.domain.serials import SerialShape, arcs_of, beats_for_serial
 from litharness.domain.text import content_hash
 
 #: The call class, which is what routes this to a non-billing provider even in production.
@@ -376,6 +377,7 @@ def make_summary_handler(
     project_id: str,
     *,
     call_class: str = CALL_CLASS,
+    serial_shape: SerialShape | None = None,
 ) -> JobHandler:
     """Build a `JobHandler` that records what one accepted scene contained.
 
@@ -396,10 +398,12 @@ def make_summary_handler(
     subjects; this call, the only one that can mark a debt paid, was the only one not shown
     them, and four books settled nothing. Read-only from the ledger's side: nothing about
     which debt is due, or due now, is computed or said. The story keys a
-    promise carries are read off `beats_for`'s own minting — the scene's beat for
+    promise carries are read off the configured scene coordinates — the scene's beat for
     `opened_at_key`, the hinted scene's beat for `due_key`, the last beat when the hint is
-    absent or unparseable (a promise is at latest overdue if the book ends unpaid) — so
-    there is exactly one padding implementation in the project. A book whose template is not
+    absent or unparseable (a promise is at latest overdue if the book ends unpaid).
+    Serial composition uses the same closed-arc beats as the drafting selector; smaller
+    books and direct callers without a serial shape retain book-template coordinates.
+    A book whose template is not
     chronological, or does not fit a template at all, gets no promise rows: the same
     abstention milestones make, no key rather than a guessed one.
     """
@@ -533,12 +537,17 @@ def make_summary_handler(
             ),
         )
 
-        # The promise ledger. Story keys are read off `beats_for`'s minting, never formatted
-        # here — see the factory docstring — and a book the template machinery refuses, or a
-        # template that is not chronological, abstains whole.
+        # Match the selector's serial eligibility on this summary's frozen source revision.
+        # Falling back solely because the current scene is in an open trailing arc would
+        # mix book-width and fixed-width coordinates inside one serial's promise ledger.
         beats: tuple[Beat, ...]
         try:
-            beats = beats_for(revision, template_for(revision))
+            arcs = arcs_of(revision, serial_shape) if serial_shape is not None else ()
+            beats = (
+                beats_for_serial(revision, serial_shape)
+                if serial_shape is not None and arcs and arcs[0].closed
+                else beats_for(revision, template_for(revision))
+            )
         except TemplateMismatch:
             beats = ()
         beat = _scene_beat(beats, logical_id)

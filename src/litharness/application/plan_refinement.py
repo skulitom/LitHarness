@@ -56,6 +56,7 @@ def accept_plan_proposal(
     created_at: str,
     actor: str = "litharness",
     decision: PolicyDecision | None = None,
+    expected_manuscript_revision_id: str | None = None,
 ) -> PlanApplication:
     """Validate and atomically accept a proposal if its baseline is still the head.
 
@@ -63,7 +64,8 @@ def accept_plan_proposal(
     not: it re-reads the head, performs deterministic validation, and lets the store compare
     the baseline again inside its write transaction. A provider job may supply its metered
     decision; programmatic proposals receive a deterministic acceptance decision so storage
-    never advances a plan head without attribution.
+    never advances a plan head without attribution. Continuation outlines also supply the
+    manuscript revision they read, checked in that same transaction before any plan movement.
     """
     base = store.plan_revision_for_id(proposal.base_plan_revision_id)
     application = apply_plan_proposal(base, proposal)
@@ -115,6 +117,7 @@ def accept_plan_proposal(
         interpreted_at=created_at,
         events=events,
         decision=accepted_decision,
+        expected_manuscript_revision_id=expected_manuscript_revision_id,
     )
     return application
 

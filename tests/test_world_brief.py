@@ -38,6 +38,7 @@ from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.plan_refinement import PlanRevision
 from litharness.domain.revision import new_book
 from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
+from tests.helpers import accepted
 
 #: The pilot's own scene count. `records_for` mints a disclosure position only for a reveal the
 #: book actually has a scene for, and the key width is the book's, so this is not a free
@@ -805,3 +806,94 @@ def test_a_declared_capability_gets_its_own_group_and_not_the_other_bucket() -> 
     assert any("silas can do cap_read_a_seam" in line for line in grouped["cast"])
     assert "capabilities" in world_brief.GROUPS
     assert world_brief.GROUPS.index("capabilities") == world_brief.GROUPS.index("cast") + 1
+
+
+def test_a_character_rule_does_not_turn_the_rest_of_the_character_into_rules() -> None:
+    declared_rule = (
+        "Mara distrusts untested doors; her sight cannot tell whether a room is occupied."
+    )
+    records = tuple(
+        accepted(record)
+        for record in (
+            worlds.world_record("mara", worlds.ENTITY_ROLE_PREDICATE, value="cast"),
+            worlds.world_record("mara", worlds.WORLD_RULE_PREDICATE, value=declared_rule),
+            worlds.world_record("mara", "name", value="Mara Vale"),
+            worlds.world_record("mara", "wants", value="Find her missing brother."),
+            worlds.world_record(
+                "mara", worlds.MANIFESTS_PREDICATE, value="She tests unfamiliar door handles."
+            ),
+            worlds.world_record("mara", "personal_rule", value="Never borrow a coat."),
+            worlds.world_record("mara", worlds.CAN_DO, object_ref="see_hinges"),
+            worlds.world_record("mara", worlds.BELIEVES, object_ref="doors_are_safe"),
+            worlds.world_record(
+                "doors_are_safe", worlds.CLAIM_CONTENT, value="Painted doors are safe."
+            ),
+            worlds.world_record("doors_are_safe", worlds.CLAIM_FALSE, value=True),
+            worlds.world_record(
+                "mara",
+                worlds.CONSEQUENCE_PREDICATE,
+                object_ref="travel",
+                value="She cannot establish a room is empty from its doorway.",
+            ),
+        )
+    )
+    brief = world_brief.brief_for(records)
+    assert brief is not None
+    grouped = brief.to_jsonable()
+    assert set(grouped["rules"]) == {
+        f"Rule — {declared_rule}",
+        "Because of mara, in travel: She cannot establish a room is empty from its doorway.",
+    }
+    cast = "\n".join(grouped["cast"])
+    for detail in (
+        "Mara Vale",
+        "Find her missing brother.",
+        "She tests unfamiliar door handles.",
+        "Never borrow a coat.",
+        "mara can do see_hinges",
+        "mara believes, wrongly: Painted doors are safe.",
+    ):
+        assert detail in cast
+    # Grouping leaves the explicit mixed rule intact; it does not interpret its psychology.
+    assert declared_rule not in cast
+    assert brief.facts == 8
+
+
+def test_planning_rules_keep_capability_costs_and_complete_reified_limits() -> None:
+    records = [
+        accepted(record)
+        for record in (
+            worlds.world_record("ember", worlds.ENTITY_ROLE_PREDICATE, value="capability"),
+            worlds.world_record("ember", "is_a", value="A bead of light above one finger."),
+            worlds.world_record("ember", worlds.COSTS, value="One breath of stored warmth."),
+            worlds.world_record("ember", worlds.REQUIRES, object_ref="sight"),
+            worlds.world_record("ferry", worlds.ENTITY_ROLE_PREDICATE, value="carrier"),
+            worlds.world_record("ferry", "name", value="The Heron"),
+        )
+    ]
+    records.extend(
+        accepted(worlds.world_record("capacity", predicate, value=value, object_ref=target))
+        for predicate, value, target in (
+            (worlds.TYPE_PREDICATE, worlds.CARDINALITY_CONSTRAINT, None),
+            (worlds.PREDICATE_PREDICATE, "carries", None),
+            (worlds.MAXIMUM_PREDICATE, 3, None),
+            (worlds.SCOPE_PREDICATE, None, "ferry"),
+            (worlds.GROUP_KEY_PREDICATE, "subject", None),
+            (worlds.EXCEPTS_PREDICATE, None, "barge"),
+        )
+    )
+    brief = world_brief.brief_for(records)
+    assert brief is not None
+    grouped = brief.to_jsonable()
+    rules = grouped["rules"]
+    assert len(rules) == 3
+    assert any("One breath of stored warmth." in line for line in rules)
+    assert "ember needs sight first" in rules
+    assert (
+        "at most 3 carries for anything that is a ferry at one time, except for barge" in rules
+    )
+    assert len(grouped["capabilities"]) == 1
+    assert "A bead of light above one finger." in grouped["capabilities"][0]
+    assert len(grouped["carriers"]) == 1
+    assert "The Heron" in grouped["carriers"][0]
+    assert brief.facts == 5

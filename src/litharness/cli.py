@@ -706,7 +706,10 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             # The producer for the context packet's evicted-scene slot. A mechanical call
             # class, so it routes to a local model even in production (§15), and the lowest
             # priority in the system, so it never outranks writing the next scene.
-            SCENE_SUMMARY: make_summary_handler(registry, store, args.project),
+            SCENE_SUMMARY: make_summary_handler(
+                registry, store, args.project,
+                serial_shape=SerialShape(args.chapter_scenes, args.arc_chapters),
+            ),
             # Narrative Planning v0: one statement per scene, so the rising span stops
             # asking twenty-five scenes the same question (§52's first taxonomy entry).
             BOOK_OUTLINE: make_outline_handler(

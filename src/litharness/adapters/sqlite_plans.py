@@ -315,6 +315,7 @@ class SqlitePlanRepository:
         interpreted_at: str,
         events: Sequence[Event],
         decision: PolicyDecision,
+        expected_manuscript_revision_id: str | None = None,
     ) -> None:
         """Commit plan movement, its decision, directive readings, and events atomically."""
         proposal = application.proposal
@@ -365,9 +366,20 @@ class SqlitePlanRepository:
                 current = self.plan_head(connection, book_id, branch_id)
                 if current is None:
                     current = self.legacy_plan_revision(connection, book_id, branch_id)
-                if current is None or current.plan_revision_id != proposal.base_plan_revision_id:
+                manuscript = connection.execute(
+                    "SELECT revision_id FROM branch_heads WHERE book_id = ? AND branch_id = ?",
+                    (book_id, branch_id),
+                ).fetchone() if expected_manuscript_revision_id is not None else None
+                manuscript_changed = expected_manuscript_revision_id is not None and (
+                    manuscript is None
+                    or manuscript["revision_id"] != expected_manuscript_revision_id
+                )
+                if (current is None or current.plan_revision_id != proposal.base_plan_revision_id
+                        or manuscript_changed):
                     actual = current.plan_revision_id[:12] if current else "no plan"
                     message = (
+                        "manuscript changed during outline generation; replan its continuation"
+                        if manuscript_changed else
                         f"proposal planned against {proposal.base_plan_revision_id[:12]}, "
                         f"but plan head is {actual}"
                     )

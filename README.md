@@ -198,8 +198,9 @@ summaries are no longer supplied again beside an existing scene plan. Planning u
 instructions rather than the prose writer's house-style rules. See the
 [handoff contract](plan/scene-brief-handoff.md) for compatibility and verification limits.
 A missing or failed outline holds drafting for that book; `--no-outline`
-is the explicit control that drafts from the same story-foundation projection without a scene
-handoff. An explicitly locked concept retains its full source. These are generation and
+is the explicit control that drafts without a scene handoff. Both writer paths retain the
+original author brief; the generated concept treatment is supplied to planning. Without a
+scene handoff, an explicitly locked concept retains its full source. These are generation and
 meaning-preservation safeguards, not evidence of literary quality.
 Candidate and acceptance events preserve the exact provider draft and its SHA-256 before
 format cleanup or an explicitly requested revision, so changes can be traced afterwards.
@@ -217,10 +218,17 @@ declared column labels and value formats separately from current holdings, inclu
 the first recorded gain. Later updates can follow an earlier readout; omitted columns retain
 their established values. This keeps recorded progression available to the next chapter
 without displaying undeveloped skills or prescribing an advancement.
+Status readers accept a colon between an exact declared label and its value (`Grade: 1`)
+as well as whitespace (`Grade 1`); label and value validation remain unchanged.
 For continuations, the current chapter request is distinguished from earlier output requests
 in the original author brief. The brief remains intact; ongoing story and style directions
 and applicable author locks still apply. Compact updates serve as the result announcement,
 while distinct warnings, choices and explicitly required notices retain their own purpose.
+When outlining an arc with accepted opening scenes, planning covers only its unwritten
+continuation. It receives bounded accepted history and state entering the next scene; local
+response numbers map back to the original chapter and story coordinates. Accepted prose and
+its scene plans remain intact. Manuscript gaps, conflicting locked plans, and changed queued
+planning bases stop the request for resolution rather than silently replacing that scope.
 The outline retains what carries over when the story moves under a second system, so its
 progression schedule can account for those intentions. The complete concept remains stored;
 explicitly locked source instructions still reach planning unchanged. For new

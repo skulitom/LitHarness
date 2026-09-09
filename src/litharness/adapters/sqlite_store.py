@@ -1121,6 +1121,7 @@ class SqliteStore:
         interpreted_at: str,
         events: Sequence[Event],
         decision: PolicyDecision,
+        expected_manuscript_revision_id: str | None = None,
     ) -> None:
         """Commit plan movement, its decision, directive readings, and events as one unit."""
         self._plans.commit_plan_application(
@@ -1129,6 +1130,7 @@ class SqliteStore:
             interpreted_at=interpreted_at,
             events=events,
             decision=decision,
+            expected_manuscript_revision_id=expected_manuscript_revision_id,
         )
 
     # -- objective story state -------------------------------------------------

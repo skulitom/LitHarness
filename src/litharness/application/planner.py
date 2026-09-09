@@ -41,7 +41,6 @@ books both finish rather than the first one starving the second.
 
 from __future__ import annotations
 
-import json
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -839,28 +838,17 @@ def packet_for(
     scene_plan = scene_plan_for(plan_items, beat.logical_id)
     intentions: dict[str, str] = {}
     if concept is not None:
-        if scene_plan is None:
-            # Without a scene handoff, supply the same foundations used by planning.
-            # An author-locked concept retains its full source, including the opening.
-            locked_concept = any(
-                item.kind is lc.PlanKind.BOOK_PLAN
-                and item.logical_id == concept_mod.CONCEPT_PLAN_ID
-                and item.locked
-                for item in plan_items
-            )
-            intentions[concept_mod.CONCEPT_PLAN_ID] = (
-                concept.render()
-                if locked_concept
-                else (
-                    "Story foundation — future intentions, not events that have already "
-                    "happened:\n"
-                    + json.dumps(concept.for_outline(), ensure_ascii=False, sort_keys=True)
-                )
-            )
+        if scene_plan is None and any(
+            item.kind is lc.PlanKind.BOOK_PLAN
+            and item.logical_id == concept_mod.CONCEPT_PLAN_ID
+            and item.locked
+            for item in plan_items
+        ):
+            # A locked source remains authoritative even without a scene handoff.
+            intentions[concept_mod.CONCEPT_PLAN_ID] = concept.render()
         elif concept.author_brief:
-            # The planner has selected the scene material. Do not reintroduce the full
-            # proposal beside its handoff, even after a directive replaces the plan with
-            # ordinary text. Keep the operator's original words intact.
+            # Drafting retains the operator's original words. The generated concept
+            # treatment belongs to planning, whether or not this scene has an outline.
             intentions[concept_mod.CONCEPT_PLAN_ID] = (
                 f"Author's original book brief:\n{concept.author_brief}"
             )
@@ -1218,7 +1206,11 @@ def make_plan_selector(
                     concept_mod.concept_of(plan_items) is not None
                     or len(set(functions)) < len(functions)
                 )
-                and any(scene_plan_for(plan_items, beat.logical_id) is None for beat in beats)
+                and any(
+                    head.node(beat.logical_id).content is None
+                    and scene_plan_for(plan_items, beat.logical_id) is None
+                    for beat in beats
+                )
             )
             if needs_outline:
                 outline_id = outline_job_id(
@@ -1232,6 +1224,8 @@ def make_plan_selector(
                         "book_id": progress.book_id,
                         "branch_id": progress.branch_id,
                         "plan_epoch": epoch,
+                        "manuscript_revision_id": head.revision_id,
+                        "base_plan_revision_id": plan_revision.plan_revision_id,
                         "chapter_by_scene": {
                             beat.logical_id: positions[beat.logical_id].chapter_index
                             for beat in beats

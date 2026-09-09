@@ -110,6 +110,7 @@ class PlanWriter(Protocol):
         interpreted_at: str,
         events: Sequence[Event],
         decision: PolicyDecision,
+        expected_manuscript_revision_id: str | None = ...,
     ) -> None: ...
 
 
