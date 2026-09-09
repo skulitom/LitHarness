@@ -4,10 +4,6 @@
 
 # LitHarness
 
-**Clean-start prototype:** [Generate a fresh Chapter 1 directly from an author brief](clean_start/README.md),
-using a Claude or Codex subscription with no legacy planning or drafting pipeline. This is an isolated
-experiment; the existing book engine and saved books remain available below.
-
 [![CI](https://github.com/skulitom/LitHarness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/skulitom/LitHarness/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -16,6 +12,11 @@ LitHarness is an open-source Python system for autonomous, open-ended serial fic
 coordinates specialised LLM agents across listing, world design, planning, scene drafting,
 continuity, repair, covers, and release packaging while preserving content-addressed manuscript
 history and scene-grounded narrative state.
+
+There is one supported generation pipeline: the `litharness` commands documented below,
+implemented in `src/litharness/`. Recent Codex-generated books use this engine with its
+context and progression fixes. The standalone clean-start generator has been retired;
+its [comparison findings](docs/generation-comparison-20260908.md) remain as historical evidence.
 
 Its product objective is fiction a defined audience voluntarily continues and recommends, with
 no human in the production loop. The operator may direct a book and accept or reject it at book
@@ -61,16 +62,15 @@ Production generation uses the signed-in local Claude Code CLI, pinned to the fr
 unavailable, work waits rather than silently degrading. Tests cannot reach a billing provider;
 for an explicit model-free local run, set `LITHARNESS_FAKE_PAD_CHARS=400`.
 
-To run the existing engine through the signed-in Codex subscription instead, set
+To run this same pipeline through the signed-in Codex subscription instead, set
 `LITHARNESS_PROVIDER=codex` and, if needed, `LITHARNESS_CODEX_BINARY` to the native executable.
 This selects `gpt-6-astra` with medium reasoning for the registry. It does not fall back to
 Claude. Codex ignores user configuration and project documents; world and roster agents use
 a restricted local command bridge with the same command allowances and no shell access.
 Codex reports token usage but no dollar cost, so use token and invocation limits to bound
-these runs. See the [comparison record](clean_start/CODEX_COMPARISON.md) before treating a
-provider change as a prose-quality fix. This adapter is experimental: the recorded continuation
-completed Chapter 1 after a mechanical repair to its seeded world; fresh-world reliability
-has not yet been established.
+these runs. The provider selection changes model transport, not the generation pipeline.
+The [comparison record](docs/generation-comparison-20260908.md) documents the initial
+transport repairs and reading limitations; completed generation does not certify literary quality.
 Set `LITHARNESS_CODEX_TRACE_DIR` to a local run directory to retain each submitted request
 and full provider response, including failed tool turns. This is useful for commands such
 as Architect that do not otherwise persist the complete transport exchange.
@@ -92,6 +92,9 @@ New books default to portal fantasy, isekai, or system apocalypse, with combinat
 The default applies even with an empty brief; `--brief` can choose another subgenre or premise.
 Stored treatments retain their original direction. All stages use the configured subscription
 CLI and the ordinary quota checks.
+New status sheets omit undeveloped skills from displayed panels while retaining their zero
+values in stored state. An acquired skill can then appear in a compact update. Older exported
+chapters retain the displays they were written with.
 Claude Code starts with `--safe-mode` to disable user/project customizations while keeping
 subscription authentication; `--bare` disables that authentication in the supported CLI.
 

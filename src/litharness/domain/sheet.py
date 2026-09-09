@@ -110,10 +110,8 @@ class Sheet:
     """
 
     fields: tuple[SheetField, ...]
-    #: Whether a column standing at zero prints (§203). `True` is every sheet declared
-    #: before the flag existed, so every book on disk renders exactly as it did; a
-    #: drawn system declares `False`, after the market census found one window field in
-    #: fifteen at zero and a row with six zeros a shape the genre's windows do not have.
+    #: Whether an unheld column prints. Old standalone declarations retain `True`;
+    #: new system-following sheets default to `False` in `parse_sheet`.
     #: The first column always prints, so a line is never empty and a ladder's rung stays.
     show_unheld: bool = True
     #: Whose sheet this is (§206): a subject id, a role (`place`, `creature`, `cast`), or

@@ -177,17 +177,20 @@ def test_a_system_whose_every_ability_is_gated_has_no_starting_sheet() -> None:
     assert any("no ability can be held at the first rung" in c for c in complaints)
 
 
-def test_the_unheld_ways_sit_on_the_line_at_nothing_where_the_reader_can_see_them() -> None:
-    """The awe mechanism was already half-built and this is the half that finishes it.
-
-    `columns` prints every declared ability including the ones nobody holds — §160 wrote that with
-    the operator's *"i wonder what I would pick"* beside it — so a fork's grants are already
-    visible at 0 from page one and exactly one branch will ever light up. Nothing new had to be
-    rendered for a reader to be able to want one.
-    """
-    snapshot = gamesystem.starting_sheet(_system(), "mira").snapshot()
+def test_unheld_choice_grants_stay_in_state_but_not_the_writer_status_example() -> None:
+    system = _system()
+    opening = gamesystem.starting_sheet(system, "mira")
+    snapshot = opening.snapshot()
     assert snapshot["cap_kiln"] == 0 and snapshot["cap_reed"] == 0
-    assert "Kiln Hand" in {column.label for column in _system().columns}
+    records = [
+        _accepted(record)
+        for record in (*gamesystem.records_for(system), *gamesystem.records_for_sheet(opening))
+    ]
+    example = extraction.system_voice_example(records)
+    assert example is not None and "Reading 1" in example
+    assert "Kiln Hand" not in example and "Reed Hand" not in example
+    assert " 0" not in example
+    assert extraction.state_as_it_stands(records)[1] == snapshot
 
 
 def test_a_pick_never_reaches_the_printed_line() -> None:

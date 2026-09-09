@@ -1,10 +1,17 @@
 # Subscription Codex comparison — 2026-09-08
 
+Historical record. On 2026-09-09 the operator chose to retain the main pipeline and remove
+the standalone clean-start generator, its launch instructions and its transport tests.
+The original implementation remains in Git history at `96ef4e2:clean_start/`; generated
+books and run records remain unchanged. This supersedes the recommendation below to keep
+an independent launcher. It does not establish a quality result. New generations use the
+[main pipeline](../README.md#start-a-serial), including its Codex subscription adapter.
+
 The operator requested the clean-start and existing pipelines on Codex, with Claude disabled
 if that resolved the reading problems. Both Codex arms use the native CLI 0.153.4, request
 `gpt-6-astra` with medium reasoning, and require ChatGPT subscription authentication. Neither
 uses API credentials or falls back to another model. The exact short clean-start system and
-author brief are unchanged from the [Claude baseline](FIRST_RUN.md).
+author brief are unchanged from the [Claude baseline](clean-start-baseline-20260908.md).
 
 Recorded requests, available raw responses, failures, hashes and reading notes live under
 `runs/codex-pipeline-comparison-20260908/`. Generated chapters are not committed. These are

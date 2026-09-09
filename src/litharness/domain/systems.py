@@ -420,14 +420,10 @@ class SystemDef:
 
     @property
     def columns(self) -> tuple[Column, ...]:
-        """The status line's columns: the rung, then every ability in declaration order.
+        """Stored columns: the rung, then every ability in declaration order.
 
-        **Every ability, including the ones nobody holds yet, and that is the design rather than
-        a fallback.** An unheld ability sits at 0 where the reader can see it, which is the
-        operator's own 2026-08-25 direction — "omg this magic would be so cool, I wonder what I
-        would pick" — expressed as a number instead of as an adjective. It also keeps the line's
-        shape constant for a whole book, which it has to be: a book declares one `status_sheet`,
-        not one per scene.
+        Unlearned abilities remain at zero in snapshots for progression and continuity.
+        The sheet's display projection omits them; this list is not a reader-facing panel.
         """
         return (
             Column(RANK_KEY, self.rank_label),
@@ -505,11 +501,8 @@ class SystemDef:
         """
         return {
             "fields": [{"name": column.name, "label": column.label} for column in self.columns],
-            # **The unheld columns do not print** (§203): the snapshot still carries every
-            # ability at 0, so the arithmetic and the digest are what they were, and the
-            # line the reader sees is the rung and what is held. The market's windows carry
-            # one field in fifteen at zero (the system-displays census); the wanting §160
-            # put on the line as zeros rides the `[OFFER]` line instead.
+            # Keep unlearned abilities in state, but omit them from the printed status.
+            # Available choices have their own [OFFER] display.
             "show_unheld": False,
             # **The sheet names its system and follows it** (§211): a grant declared after
             # the seed is a column the moment it is declared, read by `extraction.sheet_for`

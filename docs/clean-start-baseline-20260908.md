@@ -1,5 +1,11 @@
 # First clean-start chapter — 2026-09-08
 
+Historical record. On 2026-09-09 the operator chose to retain one generation pipeline and
+retire the standalone prototype. The original launcher and tests remain in Git history
+at `96ef4e2:clean_start/`; saved run artifacts are unchanged. The decisions below describe
+the experiment at the time, not current operator instructions. Use the
+[main pipeline](../README.md#start-a-serial) for new books.
+
 ## Question and setup
 
 Does a single fresh chapter written directly from the user's desired reading experience avoid
@@ -68,5 +74,5 @@ Implementation checks: all eight standalone offline tests and the repository han
 passed. Those verify software behavior, not the chapter's appeal.
 
 Follow-up, later on 2026-09-08: the exact brief was subsequently run through subscription
-Codex. See [the comparison record](CODEX_COMPARISON.md); the original run and decision above
+Codex. See [the comparison record](generation-comparison-20260908.md); the original run and decision above
 remain unchanged.
