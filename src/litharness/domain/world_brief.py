@@ -335,10 +335,7 @@ def _reveals(records: Sequence[lc.StateRecord]) -> tuple[Reveal, ...]:
     return tuple(found)
 
 
-#: Instructions to a planner, in the register the existing outline rules already use: what to
-#: do, never how to write, and never prose. **Nothing here asks for a name to be used.** A rule
-#: that said "name the world's features" would make `research/quality-measurement/world_uptake.py`
-#: a target rather than a counter, which is the shallow-because-easy failure the project refuses.
+#: World constraints and disclosure boundaries for planning; they do not prescribe scene events.
 WORLD_RULES: tuple[str, ...] = (
     "The world's declared rules constrain scene plans and milestones. For a planned gain, "
     "place its required payment, prerequisite and activation condition before its effect, "
@@ -346,12 +343,10 @@ WORLD_RULES: tuple[str, ...] = (
     "gain waits until its conditions can be met.",
     "Preserve declared quantities, scope and exceptions across scenes. Continued action by "
     "an existing entity does not introduce another instance of it.",
-    "Put the world's rules and their consequences to work. What happens in a scene should be "
-    "something only this world could make happen: a rule biting somebody, a consequence "
-    "landing, a price being paid in the currency this world actually charges in.",
-    "A statement says what happens. A scene whose only content is an explanation of how the "
-    "world works has nothing happening in it; the world's workings reach the reader through "
-    "events, priced and shown.",
+    "Choose scene developments from the characters' pursuits in this world. Its rules "
+    "constrain possible actions and consequences without requiring a separate demonstration "
+    "of each rule. Learning and discovery belong where they change what a character "
+    "understands, wants or can do.",
     "For a mystery answered in this book, the scene named as its window is where that answer "
     "lands, and it lands as an event somebody does or discovers rather than as an explanation.",
     "A statement for any scene before that window may carry the question and may never carry "

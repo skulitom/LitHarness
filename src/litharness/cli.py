@@ -354,15 +354,21 @@ def _installed_writer(
 
 
 def _draft_policy(args: argparse.Namespace) -> DraftPolicy:
-    """Generation policy from the command line, defaulting to `DraftPolicy`'s.
+    """Keep the requested length compatible with the draft's runaway ceiling.
 
-    Only the target is exposed. The shape bounds are gates, and §1a.1's warning applies to
-    both directions — an operator who could lower `min_chars` to make a run go green would
-    have turned the one deterministic check on drafts into a formality.
+    Longer CLI targets retain the default ceiling-to-target ratio, rounded up. Smaller
+    or unspecified targets keep the default ceiling; the stub floor never scales. Direct
+    domain callers retain their explicit bounds. Both effective values enter the existing
+    policy digest, and requested word count remains an instruction rather than a gate.
     """
     default = DraftPolicy()
+    target_words = args.target_words if args.target_words is not None else default.target_words
     return DraftPolicy(
-        target_words=(args.target_words if args.target_words is not None else default.target_words)
+        target_words=target_words,
+        max_chars=max(
+            default.max_chars,
+            (target_words * default.max_chars + default.target_words - 1) // default.target_words,
+        ),
     )
 
 
@@ -632,8 +638,8 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             policy=_draft_policy(args),
             outline=not args.no_outline,
             director_id=_director_id(store, args),
-            # The shape the operator asked for. At the default of one it asserts
-            # nothing and the prompt is unchanged.
+            # The configured grouping reaches drafting as well as release packaging,
+            # including a complete chapter drafted as one unit.
             scenes_per_chapter=args.chapter_scenes,
             chapters_per_arc=args.arc_chapters,
             chapters_per_volume=args.volume_chapters,

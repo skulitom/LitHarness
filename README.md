@@ -107,9 +107,11 @@ already carried but may not add one. An unusable response stops persistence.
 With `--out`, original invention and development remain in their traces and proposed edits in
 `concept-precision-trace.json`; no quality score or candidate ranking chooses an answer.
 
-The prepared discovery treatment is retained inside `concept.json` for the listing and arc
-outlines. World creation receives a separate projection of setting, background and mechanics;
-detailed opening actions, future turns, arc endings and promised answers stay with the planner.
+The prepared discovery treatment is retained inside `concept.json`. The listing can use it;
+arc planning receives a projection that omits its generated opening choreography, proposed
+first use and first threat encounter. The character, pursuit, world and growth possibilities,
+later arc shape, turns, carry-over conditions and debts remain available. World creation uses
+a separate projection of setting, background and mechanics without future story events.
 The supplied listing and original author brief still constrain the world. Chapter reconciliation
 reads the drafted chapter, author brief and stored world without replaying the original
 treatment. Scene drafting receives the planner's scene handoff instead of the
@@ -120,6 +122,11 @@ each development attempt, including failures. A missing treatment or a reserved 
 stops generation before spending on mechanical retries. Existing concept files remain readable.
 These are generation and persistence guarantees, **not a validated reader-interest gate**.
 No model ranks candidates or certifies that the resulting chapter is good.
+
+World creation allows useful beginner capabilities without making basic handling or perception
+separately acquired prerequisites. Later capabilities still support depth and choices, and
+explicit author mechanics take precedence. Previously accepted worlds retain their rules;
+changing generation guidance does not rewrite their acquisition requirements.
 
 For a new book that must differ from an earlier invention, pass
 `concept --distinct-from path/to/previous/concept.json` (repeatable). Discovery receives
@@ -184,14 +191,15 @@ Books carrying a concept receive scene plans before drafting, including six-scen
 The planner sees which scenes share a chapter and chooses their events from the concept.
 New concept-backed outlines return a structured brief for each scene: its starting situation,
 the character's pursuit, intended actions and consequences, and any later-story dependencies.
-The planner receives the whole concept and may revise provisional details while preserving
+The planner receives the concept's story foundations and may construct new scene events while preserving
 the premise, author direction and established facts. The writer receives its scene brief,
 the original author brief, and established story context; the full treatment and distant arc
 summaries are no longer supplied again beside an existing scene plan. Planning uses its own
 instructions rather than the prose writer's house-style rules. See the
 [handoff contract](plan/scene-brief-handoff.md) for compatibility and verification limits.
 A missing or failed outline holds drafting for that book; `--no-outline`
-is the explicit control that permits drafting from the full concept without one. These are generation and
+is the explicit control that drafts from the same story-foundation projection without a scene
+handoff. An explicitly locked concept retains its full source. These are generation and
 meaning-preservation safeguards, not evidence of literary quality.
 Candidate and acceptance events preserve the exact provider draft and its SHA-256 before
 format cleanup or an explicitly requested revision, so changes can be traced afterwards.
@@ -204,8 +212,9 @@ interface readings, cast limits, or a prescribed chapter-one ending. Their event
 the milestone schedule. Status formatting remains available; a changed state is shown as a
 result, while an unchanged panel appears only when the scene needs it. Legacy planning defaults
 and explicit author locks remain in place.
-The outline receives the complete concept, including what carries over when the story moves
-under a second system, so its progression schedule can account for those intentions. For new
+The outline retains what carries over when the story moves under a second system, so its
+progression schedule can account for those intentions. The complete concept remains stored;
+explicitly locked source instructions still reach planning unchanged. For new
 discovery-backed concepts, numerical milestones describe consequences of planned action;
 they may be empty when no tracked quantity changes. Stat movement is not proof of progression.
 Declared world rules, costs, prerequisites, limits and exceptions are protected context.
@@ -217,6 +226,11 @@ explicit instructions to respect payment/activation order and declared quantitie
 context and instruction safeguards, not a semantic check that certifies the resulting prose.
 World facts are also distinguished from character knowledge: passing a fact through the POV
 visibility filter makes it available to the writer, not automatically known by the character.
+
+`--chapter-scenes 1` gives both planner and writer an explicit whole-chapter position. The
+same grouping controls export. For longer `--target-words` requests, the CLI increases the
+character safety ceiling in proportion to the default allowance; it does not impose a word
+count floor. Effective targets and limits remain part of each recorded drafting decision.
 
 `--person` is a position, not a finding: `first` seeds one locked constraint every scene call
 carries, `third` and the default seed nothing. The operator's position since read 19 is third

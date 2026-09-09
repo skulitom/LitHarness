@@ -665,7 +665,9 @@ def test_discovery_precedes_mechanics_and_survives_cli_persistence(
         assert head is not None
         beat = beats_for(head, arc_template(6))[0]
         packet = packet_for(store, head, beat)
-        assert retained.discovery.render() in packet.render()
+        assert retained.discovery.world in packet.render()
+        assert retained.discovery.growth in packet.render()
+        assert retained.discovery.opening not in packet.render()
         assert str(_discovery()["opening"]) not in "\n".join(
             item.text for item in packet.sections.get("facts", ())
         )
@@ -754,7 +756,10 @@ def test_discovery_material_reaches_listing_and_later_arcs_with_scoped_world_inp
         )
         parsed = json.loads(request.prompt)
         assert request.system.count(house.QUANTITY_DETAIL) == 1
-        assert parsed["book_concept"]["discovery"] == drawn.discovery.to_jsonable()
+        assert parsed["book_concept"]["discovery"] == {
+            "version": drawn.discovery.to_jsonable()["version"],
+            "world": drawn.discovery.world, "growth": drawn.discovery.growth,
+        }
         assert concept.DISCOVERY_ARC_RULE in parsed["rules"]
         assert not any("numbers must actually move" in rule for rule in parsed["rules"])
 
@@ -793,7 +798,9 @@ def test_future_story_fields_cannot_return_as_world_declaration_material(
     ):
         assert marker not in seed.prompt
         assert marker not in grow.prompt
-        assert marker in json.dumps(drawn.for_outline())
+        assert (marker in json.dumps(drawn.for_outline())) is (
+            marker not in {"FIRST_USE_MARKER", "FIRST_REACH_MARKER", "ARC_START_MARKER"}
+        )
     assert "LISTING_MARKER" in seed.prompt
     assert "AUTHOR_BRIEF_MARKER" in seed.prompt
     assert "AUTHOR_BRIEF_MARKER" in grow.prompt
@@ -808,7 +815,7 @@ def test_future_story_fields_cannot_return_as_world_declaration_material(
         assert "SETTING_MARKER" in seed.prompt
         for marker in ("OPENING_MARKER", "GROWTH_MARKER"):
             assert marker not in seed.prompt
-            assert marker in json.dumps(drawn.for_outline())
+            assert (marker in json.dumps(drawn.for_outline())) is (marker == "GROWTH_MARKER")
     assert grow.prompt.startswith("The chapter just drafted (s1):\n\nCHAPTER_MARKER")
     assert "TURN_MARKER" not in grow.prompt
     assert drawn.person_before not in grow.prompt
@@ -856,6 +863,43 @@ def test_world_mechanics_do_not_require_institutional_conflict_or_early_grant_ex
     assert "the book is better when" not in request.system
     assert "five to eight grants per system" in request.system
     assert "require its introduction in chapter one" in request.system
+
+
+@pytest.mark.parametrize("author_mechanics", [
+    "All spells require a separately acquired awareness ability before use.",
+    "Basic casting needs no separate awareness ability.",
+])
+def test_fresh_world_cli_preserves_explicit_author_mechanics_in_the_seed_request(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, author_mechanics: str,
+) -> None:
+    from litharness import cli
+
+    drawn = replace(
+        concept.Concept.from_payload({**_example(), "discovery": _discovery()}),
+        author_brief=author_mechanics,
+    )
+    path = tmp_path / "concept.json"
+    path.write_text(drawn.to_text(), encoding="utf-8")
+    original = path.read_bytes()
+    db = tmp_path / "book.db"
+    monkeypatch.setenv("LITHARNESS_DATABASE", str(db))
+    call = _scripted({})
+    monkeypatch.setattr(cli, "_completion_call", call)
+    base = ["--database", str(db), "--writer", "ferreira"]
+    assert main([
+        *base, "new", "Book", "--premise", "FROZEN_LISTING", "--concept", str(path),
+    ]) == EXIT_OK
+    assert not call.seen  # type: ignore[attr-defined]
+    assert main([*base, "architect", "seed"]) == EXIT_OK
+    assert call.seen == [  # type: ignore[attr-defined]
+        world_agent.render_seed_request("FROZEN_LISTING", WRITER, concept=drawn),
+    ]
+    assert author_mechanics in call.seen[0].prompt  # type: ignore[attr-defined]
+    with SqliteStore.open_read_only(db) as store:
+        book, branch, _ = store.branches()[0]
+        assert concept.concept_of(store.plan_items(book, branch)) == drawn
+        assert not store.state_records(book, branch)
+    assert path.read_bytes() == original
 
 
 def test_legacy_concepts_are_not_rewritten_and_bad_discovery_does_not_disappear() -> None:

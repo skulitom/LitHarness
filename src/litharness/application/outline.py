@@ -252,10 +252,14 @@ CONCEPT_OUTLINE_SCHEMA: dict[str, Any] = {
 SCENE_HANDOFF_RULES = (
     "Return a brief for each scene: situation establishes the place, relevant relationships "
     "and the viewpoint character's understanding and concerns on entering it; pursuit is "
-    "what they try to accomplish. In changes, connect intended actions and consequences "
+    "what they try to accomplish. changes records developments in their circumstances, "
+    "understanding or pursuit. Connect intended actions and consequences "
     "through what the character can notice, infer or misunderstand at consequential choices. "
     "Distinguish what is true from what the character knows. Use plain planning facts, "
     "not dialogue, finished narration, or explanations of how a line should sound.",
+    "An unchanged world condition stays in world context. Include a learning trial or rule "
+    "discovery in changes when its outcome affects what the character attempts or decides; "
+    "do not add an episode solely to demonstrate that a supplied rule still holds.",
     "The writer will receive this scene's brief, the premise, the author's original brief, "
     "and established story context. It will not receive book_concept or the original "
     "treatment. Include the scene's necessary setup and causal connections in the brief.",
@@ -264,10 +268,10 @@ SCENE_HANDOFF_RULES = (
     "empty list when none apply. These are planning constraints, not present events or "
     "instructions to explain future developments in the scene.",
     "Preserve the premise's pursuit and magical promise; original author instructions, "
-    "author locks, established history and world rules remain binding. Generated opening "
-    "and first_use developments are proposals, including timing such as 'in chapter one' "
-    "inside their text. Choose their scope and placement from connected character choices "
-    "and available prose space; those generated labels do not create author deadlines.",
+    "author locks, established history and world rules remain binding. The supplied concept "
+    "provides story foundations and later commitments. Construct scene events from connected "
+    "character choices and available prose space; generated suggestions do not create "
+    "author deadlines.",
 )
 
 AUTHOR_LOCK_RULE = (
@@ -1161,7 +1165,7 @@ def _policy_digest(*, target_scene_words: int | None = None) -> str:
                 if target_scene_words is not None else {}
             ),
             "schema": OUTLINE_SCHEMA,
-            "concept_planning_version": 8,
+            "concept_planning_version": 11,
             "concept_schema": CONCEPT_OUTLINE_SCHEMA,
             "scene_handoff_rules": SCENE_HANDOFF_RULES,
             "author_lock_rule": AUTHOR_LOCK_RULE,

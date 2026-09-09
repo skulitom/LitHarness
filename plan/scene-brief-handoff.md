@@ -9,14 +9,17 @@ Discovery proposes story material in planning language. The existing concept and
 retain that material, with the original author brief stored separately in new concepts. Model
 development cannot replace the author brief, and precision edits cannot change it.
 
-The existing outline call receives the complete concept, author direction, accepted history
-and world context. For a concept-backed book, it returns a structured brief for each scene:
+The existing outline call receives the concept's story foundations, author direction, accepted
+history and world context. Its projection omits `discovery.opening`, the duplicate
+`first_arc.opens`, `first_use` and `threat.first_reach`. Background, pursuit, world/growth
+possibilities, system conditions, turn, later arc shape and debts remain. The complete stored
+concept is unchanged. For a concept-backed book, it returns a structured brief for each scene:
 
 - `situation`: the starting place, relevant relationships, and the viewpoint character's
   understanding and concerns.
 - `pursuit`: what the viewpoint character is trying to accomplish.
-- `changes`: intended actions and consequences connected through what the character can
-  notice, infer or misunderstand at consequential choices.
+- `changes`: developments in the character's circumstances, understanding or pursuit,
+  connected through what they can notice, infer or misunderstand at consequential choices.
 - `future_dependencies`: later-story commitments this scene must leave possible, or an empty
   list. These are kept separate from events to enact now.
 
@@ -31,10 +34,11 @@ digest records it. Planning may move optional developments later to leave room f
 the scene and developing choices. The writer's length instruction makes room for action and
 viewpoint experience without requiring additional events to fill the allowance.
 
-Generated opening and first-use chapter labels are proposals. The planner can distribute that
-material across chapters while preserving meaningful early magic, original author instructions,
-author locks and established world rules. Concept development and inspection labels use the
-same distinction; they no longer assign an automatic Chapter 1 deadline to the full sequence.
+Generated opening and first-use chapter labels are proposals, and their detailed sequences
+are no longer passed to the outline. It constructs events while preserving meaningful early
+magic, original author instructions, author locks and established world rules. An unchanged
+world condition remains a constraint rather than requiring its own demonstration episode.
+Actual costs, prerequisites and activation conditions still precede dependent gains.
 
 Planning receives relevant locked plan items with their exact text and resource scope, mapped
 to the scene ordinals used in the request. The
@@ -57,8 +61,9 @@ the scene brief can still contain generated wording; this is not a complete cont
 Historical concepts without an author brief remain readable. Existing ordinary scene plans
 remain readable and are not silently rewritten. They also use the restricted writer view.
 An author/directive edit that replaces a structured brief with ordinary text does not restore
-the duplicate concept block. With no scene plan, the explicit no-outline control retains its
-full-concept source. Accepted manuscript, world canon, locks and existing plan revisions are
+the duplicate concept block. With no scene plan, the explicit no-outline control uses the
+same story-foundation projection; an explicitly locked concept retains its full source.
+Accepted manuscript, world canon, locks and existing plan revisions are
 unchanged; future outline calls use the new handoff.
 
 Tool-free Claude calls now run in fresh empty temporary directories. Tool-using world agents
@@ -109,3 +114,39 @@ still receive much of the narration's attention; the latest attempt also introdu
 cage-gate judgment. No edition is certified against the named novels or promoted to the main
 shelf. The next source audit concerns the difference between required capability facts and
 which learning steps must be narrated. The present comparison does not establish that answer.
+
+## 2026-09-09 source and chapter-configuration follow-up
+
+Registered attempts, first outputs, frozen requests, failures and complete readings are local
+under `runs/luke-story-developments-20260909/`. The original generated opening was a direct
+source of repeated training episodes. Removing its four choreography fields from planning
+changes that input without mutating the stored concept, accepted world or author locks.
+World rules now constrain events without requiring demonstrations of unchanged conditions.
+
+The one-unit chapter trial exposed two configuration defects: its 1,800-word answer exceeded
+the fixed 8,000-character ceiling, and the valid grouping of one suppressed chapter context.
+CLI targets above the default now scale the runaway allowance; explicit domain caps and the
+stub floor remain binding. Configured positions reach both planning and drafting, including
+one-unit chapters. `None` remains the unconfigured non-serial selector control. The actual
+corrected request, acceptance decision and export verify those paths.
+
+[test_cli_draft_length.py](../tests/test_cli_draft_length.py) checks the composed handler and
+recorded effective policy. The production handoff test exercises one-unit mapping through
+the CLI, planner and writer; [test_serials.py](../tests/test_serials.py) checks release grouping.
+Chapter shape and target remain invocation settings. Continuation tooling must preserve them;
+changing global defaults would regroup existing library output.
+
+A fresh-world comparison permits useful entry capabilities without separately acquired
+handling or perception, while preserving author mechanics and later depth. Its chapter still
+filled the opening with instruction. Replacing the early-magic planning rule then connected
+one spell to the existing pursuit in one chapter. An unchanged repeat, with byte-identical
+planning messages, returned to general preparation and escape from a self-created hazard.
+The rule is therefore an instruction, not an established solution. Both results remain in
+the comparison; no quality score selects a manuscript or licenses volume expansion.
+
+The existing no-outline path now also projects an unlocked concept to its foundation;
+explicit author locks preserve the full treatment. Its first chapter makes the surroundings
+and Luke's uncertainty legible, but again postpones the search for training. Removing the
+outline alone did not resolve this case. The remaining lead is the coexistence of an urgent
+personal pursuit and a gradual introductory progression in the retained story foundation.
+The no-outline status requirement also differs, so this is not a single-variable comparison.

@@ -762,18 +762,10 @@ def test_the_planner_puts_the_system_voice_instruction_on_the_queued_job(
 # --- where the scene sits in its chapter -----------------------------------------------
 
 
-def test_the_prompt_is_byte_identical_when_a_chapter_is_one_scene(
+def test_omitted_chapter_context_is_distinct_from_a_configured_one_scene_chapter(
     store: SqliteStore,
 ) -> None:
-    """The control, and the reason it is a byte comparison rather than a substring one.
-
-    `--chapter-scenes 1` is the default and it asserts nothing: production books hold no
-    chapter nodes and no assembly scheme is decided. A cue rendered under it would put a
-    scheme nobody chose into every prompt this system has ever produced — and, because
-    `input_digest_for` covers the prompt and that digest is the sampler seed, it would also
-    silently move the decoding of every newly minted job. So the falsy case must produce
-    exactly the bytes that omitting the parameter produces.
-    """
+    """None is the control; a configured count of one still describes a real chapter."""
     book_id, branch_id = _fixture(store, "mystery")
     head = store.head(book_id, branch_id)
     assert head is not None
@@ -781,6 +773,7 @@ def test_the_prompt_is_byte_identical_when_a_chapter_is_one_scene(
     packet = packet_for(store, head, beat)
 
     absent = render_prompt(beat, book_title="The Vane House", packet=packet)
+    assert absent == render_prompt(beat, book_title="The Vane House", packet=packet, chapter=None)
     one_scene = render_prompt(
         beat,
         book_title="The Vane House",
@@ -788,7 +781,8 @@ def test_the_prompt_is_byte_identical_when_a_chapter_is_one_scene(
         chapter=chapter_positions(head, SerialShape(scenes_per_chapter=1)).get(beat.logical_id),
     )
 
-    assert one_scene == absent
+    assert "Chapter 4, scene 1 of 1." in one_scene[1]
+    assert "Chapter 4" not in absent[1]
 
 
 def test_the_prompt_says_which_chapter_the_scene_is_in_and_where(store: SqliteStore) -> None:
@@ -1017,8 +1011,9 @@ def test_the_chapter_cue_goes_before_the_beat_and_never_after_the_statement(
     assert planned.index("Chapter 2,") < planned.index("Dramatic function:")
 
 
+@pytest.mark.parametrize("scenes_per_chapter", [1, 4])
 def test_the_planner_puts_the_chapter_position_on_the_queued_job(
-    store: SqliteStore,
+    store: SqliteStore, scenes_per_chapter: int,
 ) -> None:
     """End to end through the selector, because a parameter no production caller passes is a
     parameter that does nothing — the defect shape
@@ -1029,14 +1024,44 @@ def test_the_planner_puts_the_chapter_position_on_the_queued_job(
     # genre floor.
     make_plan_selector(
         project_id=PROJECT_ID,
-        scenes_per_chapter=4,
+        scenes_per_chapter=scenes_per_chapter,
         policy=DraftPolicy(require_starting_sheet=False),
     )(store, "worker-a", START, 300.0)
 
     [job] = [
         unit for unit in store.jobs_by_status(JobStatus.QUEUED) if unit.job_kind == SCENE_DRAFT
     ]
-    assert "Chapter 1, scene 1 of 4." in str(job.payload["prompt"])
+    assert f"Chapter 1, scene 1 of {scenes_per_chapter}." in str(job.payload["prompt"])
+
+
+def test_partial_first_arc_keeps_configured_chapter_positions(store: SqliteStore) -> None:
+    empty = new_book(BOOK_ID, BRANCH_ID, title="A Partial Arc", scenes=12)
+    written = {f"scene-{index}" for index in range(1, 7)}
+    revision = build_revision(BOOK_ID, BRANCH_ID, [
+        replace(node, content="An earlier part of the journey. " * 20)
+        if node.logical_id in written else node
+        for node in empty.nodes
+    ])
+    stamp = "2026-09-09T00:00:00Z"
+    store.commit_revision(revision, created_at=stamp)
+    store.record_plan_items(BOOK_ID, BRANCH_ID, [lc.PlanItem(
+        logical_id="plan-premise", kind=lc.PlanKind.PREMISE,
+        text="A traveler follows a changing road.", authority=lc.PlanAuthority.INTENDED,
+        locked=True,
+    )], created_at=stamp)
+    policy = DraftPolicy(require_starting_sheet=False)
+    progress = plan_progress(
+        store, BOOK_ID, BRANCH_ID, policy=policy,
+        serial_shape=SerialShape(scenes_per_chapter=1, chapters_per_arc=24),
+    )
+    assert not progress.open_ended  # Exercises the partial-first-arc fallback.
+    job = make_plan_selector(
+        project_id=PROJECT_ID, policy=policy, outline=False,
+        scenes_per_chapter=1, chapters_per_arc=24, open_ended=True,
+    )(store, "writer", START, 300.0)
+    assert job is not None and job.job_kind == SCENE_DRAFT
+    assert job.payload["logical_id"] == "scene-7"
+    assert "arc 1; chapter 7 (7 of this arc); scene 1 of 1" in job.payload["prompt"]
 
 
 def test_the_default_selector_queues_the_prompt_it_always_queued(store: SqliteStore) -> None:

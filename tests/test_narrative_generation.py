@@ -72,7 +72,9 @@ def test_six_scene_concept_is_planned_before_its_first_draft(tmp_path: Path) -> 
         assert request.timeout_seconds == outline_mod.CONCEPT_TIMEOUT_SECONDS  # type: ignore[attr-defined]
         payload = json.loads(request.prompt)  # type: ignore[attr-defined]
         assert [s["chapter"] for s in payload["scenes"]] == [1, 1, 2, 2, 3, 3]
-        assert payload["book_concept"]["first_arc"] == _example()["first_arc"]
+        assert payload["book_concept"]["first_arc"] == {
+            key: value for key, value in _example()["first_arc"].items() if key != "opens"
+        }
         assert not any("four to eight milestones" in rule for rule in payload["rules"])
 
 
@@ -265,7 +267,8 @@ def test_writer_receives_budgeted_story_intentions_separate_from_canon(tmp_path:
         assert item.source_logical_id == concept.CONCEPT_PLAN_ID
         assert item.authority is lc.StateAuthority.PROPOSED
         assert item.tokens == context.count_tokens(item.text)
-        assert intended.first_use in item.text
+        assert intended.first_use not in item.text
+        assert intended.person_before in item.text
         assert intended.first_arc.closes in item.text
         assert intended.want in item.text
         assert item not in packet.sections.get(context.FACTS, ())

@@ -98,13 +98,17 @@ def test_a_scenes_position_agrees_with_the_chapters_it_is_grouped_into():
         assert len(positions) == scenes
 
 
-def test_the_shape_that_asserts_nothing_yields_no_position_at_all():
-    """One scene per chapter is `library.py`'s refusal, and this is the same refusal.
-
-    An empty mapping rather than `Position(4, 1, 1)` for every scene: the default declares no
-    assembly scheme, and rendering one would turn the refusal into a scheme nobody chose.
-    """
-    assert chapter_positions(_serial(9), SerialShape(scenes_per_chapter=1)) == {}
+def test_one_scene_chapters_keep_the_same_positions_as_release_grouping():
+    revision = _serial(9)
+    shape = SerialShape(scenes_per_chapter=1, chapters_per_arc=6)
+    positions = chapter_positions(revision, shape)
+    assert len(positions) == 9
+    for chapter in chapters_of(revision, shape):
+        position = positions[chapter.scene_ids[0]]
+        assert position.chapter_index == chapter.index
+        assert position.index_in_chapter == position.scenes_in_chapter == 1
+        assert position.arc_index == chapter.arc_index
+        assert position.chapter_in_arc == chapter.index_in_arc
 
 
 def test_a_trailing_partial_chapter_reports_the_scenes_it_actually_has():

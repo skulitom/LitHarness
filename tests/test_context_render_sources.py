@@ -45,8 +45,8 @@ BLOCKS = {
     ctx.INTENTIONS: (
         "Planned story — intentions, not events that have already happened. "
         "Established prose and author locks take precedence. Later events and "
-        "reveals belong at their planned positions; the current scene plan "
-        "determines what happens now:\nintentions body"
+        "reveals belong at their planned positions; when supplied, the current "
+        "scene plan determines what happens now:\nintentions body"
     ),
     ctx.RULES: (
         "World rules and limits — established facts, subject to author locks; "

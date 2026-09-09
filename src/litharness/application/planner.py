@@ -41,6 +41,7 @@ books both finish rather than the first one starving the second.
 
 from __future__ import annotations
 
+import json
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -385,8 +386,8 @@ def render_prompt(
     and no adjective, because *how* to end a chapter is the director's to say and a default here
     would be this system's own taste arriving in every prompt it ever renders (stage-0 §95's
     scope axiom, §97.1). `None` renders nothing and is the control, and
-    `serials.chapter_positions` returns nothing at all under the shape that asserts nothing, so
-    the default path is byte-identical to what it was before this existed.
+    an unconfigured selector omits chapter context. A configured one-scene chapter still
+    carries its position, matching release packaging.
 
     It goes in the **beat line**, after the ordinal and before the dramatic function, and not
     after the statement. `plans.scene_plan_line` is rendered last always.
@@ -812,8 +813,23 @@ def packet_for(
     intentions: dict[str, str] = {}
     if concept is not None:
         if scene_plan is None:
-            # The explicit no-outline control still needs a source for its story choices.
-            intentions[concept_mod.CONCEPT_PLAN_ID] = concept.render()
+            # Without a scene handoff, supply the same foundations used by planning.
+            # An author-locked concept retains its full source, including the opening.
+            locked_concept = any(
+                item.kind is lc.PlanKind.BOOK_PLAN
+                and item.logical_id == concept_mod.CONCEPT_PLAN_ID
+                and item.locked
+                for item in plan_items
+            )
+            intentions[concept_mod.CONCEPT_PLAN_ID] = (
+                concept.render()
+                if locked_concept
+                else (
+                    "Story foundation — future intentions, not events that have already "
+                    "happened:\n"
+                    + json.dumps(concept.for_outline(), ensure_ascii=False, sort_keys=True)
+                )
+            )
         elif concept.author_brief:
             # The planner has selected the scene material. Do not reintroduce the full
             # proposal beside its handoff, even after a directive replaces the plan with
@@ -1000,7 +1016,7 @@ def make_plan_selector(
     token_budget: int = DEFAULT_TOKEN_BUDGET,
     outline: bool = True,
     director_id: str = "",
-    scenes_per_chapter: int = 1,
+    scenes_per_chapter: int | None = None,
     chapters_per_arc: int = 6,
     chapters_per_volume: int = 50,
     open_ended: bool = False,
@@ -1034,9 +1050,8 @@ def make_plan_selector(
     writer where the scene sits.** It is the number `--chapter-scenes` already hands the
     export path, threaded to the one other place in the system where a chapter means
     anything — so a book is grouped for a reader and drafted against the same grouping rather
-    than against two that can disagree. One is the default and it asserts nothing: under it
-    `serials.chapter_positions` yields no positions and every rendered prompt is byte-for-byte
-    what it was before this parameter existed. Nothing here tells a scene what to *do* about
+    than against two that can disagree. `None` leaves grouping unconfigured; an explicit one
+    means the drafting unit is the whole chapter. Nothing here tells a scene what to *do* about
     being last in its chapter; that is the director's to say (stage-0 §95).
 
     **`writer` was a parameter `render_prompt` accepted and no production path ever passed**,
@@ -1052,6 +1067,8 @@ def make_plan_selector(
     can reproduce, and §137 leaves the gate that would license a *comparison* between writers
     with no key. So this makes one writer reachable; it establishes nothing about which.
     """
+
+    scene_group_size = 1 if scenes_per_chapter is None else scenes_per_chapter
 
     def select(store: ApplicationStore, holder: str, now: float, duration: float) -> Job | None:
         # 1. Make safe, explicit direction claimable first. A constraint received before
@@ -1083,7 +1100,7 @@ def make_plan_selector(
         # 3. Least-progressed book first: fairness derived from state, no cursor to drift.
         serial_shape = (
             SerialShape(
-                scenes_per_chapter=scenes_per_chapter,
+                scenes_per_chapter=scene_group_size,
                 chapters_per_arc=chapters_per_arc,
             )
             if open_ended
@@ -1138,17 +1155,18 @@ def make_plan_selector(
                         break
                 if not beats:
                     continue
-            # Where each scene sits in its chapter, grouped once per book rather than once
-            # per beat. Empty under the default shape, which asserts nothing, and empty is
-            # what makes the ordinary prompt byte-identical to what it was.
+            # Use the same configured grouping for planning, drafting and release.
+            # An unconfigured non-serial caller retains the context-free control.
             positions = (
                 chapter_positions(
                     head,
-                    book_serial_shape or SerialShape(scenes_per_chapter=scenes_per_chapter),
+                    book_serial_shape or SerialShape(
+                        scenes_per_chapter=scene_group_size, chapters_per_arc=chapters_per_arc,
+                    ),
                     chapters_per_volume=chapters_per_volume,
                     open_ended=open_ended,
                 )
-                if scenes_per_chapter > 1
+                if scenes_per_chapter is not None or book_serial_shape is not None
                 else {}
             )
 
@@ -1194,7 +1212,7 @@ def make_plan_selector(
                         **(
                             {
                                 "arc_index": arc_index,
-                                "scenes_per_chapter": scenes_per_chapter,
+                                "scenes_per_chapter": scene_group_size,
                                 "chapters_per_arc": chapters_per_arc,
                             }
                             if arc_index

@@ -164,22 +164,16 @@ def chapter_positions(
     chapters_per_volume: int = 50,
     open_ended: bool = False,
 ) -> dict[str, Position]:
-    """Every live scene's place in its chapter, keyed by logical id. **Empty at one scene.**
+    """Every live scene's place in its configured chapter, keyed by logical id.
 
     Grouped by :func:`chapters_of` rather than by arithmetic of its own, which is this
     module's own rule about not producing a second answer to "which chapter is fourth"
     applied to itself. Both this and `beats.beats_for` read `scene_nodes`, so the ordinal a
     beat carries and the position this returns are cut from one list in one order.
 
-    **One scene per chapter returns nothing, and that is a refusal rather than an omission.**
-    A default of one asserts nothing: production books hold no chapter nodes and no assembly
-    scheme is decided. Rendering `Chapter 4, scene 1 of 1`
-    under that default would turn a refusal into a scheme, and every scene in every book would
-    silently start being told which chapter it closes — so the gate lives here, once, beside
-    the shape it is about, rather than at each caller that might forget it.
+    A supplied shape includes one scene per chapter. Callers that have no configured
+    grouping omit chapter context rather than using a valid count as an absence sentinel.
     """
-    if shape.scenes_per_chapter <= 1:
-        return {}
     if chapters_per_volume < 1:
         raise SerialShapeError("a release volume needs at least one chapter")
     return {

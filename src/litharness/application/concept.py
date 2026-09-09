@@ -573,14 +573,19 @@ class Concept:
         return "\n".join(lines)
 
     def for_outline(self) -> dict[str, Any]:
-        """The complete concept, including what survives its turn, with the horizon view.
+        """Story foundations without the generated opening's scene choreography.
 
-        An abbreviated view previously omitted `second_system.kept`, so the planner could
-        schedule gains inconsistent with the state the concept intended to carry forward.
-        Keep the existing horizon key for the outline rules without discarding other fields.
+        Keep world possibilities, pursuits, later commitments and carry-over conditions.
+        The full concept remains stored; author locks reach planning separately, unchanged.
         """
+        material = self.to_jsonable()
+        del material["first_use"]
+        del material["first_arc"]["opens"]
+        del material["threat"]["first_reach"]
+        if self.discovery is not None:
+            del material["discovery"]["opening"]
         return {
-            **self.to_jsonable(),
+            **material,
             "horizon": {
                 "steps": self.system.steps,
                 "strongest_known": self.system.strongest_known,
@@ -640,8 +645,9 @@ def concept_of(items: Sequence[lc.PlanItem]) -> Concept | None:
 #: first arc, two for a later one; the turn rule rides both, because a turn due after an arc is
 #: what that arc prepares.
 FIRST_ARC_RULE = (
-    "Plan this arc from book_concept.first_arc.opens to book_concept.first_arc.closes, through "
-    "its middle: each is an event the scenes reach, not a mood."
+    "Begin from the premise and established starting circumstances. Construct the scene "
+    "events that develop the protagonist's pursuit through book_concept.first_arc.middle "
+    "toward its close, subject to author decisions and accepted world facts."
 )
 LATER_ARC_RULE = (
     "book_concept.first_arc is the first arc's shape and has been written; this arc builds past "
@@ -655,18 +661,21 @@ TURN_RULE = (
 
 #: Early magic should matter, while a generated opportunity leaves room for planning.
 FIRST_USE_RULE = (
-    "Make early magic matter to the protagonist's pursuit. book_concept.first_use proposes "
-    "an opportunity, not a first-chapter deadline; place it where the character's choices, "
-    "established capabilities and available prose space support it."
+    "Plan early magic within the protagonist's present pursuit: its discovery, use or failure "
+    "should change an obstacle, a decision or the situation they are trying to change. "
+    "If they suspend an established urgent pursuit, establish what they believe justifies "
+    "that choice and its consequence. Possible future usefulness alone does not connect "
+    "otherwise separate training episodes to that pursuit. Preserve established capabilities "
+    "and author decisions, and allow enough prose space for the chosen developments."
 )
 THREAT_RULE = (
-    "book_concept.threat.first_reach is placed where the concept says, and what the threat "
-    "does to people is on the page before it reaches the person."
+    "Develop encounters with book_concept.threat.what from the protagonist's situation and "
+    "choices, preserving the threat's established nature and any author-locked timing."
 )
 
 DISCOVERY_ARC_RULE = (
-    "Develop this arc's pursuits and magical encounters from book_concept.discovery. "
-    "Its opening treatment supplies proposals that may span chapters; choose the chapter's "
+    "Use book_concept.discovery.world and growth as possibilities for this arc's magical "
+    "encounters and developing capability. Construct the scene events and choose the chapter's "
     "scope from connected character decisions and available prose space. Continue from what "
     "the character has learned and kept. Plan concrete uses of capability "
     "and something worth pursuing beyond them. Costs and setbacks can complicate that pursuit; "

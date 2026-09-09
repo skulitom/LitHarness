@@ -10391,8 +10391,15 @@ the default, which asserts nothing — `chapter_positions` returns an empty mapp
 byte-for-byte what it was. `input_digest_for` covers the prompt and **that digest is the sampler
 seed**, so a cue leaking into the default path would silently change the decoding of every newly
 minted job in the system. Pinned by
-`test_the_prompt_is_byte_identical_when_a_chapter_is_one_scene` and
+the former test named test_the_prompt_is_byte_identical_when_a_chapter_is_one_scene and
 `test_the_default_selector_queues_the_prompt_it_always_queued`.
+
+**2026-09-09 correction:** a configured count of one is a real chapter shape, not an absence
+sentinel. The selector now uses `None` for the unconfigured control and includes position for
+an explicit one-scene chapter. The former test is replaced by
+`test_omitted_chapter_context_is_distinct_from_a_configured_one_scene_chapter`;
+`test_one_scene_chapters_keep_the_same_positions_as_release_grouping` checks export agreement.
+The historical default-path claim above no longer describes configured CLI calls.
 
 Three more properties are pinned rather than assumed. The arithmetic is `chapters_of`'s, not a
 `divmod` beside it — `test_a_scenes_position_agrees_with_the_chapters_it_is_grouped_into` checks
