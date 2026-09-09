@@ -41,19 +41,24 @@ QUANTITY_DETAIL = (
     "change established values and their arithmetic when leaving a quantity unspoken."
 )
 
-# Scene purpose and the magical progression offer, not a scene-to-summary rule.
-READER = (
+# Scene purpose and the recurring magical progression offer apply throughout a book.
+_SCENE_ATTENTION = (
     "Emotions and assumptions shape what the viewpoint character notices, expects and "
     "chooses. Make room for the relationships, places and concerns that give those choices "
-    "meaning; a passage can establish these without advancing an external event.\n"
+    "meaning; a passage can establish these without advancing an external event."
+)
+OPENING_OFFER = (
     "The opening shows what this book is offering: something a person could come to be able to "
     "do, and somewhere the reader has not been. A reader who reaches the end of the opening "
-    "scene without seeing either has been given no reason to start another.\n"
+    "scene without seeing either has been given no reason to start another."
+)
+_MAGICAL_OFFER = (
     "The reader is measuring themselves against the offer, and that is the whole of why they "
     "are here. A power with one use invites nobody in, and neither does one the reader meets "
     "as a summary of what it could be rather than on the page. A story that names its own "
     f"ceiling has told the reader where to stop.\n{QUANTITY_DETAIL}"
 )
+READER = f"{_SCENE_ATTENTION}\n{OPENING_OFFER}\n{_MAGICAL_OFFER}"
 
 # The retained-capability direction is separate from scene comprehension.
 ACCUMULATION = (
@@ -106,13 +111,17 @@ def demands(text: str) -> tuple[str, ...]:
         if part.strip()
     )
 
-def with_house_rules(system: str) -> str:
-    """Append all shared rules, or return them alone for an empty system.
+def with_house_rules(system: str, *, opening: bool = True) -> str:
+    """Append shared rules, with the opening's offer only in its requested scope.
 
-    Centralized spacing keeps prompt bytes stable for content-addressed replay.
+    Existing callers retain the complete block. Drafting excludes the opening-only
+    requirement when accepted prose already precedes the requested scene.
     """
     body = system.strip()
-    return f"{body}\n\n{HOUSE_RULES}" if body else HOUSE_RULES
+    rules = HOUSE_RULES if opening else (
+        f"{CLARITY}\n\n{_SCENE_ATTENTION}\n{_MAGICAL_OFFER}\n\n{ACCUMULATION}"
+    )
+    return f"{body}\n\n{rules}" if body else rules
 
 
 def with_clarity_floor(system: str) -> str:

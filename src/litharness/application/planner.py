@@ -310,6 +310,7 @@ def render_prompt(
     require_status: bool = True,
     status_syntax: str | None = None,
     scope_original_brief: bool = False,
+    has_prior_prose: bool = False,
     source_map: dict[str, Any] | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
@@ -417,7 +418,8 @@ def render_prompt(
     system = house.with_house_rules(
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
         "no commentary, no summary of what you wrote. Respect established facts and author "
-        "locks; future intentions are plans, not events that have already happened."
+        "locks; future intentions are plans, not events that have already happened.",
+        opening=not has_prior_prose,
     )
     sources = PromptSources()
     system = sources.append("system", "", system, "house_guidance")
@@ -1436,6 +1438,7 @@ def make_plan_selector(
                 )
                 beat_gain = gain_line_for(records, beat_target, beat_moved, at=beat.story_order_key)
                 prompt_sources: dict[str, Any] = {}
+                has_prior_prose = _has_prior_prose(head, beat.logical_id)
                 system, prompt = render_prompt(
                     beat,
                     source_map=prompt_sources,
@@ -1451,8 +1454,9 @@ def make_plan_selector(
                     status_syntax=status_update_syntax(records) if concept_backed else None,
                     scope_original_brief=bool(
                         book_concept is not None and book_concept.author_brief
-                        and _has_prior_prose(head, beat.logical_id)
+                        and has_prior_prose
                     ),
+                    has_prior_prose=has_prior_prose,
                     target_words=(policy or DraftPolicy()).target_words,
                     # A stored statement already carries the beat where the cadence schedules
                     # one — `outline_proposal` folded it in — so it is passed verbatim. A

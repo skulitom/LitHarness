@@ -12,6 +12,8 @@ from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application import concept, planner
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.handlers import make_scene_draft_handler
+from litharness.domain import house
+from litharness.domain.jobs import JobStatus
 from litharness.domain.revision import new_book
 from litharness.providers.fake import FakeProvider
 from litharness.providers.registry import ProviderRegistry
@@ -83,6 +85,10 @@ def test_continuation_scopes_original_request_and_preserves_author_decisions(
             system, prompt = job.payload["system"], job.payload["prompt"]
             scoped = index > 0 and brief_kind in {"original", "locked"}
             assert ("continuation of accepted prose" in system) is scoped
+            assert (house.OPENING_OFFER in system) is (index == 0)
+            assert house.CLARITY in system and house.ACCUMULATION in system
+            assert house.QUANTITY_DETAIL in system
+            assert "A power with one use invites nobody in" in system
             assert "1800 words" in system
             assert f"chapter {index + 1} ({index + 1} of this arc); scene 1 of 1" in prompt
             assert chapter_three.text not in system
@@ -95,6 +101,7 @@ def test_continuation_scopes_original_request_and_preserves_author_decisions(
         third = conductor.select(store, "next-writer", START + 2, 60)
         assert third is not None and third.job_kind == planner.SCENE_DRAFT
         assert "chapter 3 (3 of this arc); scene 1 of 1" in third.payload["prompt"]
+        assert house.OPENING_OFFER not in third.payload["system"]
         assert chapter_three.text in third.payload["system"]
         if brief_kind in {"original", "locked"}:
             assert "follow applicable author locks within their stated scope" in (
@@ -103,6 +110,12 @@ def test_continuation_scopes_original_request_and_preserves_author_decisions(
             assert brief in third.payload["prompt"]
         assert store.plan_revision(BOOK_ID, BRANCH_ID) == original_plan
         assert provider.calls == 2
+        store.save_job(replace(
+            third, status=JobStatus.QUEUED, lease_holder=None, lease_expires_at=None,
+        ))
+        resumed = conductor.select(store, "resumed-writer", START + 3, 60)
+        assert resumed is not None and resumed.job_id == third.job_id
+        assert resumed.payload == third.payload
 
 
 def test_continuation_depends_on_reading_order_not_scene_number_or_future_prose():
