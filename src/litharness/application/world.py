@@ -220,6 +220,9 @@ def vocabulary() -> dict[str, Any]:
             ),
             "world_rule": (
                 "a rule this world runs on; --value its in-world operation in plain words. "
+                "On a character, use this for an actual invariant of magic, physiology or a "
+                "curse. Ordinary temperament, current wants and beliefs have their own "
+                "predicates; keep those separate even when they concern the same person. "
                 "Scene instructions, intended actions and future endings belong in plans"
             ),
             "consequence": (
@@ -251,6 +254,18 @@ def vocabulary() -> dict[str, Any]:
                 "what a thing is called, in this world's own words; --value the name. The "
                 "printed labels live here — the word a book counts rungs in, and an ability's "
                 "— so keep those short, letters only, and free of digits"
+            ),
+            "wants": (
+                "a person's current desire or goal; --value in plain words. An ordinary "
+                "assertion that may change as the story establishes a different want"
+            ),
+            "voice_tag": (
+                "a person's manner of speaking; --value in plain words, describing the "
+                "person rather than prescribing every line of dialogue"
+            ),
+            "disposition": (
+                "a person's ordinary temperament or habits; --value in plain words. A "
+                "changeable tendency, not a rule restricting the actions they can take"
             ),
             # **The fork, its ways and one person's pick** (§173). A fork carries no
             # `entity_role`: it is a subject `governed_by` the system that `offers` something,

@@ -128,6 +128,12 @@ separately acquired prerequisites. Later capabilities still support depth and ch
 explicit author mechanics take precedence. Previously accepted worlds retain their rules;
 changing generation guidance does not rewrite their acquisition requirements.
 
+World authoring exposes character wants, speaking manner and disposition as ordinary
+assertions. Later story positions can change those assertions while preserving their history.
+The Architect is instructed to keep them separate from invariant magical, physiological or
+curse rules, including when one supplied passage mixes both. Existing world rules retain their
+declared meaning; this guidance does not automatically reclassify an accepted book.
+
 For a new book that must differ from an earlier invention, pass
 `concept --distinct-from path/to/previous/concept.json` (repeatable). Discovery receives
 the earlier concepts' world and character projections as territory to avoid in the protagonist,

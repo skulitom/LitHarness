@@ -41,6 +41,7 @@ _SELF = frozenset(
         "is_a",
         "wants",
         "voice_tag",
+        "disposition",
         "can_do",
     }
 )
@@ -81,6 +82,7 @@ class Character:
     also: tuple[tuple[str, str], ...]
     #: Only explicit reified changes; free-text wants are never promoted into causes.
     causes: tuple[CharacterCause, ...] = ()
+    disposition: str = ""
 
     @property
     def is_protagonist(self) -> bool:
@@ -88,7 +90,9 @@ class Character:
 
     def to_jsonable(self) -> dict[str, Any]:
         payload: dict[str, Any] = {"id": self.subject, "roles": list(self.roles)}
-        for name in ("is_a", "wants", "voice", "manifests_as", "edge", "price", "exception"):
+        for name in (
+            "is_a", "wants", "voice", "disposition", "manifests_as", "edge", "price", "exception",
+        ):
             value = getattr(self, name)
             if value:
                 payload[name] = value
@@ -126,6 +130,7 @@ class Character:
             ("is", self.is_a),
             ("wants", self.wants),
             ("sounds", self.voice),
+            ("disposition", self.disposition),
             # **The same field and the same correction as `worlds._record_sentence`** (§182).
             # Every other label here names something the person *is* — is, wants, sounds, can
             # do, costs — and this one named the writer's output. `looks like` puts it back in
@@ -238,6 +243,7 @@ def sheet(records: Sequence[lc.StateRecord], subject: str) -> Character:
         is_a=values.get("is_a", ""),
         wants=values.get("wants", ""),
         voice=values.get("voice_tag", ""),
+        disposition=values.get("disposition", ""),
         manifests_as=values.get(worlds_mod.MANIFESTS_PREDICATE, ""),
         edge=values.get(worlds_mod.EDGE_PREDICATE, ""),
         price=values.get(worlds_mod.PRICE_PREDICATE, ""),
@@ -283,6 +289,7 @@ def rows(characters: Sequence[Character]) -> list[dict[str, str]]:
             "is_a": c.is_a,
             "wants": c.wants,
             "voice": c.voice,
+            "disposition": c.disposition,
             "manifests_as": c.manifests_as,
             "edge": c.edge,
             "price": c.price,

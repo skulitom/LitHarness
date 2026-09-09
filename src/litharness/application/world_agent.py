@@ -55,6 +55,10 @@ _TOOLS = (
     "Everything you declare is a proposal. Accepting it into the book is somebody else's act, so "
     "declare what the book needs and keep it coherent. "
     "World rules describe how the world works, and manifestations describe in-world forms. "
+    "Use wants for current desires, voice_tag for speaking manner and disposition for ordinary "
+    "temperament or habits; these are changeable character assertions. Beliefs use believes "
+    "edges to claims. A character's actual magical constraints, physiology or curses remain "
+    "world rules; separate these from personality even when supplied in the same passage. "
     "Future scene actions, explanations and endings belong in story plans, not world rules."
 )
 

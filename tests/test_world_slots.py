@@ -36,7 +36,7 @@ import pytest
 
 from litharness.application import world as world_view
 from litharness.cli import EXIT_OK, main
-from litharness.domain import extraction, worlds
+from litharness.domain import characters, extraction, worlds
 from tests.conftest import FIXTURE_SHEET
 from tests.helpers import accepted
 
@@ -81,6 +81,27 @@ def _type() -> lc.StateRecord:
 def _world_rule() -> lc.StateRecord:
     assert worlds.rules([_RULE]) == ("provenance",)
     return _RULE
+
+
+def _wants() -> lc.StateRecord:
+    record = rec("kell", "wants", value="find his sister")
+    assert characters.sheet([accepted(record)], "kell").wants == record.value
+    assert record.kind is lc.StateRecordKind.ASSERTION
+    return record
+
+
+def _voice_tag() -> lc.StateRecord:
+    record = rec("kell", "voice_tag", value="quiet and direct")
+    assert characters.sheet([accepted(record)], "kell").voice == record.value
+    assert record.kind is lc.StateRecordKind.ASSERTION
+    return record
+
+
+def _disposition() -> lc.StateRecord:
+    record = rec("kell", "disposition", value="suspicious of strangers")
+    assert characters.sheet([accepted(record)], "kell").disposition == record.value
+    assert record.kind is lc.StateRecordKind.ASSERTION
+    return record
 
 
 def _consequence() -> lc.StateRecord:
@@ -398,6 +419,9 @@ _PROBES: dict[str, Callable[[], lc.StateRecord]] = {
     "graph_line": _graph_line,
     "type": _type,
     "world_rule": _world_rule,
+    "wants": _wants,
+    "voice_tag": _voice_tag,
+    "disposition": _disposition,
     "consequence": _consequence,
     "manifests_as": _manifests_as,
     "can_do": _can_do,
