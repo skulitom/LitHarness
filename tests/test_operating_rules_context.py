@@ -164,10 +164,14 @@ def test_writer_gets_the_rule_block_above_guidance_and_below_author_locks(tmp_pa
         authority=lc.PlanAuthority.INTENDED,
         locked=True,
     )
+    prose_cost = "Learning takes study; ordinary use consumes mana."
+    rules = (*_rules(), accepted(worlds.world_record(
+        "spark", worlds.COSTS, object_ref="marks", value=2,
+    )), accepted(worlds.world_record("spark", worlds.COSTS, value=prose_cost)))
     with SqliteStore.open(tmp_path / "book.db") as store:
         revision = a_book(store, scenes=6, extra_plan_items=[lock])
         store.record_state_records(
-            revision.book_id, revision.branch_id, _rules(), created_at="2026-08-16T00:00:00Z"
+            revision.book_id, revision.branch_id, rules, created_at="2026-08-16T00:00:00Z"
         )
         job = planner.make_plan_selector(project_id=PROJECT_ID, outline=False)(
             store, "writer", START, 60.0
@@ -181,10 +185,13 @@ def test_writer_gets_the_rule_block_above_guidance_and_below_author_locks(tmp_pa
             "AUTHOR-LOCKED STORY DECISIONS"
         )
         assert "Four tokens" in system and "Four tokens" not in prompt
-        assert job.payload["context"]["sections"][context.RULES] == len(_rules())
+        numeric_cost = "spark is paid for in marks, 2 each time it is gained or deepened"
+        assert numeric_cost in system and numeric_cost not in prompt
+        assert f"spark costs {prose_cost}" in system and prose_cost not in prompt
+        assert job.payload["context"]["sections"][context.RULES] == len(rules)
         beat = beats_for(revision, template_for(revision))[0]
         packet = planner.packet_for(store, revision, beat)
-        assert all(packet.contains_ref(row.record_id) for row in _rules())
+        assert all(packet.contains_ref(row.record_id) for row in rules)
 
 
 def test_undeclared_rules_add_nothing_to_context() -> None:

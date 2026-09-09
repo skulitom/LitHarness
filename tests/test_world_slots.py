@@ -187,14 +187,13 @@ def _is_a() -> lc.StateRecord:
 
 
 def _costs() -> lc.StateRecord:
-    """The one documented predicate with no reader, and `COSTS` says why: every world already
-    forged emits it for a rank, so giving it a sentence would change all their packets."""
+    """Prose keeps its declared scope; numeric stock prices name the advancement trigger."""
     record = rec("cap_read_grain", worlds.COSTS, value="a day of your voice")
     assert worlds.project([record]) == {}
-    # **The priced shape reads** (§210): a grant paid in a stock the rungs hand out fills
-    # both slots, and that record alone has a sentence; the prose shape still has none.
     priced = rec("threadpull", worlds.COSTS, object_ref="marks", value=1)
-    assert "threadpull is paid for in marks, 1 each time" in sentences([priced])
+    assert sentences([priced]) == (
+        "threadpull is paid for in marks, 1 each time it is gained or deepened"
+    )
     return record
 
 
@@ -818,6 +817,11 @@ def test_the_vocabulary_an_architect_reads_names_the_domain_and_the_criterion(
     assert "consequence_domains" in predicates["consequence"]
     assert "--value the criterion" in predicates["precedes"]
     assert "comparator" in predicates
+    assert "For a capability" in predicates["costs"]
+    assert "learning, deepening or ordinary use" in predicates["costs"]
+    assert "attempts, successful use or recorded mastery" in predicates["costs"]
+    assert "according to the supplied mechanics" in predicates["costs"]
+    assert "paid each time this is gained or deepened" in predicates["costs"]
 
 
 def test_an_unreadable_sheet_is_a_complaint_and_a_refusal_never_a_traceback(

@@ -143,11 +143,9 @@ REQUIRES = "requires"
 #: them is how a ladder of permissions eats an inventory of abilities.
 TAUGHT_BY = "taught_by"
 
-#: What a capability costs its holder, as prose. **The same predicate a rank's price already
-#: uses**, deliberately: it is the same fact about a different subject, and a legible twin would
-#: be two names for one thing. It has no projection sentence for the reason the branch beside
-#: `CAN_DO` gives — every legacy world fixture emits `costs` for its ranks, so adding one would
-#: change its packet.
+#: Prose requirements or costs for a capability, rank or option. The value carries its own
+#: scope; readers do not infer whether it concerns learning, improvement or use. An integer
+#: value with a stock in the object slot instead declares a price paid on gain and deepen.
 COSTS = "costs"
 
 #: How much of a grant every rung hands out (§210). A grant carrying it is a stock: it
@@ -1968,24 +1966,8 @@ def _record_sentence(
         return f"{record.subject} is the one the rule {record.object_ref} does not hold for"
     if record.predicate == EDGE_PREDICATE and value:
         return f"{record.subject} alone can: {value}"
-    # **The inventory, in English.** Until these four branches existed a person's abilities
-    # reached the writer as `state.describe`'s flat fallback — `sera can_do (cap_walk_between)` —
-    # and landed in the world brief's `other` bucket, which is the failure `worlds.py`'s own
-    # docstring calls the gate on the model being usable at all. Facts, in the register the
-    # branches above use: what is so, never an instruction to show it off.
-    # **Exactly the three predicates no world has ever emitted**, and that is the constraint
-    # rather than an accident. `costs`, `permits` and `member` are also illegible today and also
-    # wanted a sentence — and every one of them is already written by `records_for` for ranks and
-    # bonds, so giving them one would change the packet of all thirteen worlds forged before this
-    # and break the byte-identity rail. They keep `state.describe`'s flat form until somebody
-    # pays for that change deliberately; `costs` reads acceptably flat, which is why a
-    # capability's price reuses it rather than inventing a legible twin.
-    # **The magnitude joins the sentence only when there is one, and that is what keeps the
-    # byte-identity rail intact.** §160 put a holder's depth in this edge's value slot, which
-    # was free; a record written before it — or by any world that states only that somebody can
-    # do a thing — has no integer there and reads exactly as it always did. No adjective and no
-    # verb about growth: how far somebody has taken a capacity is the same class of fact as
-    # where they stand.
+    # Holdings describe present capability. Include a recorded depth only when supplied;
+    # this is not a requirement to acquire the capability again before using it.
     if record.predicate == CAN_DO and record.object_ref:
         depth = record.value if isinstance(record.value, int) else None
         if depth is not None and not isinstance(record.value, bool):
@@ -2017,16 +1999,18 @@ def _record_sentence(
         return f"{record.subject} took {record.object_ref}{of}, and cannot take another"
     if record.predicate == TAUGHT_BY and record.object_ref:
         return f"{record.subject} is taught by {record.object_ref}"
-    # **A price in a stock reads; prose about a price still does not** (§210). The prose
-    # shape stays unprojected for `COSTS`' recorded reason (every legacy world emits it
-    # for a rank); the priced shape is new, so a sentence for it changes no packet.
+    # Numeric stock prices apply to advancement. Prose costs retain state.describe's
+    # flat rendering, preserving the scope of the accepted wording without interpreting it.
     if (
         record.predicate == COSTS
         and record.object_ref
         and isinstance(record.value, int)
         and not isinstance(record.value, bool)
     ):
-        return f"{record.subject} is paid for in {record.object_ref}, {record.value} each time"
+        return (
+            f"{record.subject} is paid for in {record.object_ref}, "
+            f"{record.value} each time it is gained or deepened"
+        )
     if (
         record.predicate == PER_RUNG
         and isinstance(record.value, int)

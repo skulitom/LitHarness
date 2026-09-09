@@ -127,6 +127,9 @@ World creation allows useful beginner capabilities without making basic handling
 separately acquired prerequisites. Later capabilities still support depth and choices, and
 explicit author mechanics take precedence. Previously accepted worlds retain their rules;
 changing generation guidance does not rewrite their acquisition requirements.
+World authoring asks for the scope of prose costs: learning, improvement or ordinary use,
+including any distinction between attempts and recorded mastery. Numeric stock prices are
+rendered as payments on acquisition or deepening, matching the progression engine.
 
 World authoring exposes character wants, speaking manner and disposition as ordinary
 assertions. Later story positions can change those assertions while preserving their history.
