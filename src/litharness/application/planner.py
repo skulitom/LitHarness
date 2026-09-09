@@ -118,6 +118,8 @@ from litharness.domain.extraction import (
 )
 from litharness.domain.genre import genre_block
 from litharness.domain.jobs import Job, input_digest_for
+from litharness.domain.moves import status_update_syntax
+from litharness.domain.nodes import NodeKind
 from litharness.domain.plans import premise_of, scene_plan_for, scene_plan_line
 from litharness.domain.revision import Revision
 from litharness.domain.scene_brief import render_plan
@@ -307,6 +309,8 @@ def render_prompt(
     notices: tuple[str, ...] = (),
     readouts: tuple[str, ...] = (),
     require_status: bool = True,
+    status_syntax: str | None = None,
+    scope_original_brief: bool = False,
     source_map: dict[str, Any] | None = None,
 ) -> tuple[str, str]:
     """(system, prompt) for one beat, grounded in an assembled context packet.
@@ -530,6 +534,8 @@ def render_prompt(
                 ),
                 "progression",
             )
+    if status_syntax:
+        system = sources.append("system", system, "\n" + status_syntax, "status_syntax")
     if notices:
         # **The System's own voice** (§218): where a declared change with a line in the
         # world's register lands on the person at this scene, the book prints that line under
@@ -616,6 +622,16 @@ def render_prompt(
                 "and choices that change what matters to them."
             ),
             "target_words",
+        )
+    if scope_original_brief:
+        system = sources.append(
+            "system", system,
+            "\nThis is a continuation of accepted prose. The current scene/chapter task and "
+            "requested length identify the piece to write now. Requests for earlier chapters "
+            "or outputs in the original author brief keep their original scope. Preserve its "
+            "ongoing story and style directions, and follow applicable author locks within "
+            "their stated scope.",
+            "continuation_scope",
         )
     if criteria:
         # **The criterion the scene is writing against** (`plan/state-model-abilities.md` §5
@@ -769,6 +785,17 @@ def render_prompt(
             )
         )
     return system, prompt
+
+
+def _has_prior_prose(revision: Revision, logical_id: str) -> bool:
+    """Whether accepted scene prose precedes the target, including across arc boundaries."""
+    prior = False
+    for node in revision.in_reading_order():
+        if node.logical_id == logical_id:
+            return prior
+        if node.kind is NodeKind.SCENE and node.content and node.content.strip():
+            prior = True
+    return False
 
 
 def packet_for(
@@ -1129,7 +1156,8 @@ def make_plan_selector(
             if plan_revision is None:  # pragma: no cover - premise lookup implies a plan
                 continue
             epoch = store.plan_epoch(progress.book_id, progress.branch_id)
-            concept_backed = concept_mod.concept_of(plan_revision.items) is not None
+            book_concept = concept_mod.concept_of(plan_revision.items)
+            concept_backed = book_concept is not None
             book_serial_shape = serial_shape if progress.open_ended else None
             all_beats = (
                 beats_for_serial(head, book_serial_shape)
@@ -1425,7 +1453,12 @@ def make_plan_selector(
                     # ordinary character/world records still use StateMoment.ENTERING.
                     status_example=status_line,
                     status_moved=beat_moved,
-                    require_status=not planned_from_concept,
+                    require_status=not concept_backed,
+                    status_syntax=status_update_syntax(records) if concept_backed else None,
+                    scope_original_brief=bool(
+                        book_concept is not None and book_concept.author_brief
+                        and _has_prior_prose(head, beat.logical_id)
+                    ),
                     target_words=(policy or DraftPolicy()).target_words,
                     # A stored statement already carries the beat where the cadence schedules
                     # one — `outline_proposal` folded it in — so it is passed verbatim. A

@@ -652,6 +652,63 @@ def moved_values(
     return {movable.key: was + 1}
 
 
+def status_update_syntax(records: Sequence[lc.StateRecord]) -> str | None:
+    """The declared update grammar, without pretending its possible columns are holdings.
+
+    Unscheduled discoveries still need the same readable shape as scheduled moves. This
+    describes that shape and the extractor's numeric rung mapping; it supplies no new values
+    or advancement targets. Ambiguous systems keep the sheet grammar without a guessed map.
+    """
+    sheet = sheet_for(records)
+    if sheet is None:
+        return None
+    kinds = {
+        "number": "nonnegative integer",
+        "ordinal": "declared rung name",
+        "name": "declared entity name",
+        "text": "text on this line",
+        "set": "complete comma-separated list of held names, each optionally followed by its "
+        "integer depth; none for an empty list",
+    }
+    columns = "; ".join(
+        f"{field_.label}: "
+        + ("current/maximum integers" if field_.paired else kinds[field_.kind])
+        for field_ in sheet.fields
+    )
+    parts = [
+        "For an actual change, write a standalone line beginning [STATUS], followed by the "
+        "character's name, an em dash, and declared label/value pairs separated by |. "
+        "Use the labels below exactly; numeric values use digits, with / only for a "
+        "current/maximum pair, without trailing units or punctuation. These are available "
+        "update columns, not current holdings or "
+        "requested gains: " + columns + ".",
+        "An earlier unchanged readout does not record a later change. Record the affected "
+        "columns when the result occurs, including a later gain or loss. Omitted columns keep "
+        "their established values; a set-valued column replaces its whole list. If nothing "
+        "changes, no update is required. Do not invent a change to fill this format.",
+        "Use the compact update as the result announcement, without adding a second "
+        "notification or full sheet merely to repeat the same gain. Preserve distinct "
+        "warnings, choices, explicitly required notices and author locks.",
+    ]
+    if not sheet.show_unheld:
+        parts.append(
+            "Do not present undeveloped abilities as current holdings. A change that removes "
+            "a previously held value may still explicitly report zero or an empty list."
+        )
+    printing = _printing_system(_canon_of(records), records)
+    rank = next(
+        (field_ for field_ in sheet.fields
+         if field_.numeric and field_.name == gamesystem_mod.RANK_KEY),
+        None,
+    )
+    if printing is not None and rank is not None:
+        mapping = "; ".join(
+            f"{index} = {rung.name}" for index, rung in enumerate(printing.ranks, start=1)
+        )
+        parts.append(f"The {rank.label} numeric mapping is 0 = no recorded rung; {mapping}.")
+    return "\n".join(parts)
+
+
 def _printing_system(
     canon: Sequence[lc.StateRecord], records: Sequence[lc.StateRecord]
 ) -> gamesystem_mod.SystemDef | None:

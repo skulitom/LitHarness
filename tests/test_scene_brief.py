@@ -151,7 +151,9 @@ def test_no_outline_writer_uses_foundations_unless_the_full_concept_is_author_lo
         assert str(rule.value) in system
         assert "1800 words" in system
         assert "chapter 1 (1 of this arc); scene 1 of 1" in prompt
-        assert "Print that line exactly once" in system
+        assert "Print that line exactly once" not in system
+        assert "status update at the result" in system
+        assert "no update is required" in system
         if locked_concept:
             assert source.text == drawn.render()
             assert original in source.text

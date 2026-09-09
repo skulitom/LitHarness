@@ -212,6 +212,15 @@ interface readings, cast limits, or a prescribed chapter-one ending. Their event
 the milestone schedule. Status formatting remains available; a changed state is shown as a
 result, while an unchanged panel appears only when the scene needs it. Legacy planning defaults
 and explicit author locks remain in place.
+The same conditional update contract applies with `--no-outline`. The writer receives the
+declared column labels and value formats separately from current holdings, including before
+the first recorded gain. Later updates can follow an earlier readout; omitted columns retain
+their established values. This keeps recorded progression available to the next chapter
+without displaying undeveloped skills or prescribing an advancement.
+For continuations, the current chapter request is distinguished from earlier output requests
+in the original author brief. The brief remains intact; ongoing story and style directions
+and applicable author locks still apply. Compact updates serve as the result announcement,
+while distinct warnings, choices and explicitly required notices retain their own purpose.
 The outline retains what carries over when the story moves under a second system, so its
 progression schedule can account for those intentions. The complete concept remains stored;
 explicitly locked source instructions still reach planning unchanged. For new

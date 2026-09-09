@@ -150,3 +150,39 @@ and Luke's uncertainty legible, but again postpones the search for training. Rem
 outline alone did not resolve this case. The remaining lead is the coexistence of an urgent
 personal pursuit and a gradual introductory progression in the retained story foundation.
 The no-outline status requirement also differs, so this is not a single-variable comparison.
+
+## 2026-09-09 three-chapter progression handoff
+
+The first continuation under `runs/luke-three-chapters-20260909/` retained every prior chapter
+in its writer requests, but separate free-form gain announcements did not reach the compact
+status extractor. Chapter 3 consequently received Grade 0 beside Chapter 2's prose gains.
+The no-outline path still required an exactly-once opening sheet and did not expose the
+declared update columns. This was a located contract defect, not evidence of missing prose.
+
+Concept-backed drafting now uses conditional result updates with or without an outline.
+The declared sheet supplies exact labels and value types separately from current holdings;
+a uniquely matching numeric system supplies its existing rung mapping. The grammar is
+available before the first snapshot as well. Later partial updates retain omitted fields,
+and unchanged scenes need no update or invented gain. Existing extraction and acceptance
+rules remain in place. [test_status_handoff.py](../tests/test_status_handoff.py) follows
+selection, ordinary draft acceptance, extracted state and the next writer request, including
+first gains, existing holdings, unchanged scenes and legacy behavior.
+
+The registered `status-handoff` arm under `runs/luke-three-chapter-repairs-20260909/` kept the
+original Chapter 1 fixed and generated both continuations. Chapter 2's Initiate, Sight and
+Ember updates reached Chapter 3 as current state; Chapter 3's Current update retained those
+earlier gains. The complete first outputs, requests, read-only verification and readings are
+retained. The concrete handoff works in this run. Repeated training still dominates the
+opening, and no parity with published novels or permission to expand the volume is inferred.
+Regression to an unranked graph standing is a separate existing limitation; this forward-gain
+repair does not claim to fix it.
+
+A further continuation cue distinguishes the currently requested piece from earlier chapter
+or output requests in the unchanged original author brief. It appears only when an earlier
+accepted scene and a concept author brief exist. Ongoing story/style direction and applicable
+author locks remain binding. [test_continuation_scope.py](../tests/test_continuation_scope.py)
+checks planned and no-outline continuation, unchanged first-chapter controls, raw source
+preservation and later-chapter locks. Compact updates also identify themselves as the result
+announcement, preserving distinct warnings, choices and explicitly required notices. These
+clarifications address input scope and duplicate display instructions, not a validated pacing
+mechanism; the separate `continuation-contract` arm records their first generated outputs.
