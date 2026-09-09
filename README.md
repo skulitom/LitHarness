@@ -210,6 +210,10 @@ scene handoff, an explicitly locked concept retains its full source. These are g
 meaning-preservation safeguards, not evidence of literary quality.
 Candidate and acceptance events preserve the exact provider draft and its SHA-256 before
 format cleanup or an explicitly requested revision, so changes can be traced afterwards.
+Optional revision receives the exact author-lock block from the drafting job's recorded
+request, at system authority. If that historical handoff cannot be verified, only the
+rewrite is skipped: the already gated draft proceeds, with a recorded reason and no
+revision call. This preserves author direction; it does not certify prose quality.
 Automatic planning also waits for a concept-backed book's first missing scene before
 drafting its successors. `status` names the unresolved scene and job; an empty locked scene
 does not count as drafted. Other books can continue, and `revive` or `replan` can recover the

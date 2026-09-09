@@ -9,7 +9,7 @@ from litharness.domain.jobs import input_digest_for
 
 SCHEMA = "litharness.prompt-sources.v1"
 MAX_SOURCE_LIMIT = 100
-_COVERAGE = (
+COMPOSITION_COVERAGE = (
     "selected_packet_items_and_renderer_fragments; upstream_inputs_of_derived_fragments_not_mapped"
 )
 _CONTEXT_FIELDS = {
@@ -163,7 +163,7 @@ def _validated(
         return None, "malformed_source_context"
     if any(value is not None and not _string(value) for value in context.values()):
         return None, "malformed_source_context"
-    if "coverage" in context and context["coverage"] != _COVERAGE:
+    if "coverage" in context and context["coverage"] != COMPOSITION_COVERAGE:
         return None, "malformed_source_context"
     for key, payload_key in (
         ("book_id", "book_id"),
@@ -225,6 +225,29 @@ def _validated(
     return recorded, None
 
 
+def validated_prompt_sources(
+    payload: dict[str, Any], *, recorded_input_digest: str | None
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Validate frozen composition data without paging, presentation or source lookup."""
+    if "prompt_sources" not in payload:
+        return None, "prompt_sources_not_recorded"
+    recorded, reason = _validated(payload["prompt_sources"], payload)
+    if recorded is None:
+        return None, reason
+    # Slice hashes bind text; the complete payload digest also binds source identities.
+    if recorded_input_digest is None:
+        return None, "input_digest_not_recorded"
+    if not _digest(recorded_input_digest):
+        return None, "invalid_recorded_input_digest"
+    try:
+        current_digest = input_digest_for(payload)
+    except (TypeError, ValueError):
+        return None, "input_payload_not_serializable"
+    if current_digest != recorded_input_digest:
+        return None, "input_digest_mismatch"
+    return recorded, None
+
+
 def build_prompt_source_view(
     payload: dict[str, Any],
     *,
@@ -258,29 +281,14 @@ def build_prompt_source_view(
         return {**result, "status": "unavailable", "reason": unavailable_reason}
     if "prompt_sources" not in payload:
         return result
-    recorded, reason = _validated(payload["prompt_sources"], payload)
+    recorded, reason = validated_prompt_sources(
+        payload, recorded_input_digest=recorded_input_digest
+    )
     if recorded is None:
-        return {**result, "status": "invalid_recorded_value", "reason": reason}
-    # Stage and slice hashes bind text, but cannot detect altered source identities.
-    # New maps were included in the job's canonical payload digest at enqueue time.
-    if recorded_input_digest is None:
-        return {**result, "status": "unavailable", "reason": "input_digest_not_recorded"}
-    if not _digest(recorded_input_digest):
-        return {
-            **result,
-            "status": "invalid_recorded_value",
-            "reason": "invalid_recorded_input_digest",
-        }
-    try:
-        current_digest = input_digest_for(payload)
-    except (TypeError, ValueError):
-        return {
-            **result,
-            "status": "invalid_recorded_value",
-            "reason": "input_payload_not_serializable",
-        }
-    if current_digest != recorded_input_digest:
-        return {**result, "status": "invalid_recorded_value", "reason": "input_digest_mismatch"}
+        status = (
+            "unavailable" if reason == "input_digest_not_recorded" else "invalid_recorded_value"
+        )
+        return {**result, "status": status, "reason": reason}
     result.update(schema=SCHEMA, count=len(recorded["entries"]), stages=recorded["stages"])
     if shelf_exposure:
         return {**result, "status": "withheld", "reason": "exemplar_shelf_exposure"}
@@ -310,4 +318,11 @@ def build_prompt_source_view(
     }
 
 
-__all__ = ["MAX_SOURCE_LIMIT", "SCHEMA", "build_prompt_source_view", "validate_source_query"]
+__all__ = [
+    "COMPOSITION_COVERAGE",
+    "MAX_SOURCE_LIMIT",
+    "SCHEMA",
+    "build_prompt_source_view",
+    "validate_source_query",
+    "validated_prompt_sources",
+]

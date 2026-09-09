@@ -45,6 +45,7 @@ from litharness.application.reviser import (
     REVISION_MODEL,
     REVISION_PROFILE,
     render_revision_request,
+    revision_author_locks,
 )
 from litharness.domain import tells
 from litharness.domain.audience import Reader
@@ -328,51 +329,12 @@ def revise_draft(
     model: str | None,
     now: float,
 ) -> tuple[str, str | None, Sequence[Event]]:
-    """One rewrite of one drafted scene: the text to carry forward, and what it cost.
+    """Optionally rewrite a gated draft before its single manuscript acceptance.
 
-    Returns `(text, reviser_model, events)`. `text` is the revision when containment held and
-    the **draft unchanged** when it did not — every refusal path returns the draft, because the
-    book must never be hostage to this stage. `reviser_model` is `None` when nothing was
-    adopted, so the caller can attribute the accepted prose without inferring it from a
-    comparison.
-
-    **Where this sits is the whole design and it was read off the code rather than chosen.**
-    It runs on an unaccepted string and in front of the ladder that judges what it returns, so
-    the revision goes down the identical ladder the draft would have — shape, integrity and
-    §184's beat comparison all read the revised prose. **§187 moved one thing and left that
-    invariant standing**: the ladder now runs on the draft first and this call is made only if
-    the draft cleared it, so `drafted` is the gated text (canonicalized, after `strip_em_dash`)
-    rather than the provider's raw string, and the strip runs again on whatever comes back.
-    The three alternatives were each refused by something already written down:
-
-    * **A follow-on job rewriting accepted prose through `apply_patch`.** §184's gate could not
-      re-run there. §184.4 abstains on *a position the book already wrote down*, and a scene
-      that has committed has written its own snapshot at its own position — so the gate the
-      directive requires to pass on the revision would abstain on every one of them. `patch`
-      would also need a *located complaint* to license the rewrite (`Veto.UNLICENSED_DELETION`),
-      and a register complaint located nowhere is exactly the licence this project refuses to
-      manufacture. §180.7 records that the repair path is the one seam the em-dash strip does
-      not reach, so the book's final prose would ship down it unstripped.
-    * **A second accepted revision per scene.** The head would move twice, two
-      `MANUSCRIPT_REVISION_ACCEPTED` events would name one scene, and a re-printed status line
-      at an already-written position is the second canon snapshot at one key that
-      `integrity.detect_contradictions` groups on and refuses.
-    * **Leaving the revision unstripped.** The strip has to be the last rewrite before the gate
-      on whichever text is adopted, or the mark read 1 and read 11 both named comes back
-      through a door §180 had closed. It runs once per ladder pass rather than once per call,
-      which keeps §180.4's third load-bearing detail — one text, one hash, one offset space —
-      true of both passes, and makes the count on each pass a fact about that pass's author:
-      the draft's marks are the writer's and the revision's are the reviser's.
-
-    None of this makes `draft.py`'s rule false. *A draft may only fill emptiness; rewriting
-    existing prose must route through `apply_patch`* is about prose the store holds, and
-    `allow_overwrite` stays `False`: the node is empty when `gate_draft` runs and is filled
-    exactly once. What that docstring warns against — *have it improve the scene it just
-    wrote*, the open-ended loop RevisionBench's ~80% is the evidence against — is a loop that
-    re-reads its own committed output. This is one bounded transformation of a string nothing
-    has accepted, gated identically, with no second pass and no way to ask for one.
+    Resolve author locks from the frozen job before spending. Missing authority,
+    budget, transport or containment refusal records a no-adoption decision and
+    retains the draft. An adopted rewrite runs through the draft gates again.
     """
-    request = render_revision_request(drafted, material=material, model=model)
     stamp = _timestamp(now)
 
     def settle(gate: GateOutcome, result: object | None) -> Sequence[Event]:
@@ -420,6 +382,16 @@ def revise_draft(
             )
         ]
 
+    author_locks, unavailable = revision_author_locks(
+        job.payload, recorded_input_digest=job.input_digest
+    )
+    if author_locks is None:
+        gate = _revision_gate(False, f"revision author-lock context unavailable: {unavailable}")
+        return drafted, None, settle(gate, None)
+    request = render_revision_request(
+        drafted, material=material, model=model, author_lock_system=author_locks
+    )
+
     # **In front of the spend, exactly as the drafting call's own check is.** A ceiling reached
     # here refuses the *revision* and never the scene: the draft is already paid for and
     # already good, and parking it because a second call could not be afforded would throw away
@@ -451,11 +423,7 @@ def revise_draft(
     try:
         result, _ = registry.complete(request)
     except OperationalFailure as error:
-        # **A transport failure here leaves the draft standing rather than failing the job.**
-        # `claude -p` fails under box load and the drafting call has already been paid for, so
-        # letting this propagate would spend the scene's attempt budget on the second call's
-        # weather and eventually poison a unit whose first call succeeded. The domain failure
-        # vocabulary is what is caught, so nothing about a provider is imported here.
+        # The draft has already passed its gates; optional transport failure retains it.
         gate = _revision_gate(False, f"the revision call failed: {error}")
         return drafted, None, settle(gate, None)
 

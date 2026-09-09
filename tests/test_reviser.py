@@ -46,6 +46,8 @@ from litharness.application.handlers import (
     SCENE_DRAFT,
     make_scene_draft_handler,
 )
+from litharness.application.prompt_source_view import COMPOSITION_COVERAGE
+from litharness.application.prompt_sources import PromptSources
 from litharness.application.reviser import (
     REVISION_PROFILE,
     render_revision_request,
@@ -117,7 +119,37 @@ def _day(now: float) -> str:
     return datetime.fromtimestamp(now, tz=UTC).isoformat()[:10]
 
 
-def _seeded(store: SqliteStore, *, packet: str | None = "Rook owes the first toll.") -> str:
+def _record_empty_lock_sources(payload, revision) -> None:
+    """Freeze the unit fixture's known empty lock selection through the source builder."""
+    payload.update(
+        book_id=revision.book_id,
+        branch_id=revision.branch_id,
+        plan_revision_id="fixture-empty-plan",
+        system="",
+    )
+    sources = PromptSources()
+    sources.append("prompt", "", payload["prompt"], "scene_task")
+    payload["prompt_sources"] = sources.finish(
+        "",
+        payload["prompt"],
+        {
+            "source": "drafting_composition",
+            "coverage": COMPOSITION_COVERAGE,
+            "book_id": revision.book_id,
+            "branch_id": revision.branch_id,
+            "logical_id": payload["logical_id"],
+            "manuscript_revision_id": revision.revision_id,
+            "plan_revision_id": payload["plan_revision_id"],
+        },
+    )
+
+
+def _seeded(
+    store: SqliteStore,
+    *,
+    packet: str | None = "Rook owes the first toll.",
+    recorded_sources: bool = True,
+) -> str:
     revision = blank_revision()
     store.commit_revision(revision, created_at="2026-08-12T00:00:00Z")
     payload: dict[str, object] = {
@@ -126,6 +158,8 @@ def _seeded(store: SqliteStore, *, packet: str | None = "Rook owes the first tol
         "prompt": "Draft the opening scene.",
         **({"packet": packet} if packet is not None else {}),
     }
+    if recorded_sources:
+        _record_empty_lock_sources(payload, revision)
     store.enqueue(
         Job(
             job_id="draft-1",
@@ -334,6 +368,26 @@ def test_the_revision_is_what_the_book_keeps_and_one_revision_lands(
     assert _acceptance(store)["revised_by"] == "fake-deterministic-v1"
 
 
+def test_unrecorded_authority_skips_only_the_optional_revision(store: SqliteStore) -> None:
+    _seeded(store, recorded_sources=False)
+    _, provider = _run(store, [DRAFT, REVISION])
+    assert provider.calls == 1 and provider.responses == [REVISION]
+    assert _accepted_prose(store) == DRAFT
+    assert store.load_job("draft-1").status is JobStatus.SUCCEEDED
+    decisions = [
+        row for row in store.decisions_for_job("draft-1") if row.profile == REVISION_PROFILE
+    ]
+    assert len(decisions) == 1 and decisions[0].invocations == 0
+    assert "prompt_sources_not_recorded" in decisions[0].reason
+    events = [
+        entry.event.payload
+        for entry in store.read_log()
+        if entry.event.event_type is EventType.POLICY_DECISION_RECORDED
+        and entry.event.payload.get("stage") == "revision"
+    ]
+    assert len(events) == 1 and events[0]["adopted"] is False
+
+
 @pytest.mark.parametrize(
     "returned",
     [
@@ -516,6 +570,7 @@ def _seeded_with_a_beat(store: SqliteStore) -> str:
             "progression_column": "cold_seal",
         },
     }
+    _record_empty_lock_sources(payload, revision)
     store.enqueue(
         Job(
             job_id="draft-1",
