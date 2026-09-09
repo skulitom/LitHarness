@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -441,6 +442,23 @@ class CodexCliProvider:
                 _json_file(trace_path, raw)
 
 
+def _transport_notice(event: dict[str, Any]) -> bool:
+    """Recognize native connection notices, not arbitrary model or tool errors."""
+    if event.get("type") == "error":
+        message = event.get("message")
+        return isinstance(message, str) and re.fullmatch(
+            r"Reconnecting\.\.\. [1-9][0-9]*/[1-9][0-9]* \(.+\)", message, re.DOTALL
+        ) is not None
+    item = event.get("item")
+    return (
+        event.get("type") == "item.completed"
+        and isinstance(item, dict)
+        and item.get("type") == "error"
+        and isinstance(item.get("message"), str)
+        and item["message"].startswith("Falling back from WebSockets to HTTPS transport.")
+    )
+
+
 def _completed_response(
     response: CommandResult,
     final_path: Path,
@@ -464,12 +482,29 @@ def _completed_response(
     events = [json.loads(line) for line in response.stdout.splitlines() if line.strip()]
     if any(not isinstance(event, dict) for event in events):
         raise ValueError("Codex JSONL contains a non-object event")
+    # The CLI can recover connection setup before producing content. These notices
+    # remain in the receipt; they cannot excuse a failed turn or invalid final output.
+    transport_notices: set[int] = set()
+    for index, event in enumerate(events):
+        if event.get("type") in {"thread.started", "turn.started"}:
+            continue
+        if not _transport_notice(event):
+            break
+        transport_notices.add(index)
+    if transport_notices and (
+        sum(event.get("type") == "turn.started" for event in events) != 1
+        or sum(event.get("type") == "thread.started" for event in events) > 1
+    ):
+        raise ValueError("Codex transport recovery did not stay within one turn")
     completed = [event for event in events if event.get("type") == "turn.completed"]
     if len(completed) != 1 or any(
-        event.get("type") in {"turn.failed", "error"} for event in events
+        event.get("type") in {"turn.failed", "error"} and index not in transport_notices
+        for index, event in enumerate(events)
     ):
         raise ValueError("Codex did not report exactly one successful turn")
-    for event in events:
+    for index, event in enumerate(events):
+        if index in transport_notices:
+            continue
         if not str(event.get("type", "")).startswith("item."):
             continue
         item = event.get("item") or {}

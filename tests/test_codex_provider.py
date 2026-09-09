@@ -295,6 +295,89 @@ def test_codex_failed_or_contaminated_output_never_succeeds(bad):
     assert not Path(runner.calls[-1][1]).exists()
 
 
+@pytest.fixture
+def transport_notices():
+    return [
+        {"type": "error", "message": "Reconnecting... 2/5 (HTTP 503 Service Unavailable)"},
+        {
+            "type": "item.completed",
+            "item": {
+                "type": "error",
+                "message": "Falling back from WebSockets to HTTPS transport. HTTP 503",
+            },
+        },
+    ]
+
+
+@pytest.mark.parametrize("indexes", [(0,), (1,), (0, 1)])
+def test_codex_recovered_connection_setup_preserves_answer_usage_and_notices(
+    transport_notices, indexes
+):
+    runner = Runner()
+    runner.extra_events = [transport_notices[index] for index in indexes]
+    result = CodexCliProvider(runner=runner).complete(CompletionRequest(prompt="x"))
+    assert result.text == runner.text and result.usage.total == 112
+    assert all(event in result.raw["events"] for event in runner.extra_events)
+    assert all(event in [json.loads(line) for line in result.raw["stdout"].splitlines()]
+               for event in runner.extra_events)
+    assert len(runner.calls) == 3  # Login, version, and one native generation; no wrapper retry.
+
+
+@pytest.mark.parametrize("bad", [
+    "missing_turn", "duplicate_completion", "failed_turn", "nonzero", "missing_file",
+    "mismatch", "missing_usage", "invalid_usage", "tool", "unknown_error", "unknown_item",
+    "after_content", "after_completion", "duplicate_start", "missing_start", "multiple_threads",
+])
+def test_codex_transport_notices_do_not_excuse_failed_or_contaminated_output(
+    transport_notices, bad
+):
+    runner = Runner()
+    completed = {"type": "turn.completed", "usage": {"input_tokens": 100, "output_tokens": 12}}
+    message = {"type": "item.completed", "item": {"type": "agent_message", "text": runner.text}}
+    events = [{"type": "turn.started"}, *transport_notices, message, completed]
+    if bad == "missing_turn":
+        events.pop()
+    elif bad == "duplicate_completion":
+        events.append(completed)
+    elif bad == "failed_turn":
+        events.insert(-1, {"type": "turn.failed"})
+    elif bad == "nonzero":
+        runner.returncode = 1
+    elif bad == "missing_file":
+        runner.omit_final = True
+    elif bad == "mismatch":
+        runner.mismatch = True
+    elif bad == "missing_usage":
+        completed.pop("usage")
+    elif bad == "invalid_usage":
+        completed["usage"]["input_tokens"] = -1
+    elif bad == "tool":
+        events.insert(-1, {"type": "item.started", "item": {"type": "command_execution"}})
+    elif bad == "unknown_error":
+        events.insert(1, {"type": "error", "message": "unavailable"})
+    elif bad == "unknown_item":
+        events.insert(1, {"type": "item.completed", "item": {"type": "error", "message": "failed"}})
+    elif bad == "after_content":
+        events = [{"type": "turn.started"}, message, *transport_notices, completed]
+    elif bad == "after_completion":
+        events = [{"type": "turn.started"}, message, completed, *transport_notices]
+    elif bad == "duplicate_start":
+        events.insert(2, {"type": "turn.started"})
+    elif bad == "missing_start":
+        events.pop(0)
+    elif bad == "multiple_threads":
+        events[:0] = [
+            {"type": "thread.started", "thread_id": "first"},
+            {"type": "thread.started", "thread_id": "second"},
+        ]
+    runner.stdout_override = "\n".join(json.dumps(event) for event in events)
+    provider = CodexCliProvider(runner=runner)
+    with pytest.raises(ProviderError):
+        provider.complete(CompletionRequest(prompt="x"))
+    assert provider.last_attempt["stdout"] == runner.stdout_override
+    assert len(runner.calls) == 3
+
+
 def test_codex_invalid_utf8_final_file_is_preserved_without_replacement_characters():
     runner = Runner()
     runner.final_bytes = b"prefix\xff\xfepartial-final"
