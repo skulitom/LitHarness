@@ -28,7 +28,8 @@ def test_continuation_scopes_original_request_and_preserves_author_decisions(
     tmp_path, monkeypatch, outlined, brief_kind,
 ):
     brief = ("Write Chapter 1 in third-person past tense, about 2,000 words. "
-             "The protagonist is Mira. Keep her companion alive throughout the story.")
+             "The protagonist is Mira. Keep her companion alive throughout the story. "
+             f"{house.ACCUMULATION}")
     drawn = concept.Concept.from_payload({
         **_example(), "author_brief": "" if brief_kind == "empty" else brief,
     })
@@ -86,9 +87,10 @@ def test_continuation_scopes_original_request_and_preserves_author_decisions(
             scoped = index > 0 and brief_kind in {"original", "locked"}
             assert ("continuation of accepted prose" in system) is scoped
             assert (house.OPENING_OFFER in system) is (index == 0)
-            assert house.CLARITY in system and house.ACCUMULATION in system
+            assert house.CLARITY in system and house._SCENE_ATTENTION in system
             assert house.QUANTITY_DETAIL in system
-            assert "A power with one use invites nobody in" in system
+            assert (house.ACCUMULATION in system) is (index == 0)
+            assert (house._MAGICAL_OFFER in system) is (index == 0)
             assert "1800 words" in system
             assert f"chapter {index + 1} ({index + 1} of this arc); scene 1 of 1" in prompt
             assert chapter_three.text not in system
@@ -102,6 +104,8 @@ def test_continuation_scopes_original_request_and_preserves_author_decisions(
         assert third is not None and third.job_kind == planner.SCENE_DRAFT
         assert "chapter 3 (3 of this arc); scene 1 of 1" in third.payload["prompt"]
         assert house.OPENING_OFFER not in third.payload["system"]
+        assert house.ACCUMULATION not in third.payload["system"]
+        assert house._MAGICAL_OFFER not in third.payload["system"]
         assert chapter_three.text in third.payload["system"]
         if brief_kind in {"original", "locked"}:
             assert "follow applicable author locks within their stated scope" in (

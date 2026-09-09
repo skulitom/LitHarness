@@ -41,7 +41,7 @@ QUANTITY_DETAIL = (
     "change established values and their arithmetic when leaving a quantity unspoken."
 )
 
-# Scene purpose and the recurring magical progression offer apply throughout a book.
+# Character attention remains relevant after the opening's genre offer is established.
 _SCENE_ATTENTION = (
     "Emotions and assumptions shape what the viewpoint character notices, expects and "
     "chooses. Make room for the relationships, places and concerns that give those choices "
@@ -112,14 +112,15 @@ def demands(text: str) -> tuple[str, ...]:
     )
 
 def with_house_rules(system: str, *, opening: bool = True) -> str:
-    """Append shared rules, with the opening's offer only in its requested scope.
+    """Append shared rules within the requested drafting scope.
 
-    Existing callers retain the complete block. Drafting excludes the opening-only
-    requirement when accepted prose already precedes the requested scene.
+    Default callers and opening drafts retain the complete block. Continuations keep
+    comprehension, character attention and quantity guidance; the book's own mechanics
+    and author directions reach drafting separately from general genre appeals.
     """
     body = system.strip()
     rules = HOUSE_RULES if opening else (
-        f"{CLARITY}\n\n{_SCENE_ATTENTION}\n{_MAGICAL_OFFER}\n\n{ACCUMULATION}"
+        f"{CLARITY}\n\n{_SCENE_ATTENTION}\n{QUANTITY_DETAIL}"
     )
     return f"{body}\n\n{rules}" if body else rules
 

@@ -230,6 +230,10 @@ For continuations, the current chapter request is distinguished from earlier out
 in the original author brief. The brief remains intact; ongoing story and style directions
 and applicable author locks still apply. Compact updates serve as the result announcement,
 while distinct warnings, choices and explicitly required notices retain their own purpose.
+Once accepted prose precedes a scene, drafting keeps the shared comprehension, character
+attention and quantity guidance without repeating general genre appeals. The opening retains
+the complete guidance. Author briefs and locks, declared mechanics, held capabilities and
+status formatting remain available through their existing context paths.
 When outlining an arc with accepted opening scenes, planning covers only its unwritten
 continuation. It receives bounded accepted history and state entering the next scene; local
 response numbers map back to the original chapter and story coordinates. Accepted prose and

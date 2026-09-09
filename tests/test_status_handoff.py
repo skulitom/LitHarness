@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from hashlib import sha256
 
 import pytest
 
@@ -11,7 +12,7 @@ from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application import concept, planner
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.handlers import make_scene_draft_handler
-from litharness.domain import gamesystem, worlds
+from litharness.domain import gamesystem, house, worlds
 from litharness.domain.beats import SIX_BEAT, beats_for
 from litharness.domain.extraction import STATUS_PREDICATE, system_voice_example
 from litharness.domain.moves import status_update_syntax
@@ -79,6 +80,11 @@ def test_unscheduled_result_survives_acceptance_and_next_writer_request(
         a_book(store, scenes=6, sheet=False,
                extra_plan_items=(source,) if concept_backed else ())
         known = _world(initial_rank)
+        retention = accepted(worlds.world_record(
+            "patterns", worlds.WORLD_RULE_PREDICATE,
+            value="An acquired pattern remains available after its teaching tool is lost.",
+        ))
+        known.append(retention)
         store.record_state_records(BOOK_ID, BRANCH_ID, known, created_at="2026-09-09T00:00:00Z")
         args = cli.build_parser().parse_args([
             "--project", PROJECT_ID, "--no-outline", "--chapter-scenes", "1",
@@ -99,6 +105,7 @@ def test_unscheduled_result_survives_acceptance_and_next_writer_request(
         first = store.load_job(result.job_id)
         assert first.job_kind == planner.SCENE_DRAFT
         system = first.payload["system"]
+        assert house.HOUSE_RULES in system
         entering_line = system_voice_example(known)
         assert entering_line is not None and entering_line in system
         assert "stand the frame 0" not in system
@@ -145,6 +152,26 @@ def test_unscheduled_result_survives_acceptance_and_next_writer_request(
         assert (entering_line not in second.payload["system"]) is changed
         assert text.rstrip() in second.payload["prompt"], "the earlier display stays in history"
         assert ("stand the frame 1" in second.payload["system"]) is changed
+        assert house.ACCUMULATION not in second.payload["system"]
+        assert house._MAGICAL_OFFER not in second.payload["system"]
+        assert house._SCENE_ATTENTION in second.payload["system"]
+        if concept_backed:
+            syntax = status_update_syntax(records)
+            assert syntax is not None and syntax in second.payload["system"]
+        for job in (first, second):
+            entries = job.payload["prompt_sources"]["entries"]
+            [rule] = [entry for entry in entries if entry["source"].get(
+                "source_logical_id"
+            ) == retention.record_id]
+            assert rule["stage"] == "system" and rule["section"] == "rules"
+            assert rule["source"]["authority"] == retention.authority.value
+            assert retention.value in job.payload["system"][rule["start"]:rule["end"]]
+            for entry in entries:
+                fragment = job.payload[entry["stage"]][entry["start"]:entry["end"]]
+                assert sha256(fragment.encode("utf-8")).hexdigest() == entry["sha256"]
+        assert next(record for record in records if record.record_id == retention.record_id) == (
+            retention
+        )
         assert provider.calls == 1, "no model stage was added to record the change"
 
 
