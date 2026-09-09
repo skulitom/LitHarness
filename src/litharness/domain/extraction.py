@@ -121,7 +121,12 @@ from litharness.domain.moves import (
 # the redundant alias is the explicit re-export form, so an unused-import check leaves them.
 from litharness.domain.moves import _named_moves as _named_moves
 from litharness.domain.moves import _printing_system as _printing_system
-from litharness.domain.names import display_name, humanise_subject, normalise_subject
+from litharness.domain.names import (
+    display_name,
+    humanise_subject,
+    normalise_subject,
+    status_subject_ids,
+)
 from litharness.domain.sheet import (
     FIELD_KINDS,
     MAX_SUFFIX,
@@ -824,7 +829,7 @@ def promotions(
 
 
 def _last_line_each(
-    text: str, subjects: Collection[str]
+    text: str, subjects: Collection[str], *, ids: Mapping[str, str] | None = None,
 ) -> list[tuple[str, tuple[int, int]]]:
     """One status line per subject — the last this scene printed — in first-seen order.
 
@@ -834,8 +839,9 @@ def _last_line_each(
     """
     last: dict[str, tuple[str, tuple[int, int]]] = {}
     for read_subject, span in _status_lines(text):
-        subject = normalise_subject(read_subject)
-        if subject in subjects:
+        printed = normalise_subject(read_subject)
+        subject = ids.get(printed) if ids is not None else printed
+        if subject is not None and subject in subjects:
             last[subject] = (read_subject, span)
     return list(last.values())
 
@@ -912,13 +918,10 @@ def extract_state(
     # `pattern` needs every column; a line printing only the held columns folds forward
     # onto the columns it left out, which is what `state_as_it_stands` already does.
     ids = {display_name(known, subject).casefold(): subject for subject in subjects}
+    subject_ids = status_subject_ids(known)
     declared = False
-    for read_subject, span in _last_line_each(text, subjects):
-        subject = normalise_subject(read_subject)
-        # A name canon has never used is a claim about someone new, which is a proposal
-        # rather than a reading of what the book already established.
-        if subject not in subjects:
-            continue
+    for read_subject, span in _last_line_each(text, subjects, ids=subject_ids):
+        subject = subject_ids[normalise_subject(read_subject)]
         # **Each line is read with its owner's columns** (§206): a place's line with the
         # place's sheet, the person's with the book's. A taught sheet is the book's.
         own = sheet if taught else (sheet_for(known, subject=subject) or sheet)
@@ -932,7 +935,7 @@ def extract_state(
         read: dict[str, object] = {}
         origins: dict[str, tuple[int, int]] = {}
         for owner, values, value_span in own.read(text[: span[1]], ids=ids):
-            if normalise_subject(owner) != subject:
+            if subject_ids.get(normalise_subject(owner)) != subject:
                 continue
             read.update(values)
             origins.update(dict.fromkeys(values, value_span))

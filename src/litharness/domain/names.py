@@ -1,13 +1,8 @@
 """What a subject is called on the page, and the id a printed name reads back to.
 
-Split out of `domain/extraction.py` on 2026-09-03 (stage-0 §215) with every definition
-byte-identical; `extraction` re-exports these three names, so the import sites that read them
-there still do. The rule they serve is `display_name`'s: a snake_case id on a reader's page is
-the defect, and a printed name is used only when it normalises back to the subject it stands
-for, because `extract_state` reads the line back through `normalise_subject` and skips a
-subject canon never used. A line that looks right, parses right and establishes nothing is
-the silence this module's docstring says no gate catches, and the guard is what keeps a
-printed name from producing it.
+Rendering prefers names that normalise back to their subjects. Status extraction also
+recognises exact, unambiguous labels declared in accepted state, so a printed full name
+does not lose an update stored under a shorter canonical id.
 """
 
 from __future__ import annotations
@@ -35,6 +30,30 @@ def humanise_subject(subject: str) -> str:
     """
     return " ".join(part.title() for part in subject.split("_") if part)
 
+
+def status_subject_ids(records: Sequence[lc.StateRecord]) -> dict[str, str]:
+    """Unambiguous status-subject labels, keyed by the normalised full printed label.
+
+    Accept canonical ids and exact accepted `is_a` labels only. That predicate can also
+    hold a kind, so this resolves an explicitly printed status owner, not names in prose
+    or a preferred display name. No prefix, first-name or fuzzy matching is inferred.
+    A label naming multiple subjects, including a collision with an id, is unresolved.
+    """
+    owners: dict[str, set[str]] = {}
+    for record in records:
+        if not state_mod.is_canon(record):
+            continue
+        labels = [record.subject]
+        if record.predicate == "is_a" and isinstance(record.value, str):
+            labels.append(record.value)
+        for label in labels:
+            normalised = normalise_subject(label)
+            if normalised:
+                owners.setdefault(normalised, set()).add(record.subject)
+    return {label: next(iter(subjects)) for label, subjects in owners.items()
+            if len(subjects) == 1}
+
+
 def display_name(records: Sequence[lc.StateRecord], subject: str) -> str:
     """What a book prints where it names `subject` on the page — never the id itself.
 
@@ -54,14 +73,10 @@ def display_name(records: Sequence[lc.StateRecord], subject: str) -> str:
     `gamesystem` already reads system, rung and ability names out of it. Both draws held one:
     `tam_cawl is_a Tam Cawl`, `mira_kell is_a Mira Kell`. Nothing was missing; nothing looked.
 
-    **A name is used only when it normalises back to the subject**, and that guard is the whole
-    of what makes the lookup safe. `extract_state` reads the printed line back through
-    `normalise_subject` and skips any subject canon has not already used, so printing a name
-    that lands on a different id would not split the book's state — it would stop reading it,
-    scene after scene, while every line still looked right on the page. That is the silence
-    this module's own docstring says no gate catches. The guard also settles the other reading
-    of `is_a` for free: a book that files `mira_kell is_a mender` has stated a kind rather than
-    a name, `mender` does not normalise to `mira_kell`, and the humanised id is printed instead.
+    **A name is used only when it normalises back to the subject.** This conservative
+    rendering choice keeps a general `is_a` kind such as `mira_kell is_a mender` from
+    replacing the person's name. Status extraction separately accepts unambiguous declared
+    labels when the writer uses one; that does not change which name this renderer prints.
 
     A subject that is not already its own normalised form is a prose name a caller passed in
     (`Rook`, `Silas`), and it is returned untouched — title-casing it would damage a `McKay`

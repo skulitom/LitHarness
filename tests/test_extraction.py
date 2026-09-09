@@ -1738,6 +1738,73 @@ def test_an_unreadable_final_update_does_not_reinstate_an_earlier_value() -> Non
     assert not _statuses(_read_scene(text, _drawn_book(), at="s1"))
 
 
+def _luke_status_known() -> list[lc.StateRecord]:
+    return [
+        _canon("luke", "is_a", "Luke Mercer"),
+        _canon("luke", SHEET_PREDICATE, value={"fields": [
+            {"name": "rank", "label": "Grade"},
+            {"name": "sight", "label": "Sight"},
+            {"name": "ember", "label": "Ember"},
+        ]}),
+        _canon("luke", STATUS_PREDICATE, value={"rank": 0}),
+    ]
+
+
+@pytest.mark.parametrize(("first_name", "last_name"), [
+    ("Luke Mercer", "Luke Mercer"), ("Luke", "Luke Mercer"), ("Luke Mercer", "Luke"),
+])
+def test_accepted_full_name_updates_the_same_subject_across_compact_lines(
+    first_name, last_name,
+):
+    known = _luke_status_known()
+    first = f"[STATUS] {first_name} — Grade 1"
+    last = f"[STATUS] {last_name} — Sight 1"
+    text = f"He tried again.\n{first}\n\nHe found the light.\n{last}\n"
+    records = _read_scene(text, known, logical_id="scene-1", at="s000001")
+    [snapshot] = _statuses(records)
+    assert snapshot.subject == "luke"
+    assert snapshot.value == {"rank": 1, "sight": 1}
+    [evidence] = snapshot.evidence
+    assert (evidence.start, evidence.end) == (text.index(first), text.index(last) + len(last))
+    assert evidence.content_sha256 == content_hash(text[evidence.start:evidence.end])
+    assert evidence.source.logical_id == "scene-1" and evidence.source.version_id == "v1"
+    assert not _statuses(_read_scene(
+        text, [*known, *records], logical_id="scene-1", at="s000001",
+    )), "re-reading identical accepted evidence does not create a second snapshot"
+    [continued] = _statuses(_read_scene(
+        "[STATUS] Luke Mercer — Ember 1\n", [*known, *records],
+        logical_id="scene-2", at="s000002",
+    ))
+    assert continued.subject == "luke"
+    assert continued.value == {"rank": 1, "sight": 1, "ember": 1}
+
+
+@pytest.mark.parametrize("other_subject", ["another_luke", "luke_mercer"])
+def test_ambiguous_status_name_cannot_assign_an_update_to_either_subject(other_subject):
+    known = [*_luke_status_known(), _canon(other_subject, "is_a", "Luke Mercer")]
+    assert not _statuses(_read_scene("[STATUS] Luke Mercer — Grade 1\n", known, at="s1"))
+    [snapshot] = _statuses(_read_scene("[STATUS] Luke — Grade 1\n", known, at="s1"))
+    assert snapshot.subject == "luke" and snapshot.value == {"rank": 1}
+
+
+@pytest.mark.parametrize("name", ["Mercer", "Luke M.", "Luke Mercer Jr"])
+def test_status_owner_is_not_guessed_from_part_of_an_accepted_name(name):
+    assert not _statuses(_read_scene(
+        f"[STATUS] {name} — Grade 1\n", _luke_status_known(), at="s1",
+    ))
+
+
+def test_proposed_full_name_does_not_resolve_a_status_owner():
+    known = [dataclasses.replace(record, authority=lc.StateAuthority.PROPOSED)
+             if record.predicate == "is_a" else record for record in _luke_status_known()]
+    assert not _statuses(_read_scene("[STATUS] Luke Mercer — Grade 1\n", known, at="s1"))
+
+
+def test_unreadable_final_alias_update_does_not_reinstate_an_earlier_value():
+    text = "[STATUS] Luke — Grade 1\n[STATUS] Luke Mercer — Sight uncertain\n"
+    assert not _statuses(_read_scene(text, _luke_status_known(), at="s1"))
+
+
 def test_a_return_to_a_rung_once_held_is_read_off_the_line() -> None:
     """The first whole-volume draw: struck from Mark Four back to Mark One, the line printed
     Mark 1 for six scenes and no standing was minted, because the un-keyed opening standing
