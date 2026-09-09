@@ -614,13 +614,6 @@ class Concept:
         found.update(schema_words.named_in(replace(self, author_brief="").render()))
         return tuple(sorted(found))
 
-    def promise_entries(self) -> list[dict[str, Any]]:
-        """The debts in the shape `new --promises` reads, so one loader opens both."""
-        return [
-            {"subject": debt.subject, "description": debt.owed, "due_scene": debt.due_scene}
-            for debt in self.debts
-        ]
-
 
 def concept_of(items: Sequence[lc.PlanItem]) -> Concept | None:
     """The concept this book was created with, or `None` for a book created without one.

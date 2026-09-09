@@ -404,20 +404,10 @@ def test_a_concept_naming_its_system_with_a_machinery_word_is_caught() -> None:
     assert concept.Concept.from_payload(payload).machinery_names() == ("rung",)
 
 
-def test_the_debts_are_the_shape_the_promise_loader_reads() -> None:
-    drawn = concept.Concept.from_payload(_example())
-    entries = drawn.promise_entries()
-    assert [entry["subject"] for entry in entries] == [
-        "the silence of the Tally",
-        "the eleven years",
-    ]
-    assert all({"subject", "description", "due_scene"} <= set(entry) for entry in entries)
+# --- `new --concept`: proposed debts remain in the stored concept ---------------------------
 
 
-# --- `new --concept`: persisted, and its debts opened before scene one ----------------------
-
-
-def test_new_persists_the_concept_and_opens_its_debts_on_the_ledger(tmp_path: Path) -> None:
+def test_new_persists_the_concept_without_opening_its_proposed_debts(tmp_path: Path) -> None:
     db = tmp_path / "book.db"
     path = tmp_path / "concept.json"
     path.write_text(concept.Concept.from_payload(_example()).to_text(), encoding="utf-8")
@@ -445,14 +435,9 @@ def test_new_persists_the_concept_and_opens_its_debts_on_the_ledger(tmp_path: Pa
         items = store.plan_items(book_id, branch_id)
         stored = concept.concept_of(items)
         assert stored is not None and stored.system.name == "the Tally"
+        assert stored.to_jsonable()["debts"] == _example()["debts"]
         assert premise_of(items) == "A premise."
-        owed = store.promises(book_id, branch_id, open_only=True)
-        # Subjects are normalised by the loader, exactly as `--promises` entries are.
-        assert sorted(promise.subject for promise in owed) == [
-            "the_eleven_years",
-            "the_silence_of_the_tally",
-        ]
-        assert all(promise.due_key is not None for promise in owed)
+        assert store.promises(book_id, branch_id) == []
     finally:
         store.close()
 

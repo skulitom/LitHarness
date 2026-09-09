@@ -4552,18 +4552,12 @@ def cmd_new(args: argparse.Namespace) -> int:
         )
     # **The concept rides beside the premise, unlocked** (§197). `plans.constraints_of` carries
     # only locked items into the scene call, so the writer is never handed the turn; the seed
-    # and the outline read it back through `concept.concept_of`, and its debts open below.
+    # and the outline read it back through `concept.concept_of`. Its proposed debts remain
+    # planning input; only an accepted scene's summary or explicit --promises opens a debt.
     concept = _concept_from(getattr(args, "concept", None))
     if concept is not None:
         seeded_items.append(concept.plan_item())
-    # **A debt with a settlement date, seeded before the first scene exists.** The measured
-    # defect is the project's oldest: 40 promises opened and 0 paid on the live serial, 32 and 0
-    # before it — every one of them opened by the summary handler out of a scene that had just
-    # been written, with nothing anywhere holding the answer. A forged reveal arrives with its
-    # answer in canon and its scene here, so the ledger has something to pay with. It also makes
-    # `open_promises` non-empty at the book's *first* outline, which is the guard that made
-    # `_payoff_windows` unreachable on pass one.
-    #
+    # Explicit operator-supplied promises may be opened before manuscript exists.
     # Keys come from `beats_for`, never from a format string: `Beat.story_order_key` derives its
     # width from the scene count and a hand-padded key would sort wrong against the book's own.
     # A non-chronological template mints none, and then this abstains rather than guessing.
@@ -4571,9 +4565,6 @@ def cmd_new(args: argparse.Namespace) -> int:
     entries: object = None
     if args.promises:
         entries = json.loads(Path(args.promises).read_text(encoding="utf-8"))
-    elif concept is not None:
-        # The concept's debts, through the same loader, so one path opens both kinds.
-        entries = concept.promise_entries()
     if entries is not None:
         planned_beats = (
             beats_for_serial(revision, shape) if serial_mode else beats_for(revision, template)
@@ -4706,11 +4697,11 @@ def cmd_new(args: argparse.Namespace) -> int:
     print(f"  {len(records)} seed state record(s)")
     if concept is not None:
         print(
-            f"  concept seeded as {concept_mod.CONCEPT_PLAN_ID}; {len(promise_rows)} debt(s) "
-            "opened from it for the world to hold answers to"
+            f"  concept seeded as {concept_mod.CONCEPT_PLAN_ID}; {len(concept.debts)} "
+            "proposed debt(s) retained for planning"
         )
-    elif promise_rows:
-        print(f"  {len(promise_rows)} seeded promise(s), each with an answer already in canon")
+    if promise_rows:
+        print(f"  {len(promise_rows)} explicit promise(s) opened")
     if graph_fault:
         print(f"  graph line declared and UNUSABLE, so this book has none: {graph_fault}")
     # **The report half of the house genre floor**, and the condition is the floor's own
@@ -5938,16 +5929,16 @@ def build_parser() -> argparse.ArgumentParser:
     new.add_argument(
         "--promises",
         type=Path,
-        help="debts to open before scene one, each with a due scene; the answers live in the "
-        "seed snapshot. Without it the ledger only ever holds what a scene invented",
+        help="explicit commitments to open before scene one, each with a due scene; "
+        "otherwise promises are opened from accepted scenes",
     )
     new.add_argument(
         "--concept",
         type=Path,
         help="the settled concept (`concept.json` from `litharness concept`) this book is "
         "created from: persisted beside the premise as unlocked story intentions, read by "
-        "the world seed, outline and scene writer, with its debts opened as promises "
-        "before scene one",
+        "the world seed and outline. Its proposed debts remain planning input; the scene "
+        "writer receives the original author brief",
     )
     new.add_argument("--book", help="book id; a fresh uuid by default")
     new.add_argument("--branch", help="branch id; a fresh uuid by default")

@@ -259,8 +259,9 @@ in the open database unless `--roster-database` (or `LITHARNESS_ROSTER_DATABASE`
 installation's roster store, which is what lets a writer accepted once draft on every fresh book
 database (stage-0 §151).
 
-Use `new` when title and premise already exist (`--concept` carries a settled concept and
-opens its debts on the promise ledger), or `import` for a contracts fixture or manuscript:
+Use `new` when title and premise already exist (`--concept` retains proposed debts for
+planning; `--promises` explicitly opens commitments), or `import` for a contracts fixture or
+manuscript:
 
 ```bash
 uv run litharness --database book.db new "The Toll Road" \

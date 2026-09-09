@@ -235,3 +235,10 @@ This removes a generated treatment from the writer's input, including unaccepted
 and possible future events; existing concept debts still appear independently as threads.
 The isolated `brief-only` registration records this scope and its remaining inputs. It is
 not a claim that future directions are absent or that omission improves prose reliably.
+
+New books now retain generated concept debts as proposed planning input without opening
+them on the manuscript promise ledger. Explicit `new --promises` commitments still open as
+requested, and accepted scene summaries can establish observed commitments, including a
+subject also present in the concept. Historical seeded rows remain unchanged; their original
+creation path cannot always be distinguished from explicit promises. This forward change
+does not retrospectively remove the thread inputs recorded in the `brief-only` experiment.
