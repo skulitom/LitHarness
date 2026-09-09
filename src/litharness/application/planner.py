@@ -604,21 +604,15 @@ def render_prompt(
                 "standing_line",
             )
     if target_words:
-        # **Length is asked for by giving the scene somewhere to spend it**, which is the
-        # difference the measurement found. A bare "write approximately 900 words" moves
-        # `phi4` 324 -> 458; naming what the length is *for* moves it 324 -> 611, and
-        # `llama3.2` 279 -> 384 where the bare form reached 329. The second sentence is
-        # doing the work: a model told only a number pads, and padding is §1a.3 item 6's
-        # "summarising instead of dramatising" arriving by the door that was opened to
-        # avoid it. So the instruction spends its words on events rather than on the count.
+        # The length allows action and viewpoint experience; it is not an event quota.
         system = sources.append(
             "system",
             system,
             (
-                f" Write approximately {target_words} words. A scene of that length has room to "
-                "play out in real time — what is said, what is done, what is noticed — instead "
-                "of being told in summary. Do not pad it with restatement to reach the length; "
-                "give the scene enough events to fill it."
+                f" Write approximately {target_words} words. Let the viewpoint character's "
+                "immediate concerns determine what the narration dwells on. Routine repetitions "
+                "and straightforward transitions can pass briefly; give space to experiences "
+                "and choices that change what matters to them."
             ),
             "target_words",
         )

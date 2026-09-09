@@ -73,7 +73,7 @@ from litharness.domain import promises as promises_mod
 from litharness.domain import state as state_mod
 from litharness.domain import worlds as worlds_mod
 from litharness.domain.nodes import NodeKind
-from litharness.domain.plans import constraints_of, premise_of
+from litharness.domain.plans import constraints_of, premise_of, scope_applies_to_scenes
 from litharness.domain.revision import Revision
 
 #: The counter's identity, recorded on the packet so a report says which one produced the
@@ -602,10 +602,18 @@ def assemble(
         sections[PREMISE] = (premise_item,)
         used += premise_item.tokens
 
-    # 2. Locked constraints and promises. The director's word, and until this slice they were
-    #    parsed by `constraints_of` and read by nothing.
+    # 2. Applicable author constraints and promises must fit; other scopes consume no budget.
     constraints: list[PackedItem] = []
     for plan_item in constraints_of(plan_items):
+        if not scope_applies_to_scenes(
+            plan_item.scope, book_id=revision.book_id, branch_id=revision.branch_id,
+            scene_ids=(target_logical_id,), revision=revision,
+        ):
+            omitted.append(Omission(
+                plan_item.logical_id, plan_item.logical_id,
+                "author constraint outside this scene's scope",
+            ))
+            continue
         item = PackedItem(
             item_id=plan_item.logical_id,
             kind=lc.ContextItemKind.AUTHOR_RULE,

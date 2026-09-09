@@ -20,11 +20,13 @@ nothing, which no gate in this system can detect.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Collection, Sequence
 from dataclasses import dataclass
 
 import litharness_contracts as lc
 
+from litharness.domain.nodes import NodeKind
+from litharness.domain.revision import Revision
 from litharness.domain.scene_brief import render_plan
 
 #: The locked constraint a book told in the first person carries from creation. **A position,
@@ -84,6 +86,63 @@ def constraints_of(items: Sequence[lc.PlanItem]) -> tuple[lc.PlanItem, ...]:
         for item in items
         if item.kind in {lc.PlanKind.CONSTRAINT, lc.PlanKind.PROMISE} and item.locked
     )
+
+
+def scope_applies_to_scenes(
+    scope: lc.ResourceRef | None,
+    *,
+    book_id: str,
+    branch_id: str,
+    scene_ids: Collection[str],
+    revision: Revision | None = None,
+) -> bool:
+    """Resolve author direction against scene identities, never a guessed chapter number.
+
+    Unscoped directions belong to the containing plan's book/branch. Manuscript ancestor
+    scopes need the actual tree. Block-local and non-manuscript scopes cannot currently be
+    represented by the scene writer's plain constraint text, so refuse to widen them.
+    """
+    if scope is None:
+        return True
+    if (scope.book_id, scope.branch_id) != (book_id, branch_id):
+        return False
+    if scope.kind is lc.ResourceKind.MANUSCRIPT_SCENE:
+        return scope.logical_id in scene_ids
+    ancestor_kinds = {
+        lc.ResourceKind.MANUSCRIPT_BOOK: NodeKind.BOOK,
+        lc.ResourceKind.MANUSCRIPT_PART: NodeKind.PART,
+        lc.ResourceKind.MANUSCRIPT_CHAPTER: NodeKind.CHAPTER,
+    }
+    expected_kind = ancestor_kinds.get(scope.kind)
+    if expected_kind is None:
+        raise ValueError(
+            f"author-plan scope {scope.logical_id!r} has kind {scope.kind.value!r}; "
+            "scene-level constraint text cannot preserve that local scope. Use an explicit "
+            "scene scope only if the direction applies to the whole scene"
+        )
+    if revision is None:
+        raise ValueError("a manuscript revision is required to resolve author-plan ancestor scopes")
+    if (revision.book_id, revision.branch_id) != (book_id, branch_id):
+        raise ValueError("author-plan scope revision belongs to another book or branch")
+    nodes = {node.logical_id: node for node in revision.nodes if not node.tombstoned}
+    target = nodes.get(scope.logical_id)
+    if target is None or target.kind is not expected_kind:
+        raise ValueError(
+            f"author-plan scope {scope.logical_id!r} is not a live {expected_kind.value}"
+        )
+    for scene_id in scene_ids:
+        node = nodes.get(scene_id)
+        if node is None or node.kind is not NodeKind.SCENE:
+            raise ValueError(f"author-plan target {scene_id!r} is not a live scene")
+        seen: set[str] = set()
+        while node is not None:
+            if node.logical_id in seen:
+                raise ValueError("cyclic manuscript ancestry cannot resolve author-plan scope")
+            seen.add(node.logical_id)
+            if node.logical_id == scope.logical_id:
+                return True
+            node = nodes.get(node.parent_logical_id) if node.parent_logical_id else None
+    return False
 
 
 def scene_plan_id_for(logical_id: str) -> str:
@@ -154,4 +213,5 @@ __all__ = [
     "scene_plan_for",
     "scene_plan_id_for",
     "scene_plan_line",
+    "scope_applies_to_scenes",
 ]

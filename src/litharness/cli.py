@@ -704,7 +704,8 @@ def _conductor(store: SqliteStore, args: argparse.Namespace) -> Conductor:
             # Narrative Planning v0: one statement per scene, so the rising span stops
             # asking twenty-five scenes the same question (§52's first taxonomy entry).
             BOOK_OUTLINE: make_outline_handler(
-                registry, store, args.project, budget=_budget(args), actor=args.holder
+                registry, store, args.project, budget=_budget(args), actor=args.holder,
+                target_scene_words=_draft_policy(args).target_words,
             ),
             EVALUATE_REVISION: make_evaluation_handler(evaluator, store, args.project),
             REPAIR_FINDING: make_repair_handler(
@@ -3019,7 +3020,7 @@ def cmd_prompts(args: argparse.Namespace) -> int:
         beat,
         book_title="The Deep Ledger",
         packet=packet,
-        target_words=900,
+        target_words=_draft_policy(args).target_words,
         scene_plan="Rook pays a cost that changes what returning home would mean.",
         writer=writer,
         shelf=shelf,
@@ -3107,7 +3108,10 @@ def cmd_prompts(args: argparse.Namespace) -> int:
             dossier=(writer or writers_domain.CAST["ferreira"]).dossier,
             exemplar="A specimen passage, kept short.",
         ),
-        "outline": render_outline_request(premise, (beat,), base=base, serial_arc_index=1),
+        "outline": render_outline_request(
+            premise, (beat,), base=base, serial_arc_index=1,
+            target_scene_words=_draft_policy(args).target_words,
+        ),
         "narrative-planner": render_narrative_request(base, direction, ("scene-1",)),
         "scene": CompletionRequest(prompt=scene_prompt, system=scene_system),
         "summarizer": CompletionRequest(

@@ -218,8 +218,7 @@ class Concept:
 
     person_before: str
     exception: str
-    #: The first time the exception works for them, inside chapter one (read 18 §3: every
-    #: chapter this house had drawn ended with its person worse off or merely offered something).
+    #: A proposed early use of the magical advantage; the planner chooses its placement.
     first_use: str
     want: str
     system: SystemConcept
@@ -240,7 +239,7 @@ class Concept:
         """Keep the supplied opening as the arc's opening, not an already-finished prologue.
 
         The development call supplies mechanics and the arc's later movement. It cannot
-        replace the source treatment or silently start the arc after chapter one.
+        replace the source treatment or silently start after its events have happened.
         """
         arc = {**_mapping(payload, "first_arc"), "opens": discovery.opening}
         return cls.from_payload({
@@ -456,7 +455,7 @@ class Concept:
         """
         advantage_label = (
             "Their magical advantage"
-            if self.discovery else "What they alone have, from the first chapter"
+            if self.discovery else "What they alone have"
         )
         threat_label = (
             "The obstacle or danger"
@@ -465,7 +464,7 @@ class Concept:
         lines = [
             f"Who they were the day before: {self.person_before}",
             f"{advantage_label}: {self.exception}",
-            f"The first time it works, in chapter one: {self.first_use}",
+            f"A proposed first use of their power: {self.first_use}",
             f"What they want, in their own words: {self.want}",
             f"The system, {self.system.name}. How it shows itself: {self.system.manner}",
             f"What it looks like: {self.system.look}",
@@ -654,12 +653,11 @@ TURN_RULE = (
 )
 
 
-#: Read 18 §3: the power works on the page inside chapter one, and the threat is seen doing
-#: what it does before it reaches the person. Both are placements of material the concept
-#: already holds, and neither names an effect on a reader.
+#: Early magic should matter, while a generated opportunity leaves room for planning.
 FIRST_USE_RULE = (
-    "book_concept.first_use happens inside the first chapter's scenes, on the page and not "
-    "reported afterwards, and it works."
+    "Make early magic matter to the protagonist's pursuit. book_concept.first_use proposes "
+    "an opportunity, not a first-chapter deadline; place it where the character's choices, "
+    "established capabilities and available prose space support it."
 )
 THREAT_RULE = (
     "book_concept.threat.first_reach is placed where the concept says, and what the threat "
@@ -668,8 +666,9 @@ THREAT_RULE = (
 
 DISCOVERY_ARC_RULE = (
     "Develop this arc's pursuits and magical encounters from book_concept.discovery. "
-    "The opening treatment belongs to chapter one; later arcs explore further possibilities "
-    "from what the character has already learned and kept. Plan concrete uses of capability "
+    "Its opening treatment supplies proposals that may span chapters; choose the chapter's "
+    "scope from connected character decisions and available prose space. Continue from what "
+    "the character has learned and kept. Plan concrete uses of capability "
     "and something worth pursuing beyond them. Costs and setbacks can complicate that pursuit; "
     "a changed statistic or a new permission alone does not fulfill it. Vary the chapter's "
     "activity and pace; do not repeat one discovery-and-reward sequence in every scene."
@@ -702,7 +701,8 @@ _TASK = (
     "Whoever it happens to is somebody this shelf's reader has been: one plain clause of who "
     "they were the day before.\n"
     "The exception is one power this person has that nobody else in the world has, and the "
-    "first use is the first time it works for them, inside chapter one.\n"
+    "first use proposes an early occasion when it works for them; leave chapter placement "
+    "to planning unless the author specifies it.\n"
     "What they want is said in the words they had before any of this came.\n"
     "The turn is one event that changes what the book is about, and where it falls is one of "
     "the three places offered.\n"
@@ -763,7 +763,8 @@ def render_concept_request(
             f"{house.QUANTITY_DETAIL}\n"
             "Use person_before and want for this character; exception for their distinctive "
             "magical advantage, which need not be exclusive in the universe; first_use for "
-            "their effective use of it in chapter one.\n"
+            "a proposed early effective use, with chapter placement left to planning unless "
+            "the author specifies it.\n"
             "system describes the game system that tracks actual personal capability, "
             "independently of institutional approval. Its appearance and feedback go in "
             "manner and look; it need not speak. steps is the known span of advancement, "
@@ -775,7 +776,7 @@ def render_concept_request(
             "use second_system only if the treatment calls for it, preserving earned "
             "capabilities across any transition.\n"
             "first_arc develops the supplied opening into a middle and close; the opening "
-            "has not happened yet and remains chapter one. debts names two to "
+            "has not happened yet and its developments may span chapters. debts names two to "
             "four questions with due_scene within the requested arc. Return only the "
             "schema fields; the original discovery treatment is retained separately."
         )

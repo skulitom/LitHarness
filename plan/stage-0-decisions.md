@@ -17703,6 +17703,11 @@ topic sentence for rules that no longer needed one.
 accounting is what makes that a fact rather than a claim, and `tests/test_prompt_budget.py` is the
 ratchet that keeps it one.
 
+**2026-09-09 amendment:** The historical clause-shape and exact-count assertions in
+`tests/test_scene_economy.py` were retired. Its assembled-request check remains, while
+`tests/test_prompt_budget.py` continues to own prompt ceilings. The account below records
+the earlier implementation rather than a current quality guarantee.
+
 `tests/test_scene_economy.py` holds the shape: that a demand with a sub-scene unit exists, that the
 movement criterion survives beside it, that the truth-keyed removal test did not come back through
 the door this entry opened, that the clause names no reader state and no staging, that the price
@@ -17755,7 +17760,7 @@ is the form worth shipping. No model ranked, selected or judged anything; no mod
 book was drawn, no paid call was made, and no `runs/` database was written to. No corpus was read,
 so RS1 is untouched. No research claim is promoted and no axis is admitted. Nothing the operator
 said became prompt text, and no noun of the chapter under read is in the clause (§97.1) —
-`test_no_word_of_the_read_9_chapter_became_prompt_text` is that, mechanically.
+~~test_no_word_of_the_read_9_chapter_became_prompt_text~~ (retired 2026-09-09) is that, mechanically.
 
 ## 169 A status line printed a machine id because nothing ever looked up the name the book had already written down
 
@@ -18040,12 +18045,16 @@ which is §161.5's pattern at its third use, and the concession names accuracy a
 construction always has rather than as a defence — §168's concession doing the same job one clause
 above it.
 
+**2026-09-09 amendment:** The phrase-shape assertions cited below were retired.
+`tests/test_narratorial_gloss.py` retains revision-versus-drafting scope checks; it does
+not treat these historical craft clauses as evidence of prose quality.
+
 **Tests beside the code**, in a new file so no parallel session's file was restructured:
 `tests/test_narratorial_gloss.py`.
-`test_the_clause_reaches_the_general_rule_and_not_a_character_s_own_read` is the one to read;
-`test_the_clause_does_not_reach_the_subjectless_import_gloss` pins the narrowing below;
-`test_the_clause_does_not_collide_with_the_floor_above_it` is §129's tier check made mechanical;
-and `test_no_word_of_the_chapter_under_read_became_prompt_text` is §97.1.
+~~test_the_clause_reaches_the_general_rule_and_not_a_character_s_own_read~~ (retired 2026-09-09) is the one to read;
+~~test_the_clause_does_not_reach_the_subjectless_import_gloss~~ (retired 2026-09-09) pins the narrowing below;
+~~test_the_clause_does_not_collide_with_the_floor_above_it~~ (retired 2026-09-09) is §129's tier check made mechanical;
+and ~~test_no_word_of_the_chapter_under_read_became_prompt_text~~ (retired 2026-09-09) is §97.1.
 
 ### 171.2 The arm that was deliberately not reached, stated before the fact
 
@@ -18741,6 +18750,9 @@ Addressable per §154: a comparison is a thing a writer emits and can emit diffe
 object sits on the page and the reader appears only in the delimiter, which
 `tests/test_figure_clarity.py` asserts rather than assumes.
 
+**2026-09-09 amendment:** The historical wording, punctuation and exact-count assertions
+were retired. `tests/test_figure_clarity.py` retains shared-clarity and role-scope checks.
+
 ### 176.4 The price: six ceilings, and §171.4's prediction of four is corrected in place
 
 The floor moved 25 → 26 demands and five rows standing on it moved with it: `architect seed`
@@ -18788,7 +18800,7 @@ nothing here becomes a check a model runs on a chapter.
 
 **Any use of the operator's words or the chapter's** (§97.1). The three sentences are fixtures in
 `tests/test_figure_clarity.py` and appear nowhere else; the clause carries no noun of theirs, and
-`test_no_word_of_the_read_10_chapter_became_prompt_text` is the mechanical check.
+~~test_no_word_of_the_read_10_chapter_became_prompt_text~~ (retired 2026-09-09) is the mechanical check.
 
 ### 176.6 The residual: the third shape, refused and named before the fact
 
@@ -18798,7 +18810,7 @@ the reader having to go outside the sentence for what a phrase means — and tha
 named in one sentence and *it* in the next, which is ordinary anaphora and §163's failure mode
 exactly. A clause of its own would be §127's fourth rule against one complaint. It stands, a later
 read should expect to find it standing, and
-`test_the_third_instance_is_not_reached_and_the_clause_does_not_forbid_anaphora` is what keeps a
+~~test_the_third_instance_is_not_reached_and_the_clause_does_not_forbid_anaphora~~ (retired 2026-09-09) is what keeps a
 later widening from reaching it by accident.
 
 ### 176.7 Anti-scope
@@ -19064,7 +19076,7 @@ in, and `house.CLARITY` is untouched.
 
 **The identity between the two copies is asserted rather than noted.** `overview` already carries two
 `house.CLARITY` clauses as a recorded second statement; what is new is that
-`test_the_floor_and_the_listing_carry_the_same_sentence` now fails if they drift by a byte. The
+~~test_the_floor_and_the_listing_carry_the_same_sentence~~ (retired 2026-09-09) now fails if they drift by a byte. The
 2026-08-26 restoration that put those two back had to establish the same thing by reading both files.
 
 ### 179.4 One clause and not two, and the sentence carries the decision
@@ -19075,7 +19087,7 @@ says the first arm is an instance of the second, which is what distinguishes one
 fillers from §171's refused second rule wearing one terminator. Two clauses would have cost two
 demands at six house numbers and at the listing's, and §127's brake is that a second rule against one
 complaint is the shape this project has measured failing four times.
-`test_the_second_arm_names_the_first_as_its_general_case` holds it.
+~~test_the_second_arm_names_the_first_as_its_general_case~~ (retired 2026-09-09) holds it.
 
 **The two arms are bounded differently on purpose, and the asymmetry is the whole of what keeps §163
 out.** A restatement needs a source, so that arm is keyed to the sentence it sits in — a window of
@@ -19085,7 +19097,7 @@ nothing having put the thing in question, which is what lets it reach a bare ass
 its own sentence. Keyed the other way round, each arm would miss the shape the other was written for.
 Neither is keyed to what a passage would be equally true without: that is the truth test §163 removed
 from this very constant for deleting presence by construction.
-`test_the_two_arms_are_bounded_differently_and_neither_reaches_a_passage` is the guard.
+~~test_the_two_arms_are_bounded_differently_and_neither_reaches_a_passage~~ (retired 2026-09-09) is the guard.
 
 **The boundary the operator drew is inside the sentence.** An absence that is genuinely news — a
 thing that has not happened *since* something, where the *since* is the information — is what this
@@ -19117,7 +19129,7 @@ from ordinary quantifiers standing as the subject, and the obvious clause names 
 would suppress the words instead of the construction — every word list this project has deleted was
 deleted for that, and §163 is the standing record of what a filter keyed wide enough to delete
 presence costs. The shipped clause holds no quantifier in that position, and
-`test_the_clause_names_none_of_the_words_the_construction_is_built_from` keeps it that way at both
+~~test_the_clause_names_none_of_the_words_the_construction_is_built_from~~ (retired 2026-09-09) keeps it that way at both
 addresses.
 
 **An instance list**, for §168's reason unchanged: three clauses in that module were cut for being
@@ -19150,16 +19162,20 @@ with no draw behind it, **shipped unmeasured**. No model ranked, selected or jud
 census is not edited and none of its numbers is restated — its counter does not reach this
 construction, and whether an instrument should is a separate registered act. Nothing from the chapter
 or the listing under read reached either prompt and none of the operator's words did (§97.1), checked
-by `test_no_word_of_the_read_11_items_became_prompt_text`. The other four families read 11 named —
+by ~~test_no_word_of_the_read_11_items_became_prompt_text~~ (retired 2026-09-09). The other four families read 11 named —
 the schema-vocabulary leak, plain diction, the comma-chain sentence, the em dash, the iceberg
 principle — are other tracks' and nothing here addresses them.
 
+**2026-09-09 amendment:** Historical wording and exact-count assertions were retired.
+`tests/test_implication_register.py` retains the listing-request scope check. The retired
+names below identify the old assertions rather than live evidence.
+
 Pinned by `tests/test_implication_register.py`, and in particular by
-`test_the_floor_and_the_listing_carry_the_same_sentence`,
-`test_the_second_arm_names_the_first_as_its_general_case`,
-`test_the_two_arms_are_bounded_differently_and_neither_reaches_a_passage`,
-`test_the_boundary_is_a_concession_inside_the_sentence`,
-`test_the_new_clause_is_not_the_narrating_the_inference_prohibition_again` and
+~~test_the_floor_and_the_listing_carry_the_same_sentence~~ (retired 2026-09-09),
+~~test_the_second_arm_names_the_first_as_its_general_case~~ (retired 2026-09-09),
+~~test_the_two_arms_are_bounded_differently_and_neither_reaches_a_passage~~ (retired 2026-09-09),
+~~test_the_boundary_is_a_concession_inside_the_sentence~~ (retired 2026-09-09),
+~~test_the_new_clause_is_not_the_narrating_the_inference_prohibition_again~~ (retired 2026-09-09) and
 `test_the_clause_rides_the_listing_call_which_carries_no_floor_under_it`.
 
 ## 180. A fourth read named sentence structure and a second named the em dash, and one of them is a shape a writer makes while the other is a character a machine can take out
@@ -19316,7 +19332,7 @@ asks a model to check one. The strip is a rewrite and the clause is a sentence i
 
 **Any use of the operator's words or the chapter's** (§97.1). The clause names neither punctuation
 nor commas — which is also what keeps it clear of `directors._CRAFT_INSTRUCTION` — and
-`test_no_word_of_the_read_11_chapter_became_prompt_text` is the mechanical check.
+~~test_no_word_of_the_read_11_chapter_became_prompt_text~~ (retired 2026-09-09) is the mechanical check.
 
 ### 180.7 Residuals, named before the fact
 
@@ -19328,7 +19344,7 @@ nor commas — which is also what keeps it clear of `directors._CRAFT_INSTRUCTIO
   prompt it reaches — which is why a dossier written with one is refused. No rail has ever been
   pointed at the floor. The strip makes that harmless rather than absent, and de-marking the
   prompt is a separate edit this track did not make.
-  `test_the_floor_still_carries_the_mark_it_now_strips` keeps it visible.
+  ~~test_the_floor_still_carries_the_mark_it_now_strips~~ (retired 2026-09-09) keeps it visible.
 - **The repair path is not covered.** `application/repair.py` writes prose through `apply_patch`,
   which this rewrite does not touch; only the drafting seam is covered.
 - **The en dash is untouched.** `statusline` accepts U+2013 where `extraction` does not, so a draft
@@ -19346,6 +19362,11 @@ on. No research claim is promoted, no mechanism qualified, no axis admitted, and
 ranked or judged anything for this entry. `em_dash`'s registered hypothesis stays VOID and is
 neither pre-empted nor answered by a rewrite that makes no assertion. Read 11's other five
 families are their own tracks'.
+
+**2026-09-09 amendment:** Historical craft-clause snapshots and the asserted prompt
+em-dash residual were retired. `tests/test_sentence_structure.py` retains punctuation
+normalization, interruption preservation, idempotence, status parsing and acceptance
+provenance checks. Prompt ceilings remain in `tests/test_prompt_budget.py`.
 
 Pinned by `tests/test_sentence_structure.py`, with the ceilings that did not move recorded at
 `HOUSE_BUDGET` in `tests/test_prompt_budget.py`.
@@ -19844,7 +19865,7 @@ actually clears the gate is pilot 18's redraw to show, and nothing here claims i
 
 ### 183.7 Corrections in place
 
-`tests/test_implication_register.py::test_the_second_arm_names_the_first_as_its_general_case`
+~~tests/test_implication_register.py::test_the_second_arm_names_the_first_as_its_general_case~~ (exact-count assertion retired 2026-09-09)
 asserted the listing task at exactly thirteen demands; it now asserts fourteen, with the reason
 beside the assertion. The exact form is what made this entry's growth visible in that file rather
 than silently, which is what an exact assertion is for, and §179's own clause is unchanged and
@@ -21657,7 +21678,7 @@ too, and read 14's record marked it as this instruction's next tuning.
 **What shipped.** One prohibition appended to `application/reviser._TASK`: *"What fails is
 a sentence explaining this moment by what a person always does or says; one showing what
 they do now is not that."* §138-signed; the concession rides the semicolon (§161.5's
-pattern, counted deliberately by `test_the_concession_sits_inside_the_demand_it_bounds`,
+pattern, counted deliberately by ~~test_the_concession_sits_inside_the_demand_it_bounds~~ (retired 2026-09-09),
 4→5). The reviser's ceiling moves 30→31 with the reason in `tests/test_prompt_budget.py` —
 the one role sentence register is added to since §187, so its ceiling rises where the
 writer-facing ones fell. No writer-facing prompt moves (§187's freeze holds).

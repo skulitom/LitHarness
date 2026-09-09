@@ -193,11 +193,9 @@ def _roles() -> dict[str, str]:
             revoice.render_rewrite_request(dossier=WRITER.dossier, exemplar="A passage.").system
             or ""
         ),
-        # **The one row that stands on `CLARITY` and on neither rule below it** (§185, §129's
-        # tier order read literally). It is not the floorless case the two rows above are and
-        # it is not the whole-floor case the scene writer is: a role whose object is a sentence
-        # gets the rule whose every demand has a sentence for its object, and the two rules
-        # about what a story contains are refused by a mechanical check one function later.
+        # Revision shares comprehension guidance, including orientation and viewpoint,
+        # while its own task preserves story contents. It omits the drafting directions
+        # about progression and scene purpose; role-scope tests check that separation.
         "reviser": reviser.revision_system(),
     }
 
@@ -481,117 +479,16 @@ BUDGET: dict[str, int] = {
     # are five things the prompt says will refuse it.
     "revoice draw": 9,
     "revoice rewrite": 14,
-    # **The Reviser joined at 28 on 2026-08-30, measured and set at what is there** (§185), so
-    # it starts as a ratchet like every row above it. Fourteen of the twenty-eight are
-    # `house.CLARITY` entire and move only when the floor does — this row therefore rises with
-    # a floor clause exactly as the two Architect rows and the two scene rows do, and a later
-    # track adding one should expect **seven** numbers to move rather than six.
-    #
-    # The other fourteen are the role's own: three of containment stated as instruction, six
-    # prohibitions against the structures reads 10 to 12 named, and the rest the frame and the
-    # return contract. Every one of the six is prohibition-signed, which
-    # `tests/test_reviser.py` asserts over the text rather than about it — §138 measured the
-    # permission form of one clause at more than six times the prohibition form and worse than
-    # silence, and a role whose whole job is a register is the last place to spend that.
-    #
-    # **28 -> 30 on 2026-08-30, and this is the only row in this table that rises** (§187). It is
-    # two movements in opposite directions netting +2, and both belong in the open. The floor
-    # half falls with everything else: `house.CLARITY` 14 -> 11, so the fourteen this row
-    # inherited are eleven, and the note above predicting **seven** numbers moving with a floor
-    # clause is confirmed in the falling direction. The role's own half rises 14 -> 19: four
-    # prohibitions moved here from `house` byte-identical (§171's gloss, §179's absence and
-    # restatement, §176's comparison, §181's specialist's word) and one is new — a prohibition
-    # on a relation left unstated across a *pair* of sentences, which is the audit's own ask.
-    #
-    # **This raise is what the removal is for and it is not a subtraction looked for and
-    # refused.** The order this file asks for is take something out, then raise what is left on
-    # purpose; here the taking-out is the same commit, at six other rows, and the net across the
-    # table is strongly negative. What is bought is ownership: the reviser is the one stage the
-    # battery measured moving the sentence axis, and two of the four ported clauses are aimed at
-    # defects this stage was measured *producing* — the gloss counter reads higher on its prose
-    # than on the writer's from the same listing, and the pair clause exists because this stage
-    # answered a chained sentence by cutting it in two and leaving the relation unsaid. §180's
-    # chained-action prohibition was **not** ported, and that is why the rise is five and not
-    # six: this file already carried that prohibition before the floor's copy existed.
-    # 30 -> 31 on 2026-09-01 for §194: the located manner-gloss prohibition, reads 13-14's
-    # twice-named item, recorded at read 14 as this instruction's next tuning. The reviser
-    # is the one role sentence register is added to since §187, so its ceiling moves where
-    # the writer-facing ones fell; tested as the turn-3 A/B variant before adoption.
+    # Revision combines CLARITY with its own task. The ceiling remains 31;
+    # its historical changes are recorded in stage-0 decisions 185, 187 and 194.
     "reviser": 31,
 }
 
-#: The floor everything else inherits. Broken out because a clause added here is added to every
-#: role at once, which is exactly how the scene writer reached twenty-seven without a decision.
-#:
-#: **25 -> 26 on 2026-08-30, and this row is where the reason for all six raises belongs** (§176).
-#: Read 10 named three sentences nobody would say, and every demand on the floor was read against
-#: them first (§154's audit order): the unmet-term clause fails a *name*, and none of the three
-#: carries one; the two-ways clause fails a sentence with two readings available, and these have
-#: one reading each and it is the wrong one; the object clause fails an object *acting*, and a
-#: quality is not an act. What was left were the two sentences that open and close the rule, and
-#: those name the standard rather than a page surface — the half a writer cannot act on. So the
-#: gap was structural, which is the only thing §168.2 licenses a new clause for.
-#:
-#: **The subtraction was looked for first and refused, which is the order this file asks for.**
-#: The candidate was `CLARITY`'s own opening sentence: affirmative, its object an abstraction,
-#: unaddressable, and §168 removed one of exactly that shape to pay for its clause. It stays,
-#: because its second half carries the following-rather-than-explaining correction this constant
-#: was corrected twice in one day to get, and §127 is explicit that removing a rule which encodes
-#: a measured correction is a decision to be made against a measurement rather than against a
-#: mood. This track has no measurement, so it pays at the ceiling instead and says so.
-#:
-#: **The pronoun half of the same read cost nothing.** Widening the paragraph clause's scope from
-#: one *person* to one person or object is a scope word on a rule whose object, remedy and
-#: concession are untouched, so `house.demands` reads the same count — §161.5's in-place pattern,
-#: widened rather than narrowed. Only the figure half needed a sentence.
-#:
-#: **Unmoved on 2026-08-30 by the implication clause (§179), then moved by the diction clause
-#: (§181) — the same day, two tracks crossing.** §174 took a demand off this floor the day §176
-#: raised six ceilings for one, so every row standing on `house` carried exactly one demand of
-#: slack; §179 spent it (one sentence to `house.READER`, no number moved). §181's diction
-#: prohibition on the clarity side is the clause after the last free one, and it raises all
-#: six: the floor to 27, `architect seed` to 48, `architect grow` to 44, the two scene rows to
-#: 30 and 34, `SCENE_MAXIMAL_BUDGET` to 46. That is §176.4's prediction arriving two entries
-#: later than it said. The listing pays separately (17 since §179), the one role with no floor
-#: under it.
-#:
-#: **And unmoved again by §180 the same day, by subtraction**: the chained-sentence prohibition
-#: went onto `house.CLARITY` and `CLARITY`'s closing line came off in the same edit — the
-#: subtraction §176.5 looked for and half-refused (it protects the rule's *opening* sentence,
-#: which carries a twice-made correction under §127's brake; the closing one restates a
-#: standard, encodes no measurement, and by §154 is the half a writer cannot act on). Four
-#: house edits in one day: the ceilings moved once, for §181, and this note is the crossing
-#: written down.
-#:
-#: **27 -> 22 on 2026-08-30, and it is the first fall this number has ever taken** (§187). Every
-#: raise recorded above bought a clause; this one removes five, and the reason each came out is
-#: written on its own clause in `domain/house.py`. **The measurement is `plan/agent-impact/` and
-#: the direction is the operator's, which is what §127's brake asks for.** That brake is against
-#: removing a rule which encodes a measured correction *against a mood* — §176.5 and §181 both
-#: cite it, and both were right to, because neither of those tracks had a measurement. This one
-#: has the audit: every defect family still alive at the thirteenth read is clause-addressed, no
-#: clause on this floor moved a sentence metric across ten chapters, and one of the four removed
-#: was recorded being broken on the very next read after it shipped. The operator's word at that
-#: report — take the register clauses out of the prompts — is the other half.
-#:
-#: **What left, by constant.** `CLARITY` 14 -> 11: §176's comparison prohibition, §180's
-#: chained-action prohibition, §181's specialist's-word prohibition. `READER` 12 -> 10: §171's
-#: narratorial gloss, §179's absence-and-restatement prohibition. `ACCUMULATION` is untouched at
-#: one. **What stayed and why the line falls where it does**: a clause whose object is how a
-#: sentence sounds went, and a clause whose object is whether a reader can assemble what it says
-#: stayed — so the unmet-term pair, the two-ways clause, the object-acting clause and the
-#: paragraph trio are all still here, and §176's pronoun scope word stays with the paragraph
-#: clause it widened, being antecedent mechanics rather than register. §168's passage clause
-#: stays for a second reason: the reads stopped naming its family.
-#:
-#: **Five rows fall with this one and one rises.** The floor lands once in each row standing on
-#: it: `architect seed` 48 -> 43, `architect grow` 44 -> 39, the two scene rows 30 -> 25 and
-#: 34 -> 29, `SCENE_MAXIMAL_BUDGET` 46 -> 41. The listing pays its own -1, and the reviser rises
-#: +2 net; both are written on their own rows. **Every number here is set at what is now there
-#: rather than left high**, which is the opposite of what §174's note says about counts moving
-#: down arguing for nothing — that entry declined to *lower* a ceiling as an argument, and this
-#: one lowers them so the next clause added to this floor has to be a decision again rather than
-#: slack somebody found. A ratchet that keeps five demands of headroom is not a ratchet.
+#: Count the shared guidance separately because each inheriting role receives its changes.
+#: CLARITY includes orientation and viewpoint knowledge; READER allows context and emotion
+#: as well as advancing the story. These are author directions, not measured quality gates.
+#: The existing ceiling stays unchanged. Earlier clause changes and budget decisions are
+#: recorded in plan/stage-0-decisions.md, sections 176 through 187.
 HOUSE_BUDGET = 22
 
 
@@ -614,7 +511,7 @@ def test_a_role_prompt_stays_inside_its_declared_budget(role: str) -> None:
 
 
 def test_the_house_floor_is_the_thing_that_grows_everywhere_at_once() -> None:
-    """`house` has no call site of its own and reaches every role that has one."""
+    """Shared guidance has its own ceiling as well as each inheriting role's ceiling."""
     counted = house.demands(house.HOUSE_RULES)
     assert len(counted) <= HOUSE_BUDGET, (
         f"the house floor now makes {len(counted)} demands against {HOUSE_BUDGET}, and every "
@@ -1000,7 +897,7 @@ def test_a_reader_facing_prompt_never_speaks_in_this_system_s_own_vocabulary(rol
 
 
 def test_the_house_floor_itself_is_reader_facing() -> None:
-    """It reaches every one of them, so it is held to the same rail."""
+    """Shared writing guidance follows the same vocabulary boundary as reader-facing tasks."""
     found = sorted(word for word in house.MACHINERY_WORDS if word in house.HOUSE_RULES.lower())
     assert not found, f"the house floor speaks this system's own vocabulary: {found}"
 
@@ -1057,13 +954,20 @@ def test_prompt_inspector_covers_every_production_communication_role(
 def test_representative_prompt_inspection_labels_itself_and_carries_material(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    assert main(["prompts", "--role", "scene", "--json"]) == EXIT_OK
+    args = ["--target-words", "1300", "prompts", "--json"]
+    assert main([*args, "--role", "scene"]) == EXIT_OK
     row = json.loads(capsys.readouterr().out)
 
     assert row["source"] == "representative_specimen"
     assert "AUTHOR-LOCKED STORY DECISIONS" in row["system"]
     assert "Who is in this story" in row["prompt"]
     assert len(row["prompt"]) > 500
+    assert "1300 words" in row["system"]
+
+    assert main([*args, "--role", "outline"]) == EXIT_OK
+    planning = json.loads(capsys.readouterr().out)
+    assert planning["source"] == "representative_specimen"
+    assert json.loads(planning["prompt"])["target_scene_words"] == 1300
 
 
 def test_prompt_pressure_names_section_dominance_and_exact_repetition() -> None:

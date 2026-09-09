@@ -82,7 +82,12 @@ from litharness.domain.plan_refinement import (
     PlanRevision,
     apply_plan_proposal,
 )
-from litharness.domain.plans import premise_of, scene_plan_for, scene_plan_id_for
+from litharness.domain.plans import (
+    premise_of,
+    scene_plan_for,
+    scene_plan_id_for,
+    scope_applies_to_scenes,
+)
 from litharness.domain.policy import (
     GateKind,
     GateOutcome,
@@ -93,6 +98,7 @@ from litharness.domain.policy import (
     decision_id_for,
 )
 from litharness.domain.promises import Promise, schedule_fault, window_fault
+from litharness.domain.revision import Revision
 from litharness.domain.scene_brief import SCHEMA as SCENE_BRIEF_SCHEMA
 from litharness.domain.scene_brief import SceneBrief
 from litharness.domain.text import content_hash
@@ -244,10 +250,12 @@ CONCEPT_OUTLINE_SCHEMA: dict[str, Any] = {
 }
 
 SCENE_HANDOFF_RULES = (
-    "Return a brief for each scene: situation is its starting circumstance; pursuit is "
-    "what the viewpoint character tries to accomplish; changes lists the intended actions "
-    "and their consequences in causal order. Use plain planning facts, not dialogue, "
-    "comparisons, finished narration, or explanations of how a line should sound.",
+    "Return a brief for each scene: situation establishes the place, relevant relationships "
+    "and the viewpoint character's understanding and concerns on entering it; pursuit is "
+    "what they try to accomplish. In changes, connect intended actions and consequences "
+    "through what the character can notice, infer or misunderstand at consequential choices. "
+    "Distinguish what is true from what the character knows. Use plain planning facts, "
+    "not dialogue, finished narration, or explanations of how a line should sound.",
     "The writer will receive this scene's brief, the premise, the author's original brief, "
     "and established story context. It will not receive book_concept or the original "
     "treatment. Include the scene's necessary setup and causal connections in the brief.",
@@ -255,10 +263,19 @@ SCENE_HANDOFF_RULES = (
     "possible, including identity, capability or disclosure limits where needed. Use an "
     "empty list when none apply. These are planning constraints, not present events or "
     "instructions to explain future developments in the scene.",
-    "Preserve the premise's pursuit and magical promise, the author's choices, established "
-    "history and world rules. The generated treatment is a working proposal: you may revise "
-    "incidental obstacles, props and choreography when planning the connected action. Its "
-    "wording and every invented detail are not separate requirements. Author locks prevail.",
+    "Preserve the premise's pursuit and magical promise; original author instructions, "
+    "author locks, established history and world rules remain binding. Generated opening "
+    "and first_use developments are proposals, including timing such as 'in chapter one' "
+    "inside their text. Choose their scope and placement from connected character choices "
+    "and available prose space; those generated labels do not create author deadlines.",
+)
+
+AUTHOR_LOCK_RULE = (
+    "author_locks contains unchanged author decisions. They override generated concept "
+    "proposals, including their timing. Apply each decision within its supplied scope; "
+    "a missing scope applies throughout this book. Each scene's logical_id and author_lock_ids "
+    "map the applicable decisions to that scene's local ordinal in this request. Preserve "
+    "these decisions when choosing scene events; do not update, delete or contradict them."
 )
 
 
@@ -306,6 +323,8 @@ def render_outline_request(
     arc_entry_state: StoryStateView | None = None,
     concept: concept_mod.Concept | None = None,
     chapter_by_scene: Mapping[str, int] | None = None,
+    target_scene_words: int | None = None,
+    revision: Revision | None = None,
 ) -> CompletionRequest:
     """Freeze the premise and the whole beat sheet into one structured-output request.
 
@@ -353,8 +372,20 @@ def render_outline_request(
     arc's three events, the turn and where it falls, the horizon and the want, as a
     `book_concept` field with its own rules. Absent for a book created without one, and then
     the payload is byte-identical to what it was — the same additivity the world field keeps.
+
+    `target_scene_words` is the drafting policy's requested scene length, separate from
+    the outline statement's length. Direct callers may omit it to retain their existing input.
     """
     ordinals = _ordinal_of(beats)
+    scene_ids = {beat.logical_id for beat in beats}
+    author_locks = [
+        item for item in base.items
+        if item.locked and item.kind is not lc.PlanKind.PREMISE
+        and scope_applies_to_scenes(
+            item.scope, book_id=base.book_id, branch_id=base.branch_id,
+            scene_ids=scene_ids, revision=revision,
+        )
+    ]
     owed = [
         {
             "subject": promise.subject,
@@ -372,6 +403,14 @@ def render_outline_request(
         {
             "premise": premise,
             "base_plan_revision_id": base.plan_revision_id,
+            **(
+                {"author_locks": [lc.to_jsonable(item) for item in author_locks]}
+                if author_locks else {}
+            ),
+            **(
+                {"target_scene_words": target_scene_words}
+                if target_scene_words is not None else {}
+            ),
             **(
                 {
                     "serial_scope": {
@@ -419,6 +458,20 @@ def render_outline_request(
                     "of_total": beat.of_total,
                     "dramatic_function": beat.function,
                     **(
+                        {
+                            "logical_id": beat.logical_id,
+                            "author_lock_ids": [
+                                item.logical_id for item in author_locks
+                                if scope_applies_to_scenes(
+                                    item.scope, book_id=base.book_id,
+                                    branch_id=base.branch_id, scene_ids=(beat.logical_id,),
+                                    revision=revision,
+                                )
+                            ],
+                        }
+                        if author_locks else {}
+                    ),
+                    **(
                         {"chapter": chapter_by_scene[beat.logical_id]}
                         if chapter_by_scene and beat.logical_id in chapter_by_scene
                         else {}
@@ -429,17 +482,18 @@ def render_outline_request(
             "rules": [
                 f"Return exactly {len(beats)} scenes, ordinals 1 to {len(beats)}, each once.",
                 (
-                    "Give each scene enough detail to draft its action and consequences. "
-                    "Plan the scenes within each chapter together; choose their events and "
-                    "endings from this book's concept and the characters' circumstances."
+                    "Plan the scenes within each chapter together. Choose a connected "
+                    "movement that leaves room to experience the place, respond to what "
+                    "happens and develop the choices that follow. Defer optional developments "
+                    "to later scenes when the chapter needs that space."
                     if concept is not None
                     else f"Each statement is about {TARGET_WORDS} words."
                 ),
-                "State what happens in that scene: who acts, what they do, what changes.",
+                "State what happens in that scene: who acts, why that action is available "
+                "to them, and what changes.",
                 "Every statement must be different from every other. Two scenes that could "
                 "be swapped without the book noticing are one scene written twice.",
-                "Do not write prose, dialogue, or description; this is an instruction to a "
-                "writer, not the scene itself.",
+                "Write planning facts rather than finished scene narration or dialogue.",
                 "Respect the dramatic function given for each scene.",
                 "Later scenes must build on earlier ones rather than repeat them: nothing may "
                 "be obtained, revealed, or resolved twice.",
@@ -515,6 +569,15 @@ def render_outline_request(
                 else []
             )
             + (list(SCENE_HANDOFF_RULES) if concept is not None else [])
+            + ([AUTHOR_LOCK_RULE] if author_locks else [])
+            + (
+                [
+                    "target_scene_words gives each scene's approximate finished-prose "
+                    "length, not the length of its planning brief; zero leaves the draft "
+                    "length unspecified."
+                ]
+                if target_scene_words is not None else []
+            )
             + (
                 concept_mod.outline_rules(
                     serial_arc_index, discovery_backed=concept.discovery is not None
@@ -1083,23 +1146,33 @@ def outline_proposal(
     )
 
 
-def _policy_digest() -> str:
+def _policy_digest(*, target_scene_words: int | None = None) -> str:
     """Content address of what shaped this outline, so a change to it reads as a change.
 
-    The request is built from constants — the schema, the target length, the rules — none of
-    which appear in the plan item the operator sees. Without this, editing them would leave
-    every recorded decision byte-identical while every outline produced after it came from a
-    different question.
+    Include the schemas, rules and any supplied drafting length. These inputs shape the
+    request but do not appear in the resulting scene-plan text.
     """
     return payload_digest(
         {
             "profile": PROFILE,
             "target_words": TARGET_WORDS,
+            **(
+                {"target_scene_words": target_scene_words}
+                if target_scene_words is not None else {}
+            ),
             "schema": OUTLINE_SCHEMA,
-            "concept_planning_version": 4,
+            "concept_planning_version": 8,
             "concept_schema": CONCEPT_OUTLINE_SCHEMA,
             "scene_handoff_rules": SCENE_HANDOFF_RULES,
-            "discovery_rule": concept_mod.DISCOVERY_ARC_RULE,
+            "author_lock_rule": AUTHOR_LOCK_RULE,
+            "concept_outline_rules": {
+                "first_use": concept_mod.FIRST_USE_RULE,
+                "first_arc": concept_mod.FIRST_ARC_RULE,
+                "later_arc": concept_mod.LATER_ARC_RULE,
+                "turn": concept_mod.TURN_RULE,
+                "threat": concept_mod.THREAT_RULE,
+                "discovery": concept_mod.DISCOVERY_ARC_RULE,
+            },
             "quantity_detail": house.QUANTITY_DETAIL,
             "concept_timeout_seconds": CONCEPT_TIMEOUT_SECONDS,
             "world_rules": world_brief.WORLD_RULES,
@@ -1116,6 +1189,7 @@ def _decision(
     passed: bool,
     detail: str | None,
     resulting_revision_id: str | None = None,
+    target_scene_words: int | None = None,
 ) -> PolicyDecision:
     gate = GateOutcome(
         gate=GateKind.SHAPE,
@@ -1163,7 +1237,7 @@ def _decision(
         # is the same defect the sampler commit had just fixed one layer over: a schema or
         # target-length change would have left every stored digest identical while every
         # outline after it came from a different request.
-        policy_config_digest=_policy_digest(),
+        policy_config_digest=_policy_digest(target_scene_words=target_scene_words),
         reason=detail if passed else (detail or reason),
     )
 
@@ -1175,6 +1249,7 @@ def make_outline_handler(
     *,
     budget: BudgetPolicy | None = None,
     actor: str = "litharness",
+    target_scene_words: int | None = None,
 ) -> JobHandler:
     """Build the premise → outline → immutable plan handler."""
     budget_policy = budget or BudgetPolicy()
@@ -1241,7 +1316,7 @@ def make_outline_handler(
                     base_revision_id=base.plan_revision_id,
                     attempt=job.attempts,
                     profile=PROFILE,
-                    policy_config_digest=_policy_digest(),
+                    policy_config_digest=_policy_digest(target_scene_words=target_scene_words),
                     reason="every beat already carries a statement",
                 ),
                 decided_at=stamp,
@@ -1331,6 +1406,8 @@ def make_outline_handler(
             arc_entry_state=entry_state,
             concept=concept,
             chapter_by_scene=chapter_by_scene,
+            target_scene_words=target_scene_words,
+            revision=head,
         )
         day = stamp[:10]
         provider, _ = registry.resolve(request.call_class)
@@ -1356,6 +1433,7 @@ def make_outline_handler(
                 base_revision_id=base.plan_revision_id,
                 attempt=job.attempts,
                 profile=PROFILE,
+                policy_config_digest=_policy_digest(target_scene_words=target_scene_words),
                 reason=verdict.reason,
             )
             store.record_decision(refusal, decided_at=stamp)
@@ -1448,6 +1526,7 @@ def make_outline_handler(
                 resolution,
                 passed=False,
                 detail=f"{type(error).__name__}: {error}",
+                target_scene_words=target_scene_words,
             )
             store.record_decision(refusal, decided_at=stamp)
             return (
@@ -1470,6 +1549,7 @@ def make_outline_handler(
             passed=True,
             detail=None,
             resulting_revision_id=preview.after.plan_revision_id,
+            target_scene_words=target_scene_words,
         )
         try:
             accept_plan_proposal(
@@ -1481,7 +1561,10 @@ def make_outline_handler(
                 decision=decision,
             )
         except PlanConflict as error:
-            stale = _decision(job, base, result, resolution, passed=False, detail=str(error))
+            stale = _decision(
+                job, base, result, resolution, passed=False, detail=str(error),
+                target_scene_words=target_scene_words,
+            )
             store.record_decision(stale, decided_at=stamp)
             return (
                 policy_decision_event(

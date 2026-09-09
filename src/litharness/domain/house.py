@@ -18,25 +18,17 @@ the decision ledger preserves the experiments and reversals behind these choices
 
 from __future__ import annotations
 
-# Following unfamiliar material does not require explaining every term.
+# Reader orientation and viewpoint knowledge support sentence-level clarity.
 CLARITY = (
-    "Clarity is the floor, and it is about following rather than about explaining. Every "
-    "sentence can be followed the first time it is read.\n"
-    "A term the reader has not met needs a reason to be there before it needs anything "
-    "else, and then a consequence rather than a definition: the sentence carrying it says "
-    "what it does to somebody. What fails is a name invented because the world wanted one "
-    "and handed over to be carried while it buys the reader nothing, and the test is "
-    "whether they could say what it changes for the person it happens to.\n"
-    "A sentence a reader can take two ways has failed, and the writer is the last person who "
-    "can see it: `a sheet of directions in his brother's small hand` is handwriting to whoever "
-    "wrote it and a hand inside the box to whoever reads it. Prefer the reading nobody can "
-    "trip on.\n"
-    "Objects act or speak when the story gives them that literal capability. Otherwise, "
-    "keep figurative descriptions clear about who perceives or acts.\n"
-    "A paragraph holds together or it is not a paragraph. Inside one, a pronoun points at one "
-    "person or object only — where two are in play, use their names, however plain that reads. "
-    "A reader who has to reread a paragraph to find out whose brother died has been thrown out "
-    "of the book, and the sentences were all fine."
+    "Every sentence can be followed the first time it is read.\n"
+    "Establish where the viewpoint character is and who the relevant people are to them; "
+    "make spatial relationships clear before an action depends on them.\n"
+    "Give unfamiliar names and terms enough context to grasp their meaning in the scene, "
+    "including a brief explanation when needed.\n"
+    "Let the reader follow what the viewpoint character notices, knows and believes, "
+    "including uncertainty, before a choice depends on it.\n"
+    "Keep the order of events and the connections between them clear.\n"
+    "Use clear references so the reader knows who perceives or acts and what changes."
 )
 
 
@@ -51,11 +43,9 @@ QUANTITY_DETAIL = (
 
 # Scene purpose and the magical progression offer, not a scene-to-summary rule.
 READER = (
-    "Detail that only establishes "
-    "who somebody is — the steps of a job, the order of a routine — is not why the reader "
-    "came. What fails is a passage that settles nothing in the scene it sits in, however "
-    "much it establishes. Every scene moves the thing the book is about closer or further "
-    "away.\n"
+    "Emotions and assumptions shape what the viewpoint character notices, expects and "
+    "chooses. Make room for the relationships, places and concerns that give those choices "
+    "meaning; a passage can establish these without advancing an external event.\n"
     "The opening shows what this book is offering: something a person could come to be able to "
     "do, and somewhere the reader has not been. A reader who reaches the end of the opening "
     "scene without seeing either has been given no reason to start another.\n"

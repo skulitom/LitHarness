@@ -8,10 +8,13 @@ from dataclasses import replace
 import litharness_contracts as lc
 import pytest
 
+from litharness import cli
 from litharness.adapters.sqlite_store import SqliteStore
 from litharness.application import concept, outline, planner
+from litharness.application.plan_refinement import accept_plan_proposal
 from litharness.domain import context, house, worlds
 from litharness.domain.beats import arc_template, beats_for
+from litharness.domain.plan_refinement import PlanEdit, PlanEditAction, PlanProposal
 from litharness.domain.plans import scene_plan_for, scene_plan_line
 from litharness.domain.scene_brief import PREFIX, SceneBrief, render_plan
 from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
@@ -109,7 +112,7 @@ def test_outline_rejects_unusable_concept_response_before_persisting(tmp_path, m
 
 @pytest.mark.parametrize("author_brief", ["", "Keep the companion alive.\nUse third person."])
 def test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon(
-    tmp_path, author_brief
+    tmp_path, author_brief, monkeypatch
 ):
     drawn = concept.Concept.from_payload({
         **_example(), "discovery": _discovery(), "author_brief": author_brief,
@@ -119,15 +122,39 @@ def test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon
         text="The companion survives every crossing.",
         authority=lc.PlanAuthority.INTENDED, locked=True,
     )
+    timing = lc.PlanItem(
+        logical_id="author-timing", kind=lc.PlanKind.CONSTRAINT,
+        text="The first successful cast occurs in this scene.",
+        authority=lc.PlanAuthority.INTENDED, locked=True,
+        scope=lc.ResourceRef(
+            project_id=PROJECT_ID, book_id=BOOK_ID, branch_id=BRANCH_ID,
+            logical_id="scene-1", kind=lc.ResourceKind.MANUSCRIPT_SCENE,
+        ),
+    )
     rule = accepted(worlds.world_record(
         "ice", worlds.WORLD_RULE_PREDICATE, value="Freezing a stone consumes heat from her hand."
     ))
     with SqliteStore.open(tmp_path / "handoff.db") as store:
-        revision = a_book(store, scenes=6, extra_plan_items=(drawn.plan_item(), lock))
+        revision = a_book(store, scenes=6, extra_plan_items=(drawn.plan_item(), lock, timing))
         store.record_state_records(BOOK_ID, BRANCH_ID, [rule], created_at="2026-09-08T00:00:00Z")
         registry = StubPlanner(outlined_payload())
-        outline.make_outline_handler(registry, store, PROJECT_ID)(_job(store), START)
+        monkeypatch.setattr(cli, "build_default_registry", lambda: registry)
+        args = cli.build_parser().parse_args([
+            "--project", PROJECT_ID, "--target-words", "1300", "tick",
+        ])
+        conductor = cli._conductor(store, args)
+        outline_job = _job(store)
+        conductor.handlers[outline.BOOK_OUTLINE](outline_job, START)
         request = registry.requests[0]
+        assert json.loads(request.prompt)["target_scene_words"] == 1300
+        routed_locks = json.loads(request.prompt)["author_locks"]
+        assert {item["logical_id"]: item for item in routed_locks} == {
+            item.logical_id: lc.to_jsonable(item) for item in (lock, timing)
+        }
+        decision = store.latest_decision_for(outline_job.job_id)
+        assert decision is not None
+        assert decision.policy_config_digest == outline._policy_digest(target_scene_words=1300)
+        assert decision.policy_config_digest != outline._policy_digest()
         assert request.schema == outline.CONCEPT_OUTLINE_SCHEMA
         assert house.CLARITY not in request.system
         source = json.loads(request.prompt)["book_concept"]
@@ -137,9 +164,12 @@ def test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon
         assert plan.authority is lc.PlanAuthority.INTENDED
         brief = SceneBrief.from_text(plan.text)
         assert brief is not None
-        job = planner.make_plan_selector(project_id=PROJECT_ID)(store, "writer", START + 1, 60)
+        job = planner.make_plan_selector(
+            project_id=PROJECT_ID, policy=cli._draft_policy(args)
+        )(store, "writer", START + 1, 60)
         assert job is not None and job.job_kind != outline.BOOK_OUTLINE
         system, prompt = job.payload["system"], job.payload["prompt"]
+        assert "1300 words" in system
         assert brief.render() in prompt
         assert PREFIX not in prompt
         source_entry = next(
@@ -148,7 +178,7 @@ def test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon
         )
         assert source_entry["source"]["source_logical_id"] == plan.logical_id
         assert source_entry["source"]["rendered_equals_stored"] is False
-        assert lock.text in system and str(rule.value) in system
+        assert lock.text in system and timing.text in system and str(rule.value) in system
         assert drawn.discovery.opening not in prompt
         assert drawn.first_arc.closes not in prompt
         assert drawn.system.strongest_known not in prompt
@@ -161,18 +191,37 @@ def test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon
         revised = replace(
             drawn, discovery=replace(drawn.discovery, opening="Unused proposal wording.")
         )
-        items = store.plan_items(BOOK_ID, BRANCH_ID)
-        store.record_plan_items(BOOK_ID, BRANCH_ID, [
-            revised.plan_item() if item.logical_id == concept.CONCEPT_PLAN_ID else item
-            for item in items
-        ], created_at="2026-09-08T01:00:00Z")
-        assert planner.packet_for(store, revision, beat).render() == before
-        # Ordinary author/directive plan edits must not resurrect the full treatment.
-        store.record_plan_items(BOOK_ID, BRANCH_ID, [
-            replace(item, text="Cross by the upstream route.") if item.logical_id == plan.logical_id
-            else item for item in store.plan_items(BOOK_ID, BRANCH_ID)
-        ], created_at="2026-09-08T02:00:00Z")
-        assert planner.packet_for(store, revision, beat).render() == before
+        # Accepted updates to either the concept or scene plan must not resurrect
+        # the full treatment. Importing existing item IDs would silently do nothing.
+        updates = [
+            (revised.plan_item(), "2026-09-08T01:00:00Z"),
+            (replace(plan, text="Cross by the upstream route."), "2026-09-08T02:00:00Z"),
+        ]
+        for updated_item, stamp in updates:
+            prior = store.plan_revision(BOOK_ID, BRANCH_ID)
+            assert prior is not None
+            assert prior.item(updated_item.logical_id).text != updated_item.text
+            proposal = PlanProposal(
+                base_plan_revision_id=prior.plan_revision_id,
+                summary=f"Update {updated_item.logical_id}",
+                rationale="Exercise treatment containment after a real accepted plan edit.",
+                expected_outcome="The new plan text is stored without leaking the treatment.",
+                edits=(PlanEdit(PlanEditAction.UPDATE, updated_item.logical_id, updated_item),),
+            )
+            application = accept_plan_proposal(
+                store, proposal, project_id=PROJECT_ID, created_at=stamp,
+                actor="handoff-test",
+            )
+            current = store.plan_revision(BOOK_ID, BRANCH_ID)
+            assert current is not None and current == application.after
+            assert current.plan_revision_id != prior.plan_revision_id
+            assert current.parent_plan_revision_id == prior.plan_revision_id
+            assert current.item(updated_item.logical_id).text == updated_item.text
+            acceptance = store.decision_for_revision(current.plan_revision_id)
+            assert acceptance is not None and acceptance.accepted
+            assert acceptance.base_revision_id == prior.plan_revision_id
+            assert acceptance.resulting_revision_id == current.plan_revision_id
+            assert planner.packet_for(store, revision, beat).render() == before
         packet = planner.packet_for(store, revision, beat)
         assert all(item.authority is lc.StateAuthority.ACCEPTED_CANON
                    for item in packet.sections[context.RULES])
