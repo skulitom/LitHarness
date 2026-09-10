@@ -264,9 +264,26 @@ def main(argv: list[str] | None = None) -> int:
                 "traces": [t.summary() for t in traces],
                 "errors": errors,
                 "profile_counts": dict(Counter(t.profile for t in traces)),
-                "input_groups": dict(Counter(t.input_digest("application") for t in traces)),
+                "input_groups": dict(
+                    Counter(
+                        value
+                        for t in traces
+                        if (value := t.input_digest("application")) is not None
+                    )
+                ),
                 "limitation": "Files may mirror one call; do not count files as independent draws.",
             }
+            output_groups: dict[str, list[str]] = {}
+            session_groups: dict[str, list[str]] = {}
+            for trace in traces:
+                if "output.text" in trace.fields:
+                    output_groups.setdefault(digest(trace.fields["output.text"]), []).append(
+                        str(trace.path)
+                    )
+                for session in trace.sessions:
+                    session_groups.setdefault(session, []).append(str(trace.path))
+            report["repeated_outputs"] = {k: v for k, v in output_groups.items() if len(v) > 1}
+            report["shared_sessions"] = {k: v for k, v in session_groups.items() if len(v) > 1}
             if args.command == "search":
                 pattern = re.compile(args.query if args.regex else re.escape(args.query), re.I)
                 report["hits"] = [

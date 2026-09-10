@@ -43,6 +43,8 @@ def test_identical_outputs_from_fresh_sessions_are_not_deduplicated(tmp_path, ca
     result = json.loads(capsys.readouterr().out)
     assert len(result["traces"]) == 2
     assert result["traces"][0]["sessions"] != result["traces"][1]["sessions"]
+    assert len(result["repeated_outputs"]) == 1
+    assert result["shared_sessions"] == {}
 
 
 def test_missing_transport_is_unknown_not_equal_or_isolated(tmp_path):

@@ -1,0 +1,27 @@
+{
+  "manifest_sha256": "5860121c3dd1b06fe5da79ce2666118b637ee4e659219551cb589b12136a19a6",
+  "phase1_manifest_sha256": "07532443882a8b6bfe3cedd9fa7cd20a0e1d793ed3a4b700546aa6acc1e554f0",
+  "request_sha256": "d2e8eb45916e4cb00a18e55f8a57be710bbdba79967214322d6bb2c5ba184e6d",
+  "runner_sha256": "f75189f1da21b4f310ac72ba4875f519d7e5e374f95854044f2f8eb7dac7ff6a",
+  "runbook_sha256": "008012c6eca92f13b1cffe4ac4bfdce50ef18a4e8cfc09f4aa621c78366c97c3",
+  "models": {
+    "astra": "gpt-6-astra",
+    "gpt55": "gpt-5.5",
+    "opus": "claude-opus-5"
+  },
+  "order": [
+    "astra-1",
+    "gpt55-1",
+    "opus-1",
+    "gpt55-2",
+    "opus-2",
+    "astra-2",
+    "opus-3",
+    "astra-3",
+    "gpt55-3"
+  ],
+  "binary_sha256": {
+    "C:\\Users\\artem\\AppData\\Local\\OpenAI\\Codex\\bin\\7ac07f4ce733f89a\\codex.exe": "3d6ca7085c932b62ef4ee4877e92f15b050fb94b2eb8e6c10a346a06248c6004",
+    "C:\\Users\\artem\\.local\\bin\\claude.exe": "0b35df94c1307004f07b738390bfef8dfca5e9af29aaf6517f305bf086b95b03"
+  }
+}
