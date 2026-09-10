@@ -1,8 +1,10 @@
 # Creative seeding trial
 
-The seed controls an authored brief, not the native sampler. The initial trial found useful
-control of premise ingredients, with substantial repetition still present in how powers were
-used. An opaque identifier alone did not escape the aquatic repair premise in these examples.
+The seed controls an authored brief, not the native sampler. Ingredient briefs changed
+premises but left substantial repetition in how powers were used. Adding an explicit first
+successful use controlled that action in two follow-up responses. An opaque identifier alone
+did not escape the aquatic repair premise in these examples. This is useful steering, not
+a demonstrated source of unrestricted novelty.
 
 ## Initial comparison
 
@@ -47,9 +49,34 @@ early rewards support damaged structures. The two nightmare pilgrims are both na
 Across conditions, nursery communities, threatened passages and negotiated rescue recur.
 The input method has not demonstrated freedom from this broader family of model choices.
 
-The [first-use follow-up](action-followup/RUNBOOK.md) adds a specified combat success to the
-shadow-duelist packet. It is a separate, post-hoc two-response test of a more prescriptive
-author brief. Its registration precedes its calls; it does not replace the initial results.
+## First-use follow-up
+
+The [registered follow-up](action-followup/RUNBOOK.md) added a specified combat success to the
+shadow-duelist packet: coordinate with the shadow's original owner to ambush and capture an
+enemy commander needed alive to identify the revenge target. This was a separate, post-hoc
+test of a more prescriptive author brief, not a replacement for the original results.
+
+The [follow-up audit](action-followup/evidence.json) records two successful calls, two separate
+sessions, different output hashes, identical repeated inputs and configuration, no frozen-file
+drift and 12,901 recorded tokens. Both passed structural validation. Across both phases the
+fourteen calls used 84,192 recorded tokens. No failed response, redraw or downstream book call
+was omitted.
+
+Both full responses are in the local
+[follow-up treatments](../../../runs/invention-seeding-20260910/action-followup/TREATMENTS.md).
+Their `opening` fields contain these inspectable realizations:
+
+| Call | First successful power use | Owner control and remaining repetition |
+| --- | --- | --- |
+| action-1 | The unnamed duelist manifests Tavin's shadow behind a commander and captures him with Tavin's cooperation. | Tavin protects his sister, disrupting the restraint; the duelist changes tactics and takes both. An earlier attempt to lift a beam fails. After the capture, the next gain braces a casualty door, and growth returns to load-bearing supports. |
+| action-2 | Sera Venn manifests Nemi's shadow behind a commander and captures him through a coordinated ambush. | A threat to Nemi's daughter changes her commands and spoils a disarm; Sera takes a wound while they improvise the capture. The ensuing lead and warrant enable escape. Later gains develop shared control and remote shadow movement, with some workshop restoration still present. |
+
+The specified combat success is realized in both examples, and the owner's control affects
+the fight rather than remaining an unused rule. The repeated fallback remains visible in
+action-1. Sera Venn also repeats the name used in ingredients-2-b. Supplying the initial
+success constrains one action; it does not establish broad originality or a reliable success
+rate. This follow-up deliberately prescribed the capture, so the model did not independently
+invent that plot difference. It also was not matched for prompt length.
 
 ## Use and limits
 
@@ -64,6 +91,20 @@ to take new positions from the same seed's finite deck. Distinct positions have 
 ingredient combinations; different labels can overlap. The same label and index reproduce
 the input, not necessarily the model's story. The authored eight-option axes are an explicit
 constraint of this experimental tool, not a representative sample of fiction.
+
+For stronger control, add an explicit first successful use to the brief: what the ability
+accomplishes, why the protagonist wants that result, and how its defining limitation changes
+the action. The exact
+[follow-up brief](../../../runs/invention-seeding-20260910/action-followup/first-use.brief.txt)
+is ready for `concept --brief-file`. This is an optional authored addition; the seed tool itself
+still produces the five ingredient axes. No model selects a packet or a preferred response.
+
+To reproduce the retained integrity summaries without calling a provider:
+
+```bash
+uv run python research/quality-measurement/invention-seeding-20260910/audit.py
+uv run python research/quality-measurement/invention-seeding-20260910/audit.py --action-followup
+```
 
 The initial comparison is not length-matched, uses one requested model and contains only
 three packet combinations. Native receipts do not disclose every backend instruction or the

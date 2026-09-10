@@ -163,8 +163,9 @@ Pass a generated file to `concept --brief-file runs/my-seeds/seed-00000.brief.tx
 usual provider and output settings. Use `--start 3` for the next positions. The same label and
 position reproduce the brief; different positions within one label have different combinations
 from a finite, authored adventure palette. This does not seed the native sampler or guarantee
-unique prose. The [pilot protocol](research/quality-measurement/invention-seeding-20260910/RUNBOOK.md)
-defines the initial comparison with empty briefs and opaque identifiers.
+unique prose. The [pilot results](research/quality-measurement/invention-seeding-20260910/REPORT.md)
+compare empty briefs, opaque identifiers and ingredients, including a follow-up that specifies
+the power's first successful use.
 
 New discovery requests develop an early gain's use toward a personal pursuit and the appeal
 of further capabilities. Advancement follows the chosen magic system through discovery,

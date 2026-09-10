@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -69,6 +70,7 @@ def main() -> None:
         ("ingredients-0-a", "ingredients-0-b"),
         ("ingredients-1-a", "ingredients-1-b"),
         ("ingredients-2-a", "ingredients-2-b"),
+        ("action-1", "action-2"),
     ):
         if left not in traces or right not in traces:
             continue
@@ -136,4 +138,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--action-followup", action="store_true")
+    args = parser.parse_args()
+    if args.action_followup:
+        HERE, LOCAL = HERE / "action-followup", LOCAL / "action-followup"
     main()
