@@ -187,6 +187,8 @@ def load_trace(path: Path) -> Trace:
                 "sampler_requested": request.get("sampler") if request else None,
             }
             for flag in (
+                "output-schema",
+                "json",
                 "ephemeral",
                 "ignore-user-config",
                 "ignore-rules",

@@ -1,11 +1,12 @@
-"""Reproducible creative inputs; entropy and persistence belong to the caller.
+"""Replayable invention inputs; entropy and persistence belong to the caller.
 
-The finite authored palette is an input policy, not a novelty or quality guarantee.
-The earlier standalone tool keeps its original experimental version unchanged.
+Opaque Base64 preprompts do not control the native sampler or guarantee novelty.
+The earlier authored palettes remain available under their original versions.
 """
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
 import math
@@ -15,9 +16,10 @@ from typing import Any
 
 LEGACY_VERSION = "invention-seed.v1"
 VERSION = "invention-seed.v2"
-VERSIONS = (LEGACY_VERSION, VERSION)
-# Concrete world inputs remain an explicit experiment; ordinary seeds use activity guidance.
-DEFAULT_VERSION = LEGACY_VERSION
+PREFIX_VERSION = "invention-seed.v3"
+VERSIONS = (LEGACY_VERSION, VERSION, PREFIX_VERSION)
+DEFAULT_VERSION = PREFIX_VERSION
+PREFIX_BITS = 2048
 PALETTE = {
     "protagonist": (
         "a goblin youth impersonating a celebrated human champion",
@@ -209,13 +211,24 @@ class InventionSeed:
 def make_seed(
     seed: str, index: int = 0, *, actions: bool = True, version: str = DEFAULT_VERSION
 ) -> InventionSeed:
-    """Take a deterministic position in a finite deck, optionally with activity guidance."""
+    """Render a replayable opaque prefix, or an explicitly requested older creative deck."""
     if not isinstance(seed, str) or not seed.strip():
         raise ValueError("Supply a non-empty invention seed")
     if version not in VERSIONS:
         raise ValueError(f"Unknown invention seed version: {version}")
     if isinstance(index, bool) or not isinstance(index, int) or not 0 <= index < COMBINATIONS:
         raise ValueError(f"Seed index must be from 0 to {COMBINATIONS - 1}")
+    if version == PREFIX_VERSION:
+        if index == 0 and seed.isascii() and seed.isdecimal():
+            number_value = int(seed)
+            size = max(PREFIX_BITS // 8, (number_value.bit_length() + 7) // 8)
+            random_bytes = number_value.to_bytes(size, "big")
+        else:
+            # Named labels and alternate positions still support deterministic replay.
+            encoded = json.dumps([version, seed, index], ensure_ascii=False).encode("utf-8")
+            random_bytes = hashlib.shake_256(encoded).digest(PREFIX_BITS // 8)
+        prefix = base64.b64encode(random_bytes).decode("ascii")
+        return InventionSeed(seed, index, version, "base64-prefix", prefix)
 
     def number(label: str) -> int:
         value = json.dumps([LEGACY_VERSION, seed, label], ensure_ascii=False).encode("utf-8")

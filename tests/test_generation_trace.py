@@ -130,6 +130,25 @@ def test_missing_argv_does_not_report_disabled_isolation_flags(tmp_path):
     del data["result"]["raw"]["argv"]
     path.write_text(json.dumps(data), encoding="utf-8")
     assert load_trace(path).configuration["ephemeral"] is None
+    assert load_trace(path).configuration["output_schema"] is None
+
+
+def test_native_schema_constraint_is_distinct_from_json_event_logging(tmp_path):
+    paths = [receipt(tmp_path, name) for name in ("native", "relocated", "prompt_only")]
+    for index, path in enumerate(paths):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        raw = data["result"]["raw"]
+        raw["argv"] = ["--ephemeral", "--json"]
+        if index < 2:
+            raw["argv"] += ["--output-schema", f"/temp/{index}/schema.json"]
+            raw["native_schema"] = {"type": "object"}
+        path.write_text(json.dumps(data), encoding="utf-8")
+    native, relocated, prompt_only = [load_trace(path) for path in paths]
+    assert native.configuration["output_schema"] is True
+    assert prompt_only.configuration["output_schema"] is False
+    assert prompt_only.configuration["json"] is True
+    assert compare(native, relocated)["configuration_equal"] is True
+    assert compare(native, prompt_only)["configuration_equal"] is False
 
 
 def test_show_opens_complete_field_but_respects_withheld_inputs(tmp_path, capsys):

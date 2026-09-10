@@ -18,7 +18,7 @@ from litharness.domain.generation import CompletionRequest
 from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v9"
+PROFILE = "writer.discovery.v10"
 VERSION = "magical-discovery.v5"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
@@ -179,7 +179,7 @@ def render_request(
     )
     if person in ("first", "third"):
         prompt += f"\nNarrative person: {person}."
-    if seed is not None:
+    if seed is not None and seed.mode != "base64-prefix":
         prompt += (
             "\n\nCreative starting points for unspecified choices:\n"
             "The author's explicit brief takes precedence. Adapt or omit any conflicting "
@@ -197,8 +197,11 @@ def render_request(
             + json.dumps(list(distinct_from), ensure_ascii=False)
             + "\n\n" + prompt
         )
+    system = f"{writer.render()}\n\n{_TASK}" if writer else _TASK
+    if seed is not None and seed.mode == "base64-prefix":
+        system = seed.brief + "\n\n" + system
     return CompletionRequest(
-        system=f"{writer.render()}\n\n{_TASK}" if writer else _TASK,
+        system=system,
         prompt=prompt,
         schema=SCHEMA,
         profile=PROFILE,

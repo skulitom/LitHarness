@@ -23,6 +23,7 @@ import csv
 import dataclasses
 import json
 import os
+import secrets
 import shutil
 import sqlite3
 import sys
@@ -2215,10 +2216,15 @@ def cmd_concept(args: argparse.Namespace) -> int:
     ]
     seed = None
     if not getattr(args, "no_seed", False):
-        label = args.seed if getattr(args, "seed", None) is not None else uuid.uuid4().hex
+        seed_version = getattr(args, "seed_version", None) or invention_mod.DEFAULT_VERSION
+        label = getattr(args, "seed", None)
+        if label is None:
+            label = (
+                str(secrets.randbits(invention_mod.PREFIX_BITS))
+                if seed_version == invention_mod.PREFIX_VERSION else uuid.uuid4().hex
+            )
         seed = invention_mod.make_seed(
-            label, getattr(args, "seed_index", 0),
-            version=getattr(args, "seed_version", None) or invention_mod.DEFAULT_VERSION,
+            label, getattr(args, "seed_index", 0), version=seed_version,
         )
     elif getattr(args, "seed_index", 0) or getattr(args, "seed_version", None):
         raise ValueError("--seed-index and --seed-version require seeding")
@@ -6440,14 +6446,14 @@ def build_parser() -> argparse.ArgumentParser:
     concept.add_argument("--brief-file", help="the brief as a file, or - for stdin")
     concept_seed = concept.add_mutually_exclusive_group()
     concept_seed.add_argument(
-        "--seed", help="reproduce creative starting points from this label; default: a fresh seed",
+        "--seed", help="replay invention input from a number or label; default: fresh entropy",
     )
     concept_seed.add_argument(
-        "--no-seed", action="store_true", help="omit creative starting points",
+        "--no-seed", action="store_true", help="omit the invention seed",
     )
     concept.add_argument(
         "--seed-index", type=int, default=0,
-        help="position in the seed's ingredient deck (default: 0)",
+        help="position for deterministic seed replay (default: 0)",
     )
     concept.add_argument(
         "--seed-version", choices=invention_mod.VERSIONS,

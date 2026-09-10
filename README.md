@@ -152,31 +152,34 @@ setting and core power premise. These references do not enter later development 
 creation; the saved discovery request records them. This supplies a novelty constraint, not
 an automatic judgment that the returned concept is distinct enough.
 
-New `concept` commands automatically choose a fresh creative seed. It supplies starting
-ingredients, a first magical success and further growth in the chosen activity. Explicit
-author briefs take precedence over conflicting ingredients. The original author brief remains
-separate from the seed; generated story material carries the realized choices downstream.
-The default remains `invention-seed.v1`. Explicit `--seed-version invention-seed.v2` experiments
-with a concrete habitat, embodied inhabitants, a local rule and a contested opportunity.
-The [world-seeding comparison](research/quality-measurement/world-seeding-20260911/REPORT.md)
-found changed local mechanics but persistent plot repetition and later infrastructure powers;
-v2 remains opt-in.
+New `concept` commands generate a fresh random integer from 2,048 random bits, encode its
+unsigned big-endian bytes as Base64, and prepend that text to the invention system message.
+This default is `invention-seed.v3`, following the operator's intended meaning of seeding.
+The prefix contains no authored story ingredients or instructions about using the random text.
+The author brief stays separate. The prefix is used for first invention; later stages use
+the realized story and keep its seed receipt as provenance.
 
 With `--out`, `invention-seed.json` is written before the first model call, and the completed
-`concept.json` also retains the seed, version, deck position and exact creative brief. The
+`concept.json` also retains the integer or label, version, position and exact prefix. The
 seed is printed on stderr, including with `--json`. Development retries reuse the same
 invention. Reproduce a brief with its recorded `--seed` and `--seed-version`, and take another
 position with `--seed-index`:
 
 ```bash
-uv run litharness concept --seed my-series --seed-version invention-seed.v1 --seed-index 3 --out runs/my-concept
+uv run litharness concept --seed my-series --seed-version invention-seed.v3 --out runs/my-concept
 ```
 
 Use the usual provider/database options for generation. `--no-seed` is an explicit unseeded
-control. A fresh seed does not guarantee a globally unique story: the palette is finite,
-different labels can choose overlapping ingredients, and this does not control the native
-sampler. Distinct positions under one label have distinct combinations.
-Use the recorded version when replaying a seed. The
+control. At index 0, decimal seeds encode that exact integer using at least 256 bytes; larger
+integers produce longer prefixes. Named labels or alternate positions deterministically derive
+256 bytes with SHAKE-256. Use the stored decimal integer for exact replay of a default draw.
+This changes model input, not the provider's sampling seed, and does not guarantee unique
+prose or reproducible output. Use the recorded version when replaying a seed.
+
+Explicit `--seed-version invention-seed.v1` selects the previous ingredient/activity palette;
+v2 adds concrete world conditions. Those were a different interpretation of seeding. The
+[world-seeding comparison](research/quality-measurement/world-seeding-20260911/REPORT.md)
+records their persistent plot repetition. The
 [experimental tool](tools/invention_seed.py) retains its original palette/version for replay of
 the [initial pilot](research/quality-measurement/invention-seeding-20260910/REPORT.md).
 The [automatic-seeding experiment](research/quality-measurement/automatic-seeding-20260910/REPORT.md)

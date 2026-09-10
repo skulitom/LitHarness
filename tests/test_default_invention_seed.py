@@ -1,8 +1,8 @@
 """Default creative inputs, replay, author precedence and provenance through real CLI stages."""
 
+import base64
 import json
 from dataclasses import replace
-from types import SimpleNamespace
 
 import pytest
 
@@ -11,6 +11,8 @@ from litharness.application import concept, discovery, world_agent
 from litharness.domain.invention import (
     COMBINATIONS,
     LEGACY_VERSION,
+    PREFIX_BITS,
+    PREFIX_VERSION,
     VERSION,
     InventionSeed,
     make_seed,
@@ -19,13 +21,13 @@ from tests.test_concept import _discovery, _example, _scripted
 
 
 def test_seed_deck_and_activity_extension_are_repeatable():
-    seed = make_seed("deck", 7)
-    assert seed == make_seed("deck", 7)
+    seed = make_seed("deck", 7, version=LEGACY_VERSION)
+    assert seed == make_seed("deck", 7, version=LEGACY_VERSION)
     ingredients = make_seed("deck", 7, actions=False, version=LEGACY_VERSION)
     assert seed.brief.startswith(ingredients.brief)
     assert "First magical success:" in seed.brief
     assert "Further power growth:" in seed.brief
-    assert len({make_seed("deck", i).brief for i in range(100)}) == 100
+    assert len({make_seed("deck", i, version=LEGACY_VERSION).brief for i in range(100)}) == 100
     for index in (-1, COMBINATIONS, True):
         with pytest.raises(ValueError):
             make_seed("deck", index)
@@ -41,7 +43,6 @@ def test_world_seed_extends_the_same_activity_and_keeps_legacy_replay():
         "7d0c451f231b7e926592f53e91bac556935b1c861353736fee6c52079ee3fb34"
     )
     current = make_seed(label, version=VERSION)
-    assert make_seed(label) == old
     assert old.version == LEGACY_VERSION
     assert current.version == VERSION
     assert current.brief.startswith(old.brief + "\nConcrete world starting points:")
@@ -55,6 +56,24 @@ def test_world_seed_extends_the_same_activity_and_keeps_legacy_replay():
     )
     with pytest.raises(ValueError, match="Unknown invention seed version"):
         make_seed(label, version="invention-seed.v999")
+
+
+def test_base64_prefix_encodes_the_integer_and_changes_only_the_system_prefix():
+    for bits in (PREFIX_BITS, 8192):
+        number = (1 << (bits - 1)) + 731
+        seed = make_seed(str(number))
+        assert seed.version == PREFIX_VERSION
+        assert seed.mode == "base64-prefix"
+        decoded = base64.b64decode(seed.brief, validate=True)
+        assert len(decoded) == bits // 8
+        assert int.from_bytes(decoded, "big") == number
+        control = discovery.render_request("The author's own story.")
+        prefixed = discovery.render_request("The author's own story.", seed=seed)
+        assert prefixed == replace(control, system=seed.brief + "\n\n" + control.system)
+        assert prefixed.effective_system.startswith(seed.brief + "\n\n")
+    named = make_seed("replay-label", 3)
+    assert named == make_seed("replay-label", 3)
+    assert named != make_seed("replay-label", 4)
 
 
 def test_seed_receipt_keeps_older_bytes_and_refuses_missing_or_corrupt_data():
@@ -72,10 +91,11 @@ def test_seed_receipt_keeps_older_bytes_and_refuses_missing_or_corrupt_data():
 def test_default_concepts_receive_fresh_seeds_and_preserve_json_output(
     tmp_path, monkeypatch, capsys
 ):
-    labels = iter(("first-default", "second-default"))
-    monkeypatch.setattr(
-        cli, "uuid", SimpleNamespace(uuid4=lambda: SimpleNamespace(hex=next(labels)))
-    )
+    numbers = iter(((1 << (PREFIX_BITS - 1)) + 7, (1 << (PREFIX_BITS - 1)) + 101))
+    def draw(bits):
+        assert bits == PREFIX_BITS
+        return next(numbers)
+    monkeypatch.setattr(cli.secrets, "randbits", draw)
     retained, requests = [], []
     for index in range(2):
         call = _scripted(_discovery(), _example(), {"edits": []})
@@ -96,19 +116,20 @@ def test_default_concepts_receive_fresh_seeds_and_preserve_json_output(
         )
         printed = json.loads(capsys.readouterr().out)
         seed = InventionSeed.from_payload(json.loads((out / "invention-seed.json").read_text()))
-        assert seed.version == LEGACY_VERSION
+        assert seed.version == PREFIX_VERSION
         stored = concept.Concept.from_text((out / "concept.json").read_text())
         assert stored.invention_seed == seed
         assert printed["invention_seed"] == seed.to_jsonable()
-        assert seed.brief in call.seen[0].prompt
-        assert all(seed.brief not in r.prompt for r in call.seen[1:])
+        assert call.seen[0].system.startswith(seed.brief + "\n\n")
+        assert all(seed.brief not in r.effective_system + r.prompt for r in call.seen[1:])
         retained.append(seed)
         requests.append(call.seen[0])
     assert retained[0].seed != retained[1].seed
-    assert requests[0].prompt != requests[1].prompt
+    assert requests[0].system != requests[1].system
+    assert requests[0].prompt == requests[1].prompt
 
 
-@pytest.mark.parametrize("version", [LEGACY_VERSION, VERSION])
+@pytest.mark.parametrize("version", [LEGACY_VERSION, VERSION, PREFIX_VERSION])
 def test_explicit_seed_replays_and_mechanical_retries_keep_one_invention(
     tmp_path, monkeypatch, version
 ):
@@ -143,8 +164,9 @@ def test_explicit_seed_replays_and_mechanical_retries_keep_one_invention(
     assert requests[0] == requests[1]
 
 
+@pytest.mark.parametrize("version", [LEGACY_VERSION, VERSION, PREFIX_VERSION])
 def test_author_brief_wins_and_seed_receipt_never_becomes_an_editable_instruction(
-    tmp_path, monkeypatch
+    tmp_path, monkeypatch, version
 ):
     label = "SEED_LABEL_MUST_NOT_ENTER_PROMPTS"
     # The development model cannot replace the caller's receipt.
@@ -163,6 +185,8 @@ def test_author_brief_wins_and_seed_receipt_never_becomes_an_editable_instructio
                 brief,
                 "--seed",
                 label,
+                "--seed-version",
+                version,
                 "--out",
                 str(out),
             ]
@@ -170,12 +194,15 @@ def test_author_brief_wins_and_seed_receipt_never_becomes_an_editable_instructio
         == cli.EXIT_OK
     )
     assert brief in call.seen[0].prompt
-    assert "author's explicit brief takes precedence" in call.seen[0].prompt
-    assert "Adapt or omit any conflicting ingredient" in call.seen[0].prompt
+    if version != PREFIX_VERSION:
+        assert "author's explicit brief takes precedence" in call.seen[0].prompt
+        assert "Adapt or omit any conflicting ingredient" in call.seen[0].prompt
+    else:
+        assert "Creative starting points" not in call.seen[0].prompt
     assert all(label not in r.prompt and label not in (r.system or "") for r in call.seen)
     saved = concept.Concept.from_text((out / "concept.json").read_text())
     assert saved.author_brief == brief
-    assert saved.invention_seed == make_seed(label)
+    assert saved.invention_seed == make_seed(label, version=version)
     assert "MODEL_FORGED_SEED" not in saved.to_text()
     editable, protected = saved.precision_material()
     assert not any(k.startswith("invention_seed") for k in editable | protected)
