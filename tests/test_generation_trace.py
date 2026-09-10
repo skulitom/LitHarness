@@ -1,0 +1,123 @@
+"""Recorded inputs remain distinct from transport, missing evidence and fresh draws."""
+
+import json
+
+from tools.generation_trace import compare, load_trace, main, search
+
+
+def receipt(tmp_path, name="one", *, session="s1", extra="", text="A water wheel."):
+    path = tmp_path / f"{name}.json"
+    raw = {
+        "provider": "codex",
+        "requested_model": "test-model",
+        "system": "Invent." + extra,
+        "prompt": "A story.",
+        "native_schema": None,
+        "argv": ["--ephemeral"],
+        "settings": {"model_instructions_file": f"/temp/{name}", "features.memories": False},
+        "events": [{"type": "thread.started", "thread_id": session}],
+    }
+    data = {
+        "request": {"profile": "discovery", "system": "Invent.", "prompt": "A story."},
+        "result": {"text": text, "model": "test-model", "raw": raw},
+    }
+    path.write_text(json.dumps(data), encoding="utf-8")
+    return path
+
+
+def test_comparison_locates_transport_added_material(tmp_path):
+    left = load_trace(receipt(tmp_path))
+    right = load_trace(receipt(tmp_path, "two", extra=" Repair a pump.", session="s2"))
+    result = compare(left, right)
+    assert result["fields"]["application.system"]["equal"] is True
+    assert result["fields"]["transport.system"]["equal"] is False
+    assert result["configuration_equal"] is True
+    assert result["same_native_session"] is False
+    assert "Repair" not in json.dumps(result)
+
+
+def test_identical_outputs_from_fresh_sessions_are_not_deduplicated(tmp_path, capsys):
+    one = receipt(tmp_path)
+    two = receipt(tmp_path, "two", session="s2")
+    assert main(["inventory", str(one), str(two)]) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert len(result["traces"]) == 2
+    assert result["traces"][0]["sessions"] != result["traces"][1]["sessions"]
+
+
+def test_missing_transport_is_unknown_not_equal_or_isolated(tmp_path):
+    path = tmp_path / "legacy.json"
+    path.write_text(
+        json.dumps(
+            {
+                "profile": "discovery",
+                "request": {"system": "Invent.", "prompt": "A story."},
+                "response": "A water wheel.",
+            }
+        ),
+        encoding="utf-8",
+    )
+    left = load_trace(path)
+    result = compare(left, load_trace(receipt(tmp_path)))
+    assert result["configuration_equal"] is None
+    assert result["same_native_session"] is None
+    assert result["fields"]["transport.system"]["equal"] is None
+    assert left.input_digest("transport") is None
+
+
+def test_search_locates_output_and_does_not_invent_input_match(tmp_path):
+    import re
+
+    trace = load_trace(receipt(tmp_path, text="First.\nA water wheel."))
+    hits = search(trace, re.compile("water"))
+    assert len(hits) == 1 and hits[0]["field"] == "output.text"
+    assert hits[0]["line"] == 2
+    assert "excerpt" not in hits[0]
+    assert trace.fields["output.text"][hits[0]["start"] : hits[0]["end"]] == "water"
+    assert "water" in search(trace, re.compile("water"), context=5)[0]["excerpt"]
+
+
+def test_failed_native_trace_retains_output_and_session_from_stdout(tmp_path):
+    path = receipt(tmp_path)
+    data = json.loads(path.read_text(encoding="utf-8"))["result"]["raw"]
+    data["stdout"] = "\n".join(json.dumps(e) for e in data.pop("events"))
+    data["final_text"] = "Retained output."
+    data["failure"] = {"message": "rejected"}
+    path.write_text(json.dumps(data), encoding="utf-8")
+    trace = load_trace(path)
+    assert trace.sessions == ["s1"]
+    assert trace.fields["output.text"] == "Retained output."
+
+
+def test_marked_exemplar_input_is_withheld(tmp_path):
+    path = receipt(tmp_path)
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data["contains_exemplar_material"] = True
+    path.write_text(json.dumps(data), encoding="utf-8")
+    trace = load_trace(path)
+    assert "application.system" not in trace.fields
+    assert "transport.system" not in trace.fields
+    assert "withheld" in " ".join(trace.gaps)
+
+
+def test_prepared_requests_expose_parameter_differences_without_inventing_output(tmp_path):
+    one, two = tmp_path / "one.json", tmp_path / "two.json"
+    request = {"system": "Invent.", "prompt": "A story.", "max_output_tokens": 200}
+    one.write_text(json.dumps(request), encoding="utf-8")
+    two.write_text(json.dumps({**request, "max_output_tokens": 400}), encoding="utf-8")
+    left, right = load_trace(one), load_trace(two)
+    result = compare(left, right)
+    assert result["fields"]["application.parameters"]["equal"] is False
+    assert "output.text" not in left.fields
+    assert result["configuration_equal"] is None
+
+
+def test_bad_and_missing_files_are_reported_without_creating_them(tmp_path, capsys):
+    missing = tmp_path / "missing.json"
+    assert main(["inventory", str(missing)]) == 2
+    assert not missing.exists()
+    capsys.readouterr()
+    bad = tmp_path / "discovery-trace.json"
+    bad.write_text("not JSON", encoding="utf-8")
+    assert main(["inventory", str(tmp_path)]) == 1
+    assert json.loads(capsys.readouterr().out)["errors"]

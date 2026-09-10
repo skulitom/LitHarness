@@ -175,6 +175,24 @@ three make `why` exit 1; missing current plan text alone does not.
 
 ## Report the evidence
 
+For repeated concepts or suspected input reuse, inspect saved generation files with the
+store-free [generation trace tool](../../../tools/generation_trace.py). It accepts CLI
+discovery traces, complete call receipts, and native Codex transport traces. Inventory hashes
+and search locations are text-free by default; explicit excerpt/diff options reveal text.
+
+```powershell
+uv run python tools/generation_trace.py inventory runs
+uv run python tools/generation_trace.py search runs --query "water"
+uv run python tools/generation_trace.py compare first-call.json second-call.json
+```
+
+The default directory pattern finds discovery traces only. Use the tool's help to select
+other trace files. Compare application and transport layers separately. Missing transport
+records leave session/configuration claims unanswered. Mirrored trace files are not fresh
+calls, and fresh sessions do not prove diverse premises. A search match locates recorded text;
+it does not establish the cause of a model choice. Keep excerpts and experimental prompts
+under ignored run roots; this tool never feeds diagnostics into generation.
+
 Name the scene, job or decision and the rows or stages inspected. Quote only the needed
 permitted excerpt, distinguish a recorded fact from an inference, and name uncaptured or
 withheld evidence. Do not turn a diagnostic into a literary score or an automatic story edit.

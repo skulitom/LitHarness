@@ -1,0 +1,28 @@
+{
+  "manifest_sha256": "07532443882a8b6bfe3cedd9fa7cd20a0e1d793ed3a4b700546aa6acc1e554f0",
+  "source_revision": "d5ccb9ec7a244e8a573a0c26612373672d3c2bd7",
+  "runbook_sha256": "797558bbd1bc54436cace8dbdf5aa626ee6fd3c429c08b661529961441604fa2",
+  "runner_sha256": "bdc790f96596bf5a4fae7ed10f0c1ad90e92a34acdb464831932a5b7c5ee8e05",
+  "request_sha256": {
+    "full-1": "d17c865b362042dc2d36d97715d5b91e6024ed6c396f1d88410f6427d51cf0c4",
+    "minimal-1": "d2e8eb45916e4cb00a18e55f8a57be710bbdba79967214322d6bb2c5ba184e6d",
+    "minimal-2": "d2e8eb45916e4cb00a18e55f8a57be710bbdba79967214322d6bb2c5ba184e6d",
+    "full-2": "d17c865b362042dc2d36d97715d5b91e6024ed6c396f1d88410f6427d51cf0c4",
+    "minimal-3": "d2e8eb45916e4cb00a18e55f8a57be710bbdba79967214322d6bb2c5ba184e6d",
+    "full-3": "d17c865b362042dc2d36d97715d5b91e6024ed6c396f1d88410f6427d51cf0c4",
+    "full-4": "d17c865b362042dc2d36d97715d5b91e6024ed6c396f1d88410f6427d51cf0c4",
+    "minimal-4": "d2e8eb45916e4cb00a18e55f8a57be710bbdba79967214322d6bb2c5ba184e6d"
+  },
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "order": [
+    "full-1",
+    "minimal-1",
+    "minimal-2",
+    "full-2",
+    "minimal-3",
+    "full-3",
+    "full-4",
+    "minimal-4"
+  ]
+}
