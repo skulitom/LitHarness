@@ -1,0 +1,437 @@
+{
+  "schema": "litharness.volume-screen-audit.v1",
+  "analysis": "Feasibility and record reconciliation only. No allocation effect computed.",
+  "registration_path": "research/quality-measurement/cost-that-bites/PREREG-volume-screen.md",
+  "registration_sha256": "d67ed35c34a28d28fb5094b940ba7e935709e345f27af1ab87663a328d0f2ae6",
+  "derivation_sha256": "0912b603def07c89dd9525d8964ea68209e3489cc90a2af247e43b0a8b1b6826",
+  "helper_sha256": {
+    "feed_core.py": "a72be9a3bf40212a61c3c7a59bc30521edc803167517142d317be8bc439b735a",
+    "feed_session.py": "811ac25fb1a5a320e6bf8303d17b7fa1268c7292ad630141995093f602fe2c38",
+    "bcr.py": "f7bc862c97530fb34d75b645b2e995cfd9e52e80c24591118e1c603d4f3d42cb",
+    "elicit.py": "5d7bd2305ffbc8c8fcb0bdbb3535cf0d22a2a04fc2d71b3bdddf5d646689b5cb"
+  },
+  "untracked_inputs": [
+    "research/quality-measurement/cost-that-bites/raw-volume-screen-a-good-take.jsonl",
+    "research/quality-measurement/cost-that-bites/raw-volume-screen-copy-costs-a-hand.jsonl",
+    "research/quality-measurement/cost-that-bites/raw-volume-screen-patch-notes-for-earth.jsonl",
+    "research/quality-measurement/cost-that-bites/raw-volume-screen-reappraisal.jsonl",
+    "research/quality-measurement/cost-that-bites/raw-volume-screen-what-takes.jsonl",
+    "research/quality-measurement/cost-that-bites/results-volume-screen-a-good-take.json",
+    "research/quality-measurement/cost-that-bites/results-volume-screen-copy-costs-a-hand.json",
+    "research/quality-measurement/cost-that-bites/results-volume-screen-nineteen-floors-down.json",
+    "research/quality-measurement/cost-that-bites/results-volume-screen-patch-notes-for-earth.json",
+    "research/quality-measurement/cost-that-bites/results-volume-screen-reappraisal.json",
+    "research/quality-measurement/cost-that-bites/results-volume-screen-the-game-nobody-plays-anymore.json",
+    "research/quality-measurement/cost-that-bites/results-volume-screen-the-line-nobody-else-has.json",
+    "research/quality-measurement/cost-that-bites/results-volume-screen-what-takes.json"
+  ],
+  "records": [
+    {
+      "book": "a-good-take",
+      "result_path": "research/quality-measurement/cost-that-bites/results-volume-screen-a-good-take.json",
+      "result_sha256": "616157bc06c3224b2e80e71d5000fe9402862873219dcc988d4b4b1c93aa92b4",
+      "chapters_reported": 8,
+      "chunks_reported": {
+        "intact": 24,
+        "sham": 24,
+        "shuffled": 25
+      },
+      "reading_reported": "CARRIES",
+      "checks": {
+        "every_variant_clears_floor": true,
+        "three_versions": true,
+        "raw_transport_clean": true,
+        "raw_economics_match_registration": true,
+        "raw_call_count_matches_ledger": true,
+        "no_reported_transport_failures": true,
+        "three_scorable_sessions_reported": true,
+        "no_unmatched_raw_sessions": true,
+        "usage_matches_raw": true
+      },
+      "provenance_limits": [
+        "No source-text or competitor digest manifest is present in the result.",
+        "Raw cache records contain request keys, not the full frozen requests.",
+        "No per-call timestamps establish when each response was obtained.",
+        "Registration specifies draw 6 with three chapters; no expansion amendment found."
+      ],
+      "raw_path": "research/quality-measurement/cost-that-bites/raw-volume-screen-a-good-take.jsonl",
+      "raw_sha256": "bf07cb6715fa6cf8cdd544813e88d6a711cf350f062fca919d41c65c6d6a31d8",
+      "raw_calls": 24,
+      "models": [
+        "claude-haiku-4-5"
+      ],
+      "sessions": [
+        {
+          "version": "intact",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        },
+        {
+          "version": "sham",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        },
+        {
+          "version": "shuffled",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        }
+      ],
+      "equivalent_usd": 0.92739,
+      "transport_failures_reported": 0
+    },
+    {
+      "book": "copy-costs-a-hand",
+      "result_path": "research/quality-measurement/cost-that-bites/results-volume-screen-copy-costs-a-hand.json",
+      "result_sha256": "1aec9770afe298d24489ddb7df6929ca06d96d7c80021644e6fa4c9805bf381a",
+      "chapters_reported": 3,
+      "chunks_reported": {
+        "intact": 18,
+        "sham": 18,
+        "shuffled": 18
+      },
+      "reading_reported": "CARRIES",
+      "checks": {
+        "every_variant_clears_floor": true,
+        "three_versions": true,
+        "raw_transport_clean": true,
+        "raw_economics_match_registration": true,
+        "raw_call_count_matches_ledger": true,
+        "no_reported_transport_failures": true,
+        "three_scorable_sessions_reported": true,
+        "no_unmatched_raw_sessions": true,
+        "usage_matches_raw": true
+      },
+      "provenance_limits": [
+        "No source-text or competitor digest manifest is present in the result.",
+        "Raw cache records contain request keys, not the full frozen requests.",
+        "No per-call timestamps establish when each response was obtained.",
+        "Registration specifies draw 6 with three chapters; no expansion amendment found."
+      ],
+      "raw_path": "research/quality-measurement/cost-that-bites/raw-volume-screen-copy-costs-a-hand.jsonl",
+      "raw_sha256": "b08961ea6059b7a79873968395ca2b178fb8f0ca9d0f9eb0588d19cf99843cfe",
+      "raw_calls": 26,
+      "models": [
+        "claude-haiku-4-5"
+      ],
+      "sessions": [
+        {
+          "version": "intact",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        },
+        {
+          "version": "sham",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        },
+        {
+          "version": "shuffled",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        }
+      ],
+      "equivalent_usd": 1.015566,
+      "transport_failures_reported": 0
+    },
+    {
+      "book": "nineteen-floors-down",
+      "result_path": "research/quality-measurement/cost-that-bites/results-volume-screen-nineteen-floors-down.json",
+      "result_sha256": "482708c5450151bcad85ba0a220895e6cad3ac58d5e55017213d2daed434a9e1",
+      "chapters_reported": 1,
+      "chunks_reported": {
+        "intact": 6
+      },
+      "reading_reported": "TOO_SHORT",
+      "checks": {
+        "intact_below_registered_floor": true,
+        "no_saved_sessions": true
+      },
+      "provenance_limits": [
+        "No source-text or competitor digest manifest is present in the result.",
+        "Raw cache records contain request keys, not the full frozen requests.",
+        "No per-call timestamps establish when each response was obtained.",
+        "Registration specifies draw 6 with three chapters; no expansion amendment found."
+      ]
+    },
+    {
+      "book": "patch-notes-for-earth",
+      "result_path": "research/quality-measurement/cost-that-bites/results-volume-screen-patch-notes-for-earth.json",
+      "result_sha256": "b8817d17d5b34aed6771ff1d06cf0aead3a052109fba2f97bbd57783a05433b0",
+      "chapters_reported": 2,
+      "chunks_reported": {
+        "intact": 12,
+        "sham": 12,
+        "shuffled": 12
+      },
+      "reading_reported": "CARRIES",
+      "checks": {
+        "every_variant_clears_floor": true,
+        "three_versions": true,
+        "raw_transport_clean": true,
+        "raw_economics_match_registration": true,
+        "raw_call_count_matches_ledger": true,
+        "no_reported_transport_failures": true,
+        "three_scorable_sessions_reported": true,
+        "no_unmatched_raw_sessions": true,
+        "usage_matches_raw": true
+      },
+      "provenance_limits": [
+        "No source-text or competitor digest manifest is present in the result.",
+        "Raw cache records contain request keys, not the full frozen requests.",
+        "No per-call timestamps establish when each response was obtained.",
+        "Registration specifies draw 6 with three chapters; no expansion amendment found."
+      ],
+      "raw_path": "research/quality-measurement/cost-that-bites/raw-volume-screen-patch-notes-for-earth.jsonl",
+      "raw_sha256": "372d109a17b674b7f8c28025fe681b5076fe56dbfac1c9ea9952d0435aea6cc2",
+      "raw_calls": 26,
+      "models": [
+        "claude-haiku-4-5"
+      ],
+      "sessions": [
+        {
+          "version": "intact",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        },
+        {
+          "version": "sham",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        },
+        {
+          "version": "shuffled",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        }
+      ],
+      "equivalent_usd": 1.033737,
+      "transport_failures_reported": 0
+    },
+    {
+      "book": "reappraisal",
+      "result_path": "research/quality-measurement/cost-that-bites/results-volume-screen-reappraisal.json",
+      "result_sha256": "b59946749d2bb4674b3b5c078895b07c088ff7dba4e885f9dbafeb53bab75779",
+      "chapters_reported": 2,
+      "chunks_reported": {
+        "intact": 25,
+        "sham": 25,
+        "shuffled": 25
+      },
+      "reading_reported": "CARRIES",
+      "checks": {
+        "every_variant_clears_floor": true,
+        "three_versions": true,
+        "raw_transport_clean": true,
+        "raw_economics_match_registration": true,
+        "raw_call_count_matches_ledger": true,
+        "no_reported_transport_failures": true,
+        "three_scorable_sessions_reported": true,
+        "no_unmatched_raw_sessions": true,
+        "usage_matches_raw": true
+      },
+      "provenance_limits": [
+        "No source-text or competitor digest manifest is present in the result.",
+        "Raw cache records contain request keys, not the full frozen requests.",
+        "No per-call timestamps establish when each response was obtained.",
+        "Registration specifies draw 6 with three chapters; no expansion amendment found."
+      ],
+      "raw_path": "research/quality-measurement/cost-that-bites/raw-volume-screen-reappraisal.jsonl",
+      "raw_sha256": "f35cb70eec8ffa11c76d1c83778cd85077f4597a8bb2956bb563e36a7927b4b1",
+      "raw_calls": 24,
+      "models": [
+        "claude-haiku-4-5"
+      ],
+      "sessions": [
+        {
+          "version": "intact",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        },
+        {
+          "version": "sham",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        },
+        {
+          "version": "shuffled",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        }
+      ],
+      "equivalent_usd": 0.947769,
+      "transport_failures_reported": 0
+    },
+    {
+      "book": "the-game-nobody-plays-anymore",
+      "result_path": "research/quality-measurement/cost-that-bites/results-volume-screen-the-game-nobody-plays-anymore.json",
+      "result_sha256": "b08ceebaeb19719487b2c4188df880741fb77bf0339f83c4ff8082fffced0329",
+      "chapters_reported": 1,
+      "chunks_reported": {
+        "intact": 6
+      },
+      "reading_reported": "TOO_SHORT",
+      "checks": {
+        "intact_below_registered_floor": true,
+        "no_saved_sessions": true
+      },
+      "provenance_limits": [
+        "No source-text or competitor digest manifest is present in the result.",
+        "Raw cache records contain request keys, not the full frozen requests.",
+        "No per-call timestamps establish when each response was obtained.",
+        "Registration specifies draw 6 with three chapters; no expansion amendment found."
+      ]
+    },
+    {
+      "book": "the-line-nobody-else-has",
+      "result_path": "research/quality-measurement/cost-that-bites/results-volume-screen-the-line-nobody-else-has.json",
+      "result_sha256": "bb27f964a31a6e01707583cc6e61d6ae2d45bf7d40c61e49fe49d3f08042ccb8",
+      "chapters_reported": 1,
+      "chunks_reported": {
+        "intact": 5
+      },
+      "reading_reported": "TOO_SHORT",
+      "checks": {
+        "intact_below_registered_floor": true,
+        "no_saved_sessions": true
+      },
+      "provenance_limits": [
+        "No source-text or competitor digest manifest is present in the result.",
+        "Raw cache records contain request keys, not the full frozen requests.",
+        "No per-call timestamps establish when each response was obtained.",
+        "Registration specifies draw 6 with three chapters; no expansion amendment found."
+      ]
+    },
+    {
+      "book": "what-takes",
+      "result_path": "research/quality-measurement/cost-that-bites/results-volume-screen-what-takes.json",
+      "result_sha256": "67e2b831b0a0518462ef88de09296a6d4f9ece3efc7c9db5854dc9f94bc0a43f",
+      "chapters_reported": 2,
+      "chunks_reported": {
+        "intact": 24,
+        "sham": 24,
+        "shuffled": 24
+      },
+      "reading_reported": "CARRIES",
+      "checks": {
+        "every_variant_clears_floor": true,
+        "three_versions": true,
+        "raw_transport_clean": true,
+        "raw_economics_match_registration": true,
+        "raw_call_count_matches_ledger": true,
+        "no_reported_transport_failures": true,
+        "three_scorable_sessions_reported": true,
+        "no_unmatched_raw_sessions": true,
+        "usage_matches_raw": true
+      },
+      "provenance_limits": [
+        "No source-text or competitor digest manifest is present in the result.",
+        "Raw cache records contain request keys, not the full frozen requests.",
+        "No per-call timestamps establish when each response was obtained.",
+        "Registration specifies draw 6 with three chapters; no expansion amendment found."
+      ],
+      "raw_path": "research/quality-measurement/cost-that-bites/raw-volume-screen-what-takes.jsonl",
+      "raw_sha256": "4106a7d88d303c38bb08dc8aaabba16d0e0a64b16aaae75db8a2c48c0c007a3a",
+      "raw_calls": 24,
+      "models": [
+        "claude-haiku-4-5"
+      ],
+      "sessions": [
+        {
+          "version": "intact",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        },
+        {
+          "version": "sham",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        },
+        {
+          "version": "shuffled",
+          "actions_match_raw": true,
+          "steps_contiguous": true,
+          "scorable": true,
+          "no_exit_note": true,
+          "registered_budget_spent": true,
+          "registered_prices": true,
+          "raw_session_metadata_matches": true
+        }
+      ],
+      "equivalent_usd": 0.940705,
+      "transport_failures_reported": 0
+    }
+  ],
+  "failed_reconciliation_checks": [],
+  "provenance_verified": false
+}

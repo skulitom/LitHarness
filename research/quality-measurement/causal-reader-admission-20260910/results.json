@@ -1,0 +1,1421 @@
+{
+  "schema": "litharness.causal-reader-admission.v1",
+  "model_calls": 0,
+  "driver_sha256": "0b08db9351cace11e186e103c09df5383de5710216fe22f7b85f80a02a8cf98a",
+  "runbook_sha256": "3d135d607b124e963e99bfdbfb1ce0a9459b5b848d5be3b45c8ad907a9d3a904",
+  "pipeline_source": "runs\\continuation-baseline-20260910\\source",
+  "salience_sha256": "1589d262d7e2e2da3c9bb15e0f1043d3cf62ecc0547fa7ded0609e7007f6c430",
+  "loader_sha256": "2d8329bd8ae3f07035e5be8416c7a928518c6590b31ddadfd698b10564dc118a",
+  "chunker_sha256": "f7bc862c97530fb34d75b645b2e995cfd9e52e80c24591118e1c603d4f3d42cb",
+  "sources": [
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-00.db",
+      "branches": [
+        {
+          "book_id": "0f5fb005-b02d-49a8-957b-59b92a5dfcba",
+          "branch_id": "ec75c53b-2042-43b7-833e-78f97f0bcb71",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "0f5fb005-b02d-49a8-957b-59b92a5dfcba",
+              "branch_id": "ec75c53b-2042-43b7-833e-78f97f0bcb71",
+              "revision_id": "2201fe5aa2df1f676fa026e690bd648129e3370bfefbef553035b14f905a4f19",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 27
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "a191fc0cfd1ae91e4ce92907d4376de1f2f464983abcd11d613fcf29783f4522",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3896,
+          "chunks": 12,
+          "manuscript_sha256": "7b7b3be50ff02962bfde19919d067294bad2b17135b49d8b921a3262ce444f3d",
+          "report_sha256": "9d9910b0157690b4a72970d17a7498c1c8e611f4908087d8e5778c197fd36205",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "70c8a4f7a66d3262b50ba956c5ae03f855abf06566ac778eb1bd0e33a0ba8a02"
+        },
+        {
+          "book_id": "19f3121b-4128-4282-adf6-8d700f89b778",
+          "branch_id": "b0103f35-4403-48b1-992f-bf96393d6563",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "19f3121b-4128-4282-adf6-8d700f89b778",
+              "branch_id": "b0103f35-4403-48b1-992f-bf96393d6563",
+              "revision_id": "a3d3dcb9bf452850602d4006de8e7f9c67f0a24a7c8399f96e4286c954d11354",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 23
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "d4cc11805dc93474bdb93599cde6a05f494af84fbe0d4d6044c1edd5aae94e53",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3877,
+          "chunks": 11,
+          "manuscript_sha256": "8f4e7724664a78ab673ca81d2a55db7ffac03c70e586e463593143afb3925ed7",
+          "report_sha256": "e770bce4b47caeb5110bf2b565bc1ae1616f30427739c82ccceb6a526f903f86",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "532ac47656cab41a5d91d1349454227e197632d5ae421ad12e29b5ee84c145b7"
+        }
+      ],
+      "sha256_before": "fc628afa013eebb8ca45952b5030f5cca348209644ec9ad2bae7f4a069db7e39",
+      "backup_sha256_before_migration": "bbcb7f9c02f0685b3c85d95157de7123f8431cb19cc334959e82ac0a96503d57",
+      "sha256_after": "fc628afa013eebb8ca45952b5030f5cca348209644ec9ad2bae7f4a069db7e39",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-01.db",
+      "branches": [
+        {
+          "book_id": "f4f56678-47a8-4504-9276-af008844d3a9",
+          "branch_id": "a3a9835d-ac76-486c-a623-85f001205b71",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "f4f56678-47a8-4504-9276-af008844d3a9",
+              "branch_id": "a3a9835d-ac76-486c-a623-85f001205b71",
+              "revision_id": "cf8e9f2689231180e78ef3bc88e2d857e88bd8be4ecb93c9cb27301b0467a136",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 25
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "4d864989c2770b390627a234c4046b9b29c1fa53ce4f63f94a8fde8ba73f598b",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3865,
+          "chunks": 12,
+          "manuscript_sha256": "d663e41a38d282c62d6971a6da1dd2131dd9892eef7e3366454a7124f4e2a683",
+          "report_sha256": "4efa7c324c992e88df343377c678ab65afb9d06bd28862d9ae8276d2766b4847",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "4f9d4647608a9d1a579a895c2b86e7bc92dedd2d181d04700469fc37a5d3eefe"
+        }
+      ],
+      "sha256_before": "cf70fa55074885581aaeb657d22e75d033258a9d95952638683c0721e74fa41b",
+      "backup_sha256_before_migration": "cbb251098ed122bb7fa577429b6440a89e4c0d10ec1a0be04a0576a5a6ca8d32",
+      "sha256_after": "cf70fa55074885581aaeb657d22e75d033258a9d95952638683c0721e74fa41b",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-02.db",
+      "branches": [
+        {
+          "book_id": "322ea40c-13da-4c8d-a738-8ddc259945dd",
+          "branch_id": "c0eeeb00-ab8e-4c39-93e9-ba2ee98b4bec",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "322ea40c-13da-4c8d-a738-8ddc259945dd",
+              "branch_id": "c0eeeb00-ab8e-4c39-93e9-ba2ee98b4bec",
+              "revision_id": "5be9a52935f71956148ce9b242e1913a00c5a6f0dd8e9291e7b758c2cb811e41",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 24
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "8db03a0216dbc8dc210c62277d06a860d7b642d609166cc66396de874f072d43",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3814,
+          "chunks": 12,
+          "manuscript_sha256": "ca219a4264f79ffb97bed7875e24a4521a39862ad2ad3a93242637c617a75e2a",
+          "report_sha256": "ec22e531696c783a445f06df8badb9a0ffa4e619ec12dd981552a88111b81eef",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "1fde9a468b4c0cfc807fbfc4394c05e8565344ccb76db4faddf2e61ff37ab9ad"
+        }
+      ],
+      "sha256_before": "36956c451b1a68ccb6d73df254e2ace99ed9e85fc140d9b6466107a92e20fd78",
+      "backup_sha256_before_migration": "21920834502947ffe641eebd1295844163bd367c502b369bf15489bc9855aa36",
+      "sha256_after": "36956c451b1a68ccb6d73df254e2ace99ed9e85fc140d9b6466107a92e20fd78",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-03.db",
+      "branches": [
+        {
+          "book_id": "55ac1dfa-2c1e-4f9e-88e6-414b61449e50",
+          "branch_id": "669992d2-3b89-460a-91ce-968896adda62",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "55ac1dfa-2c1e-4f9e-88e6-414b61449e50",
+              "branch_id": "669992d2-3b89-460a-91ce-968896adda62",
+              "revision_id": "935d35e67711d689b9baa4ca2ed8cd500cc265dde53bc460f5dd2a65afe7a093",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 28
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "3d541c4fedb7d74301a837d98ee1824d01986b92c3a71d7f6e33abb15ac7f777",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3782,
+          "chunks": 12,
+          "manuscript_sha256": "dee4c89a47e90cd472ef9c9dbdd5e06007ccfc19eb40aa2885c4709b92be48b2",
+          "report_sha256": "ce8ee9b7144133672219fc47c6542ee2bff40369d6a8829791d92f5f44f3db26",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "73d360cf294db234d13dff33e9ad789fd3560bf06e721fa95ad406c2417e102a"
+        }
+      ],
+      "sha256_before": "672ed16a8ad8db5fc25d3f63e5673a7730887981af619265c6c5fe77edc58676",
+      "backup_sha256_before_migration": "e544e3a7a06d0c5594bd8c88dd63a5f81821fccab40d46e14454c89da56b3cc4",
+      "sha256_after": "672ed16a8ad8db5fc25d3f63e5673a7730887981af619265c6c5fe77edc58676",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-04.db",
+      "branches": [
+        {
+          "book_id": "c6d3fe1d-5e12-4c4e-8cfb-a1d0d9e9dda9",
+          "branch_id": "71ed7b4c-5062-4752-8b5f-0c072a220d3b",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "c6d3fe1d-5e12-4c4e-8cfb-a1d0d9e9dda9",
+              "branch_id": "71ed7b4c-5062-4752-8b5f-0c072a220d3b",
+              "revision_id": "fb7c60acc0f0c9b8ff64926cfe52c834b07e5cab4f522ffd89a9133dc8f19c59",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 29
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "87734bbefd1439a9a51d92289d4332a57aa3935a8231aa7efbfb51704834d7f0",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3779,
+          "chunks": 11,
+          "manuscript_sha256": "0815969a71fbc352967339c6cf97eb3a2b32789fb6fe3f3cc040c6f76c479284",
+          "report_sha256": "87d86a674cf61d7eabc9f2c03bfd06517c1deeed90ca2dd4d8195fe1a0f93379",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "33a84a1e07798b302291bbcc77f1830ac6565639931ff04d1cd2e0db5e8ee378"
+        }
+      ],
+      "sha256_before": "04660e870b57f8521ddc6a50483c70305ac008dd498259372bfb68da7c1e9182",
+      "backup_sha256_before_migration": "c174468436b4b055dc546ed0bfb6b3806d22624155f16bdac4426efb3085844e",
+      "sha256_after": "04660e870b57f8521ddc6a50483c70305ac008dd498259372bfb68da7c1e9182",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-05.db",
+      "branches": [
+        {
+          "book_id": "ff7125cd-ec38-4557-ab24-594590af4229",
+          "branch_id": "a83e8668-976e-4c89-a817-68ba73dba2f1",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "ff7125cd-ec38-4557-ab24-594590af4229",
+              "branch_id": "a83e8668-976e-4c89-a817-68ba73dba2f1",
+              "revision_id": "bccaca27de932c367b4ce8fbe81bb1f4d6f354b235fc9289fee85c859745cb2b",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 30
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "69bb9ee75a2f5458abfd047991aadee3cfe21a6fd5fb2453c67570f0e552d603",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3781,
+          "chunks": 11,
+          "manuscript_sha256": "f928f74fc9551c459034446b21d3d06dc500715bfe1ff56fa5e89e42ccd273e0",
+          "report_sha256": "9ef36a53b889a9d539b8043c167f198a2508eb12e94d3b8ce91bb657fee2d7d8",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "a3c6b181836abbe76fb1d96408ac0c0f2e7f4173c37e2d134e61f5967865302e"
+        }
+      ],
+      "sha256_before": "8b428aaa36715790ee8a2835f6d8bc5909d7a5a3298007867d285e9d67e98f59",
+      "backup_sha256_before_migration": "c3d1ad9509e0421bf1eea9928adb7f1133e0613fd9f6cb50b11e32e25895688b",
+      "sha256_after": "8b428aaa36715790ee8a2835f6d8bc5909d7a5a3298007867d285e9d67e98f59",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-06.db",
+      "branches": [
+        {
+          "book_id": "04f476d1-858f-4b0d-8216-c66adc1d8a18",
+          "branch_id": "b5f69e83-f17a-4540-b4d9-277c392f8a27",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "04f476d1-858f-4b0d-8216-c66adc1d8a18",
+              "branch_id": "b5f69e83-f17a-4540-b4d9-277c392f8a27",
+              "revision_id": "bc8785499f905594508032785a36d4c18e2c9d791b525e9430bf53f491160547",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 27
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "68e24144ed656f72a1148599b597f166366e9c510cd08262812a730d33564396",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3792,
+          "chunks": 11,
+          "manuscript_sha256": "ef24c0343f866bd8c8a154bed86f672cf09139f7b398bd1c51e55af4112bd73f",
+          "report_sha256": "53b20a289f07c545e2dd8ba2e5e93e789b7197823eb5b146833dd68331c0c8bd",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "3f366e4657242bc1fcc6858e98dbb5cc91bc0593bf41e756eea4fd10c7ba5502"
+        }
+      ],
+      "sha256_before": "6ab94d760aed705ef799f71987afa049bc3e5bee5487f0560c1a0a39be688593",
+      "backup_sha256_before_migration": "87dd9af7b79374c58e29dc271460810624ff44fbb2db05c37e5e98e36dfad77b",
+      "sha256_after": "6ab94d760aed705ef799f71987afa049bc3e5bee5487f0560c1a0a39be688593",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-07.db",
+      "branches": [
+        {
+          "book_id": "b8379d46-9fcd-4374-838b-622dff664406",
+          "branch_id": "9bd1015f-c14e-44d8-956b-e39d3214e5d7",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "b8379d46-9fcd-4374-838b-622dff664406",
+              "branch_id": "9bd1015f-c14e-44d8-956b-e39d3214e5d7",
+              "revision_id": "c07919f6b446195a15626cc108e123f762956a8d1d314cca2bbac834a35ac9c5",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 28
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "b212239b918247e3991024f68f061a5a42511e83b413eb18799fbea2a0205dda",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3910,
+          "chunks": 12,
+          "manuscript_sha256": "fe02243ff6469cc44255c5442d433738432ba9558eb8e4d1706ff2821381fa34",
+          "report_sha256": "90715d77ae3ad601458453bfb829d8c4bb83a80cdd5dd5ce70c58bbfcc98b0e4",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "4740fa142b2bd5f59b41682692a489556a65a86d8bff51a520c79834df4ccf4b"
+        }
+      ],
+      "sha256_before": "154359d9c5d4ca86c767803d02a69faa6c41283f916032818c7313a61dee384c",
+      "backup_sha256_before_migration": "d756673a228ec5ec8c82e0863ae73dfaafdaffab19eba6196d78731deb51e963",
+      "sha256_after": "154359d9c5d4ca86c767803d02a69faa6c41283f916032818c7313a61dee384c",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-08.db",
+      "branches": [
+        {
+          "book_id": "eb573d90-6e34-4f1a-994d-366f27c1bfa9",
+          "branch_id": "24f55aac-b2f5-41b8-a968-11db3366f8a3",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "eb573d90-6e34-4f1a-994d-366f27c1bfa9",
+              "branch_id": "24f55aac-b2f5-41b8-a968-11db3366f8a3",
+              "revision_id": "42e237dba5ac3823d7de65e2ca7bcf2b28831c4a6f4b8298ae96b95e31e15332",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 26
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "5616233ea4abe356c6501261da0f9151235aa93a96f552042841c88030df6dcd",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3775,
+          "chunks": 11,
+          "manuscript_sha256": "e091b040cda36030f472919a898fb960a7082995d6f90599e78e7093c2df81e6",
+          "report_sha256": "149cba6b49bd91d5ec88899edfd5975531e475e506683b135643d2b26d064185",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "0e9897c9ea1bf75a99e0c92c2ebe1657c8836e371cbc600b355376a81e82755f"
+        }
+      ],
+      "sha256_before": "0ecd5bff585597441a4cc65880b8a490743443c5f4736751cb41a5844a4590a6",
+      "backup_sha256_before_migration": "9b8e1368522b8432eb238c7af7b233dfbc5f9219cc62740a6ad5e9108a658cb6",
+      "sha256_after": "0ecd5bff585597441a4cc65880b8a490743443c5f4736751cb41a5844a4590a6",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-09.db",
+      "branches": [
+        {
+          "book_id": "5150f91f-76af-4bcd-bd5c-420c9c7e9d1d",
+          "branch_id": "121dc666-ebe1-40cf-b5cf-4a25cb59e9f7",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "5150f91f-76af-4bcd-bd5c-420c9c7e9d1d",
+              "branch_id": "121dc666-ebe1-40cf-b5cf-4a25cb59e9f7",
+              "revision_id": "a166d6a99e777ee0515fdb1b2785505367833fb16212ac00481d9bc633a429ab",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 26
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "4cd1407e293d3bd03a001a760f036b94fab843ead70a6983dc4383716bd56bea",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3780,
+          "chunks": 11,
+          "manuscript_sha256": "3410c4da90f7a6131a4842334e0d7b85f8698541c4bedd31d9fd2800474278f6",
+          "report_sha256": "d8a1e3f9ce44827d633407b36b6b53702f0fb629da8fc912d208c5e561703eca",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "c7b8721a3d56ed737102814c5b404b83dc66db45b830e9f480ca8030a7b4b4d3"
+        }
+      ],
+      "sha256_before": "23a4a70987c4de339c4cd9b50c686a7e5f2c1e28c408c139073075cd49e951ff",
+      "backup_sha256_before_migration": "b61206c49d68b8f9fa35e6cfb0c2d893576e61499918a90d428172d6c3f258e2",
+      "sha256_after": "23a4a70987c4de339c4cd9b50c686a7e5f2c1e28c408c139073075cd49e951ff",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-10.db",
+      "branches": [
+        {
+          "book_id": "e245edca-2cd7-4a62-aee0-dfae6c4ff8fc",
+          "branch_id": "f1b15301-0d93-4da2-bbef-c62dd470fba0",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "e245edca-2cd7-4a62-aee0-dfae6c4ff8fc",
+              "branch_id": "f1b15301-0d93-4da2-bbef-c62dd470fba0",
+              "revision_id": "ae6a7dc7d5f1f095dbb18eea20c15ae1d8b9bc439dc091f9c0eba43427182818",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 25
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "6e4ed1cb69a5d0094df098f2a22a4db8ef6c974d03b46787d387a841f763384c",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3832,
+          "chunks": 12,
+          "manuscript_sha256": "289f01a49e8d627c7218220182cbc874dd4959f91f28fd8eb86b6286c006b0a8",
+          "report_sha256": "37782d7e863e1f3329b06c284c64bd275d9f07a41e17529fb865605bd2b69383",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "0150acaee59074f687ae8559fa337f5a1d4c91b0c8026e6793ed8f13eb72ba37"
+        }
+      ],
+      "sha256_before": "2714359b6691054048088193b1a382c9edd65ddcc0e32a5806f1fdb3dcd8f0c6",
+      "backup_sha256_before_migration": "3f55da2c41a0bb0c9badf78edd4abe6daef0f0cf68f48a6980778c37786b59b8",
+      "sha256_after": "2714359b6691054048088193b1a382c9edd65ddcc0e32a5806f1fdb3dcd8f0c6",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-11.db",
+      "branches": [
+        {
+          "book_id": "4022db86-14a1-40c4-803e-7238fbeeb6d8",
+          "branch_id": "1c77410d-d578-4d0b-af45-62627b7bbf8c",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "4022db86-14a1-40c4-803e-7238fbeeb6d8",
+              "branch_id": "1c77410d-d578-4d0b-af45-62627b7bbf8c",
+              "revision_id": "ad929ea1d5144eec7502919d7ceca386d175d742cfc8679bb43c0a985c6d000f",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 26
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "19c58dbf7da42aa1591351b3ff775fe0929a4bb9b23aca92d84eb9562500251a",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3863,
+          "chunks": 11,
+          "manuscript_sha256": "79dbf94e8dce3d2a19e6b6db3c52087167f77e9708c86f56c53c8d26171ffe5f",
+          "report_sha256": "f394ebaac4360c2ee5d383b50ea6e5b7b79953ea5c6ae619cd259e8622da78e0",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "b5db734bb2c2a4a6d52e54016934ef909958dce08ea706629344461d75a87d1b"
+        }
+      ],
+      "sha256_before": "e9fec8dfc4c24db4cf1a0c5037df78c2fab384f8bfea3df0cb4f1703629e5857",
+      "backup_sha256_before_migration": "3db651571ea4ab5a27b3d325895503415157e4a2321ee29b25ec814b4e193030",
+      "sha256_after": "e9fec8dfc4c24db4cf1a0c5037df78c2fab384f8bfea3df0cb4f1703629e5857",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-12.db",
+      "branches": [
+        {
+          "book_id": "8a49f3a6-cf2b-4524-85e1-83e073fc70c0",
+          "branch_id": "fc802d0e-65bb-48d3-84da-2baaedc14a60",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "8a49f3a6-cf2b-4524-85e1-83e073fc70c0",
+              "branch_id": "fc802d0e-65bb-48d3-84da-2baaedc14a60",
+              "revision_id": "ea7ee9b00eb8767e5cd9faea5efb63f796334d8df5381a581ea88cdf13d16329",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 25
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "982448acd86623ce90d862d61a283e145186146f806189783035592b73bbb658",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3793,
+          "chunks": 11,
+          "manuscript_sha256": "0c4da131a5eda5fbaacbd89bfb7ee92a932add2027fe62f3810b2096d83666ef",
+          "report_sha256": "d6efd95b361ebb5df92d136a9401146fd5123bdda6877ed535476e464112dc68",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "e03bcc1aef22dac028e5a2dab7dc8e5c0a3a4d69e6079a6702f2e1e93b294579"
+        }
+      ],
+      "sha256_before": "3aefbf24169f8b3516a2f464d62890b8bd960026621269e6a594f416c08c623c",
+      "backup_sha256_before_migration": "3c6795c205d4666fe2b30caaeb1b144a9b0005c69202ca5a938fcd18878a4963",
+      "sha256_after": "3aefbf24169f8b3516a2f464d62890b8bd960026621269e6a594f416c08c623c",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-13.db",
+      "branches": [
+        {
+          "book_id": "e2a789b3-cc4e-4b08-b410-fbf7a9637d0c",
+          "branch_id": "5869dab5-2006-4808-b725-b72a916048a0",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "e2a789b3-cc4e-4b08-b410-fbf7a9637d0c",
+              "branch_id": "5869dab5-2006-4808-b725-b72a916048a0",
+              "revision_id": "25d9d02c6b3e12009c7f0e9cf2e920237cf6dddd41f66ac314bee061cf315a21",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 28
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "489da28bb12934d6ca4a2cd1ad7fa2c7f4d9cff7113ecb0523720f5231a983d6",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3909,
+          "chunks": 11,
+          "manuscript_sha256": "d701af7fbc20a5986434372f8999e301ad6d099fc8c7285f53eb5c110bc9849a",
+          "report_sha256": "c387851d912250c00963bb743df06fc6eb7b5d11ecffc04c94de4fc160be2709",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "ad4a4de409e9c04afa69b7c1b8d8c69a4e8e56995711446f3e2c3e857a9544e9"
+        }
+      ],
+      "sha256_before": "15c8e35cac05e38939a46855cbbd855ffd5536ae27749d94f6bdc61880f0fbef",
+      "backup_sha256_before_migration": "fccae1c66b837a7f277564fd6db6969877f2d7696f7c71957daa7017c1e0a266",
+      "sha256_after": "15c8e35cac05e38939a46855cbbd855ffd5536ae27749d94f6bdc61880f0fbef",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-14.db",
+      "branches": [
+        {
+          "book_id": "fc6b11d3-3a9e-4ebf-9a90-aa8783e473d7",
+          "branch_id": "45bd9358-80a9-497d-9ef0-7d29af516e75",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "fc6b11d3-3a9e-4ebf-9a90-aa8783e473d7",
+              "branch_id": "45bd9358-80a9-497d-9ef0-7d29af516e75",
+              "revision_id": "e42f5e4f57b568caf0200f00bc539899e263f4c69a123238effcd9f79b15ddd3",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 30
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "6cc779764e41bb68a54fcd0a47ac37d6688f1460a31e76853301423fa4b986d5",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3844,
+          "chunks": 12,
+          "manuscript_sha256": "c38d74325804c3c89caac341e0eb92eb0357f5039c9a8ea3323a323cc4969d38",
+          "report_sha256": "39e1e6405ce0b1f4e3c52e323bafa32ccdd83008c50847afc2bcca2474fb65f8",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "3c5109a0321052584ebaeaf80fbf7a771ae09b5dc1fc75e99f073fb56c225dab"
+        }
+      ],
+      "sha256_before": "5bd285be974382d3502ed17a86f0a20c1071a587a2efb3a47781d3ca5c0028ca",
+      "backup_sha256_before_migration": "6e47d652c159af2f2604fe8ed40fbc3f2477c3fb2db5c64cda54f956fc8efe9c",
+      "sha256_after": "5bd285be974382d3502ed17a86f0a20c1071a587a2efb3a47781d3ca5c0028ca",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-15.db",
+      "branches": [
+        {
+          "book_id": "2ab40499-f8cc-47f0-a2f8-1a0505be5fc2",
+          "branch_id": "23b87da1-c017-4674-8b47-ec9873e93528",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "2ab40499-f8cc-47f0-a2f8-1a0505be5fc2",
+              "branch_id": "23b87da1-c017-4674-8b47-ec9873e93528",
+              "revision_id": "894993af1909fb6eef05e74b69a17edfccfd6f9104f2fe146e613899898c7453",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 33
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "be0c0ddb7f107429109a1a8e49c26a93d9e482d401a15c708799d671c2433ded",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3797,
+          "chunks": 11,
+          "manuscript_sha256": "d752228d4e6bcf6c7ef96f3c269514784aed9012d311651782de67cd03e22645",
+          "report_sha256": "239a765fe3c7d1819ba28075238a7a47987ba164b866f258c289f3be2456215f",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "3ca9909ba7179dd269defdb75acbfb5dad2cd90ffa002d0364b8763aeb8581e1"
+        }
+      ],
+      "sha256_before": "3a96eb5d712046b8f1459e591c0ac81180d9c3a71ae41ef071d9b51c02d721d6",
+      "backup_sha256_before_migration": "cc5543507a4686478fadefc0a8b107550f17c66f424f292760ae3401f4a21506",
+      "sha256_after": "3a96eb5d712046b8f1459e591c0ac81180d9c3a71ae41ef071d9b51c02d721d6",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-16.db",
+      "branches": [
+        {
+          "book_id": "dd4c99b0-0ed6-4ea1-b50d-11c17c2946af",
+          "branch_id": "fa038901-3041-49c2-98c5-15bbd55eddc6",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "dd4c99b0-0ed6-4ea1-b50d-11c17c2946af",
+              "branch_id": "fa038901-3041-49c2-98c5-15bbd55eddc6",
+              "revision_id": "904eb36768add8dbf4538833cfabe92262536ea4979d20f53b62fa0ae1746a50",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 27
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "4e299c3a06359024d430f7c68a03aab4ba5ad65bc932f42aaaafe2ff39d5a9c8",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3831,
+          "chunks": 11,
+          "manuscript_sha256": "9d2dc114c0f2513c238ea714d17a793708d70b92e43d5ccacace33413239490c",
+          "report_sha256": "a49145298b1d7d72f999ead5a4ef6b959fc14d1393c72992e1b731d511225202",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "d9c726a0d9520ee7b6e978eba0e3b390768a9a470711e8e07dc38c8bc0cefcf0"
+        }
+      ],
+      "sha256_before": "613ca252cb7063da104303b1106df2f4e05004f21ebad53cc20a178806af7ec0",
+      "backup_sha256_before_migration": "ef7d0806363fd9f29a85921e8c5b3763fdbb7893e9a5fd312c125cece57e01ed",
+      "sha256_after": "613ca252cb7063da104303b1106df2f4e05004f21ebad53cc20a178806af7ec0",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-17.db",
+      "branches": [
+        {
+          "book_id": "8563980e-953e-4571-b67c-1273fd54adf3",
+          "branch_id": "2b47e116-afee-4d58-a9f2-d55711dcf0fe",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "8563980e-953e-4571-b67c-1273fd54adf3",
+              "branch_id": "2b47e116-afee-4d58-a9f2-d55711dcf0fe",
+              "revision_id": "e10d30ddac68fe7db7124e62470b2431c87d95053fc27e9d113743c49fd43cbe",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 26
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "4e2391f8574f38117ef483a9b0244973313e3a0cac7a67bd1bff42f6bb791e79",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3816,
+          "chunks": 12,
+          "manuscript_sha256": "4e18546b95d3ceda4f2d88812534f7803c27a085c31d4fcfe7cd93fbd29d546c",
+          "report_sha256": "c4db7f6dde6efc20402adccd53d3b82632de1c648ff3030f65cb02bf551a02a7",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "e99a558943b9ff326134ecafc429f2cd6884b28e0342a067daaa9001bc34d949"
+        }
+      ],
+      "sha256_before": "919207c0caa0ea7077f4f46bceacd05c68aa7c4996bb7979255110da237d04cf",
+      "backup_sha256_before_migration": "c8b357b6da02aecd7056947f6b0a9fab0acc854b871c09a1c2d4c2c526015364",
+      "sha256_after": "919207c0caa0ea7077f4f46bceacd05c68aa7c4996bb7979255110da237d04cf",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-18.db",
+      "branches": [
+        {
+          "book_id": "de34b0a0-68ab-49a7-b101-a65da35bc444",
+          "branch_id": "e60e7744-cfe4-4e82-89c1-6db42b45bcf2",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "de34b0a0-68ab-49a7-b101-a65da35bc444",
+              "branch_id": "e60e7744-cfe4-4e82-89c1-6db42b45bcf2",
+              "revision_id": "408aa4fa5b10263b1d1848ce61224071c039d16be1686bac450413e804520115",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 25
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "5fed14b6647cbd8545f3a00b96ab48645e0c7ea0d9eed44167bb0a47116d89af",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3795,
+          "chunks": 11,
+          "manuscript_sha256": "36a0390aaf9a19305abe4c8b5c88cdca7501afb06656090827cc3eac9a77b661",
+          "report_sha256": "afac654a38beea4a0bfb420db8d3fe7b464b88b3a487be55c9a064ab7bf445d5",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "756938ba4cbcad6f190ec9b2486f4ecd1950f9d198d01daf6c830e39cb365fce"
+        }
+      ],
+      "sha256_before": "591dcad21e8dbb675a0a190fcee606b2ecee66e6c491cd1fa30d146cb473823b",
+      "backup_sha256_before_migration": "b1f4470d74d014f22403af5f6a5c7158dbe8583d3e90a0a1787af1eb915755f0",
+      "sha256_after": "591dcad21e8dbb675a0a190fcee606b2ecee66e6c491cd1fa30d146cb473823b",
+      "original_unchanged": true
+    },
+    {
+      "path": "research/quality-measurement/corpora/fitness/fitness-19.db",
+      "branches": [
+        {
+          "book_id": "472b4322-04ca-43da-9d69-b6ff65d85a37",
+          "branch_id": "5753ed43-f238-4b35-871f-54c2a3e42026",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "472b4322-04ca-43da-9d69-b6ff65d85a37",
+              "branch_id": "5753ed43-f238-4b35-871f-54c2a3e42026",
+              "revision_id": "cd7c68489e4a48a33d1fb01660498d3b11e35a2d4e5111c5e25547e3d2d4ca0d",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 20
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "4d24456ebbfa19bd3b493098b640a66f5d1613d7bed0056f360e60295d8a150b",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 6,
+          "exported_words": 3808,
+          "chunks": 11,
+          "manuscript_sha256": "73f1ae057e986acd0e129463662beca65c45e60e09c6dbc2315aca24633faf5e",
+          "report_sha256": "f3001d414532e288d74eac9b7efc68b8b5abf7432a1bcc26da56438aba824ba0",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "619070992eadbccd45aa7e690f72fc14e7e5b608c0fa0e04384aa2a8911794dd"
+        }
+      ],
+      "sha256_before": "5fb1d8737c4a9ea1d2ff40049338c092306197318bf2a1da6fd973527fca127b",
+      "backup_sha256_before_migration": "72745fbc3a4607ff3b6f82a1c48ced148a69d17fc65a3f4040345297f2addc60",
+      "sha256_after": "5fb1d8737c4a9ea1d2ff40049338c092306197318bf2a1da6fd973527fca127b",
+      "original_unchanged": true
+    },
+    {
+      "path": "runs/continuation-baseline-20260910/book-1/serial.db",
+      "branches": [
+        {
+          "book_id": "84a7f12e-e1ab-454d-8852-307591f29c0e",
+          "branch_id": "4962f24f-30a0-43c3-a251-43e6f0be829b",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "84a7f12e-e1ab-454d-8852-307591f29c0e",
+              "branch_id": "4962f24f-30a0-43c3-a251-43e6f0be829b",
+              "revision_id": "3cf4ec737f32558892b35865281556f4ae47faa19539351f58a04b5fe87fc832",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 2
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 2,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 5
+              },
+              "candidate_count": 2
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "5426c78f1d4871b39d9e37da25c4d0402fd8a8687e64e0363ecf079827a8930a",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 2,
+          "exported_words": 3847,
+          "chunks": 12,
+          "manuscript_sha256": "a2d4ded19b1f9f9dae2e893453f21ac8b746ef01e6b4609b85fd7a5e685bbf73",
+          "report_sha256": "1d25dae14cd46e09670bd39adf27672c00ad81d3271397422faf537f192a5804",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "1ed5ce0109a3832468d2cd2afc3604a3c4521240faba934e5180e60e277ca34e"
+        }
+      ],
+      "sha256_before": "657472eb808f83396fb89d4d28c77e9206e795a3be6902be116e708084f2ae93",
+      "backup_sha256_before_migration": "1d0c78ed1e96f70e000182a07a6659def874ab16f5d9f8238a5c13b94484bd3c",
+      "sha256_after": "657472eb808f83396fb89d4d28c77e9206e795a3be6902be116e708084f2ae93",
+      "original_unchanged": true
+    },
+    {
+      "path": "runs/continuation-baseline-20260910/book-2/serial.db",
+      "branches": [
+        {
+          "book_id": "dde58116-23ec-4ff4-b2d2-4a38ddab0613",
+          "branch_id": "601c47b4-ab4e-4ebd-a12d-33ac89a9688a",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "dde58116-23ec-4ff4-b2d2-4a38ddab0613",
+              "branch_id": "601c47b4-ab4e-4ebd-a12d-33ac89a9688a",
+              "revision_id": "a363ddaf5ebf7cb9ee70b26944867790ffc2ddc37b3c76858c48e87e8e02a848",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 0
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 0,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "promise_payoff:missing_unique_evidence": 4
+              },
+              "candidate_count": 0
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "39472f88ae6bd548bdfb877ad417607c4e7cc3aa0d21bc52fbbb883ea95e0a0d",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 1,
+          "exported_words": 1982,
+          "chunks": 6,
+          "manuscript_sha256": "0fb52054b7f1775bf2840e71f53e9eb1e74c689ca01f77fe69c95f179674d8d4",
+          "report_sha256": "f1d33288697435c97068b17141055003bb161ceb84a58d060e8ae38224fd3d36",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "606cd2a53c52ed167b51d1e27617beb64e73172e903dcc7f30e9b3696c4c0c91"
+        }
+      ],
+      "sha256_before": "9030a339b5258cc06e0df0ff6d670dffe0805da860f5866b979542f4f49d3502",
+      "backup_sha256_before_migration": "d0ce4c0542efdb289ca6b8d53f80947be40a84b4566d10840a658b333b2e7f32",
+      "sha256_after": "9030a339b5258cc06e0df0ff6d670dffe0805da860f5866b979542f4f49d3502",
+      "original_unchanged": true
+    },
+    {
+      "path": "runs/continuation-baseline-20260910/book-3/serial.db",
+      "branches": [],
+      "unavailable": "source store missing"
+    },
+    {
+      "path": "runs/volume1/serial.db",
+      "branches": [
+        {
+          "book_id": "52c2a0f0-1984-4b75-8e1f-f91ffe92a1de",
+          "branch_id": "063bd8c9-f69a-4540-9499-aa878a0f619e",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "52c2a0f0-1984-4b75-8e1f-f91ffe92a1de",
+              "branch_id": "063bd8c9-f69a-4540-9499-aa878a0f619e",
+              "revision_id": "2b9a2ef8d4ea88bb15bc30805d82a74ef6258d61ff966c3a3469120fd1042fa6",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 40
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 37,
+                "local_arc": 3,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "character_cause:missing_role": 7,
+                "event_consequence:missing_role": 7,
+                "progression_cost:missing_role": 7,
+                "promise_payoff:missing_unique_evidence": 71
+              },
+              "candidate_count": 40
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "ef3e7927211e0e38b6fae2c6f13a59b2242ceb54128b71ee3d953f5645226082",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 24,
+          "exported_words": 25901,
+          "chunks": 79,
+          "manuscript_sha256": "8ebf306ce28d17473cae8c56b78a3c4dab3e8c7c13c8e446edc8e8541769c587",
+          "report_sha256": "a5659530c0635ed9c5891484cee3b5e3cf923a4d3e1436e1adc64229bd6eaf76",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "9fdb475df67c2144976ed039542854a92a2cec1e47e4a1a0f2e2a68b32629891"
+        }
+      ],
+      "sha256_before": "ffb824994f7c7c380451e4ca0b9575622dd0d8316a0ea615f2d390cc5b4c16b3",
+      "backup_sha256_before_migration": "f646b2445bde5bcd7634a7686f7c6a39e1d7eda8a10a9aa86bbb2511842f4745",
+      "sha256_after": "ffb824994f7c7c380451e4ca0b9575622dd0d8316a0ea615f2d390cc5b4c16b3",
+      "original_unchanged": true
+    },
+    {
+      "path": "runs/ab/pilot25/draw6/serial.db",
+      "branches": [
+        {
+          "book_id": "674891a1-e996-4465-bc7c-ec1703f11621",
+          "branch_id": "707f7c91-6930-42d2-ad7c-b5cfb2afd637",
+          "audit_exit": 0,
+          "evidence": {
+            "census": {
+              "book_id": "674891a1-e996-4465-bc7c-ec1703f11621",
+              "branch_id": "707f7c91-6930-42d2-ad7c-b5cfb2afd637",
+              "revision_id": "8e96611b0f8f16c6aa213d87ad76f7ab368011f2b5d267745411cd62f407e621",
+              "candidate_counts": {
+                "state_continuity": 0,
+                "event_consequence": 0,
+                "progression_cost": 0,
+                "character_cause": 0,
+                "promise_payoff": 9
+              },
+              "long_context_rungs": {
+                "adjacent_scene_or_chapter": 9,
+                "local_arc": 0,
+                "half_volume": 0,
+                "full_volume": 0,
+                "cross_volume": 0,
+                "growing_serial_prefix": 0
+              },
+              "rejected": {
+                "character_cause:missing_role": 9,
+                "event_consequence:missing_role": 9,
+                "progression_cost:missing_role": 9,
+                "promise_payoff:missing_unique_evidence": 15
+              },
+              "candidate_count": 9
+            },
+            "ecological_manifest": {
+              "version": "ecological-causal-salience.v1",
+              "census_digest": "85b12d9c1e91ec41471b9dbeaf6d9695918d388799277629397749ae5e9308ed",
+              "source_group_split": "whole book/world",
+              "heldout_transformation_requirement": true,
+              "items": [],
+              "eligible_for_model_run": false,
+              "promotion_bar": null
+            }
+          },
+          "exported_scenes": 4,
+          "exported_words": 3886,
+          "chunks": 12,
+          "manuscript_sha256": "c5c856e7a5548f39f2694170ae36da7d37c802d47c443f0a6a882071100f22f7",
+          "report_sha256": "c99334947c67e2e3d9e9e1b79204ee9c4343e70ba31f9b0c87b9bba598865f2d",
+          "public_sha256": "b3eb9801ff80e8c9b2a6a61463ae33694ce1cafbcdc09c13f020ac02e4c3305f",
+          "private_sha256": "8343134fde4836366895c8a9e70f14f7d4e14ad51519b8c0f34b2058b8c010fe"
+        }
+      ],
+      "sha256_before": "847d7cff67fea9e4727a635f1df77c3b7322e5d10da2fc15082dec819a0a214c",
+      "backup_sha256_before_migration": "470dbbe25ce58224d0c55d8648c208fd849d5be736656047d098f56e9e4a24ae",
+      "sha256_after": "847d7cff67fea9e4727a635f1df77c3b7322e5d10da2fc15082dec819a0a214c",
+      "original_unchanged": true
+    }
+  ],
+  "limitations": [
+    "An admitted relation is not a validated reader or a literary quality label.",
+    "Only state continuity currently has a deterministic ecological sibling generator.",
+    "Current copies are not a reconstruction of the historical volume-screen inputs.",
+    "Multiple revisions or branches of one book do not create independent books.",
+    "Legacy stores may lack the evidence captured by newer production versions."
+  ]
+}

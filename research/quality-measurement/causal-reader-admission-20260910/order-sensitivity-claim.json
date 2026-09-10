@@ -1,0 +1,38 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "costed-reader-order-sensitivity-v2-v3",
+  "statement": "On the registered fitness books, target slot, model and transport, the v2 and v3 costed-reader arms allocated fewer full reads to whole-book paragraph shuffles than to intact and whitespace-control texts, under their registered decision rules. This supports only the tested order manipulation and does not establish sensitivity to subtler causal defects or qualify production steering.",
+  "status": "supported",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/cost-that-bites/PREREG-v2.md",
+      "sha256": "7aa93f34f34ab311c6f3dbd19327acd06933cb57afed6e38d4903c403ae58391"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/cost-that-bites/PREREG-v3-replication.md",
+      "sha256": "1636ddd536c6513793e65e2b41b202a74e492176a828f025fe39d7463a4ac13a"
+    },
+    {
+      "kind": "raw_result",
+      "path": "research/quality-measurement/cost-that-bites/raw-v2.jsonl",
+      "sha256": "cca316791da84eb1cbdadfece134d48f932f328923d34529cc42b6be445146c6"
+    },
+    {
+      "kind": "raw_result",
+      "path": "research/quality-measurement/cost-that-bites/raw-v3.jsonl",
+      "sha256": "a29b986abc0352936b465c882d9b74b3f66d307fbcd2185490e1bffe4e0ffefc"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/cost-that-bites/results-arm-v2.json",
+      "sha256": "edc2927d38a1ec67481d339cefd7380f43d5a30f8ebc9bd9e128ed3b62664fb6"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/cost-that-bites/results-arm-v3.json",
+      "sha256": "5ec4dedb09fd3b5cbe3bf3b192f5676fa3e4b0a213c8eda50ec849e62cff450e"
+    }
+  ]
+}

@@ -1,0 +1,1137 @@
+{
+  "schema": "litharness.continuation-baseline-result.v1",
+  "registration_sha256": "e7b13324fb70862bf549a8c95212dad7b682b58a910c1586ccbd896674825421",
+  "runner_sha256": "e01b53b72e17c8346b0b0f67ab7696211f4524f448fdbc641614a80f1e9df5b1",
+  "derivation_sha256": "bee2eea483573c3a4f89a16d654bea1676912611ca9aeaa9c11020b37e592e2a",
+  "source_manifest_sha256": "1900aa38ed66ac2049736cda10dd524507a415b1c94a67652a4c7f33868c02e5",
+  "progress_sha256": "b4fd89b4f41fd85b7cf572f25b25113f176e1a2ee53b5f006a6174e627d9f072",
+  "frozen_source_intact": true,
+  "registered_files_intact": true,
+  "started_at": "2026-09-10T15:28:08.944735+00:00",
+  "finished_at": "2026-09-10T16:04:13.174966+00:00",
+  "elapsed_seconds": 2164.2,
+  "native_attempts": 40,
+  "reported_tokens": 1157033,
+  "stopped_globally": true,
+  "global_stop": "other failure; inspect ignored progress receipt",
+  "books": [
+    {
+      "id": "book-1",
+      "status": "stopped",
+      "calls": 22,
+      "tokens": 874276,
+      "chapters": 2,
+      "stop_reason_sha256": "f83d6d72b0436b27bd07010dc95194ea32299fed7c996263b7bff12aca3aec43",
+      "title": "The Sea Needs Mending",
+      "receipt_statuses": {
+        "completed": 22
+      },
+      "profiles": {
+        "default": 3,
+        "writer.discovery.v8": 1,
+        "writer.concept.discovery.v5": 1,
+        "writer.concept.precision.v1": 1,
+        "writer.overview.concept.v2": 1,
+        "reader.appetite.v0": 4,
+        "writer.title.v0": 1,
+        "reader.start.v0": 4,
+        "architect.seed.v3": 1,
+        "planner.outline.v1": 1,
+        "mechanical": 2,
+        "architect.grow.v1": 2
+      },
+      "reported_tokens_by_profile": {
+        "default": 36850,
+        "writer.discovery.v8": 5620,
+        "writer.concept.discovery.v5": 7815,
+        "writer.concept.precision.v1": 7536,
+        "writer.overview.concept.v2": 5359,
+        "reader.appetite.v0": 18467,
+        "writer.title.v0": 4222,
+        "reader.start.v0": 17094,
+        "architect.seed.v3": 262527,
+        "planner.outline.v1": 23616,
+        "mechanical": 15183,
+        "architect.grow.v1": 469987
+      },
+      "usage_components": {
+        "input_tokens": 226911,
+        "output_tokens": 24526,
+        "cache_read_tokens": 619264,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 3575
+      },
+      "receipt_counts_reconcile": true,
+      "receipt_tokens_reconcile": true,
+      "receipt_hashes": {
+        "001.json": "3a3895a6ca13b1efc9763e9ddaa2f9723d025c5942e39f214efa793367f49e70",
+        "002.json": "39cd761d3b32afe341e069300d655addad9dbc4a8694b11511d61f56820b446d",
+        "003.json": "6462222447a74e37bed1abe7f70401154558f23549b8ba4beaeaebeeee369124",
+        "004.json": "72121d8c2a32c88ef8fb7eab93f2a20f9f9c2c0dee9b627d09cfb9f268d0ac61",
+        "005.json": "37f479fe311279adec38f78206cf8bdb421e650a51efe1a7159ade4e987e3413",
+        "006.json": "e2de26f2d497070ae32e3c4c779c1e1e096fc8fb700387076147de939e6afb91",
+        "007.json": "164c4c5d1299d73ea19241a98753603ebb6af73376f051ad85eae81899030941",
+        "008.json": "ec218ec1d98716c1fb43b46372bef9edcc3631df5a52105ed9c98947b0a34a98",
+        "009.json": "30a18517cc4f830565a84364d5723e31e751baf5c841e720be73f4fad8e78997",
+        "010.json": "82e564159b5d2a0b413b19dff8d4b7623c81736c53cba88f522de7ee4bed7bd8",
+        "011.json": "7bc1c8fa606feca829eb30c2026753003517b5a726df5b63ff52225b14c1459e",
+        "012.json": "22f0e63781917004780fe4e92986d03676607959b1e5585b5644ef8decefd517",
+        "013.json": "68f688a2d45513232dc1f826c9d965756572482ceb3d065c65823cf72cab64e4",
+        "014.json": "0c114bb670c56598503dd194c4f05054c2614ad8ba48cb6a252ba073c27ce45f",
+        "015.json": "6b387eeba7d146be4ca1c117904e45c443118fda12a4ad6ce142ad55d29fae0a",
+        "016.json": "63685643c5d44751e02f844135c70f70be8c146b5dd1d4f6040ca0f7350f2c1d",
+        "017.json": "284751fb1a90c3cb48249c76d67fbe2a5535ca632800683209e450e5e192ec3e",
+        "018.json": "0fdd620fb004bfef344e2a18e547e32b0a18e446900493a9ad861254c6710769",
+        "019.json": "1007b0b14ddc17730bf58f4eb7af28b8475646e79eeaed7577cf7387c14aa3b4",
+        "020.json": "ff557101e58fa6723466811dfa0f6c0d2e10085b35573f2f9781f097b693f13f",
+        "021.json": "ef18e27446e7de0e2365f0e769b4d27b8fdac3358a05161e3658ea8f87ef5cfe",
+        "022.json": "5b4fe51ff6e129ee40a1361d7bffdf919ec036226c7dccacb9413c924ce192c5"
+      },
+      "transport": [
+        {
+          "file": "attempt-02cfe1edfb2a4be3a9253d3233d68210.json",
+          "sha256": "f42ec28aad4a2d508ddb6dcd9f3d95ed75bb38f314a1c26b7360096e15738cae",
+          "guard_rejected": false,
+          "native_reported_tokens": 4255,
+          "wall_ms": 6310,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-2623b3d6edca438492f35b5e0fe9cdb0.json",
+          "sha256": "dafbb86ac606337fab6724fd6b3cf353fd427659bdcd34fd785ff0b6af0bae89",
+          "guard_rejected": false,
+          "native_reported_tokens": 7815,
+          "wall_ms": 69883,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-38ed25ff0fb84b6b9a0eb7591c3957d6.json",
+          "sha256": "177e5980ff122ce68a626ad53d2b69232faf5170332cde5fd122e9ce4d99b9f6",
+          "guard_rejected": false,
+          "native_reported_tokens": 205969,
+          "wall_ms": 134159,
+          "bridge_requests": 63,
+          "bridge_results": 63,
+          "bridge_commands": {
+            "world vocabulary": 1,
+            "world summary": 1,
+            "world cast": 1,
+            "world abilities": 2,
+            "world threads": 2,
+            "world presence": 1,
+            "world ladders": 1,
+            "world declare": 50,
+            "world --help": 1,
+            "world check": 3
+          },
+          "bridge_stdout_characters": 82686,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-47278c4f95ce49d9ba101d8ca7d2224a.json",
+          "sha256": "cbcdfdd34401c0e1e20d46f23cfabf3b5427d85e7dda98c705a03f990e0d82e6",
+          "guard_rejected": false,
+          "native_reported_tokens": 7536,
+          "wall_ms": 11602,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-4739f3d0614f416da0c8458a573662e0.json",
+          "sha256": "a84486a06fb2eed5f5a73585454134998415ba787dfbf13e9d2c3c1da096a4b0",
+          "guard_rejected": false,
+          "native_reported_tokens": 4639,
+          "wall_ms": 15531,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-4ebaac721f864531b127472c4e6f80c4.json",
+          "sha256": "8998dcfb73c98d5202cc064d2a3577876f85010a0938d86db07196448127d663",
+          "guard_rejected": false,
+          "native_reported_tokens": 14840,
+          "wall_ms": 108232,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-4f772ed6905e425a808e61dc542ec03e.json",
+          "sha256": "e41e4db2e81ffb8ded468798b8c4f686c87eb39c5b47f4ddd66eb40b12c37bd8",
+          "guard_rejected": false,
+          "native_reported_tokens": 23616,
+          "wall_ms": 162665,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-5b3a98de6c8e4a3fa5299088bb7251bc.json",
+          "sha256": "11171c10fb8d3bcac6e7f2f55915b5a0a8555808099c3bc82ba2fa614ee5faa3",
+          "guard_rejected": false,
+          "native_reported_tokens": 4238,
+          "wall_ms": 5976,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-658a8a9484bf4a5aacedfb9d6cd0deda.json",
+          "sha256": "c1d2fa243d392207f7e8bedbf2ae84357cfd15ab377d4d38109d5e3365360af2",
+          "guard_rejected": false,
+          "native_reported_tokens": 4626,
+          "wall_ms": 15432,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-86664beac8c94db1a091dfb2438e2df7.json",
+          "sha256": "23bf2b4d54db30772e532bac9b30f000a3b8890ae49737726940cd9a8acf851a",
+          "guard_rejected": false,
+          "native_reported_tokens": 18244,
+          "wall_ms": 107792,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-8a08bed632b74b4f86c4c0ba9044f524.json",
+          "sha256": "99cab8e3352bd630421a2d0f0f5008c399a8dc1c2195fd896f569fdc32c1fe00",
+          "guard_rejected": false,
+          "native_reported_tokens": 7766,
+          "wall_ms": 21476,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-8acf73922ff8475abc4113b977b4c890.json",
+          "sha256": "0f580df69dfe3459e4cf7109cc8f4d567ac425b90ac812509ca940eb783dc43e",
+          "guard_rejected": false,
+          "native_reported_tokens": 4606,
+          "wall_ms": 12173,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-a138584f16ab48ac983314b497c7eb82.json",
+          "sha256": "01bf68a51c1ca3b4cf8bcb52fe871c0305d9a8fd2f159518dad0e8561fc65ebd",
+          "guard_rejected": false,
+          "native_reported_tokens": 4222,
+          "wall_ms": 15436,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-c8b73c34a59d4b4e9a20a3710f44f11a.json",
+          "sha256": "1e7db4ead3ac6cbf1eea07c63b451e4c2f426b2f0b43530beb731886a2f8defb",
+          "guard_rejected": false,
+          "native_reported_tokens": 5359,
+          "wall_ms": 15139,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-c97a2b7f05fd415e802910e8fb5565c3.json",
+          "sha256": "f3f3209d30ff7a96b2454c2aebc13c52ed4893bd6f1fe02c113af506c097edb6",
+          "guard_rejected": false,
+          "native_reported_tokens": 264018,
+          "wall_ms": 90450,
+          "bridge_requests": 38,
+          "bridge_results": 38,
+          "bridge_commands": {
+            "world vocabulary": 1,
+            "world summary": 1,
+            "world cast": 1,
+            "world abilities": 1,
+            "world ladders": 1,
+            "world threads": 1,
+            "world presence": 1,
+            "world --help": 1,
+            "world show": 2,
+            "world declare": 26,
+            "world check": 2
+          },
+          "bridge_stdout_characters": 173381,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-ccd946ca36754750917c4883f0206763.json",
+          "sha256": "22546120aa3755af7e1fdef5cb626c9d83914a681215696def89d8572480f1ce",
+          "guard_rejected": false,
+          "native_reported_tokens": 4286,
+          "wall_ms": 9161,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-d007ac415e8f4caf9a7f4a8e96eb4aa5.json",
+          "sha256": "96be8c8dc81b3909981e10edf43bd04d0749c26a70a23b17a701db3dfa29b870",
+          "guard_rejected": false,
+          "native_reported_tokens": 5620,
+          "wall_ms": 81796,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-d08113e3e8604285b8d77e3267824124.json",
+          "sha256": "ee2669d3515fd0656fbaaba4e6da0e1bcfa5e355d63f4ef3da5e9e8d8f5a43ad",
+          "guard_rejected": false,
+          "native_reported_tokens": 4596,
+          "wall_ms": 11915,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-e3c0e619781841289bf642319c57ae37.json",
+          "sha256": "6412dc3b1861e41ddfe4d1538027bec752a529e88044e31c067cd12795e7cc33",
+          "guard_rejected": false,
+          "native_reported_tokens": 262527,
+          "wall_ms": 359988,
+          "bridge_requests": 29,
+          "bridge_results": 29,
+          "bridge_commands": {
+            "world vocabulary": 1,
+            "world summary": 2,
+            "world --help": 1,
+            "world declare-batch": 14,
+            "world ladders": 2,
+            "world check": 5,
+            "world abilities": 1,
+            "world cast": 1,
+            "world threads": 1,
+            "world presence": 1
+          },
+          "bridge_stdout_characters": 84558,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-f482d5a4eb43489e8ba676808ba426bc.json",
+          "sha256": "6bcfbe6f8a4d5b4b23127307a9b62d940c723100f93b4a0f93bb36c6b56d823e",
+          "guard_rejected": false,
+          "native_reported_tokens": 3766,
+          "wall_ms": 5038,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-f62a1fdf5e4a4846a7777653d2abd6ce.json",
+          "sha256": "8fb789eb723703f6aa9ca6dc214c38152a8ef1b96e9870f742d0a8c535955699",
+          "guard_rejected": false,
+          "native_reported_tokens": 4315,
+          "wall_ms": 9938,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-f66d02cc00e7484cb6ce6482ad6f4a17.json",
+          "sha256": "3d119123d895492acd810e5d6af282b916e5452506eb19ce46da88c5463709fb",
+          "guard_rejected": false,
+          "native_reported_tokens": 7417,
+          "wall_ms": 12910,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        }
+      ],
+      "transport_counts_reconcile": true,
+      "native_usage_complete": true,
+      "native_reported_tokens": 874276,
+      "commands": [
+        {
+          "file": "001-concept.json",
+          "exit_code": 0,
+          "sha256": "b5fbfebe0ece1b6754f92c49361cba27679a7dcf6ce22a0941203d616e603842"
+        },
+        {
+          "file": "002-listing.json",
+          "exit_code": 0,
+          "sha256": "4a5cf0564e366406087b44846a3bf82de2636aedc1452966462f39a997a1269c"
+        },
+        {
+          "file": "003-seed.json",
+          "exit_code": 0,
+          "sha256": "c03c41214c68a4d103efe9dad7d28316d71a8b0d116ddf0a28a7acdc87eb6ea7"
+        },
+        {
+          "file": "004-seed-check.json",
+          "exit_code": 0,
+          "sha256": "f07788783df216e8ba937e9cca14f836336b7588280197f7e121da380fd22416"
+        },
+        {
+          "file": "005-seed-accept.json",
+          "exit_code": 0,
+          "sha256": "e8a1601383a32a1491589d33ebc22c1ea0078c0881dcc862feead9f9c02a7134"
+        },
+        {
+          "file": "006-tick.json",
+          "exit_code": 0,
+          "sha256": "ee3d596589d6dc73fc024a9b5ab6df01d8597787828c0ee6c191f985d00e371f"
+        },
+        {
+          "file": "007-count.json",
+          "exit_code": 0,
+          "sha256": "bcccb1b808f5ac65c0aa9ad0d5859dcd3c35b0dca510c3af9d91ff773ee4d5a0"
+        },
+        {
+          "file": "008-tick.json",
+          "exit_code": 0,
+          "sha256": "6fd31302fc110d5e4ce9f625472a79ae5e37f3e0a50cdd08ba4a02374d17a8c2"
+        },
+        {
+          "file": "009-count.json",
+          "exit_code": 0,
+          "sha256": "6166d278249f96cb62a3e66f0bd220801b240ad226ed6d047fe92b556596a388"
+        },
+        {
+          "file": "010-queued.json",
+          "exit_code": 0,
+          "sha256": "f79b0f7d288958d183ab09083306ede66c52e90b97c91e6f9ed7cf1c9aa84110"
+        },
+        {
+          "file": "011-post-chapter-tick.json",
+          "exit_code": 0,
+          "sha256": "465fac0621e667789abb64960540e3dce3488ace5875e72bcbf148fb9e2d0b61"
+        },
+        {
+          "file": "012-queued.json",
+          "exit_code": 0,
+          "sha256": "d690c7d632eedffc49e1342b4636dcdc4725a638db4120d51514b271a96265be"
+        },
+        {
+          "file": "013-post-chapter-tick.json",
+          "exit_code": 0,
+          "sha256": "dd760e27d863f7c2c2fb22ffd5bb0f8fcf1d7115212c076c09d1107fbe289daf"
+        },
+        {
+          "file": "014-queued.json",
+          "exit_code": 0,
+          "sha256": "74899e09bd873b1bb58c4e418d563e154bb95fa546b90d4d6c90be60920d46ef"
+        },
+        {
+          "file": "015-grow.json",
+          "exit_code": 0,
+          "sha256": "289e247a4576db7a00f0887ef92b668c1e0355b24bfcfe48140feb50984d3ee5"
+        },
+        {
+          "file": "016-grow-check.json",
+          "exit_code": 0,
+          "sha256": "c8436d9741472a703ea53738e909045c0b367e6e21b97280a3f65f3ee4b0d242"
+        },
+        {
+          "file": "017-grow-accept.json",
+          "exit_code": 0,
+          "sha256": "94bb4ab31a3cc058e52d4d54251dbfc40b894d3fe6010cd358813e8959bff432"
+        },
+        {
+          "file": "018-checkpoint-1-audit.json",
+          "exit_code": 1,
+          "sha256": "c3cba03f92019a496415cce7ea84a060d4d4a20f06763af3b187181040daa9aa"
+        },
+        {
+          "file": "019-checkpoint-1-status.json",
+          "exit_code": 0,
+          "sha256": "707a4b47dda0fa3ce69e3766310744603d79ae192fc63125240a8dea9da2b4c9"
+        },
+        {
+          "file": "020-checkpoint-1-jobs.json",
+          "exit_code": 0,
+          "sha256": "74899e09bd873b1bb58c4e418d563e154bb95fa546b90d4d6c90be60920d46ef"
+        },
+        {
+          "file": "021-checkpoint-1-plans.json",
+          "exit_code": 0,
+          "sha256": "8c343aaf5da9863911eec40133cb525fe0f9d217d780545396df47a1bd9978b5"
+        },
+        {
+          "file": "022-checkpoint-1-state.json",
+          "exit_code": 0,
+          "sha256": "440f44a3aea025910d0963219ba9b066c3b3b1c6b154abcb317a5f23e2e7b478"
+        },
+        {
+          "file": "023-checkpoint-1-verify.json",
+          "exit_code": 0,
+          "sha256": "9ddfd81ca9d42838aaad79a3d320d1311e03186138b539f71825592daf6b1d8f"
+        },
+        {
+          "file": "024-checkpoint-1-world.json",
+          "exit_code": 0,
+          "sha256": "3592e41c39a1ecfe568393d7f0d8d395a40026241d8c99834f347f6c39bb30a2"
+        },
+        {
+          "file": "025-tick.json",
+          "exit_code": 0,
+          "sha256": "2a17f824481994fc799afa874ffdbd04436f5143707167db7a577da77a27b5e3"
+        },
+        {
+          "file": "026-count.json",
+          "exit_code": 0,
+          "sha256": "1891ed69b95f0e4fad56cfefd045684e605b330dbe7386481352115a6c75a97f"
+        },
+        {
+          "file": "027-queued.json",
+          "exit_code": 0,
+          "sha256": "c07006c61afe92d0390989230b3639a30371d3d910a4a1d785b683e745edc592"
+        },
+        {
+          "file": "028-post-chapter-tick.json",
+          "exit_code": 0,
+          "sha256": "f94581e427f62849c25877483f2968f4c28a4853a33104e444168c7773a23a7e"
+        },
+        {
+          "file": "029-queued.json",
+          "exit_code": 0,
+          "sha256": "82af2048b72cea47ce9ee1357c2810dfc6bd4f209457084b9ddb0132c6f917e4"
+        },
+        {
+          "file": "030-post-chapter-tick.json",
+          "exit_code": 0,
+          "sha256": "4d92a3ae2723a72ab049b9bb6590e4ba83950f7595401aac01cbbbbb5bc4ed75"
+        },
+        {
+          "file": "031-queued.json",
+          "exit_code": 0,
+          "sha256": "8ef2be7205451bc4394f971d361e3a3a0f05987e56d29894e3299e04012d3fc7"
+        },
+        {
+          "file": "032-grow.json",
+          "exit_code": 0,
+          "sha256": "41fd2cb7675d474dad3230c4c0e133b73d6b547d44d6b4123369f8d25e81b395"
+        },
+        {
+          "file": "033-grow-check.json",
+          "exit_code": 0,
+          "sha256": "b8bd05563ce2eb1262a81b295b9a34354572443ef77d4dc91d96a226926aec6c"
+        },
+        {
+          "file": "034-grow-accept.json",
+          "exit_code": 0,
+          "sha256": "617cb927dddc661247b5abe9fbe60c9d9570554d60671f21590f41edb2dd0742"
+        },
+        {
+          "file": "035-checkpoint-2-audit.json",
+          "exit_code": 1,
+          "sha256": "7ee6214022017a69f58e8221f96ea1a7ab55ff20de54138a41dc6f0b0845cda0"
+        },
+        {
+          "file": "036-checkpoint-2-status.json",
+          "exit_code": 0,
+          "sha256": "a1c0e48a950fe2fcd4642f88efcbdcab0c26cd516783aaaf162fde73bd0ddd7a"
+        },
+        {
+          "file": "037-checkpoint-2-jobs.json",
+          "exit_code": 0,
+          "sha256": "8ef2be7205451bc4394f971d361e3a3a0f05987e56d29894e3299e04012d3fc7"
+        },
+        {
+          "file": "038-checkpoint-2-plans.json",
+          "exit_code": 0,
+          "sha256": "8c343aaf5da9863911eec40133cb525fe0f9d217d780545396df47a1bd9978b5"
+        },
+        {
+          "file": "039-checkpoint-2-state.json",
+          "exit_code": 0,
+          "sha256": "bc4e5595f2b97eaa04325e4796fe559e99799b3151f82f8b760dbe0f9d632d89"
+        },
+        {
+          "file": "040-checkpoint-2-verify.json",
+          "exit_code": 0,
+          "sha256": "eca17aa9e6a36fa9e226a75993c82436eb81eaa64d797156522d5fbc3308adae"
+        },
+        {
+          "file": "041-checkpoint-2-world.json",
+          "exit_code": 0,
+          "sha256": "d7a8a8f04210e878423c30fc725897d872fe74084f28b7d3ae3d9d0ee67c291b"
+        },
+        {
+          "file": "042-tick.json",
+          "exit_code": 1,
+          "sha256": "d974b5c9cf4d99e9f0afade77826e57c787d257add091717de959f82213bb3bd"
+        },
+        {
+          "file": "043-final-audit.json",
+          "exit_code": 1,
+          "sha256": "7ee6214022017a69f58e8221f96ea1a7ab55ff20de54138a41dc6f0b0845cda0"
+        },
+        {
+          "file": "044-final-status.json",
+          "exit_code": 0,
+          "sha256": "f5eda657b6de3ba850e204b7374c17484e5881792f480084220c2fe0784f6d5e"
+        },
+        {
+          "file": "045-final-jobs.json",
+          "exit_code": 0,
+          "sha256": "57e9b9a05cbd2a023e11cbdb5766b582a544eb218bcd72452637374a9cd1525c"
+        },
+        {
+          "file": "046-final-plans.json",
+          "exit_code": 0,
+          "sha256": "8c343aaf5da9863911eec40133cb525fe0f9d217d780545396df47a1bd9978b5"
+        },
+        {
+          "file": "047-final-state.json",
+          "exit_code": 0,
+          "sha256": "bc4e5595f2b97eaa04325e4796fe559e99799b3151f82f8b760dbe0f9d632d89"
+        },
+        {
+          "file": "048-final-verify.json",
+          "exit_code": 0,
+          "sha256": "eca17aa9e6a36fa9e226a75993c82436eb81eaa64d797156522d5fbc3308adae"
+        },
+        {
+          "file": "049-final-world.json",
+          "exit_code": 0,
+          "sha256": "d7a8a8f04210e878423c30fc725897d872fe74084f28b7d3ae3d9d0ee67c291b"
+        }
+      ],
+      "checkpoints": [
+        {
+          "name": "checkpoint-1",
+          "chapters": 1,
+          "words": 1916,
+          "chapter_hashes": {
+            "Chapter1.txt": "32af9d1b8da15bb29b77be09f2b0eaf2333782a88461a67fa736449aa2e4bfe7"
+          },
+          "audit_sha256": "4b0666d81e1b49fe85ddc4aedf8812c39a389b11ca2a0cd6c431fd4b091f8c2c",
+          "state_sha256": "858f3e1801cb3f20dd7c4c31866687af6a65c85dad22dede5dd96b931c1d44f7",
+          "verify_sha256": "cd04fb3c949e6c170f03bc89cabe0c7f5c64b54cebaaca7269d97636069cc423"
+        },
+        {
+          "name": "checkpoint-2",
+          "chapters": 2,
+          "words": 3847,
+          "chapter_hashes": {
+            "Chapter1.txt": "32af9d1b8da15bb29b77be09f2b0eaf2333782a88461a67fa736449aa2e4bfe7",
+            "Chapter2.txt": "e7c55936a0418033a32bb2c4eab75f9033ec6d58072584e882e649ce92270320"
+          },
+          "audit_sha256": "10f251ef0194efe73a61a114a51484c73b1db2b0a3d928e3f02fa09c6f179336",
+          "state_sha256": "ee8c622aedac23914b4f99a9778902f4b65f73d95040810412bffe7c7015e0d4",
+          "verify_sha256": "785d7a7e4a081aa85ccb242198fa16f3020dfb3188a263f1684609f2b5fe8d6a"
+        }
+      ],
+      "words": 3847,
+      "final_revision_audit_sha256": "10f251ef0194efe73a61a114a51484c73b1db2b0a3d928e3f02fa09c6f179336",
+      "final_chapter_hashes": {
+        "Chapter1.txt": "32af9d1b8da15bb29b77be09f2b0eaf2333782a88461a67fa736449aa2e4bfe7",
+        "Chapter2.txt": "e7c55936a0418033a32bb2c4eab75f9033ec6d58072584e882e649ce92270320"
+      },
+      "earlier_chapters_unchanged": true,
+      "final_revision_verification": {
+        "rebuilt": 3,
+        "unattributed": []
+      }
+    },
+    {
+      "id": "book-2",
+      "status": "stopped",
+      "calls": 18,
+      "tokens": 282757,
+      "chapters": 1,
+      "stop_reason_sha256": "bbb88a1deb4bfedcc816c380361195741e94846fb2e51ef5c3931f712437a8f1",
+      "title": "Where the Water Hangs",
+      "receipt_statuses": {
+        "completed": 17,
+        "failed": 1
+      },
+      "profiles": {
+        "writer.discovery.v8": 1,
+        "writer.concept.discovery.v5": 1,
+        "writer.concept.precision.v1": 1,
+        "writer.overview.concept.v2": 1,
+        "reader.appetite.v0": 4,
+        "writer.title.v0": 1,
+        "reader.start.v0": 4,
+        "architect.seed.v3": 1,
+        "planner.outline.v1": 1,
+        "default": 1,
+        "mechanical": 1,
+        "architect.grow.v1": 1
+      },
+      "reported_tokens_by_profile": {
+        "writer.discovery.v8": 5714,
+        "writer.concept.discovery.v5": 7886,
+        "writer.concept.precision.v1": 7487,
+        "writer.overview.concept.v2": 5460,
+        "reader.appetite.v0": 18303,
+        "writer.title.v0": 4079,
+        "reader.start.v0": 17057,
+        "architect.seed.v3": 173618,
+        "planner.outline.v1": 21599,
+        "default": 13801,
+        "mechanical": 7753
+      },
+      "usage_components": {
+        "input_tokens": 127839,
+        "output_tokens": 16603,
+        "cache_read_tokens": 136576,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 1739
+      },
+      "receipt_counts_reconcile": true,
+      "receipt_tokens_reconcile": true,
+      "receipt_hashes": {
+        "001.json": "bfa180eac6d29a2e83bdb2c045f48acc2130eb2559f03287ec174e37953fa386",
+        "002.json": "0166534948e7c40e5fbf0590d5189d4873f384fc2919309ba358a2ec93697937",
+        "003.json": "1b9880f145f7a8cec3a4a76ff86bc31936e03d0a8a48da8dd9edf70edf2d4912",
+        "004.json": "4653ca75cc1c0dc5b2582d000226a581e3269f46328a4940cf767b8b28eb6bea",
+        "005.json": "e209b0b123dd6b2b4f05d5eb3ae85a767fb3199018452d4d6c0eb679d506c8d8",
+        "006.json": "fe42def2daf1ee1062566002c54529e88d45e7ce1d176256ab50392ebecca011",
+        "007.json": "c8353480134b8ec617bb24fe8499d63e3f5d6aa0d92189d813cfae086c621b71",
+        "008.json": "760674c67c1ba3ed5ea18f3398e2a2781cd236368f95bf02fedbaba951fbe903",
+        "009.json": "27c9f5117e8b2609e8c9ee533e459a103621f9c8bba0d894f2f49cd934d519bb",
+        "010.json": "c161f4a0df39e4a5b8d0ff5bcf09f6d783f3ef8856b5aa328a0e5d0b09c20c2c",
+        "011.json": "41b128036b5f00f038bc1e706f71c7b51ea688d5aa2a27638250eeef3abce89b",
+        "012.json": "b0df1ff9da52584973598a22d5139182eefc0527a45914f4ce251b0a21cfd190",
+        "013.json": "57e4a34262c4d7432c4fe9680ed29754f15bf6cc1c2fd1883b41bdc1ec905d34",
+        "014.json": "a6431bc1889f2ff9c7f6d755e3eb1641ca984e52caa2136b3a51bff88d31bd12",
+        "015.json": "e2d8f5f6d989c9f443d9adc7cb0d6ba31f6fe12782225f4a3d89ac08fff1dca3",
+        "016.json": "fe98c59f7ea89b79775c7cd290ede1b918c8847ff547b5a3a520e943b8bc46e8",
+        "017.json": "f13e3afa56c8204c2c288d22733c029115fd0e19c5b45199ee23d166b592681f",
+        "018.json": "d876edb1ba445cf452a608e1d19b4423e1bd221833ec906b8584183a8e0994bc"
+      },
+      "transport": [
+        {
+          "file": "attempt-0a92c04a45464a02b8fc2998fec1f8d3.json",
+          "sha256": "d42dd82853b5a22543b8cde6d75c37a3a5c753289d28811ecb17bdc5094ff371",
+          "guard_rejected": false,
+          "native_reported_tokens": 4588,
+          "wall_ms": 14085,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-0ca1cdaa7f3d4ac681da046a55b9b1ea.json",
+          "sha256": "966db269cb1914bd393351948ad0bf47fffb2fa0fd065c5e8683ba3751dc00fd",
+          "guard_rejected": false,
+          "native_reported_tokens": 4260,
+          "wall_ms": 7091,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-1c85376338d6475aa6e7cd2be68aa5d5.json",
+          "sha256": "103f09a9c155c977506464045798662d1ee638da91bf701339e53a3a162b7e9f",
+          "guard_rejected": false,
+          "native_reported_tokens": 4221,
+          "wall_ms": 5611,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-203d0be41f7b4da59cc2deb7a21024cc.json",
+          "sha256": "20cf1ec69dc69618f326e89db625dd2c2849df432ea2807ad3cdc681537b6e93",
+          "guard_rejected": false,
+          "native_reported_tokens": 4296,
+          "wall_ms": 7776,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-2809007f32654681806c3c1893f8e304.json",
+          "sha256": "5c7f49024081e364a62334d7e5704ae89f159d8c166317277b7ed7c3fd8c097a",
+          "guard_rejected": false,
+          "native_reported_tokens": 5714,
+          "wall_ms": 74935,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-3f3bfcef362c4266b66b882aa0f8e1d1.json",
+          "sha256": "329066a40b61f8023d60f18a5824f28696c66cb1d2035f247702c9ce4eb0d952",
+          "guard_rejected": false,
+          "native_reported_tokens": 4582,
+          "wall_ms": 13092,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-5c946dcde81248d6a5120a693d098138.json",
+          "sha256": "1456beab886a41f2e4d267ec9445d38a4064091e5dd5b24fa628afdd3057c664",
+          "guard_rejected": false,
+          "native_reported_tokens": 13801,
+          "wall_ms": 124034,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-7d8ce07c478449319eebacc06437b650.json",
+          "sha256": "55db1ee0da412c22c26d9a0c0eafc2dee54981cc5fd7eec35433c0437446f216",
+          "guard_rejected": false,
+          "native_reported_tokens": 21599,
+          "wall_ms": 133998,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-81734d7340b644a798b1d254d9f2dba2.json",
+          "sha256": "c94fb96e564d794d07f20d4ed07f54ad97ae7f5ec83067d3b601e9d267809fef",
+          "guard_rejected": false,
+          "native_reported_tokens": 4280,
+          "wall_ms": 6977,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-902d98e3f0914431b637a91cd86b6d85.json",
+          "sha256": "75db09e5b1f3d70ba16f1c17e7d6bd9ccb7de1fcb6acb033d74ba473ac09834b",
+          "guard_rejected": true,
+          "native_reported_tokens": 149736,
+          "wall_ms": 93184,
+          "bridge_requests": 34,
+          "bridge_results": 34,
+          "bridge_commands": {
+            "world vocabulary": 1,
+            "world summary": 2,
+            "world ladders": 1,
+            "world abilities": 1,
+            "world cast": 1,
+            "world threads": 1,
+            "world presence": 1,
+            "world --help": 1,
+            "world declare": 23,
+            "world check": 2
+          },
+          "bridge_stdout_characters": 37637,
+          "unexpected_mcp_tools": [
+            [
+              "codex",
+              "list_mcp_resource_templates"
+            ],
+            [
+              "codex",
+              "list_mcp_resources"
+            ]
+          ]
+        },
+        {
+          "file": "attempt-93e58d080d444103bacb1c3011188dba.json",
+          "sha256": "7eec9fe78c78ae628f292427c3457e0e60c3bc303117bb27e7b1c4f5da313548",
+          "guard_rejected": false,
+          "native_reported_tokens": 7753,
+          "wall_ms": 20360,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-a660da1b24f245a7966895b923242ee2.json",
+          "sha256": "4946f991cf617329b0290149217e05af1335035593f0cbdf3282149d7757686b",
+          "guard_rejected": false,
+          "native_reported_tokens": 5460,
+          "wall_ms": 14554,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-c54d3bd0fb9d444db4661924a24244a3.json",
+          "sha256": "2a32a395e76a1b25e5bdde084a85f0e8993ff9483464fd3d734f00b299929730",
+          "guard_rejected": false,
+          "native_reported_tokens": 7487,
+          "wall_ms": 5407,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-d5a881f4d56d4922a378fdb52a257570.json",
+          "sha256": "136ebccb92fe17b97d7a052aa837f98c728389a6798f948e1a14de33814c58a7",
+          "guard_rejected": false,
+          "native_reported_tokens": 4079,
+          "wall_ms": 9034,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-d5c5c4af94f640358ddf26be29962e88.json",
+          "sha256": "f70af540635d4775b3150e5a20638b343a77b0747c9e3b3e299bb63c67830e9b",
+          "guard_rejected": false,
+          "native_reported_tokens": 4565,
+          "wall_ms": 11534,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-e08c9e16d6624ce39aaf5593ffc8383e.json",
+          "sha256": "a3551337800319cbe596249a802d23d70bace49365cf94d5c984b722593227ca",
+          "guard_rejected": false,
+          "native_reported_tokens": 173618,
+          "wall_ms": 242695,
+          "bridge_requests": 24,
+          "bridge_results": 24,
+          "bridge_commands": {
+            "invalid_arguments": 2,
+            "world vocabulary": 1,
+            "world summary": 1,
+            "world declare-batch": 12,
+            "world check": 3,
+            "world ladders": 1,
+            "world abilities": 1,
+            "world cast": 1,
+            "world threads": 1,
+            "world presence": 1
+          },
+          "bridge_stdout_characters": 63757,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-eb81e04a3c0d41db8d1d7c286f6b6aed.json",
+          "sha256": "06b167e5624f2009ef1ffa5c88050ce7c27ed8650ffccc77be37cb3ec3433888",
+          "guard_rejected": false,
+          "native_reported_tokens": 7886,
+          "wall_ms": 64666,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        },
+        {
+          "file": "attempt-f0da990efa644eba884332994329cc48.json",
+          "sha256": "6e6a6fb1d5e0d4b971fccc5f5acc61d3e89ddb394f5a31fed1269f9e830c0066",
+          "guard_rejected": false,
+          "native_reported_tokens": 4568,
+          "wall_ms": 13909,
+          "bridge_requests": 0,
+          "bridge_results": 0,
+          "bridge_commands": {},
+          "bridge_stdout_characters": 0,
+          "unexpected_mcp_tools": []
+        }
+      ],
+      "transport_counts_reconcile": true,
+      "native_usage_complete": true,
+      "native_reported_tokens": 432493,
+      "commands": [
+        {
+          "file": "001-concept.json",
+          "exit_code": 0,
+          "sha256": "546b4668c595b7805a1f462fa27ad76b224889b64b428d6a22ac133300783564"
+        },
+        {
+          "file": "002-listing.json",
+          "exit_code": 0,
+          "sha256": "c250a01e9ef00ebedddf261a0a76762e47597c2910d4de35a85ae5124fa0f576"
+        },
+        {
+          "file": "003-seed.json",
+          "exit_code": 0,
+          "sha256": "8a4e06665e599cdc314595f28b6bef2cbe344f1564099fcb6c6604329095aafd"
+        },
+        {
+          "file": "004-seed-check.json",
+          "exit_code": 0,
+          "sha256": "d4f52ef2fb3b0ad05a3444be08e485ee0536ca9bf983d5fbce9c7bd27e983e7c"
+        },
+        {
+          "file": "005-seed-accept.json",
+          "exit_code": 0,
+          "sha256": "60ff4ce21fe331ad7ab95454b6a65d862e8050a9862c8586660d4f271f4ccaa7"
+        },
+        {
+          "file": "006-tick.json",
+          "exit_code": 0,
+          "sha256": "0242285ee280523d7c325a9f53d9995436b2c56663f47652eadbf89db5cc39f7"
+        },
+        {
+          "file": "007-count.json",
+          "exit_code": 0,
+          "sha256": "ef55d7500afa24d6a8734c310270f3698e8a25a1b4016b2db58cc85321cc2e39"
+        },
+        {
+          "file": "008-tick.json",
+          "exit_code": 0,
+          "sha256": "1d789a786c2e2d61925475c781e5ffa468d083f24915d0ed6f8d495e17122810"
+        },
+        {
+          "file": "009-count.json",
+          "exit_code": 1,
+          "sha256": "c48d8ea4b99cdbff469ffa490b49e6c7a265a2b75418c3e98b446a8857fd64e7"
+        },
+        {
+          "file": "010-queued.json",
+          "exit_code": 0,
+          "sha256": "83ee057824a514eb9fe11c4b90845258c0c69d5044e9692fbc125f3ad2f3c92e"
+        },
+        {
+          "file": "011-post-chapter-tick.json",
+          "exit_code": 0,
+          "sha256": "d6ed4f1e4c42a22e9dd7e14242a0e171657332656b7e37397dc7c90de2e43d66"
+        },
+        {
+          "file": "012-queued.json",
+          "exit_code": 0,
+          "sha256": "1ec55618a41fff91fdfea208363d234a4076cbeef31053ab00b9d9f562fb64b2"
+        },
+        {
+          "file": "013-post-chapter-tick.json",
+          "exit_code": 0,
+          "sha256": "07cc73573fd6015d08d26dc602d20d7e2a29ce18066e22b838b4f688dcd8dc48"
+        },
+        {
+          "file": "014-queued.json",
+          "exit_code": 0,
+          "sha256": "6029adc3038dba4cdeb294e9cd446fc33f2f1ed46dc320590ec2b3aa719311b5"
+        },
+        {
+          "file": "015-grow.json",
+          "exit_code": 2,
+          "sha256": "b9910420649f8e47248c32b0f7576c027b80355ec2c457f80a7c3475ac44ab0e"
+        },
+        {
+          "file": "016-final-audit.json",
+          "exit_code": 1,
+          "sha256": "ac2908e1f3f96ca811553324552bfa9f53b283a4afc6eddc92062532653578d3"
+        },
+        {
+          "file": "017-final-status.json",
+          "exit_code": 0,
+          "sha256": "aed9ff83067c3ede08ad830c8dde896aa1d48938bd8ce13222e884ba8acc3736"
+        },
+        {
+          "file": "018-final-jobs.json",
+          "exit_code": 0,
+          "sha256": "6029adc3038dba4cdeb294e9cd446fc33f2f1ed46dc320590ec2b3aa719311b5"
+        },
+        {
+          "file": "019-final-plans.json",
+          "exit_code": 0,
+          "sha256": "2b9da8215742ee065862135fd3ef41f4d6fc00d8044b6ebaac742bdad8ac3b40"
+        },
+        {
+          "file": "020-final-state.json",
+          "exit_code": 0,
+          "sha256": "e11f53d3915c5c77aaf585fa5a20380eb2204bd81a42c8d15ad7a92f0200eee7"
+        },
+        {
+          "file": "021-final-verify.json",
+          "exit_code": 0,
+          "sha256": "d46220fd2823b04131c868e102de0fb4dddc0c481482a20dae544b8240d54af3"
+        },
+        {
+          "file": "022-final-world.json",
+          "exit_code": 0,
+          "sha256": "3e1f76595a6e0b720d30bec58a0d8d4919b82c192320f1b864ee1781bcfa814d"
+        }
+      ],
+      "checkpoints": [],
+      "words": 1982,
+      "final_revision_audit_sha256": "ff411f07806510c368b9ebb2f1f6db475312bbb55ed85265d9c2b130acbb6291",
+      "final_chapter_hashes": {
+        "Chapter1.txt": "af6ebd55d31fabeb166c2dc7e08e8f0bd1c6bc8f2d18d4dfb816d44d483316d6"
+      },
+      "earlier_chapters_unchanged": null,
+      "final_revision_verification": {
+        "rebuilt": 2,
+        "unattributed": []
+      }
+    },
+    {
+      "id": "book-3",
+      "status": "not_started"
+    }
+  ],
+  "limitations": [
+    "Three-book engineering pilot; no estimate of literary quality or improvement.",
+    "Native model identity is requested, not independently reported by the backend.",
+    "All prose, databases and complete transport receipts remain in ignored runs/.",
+    "Token accounting covers returned usage; an in-flight call may exceed a bound.",
+    "Reported totals include cached input and reasoning under the production Usage contract.",
+    "The frozen progress ledger omits usage from a provider-rejected response; native traces are reported separately.",
+    "Listing observations are inert and are not reader-validity evidence."
+  ],
+  "aggregate_counts_reconcile": true,
+  "native_reported_tokens": 1306769
+}
