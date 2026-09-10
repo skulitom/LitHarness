@@ -19,17 +19,29 @@ the decision ledger preserves the experiments and reversals behind these choices
 from __future__ import annotations
 
 # Reader orientation and viewpoint knowledge support sentence-level clarity.
-CLARITY = (
+_CLARITY_CONTEXT = (
     "Every sentence can be followed the first time it is read.\n"
     "Establish where the viewpoint character is and who the relevant people are to them; "
     "make spatial relationships clear before an action depends on them.\n"
     "Give unfamiliar names and terms enough context to grasp their meaning in the scene, "
     "including a brief explanation when needed.\n"
+)
+_GENERAL_ACCESS = (
     "Let the reader follow what the viewpoint character notices, knows and believes, "
     "including uncertainty, before a choice depends on it.\n"
-    "Keep the order of events and the connections between them clear.\n"
+    "Keep the order of events and the connections between them clear."
+)
+_PERCEPTUAL_ACCESS = (
+    "Keep narration within what the viewpoint character can perceive from their position, "
+    "remember or infer; other minds and unseen events remain inferred or reported.\n"
+    "Connect new information through what draws or redirects their attention, leaving "
+    "routine glances and movements implicit when easy to follow."
+)
+_CLARITY_REFERENCES = (
     "Use clear references so the reader knows who perceives or acts and what changes."
 )
+CLARITY = f"{_CLARITY_CONTEXT}{_GENERAL_ACCESS}\n{_CLARITY_REFERENCES}"
+SCENE_CLARITY = f"{_CLARITY_CONTEXT}{_PERCEPTUAL_ACCESS}\n{_CLARITY_REFERENCES}"
 
 
 # Shared precision policy for invention and prose; stage-0 decision 244.
@@ -111,16 +123,21 @@ def demands(text: str) -> tuple[str, ...]:
         if part.strip()
     )
 
-def with_house_rules(system: str, *, opening: bool = True) -> str:
+def with_house_rules(
+    system: str, *, opening: bool = True, limited_viewpoint: bool = False,
+) -> str:
     """Append shared rules within the requested drafting scope.
 
     Default callers and opening drafts retain the complete block. Continuations keep
     comprehension, character attention and quantity guidance; the book's own mechanics
     and author directions reach drafting separately from general genre appeals.
+    Named-viewpoint drafting uses perceptual access in place of general event clarity;
+    planning, world building and content-preserving revision retain their existing scope.
     """
     body = system.strip()
-    rules = HOUSE_RULES if opening else (
-        f"{CLARITY}\n\n{_SCENE_ATTENTION}\n{QUANTITY_DETAIL}"
+    clarity = SCENE_CLARITY if limited_viewpoint else CLARITY
+    rules = f"{clarity}\n\n{READER}\n\n{ACCUMULATION}" if opening else (
+        f"{clarity}\n\n{_SCENE_ATTENTION}\n{QUANTITY_DETAIL}"
     )
     return f"{body}\n\n{rules}" if body else rules
 

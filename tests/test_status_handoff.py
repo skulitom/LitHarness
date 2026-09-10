@@ -105,7 +105,7 @@ def test_unscheduled_result_survives_acceptance_and_next_writer_request(
         first = store.load_job(result.job_id)
         assert first.job_kind == planner.SCENE_DRAFT
         system = first.payload["system"]
-        assert house.HOUSE_RULES in system
+        assert house.with_house_rules("", limited_viewpoint=True) in system
         entering_line = system_voice_example(known)
         assert entering_line is not None and entering_line in system
         assert "stand the frame 0" not in system
@@ -155,6 +155,7 @@ def test_unscheduled_result_survives_acceptance_and_next_writer_request(
         assert house.ACCUMULATION not in second.payload["system"]
         assert house._MAGICAL_OFFER not in second.payload["system"]
         assert house._SCENE_ATTENTION in second.payload["system"]
+        assert house.SCENE_CLARITY in second.payload["system"]
         if concept_backed:
             syntax = status_update_syntax(records)
             assert syntax is not None and syntax in second.payload["system"]

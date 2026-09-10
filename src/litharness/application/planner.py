@@ -396,17 +396,9 @@ def render_prompt(
     It goes in the **beat line**, after the ordinal and before the dramatic function, and not
     after the statement. `plans.scene_plan_line` is rendered last always.
 
-    **`point_of_view` is the same class of thing as `chapter`, and it is held to the same
-    boundary.** It says whose scene this is — one declared cast id, the one this book's canon
-    names as its protagonist — and then stops. `Point of view: kell.` has no verb and no
-    adjective, because *how* to handle a protagonist is the director's to say and a default here
-    would be this system's own taste arriving in every prompt it ever renders (stage-0 §95's
-    scope axiom, §97.1). Nothing here says open on them, make them likeable, or show them
-    winning; `test_the_point_of_view_fragment_carries_no_verb_and_no_adjective` checks it.
-
-    `None` renders nothing and is the control: every book written before a world could declare a
-    protagonist passes `None`, and its prompt is byte-identical to what it was. It sits beside
-    the chapter cue and before the dramatic function, for the chapter cue's reason.
+    `point_of_view` names whose scene this is beside the chapter cue. The cue carries only
+    identity; named-viewpoint drafting also selects perceptual-access guidance in the house
+    block. A missing identity retains general clarity and adds no viewpoint cue.
     """
     # Accepted predecessors determine whether this is still the opening. Continuations
     # keep comprehension guidance; declared mechanics and author locks are appended below.
@@ -415,6 +407,7 @@ def render_prompt(
         "no commentary, no summary of what you wrote. Respect established facts and author "
         "locks; future intentions are plans, not events that have already happened.",
         opening=not has_prior_prose,
+        limited_viewpoint=bool(point_of_view),
     )
     sources = PromptSources()
     system = sources.append("system", "", system, "house_guidance")

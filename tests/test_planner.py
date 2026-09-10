@@ -35,7 +35,7 @@ from litharness.application.planner import (
     render_prompt,
     template_for,
 )
-from litharness.domain import integrity, worlds
+from litharness.domain import house, integrity, worlds
 from litharness.domain.beats import (
     SIX_BEAT,
     BeatTemplate,
@@ -888,6 +888,32 @@ def test_the_prompt_says_whose_scene_it_is(store: SqliteStore) -> None:
     # And without a chapter scheme it sits directly after the ordinal.
     _, alone = render_prompt(beat, book_title=None, packet=packet, point_of_view="silas")
     assert "scene 4 of 6. Point of view: silas. Dramatic function:" in alone
+
+
+@pytest.mark.parametrize("has_prior_prose", [False, True])
+def test_named_viewpoint_scopes_perception_without_changing_story_context(
+    store: SqliteStore, has_prior_prose: bool,
+) -> None:
+    book_id, branch_id = _fixture(store, "mystery")
+    head = store.head(book_id, branch_id)
+    assert head is not None
+    beat = beats_for(head, SIX_BEAT)[3]
+    packet = packet_for(store, head, beat)
+    base_system, base_prompt = render_prompt(
+        beat, book_title=None, packet=packet, has_prior_prose=has_prior_prose,
+    )
+    mapping: dict = {}
+    system, prompt = render_prompt(
+        beat, book_title=None, packet=packet, has_prior_prose=has_prior_prose,
+        point_of_view="silas", source_map=mapping,
+    )
+    assert system == base_system.replace(house.CLARITY, house.SCENE_CLARITY, 1)
+    assert prompt.replace(" Point of view: silas.", "", 1) == base_prompt
+    guidance = next(e for e in mapping["entries"] if e["section"] == "house_guidance")
+    assert house.SCENE_CLARITY in system[guidance["start"]:guidance["end"]]
+    assert len(house.demands(system)) == len(house.demands(base_system))
+    assert (house.OPENING_OFFER in system) is (not has_prior_prose)
+    assert house._SCENE_ATTENTION in system
 
 
 def test_the_point_of_view_fragment_carries_no_verb_and_no_adjective(

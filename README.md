@@ -219,6 +219,11 @@ is the explicit control that drafts without a scene handoff. Both writer paths r
 original author brief; the generated concept treatment is supplied to planning. Without a
 scene handoff, an explicitly locked concept retains its full source. These are generation and
 meaning-preservation safeguards, not evidence of literary quality.
+When a scene names its viewpoint character, drafting follows that character's available
+perceptions, memories and inferences. Changes in attention connect new information;
+routine glances can remain implicit. World truth stays available for consistency without
+automatically becoming character knowledge. This direction replaces general event-clarity
+wording in that drafting request; other authoring stages retain their existing guidance.
 Candidate and acceptance events preserve the exact provider draft and its SHA-256 before
 format cleanup or an explicitly requested revision, so changes can be traced afterwards.
 Optional revision receives the exact author-lock block from the drafting job's recorded
