@@ -1,0 +1,44 @@
+{
+  "manifest_sha256": "8f60c04ff18f4ba33c98cecd44a531b2c3d43c3057e4c14914de586dd3869856",
+  "order": [
+    "control-1",
+    "nonce-1",
+    "ingredients-0-a",
+    "ingredients-1-a",
+    "control-2",
+    "nonce-2",
+    "ingredients-2-a",
+    "ingredients-0-b",
+    "nonce-3",
+    "ingredients-1-b",
+    "ingredients-2-b",
+    "control-3"
+  ],
+  "source_revision": "d5ccb9ec7a244e8a573a0c26612373672d3c2bd7",
+  "runbook_sha256": "93c645aaefb21268d5f1971727162dd688c6766acbf2d349db7ee04d8ef7c5d6",
+  "runner_sha256": "1f51fdeb5afbbf53f13ef55d4a8e5ba2a75985d134b18d00bf2d952526c181c6",
+  "seed_tool_sha256": "d6a5533eedf445b0f831e3660b78fa7a37155ac9c446af18559ee9e0cccf58aa",
+  "seed_label": "20260910-invention-seed-pilot",
+  "packet_sha256": {
+    "0": "29dfb10692ac154f278d8e46cd17e09af0202a99e2f1c71f5042dea0df894962",
+    "1": "cb0179d19cd94b8ff8ba77065b80cb891e8b14460e9cb84ac3bda6965c545a07",
+    "2": "79c431e2e16d1830eea33f2f9c834800e288f6769970973bcf24b23f4de3ef82"
+  },
+  "request_sha256": {
+    "control-1": "bb5a97cda6f278e0a014fbd89aa73181c6f204005719ce31a755627fad1fc2fc",
+    "nonce-1": "4f272ae2227e2ab1096a42613c3382e1e14ddcf1723ff7ef802c8ec13da46179",
+    "ingredients-0-a": "8f78f780089f430d2bebdd346e10485b6291a17ffc7aa85e922ff61499d32732",
+    "ingredients-1-a": "65f25dc54c3cb6ad43049475a22b55b42614fd89d437c36f60f0bf64d9db6a52",
+    "control-2": "bb5a97cda6f278e0a014fbd89aa73181c6f204005719ce31a755627fad1fc2fc",
+    "nonce-2": "0dd7d347c41a5ad10526c29b1790c94d1e35ddea597a56acec7cabd1e9e00166",
+    "ingredients-2-a": "8dc9fc8938bb6e36f34a6ff43a28510edaabebe7471b7a524160dbe7048a9643",
+    "ingredients-0-b": "8f78f780089f430d2bebdd346e10485b6291a17ffc7aa85e922ff61499d32732",
+    "nonce-3": "b471dda303e6ba168087eaa80840334ee3631e1e6e783704fc874637e18c1f23",
+    "ingredients-1-b": "65f25dc54c3cb6ad43049475a22b55b42614fd89d437c36f60f0bf64d9db6a52",
+    "ingredients-2-b": "8dc9fc8938bb6e36f34a6ff43a28510edaabebe7471b7a524160dbe7048a9643",
+    "control-3": "bb5a97cda6f278e0a014fbd89aa73181c6f204005719ce31a755627fad1fc2fc"
+  },
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "native_sampler_seed": null
+}
