@@ -723,6 +723,33 @@ def test_a_false_belief_is_never_carried_as_a_hidden_truth() -> None:
     assert texts == ["silas believes, wrongly: the ledger only counts coin"]
 
 
+def test_an_inhabited_place_keeps_visible_traces_separate_from_its_hidden_history() -> None:
+    visible = "Faded handprints show through the hall's fresh plaster."
+    secret = "The handprints mark the families displaced when the hall was enlarged."
+    mistaken = "The handprints were left by the painters who work here now."
+    records = (
+        flat("hall", "manifests_as", visible),
+        flat("hall_history", worlds.CLAIM_CONTENT, secret),
+        flat("keeper", "wants", "Restore the damaged wall paintings."),
+        flat("visitor_guess", worlds.CLAIM_CONTENT, mistaken),
+        flat("visitor_guess", worlds.CLAIM_FALSE, True),
+        edge("visitor", worlds.BELIEVES, "visitor_guess"),
+    )
+    packet = assemble(
+        one_scene_book(), "scene-2", plan_items=[PREMISE_ITEM], state_records=records,
+        story_time_cutoff="s1", disclosure_at="s1",
+    )
+    facts = [item.text for item in packet.sections[FACTS]]
+    assert any(visible in text for text in facts)
+    assert any("Restore the damaged wall paintings." in text for text in facts)
+    assert f"visitor believes, wrongly: {mistaken}" in facts
+    assert [item.text for item in packet.sections[HIDDEN]] == [secret]
+    assert all(secret not in item.text for name, items in packet.sections.items()
+               if name != HIDDEN for item in items)
+    assert worlds.undisclosed_claims(records, at="s1") == (records[1],)
+    assert worlds.validate(records) == ()  # A private explanation needs no invented reveal date.
+
+
 def test_pov_visibility_is_not_how_a_secret_is_carried() -> None:
     """§0.1 row 2, demonstrated rather than cited.
 

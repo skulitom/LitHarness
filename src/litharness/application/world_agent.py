@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from litharness.application.concept import Concept
 
 #: Frozen profiles, one per job, so seeding a world and growing one are separable on the rows.
-SEED_PROFILE = "architect.seed.v2"
+SEED_PROFILE = "architect.seed.v3"
 GROW_PROFILE = "architect.grow.v1"
 
 # Explicit subcommands exclude acceptance. A broad world:* allowance would permit it.
@@ -94,16 +94,14 @@ _SYSTEM = (
 )
 
 _SEED = (
-    "Build a world that supports the supplied material, including its places, beings, magical "
-    "effects and usable capabilities.\n\n"
+    "Build the supplied world, including its history, inhabitants' own pursuits, magical "
+    "effects and usable capabilities. Declare observable forms, activity and historical "
+    "traces through manifests_as, separately from undisclosed explanations in claim.content.\n\n"
     f"{_TOOLS}\n\n"
     f"{_SYSTEM}\n\n"
-    "Build enough world for the first chapters to stand on besides that: who is in it, how it "
-    "works, and what is true that nobody has been told yet. Establish which people the "
-    "viewpoint character can understand and be understood by, including any translation "
-    "mechanism or language barrier the supplied story relies on. Then say, in two or three "
-    "sentences, what you built "
-    "and what you deliberately left open."
+    "Establish which people the viewpoint character can understand and be understood by, "
+    "including any translation mechanism or language barrier the supplied story relies on. "
+    "Briefly report what you built and left open."
 )
 
 # Only concepts with a second system need this declaration contract.

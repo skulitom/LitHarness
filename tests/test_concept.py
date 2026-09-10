@@ -182,7 +182,7 @@ def test_new_invention_defaults_to_the_requested_genres_under_the_author_brief(b
         assert "unless the author's brief calls for something else" in request.system
         if brief:
             assert brief in request.prompt
-    assert discovery.Discovery.from_invention(_discovery()).version == "magical-discovery.v4"
+    assert discovery.Discovery.from_invention(_discovery()).version == "magical-discovery.v5"
 
 
 # --- where it lives ------------------------------------------------------------------------
@@ -574,6 +574,28 @@ def test_stored_v3_discovery_retains_its_original_direction() -> None:
     assert discovery.DIRECTION not in restored.render()
 
 
+def test_stored_v4_discovery_keeps_its_direction_when_developed_again() -> None:
+    payload = {**_discovery(), "version": "magical-discovery.v4"}
+    original_direction = (
+        "Create a LitRPG fantasy experience in portal fantasy, isekai, or system apocalypse, or "
+        "a combination, unless the author's brief calls for something else: an unfamiliar world "
+        "worth exploring and powers the character wants to acquire and use. Let the chosen "
+        "magic system determine how advancement is earned through the story's events, including "
+        "discovery, conflict, exploration, choices or practice. Develop what an early gain lets "
+        "the protagonist accomplish for a personal pursuit, and what makes a further capability "
+        "desirable. Let them experience and use a reward as well as encounter its limitations."
+    )
+    saved = discovery.Discovery.from_payload(payload)
+    restored = discovery.Discovery.from_payload(saved.to_jsonable())
+    assert restored.to_jsonable() == payload
+    assert restored.render().splitlines()[0] == (
+        f"Intended fantasy experience (magical-discovery.v4): {original_direction}"
+    )
+    request = concept.render_concept_request("Keep this story.", scenes=6, discovery=restored)
+    assert restored.render() in request.prompt
+    assert discovery.DIRECTION not in request.system + request.prompt
+
+
 def _discovery() -> dict[str, object]:
     return {
         "world": "Reefs float through the mountain passes and carry living weather.",
@@ -748,6 +770,38 @@ def test_discovery_material_reaches_listing_and_later_arcs_with_scoped_world_inp
         }
         assert concept.DISCOVERY_ARC_RULE in parsed["rules"]
         assert not any("numbers must actually move" in rule for rule in parsed["rules"])
+
+
+def test_inhabited_world_survives_development_and_seed_without_future_discoveries() -> None:
+    source = discovery.Discovery.from_invention({
+        "world": (
+            "An old hill settlement surrounds a sealed kiln. Its inhabitants repair tiles "
+            "for homes elsewhere; worn trade marks remain beneath newer glazes. Visitors "
+            "can compare those marks with tiles offered for exchange. The makers disagree "
+            "about who built the kiln; its original purpose remains unknown."
+        ),
+        "opening": "OPENING_ACTION: the gardener exchanges a cutting and finds a route home.",
+        "growth": "CAPABILITY_GOAL: growing a shelter that can travel between the hills.",
+    })
+    brief = "Preserve the gardener's ordinary starting abilities and untranslated local script."
+    answer = {**_example(), "discovery": dict.fromkeys(_discovery(), "REPLACEMENT_WORLD")}
+    developed = concept.Concept.from_development(answer, source, author_brief=brief)
+    restored = concept.Concept.from_text(developed.to_text())
+    seed = world_agent.render_seed_request(
+        "A gardener reaches an unfamiliar settlement.", concept=restored,
+    )
+
+    assert restored.discovery == source
+    assert restored.first_arc.opens == source.opening
+    assert restored.author_brief == brief
+    assert seed.profile == "architect.seed.v3"
+    assert source.world in seed.prompt
+    assert brief in seed.prompt
+    assert restored.system.manner in seed.prompt
+    assert restored.system.pays in seed.prompt
+    for future_or_replaced in (source.opening, source.growth, "REPLACEMENT_WORLD"):
+        assert future_or_replaced not in seed.prompt
+    assert restored.to_text() == developed.to_text()
 
 
 @pytest.mark.parametrize("with_discovery", [False, True])

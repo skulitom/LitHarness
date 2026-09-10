@@ -92,6 +92,14 @@ New books default to portal fantasy, isekai, or system apocalypse, with combinat
 The default applies even with an empty brief; `--brief` can choose another subgenre or premise.
 Stored treatments retain their original direction. All stages use the configured subscription
 CLI and the ordinary quota checks.
+
+World invention develops unfamiliar inhabitants with their own activities, relationships
+and history, alongside tangible things people can discover about them and their surroundings.
+Each book invents the forms of life and intelligence that fit its brief. Stable world material
+stays in the discovery treatment's world field; proposed encounters stay in its opening field.
+World seeding is instructed to keep observable traces separate from undisclosed explanations
+and characters' fallible beliefs. These are authoring directions, not a guarantee of reader appeal.
+
 New status sheets omit undeveloped skills from displayed panels while retaining their zero
 values in stored state. An acquired skill can then appear in a compact update. Older exported
 chapters retain the displays they were written with.
