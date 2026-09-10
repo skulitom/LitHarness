@@ -1,0 +1,40 @@
+{
+  "manifest_sha256": "d07de9b43c7aad9029b66e93db865fc5ae12b5223df2ddefde095fb28d7876cf",
+  "order": [
+    "baseline-0",
+    "world-0",
+    "world-1",
+    "baseline-1",
+    "baseline-2",
+    "world-2",
+    "development-1"
+  ],
+  "base_revision": "f6bfe4228f0909d27e320c2058e831af822003d4",
+  "owned_source_sha256": {
+    "src/litharness/domain/invention.py": "f2fd6cd642ccd0846b98d053dcf8085ad9920ee662f18bf7e45a7754cc5dc98b",
+    "src/litharness/cli.py": "5dda71368519ee6dd41397c5581aa0f292deba5e9e9964dbd2621cf09ec83e65"
+  },
+  "seed_labels": [
+    "83a9b641ef6d40ba95e9fb74ccd351a2",
+    "27bd0e944f6e4d52a51210ec58139587",
+    "c3d06067fad54e50a6643336a81fd7e2"
+  ],
+  "seed_index": 0,
+  "versions": [
+    "invention-seed.v1",
+    "invention-seed.v2"
+  ],
+  "runbook_sha256": "4beb7b491774e2de74d6cbea28dd51d47868e24d08a18d466485d77f02531cc0",
+  "runner_sha256": "d7b56b473f9d0c7e5b1e5dd149bad902fd077d31110c34a3881ae11979731a3d",
+  "request_sha256": {
+    "baseline-0": "937a7c30a1daa323b1876c8ffe0cb79c9db6e6e07d3c5dea3f49fa74f99182c2",
+    "world-0": "d9004ff643d65a7104bdcbda9d6c3fc59e53ad5754738738ece029943bb08a33",
+    "world-1": "84f1e713108d61fbbbb6410189d6cfc60dd7e38653b811fa8d7e58425cbe5510",
+    "baseline-1": "2011bf9237eb4796823ff91ef100822e15e0d513349411952c2ef0d302b7e264",
+    "baseline-2": "f6d9d4a72fb972b6b9863dce54c091e896e1932c4df7af0edacb507e10cd7818",
+    "world-2": "00fea78c5993ed28b02cdc3453c1c70579c634191f97fcb60847394bb2c8909d"
+  },
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "native_sampler_seed": null
+}

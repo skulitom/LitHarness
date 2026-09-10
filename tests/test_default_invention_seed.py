@@ -8,14 +8,20 @@ import pytest
 
 from litharness import cli
 from litharness.application import concept, discovery, world_agent
-from litharness.domain.invention import COMBINATIONS, InventionSeed, make_seed
+from litharness.domain.invention import (
+    COMBINATIONS,
+    LEGACY_VERSION,
+    VERSION,
+    InventionSeed,
+    make_seed,
+)
 from tests.test_concept import _discovery, _example, _scripted
 
 
 def test_seed_deck_and_activity_extension_are_repeatable():
     seed = make_seed("deck", 7)
     assert seed == make_seed("deck", 7)
-    ingredients = make_seed("deck", 7, actions=False)
+    ingredients = make_seed("deck", 7, actions=False, version=LEGACY_VERSION)
     assert seed.brief.startswith(ingredients.brief)
     assert "First magical success:" in seed.brief
     assert "Further power growth:" in seed.brief
@@ -25,6 +31,28 @@ def test_seed_deck_and_activity_extension_are_repeatable():
             make_seed("deck", index)
     with pytest.raises(ValueError):
         make_seed("  ")
+
+
+def test_world_seed_extends_the_same_activity_and_keeps_legacy_replay():
+    label = "83a9b641ef6d40ba95e9fb74ccd351a2"
+    old = make_seed(label, version=LEGACY_VERSION)
+    # Captured before v2 in automatic-seeding-20260910/seeds/actions-0.json.
+    assert old.to_jsonable()["brief_sha256"] == (
+        "7d0c451f231b7e926592f53e91bac556935b1c861353736fee6c52079ee3fb34"
+    )
+    current = make_seed(label)
+    assert old.version == LEGACY_VERSION
+    assert current.version == VERSION
+    assert current.brief.startswith(old.brief + "\nConcrete world starting points:")
+    assert current.mode == "actions-world"
+    assert "inhabited destinations through these conditions" in current.brief
+    assert "Concrete world starting points:" not in old.brief
+    assert make_seed(label, actions=False).mode == "ingredients-world"
+    assert make_seed(label, 1).brief.split("Concrete world starting points:")[1] != (
+        current.brief.split("Concrete world starting points:")[1]
+    )
+    with pytest.raises(ValueError, match="Unknown invention seed version"):
+        make_seed(label, version="invention-seed.v999")
 
 
 def test_seed_receipt_keeps_older_bytes_and_refuses_missing_or_corrupt_data():
@@ -77,7 +105,10 @@ def test_default_concepts_receive_fresh_seeds_and_preserve_json_output(
     assert requests[0].prompt != requests[1].prompt
 
 
-def test_explicit_seed_replays_and_mechanical_retries_keep_one_invention(tmp_path, monkeypatch):
+@pytest.mark.parametrize("version", [LEGACY_VERSION, VERSION])
+def test_explicit_seed_replays_and_mechanical_retries_keep_one_invention(
+    tmp_path, monkeypatch, version
+):
     requests = []
     for index in range(2):
         call = _scripted(_discovery(), None, _example(), {"edits": []})
@@ -91,6 +122,8 @@ def test_explicit_seed_replays_and_mechanical_retries_keep_one_invention(tmp_pat
                     "concept",
                     "--seed",
                     "replay",
+                    "--seed-version",
+                    version,
                     "--seed-index",
                     "4",
                     "--out",
@@ -103,7 +136,7 @@ def test_explicit_seed_replays_and_mechanical_retries_keep_one_invention(tmp_pat
         assert call.seen[1] == call.seen[2]
         requests.append(call.seen[0])
         stored = concept.Concept.from_text((out / "concept.json").read_text())
-        assert stored.invention_seed == make_seed("replay", 4)
+        assert stored.invention_seed == make_seed("replay", 4, version=version)
     assert requests[0] == requests[1]
 
 
@@ -176,7 +209,10 @@ def test_no_seed_is_an_explicit_control_and_clears_a_stale_receipt(tmp_path, mon
 
 
 @pytest.mark.parametrize(
-    "flags", [("--seed", " "), ("--seed-index", "-1"), ("--no-seed", "--seed-index", "1")]
+    "flags", [
+        ("--seed", " "), ("--seed-index", "-1"), ("--no-seed", "--seed-index", "1"),
+        ("--no-seed", "--seed-version", LEGACY_VERSION),
+    ]
 )
 def test_invalid_seed_refuses_before_opening_a_store(tmp_path, flags):
     db = tmp_path / "absent.db"

@@ -156,24 +156,29 @@ New `concept` commands automatically choose a fresh creative seed. It supplies s
 ingredients, a first magical success and further growth in the chosen activity. Explicit
 author briefs take precedence over conflicting ingredients. The original author brief remains
 separate from the seed; generated story material carries the realized choices downstream.
+The default `invention-seed.v2` also supplies a concrete habitat, embodied inhabitants, a local
+physical rule and a contested opportunity. Their properties should affect early and later
+magical actions, including inside any portals or other eras in the broader setting.
 
 With `--out`, `invention-seed.json` is written before the first model call, and the completed
 `concept.json` also retains the seed, version, deck position and exact creative brief. The
 seed is printed on stderr, including with `--json`. Development retries reuse the same
-invention. Reproduce a brief with `--seed` and take another position with `--seed-index`:
+invention. Reproduce a brief with its recorded `--seed` and `--seed-version`, and take another
+position with `--seed-index`:
 
 ```bash
-uv run litharness concept --seed my-series --seed-index 3 --out runs/my-concept
+uv run litharness concept --seed my-series --seed-version invention-seed.v2 --seed-index 3 --out runs/my-concept
 ```
 
 Use the usual provider/database options for generation. `--no-seed` is an explicit unseeded
 control. A fresh seed does not guarantee a globally unique story: the palette is finite,
 different labels can choose overlapping ingredients, and this does not control the native
-sampler. Distinct positions under one label have distinct combinations. The standalone
-[experimental tool](tools/invention_seed.py) retains its older palette/version for replay of
+sampler. Distinct positions under one label have distinct combinations.
+`--seed-version invention-seed.v1` preserves the earlier input policy for replay. The
+[experimental tool](tools/invention_seed.py) retains its original palette/version for replay of
 the [initial pilot](research/quality-measurement/invention-seeding-20260910/REPORT.md).
 The [automatic-seeding experiment](research/quality-measurement/automatic-seeding-20260910/REPORT.md)
-records the current input comparison, development checks and remaining repetitions.
+records the first default's input comparison, development checks and remaining repetitions.
 
 New discovery requests develop an early gain's use toward a personal pursuit and the appeal
 of further capabilities. Advancement follows the chosen magic system through discovery,

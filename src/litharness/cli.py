@@ -2216,9 +2216,12 @@ def cmd_concept(args: argparse.Namespace) -> int:
     seed = None
     if not getattr(args, "no_seed", False):
         label = args.seed if getattr(args, "seed", None) is not None else uuid.uuid4().hex
-        seed = invention_mod.make_seed(label, getattr(args, "seed_index", 0))
-    elif getattr(args, "seed_index", 0):
-        raise ValueError("--seed-index requires seeding")
+        seed = invention_mod.make_seed(
+            label, getattr(args, "seed_index", 0),
+            version=getattr(args, "seed_version", None) or invention_mod.VERSION,
+        )
+    elif getattr(args, "seed_index", 0) or getattr(args, "seed_version", None):
+        raise ValueError("--seed-index and --seed-version require seeding")
     store = _store(args)
     try:
         writer, reason = _installed_writer(args, getattr(args, "writer", "") or "", store)
@@ -6445,6 +6448,10 @@ def build_parser() -> argparse.ArgumentParser:
     concept.add_argument(
         "--seed-index", type=int, default=0,
         help="position in the seed's ingredient deck (default: 0)",
+    )
+    concept.add_argument(
+        "--seed-version", choices=invention_mod.VERSIONS,
+        help=f"creative input version for replay (default: {invention_mod.VERSION})",
     )
     concept.add_argument(
         "--distinct-from", type=Path, action="append", default=[],

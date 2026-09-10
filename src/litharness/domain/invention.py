@@ -13,7 +13,9 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
-VERSION = "invention-seed.v1"
+LEGACY_VERSION = "invention-seed.v1"
+VERSION = "invention-seed.v2"
+VERSIONS = (LEGACY_VERSION, VERSION)
 PALETTE = {
     "protagonist": (
         "a goblin youth impersonating a celebrated human champion",
@@ -104,6 +106,59 @@ ACTIVITIES = (
     ),
 )
 
+# These describe the lived setting inside the broad world, including worlds with portals
+# or multiple eras. Choices are independent of the base deck so old ingredients replay.
+HABITATS = {
+    "habitat": (
+        "terraces of porous pumice threaded with flexible basalt needles",
+        "curled metal leaves large enough to inhabit, folding shut at different temperatures",
+        "interlocked ivory hoops drifting through a permanent aurora",
+        "glass foam whose bubbles contain red dust and hollow galleries",
+        "magnetic shingle slopes hanging beneath inverted mountains",
+        "enormous feathers slowly tilting around a warm mineral core",
+        "dunes of bright beads that rearrange around buried sources of vibration",
+        "chambers inside amber blisters which soften under direct light",
+        "compressed felt plains threaded with tunnels made by needle-shaped animals",
+        "floating pollen shelves above a canopy of continuously opening stone flowers",
+        "freshwater pools inside tilted giant shells connected by leaping streams",
+        "an ocean kelp thicket enclosing breathable bubbles that move along its stems",
+    ),
+    "inhabitants": (
+        "six-limbed porcelain grazers that perceive heat as shape and defend nesting surfaces",
+        "linked beetles that rearrange into ribbon bodies and smell electrical charge",
+        "hollow antlered fungi that move by shedding spores and sense pressure changes",
+        "folded parchment scavengers that exchange memories by staining one another",
+        "glass-legged spiders that converse through vibration and bargain over captured prey",
+        "moth swarms that assemble temporary bodies and coordinate through reflected color",
+        "cold-flame beings that feed on oxidation and recognize individuals by their shadows",
+        "jointed crystal worms that grow sensory facets by consuming particular minerals",
+        "soft-bodied mimics that trade borrowed silhouettes and navigate by echoes",
+        "ambulatory seedpods that hear through roots and compete for places to germinate",
+        "ribbon-winged predators that taste magnetic fields and hoard resonant objects",
+        "colonies of tiny masks that share a walking body while arguing through changing faces",
+    ),
+    "local rule": (
+        "an object grows heavier while motionless; uninterrupted movement releases the weight",
+        "shadows stay where dawn cast them even after their owners move",
+        "speaking a thing's name exchanges its surface friction with the speaker's skin",
+        "a sustained sound bends nearby surfaces, which redirect the next sound",
+        "a fresh fracture attracts loose fragments until its edges are brought together",
+        "pigments store illumination and release it as heat when rubbed away",
+        "matching patterns on touching objects bind them until their rhythms diverge",
+        "an object cooled after heating briefly retraces its recent path through space",
+    ),
+    "contested opportunity": (
+        "a rival is trying to monopolize a rare seasonal transformation of the habitat",
+        "a coveted living trophy will bond only with someone who defeats its present bearer",
+        "a feast lets guests exchange bodily traits, and an enemy wants the same trait",
+        "an adversary is breeding a predator to exploit the inhabitants' distinctive senses",
+        "an exile has hidden a personal treasure inside a dangerous organism's changing body",
+        "a rival courtship requires a display that risks revealing the protagonist's disguise",
+        "a traveling challenger wagers an unusual ability against an intimate secret",
+        "an enemy hunts the creature whose migration reveals a buried route to the pursuit",
+    ),
+}
+
 
 @dataclass(frozen=True, slots=True)
 class InventionSeed:
@@ -149,15 +204,19 @@ class InventionSeed:
         return value
 
 
-def make_seed(seed: str, index: int = 0, *, actions: bool = True) -> InventionSeed:
+def make_seed(
+    seed: str, index: int = 0, *, actions: bool = True, version: str = VERSION
+) -> InventionSeed:
     """Take a deterministic position in a finite deck, optionally with activity guidance."""
     if not isinstance(seed, str) or not seed.strip():
         raise ValueError("Supply a non-empty invention seed")
+    if version not in VERSIONS:
+        raise ValueError(f"Unknown invention seed version: {version}")
     if isinstance(index, bool) or not isinstance(index, int) or not 0 <= index < COMBINATIONS:
         raise ValueError(f"Seed index must be from 0 to {COMBINATIONS - 1}")
 
     def number(label: str) -> int:
-        value = json.dumps([VERSION, seed, label], ensure_ascii=False).encode("utf-8")
+        value = json.dumps([LEGACY_VERSION, seed, label], ensure_ascii=False).encode("utf-8")
         return int.from_bytes(hashlib.sha256(value).digest(), "big")
 
     stride = number("stride") % COMBINATIONS
@@ -183,4 +242,22 @@ def make_seed(seed: str, index: int = 0, *, actions: bool = True) -> InventionSe
             "success in that activity and how an opponent or discovery makes the next use "
             "different. Keep the chosen power's mechanism central as its applications expand."
         )
-    return InventionSeed(seed, index, VERSION, "actions" if actions else "ingredients", brief)
+    mode = "actions" if actions else "ingredients"
+    if version == VERSION:
+        brief += "\nConcrete world starting points:"
+        for axis, world_options in HABITATS.items():
+            encoded = json.dumps([version, seed, index, axis], ensure_ascii=False).encode("utf-8")
+            choice = int.from_bytes(hashlib.sha256(encoded).digest(), "big") % len(world_options)
+            brief += f"\n{axis.capitalize()}: {world_options[choice]}."
+        brief += (
+            "\nBuild the lived setting within the supplied world from this habitat, its "
+            "inhabitants and its local rule. Connect the contested opportunity to the personal "
+            "pursuit. Make the first magical success depend on a concrete property of this "
+            "environment and an inhabitant's behavior; develop another consequential "
+            "interaction as power grows. If the world contains portals, eras or dreams, "
+            "realize their inhabited destinations through these conditions too, with "
+            "consequences for what the protagonist and opponents can do. Invent how these "
+            "ingredients fit together and adapt them where the author's explicit brief requires."
+        )
+        mode += "-world"
+    return InventionSeed(seed, index, version, mode, brief)
