@@ -16,6 +16,8 @@ from typing import Any
 LEGACY_VERSION = "invention-seed.v1"
 VERSION = "invention-seed.v2"
 VERSIONS = (LEGACY_VERSION, VERSION)
+# Concrete world inputs remain an explicit experiment; ordinary seeds use activity guidance.
+DEFAULT_VERSION = LEGACY_VERSION
 PALETTE = {
     "protagonist": (
         "a goblin youth impersonating a celebrated human champion",
@@ -205,7 +207,7 @@ class InventionSeed:
 
 
 def make_seed(
-    seed: str, index: int = 0, *, actions: bool = True, version: str = VERSION
+    seed: str, index: int = 0, *, actions: bool = True, version: str = DEFAULT_VERSION
 ) -> InventionSeed:
     """Take a deterministic position in a finite deck, optionally with activity guidance."""
     if not isinstance(seed, str) or not seed.strip():

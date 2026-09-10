@@ -40,15 +40,17 @@ def test_world_seed_extends_the_same_activity_and_keeps_legacy_replay():
     assert old.to_jsonable()["brief_sha256"] == (
         "7d0c451f231b7e926592f53e91bac556935b1c861353736fee6c52079ee3fb34"
     )
-    current = make_seed(label)
+    current = make_seed(label, version=VERSION)
+    assert make_seed(label) == old
     assert old.version == LEGACY_VERSION
     assert current.version == VERSION
     assert current.brief.startswith(old.brief + "\nConcrete world starting points:")
     assert current.mode == "actions-world"
     assert "inhabited destinations through these conditions" in current.brief
     assert "Concrete world starting points:" not in old.brief
-    assert make_seed(label, actions=False).mode == "ingredients-world"
-    assert make_seed(label, 1).brief.split("Concrete world starting points:")[1] != (
+    assert make_seed(label, actions=False, version=VERSION).mode == "ingredients-world"
+    next_world = make_seed(label, 1, version=VERSION)
+    assert next_world.brief.split("Concrete world starting points:")[1] != (
         current.brief.split("Concrete world starting points:")[1]
     )
     with pytest.raises(ValueError, match="Unknown invention seed version"):
@@ -94,6 +96,7 @@ def test_default_concepts_receive_fresh_seeds_and_preserve_json_output(
         )
         printed = json.loads(capsys.readouterr().out)
         seed = InventionSeed.from_payload(json.loads((out / "invention-seed.json").read_text()))
+        assert seed.version == LEGACY_VERSION
         stored = concept.Concept.from_text((out / "concept.json").read_text())
         assert stored.invention_seed == seed
         assert printed["invention_seed"] == seed.to_jsonable()

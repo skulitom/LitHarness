@@ -1,0 +1,1329 @@
+{
+  "purpose": "Input controls and preservation; no quality score or candidate selection",
+  "manifest_sha256": "d07de9b43c7aad9029b66e93db865fc5ae12b5223df2ddefde095fb28d7876cf",
+  "manifest_matches_registration": true,
+  "frozen_file_drift": [],
+  "progress": {
+    "status": "finished",
+    "attempts": 7,
+    "tokens": 49277,
+    "slots": [
+      {
+        "name": "baseline-0",
+        "status": "completed"
+      },
+      {
+        "name": "world-0",
+        "status": "completed"
+      },
+      {
+        "name": "world-1",
+        "status": "completed"
+      },
+      {
+        "name": "baseline-1",
+        "status": "completed"
+      },
+      {
+        "name": "baseline-2",
+        "status": "completed"
+      },
+      {
+        "name": "world-2",
+        "status": "completed"
+      },
+      {
+        "name": "development-1",
+        "status": "completed"
+      }
+    ],
+    "stop": null
+  },
+  "calls": [
+    {
+      "slot": "baseline-0",
+      "path": "runs/world-seeding-20260911/calls/baseline-0.json",
+      "file_sha256": "9dcd255459eeffa77dfae8be5c4e833368f61dbf9da816701920d4390cae0832",
+      "profile": "writer.discovery.v9",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d94-207d-77c0-95de-30a36611e60c"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "ca352078845d9f1301ebb14a592612c63cd7e682cb03c1596b16893c246b83d7",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "ca352078845d9f1301ebb14a592612c63cd7e682cb03c1596b16893c246b83d7",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 1449,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 1449,
+        "transport.schema": 182,
+        "output.text": 8296
+      },
+      "application_input_sha256": "0d9c92e748fd276b4bcf52f110dd4cbfabb9319d410a65103b9966e2802dd219",
+      "transport_input_sha256": "929942dc7e569fa1077356f090446e1236a38770e546a642a06310feb577aa40",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T23:08:09.817287+00:00",
+      "finished_at": "2026-09-10T23:09:37.064591+00:00",
+      "machinery_names": null,
+      "requires_precision": null,
+      "discovery_preserved": null,
+      "seed_preserved": null,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 4466,
+        "output_tokens": 1569,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 516
+      }
+    },
+    {
+      "slot": "world-0",
+      "path": "runs/world-seeding-20260911/calls/world-0.json",
+      "file_sha256": "ceac6ac8c8040bb7675f7c3dffcb7b5dccc9f628c23282e0647c6526531ace11",
+      "profile": "writer.discovery.v9",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d95-75ee-75d1-b9f1-07305ade1589"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "be5f114dd7ca35aeb69505ede2b75d1e2c5c03018dbd59376157a02fb9c2a532",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "be5f114dd7ca35aeb69505ede2b75d1e2c5c03018dbd59376157a02fb9c2a532",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "95f8d086f35e469b2f413d24b37329e2aaae49155b5295a0b182fd753bde93d6"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 2459,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 2459,
+        "transport.schema": 182,
+        "output.text": 9593
+      },
+      "application_input_sha256": "4ad37e978d70a25473eeaee724c35a50462e75b787069cdf68d945eaf2c5729d",
+      "transport_input_sha256": "d8cfe88680b8cc21dcb8104c590410c9689db9abc210d695d047edcab00c2d13",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T23:09:37.294623+00:00",
+      "finished_at": "2026-09-10T23:11:08.593790+00:00",
+      "machinery_names": null,
+      "requires_precision": null,
+      "discovery_preserved": null,
+      "seed_preserved": null,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 2078,
+        "output_tokens": 1798,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 516
+      }
+    },
+    {
+      "slot": "world-1",
+      "path": "runs/world-seeding-20260911/calls/world-1.json",
+      "file_sha256": "36689f798ac5479256b1c199c109aa99dbe96275b334d47eec0b36b3de9a91d6",
+      "profile": "writer.discovery.v9",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d96-db8a-7a02-908a-658b585200d8"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "1e5f347d242f4b33df027b26942eaf255442e938c174b220dc88766d54c2514e",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "1e5f347d242f4b33df027b26942eaf255442e938c174b220dc88766d54c2514e",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "231f6667fc416d453fcb518b6bf261df97816054d2b3cf8295b5a918e06bf2b9"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 2446,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 2446,
+        "transport.schema": 182,
+        "output.text": 7991
+      },
+      "application_input_sha256": "0fd594620f8dfd501fe156eaf3a6067d46f5b2fd45b732b406a7f2ccabb18480",
+      "transport_input_sha256": "3a11b0ed7c8550fd3ae42b058410b09f40e5d221a0c9290cfffdae5ad05e040e",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T23:11:08.824155+00:00",
+      "finished_at": "2026-09-10T23:12:29.740956+00:00",
+      "machinery_names": null,
+      "requires_precision": null,
+      "discovery_preserved": null,
+      "seed_preserved": null,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 4639,
+        "output_tokens": 1546,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 516
+      }
+    },
+    {
+      "slot": "baseline-1",
+      "path": "runs/world-seeding-20260911/calls/baseline-1.json",
+      "file_sha256": "e013e049e2ce3d8d15dd01bb6ac9ae080a7b0a52ff967a1f6481e15db8ce3104",
+      "profile": "writer.discovery.v9",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d98-1882-7143-80b2-33b4249be1c7"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "b15aa4e67b2c2a743ed9406192d3c2e870673adce74abd0266bd1afdee427dd5",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "b15aa4e67b2c2a743ed9406192d3c2e870673adce74abd0266bd1afdee427dd5",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "67d8625b3df0e2451fe531b208a28c2f950e4df5df286ac8f1894d67c602412b"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 1439,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 1439,
+        "transport.schema": 182,
+        "output.text": 7136
+      },
+      "application_input_sha256": "f4ca50ebaba8b95dbc249000814ed0d9942410fa3712722ffcff638cfcaf76b1",
+      "transport_input_sha256": "ed2a5ac0846fff64c0cb4290e9b777f2686facd6866e344660b2dd5f30f62ce2",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T23:12:29.973172+00:00",
+      "finished_at": "2026-09-10T23:14:07.839150+00:00",
+      "machinery_names": null,
+      "requires_precision": null,
+      "discovery_preserved": null,
+      "seed_preserved": null,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 4465,
+        "output_tokens": 1369,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 782
+      }
+    },
+    {
+      "slot": "baseline-2",
+      "path": "runs/world-seeding-20260911/calls/baseline-2.json",
+      "file_sha256": "7622c9140e708f45c9724091efa012daefae0702f0bdd75d3bc0f186cfbbaca0",
+      "profile": "writer.discovery.v9",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d99-97c8-7122-a96f-f8a4512e2a3b"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "56c1b51e8462ce46161e10f5fced06c33ef0835ba99fbf8bf3f6ee9b0a433017",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "56c1b51e8462ce46161e10f5fced06c33ef0835ba99fbf8bf3f6ee9b0a433017",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "48f9d5e74dcbe393216d4def7cffeaf9749c2d216aab29807f4e50a0c3b6f634"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 1473,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 1473,
+        "transport.schema": 182,
+        "output.text": 7157
+      },
+      "application_input_sha256": "d768f0ed6b6d8bcafc6d84295e4862354e5bc974084bcb3ceb812f8408ba9718",
+      "transport_input_sha256": "8fa3249084c4a15b02cc28d648d5b77b2e7f706d108dc4852416091032afc53e",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T23:14:08.087758+00:00",
+      "finished_at": "2026-09-10T23:15:46.381671+00:00",
+      "machinery_names": null,
+      "requires_precision": null,
+      "discovery_preserved": null,
+      "seed_preserved": null,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 4472,
+        "output_tokens": 1369,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 975
+      }
+    },
+    {
+      "slot": "world-2",
+      "path": "runs/world-seeding-20260911/calls/world-2.json",
+      "file_sha256": "effeb8fdffc767e3458e823ea054a737962385b9d3d82a5b3f663d81fc8bcd6e",
+      "profile": "writer.discovery.v9",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d9b-18b6-7c41-8327-f5682dbf7027"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "c1a10b255aea0f9274bf7af7fd8c792fd7edb64f97f80014823142e39fa3e081",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "c1a10b255aea0f9274bf7af7fd8c792fd7edb64f97f80014823142e39fa3e081",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "9780c19bcc69d3f8ac85114cd9915280f5b22e5acdf9842464404dd60d1976c4"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 2475,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 2475,
+        "transport.schema": 182,
+        "output.text": 7870
+      },
+      "application_input_sha256": "7c31b5b9a4046109cebe053ae7bf93ef1dd42ce31264c66b18b8724f1a28c4ec",
+      "transport_input_sha256": "2917ea8c67f36bdc11c541a3427b3740a43ee9577edd681d9098440fd31fc7e7",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T23:15:46.614714+00:00",
+      "finished_at": "2026-09-10T23:17:29.087118+00:00",
+      "machinery_names": null,
+      "requires_precision": null,
+      "discovery_preserved": null,
+      "seed_preserved": null,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 4646,
+        "output_tokens": 1502,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 1008
+      }
+    },
+    {
+      "slot": "development-1",
+      "path": "runs/world-seeding-20260911/calls/development-1.json",
+      "file_sha256": "d002bec59d6ef7ec06a21686951850acbbb4aab7a4ef36c514d195ec5bd403d0",
+      "profile": "writer.concept.discovery.v5",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d9c-a9f9-7231-9046-82a52e9be332"
+      ],
+      "field_sha256": {
+        "application.system": "83aea4e7efedc74d86af471493ec4ac07dc3477597d48bbaec158885259491c8",
+        "application.prompt": "1aa1f745b0a6e61d8f2d1e70117fb4638fac465e93b2ec78263d26dcc2d3615b",
+        "application.schema": "621c7c107d841e9b4ab2bc0665dab0adb1803fc18b2ee1d811edaac630b21be6",
+        "application.parameters": "cb5f1c41b39c2340ffdc77ca9a01a54b4060eb82ece0bca308efafe7c2484c6d",
+        "transport.system": "4ee7ff0349304d3ad4ea07726b8152b06873462bac6a75c2f16c3a7afd388488",
+        "transport.prompt": "1aa1f745b0a6e61d8f2d1e70117fb4638fac465e93b2ec78263d26dcc2d3615b",
+        "transport.schema": "621c7c107d841e9b4ab2bc0665dab0adb1803fc18b2ee1d811edaac630b21be6",
+        "output.text": "fc539bad4c6eec966d29fec4b277fbf1bff9cb3e4e93ca26482d1baac64bddd0"
+      },
+      "field_characters": {
+        "application.system": 1812,
+        "application.prompt": 9017,
+        "application.schema": 1624,
+        "application.parameters": 163,
+        "transport.system": 3695,
+        "transport.prompt": 9017,
+        "transport.schema": 1624,
+        "output.text": 8560
+      },
+      "application_input_sha256": "97cbbcee1f101df880b9a3a2a3f6a1c92393f54d09fc4f483d3bfcc94ff9d595",
+      "transport_input_sha256": "1ff794d02293c12a85412e54dc6addd816c1e2974e580c2c056798ba9a3e2102",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T23:17:29.333570+00:00",
+      "finished_at": "2026-09-10T23:18:29.967650+00:00",
+      "machinery_names": [],
+      "requires_precision": true,
+      "discovery_preserved": true,
+      "seed_preserved": true,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 6574,
+        "output_tokens": 1708,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 203
+      }
+    }
+  ],
+  "discovery_pairs": {
+    "0": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+          "right_sha256": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d"
+        },
+        "application.prompt": {
+          "equal": false,
+          "left_sha256": "ca352078845d9f1301ebb14a592612c63cd7e682cb03c1596b16893c246b83d7",
+          "right_sha256": "be5f114dd7ca35aeb69505ede2b75d1e2c5c03018dbd59376157a02fb9c2a532"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7",
+          "right_sha256": "95f8d086f35e469b2f413d24b37329e2aaae49155b5295a0b182fd753bde93d6"
+        },
+        "transport.prompt": {
+          "equal": false,
+          "left_sha256": "ca352078845d9f1301ebb14a592612c63cd7e682cb03c1596b16893c246b83d7",
+          "right_sha256": "be5f114dd7ca35aeb69505ede2b75d1e2c5c03018dbd59376157a02fb9c2a532"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "1": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+          "right_sha256": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d"
+        },
+        "application.prompt": {
+          "equal": false,
+          "left_sha256": "b15aa4e67b2c2a743ed9406192d3c2e870673adce74abd0266bd1afdee427dd5",
+          "right_sha256": "1e5f347d242f4b33df027b26942eaf255442e938c174b220dc88766d54c2514e"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "67d8625b3df0e2451fe531b208a28c2f950e4df5df286ac8f1894d67c602412b",
+          "right_sha256": "231f6667fc416d453fcb518b6bf261df97816054d2b3cf8295b5a918e06bf2b9"
+        },
+        "transport.prompt": {
+          "equal": false,
+          "left_sha256": "b15aa4e67b2c2a743ed9406192d3c2e870673adce74abd0266bd1afdee427dd5",
+          "right_sha256": "1e5f347d242f4b33df027b26942eaf255442e938c174b220dc88766d54c2514e"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "2": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+          "right_sha256": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d"
+        },
+        "application.prompt": {
+          "equal": false,
+          "left_sha256": "56c1b51e8462ce46161e10f5fced06c33ef0835ba99fbf8bf3f6ee9b0a433017",
+          "right_sha256": "c1a10b255aea0f9274bf7af7fd8c792fd7edb64f97f80014823142e39fa3e081"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "48f9d5e74dcbe393216d4def7cffeaf9749c2d216aab29807f4e50a0c3b6f634",
+          "right_sha256": "9780c19bcc69d3f8ac85114cd9915280f5b22e5acdf9842464404dd60d1976c4"
+        },
+        "transport.prompt": {
+          "equal": false,
+          "left_sha256": "56c1b51e8462ce46161e10f5fced06c33ef0835ba99fbf8bf3f6ee9b0a433017",
+          "right_sha256": "c1a10b255aea0f9274bf7af7fd8c792fd7edb64f97f80014823142e39fa3e081"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    }
+  },
+  "seed_controls": {
+    "0": {
+      "same_label_and_index": true,
+      "world_extends_exact_base_brief": true,
+      "only_prepared_request_change_is_world_extension": true,
+      "seed_file_sha256": {
+        "baseline-0": "37644b9ef03288843cd138888b62fe1f84de9b6528a80c512dfc6f12703f2c63",
+        "world-0": "f2c3f335cf21bdb0037d34deb0670a779b12dbe74b13cfcb9816ac0597bf95e8"
+      }
+    },
+    "1": {
+      "same_label_and_index": true,
+      "world_extends_exact_base_brief": true,
+      "only_prepared_request_change_is_world_extension": true,
+      "seed_file_sha256": {
+        "baseline-1": "a8035d47b2d99dffe3994fdd0c7cf4851207d91921be2491cbbc7b7b21e3ced6",
+        "world-1": "a7e15d1bf5575655c5f8861673ada1dff38ef608ae81d2f7f5619f3ac71f7807"
+      }
+    },
+    "2": {
+      "same_label_and_index": true,
+      "world_extends_exact_base_brief": true,
+      "only_prepared_request_change_is_world_extension": true,
+      "seed_file_sha256": {
+        "baseline-2": "704c6e534eba776209425d91b7a5dbefcfa9af939b0c27327d88f9da9e309e52",
+        "world-2": "a862a97bab3c38e312867b8e2c9e9208cc844b65328e99efd02d64ac8170e7b9"
+      }
+    }
+  },
+  "distinct_sessions": 7,
+  "distinct_outputs": 7,
+  "shared_sessions": {},
+  "repeated_outputs": {},
+  "literal_search": {
+    "query": "\\b(?:Mara Venn|Sera Venn|drowned|orchard|water|flood\\w*|repair\\w*|mend\\w*|nurser\\w*|load-bearing)\\b",
+    "hits": [
+      {
+        "slot": "baseline-0",
+        "path": "runs/world-seeding-20260911/calls/baseline-0.json",
+        "file_sha256": "9dcd255459eeffa77dfae8be5c4e833368f61dbf9da816701920d4390cae0832",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7",
+        "start": 145,
+        "end": 152,
+        "line": 1
+      },
+      {
+        "slot": "baseline-0",
+        "path": "runs/world-seeding-20260911/calls/baseline-0.json",
+        "file_sha256": "9dcd255459eeffa77dfae8be5c4e833368f61dbf9da816701920d4390cae0832",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7",
+        "start": 797,
+        "end": 804,
+        "line": 1
+      },
+      {
+        "slot": "baseline-0",
+        "path": "runs/world-seeding-20260911/calls/baseline-0.json",
+        "file_sha256": "9dcd255459eeffa77dfae8be5c4e833368f61dbf9da816701920d4390cae0832",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7",
+        "start": 4239,
+        "end": 4244,
+        "line": 1
+      },
+      {
+        "slot": "baseline-0",
+        "path": "runs/world-seeding-20260911/calls/baseline-0.json",
+        "file_sha256": "9dcd255459eeffa77dfae8be5c4e833368f61dbf9da816701920d4390cae0832",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7",
+        "start": 4748,
+        "end": 4755,
+        "line": 1
+      },
+      {
+        "slot": "baseline-0",
+        "path": "runs/world-seeding-20260911/calls/baseline-0.json",
+        "file_sha256": "9dcd255459eeffa77dfae8be5c4e833368f61dbf9da816701920d4390cae0832",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7",
+        "start": 5379,
+        "end": 5384,
+        "line": 1
+      },
+      {
+        "slot": "baseline-0",
+        "path": "runs/world-seeding-20260911/calls/baseline-0.json",
+        "file_sha256": "9dcd255459eeffa77dfae8be5c4e833368f61dbf9da816701920d4390cae0832",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7",
+        "start": 5420,
+        "end": 5427,
+        "line": 1
+      },
+      {
+        "slot": "baseline-0",
+        "path": "runs/world-seeding-20260911/calls/baseline-0.json",
+        "file_sha256": "9dcd255459eeffa77dfae8be5c4e833368f61dbf9da816701920d4390cae0832",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7",
+        "start": 6245,
+        "end": 6252,
+        "line": 1
+      },
+      {
+        "slot": "baseline-0",
+        "path": "runs/world-seeding-20260911/calls/baseline-0.json",
+        "file_sha256": "9dcd255459eeffa77dfae8be5c4e833368f61dbf9da816701920d4390cae0832",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7",
+        "start": 6296,
+        "end": 6301,
+        "line": 1
+      },
+      {
+        "slot": "baseline-0",
+        "path": "runs/world-seeding-20260911/calls/baseline-0.json",
+        "file_sha256": "9dcd255459eeffa77dfae8be5c4e833368f61dbf9da816701920d4390cae0832",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7",
+        "start": 6635,
+        "end": 6642,
+        "line": 1
+      },
+      {
+        "slot": "baseline-0",
+        "path": "runs/world-seeding-20260911/calls/baseline-0.json",
+        "file_sha256": "9dcd255459eeffa77dfae8be5c4e833368f61dbf9da816701920d4390cae0832",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7",
+        "start": 7150,
+        "end": 7157,
+        "line": 1
+      },
+      {
+        "slot": "baseline-0",
+        "path": "runs/world-seeding-20260911/calls/baseline-0.json",
+        "file_sha256": "9dcd255459eeffa77dfae8be5c4e833368f61dbf9da816701920d4390cae0832",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "b73fb4d9d5be5d1e0372624bf43c5cddb71087d689e5fa4e820d0ed56e2b69b7",
+        "start": 7383,
+        "end": 7390,
+        "line": 1
+      },
+      {
+        "slot": "world-0",
+        "path": "runs/world-seeding-20260911/calls/world-0.json",
+        "file_sha256": "ceac6ac8c8040bb7675f7c3dffcb7b5dccc9f628c23282e0647c6526531ace11",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "95f8d086f35e469b2f413d24b37329e2aaae49155b5295a0b182fd753bde93d6",
+        "start": 1380,
+        "end": 1389,
+        "line": 1
+      },
+      {
+        "slot": "world-0",
+        "path": "runs/world-seeding-20260911/calls/world-0.json",
+        "file_sha256": "ceac6ac8c8040bb7675f7c3dffcb7b5dccc9f628c23282e0647c6526531ace11",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "95f8d086f35e469b2f413d24b37329e2aaae49155b5295a0b182fd753bde93d6",
+        "start": 5171,
+        "end": 5177,
+        "line": 1
+      },
+      {
+        "slot": "world-1",
+        "path": "runs/world-seeding-20260911/calls/world-1.json",
+        "file_sha256": "36689f798ac5479256b1c199c109aa99dbe96275b334d47eec0b36b3de9a91d6",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "231f6667fc416d453fcb518b6bf261df97816054d2b3cf8295b5a918e06bf2b9",
+        "start": 6383,
+        "end": 6390,
+        "line": 1
+      },
+      {
+        "slot": "world-1",
+        "path": "runs/world-seeding-20260911/calls/world-1.json",
+        "file_sha256": "36689f798ac5479256b1c199c109aa99dbe96275b334d47eec0b36b3de9a91d6",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "231f6667fc416d453fcb518b6bf261df97816054d2b3cf8295b5a918e06bf2b9",
+        "start": 6607,
+        "end": 6614,
+        "line": 1
+      },
+      {
+        "slot": "world-1",
+        "path": "runs/world-seeding-20260911/calls/world-1.json",
+        "file_sha256": "36689f798ac5479256b1c199c109aa99dbe96275b334d47eec0b36b3de9a91d6",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "231f6667fc416d453fcb518b6bf261df97816054d2b3cf8295b5a918e06bf2b9",
+        "start": 6737,
+        "end": 6742,
+        "line": 1
+      },
+      {
+        "slot": "baseline-1",
+        "path": "runs/world-seeding-20260911/calls/baseline-1.json",
+        "file_sha256": "e013e049e2ce3d8d15dd01bb6ac9ae080a7b0a52ff967a1f6481e15db8ce3104",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "67d8625b3df0e2451fe531b208a28c2f950e4df5df286ac8f1894d67c602412b",
+        "start": 120,
+        "end": 127,
+        "line": 1
+      },
+      {
+        "slot": "baseline-1",
+        "path": "runs/world-seeding-20260911/calls/baseline-1.json",
+        "file_sha256": "e013e049e2ce3d8d15dd01bb6ac9ae080a7b0a52ff967a1f6481e15db8ce3104",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "67d8625b3df0e2451fe531b208a28c2f950e4df5df286ac8f1894d67c602412b",
+        "start": 128,
+        "end": 135,
+        "line": 1
+      },
+      {
+        "slot": "baseline-1",
+        "path": "runs/world-seeding-20260911/calls/baseline-1.json",
+        "file_sha256": "e013e049e2ce3d8d15dd01bb6ac9ae080a7b0a52ff967a1f6481e15db8ce3104",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "67d8625b3df0e2451fe531b208a28c2f950e4df5df286ac8f1894d67c602412b",
+        "start": 5626,
+        "end": 5633,
+        "line": 1
+      },
+      {
+        "slot": "baseline-1",
+        "path": "runs/world-seeding-20260911/calls/baseline-1.json",
+        "file_sha256": "e013e049e2ce3d8d15dd01bb6ac9ae080a7b0a52ff967a1f6481e15db8ce3104",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "67d8625b3df0e2451fe531b208a28c2f950e4df5df286ac8f1894d67c602412b",
+        "start": 5634,
+        "end": 5641,
+        "line": 1
+      },
+      {
+        "slot": "baseline-1",
+        "path": "runs/world-seeding-20260911/calls/baseline-1.json",
+        "file_sha256": "e013e049e2ce3d8d15dd01bb6ac9ae080a7b0a52ff967a1f6481e15db8ce3104",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "67d8625b3df0e2451fe531b208a28c2f950e4df5df286ac8f1894d67c602412b",
+        "start": 5845,
+        "end": 5852,
+        "line": 1
+      },
+      {
+        "slot": "baseline-2",
+        "path": "runs/world-seeding-20260911/calls/baseline-2.json",
+        "file_sha256": "7622c9140e708f45c9724091efa012daefae0702f0bdd75d3bc0f186cfbbaca0",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "48f9d5e74dcbe393216d4def7cffeaf9749c2d216aab29807f4e50a0c3b6f634",
+        "start": 68,
+        "end": 75,
+        "line": 1
+      },
+      {
+        "slot": "baseline-2",
+        "path": "runs/world-seeding-20260911/calls/baseline-2.json",
+        "file_sha256": "7622c9140e708f45c9724091efa012daefae0702f0bdd75d3bc0f186cfbbaca0",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "48f9d5e74dcbe393216d4def7cffeaf9749c2d216aab29807f4e50a0c3b6f634",
+        "start": 4782,
+        "end": 4788,
+        "line": 1
+      },
+      {
+        "slot": "world-2",
+        "path": "runs/world-seeding-20260911/calls/world-2.json",
+        "file_sha256": "effeb8fdffc767e3458e823ea054a737962385b9d3d82a5b3f663d81fc8bcd6e",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "9780c19bcc69d3f8ac85114cd9915280f5b22e5acdf9842464404dd60d1976c4",
+        "start": 814,
+        "end": 821,
+        "line": 1
+      },
+      {
+        "slot": "world-2",
+        "path": "runs/world-seeding-20260911/calls/world-2.json",
+        "file_sha256": "effeb8fdffc767e3458e823ea054a737962385b9d3d82a5b3f663d81fc8bcd6e",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "9780c19bcc69d3f8ac85114cd9915280f5b22e5acdf9842464404dd60d1976c4",
+        "start": 4467,
+        "end": 4472,
+        "line": 1
+      },
+      {
+        "slot": "world-2",
+        "path": "runs/world-seeding-20260911/calls/world-2.json",
+        "file_sha256": "effeb8fdffc767e3458e823ea054a737962385b9d3d82a5b3f663d81fc8bcd6e",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "9780c19bcc69d3f8ac85114cd9915280f5b22e5acdf9842464404dd60d1976c4",
+        "start": 5976,
+        "end": 5983,
+        "line": 1
+      },
+      {
+        "slot": "development-1",
+        "path": "runs/world-seeding-20260911/calls/development-1.json",
+        "file_sha256": "d002bec59d6ef7ec06a21686951850acbbb4aab7a4ef36c514d195ec5bd403d0",
+        "profile": "writer.concept.discovery.v5",
+        "field": "application.prompt",
+        "field_sha256": "1aa1f745b0a6e61d8f2d1e70117fb4638fac465e93b2ec78263d26dcc2d3615b",
+        "start": 7115,
+        "end": 7122,
+        "line": 26
+      },
+      {
+        "slot": "development-1",
+        "path": "runs/world-seeding-20260911/calls/development-1.json",
+        "file_sha256": "d002bec59d6ef7ec06a21686951850acbbb4aab7a4ef36c514d195ec5bd403d0",
+        "profile": "writer.concept.discovery.v5",
+        "field": "application.prompt",
+        "field_sha256": "1aa1f745b0a6e61d8f2d1e70117fb4638fac465e93b2ec78263d26dcc2d3615b",
+        "start": 7339,
+        "end": 7346,
+        "line": 26
+      },
+      {
+        "slot": "development-1",
+        "path": "runs/world-seeding-20260911/calls/development-1.json",
+        "file_sha256": "d002bec59d6ef7ec06a21686951850acbbb4aab7a4ef36c514d195ec5bd403d0",
+        "profile": "writer.concept.discovery.v5",
+        "field": "application.prompt",
+        "field_sha256": "1aa1f745b0a6e61d8f2d1e70117fb4638fac465e93b2ec78263d26dcc2d3615b",
+        "start": 7469,
+        "end": 7474,
+        "line": 26
+      },
+      {
+        "slot": "development-1",
+        "path": "runs/world-seeding-20260911/calls/development-1.json",
+        "file_sha256": "d002bec59d6ef7ec06a21686951850acbbb4aab7a4ef36c514d195ec5bd403d0",
+        "profile": "writer.concept.discovery.v5",
+        "field": "transport.prompt",
+        "field_sha256": "1aa1f745b0a6e61d8f2d1e70117fb4638fac465e93b2ec78263d26dcc2d3615b",
+        "start": 7115,
+        "end": 7122,
+        "line": 26
+      },
+      {
+        "slot": "development-1",
+        "path": "runs/world-seeding-20260911/calls/development-1.json",
+        "file_sha256": "d002bec59d6ef7ec06a21686951850acbbb4aab7a4ef36c514d195ec5bd403d0",
+        "profile": "writer.concept.discovery.v5",
+        "field": "transport.prompt",
+        "field_sha256": "1aa1f745b0a6e61d8f2d1e70117fb4638fac465e93b2ec78263d26dcc2d3615b",
+        "start": 7339,
+        "end": 7346,
+        "line": 26
+      },
+      {
+        "slot": "development-1",
+        "path": "runs/world-seeding-20260911/calls/development-1.json",
+        "file_sha256": "d002bec59d6ef7ec06a21686951850acbbb4aab7a4ef36c514d195ec5bd403d0",
+        "profile": "writer.concept.discovery.v5",
+        "field": "transport.prompt",
+        "field_sha256": "1aa1f745b0a6e61d8f2d1e70117fb4638fac465e93b2ec78263d26dcc2d3615b",
+        "start": 7469,
+        "end": 7474,
+        "line": 26
+      },
+      {
+        "slot": "development-1",
+        "path": "runs/world-seeding-20260911/calls/development-1.json",
+        "file_sha256": "d002bec59d6ef7ec06a21686951850acbbb4aab7a4ef36c514d195ec5bd403d0",
+        "profile": "writer.concept.discovery.v5",
+        "field": "output.text",
+        "field_sha256": "fc539bad4c6eec966d29fec4b277fbf1bff9cb3e4e93ca26482d1baac64bddd0",
+        "start": 3976,
+        "end": 3983,
+        "line": 1
+      },
+      {
+        "slot": "development-1",
+        "path": "runs/world-seeding-20260911/calls/development-1.json",
+        "file_sha256": "d002bec59d6ef7ec06a21686951850acbbb4aab7a4ef36c514d195ec5bd403d0",
+        "profile": "writer.concept.discovery.v5",
+        "field": "output.text",
+        "field_sha256": "fc539bad4c6eec966d29fec4b277fbf1bff9cb3e4e93ca26482d1baac64bddd0",
+        "start": 6111,
+        "end": 6118,
+        "line": 1
+      },
+      {
+        "slot": "development-1",
+        "path": "runs/world-seeding-20260911/calls/development-1.json",
+        "file_sha256": "d002bec59d6ef7ec06a21686951850acbbb4aab7a4ef36c514d195ec5bd403d0",
+        "profile": "writer.concept.discovery.v5",
+        "field": "output.text",
+        "field_sha256": "fc539bad4c6eec966d29fec4b277fbf1bff9cb3e4e93ca26482d1baac64bddd0",
+        "start": 6278,
+        "end": 6283,
+        "line": 1
+      }
+    ],
+    "interpretation": "Passage locations only"
+  }
+}
