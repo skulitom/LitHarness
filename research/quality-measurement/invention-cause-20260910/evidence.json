@@ -1699,6 +1699,854 @@
           }
         }
       ]
+    },
+    {
+      "registration": "research/quality-measurement/invention-cause-20260910/phase3-registration.json",
+      "manifest_sha256": "b3263249902c4ee2ae1dc5783f085c1aff1fd228cb819f0c29cd03cd976c1b82",
+      "manifest_matches_registration": true,
+      "frozen_file_drift": [],
+      "progress": {
+        "status": "finished",
+        "attempts": 8,
+        "tokens": 22137,
+        "slots": [
+          {
+            "name": "astra-control-1",
+            "status": "completed"
+          },
+          {
+            "name": "gpt55-blank-1",
+            "status": "completed"
+          },
+          {
+            "name": "astra-blank-1",
+            "status": "completed"
+          },
+          {
+            "name": "gpt55-control-1",
+            "status": "completed"
+          },
+          {
+            "name": "gpt55-control-2",
+            "status": "completed"
+          },
+          {
+            "name": "astra-blank-2",
+            "status": "completed"
+          },
+          {
+            "name": "gpt55-blank-2",
+            "status": "completed"
+          },
+          {
+            "name": "astra-control-2",
+            "status": "completed"
+          }
+        ],
+        "stop": null
+      },
+      "calls": [
+        {
+          "slot": "astra-control-1",
+          "path": "runs/invention-cause-20260910/phase3/calls/astra-control-1.json",
+          "file_sha256": "8a05d9bb98278c0d240fa85bd77cfa9d4045be0ad09b4e0a76bf4ceb5cc0268d",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c6e-64e8-7ac1-b71f-e900bab9416e"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "750f3710b6e53b413e3e80667dde1389ad4ad748b6fe1b1effd6e116f611714e"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 3234
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none",
+              "model_catalog_json": "C:/DEV/LitHarness/runs/invention-cause-20260910/phase3/control-catalog.json"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:47:19.865533+00:00",
+          "finished_at": "2026-09-10T17:48:03.046582+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 3928,
+            "output_tokens": 665,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 47
+          }
+        },
+        {
+          "slot": "gpt55-blank-1",
+          "path": "runs/invention-cause-20260910/phase3/calls/gpt55-blank-1.json",
+          "file_sha256": "37b33ee7ada002c791c3c4681035885d4a09cb87a9507b4013bfdb954154081c",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-5.5",
+          "status": "completed",
+          "sessions": [
+            "01a08c6f-0ef8-7912-85dd-e23ca63ba837"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "0fef5feabb83b1b224992f4fef2c2ed0a3af81690c76d3037b1c97c77c049f35"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 2317
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-5.5",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none",
+              "model_catalog_json": "C:/DEV/LitHarness/runs/invention-cause-20260910/phase3/blank-catalog.json"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:48:03.413533+00:00",
+          "finished_at": "2026-09-10T17:48:19.642836+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 699,
+            "output_tokens": 463,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 25
+          }
+        },
+        {
+          "slot": "astra-blank-1",
+          "path": "runs/invention-cause-20260910/phase3/calls/astra-blank-1.json",
+          "file_sha256": "3af1b1f6b64a1aa19e755c0a043cb3037b849c453da9f211308ffe97b496ca88",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c6f-4fc1-7590-a80c-cd456ce2192a"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "4cadadd2bac294daf58faf8c3550fde6fdfc4262ff03b830a4e285e9809b64ef"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 3411
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none",
+              "model_catalog_json": "C:/DEV/LitHarness/runs/invention-cause-20260910/phase3/blank-catalog.json"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:48:19.999109+00:00",
+          "finished_at": "2026-09-10T17:49:04.440934+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 3149,
+            "output_tokens": 666,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 135
+          }
+        },
+        {
+          "slot": "gpt55-control-1",
+          "path": "runs/invention-cause-20260910/phase3/calls/gpt55-control-1.json",
+          "file_sha256": "18d84d39428c6fca48ace03bbf281f285b23f2f6a87205283aefe288d20457fd",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-5.5",
+          "status": "completed",
+          "sessions": [
+            "01a08c6f-fed5-7120-b74a-8df67dad6fd6"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "8d04ec3cb8cea27a82c851a8e0fc351d5b16355cd54ca586fa8de5f4ea10a66a"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 2287
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-5.5",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none",
+              "model_catalog_json": "C:/DEV/LitHarness/runs/invention-cause-20260910/phase3/control-catalog.json"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:49:04.800635+00:00",
+          "finished_at": "2026-09-10T17:49:19.414424+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 701,
+            "output_tokens": 487,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 25
+          }
+        },
+        {
+          "slot": "gpt55-control-2",
+          "path": "runs/invention-cause-20260910/phase3/calls/gpt55-control-2.json",
+          "file_sha256": "5a0c122804c9b8c202eccb52a264517b6ffc5afff738910fa512e8d0400e0196",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-5.5",
+          "status": "completed",
+          "sessions": [
+            "01a08c70-393f-7d80-bf19-a1a4295a0e8c"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "c2df9bdb6f4ee6c12642b592768ac2e74a952017590a6e58ea2db4653ec63f7a"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 2433
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-5.5",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none",
+              "model_catalog_json": "C:/DEV/LitHarness/runs/invention-cause-20260910/phase3/control-catalog.json"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:49:19.773819+00:00",
+          "finished_at": "2026-09-10T17:49:35.773297+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 703,
+            "output_tokens": 501,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 20
+          }
+        },
+        {
+          "slot": "astra-blank-2",
+          "path": "runs/invention-cause-20260910/phase3/calls/astra-blank-2.json",
+          "file_sha256": "5f0eeef71e8662e7c1900b64e0ffd3d9998c926c66608a996891ca3e4c3472a5",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c70-7927-7c21-903f-da4e6a5f8259"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "622eee8ba341b95491c4ef201416c1577da201ce5605301b49d401567d481990"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 4115
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none",
+              "model_catalog_json": "C:/DEV/LitHarness/runs/invention-cause-20260910/phase3/blank-catalog.json"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:49:36.133412+00:00",
+          "finished_at": "2026-09-10T17:50:27.945498+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 3149,
+            "output_tokens": 830,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 67
+          }
+        },
+        {
+          "slot": "gpt55-blank-2",
+          "path": "runs/invention-cause-20260910/phase3/calls/gpt55-blank-2.json",
+          "file_sha256": "f3ebf5498f223c1a057b59c0040bcfc44f92055c80ae9307a4db1c715c3438cd",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-5.5",
+          "status": "completed",
+          "sessions": [
+            "01a08c71-44f1-7a82-b072-4cdbe9da9d20"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "7b6fe71cedf24ddb6cb7f2508a4da82397cc65d9333eaa5a1ab70c5bba712fb9"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 2084
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-5.5",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none",
+              "model_catalog_json": "C:/DEV/LitHarness/runs/invention-cause-20260910/phase3/blank-catalog.json"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:50:28.298555+00:00",
+          "finished_at": "2026-09-10T17:50:45.485689+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 701,
+            "output_tokens": 421,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 20
+          }
+        },
+        {
+          "slot": "astra-control-2",
+          "path": "runs/invention-cause-20260910/phase3/calls/astra-control-2.json",
+          "file_sha256": "42d13dccd938304b65bc195bbfb084d13db5c72a96623eca15e22861c90e4e03",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c71-897e-7c33-9d7b-c1143961336e"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "27f740c7a9a1abd6d038cbf238f3a3943c62ef33df01ab9f2e1297633348a0b4"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 3678
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none",
+              "model_catalog_json": "C:/DEV/LitHarness/runs/invention-cause-20260910/phase3/control-catalog.json"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:50:45.847897+00:00",
+          "finished_at": "2026-09-10T17:51:33.248907+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 3930,
+            "output_tokens": 724,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 81
+          }
+        }
+      ]
     }
   ],
   "comparisons": {
@@ -1845,10 +2693,132 @@
       },
       "configuration_equal": false,
       "same_native_session": false
+    },
+    "astra_templates": {
+      "left": "phase3/calls/astra-control-1.json",
+      "right": "phase3/calls/astra-blank-1.json",
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+          "right_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+          "right_sha256": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "750f3710b6e53b413e3e80667dde1389ad4ad748b6fe1b1effd6e116f611714e",
+          "right_sha256": "4cadadd2bac294daf58faf8c3550fde6fdfc4262ff03b830a4e285e9809b64ef"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+          "right_sha256": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd"
+        }
+      },
+      "configuration_equal": false,
+      "same_native_session": false
+    },
+    "gpt55_templates": {
+      "left": "phase3/calls/gpt55-control-1.json",
+      "right": "phase3/calls/gpt55-blank-1.json",
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+          "right_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+          "right_sha256": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "8d04ec3cb8cea27a82c851a8e0fc351d5b16355cd54ca586fa8de5f4ea10a66a",
+          "right_sha256": "0fef5feabb83b1b224992f4fef2c2ed0a3af81690c76d3037b1c97c77c049f35"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+          "right_sha256": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd"
+        }
+      },
+      "configuration_equal": false,
+      "same_native_session": false
     }
   },
   "shared_sessions": {},
   "repeated_outputs": {},
+  "literal_name_check": {
+    "query": "Mara Venn",
+    "field": "output.text",
+    "minimal_codex_calls": 18,
+    "matched_calls": 17,
+    "paths": [
+      "runs/invention-cause-20260910/calls/minimal-1.json",
+      "runs/invention-cause-20260910/calls/minimal-2.json",
+      "runs/invention-cause-20260910/calls/minimal-3.json",
+      "runs/invention-cause-20260910/calls/minimal-4.json",
+      "runs/invention-cause-20260910/phase2/calls/astra-1.json",
+      "runs/invention-cause-20260910/phase2/calls/gpt55-1.json",
+      "runs/invention-cause-20260910/phase2/calls/gpt55-2.json",
+      "runs/invention-cause-20260910/phase2/calls/astra-2.json",
+      "runs/invention-cause-20260910/phase2/calls/astra-3.json",
+      "runs/invention-cause-20260910/phase2/calls/gpt55-3.json",
+      "runs/invention-cause-20260910/phase3/calls/astra-control-1.json",
+      "runs/invention-cause-20260910/phase3/calls/gpt55-blank-1.json",
+      "runs/invention-cause-20260910/phase3/calls/astra-blank-1.json",
+      "runs/invention-cause-20260910/phase3/calls/gpt55-control-1.json",
+      "runs/invention-cause-20260910/phase3/calls/gpt55-control-2.json",
+      "runs/invention-cause-20260910/phase3/calls/astra-blank-2.json",
+      "runs/invention-cause-20260910/phase3/calls/astra-control-2.json"
+    ],
+    "interpretation": "Text occurrence only; roles were inspected in full outputs."
+  },
   "limits": [
     "Native transport capture contains submitted inputs, not every backend instruction.",
     "Different requested models can also select different native model metadata/routes.",

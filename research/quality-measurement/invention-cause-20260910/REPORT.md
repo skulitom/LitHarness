@@ -6,6 +6,21 @@ quality. Raw requests, returned treatments, native traces and logs remain in the
 `runs/invention-cause-20260910/` directory. [evidence.json](evidence.json), derived by
 [audit.py](audit.py), binds the observations below to first-response receipts and frozen inputs.
 
+**Operational diagnosis:** fresh books repeatedly submit the same generic invention request
+to a generator whose first responses concentrate on a small family of premises. Resetting
+book state does not supply a new creative direction. The recurring water setting is one
+part of a wider pattern involving professional expertise, repair/restoration, rescue and
+institutional rules. Those choices arrive in the initial response and are carried forward
+by the pipeline. They were not an operator-selected research direction.
+
+The strongest local signature is the exact name Mara Venn in **17 of 18 minimal-request
+Codex responses**, across two requested models and native-template controls. The exceptions
+and all original outputs are retained. This is a reproducible provider-boundary behavior
+under these inputs, not proof of a universal model distribution. The experiments do not
+separate learned model preferences from undisclosed backend framing or sampling. That deeper
+mechanism remains unresolved; naming a particular hidden instruction, temperature or training
+source as the cause would exceed the evidence.
+
 ## Located stage
 
 The repeated premise already exists in the first invention response, before concept
@@ -89,7 +104,61 @@ offline inspections.
 Changing requested model can select different native metadata as well as a different model.
 The receipts do not report Codex's backend-resolved model or resolved sampling parameters.
 The evidence therefore supports requested-route comparisons, not a claim to have isolated
-model weights or a backend temperature. [Phase 3](PHASE3.md) tests the native template prose.
+model weights or a backend temperature.
+
+## Phase 3: native catalog prose is not necessary either
+
+[Registration](phase3-registration.json), [protocol](PHASE3.md), [runner](phase3.py).
+
+All eight first responses completed and passed validation. Each model/catalog cell contains
+two calls. Both arms explicitly selected a frozen catalog; blank changed only string values
+inside the two target models' `model_messages` objects. Captured application system, prompt,
+schema and parameters remain identical. Actual native argv records the selected catalog.
+
+Astra's input-token count dropped from 3,928 in the first control to 3,149 in both blank
+calls. The manipulation therefore changed the native input, rather than only changing a
+filename in a receipt. GPT-5.5's input counts remained close across the two arms. Empty
+catalog templates do not mean an instruction-free request: fixed native messages and
+undisclosed provider-side behavior remain outside that manipulation.
+
+All four controls name Mara Venn. Both blank Astra treatments do too: a lift technician
+repairing a bridge and an accessibility inspector creating a route to shelter. The first
+blank GPT-5.5 treatment names Mara Venn as a paramedic beside a vertical ocean; the second
+names Nadia Vale as a museum registrar in a civic-quest labyrinth. The name changed in that
+last case while the professional/support-class family persisted. Thus the removed native
+catalog prose is not necessary for the repetition on these draws. This does not establish
+that every template has zero influence.
+
+## What the investigation establishes
+
+The first-invention stage can reproduce the problem with no book database, previous story,
+writer dossier, exemplar, reader feedback or downstream planning. The detailed discovery
+instructions and removed native templates are not necessary for the observed cluster.
+Switching from Astra to GPT-5.5 also does not remove it. Opus provides a counterexample to
+the exact repeated-name cluster, while retaining some broader motifs of professional
+expertise. None of these comparisons licenses a quality ranking or a production model switch.
+
+The workflow mistake was treating independent fresh stores and fresh sessions as evidence
+of distinct creative starting points. They establish state separation, not premise variety.
+That is why repeated blank-brief launches can return to the same family for no project
+purpose. An actual creative direction must be an input or an explicitly authorized process;
+it cannot be assumed from a new identifier or the word "original".
+
+No production invention prompt, theme restriction, candidate selector or model default was
+changed. In particular, the observations do not justify inventing a water blacklist. The
+engineering change improves what future runs record and how their provenance is inspected.
+
+## Integrity and validation
+
+Across the three registered phases: **25 completion attempts, 106,541 recorded tokens,
+25 distinct native sessions and 25 distinct output texts**. All calls match their prepared
+requests; all three manifests match registration; frozen source, runner, document, binary
+and request checks report no drift. There were no transport stops or redraws. The one
+application validation failure is retained above. Counts and per-call hashes live in
+[evidence.json](evidence.json); prose stays in the ignored run roots.
+
+The focused concept/trace tests pass. The final repository handoff result is recorded in
+`runs/invention-cause-20260910/handoff-final.log`.
 
 ## Debugging tools
 
@@ -114,3 +183,9 @@ Use `--glob '*.json'` for a directory of call receipts; the default directory pa
 sessions and repeated premises answer different questions. The debug-book skill now points
 to this workflow. Regression coverage is in
 [tests/test_generation_trace.py](../../../tests/test_generation_trace.py).
+
+Ordinary `concept --out` traces now retain the complete `CompletionRequest` and the provider's
+raw receipt, while preserving the existing response, attribution and exemplar-boundary
+fields. This closes the provenance loss for new traces; it cannot reconstruct omitted data
+in older files. `test_concept_trace_retains_request_controls_and_native_receipt` covers the
+producer-to-inspector path without calling a model.

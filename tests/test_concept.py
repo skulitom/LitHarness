@@ -22,6 +22,36 @@ from litharness.domain.revision import new_book
 WRITER = writers_domain.CAST["ferreira"]
 
 
+def test_concept_trace_retains_request_controls_and_native_receipt(tmp_path):
+    from dataclasses import asdict
+
+    from litharness.cli import _write_concept_trace
+    from litharness.domain.generation import CompletionRequest, Sampler
+    from tools.generation_trace import load_trace
+
+    request = CompletionRequest(
+        prompt="Invent.", system="Story material.", profile="discovery-test",
+        model="requested-model", sampler=Sampler(seed=37), timeout_seconds=123,
+    )
+    raw = {
+        "provider": "codex", "prompt": request.prompt, "system": request.system,
+        "argv": ["--ephemeral"], "requested_model": "requested-model",
+        "events": [{"type": "thread.started", "thread_id": "native-session"}],
+    }
+    result = CompletionResult(
+        text="Malformed first response.", provider="codex", model="requested-model", raw=raw,
+    )
+    _write_concept_trace(tmp_path, "discovery-trace.json", request, result)
+    path = tmp_path / "discovery-trace.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert data["request"] == json.loads(json.dumps(asdict(request)))
+    assert data["raw"] == raw
+    trace = load_trace(path)
+    assert trace.sessions == ["native-session"]
+    assert trace.fields["output.text"] == result.text
+    assert trace.configuration["sampler_requested"] == asdict(request.sampler)
+
+
 def _example() -> dict[str, object]:
     """The operator's example premise, in the schema's fields.
 

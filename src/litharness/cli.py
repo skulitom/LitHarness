@@ -2178,23 +2178,20 @@ def _write_concept_trace(
     out: Path | None, name: str, request: CompletionRequest, result: CompletionResult,
     *, has_exemplars: bool = False,
 ) -> None:
-    """Retain each response, including malformed attempts, under the requested output root."""
+    """Retain the complete request and provider receipt, including malformed responses."""
     if out is None:
         return
     out.mkdir(parents=True, exist_ok=True)
     payload = {
+        "trace_format": "litharness.completion-trace.v2",
         "profile": request.profile,
         "contains_exemplar_material": has_exemplars,
-        "request": {
-            "system": request.system,
-            "prompt": request.prompt,
-            "schema": request.schema,
-            "max_output_tokens": request.max_output_tokens,
-        },
+        "request": dataclasses.asdict(request),
         "response": result.text,
         "provider": result.provider,
         "model": result.model,
         "usage": dataclasses.asdict(result.usage),
+        "raw": result.raw,
     }
     (out / name).write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

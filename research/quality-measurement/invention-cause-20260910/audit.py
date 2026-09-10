@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -52,7 +53,8 @@ def phase(directory: Path, registration: Path) -> dict:
 
 def main() -> None:
     phases = [phase(LOCAL, HERE / "registration.json"),
-              phase(LOCAL / "phase2", HERE / "phase2-registration.json")]
+              phase(LOCAL / "phase2", HERE / "phase2-registration.json"),
+              phase(LOCAL / "phase3", HERE / "phase3-registration.json")]
     calls = [r for p in phases for r in p["calls"] if r["status"] != "not_attempted"]
     sessions = Counter(s for row in calls for s in row["sessions"])
     outputs = Counter(row["field_sha256"].get("output.text") for row in calls)
@@ -61,6 +63,8 @@ def main() -> None:
         ("full_minimal", "calls/full-1.json", "calls/minimal-1.json"),
         ("astra_gpt55", "phase2/calls/astra-1.json", "phase2/calls/gpt55-1.json"),
         ("astra_opus", "phase2/calls/astra-1.json", "phase2/calls/opus-1.json"),
+        ("astra_templates", "phase3/calls/astra-control-1.json", "phase3/calls/astra-blank-1.json"),
+        ("gpt55_templates", "phase3/calls/gpt55-control-1.json", "phase3/calls/gpt55-blank-1.json"),
     ):
         result = compare(load_trace(LOCAL / left), load_trace(LOCAL / right))
         comparisons[label] = {
@@ -68,11 +72,21 @@ def main() -> None:
             "configuration_equal": result["configuration_equal"],
             "same_native_session": result["same_native_session"],
         }
+    minimal_codex = [r for r in calls if r["recorded_model"] in {"gpt-6-astra", "gpt-5.5"}
+                     and not r["slot"].startswith("full-")]
+    name_matches = [r["path"] for r in minimal_codex if re.search(
+        r"\bMara Venn\b", load_trace(ROOT / r["path"]).fields["output.text"],
+    )]
     write(HERE / "evidence.json", {
         "purpose": "Generation debugging; no quality scores or candidate selection",
         "phases": phases, "comparisons": comparisons,
         "shared_sessions": {s: n for s, n in sessions.items() if n > 1},
         "repeated_outputs": {s: n for s, n in outputs.items() if s is not None and n > 1},
+        "literal_name_check": {
+            "query": "Mara Venn", "field": "output.text", "minimal_codex_calls": len(minimal_codex),
+            "matched_calls": len(name_matches), "paths": name_matches,
+            "interpretation": "Text occurrence only; roles were inspected in full outputs.",
+        },
         "limits": [
             "Native transport capture contains submitted inputs, not every backend instruction.",
             "Different requested models can also select different native model metadata/routes.",

@@ -195,6 +195,10 @@ calls, and fresh sessions do not prove diverse premises. A search match locates 
 it does not establish the cause of a model choice. Keep excerpts and experimental prompts
 under ignored run roots; this tool never feeds diagnostics into generation.
 
+New `concept --out` traces retain the full request and the provider's raw receipt. Older
+traces may omit request controls or native data. A retained native receipt can still omit
+backend instructions or resolved model/sampling settings; inspect the reported gaps.
+
 Name the scene, job or decision and the rows or stages inspected. Quote only the needed
 permitted excerpt, distinguish a recorded fact from an inference, and name uncaptured or
 withheld evidence. Do not turn a diagnostic into a literary score or an automatic story edit.
