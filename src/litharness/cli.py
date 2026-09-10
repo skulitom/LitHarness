@@ -123,6 +123,7 @@ from litharness.domain import (
     propagation,
     schema_words,
 )
+from litharness.domain import invention as invention_mod
 from litharness.domain import release as release_domain
 from litharness.domain import rivals as rivals_mod
 from litharness.domain import state as state_mod
@@ -2212,6 +2213,12 @@ def cmd_concept(args: argparse.Namespace) -> int:
         for path in (getattr(args, "distinct_from", None) or [])
         if (prior := _concept_from(path)) is not None
     ]
+    seed = None
+    if not getattr(args, "no_seed", False):
+        label = args.seed if getattr(args, "seed", None) is not None else uuid.uuid4().hex
+        seed = invention_mod.make_seed(label, getattr(args, "seed_index", 0))
+    elif getattr(args, "seed_index", 0):
+        raise ValueError("--seed-index requires seeding")
     store = _store(args)
     try:
         writer, reason = _installed_writer(args, getattr(args, "writer", "") or "", store)
@@ -2223,8 +2230,20 @@ def cmd_concept(args: argparse.Namespace) -> int:
         spend = _StageSpend()
         calls = _ProviderCalls(registry=registry, store=store, args=args, stamp=stamp, run=run)
         shelf = _selected_shelf(args)
+        if seed is not None:
+            print(
+                f"  invention seed {json.dumps(seed.seed)}; index {seed.index}; {seed.version}",
+                file=sys.stderr,
+            )
+        if args.out:
+            args.out.mkdir(parents=True, exist_ok=True)
+            (args.out / "invention-seed.json").write_text(
+                json.dumps(seed.to_jsonable() if seed else None, ensure_ascii=False, indent=2)
+                + "\n", encoding="utf-8",
+            )
         discovery_request = discovery_mod.render_request(
-            brief, writer, person=getattr(args, "person", None), distinct_from=prior_concepts
+            brief, writer, person=getattr(args, "person", None), distinct_from=prior_concepts,
+            seed=seed,
         )
         discovery_result, refusal = _completion_call(discovery_request, calls=calls, spend=spend)
         if discovery_result is None:
@@ -2281,7 +2300,7 @@ def cmd_concept(args: argparse.Namespace) -> int:
                 # Downstream generation cannot silently rewrite or drop the treatment.
                 drawn.append(
                     concept_mod.Concept.from_development(
-                        result.parsed, discovery, author_brief=brief
+                        result.parsed, discovery, author_brief=brief, invention_seed=seed
                     )
                 )
             except concept_mod.MalformedConcept as error:
@@ -3079,7 +3098,9 @@ def cmd_prompts(args: argparse.Namespace) -> int:
                 growth="Using that power opens a further pursuit.",
             ),
         ),
-        "discovery": discovery_mod.render_request(premise, writer),
+        "discovery": discovery_mod.render_request(
+            premise, writer, seed=invention_mod.make_seed("prompt-budget")
+        ),
         "concept-precision": precision_mod.render_request({"opening": "An encounter."}),
         "title": overview_mod.render_title_request("A debtor takes the road below.", writer),
         "title-lookup": titles.render_check_request("The Deep Ledger", writer),
@@ -6414,6 +6435,17 @@ def build_parser() -> argparse.ArgumentParser:
         "cares about; never a shelf label (§136). Empty is legitimate",
     )
     concept.add_argument("--brief-file", help="the brief as a file, or - for stdin")
+    concept_seed = concept.add_mutually_exclusive_group()
+    concept_seed.add_argument(
+        "--seed", help="reproduce creative starting points from this label; default: a fresh seed",
+    )
+    concept_seed.add_argument(
+        "--no-seed", action="store_true", help="omit creative starting points",
+    )
+    concept.add_argument(
+        "--seed-index", type=int, default=0,
+        help="position in the seed's ingredient deck (default: 0)",
+    )
     concept.add_argument(
         "--distinct-from", type=Path, action="append", default=[],
         help="an earlier concept.json this book must differ from in protagonist, world and "

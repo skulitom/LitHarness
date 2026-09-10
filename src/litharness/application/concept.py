@@ -20,6 +20,7 @@ from litharness.application.discovery import Discovery
 from litharness.application.overview import FIRST_PERSON_ASK
 from litharness.domain import house, schema_words
 from litharness.domain.generation import CompletionRequest
+from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
 CONCEPT_PROFILE = "writer.concept.v1"
@@ -229,12 +230,14 @@ class Concept:
     second_system: SecondSystem | None = None
     discovery: Discovery | None = None
     author_brief: str = ""
+    invention_seed: InventionSeed | None = None
 
     # ------------------------------------------------------------------ reading one back
 
     @classmethod
     def from_development(
-        cls, payload: Mapping[str, Any], discovery: Discovery, *, author_brief: str = ""
+        cls, payload: Mapping[str, Any], discovery: Discovery, *, author_brief: str = "",
+        invention_seed: InventionSeed | None = None,
     ) -> Concept:
         """Keep the supplied opening as the arc's opening, not an already-finished prologue.
 
@@ -245,6 +248,7 @@ class Concept:
         return cls.from_payload({
             **payload, "first_arc": arc, "discovery": discovery.to_jsonable(),
             "author_brief": author_brief,
+            "invention_seed": invention_seed.to_jsonable() if invention_seed else None,
         })
 
     @classmethod
@@ -253,6 +257,12 @@ class Concept:
         author_brief = payload.get("author_brief", "")
         if not isinstance(author_brief, str):
             raise MalformedConcept("author_brief must be text")
+        seed = None
+        if payload.get("invention_seed") is not None:
+            try:
+                seed = InventionSeed.from_payload(_mapping(payload, "invention_seed"))
+            except ValueError as error:
+                raise MalformedConcept(str(error)) from error
         system = _mapping(payload, "system")
         steps = system.get("steps")
         if isinstance(steps, bool) or not isinstance(steps, int) or steps < MIN_STEPS:
@@ -329,6 +339,7 @@ class Concept:
             second_system=second,
             discovery=discovery,
             author_brief=author_brief,
+            invention_seed=seed,
         )
 
     @classmethod
@@ -366,7 +377,8 @@ class Concept:
             else:
                 protected[path] = value
 
-        visit(self.to_jsonable(), "")
+        # Generation provenance is not editable prose or an instruction for this model.
+        visit({k: v for k, v in self.to_jsonable().items() if k != "invention_seed"}, "")
         return fields, protected
 
     def has_quantities(self) -> bool:
@@ -392,6 +404,10 @@ class Concept:
         return {
             **({"discovery": self.discovery.to_jsonable()} if self.discovery else {}),
             **({"author_brief": self.author_brief} if self.author_brief else {}),
+            **(
+                {"invention_seed": self.invention_seed.to_jsonable()}
+                if self.invention_seed else {}
+            ),
             "person_before": self.person_before,
             "exception": self.exception,
             "first_use": self.first_use,
@@ -579,6 +595,7 @@ class Concept:
         The full concept remains stored; author locks reach planning separately, unchanged.
         """
         material = self.to_jsonable()
+        material.pop("invention_seed", None)
         del material["first_use"]
         del material["first_arc"]["opens"]
         del material["threat"]["first_reach"]

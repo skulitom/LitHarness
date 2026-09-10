@@ -15,9 +15,10 @@ from typing import Any
 from litharness.application import precision
 from litharness.domain import house, schema_words
 from litharness.domain.generation import CompletionRequest
+from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v8"
+PROFILE = "writer.discovery.v9"
 VERSION = "magical-discovery.v5"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
@@ -171,12 +172,21 @@ class Discovery:
 def render_request(
     brief: str, writer: Writer | None = None, *, person: str | None = None,
     distinct_from: Sequence[str] = (),
+    seed: InventionSeed | None = None,
 ) -> CompletionRequest:
     prompt = (
         f"Author's brief:\n{brief.strip() or 'Invent a new story within the intended experience.'}"
     )
     if person in ("first", "third"):
         prompt += f"\nNarrative person: {person}."
+    if seed is not None:
+        prompt += (
+            "\n\nCreative starting points for unspecified choices:\n"
+            "The author's explicit brief takes precedence. Adapt or omit any conflicting "
+            "ingredient, including its genre, character, setting, power or activity. Use the "
+            "compatible ingredients causally; invent their names and connections.\n"
+            + seed.brief
+        )
     if distinct_from:
         prompt = (
             "The author requests a new book distinct from these previous concepts. "

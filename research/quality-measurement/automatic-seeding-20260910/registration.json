@@ -1,0 +1,40 @@
+{
+  "manifest_sha256": "90f77899c97ea47077ea3ab26818969da8c84c58ac930f2b74301b1cd2a24f07",
+  "order": [
+    "ingredients-0",
+    "actions-0",
+    "actions-1",
+    "ingredients-1",
+    "ingredients-2",
+    "actions-2",
+    "development-0",
+    "development-2"
+  ],
+  "base_revision": "735b7e7b352732f7a39a1dd194bcd48e4a2f82e8",
+  "owned_source_sha256": {
+    "src/litharness/domain/invention.py": "1c4dcd1c0260daba423469aac9fa631f57b82f9a6b306e3fba827aaa1385b300",
+    "src/litharness/application/discovery.py": "beb661c48e4f3d549ea2c95a4785eefa0c7a89ba14ee4190981b2a12184fbf59",
+    "src/litharness/application/concept.py": "a255502e7fc7f4193c1c03df43f12151efa2e7758fd5619f4cb2140c4487c065",
+    "src/litharness/cli.py": "533e8e967d6a257eca47d50ef241d1c26c4dd5d00825d0d189ed4d07681964cd"
+  },
+  "seed_labels": [
+    "83a9b641ef6d40ba95e9fb74ccd351a2",
+    "89a6323bcdd1448288d684bec57babed",
+    "27bd0e944f6e4d52a51210ec58139587"
+  ],
+  "seed_index": 0,
+  "version": "invention-seed.v1",
+  "runbook_sha256": "37bc713a0160026652f3eb1834faaf3c5f4b56450ee25dc1423c78c852cb16ad",
+  "runner_sha256": "994bac066ebf9596ecf13c63ae36d7ea772782ab039ca2dce49b29cfd06550ac",
+  "request_sha256": {
+    "ingredients-0": "04c8fb7b66e9c1bba220aabcb8733c2889a1a399f0c42ac7188121da0118df7b",
+    "actions-0": "937a7c30a1daa323b1876c8ffe0cb79c9db6e6e07d3c5dea3f49fa74f99182c2",
+    "actions-1": "b5cd5f26da840b24a54ab34f1257bc3ccaeaa04f3c3362960bddf20101865a24",
+    "ingredients-1": "62ecebb62c95d1b5f819f5cec09167aeb9fba84f61f58ccd0f68cecb50250818",
+    "ingredients-2": "8038eb0ecf9463db545830113d40fb581b0db669a1c2603f2b5b98302b55255b",
+    "actions-2": "2011bf9237eb4796823ff91ef100822e15e0d513349411952c2ef0d302b7e264"
+  },
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "native_sampler_seed": null
+}

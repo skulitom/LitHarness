@@ -152,20 +152,26 @@ setting and core power premise. These references do not enter later development 
 creation; the saved discovery request records them. This supplies a novelty constraint, not
 an automatic judgment that the returned concept is distinct enough.
 
-For repeatable starting ingredients, the experimental [invention seed tool](tools/invention_seed.py)
-writes author briefs without calling a model:
+New `concept` commands automatically choose a fresh creative seed. It supplies starting
+ingredients, a first magical success and further growth in the chosen activity. Explicit
+author briefs take precedence over conflicting ingredients. The original author brief remains
+separate from the seed; generated story material carries the realized choices downstream.
+
+With `--out`, `invention-seed.json` is written before the first model call, and the completed
+`concept.json` also retains the seed, version, deck position and exact creative brief. The
+seed is printed on stderr, including with `--json`. Development retries reuse the same
+invention. Reproduce a brief with `--seed` and take another position with `--seed-index`:
 
 ```bash
-uv run python tools/invention_seed.py --seed my-series --count 3 --out runs/my-seeds
+uv run litharness concept --seed my-series --seed-index 3 --out runs/my-concept
 ```
 
-Pass a generated file to `concept --brief-file runs/my-seeds/seed-00000.brief.txt` with your
-usual provider and output settings. Use `--start 3` for the next positions. The same label and
-position reproduce the brief; different positions within one label have different combinations
-from a finite, authored adventure palette. This does not seed the native sampler or guarantee
-unique prose. The [pilot results](research/quality-measurement/invention-seeding-20260910/REPORT.md)
-compare empty briefs, opaque identifiers and ingredients, including a follow-up that specifies
-the power's first successful use.
+Use the usual provider/database options for generation. `--no-seed` is an explicit unseeded
+control. A fresh seed does not guarantee a globally unique story: the palette is finite,
+different labels can choose overlapping ingredients, and this does not control the native
+sampler. Distinct positions under one label have distinct combinations. The standalone
+[experimental tool](tools/invention_seed.py) retains its older palette/version for replay of
+the [initial pilot](research/quality-measurement/invention-seeding-20260910/REPORT.md).
 
 New discovery requests develop an early gain's use toward a personal pursuit and the appeal
 of further capabilities. Advancement follows the chosen magic system through discovery,
