@@ -26,6 +26,41 @@ def encoded(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
+def native_records(source: dict[str, Any], gaps: list[str]) -> list[dict[str, Any]]:
+    """Retain valid events when failed native stdout also contains warnings or truncation."""
+    events = source.get("events")
+    if isinstance(events, list):
+        return [e for e in events if isinstance(e, dict)]
+    stdout = source.get("stdout")
+    if not isinstance(stdout, str) or not stdout.strip():
+        return []
+    try:
+        value = json.loads(stdout)
+        if isinstance(value, dict):
+            return [value]
+        return [e for e in value if isinstance(e, dict)] if isinstance(value, list) else []
+    except ValueError:
+        records, skipped = [], 0
+        for line in stdout.splitlines():
+            if not line.strip():
+                continue
+            try:
+                event = json.loads(line)
+                if isinstance(event, dict):
+                    records.append(event)
+            except ValueError:
+                skipped += 1
+        if skipped:
+            gaps.append(f"Native stdout has {skipped} non-JSON or truncated lines; retained file.")
+        return records
+
+
+def option(argv: list[Any] | None, flag: str) -> Any:
+    if argv is not None and flag in argv and argv.index(flag) + 1 < len(argv):
+        return argv[argv.index(flag) + 1]
+    return None
+
+
 @dataclass
 class Trace:
     path: Path
@@ -84,12 +119,16 @@ def load_trace(path: Path) -> Trace:
     else:
         raise ValueError("unsupported trace envelope")
 
+    # An instrumented launch is separate from the provider's returned envelope. Legacy
+    # Claude envelopes report sessions/model usage but do not capture submitted inputs.
+    launch = record.get("transport")
+    native = launch if isinstance(launch, dict) else raw
     fields: dict[str, str] = {}
     gaps = []
     if record.get("contains_exemplar_material"):
         gaps.append("Application input withheld: trace marks exemplar material.")
         request = None
-    for layer, source in (("application", request), ("transport", raw)):
+    for layer, source in (("application", request), ("transport", native)):
         if record.get("contains_exemplar_material") and source is not None:
             gaps.append(f"{layer} input withheld: trace marks exemplar material.")
             continue
@@ -115,40 +154,58 @@ def load_trace(path: Path) -> Trace:
         gaps.append("Final output text not captured.")
     configuration = None
     sessions: list[str] = []
-    if raw is not None:
-        events = raw.get("events")
-        if events is None and isinstance(raw.get("stdout"), str):
-            events = [json.loads(line) for line in raw["stdout"].splitlines() if line.strip()]
-        if not isinstance(events, list):
-            events = []
-        sessions = [
-            e["thread_id"]
-            for e in events
-            if isinstance(e, dict)
-            and e.get("type") == "thread.started"
-            and isinstance(e.get("thread_id"), str)
-        ]
-        settings = raw.get("settings")
+    if native is not None:
+        events = native_records(native, gaps)
+        if raw is not None:
+            events.append(raw)
+        sessions = sorted(
+            {
+                e["thread_id"]
+                for e in events
+                if e.get("type") == "thread.started" and isinstance(e.get("thread_id"), str)
+            }
+            | {e["session_id"] for e in events if isinstance(e.get("session_id"), str)}
+        )
+        argv = native.get("argv")
+        argv = argv if isinstance(argv, list) else None
+        settings = native.get("settings")
+        if settings is None and isinstance(value := option(argv, "--settings"), str):
+            settings = json.loads(value)
         # The file's captured contents above matter; its temporary filename is incidental.
         settings = (
             {k: v for k, v in settings.items() if k != "model_instructions_file"}
             if isinstance(settings, dict)
             else None
         )
-        argv = raw.get("argv", [])
-        configuration = {
-            "requested_model": raw.get("requested_model"),
-            "cli_version": raw.get("cli_version"),
-            "mode": raw.get("mode"),
-            "settings": settings,
-            "ephemeral": "--ephemeral" in argv,
-            "ignore_user_config": "--ignore-user-config" in argv,
-            "ignore_rules": "--ignore-rules" in argv,
-            "sampler_requested": request.get("sampler") if request else None,
-        }
+        if argv is not None or settings is not None:
+            configuration = {
+                "provider": native.get("provider"),
+                "requested_model": native.get("requested_model") or option(argv, "--model"),
+                "cli_version": native.get("cli_version"),
+                "mode": native.get("mode"),
+                "settings": settings,
+                "sampler_requested": request.get("sampler") if request else None,
+            }
+            for flag in (
+                "ephemeral",
+                "ignore-user-config",
+                "ignore-rules",
+                "safe-mode",
+                "no-session-persistence",
+                "strict-mcp-config",
+            ):
+                configuration[flag.replace("-", "_")] = (
+                    "--" + flag in argv if argv is not None else None
+                )
+            for flag in ("tools", "allowed-tools", "setting-sources", "permission-mode"):
+                configuration[flag.replace("-", "_")] = option(argv, "--" + flag)
+        else:
+            gaps.append("Native launch configuration not captured.")
         if not sessions:
             gaps.append("Native session identity not captured.")
-        gaps.append("Backend-resolved model and sampling distribution are not reported.")
+        if not (raw and isinstance(raw.get("modelUsage"), dict) and raw["modelUsage"]):
+            gaps.append("Backend-resolved model not reported.")
+        gaps.append("Resolved sampling distribution is not reported.")
     return Trace(
         path.resolve(),
         hashlib.sha256(data).hexdigest(),
@@ -245,9 +302,34 @@ def main(argv: list[str] | None = None) -> int:
     command.add_argument("left", type=Path)
     command.add_argument("right", type=Path)
     command.add_argument("--text-diff", action="store_true")
+    command = sub.add_parser("show", help="Explicitly display a complete captured field")
+    command.add_argument("path", type=Path)
+    command.add_argument(
+        "--field",
+        default="output.text",
+        choices=(
+            "application.system",
+            "application.prompt",
+            "application.schema",
+            "application.parameters",
+            "transport.system",
+            "transport.prompt",
+            "transport.schema",
+            "output.text",
+        ),
+    )
     args = parser.parse_args(argv)
     try:
-        if args.command == "compare":
+        if args.command == "show":
+            trace = load_trace(args.path)
+            if args.field not in trace.fields:
+                raise ValueError(f"{args.field} unavailable: {' '.join(trace.gaps)}")
+            report = {
+                "trace": trace.summary(),
+                "field": args.field,
+                "text": trace.fields[args.field],
+            }
+        elif args.command == "compare":
             report = compare(
                 load_trace(args.left), load_trace(args.right), show_text=args.text_diff
             )

@@ -82,13 +82,65 @@ def test_search_locates_output_and_does_not_invent_input_match(tmp_path):
 def test_failed_native_trace_retains_output_and_session_from_stdout(tmp_path):
     path = receipt(tmp_path)
     data = json.loads(path.read_text(encoding="utf-8"))["result"]["raw"]
-    data["stdout"] = "\n".join(json.dumps(e) for e in data.pop("events"))
+    data["stdout"] = "Native warning\n" + "\n".join(json.dumps(e) for e in data.pop("events"))
     data["final_text"] = "Retained output."
     data["failure"] = {"message": "rejected"}
     path.write_text(json.dumps(data), encoding="utf-8")
     trace = load_trace(path)
     assert trace.sessions == ["s1"]
     assert trace.fields["output.text"] == "Retained output."
+    assert "non-JSON or truncated" in " ".join(trace.gaps)
+
+
+def test_claude_envelope_session_does_not_imply_captured_launch(tmp_path):
+    path = receipt(tmp_path)
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data["result"]["raw"] = {"session_id": "claude-session", "modelUsage": {"opus": {}}}
+    path.write_text(json.dumps(data), encoding="utf-8")
+    trace = load_trace(path)
+    assert trace.sessions == ["claude-session"]
+    assert trace.configuration is None
+    assert trace.input_digest("transport") is None
+    data["transport"] = {
+        "provider": "claude_code",
+        "system": "Launch system",
+        "prompt": "Launch prompt",
+        "native_schema": None,
+        "argv": [
+            "--safe-mode",
+            "--no-session-persistence",
+            "--tools",
+            "",
+            "--settings",
+            '{"autoMemoryEnabled":false}',
+        ],
+    }
+    path.write_text(json.dumps(data), encoding="utf-8")
+    trace = load_trace(path)
+    assert trace.fields["transport.system"] == "Launch system"
+    assert trace.sessions == ["claude-session"]
+    assert trace.configuration["safe_mode"] is True
+    assert trace.configuration["tools"] == ""
+    assert trace.configuration["settings"] == {"autoMemoryEnabled": False}
+
+
+def test_missing_argv_does_not_report_disabled_isolation_flags(tmp_path):
+    path = receipt(tmp_path)
+    data = json.loads(path.read_text(encoding="utf-8"))
+    del data["result"]["raw"]["argv"]
+    path.write_text(json.dumps(data), encoding="utf-8")
+    assert load_trace(path).configuration["ephemeral"] is None
+
+
+def test_show_opens_complete_field_but_respects_withheld_inputs(tmp_path, capsys):
+    path = receipt(tmp_path, text="Complete recorded output.")
+    assert main(["show", str(path)]) == 0
+    assert json.loads(capsys.readouterr().out)["text"] == "Complete recorded output."
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data["contains_exemplar_material"] = True
+    path.write_text(json.dumps(data), encoding="utf-8")
+    assert main(["show", str(path), "--field", "application.system"]) == 2
+    assert "withheld" in capsys.readouterr().out
 
 
 def test_marked_exemplar_input_is_withheld(tmp_path):

@@ -1,0 +1,1858 @@
+{
+  "purpose": "Generation debugging; no quality scores or candidate selection",
+  "phases": [
+    {
+      "registration": "research/quality-measurement/invention-cause-20260910/registration.json",
+      "manifest_sha256": "07532443882a8b6bfe3cedd9fa7cd20a0e1d793ed3a4b700546aa6acc1e554f0",
+      "manifest_matches_registration": true,
+      "frozen_file_drift": [],
+      "progress": {
+        "status": "finished",
+        "attempts": 8,
+        "tokens": 41859,
+        "slots": [
+          {
+            "name": "full-1",
+            "status": "completed"
+          },
+          {
+            "name": "minimal-1",
+            "status": "completed"
+          },
+          {
+            "name": "minimal-2",
+            "status": "completed"
+          },
+          {
+            "name": "full-2",
+            "status": "completed"
+          },
+          {
+            "name": "minimal-3",
+            "status": "completed"
+          },
+          {
+            "name": "full-3",
+            "status": "completed"
+          },
+          {
+            "name": "full-4",
+            "status": "completed"
+          },
+          {
+            "name": "minimal-4",
+            "status": "completed"
+          }
+        ],
+        "stop": null
+      },
+      "calls": [
+        {
+          "slot": "full-1",
+          "path": "runs/invention-cause-20260910/calls/full-1.json",
+          "file_sha256": "47a746978d5650a7cedda633e01604d9e38ec6a763498e8374647ead8aecdb6d",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c4c-e3b7-7c92-8596-ea22fe989144"
+          ],
+          "field_sha256": {
+            "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "396fdfb6d66aead9aac2d62ac3dd7eb767a7428553e921aa39d7f2eb08c17c43"
+          },
+          "field_characters": {
+            "application.system": 1964,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 2267,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 5379
+          },
+          "application_input_sha256": "ef0038fd8ced9398b4f15973f6d898cebb6505705e0e6ddd8ee709332194a622",
+          "transport_input_sha256": "2476b012ef0a3b4fdeadbe3989cee2dcd0ea31ee69088e930732125b9305c602",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:10:44.069100+00:00",
+          "finished_at": "2026-09-10T17:12:14.415090+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 4227,
+            "output_tokens": 1026,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 442
+          }
+        },
+        {
+          "slot": "minimal-1",
+          "path": "runs/invention-cause-20260910/calls/minimal-1.json",
+          "file_sha256": "e15f934a2f16ab69d1adb49d4d63dfec61566ceee563b61fd329150fed12120e",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c4e-454a-7562-b548-f9d51727dee3"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "bca12d4166e14498bb7f557fea117c528c79598512f35bcbf16cbb5024b7cba3"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 3795
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:12:14.625120+00:00",
+          "finished_at": "2026-09-10T17:13:03.792991+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 3928,
+            "output_tokens": 767,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 82
+          }
+        },
+        {
+          "slot": "minimal-2",
+          "path": "runs/invention-cause-20260910/calls/minimal-2.json",
+          "file_sha256": "4a2567967c3f5e9e85521a6ac9f3d447c9d5787a2e07aea1554af2446f5a0df7",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c4f-0637-7a83-8c03-ddc6ec86c87c"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "69a6e63a0ce9c097d890945b19dd321bab39e2c0672f6b7a2887aedf14c1c4a4"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 3713
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:13:04.010796+00:00",
+          "finished_at": "2026-09-10T17:13:46.475824+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 3930,
+            "output_tokens": 746,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 93
+          }
+        },
+        {
+          "slot": "full-2",
+          "path": "runs/invention-cause-20260910/calls/full-2.json",
+          "file_sha256": "6d6b703b815549dcf1958142d3f9de7b42bb4b17be1ca522feaa885674d8713e",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c4f-acfa-7380-bb80-ded5c84b86a3"
+          ],
+          "field_sha256": {
+            "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "5c31402ed0669aa0f68bf6df40b55c68d84a0df2edd3b595de475c1dbad00396"
+          },
+          "field_characters": {
+            "application.system": 1964,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 2267,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 5630
+          },
+          "application_input_sha256": "ef0038fd8ced9398b4f15973f6d898cebb6505705e0e6ddd8ee709332194a622",
+          "transport_input_sha256": "2476b012ef0a3b4fdeadbe3989cee2dcd0ea31ee69088e930732125b9305c602",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:13:46.700780+00:00",
+          "finished_at": "2026-09-10T17:15:20.450251+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 4227,
+            "output_tokens": 1066,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 516
+          }
+        },
+        {
+          "slot": "minimal-3",
+          "path": "runs/invention-cause-20260910/calls/minimal-3.json",
+          "file_sha256": "6090fa5d1929fc06567dda61a655dfad65fa8bd8b894d2a5987dacd4998035d8",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c51-1c76-79a3-ac4a-9eb6829ee19b"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "8cc5ecc34926dbdb0ccf03e8445894588012da92f97fd2b43b94bb97a32e45fa"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 3670
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:15:20.696153+00:00",
+          "finished_at": "2026-09-10T17:16:04.015210+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 3930,
+            "output_tokens": 729,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 52
+          }
+        },
+        {
+          "slot": "full-3",
+          "path": "runs/invention-cause-20260910/calls/full-3.json",
+          "file_sha256": "3cc2d50b2d79ed3310d61287b15b3e9f7bf4a5d74bf0f72f6b44c6c60036f80c",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c51-c670-73e0-8421-de9dfa7a4433"
+          ],
+          "field_sha256": {
+            "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "36fe0c35d9cdae785e5d9701fc0ca5b368d7a13de542c48ff42103f9f3660d5a"
+          },
+          "field_characters": {
+            "application.system": 1964,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 2267,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 5559
+          },
+          "application_input_sha256": "ef0038fd8ced9398b4f15973f6d898cebb6505705e0e6ddd8ee709332194a622",
+          "transport_input_sha256": "2476b012ef0a3b4fdeadbe3989cee2dcd0ea31ee69088e930732125b9305c602",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:16:04.242208+00:00",
+          "finished_at": "2026-09-10T17:17:24.407140+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 4225,
+            "output_tokens": 1046,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 392
+          }
+        },
+        {
+          "slot": "full-4",
+          "path": "runs/invention-cause-20260910/calls/full-4.json",
+          "file_sha256": "f66d93e575890876d5fd7b8ccd7bfdbb426d97994f903a1c4d8edad17d695de6",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c53-007c-72a1-b0ce-1cb1f22e35bd"
+          ],
+          "field_sha256": {
+            "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "e41fe608be10fc4339cce5af19847d230591dc9f7aacd6b4591b7bede972bb33"
+          },
+          "field_characters": {
+            "application.system": 1964,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 2267,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 5848
+          },
+          "application_input_sha256": "ef0038fd8ced9398b4f15973f6d898cebb6505705e0e6ddd8ee709332194a622",
+          "transport_input_sha256": "2476b012ef0a3b4fdeadbe3989cee2dcd0ea31ee69088e930732125b9305c602",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:17:24.634924+00:00",
+          "finished_at": "2026-09-10T17:18:41.519778+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 4227,
+            "output_tokens": 1112,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 424
+          }
+        },
+        {
+          "slot": "minimal-4",
+          "path": "runs/invention-cause-20260910/calls/minimal-4.json",
+          "file_sha256": "85c233a8d571ca184e653ed1f5996c0846145bf3a008b8a51afb03a39f5129ce",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c54-2dd2-74c0-a041-4efe3b74a5c9"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "f9661160ca60a1fee7efcdc17d171adbbf42d557c3444f69da52bb349deff511"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 3108
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:18:41.778405+00:00",
+          "finished_at": "2026-09-10T17:19:24.844795+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 3928,
+            "output_tokens": 620,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 124
+          }
+        }
+      ]
+    },
+    {
+      "registration": "research/quality-measurement/invention-cause-20260910/phase2-registration.json",
+      "manifest_sha256": "5860121c3dd1b06fe5da79ce2666118b637ee4e659219551cb589b12136a19a6",
+      "manifest_matches_registration": true,
+      "frozen_file_drift": [],
+      "progress": {
+        "status": "finished",
+        "attempts": 9,
+        "tokens": 42545,
+        "slots": [
+          {
+            "name": "astra-1",
+            "status": "completed"
+          },
+          {
+            "name": "gpt55-1",
+            "status": "completed"
+          },
+          {
+            "name": "opus-1",
+            "status": "completed"
+          },
+          {
+            "name": "gpt55-2",
+            "status": "completed"
+          },
+          {
+            "name": "opus-2",
+            "status": "completed"
+          },
+          {
+            "name": "astra-2",
+            "status": "completed"
+          },
+          {
+            "name": "opus-3",
+            "status": "completed"
+          },
+          {
+            "name": "astra-3",
+            "status": "completed"
+          },
+          {
+            "name": "gpt55-3",
+            "status": "completed"
+          }
+        ],
+        "stop": null
+      },
+      "calls": [
+        {
+          "slot": "astra-1",
+          "path": "runs/invention-cause-20260910/phase2/calls/astra-1.json",
+          "file_sha256": "f62170f81b182ecc88ee0bbfd0c189cf3064a01cd92be9f4d9c4dd6dd58eead2",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c5e-684f-78b1-a51a-343c84ac2d9a"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "d45292df226e6884793dbfaf53eb388248d0271eb22198ceee541284441493a4"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 3958
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:29:52.148393+00:00",
+          "finished_at": "2026-09-10T17:30:43.908187+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 1370,
+            "output_tokens": 761,
+            "cache_read_tokens": 2560,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 118
+          }
+        },
+        {
+          "slot": "gpt55-1",
+          "path": "runs/invention-cause-20260910/phase2/calls/gpt55-1.json",
+          "file_sha256": "05b06bc79b073e9b3522038356b8808131df34d6e6aea569351a812d19768bb8",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-5.5",
+          "status": "completed",
+          "sessions": [
+            "01a08c5f-33db-7bd1-b301-0e0ce683a7eb"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "8607cba50153d0e9181dc1a29f927380f9c66a0f026049b3794bd317022f1984"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 2202
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-5.5",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:30:44.273654+00:00",
+          "finished_at": "2026-09-10T17:31:04.918189+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 701,
+            "output_tokens": 466,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 28
+          }
+        },
+        {
+          "slot": "opus-1",
+          "path": "runs/invention-cause-20260910/phase2/calls/opus-1.json",
+          "file_sha256": "8c09bf3f2ce2ef3fbc9d06f7ab3d7294d9044bab27213fdaa0e397cab8bb7c09",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "claude-opus-5",
+          "status": "completed",
+          "sessions": [
+            "e32b6ca1-d459-457a-a8a7-151f61ecfda1"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "c3cb62edc4be8794e96af21caddca048ef8c30e3529241519e8124e42e5fcdbe"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 12302
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "claude_code",
+            "requested_model": "claude-opus-5",
+            "cli_version": "2.1.263 (Claude Code)",
+            "mode": "completion",
+            "settings": {
+              "claudeMdExcludes": [
+                "**/CLAUDE.md",
+                "**/CLAUDE.local.md"
+              ],
+              "autoMemoryEnabled": false
+            },
+            "sampler_requested": null,
+            "ephemeral": false,
+            "ignore_user_config": false,
+            "ignore_rules": false,
+            "safe_mode": true,
+            "no_session_persistence": true,
+            "strict_mcp_config": true,
+            "tools": "",
+            "allowed_tools": "",
+            "setting_sources": "user",
+            "permission_mode": "manual"
+          },
+          "gaps": [
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "discovery uses reserved names: standing; rename them in the source before mechanical development",
+          "started_at": "2026-09-10T17:31:05.284061+00:00",
+          "finished_at": "2026-09-10T17:33:16.999809+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 2,
+            "output_tokens": 7586,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 1096,
+            "reasoning_tokens": 0
+          }
+        },
+        {
+          "slot": "gpt55-2",
+          "path": "runs/invention-cause-20260910/phase2/calls/gpt55-2.json",
+          "file_sha256": "a5c06ed0a6566df021fa73bde91402660b5046299c5a474ba0f8ef421269f0fd",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-5.5",
+          "status": "completed",
+          "sessions": [
+            "01a08c61-89d6-7f00-b8e8-227be104fe15"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "9e3972a3f98633c0bcf4480218fb6ea0238a5c573e55705ca8483493d9c57906"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 2374
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-5.5",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:33:17.351000+00:00",
+          "finished_at": "2026-09-10T17:33:33.369952+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 701,
+            "output_tokens": 507,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 30
+          }
+        },
+        {
+          "slot": "opus-2",
+          "path": "runs/invention-cause-20260910/phase2/calls/opus-2.json",
+          "file_sha256": "3bee45dec574eabfdfcbc74a414113dae5b7aaa912db6cedea05c05ee402ef1e",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "claude-opus-5",
+          "status": "completed",
+          "sessions": [
+            "ece91783-5aec-4bae-bec4-a15f33660648"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "6004fcfe2ce3421a23dfe3fbfe7d59ac33b93a4821d4d9e993890de5ac1fcb7d"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 11643
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "claude_code",
+            "requested_model": "claude-opus-5",
+            "cli_version": "2.1.263 (Claude Code)",
+            "mode": "completion",
+            "settings": {
+              "claudeMdExcludes": [
+                "**/CLAUDE.md",
+                "**/CLAUDE.local.md"
+              ],
+              "autoMemoryEnabled": false
+            },
+            "sampler_requested": null,
+            "ephemeral": false,
+            "ignore_user_config": false,
+            "ignore_rules": false,
+            "safe_mode": true,
+            "no_session_persistence": true,
+            "strict_mcp_config": true,
+            "tools": "",
+            "allowed_tools": "",
+            "setting_sources": "user",
+            "permission_mode": "manual"
+          },
+          "gaps": [
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:33:33.728967+00:00",
+          "finished_at": "2026-09-10T17:35:41.163443+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 2,
+            "output_tokens": 6995,
+            "cache_read_tokens": 586,
+            "cache_write_tokens": 509,
+            "reasoning_tokens": 0
+          }
+        },
+        {
+          "slot": "astra-2",
+          "path": "runs/invention-cause-20260910/phase2/calls/astra-2.json",
+          "file_sha256": "469f33633ddf1e96b8dac5b8787a66e09d2654d097e695f0743300c3e2e9850a",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c63-bd47-7d60-a200-896be835dfe5"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "de713c3b6af20eb4d8ab11452cf20a47e361f6be9d069adf1f320448d3e1ed4c"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 3599
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:35:41.538511+00:00",
+          "finished_at": "2026-09-10T17:36:36.547329+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 3930,
+            "output_tokens": 700,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 95
+          }
+        },
+        {
+          "slot": "opus-3",
+          "path": "runs/invention-cause-20260910/phase2/calls/opus-3.json",
+          "file_sha256": "1aaed5fedbe898af75d31c2d285a007a71567e78be0f0e6d777ea3a5ad46d5f8",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "claude-opus-5",
+          "status": "completed",
+          "sessions": [
+            "c9a34418-dd58-4ee4-ab0c-d107a79d6202"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "488de05034cbddcaabd5a12ef0a264a4e4e7edd17d946ed1edc9ffe4d2a9058c"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 11489
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "claude_code",
+            "requested_model": "claude-opus-5",
+            "cli_version": "2.1.263 (Claude Code)",
+            "mode": "completion",
+            "settings": {
+              "claudeMdExcludes": [
+                "**/CLAUDE.md",
+                "**/CLAUDE.local.md"
+              ],
+              "autoMemoryEnabled": false
+            },
+            "sampler_requested": null,
+            "ephemeral": false,
+            "ignore_user_config": false,
+            "ignore_rules": false,
+            "safe_mode": true,
+            "no_session_persistence": true,
+            "strict_mcp_config": true,
+            "tools": "",
+            "allowed_tools": "",
+            "setting_sources": "user",
+            "permission_mode": "manual"
+          },
+          "gaps": [
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:36:36.923079+00:00",
+          "finished_at": "2026-09-10T17:38:38.165407+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 2,
+            "output_tokens": 6711,
+            "cache_read_tokens": 586,
+            "cache_write_tokens": 510,
+            "reasoning_tokens": 0
+          }
+        },
+        {
+          "slot": "astra-3",
+          "path": "runs/invention-cause-20260910/phase2/calls/astra-3.json",
+          "file_sha256": "7cca35dc1e274557c5fbb51be4ffd519ef625956a4ad6d8d83c443daafed5d00",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-6-astra",
+          "status": "completed",
+          "sessions": [
+            "01a08c66-7064-71d3-9014-9765e8558610"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "c9b8463418b4a2f099db28ac2ab464fa11d6837879938e81afc6ff6c1721294d"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 3154
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-6-astra",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:38:38.516833+00:00",
+          "finished_at": "2026-09-10T17:39:33.063973+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 3928,
+            "output_tokens": 621,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 168
+          }
+        },
+        {
+          "slot": "gpt55-3",
+          "path": "runs/invention-cause-20260910/phase2/calls/gpt55-3.json",
+          "file_sha256": "b75a9fa14716e25dee9960ca94360d55079f56654e504dff8f0ae95f48d18c7a",
+          "profile": "writer.discovery.v8",
+          "recorded_model": "gpt-5.5",
+          "status": "completed",
+          "sessions": [
+            "01a08c67-46ca-7282-ac5e-6ee4306e58a5"
+          ],
+          "field_sha256": {
+            "application.system": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+            "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+            "transport.system": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+            "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+            "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+            "output.text": "eaf394a6270229c21e632ebba9be862975515e95d0be5f8bd7b1c124aeb12a2b"
+          },
+          "field_characters": {
+            "application.system": 241,
+            "application.prompt": 91,
+            "application.schema": 182,
+            "application.parameters": 155,
+            "transport.system": 544,
+            "transport.prompt": 91,
+            "transport.schema": 182,
+            "output.text": 2709
+          },
+          "application_input_sha256": "de8551c165f481acff5389cf43e37a4c0438ae14d1b20b294d21961c392ea045",
+          "transport_input_sha256": "df060d58e1053c2ea1deaeaa8457cc338bfd8a2975dbd93cb4267c82a2cc2eff",
+          "configuration": {
+            "provider": "codex",
+            "requested_model": "gpt-5.5",
+            "cli_version": "codex-cli 0.153.4",
+            "mode": "completion",
+            "settings": {
+              "forced_login_method": "chatgpt",
+              "model_provider": "openai",
+              "model_reasoning_effort": "medium",
+              "project_doc_max_bytes": 0,
+              "web_search": "disabled",
+              "hide_agent_reasoning": true,
+              "features.shell_tool": false,
+              "features.multi_agent": false,
+              "features.apps": false,
+              "features.plugins": false,
+              "features.hooks": false,
+              "features.memories": false,
+              "features.code_mode": false,
+              "features.view_image": false,
+              "features.browser_use": false,
+              "features.browser_use_external": false,
+              "features.browser_use_full_cdp_access": false,
+              "features.in_app_browser": false,
+              "features.computer_use": false,
+              "features.image_generation": false,
+              "features.sleep_tool": false,
+              "features.goals": false,
+              "features.skill_search": false,
+              "features.tool_suggest": false,
+              "features.workspace_dependencies": false,
+              "features.skill_mcp_dependency_install": false,
+              "features.multi_agent_v2": false,
+              "tools.update_plan.enabled": false,
+              "tools.experimental_request_user_input.enabled": false,
+              "skills.include_instructions": false,
+              "skills.bundled.enabled": false,
+              "history.persistence": "none"
+            },
+            "sampler_requested": null,
+            "ephemeral": true,
+            "ignore_user_config": true,
+            "ignore_rules": true,
+            "safe_mode": false,
+            "no_session_persistence": false,
+            "strict_mcp_config": false,
+            "tools": null,
+            "allowed_tools": null,
+            "setting_sources": null,
+            "permission_mode": null
+          },
+          "gaps": [
+            "Backend-resolved model not reported.",
+            "Resolved sampling distribution is not reported."
+          ],
+          "validation": "passed",
+          "started_at": "2026-09-10T17:39:33.418586+00:00",
+          "finished_at": "2026-09-10T17:39:50.948254+00:00",
+          "request_matches_prepared": true,
+          "usage": {
+            "input_tokens": 701,
+            "output_tokens": 546,
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "reasoning_tokens": 29
+          }
+        }
+      ]
+    }
+  ],
+  "comparisons": {
+    "full_minimal": {
+      "left": "calls/full-1.json",
+      "right": "calls/minimal-1.json",
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+          "right_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": false,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "396fdfb6d66aead9aac2d62ac3dd7eb767a7428553e921aa39d7f2eb08c17c43",
+          "right_sha256": "bca12d4166e14498bb7f557fea117c528c79598512f35bcbf16cbb5024b7cba3"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": false,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "astra_gpt55": {
+      "left": "phase2/calls/astra-1.json",
+      "right": "phase2/calls/gpt55-1.json",
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+          "right_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+          "right_sha256": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "d45292df226e6884793dbfaf53eb388248d0271eb22198ceee541284441493a4",
+          "right_sha256": "8607cba50153d0e9181dc1a29f927380f9c66a0f026049b3794bd317022f1984"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+          "right_sha256": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd"
+        }
+      },
+      "configuration_equal": false,
+      "same_native_session": false
+    },
+    "astra_opus": {
+      "left": "phase2/calls/astra-1.json",
+      "right": "phase2/calls/opus-1.json",
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+          "right_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220",
+          "right_sha256": "1ad4cd001862f44bf4eb55f44fc9d7c1aded5ab23fd3836dcf4abe23bba06220"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "d45292df226e6884793dbfaf53eb388248d0271eb22198ceee541284441493a4",
+          "right_sha256": "c3cb62edc4be8794e96af21caddca048ef8c30e3529241519e8124e42e5fcdbe"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd",
+          "right_sha256": "03fc2f08d13470a7a74d39e2d87ae901e6cad536c5493149e7275e3a8b3700fd"
+        }
+      },
+      "configuration_equal": false,
+      "same_native_session": false
+    }
+  },
+  "shared_sessions": {},
+  "repeated_outputs": {},
+  "limits": [
+    "Native transport capture contains submitted inputs, not every backend instruction.",
+    "Different requested models can also select different native model metadata/routes.",
+    "Fresh sessions and different bytes do not establish premise diversity.",
+    "The retained treatments require reading; keywords do not classify water worlds."
+  ]
+}

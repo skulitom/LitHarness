@@ -177,13 +177,15 @@ three make `why` exit 1; missing current plan text alone does not.
 
 For repeated concepts or suspected input reuse, inspect saved generation files with the
 store-free [generation trace tool](../../../tools/generation_trace.py). It accepts CLI
-discovery traces, complete call receipts, and native Codex transport traces. Inventory hashes
-and search locations are text-free by default; explicit excerpt/diff options reveal text.
+discovery traces, complete call receipts, native Codex traces, and separately captured Claude
+launches. Inventory hashes and search locations are text-free by default; explicit excerpt,
+diff and show options reveal text. Inventory also groups repeated outputs and session IDs.
 
 ```powershell
 uv run python tools/generation_trace.py inventory runs
 uv run python tools/generation_trace.py search runs --query "water"
 uv run python tools/generation_trace.py compare first-call.json second-call.json
+uv run python tools/generation_trace.py show first-call.json --field output.text
 ```
 
 The default directory pattern finds discovery traces only. Use the tool's help to select

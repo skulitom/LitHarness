@@ -1,0 +1,24 @@
+{
+  "manifest_sha256": "b3263249902c4ee2ae1dc5783f085c1aff1fd228cb819f0c29cd03cd976c1b82",
+  "order": [
+    "astra-control-1",
+    "gpt55-blank-1",
+    "astra-blank-1",
+    "gpt55-control-1",
+    "gpt55-control-2",
+    "astra-blank-2",
+    "gpt55-blank-2",
+    "astra-control-2"
+  ],
+  "models": {
+    "astra": "gpt-6-astra",
+    "gpt55": "gpt-5.5"
+  },
+  "request_sha256": "d2e8eb45916e4cb00a18e55f8a57be710bbdba79967214322d6bb2c5ba184e6d",
+  "runner_sha256": "dc151c8387d241f555d55bcd9b1a5c1a2bbd6504466db50cd89f4a2ef675dd5b",
+  "runbook_sha256": "aa007ddc2668b6691db3d715ec5f4c5891030942c30a468f39cc229b0c80682f",
+  "catalog_sha256": {
+    "control": "2127d02be03a92c33f011dc1b609a543011367816d7827eb61067048a3200648",
+    "blank": "d63412bd20cf918c69eafb9ca2df2c23ed38820aadc00fc260f0015441ada138"
+  }
+}
