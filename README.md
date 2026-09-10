@@ -172,6 +172,8 @@ different labels can choose overlapping ingredients, and this does not control t
 sampler. Distinct positions under one label have distinct combinations. The standalone
 [experimental tool](tools/invention_seed.py) retains its older palette/version for replay of
 the [initial pilot](research/quality-measurement/invention-seeding-20260910/REPORT.md).
+The [automatic-seeding experiment](research/quality-measurement/automatic-seeding-20260910/REPORT.md)
+records the current input comparison, development checks and remaining repetitions.
 
 New discovery requests develop an early gain's use toward a personal pursuit and the appeal
 of further capabilities. Advancement follows the chosen magic system through discovery,

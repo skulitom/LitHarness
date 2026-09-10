@@ -1,0 +1,1275 @@
+{
+  "purpose": "Input controls and preservation; no quality score or candidate selection",
+  "manifest_sha256": "90f77899c97ea47077ea3ab26818969da8c84c58ac930f2b74301b1cd2a24f07",
+  "manifest_matches_registration": true,
+  "frozen_file_drift": [],
+  "progress": {
+    "status": "finished",
+    "attempts": 8,
+    "tokens": 55649,
+    "slots": [
+      {
+        "name": "ingredients-0",
+        "status": "completed"
+      },
+      {
+        "name": "actions-0",
+        "status": "completed"
+      },
+      {
+        "name": "actions-1",
+        "status": "completed"
+      },
+      {
+        "name": "ingredients-1",
+        "status": "completed"
+      },
+      {
+        "name": "ingredients-2",
+        "status": "completed"
+      },
+      {
+        "name": "actions-2",
+        "status": "completed"
+      },
+      {
+        "name": "development-0",
+        "status": "completed"
+      },
+      {
+        "name": "development-2",
+        "status": "completed"
+      }
+    ],
+    "stop": null
+  },
+  "calls": [
+    {
+      "slot": "ingredients-0",
+      "path": "runs/automatic-seeding-20260910/calls/ingredients-0.json",
+      "file_sha256": "4812c8b8119f0c0ab015f6b222b6314be816efab680c9d1dd3ef4559003a6bf8",
+      "profile": "writer.discovery.v9",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d69-3bdb-7b02-b80a-719568319599"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "9eeef44c4e13ebd9c54bd37c5a7048f4cfb567ea7fe34cdf0e3dcd3d2fc09703",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "9eeef44c4e13ebd9c54bd37c5a7048f4cfb567ea7fe34cdf0e3dcd3d2fc09703",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "b15054d503bad6b02f3746ac7d4f345519a2f8a6c72ecfc2ef0cc465469db18c"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 782,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 782,
+        "transport.schema": 182,
+        "output.text": 6816
+      },
+      "application_input_sha256": "8d0d46faed56806218cb46b9fe3b19e319d01e651f56dbcaf582ae4d4267d587",
+      "transport_input_sha256": "f24a1cd4341a97000dcd5273fba96d989c0aaae5ca59410a66daf4f232f1b132",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T22:21:18.805239+00:00",
+      "finished_at": "2026-09-10T22:22:27.730878+00:00",
+      "machinery_names": null,
+      "requires_precision": null,
+      "discovery_preserved": null,
+      "seed_preserved": null,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 4351,
+        "output_tokens": 1287,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 343
+      }
+    },
+    {
+      "slot": "actions-0",
+      "path": "runs/automatic-seeding-20260910/calls/actions-0.json",
+      "file_sha256": "b5cbd356fe9f6f803fff77c2aee2d796774649bbf86cc19bcfc64a85b45a1aa8",
+      "profile": "writer.discovery.v9",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d6a-49dc-71c0-885f-69ffb3cfd1b1"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "ca352078845d9f1301ebb14a592612c63cd7e682cb03c1596b16893c246b83d7",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "ca352078845d9f1301ebb14a592612c63cd7e682cb03c1596b16893c246b83d7",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "8ff2b802740610a1e7376be2a40351b796c8a89ea0a5b4a0019fb32005a44c5e"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 1449,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 1449,
+        "transport.schema": 182,
+        "output.text": 7178
+      },
+      "application_input_sha256": "0d9c92e748fd276b4bcf52f110dd4cbfabb9319d410a65103b9966e2802dd219",
+      "transport_input_sha256": "929942dc7e569fa1077356f090446e1236a38770e546a642a06310feb577aa40",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T22:22:27.954464+00:00",
+      "finished_at": "2026-09-10T22:23:42.788054+00:00",
+      "machinery_names": null,
+      "requires_precision": null,
+      "discovery_preserved": null,
+      "seed_preserved": null,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 4464,
+        "output_tokens": 1382,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 495
+      }
+    },
+    {
+      "slot": "actions-1",
+      "path": "runs/automatic-seeding-20260910/calls/actions-1.json",
+      "file_sha256": "8647d88c207fbaf1159390c076ced29d9ebda13cd6c74a6f7bdc42ab641b0847",
+      "profile": "writer.discovery.v9",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d6b-6ef0-7a22-8ef7-603ebf1dfad0"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "02e48678d03745a1cb600330344fe2bbceceac44c3b055211dfc20992a87ca89",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "02e48678d03745a1cb600330344fe2bbceceac44c3b055211dfc20992a87ca89",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "b56ddc176aed9f383d86a3ebe63d2d18ad4a9cae3083d47333b4cf01aca3d330"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 1460,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 1460,
+        "transport.schema": 182,
+        "output.text": 6705
+      },
+      "application_input_sha256": "c7cef50fda0fbd1110137ca6d13e3561ce851999a01ceacca75e66b20da753b1",
+      "transport_input_sha256": "691c5a333410c93672e5d5418b6aa0d54bdeb86f6300f2c3d18d4784752728b3",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T22:23:43.007305+00:00",
+      "finished_at": "2026-09-10T22:25:15.665502+00:00",
+      "machinery_names": null,
+      "requires_precision": null,
+      "discovery_preserved": null,
+      "seed_preserved": null,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 1905,
+        "output_tokens": 1292,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 764
+      }
+    },
+    {
+      "slot": "ingredients-1",
+      "path": "runs/automatic-seeding-20260910/calls/ingredients-1.json",
+      "file_sha256": "911a20230927f4193021b04ea63cd047d9526f410d5bf235e0d20ccfccb07fbf",
+      "profile": "writer.discovery.v9",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d6c-d9b2-70c1-8541-1198cdcad54b"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "940f2f7e18514b7f484db6cfe62feac1d58d482c840e0d405b6e29bfe7b1b60d",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "940f2f7e18514b7f484db6cfe62feac1d58d482c840e0d405b6e29bfe7b1b60d",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "a3daffbb7e25ae5b94c2d115e808480562b8aceb0bc6ae4d3dcda3fa0d1a6fca"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 773,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 773,
+        "transport.schema": 182,
+        "output.text": 6770
+      },
+      "application_input_sha256": "46a7e505831c0262e65011f05bacc6bd6bc3851f62d9bfa69ff7a4327e0d84dc",
+      "transport_input_sha256": "4fa5cd5226f3d756c184f6041bec8a7e8c2a3271b90659c64d0fffaf41188974",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T22:25:15.877146+00:00",
+      "finished_at": "2026-09-10T22:26:50.021978+00:00",
+      "machinery_names": null,
+      "requires_precision": null,
+      "discovery_preserved": null,
+      "seed_preserved": null,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 4349,
+        "output_tokens": 1282,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 865
+      }
+    },
+    {
+      "slot": "ingredients-2",
+      "path": "runs/automatic-seeding-20260910/calls/ingredients-2.json",
+      "file_sha256": "9cba5408346c2c1064e14a0e298c2e08cb1f307a43affa37e2abeabbb90eb5a9",
+      "profile": "writer.discovery.v9",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d6e-4a85-75f1-b079-9ca0a8ac9288"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "9f26bbd1bbf846040b92b241f1c6f51e33442c6ab4621a9b9ebbb350a070ee00",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "9f26bbd1bbf846040b92b241f1c6f51e33442c6ab4621a9b9ebbb350a070ee00",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "90d8674d61205cdc8a296ca7e25d1f90492b3b2a5da5dedfa52455c41258146d"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 772,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 772,
+        "transport.schema": 182,
+        "output.text": 6445
+      },
+      "application_input_sha256": "8f0710488bc2beabbf1e323c3c0dde66f6e9632f8036e1d9cb348fd1b098f1f4",
+      "transport_input_sha256": "0c2bccdcd911f26f9f99b079069850c7a261e064c472830d92a0912cd0f88e5f",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T22:26:50.261143+00:00",
+      "finished_at": "2026-09-10T22:27:58.166640+00:00",
+      "machinery_names": null,
+      "requires_precision": null,
+      "discovery_preserved": null,
+      "seed_preserved": null,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 4350,
+        "output_tokens": 1237,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 516
+      }
+    },
+    {
+      "slot": "actions-2",
+      "path": "runs/automatic-seeding-20260910/calls/actions-2.json",
+      "file_sha256": "e36facd1d1b09a417b37a56c5c3c458b5fb3ef90a5a5396bb0376720615190b4",
+      "profile": "writer.discovery.v9",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d6f-54c0-7301-a1ef-947805d62e3b"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "b15aa4e67b2c2a743ed9406192d3c2e870673adce74abd0266bd1afdee427dd5",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "b15aa4e67b2c2a743ed9406192d3c2e870673adce74abd0266bd1afdee427dd5",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "a23c00063dfd21575b90ed904ad6a01830d39a1118dd03354fd29f7d626a075e"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 1439,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 1439,
+        "transport.schema": 182,
+        "output.text": 8459
+      },
+      "application_input_sha256": "f4ca50ebaba8b95dbc249000814ed0d9942410fa3712722ffcff638cfcaf76b1",
+      "transport_input_sha256": "ed2a5ac0846fff64c0cb4290e9b777f2686facd6866e344660b2dd5f30f62ce2",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T22:27:58.401628+00:00",
+      "finished_at": "2026-09-10T22:30:00.357753+00:00",
+      "machinery_names": null,
+      "requires_precision": null,
+      "discovery_preserved": null,
+      "seed_preserved": null,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 4465,
+        "output_tokens": 1631,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 1367
+      }
+    },
+    {
+      "slot": "development-0",
+      "path": "runs/automatic-seeding-20260910/calls/development-0.json",
+      "file_sha256": "05d5acc98bccba5264f2eebae3200acca0fa27c2721131332bbe4be1812a9f26",
+      "profile": "writer.concept.discovery.v5",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d71-3209-7372-af69-b697407fdb78"
+      ],
+      "field_sha256": {
+        "application.system": "83aea4e7efedc74d86af471493ec4ac07dc3477597d48bbaec158885259491c8",
+        "application.prompt": "9db4212890c3d5c727424fb72d73890a0b8da561a691d3859ca875ab6cdf5b38",
+        "application.schema": "621c7c107d841e9b4ab2bc0665dab0adb1803fc18b2ee1d811edaac630b21be6",
+        "application.parameters": "cb5f1c41b39c2340ffdc77ca9a01a54b4060eb82ece0bca308efafe7c2484c6d",
+        "transport.system": "4ee7ff0349304d3ad4ea07726b8152b06873462bac6a75c2f16c3a7afd388488",
+        "transport.prompt": "9db4212890c3d5c727424fb72d73890a0b8da561a691d3859ca875ab6cdf5b38",
+        "transport.schema": "621c7c107d841e9b4ab2bc0665dab0adb1803fc18b2ee1d811edaac630b21be6",
+        "output.text": "d7bab45920a809f57f5bcff52f3b15eee63ee35f970e914652907a0e595f9933"
+      },
+      "field_characters": {
+        "application.system": 1812,
+        "application.prompt": 8204,
+        "application.schema": 1624,
+        "application.parameters": 163,
+        "transport.system": 3695,
+        "transport.prompt": 8204,
+        "transport.schema": 1624,
+        "output.text": 8473
+      },
+      "application_input_sha256": "743cb5569801ee31259ef01d32f921b0d6a4e6ee278048274fba7a0308ec520e",
+      "transport_input_sha256": "6d925125bc9a34b73c47710005a098fa43c3e9c3ff4e7cda7ff8f783fdf60907",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T22:30:00.593521+00:00",
+      "finished_at": "2026-09-10T22:30:59.837931+00:00",
+      "machinery_names": [],
+      "requires_precision": true,
+      "discovery_preserved": true,
+      "seed_preserved": true,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 6414,
+        "output_tokens": 1673,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 170
+      }
+    },
+    {
+      "slot": "development-2",
+      "path": "runs/automatic-seeding-20260910/calls/development-2.json",
+      "file_sha256": "920748fa25075caa2bfc787ab4643c4c543e90bb1b495000d8fe2cb99bb02e99",
+      "profile": "writer.concept.discovery.v5",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08d72-1a5e-7213-8ed6-3a247cd86156"
+      ],
+      "field_sha256": {
+        "application.system": "83aea4e7efedc74d86af471493ec4ac07dc3477597d48bbaec158885259491c8",
+        "application.prompt": "a45f95e844a4ceb28fd2a0e471d40fc0a585929f0ce28730c83cdd2fe1f9ccfe",
+        "application.schema": "621c7c107d841e9b4ab2bc0665dab0adb1803fc18b2ee1d811edaac630b21be6",
+        "application.parameters": "cb5f1c41b39c2340ffdc77ca9a01a54b4060eb82ece0bca308efafe7c2484c6d",
+        "transport.system": "4ee7ff0349304d3ad4ea07726b8152b06873462bac6a75c2f16c3a7afd388488",
+        "transport.prompt": "a45f95e844a4ceb28fd2a0e471d40fc0a585929f0ce28730c83cdd2fe1f9ccfe",
+        "transport.schema": "621c7c107d841e9b4ab2bc0665dab0adb1803fc18b2ee1d811edaac630b21be6",
+        "output.text": "27725cb52dde653b8d42a11113f7de80fa03943526503e71e94f6dbbc8fed59b"
+      },
+      "field_characters": {
+        "application.system": 1812,
+        "application.prompt": 9481,
+        "application.schema": 1624,
+        "application.parameters": 163,
+        "transport.system": 3695,
+        "transport.prompt": 9481,
+        "transport.schema": 1624,
+        "output.text": 8593
+      },
+      "application_input_sha256": "5cb0f3a09c5846cefe3c0901897651a1301b54edb6498953da4c47793eca9930",
+      "transport_input_sha256": "4600a5160836e4267c4d7123bf4d827d1849ca9f7501ebcbc654d5a176a19376",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T22:31:00.080151+00:00",
+      "finished_at": "2026-09-10T22:31:58.625514+00:00",
+      "machinery_names": [],
+      "requires_precision": true,
+      "discovery_preserved": true,
+      "seed_preserved": true,
+      "request_matches_saved": true,
+      "usage": {
+        "input_tokens": 6657,
+        "output_tokens": 1680,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 150
+      }
+    }
+  ],
+  "discovery_pairs": {
+    "0": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+          "right_sha256": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d"
+        },
+        "application.prompt": {
+          "equal": false,
+          "left_sha256": "9eeef44c4e13ebd9c54bd37c5a7048f4cfb567ea7fe34cdf0e3dcd3d2fc09703",
+          "right_sha256": "ca352078845d9f1301ebb14a592612c63cd7e682cb03c1596b16893c246b83d7"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "b15054d503bad6b02f3746ac7d4f345519a2f8a6c72ecfc2ef0cc465469db18c",
+          "right_sha256": "8ff2b802740610a1e7376be2a40351b796c8a89ea0a5b4a0019fb32005a44c5e"
+        },
+        "transport.prompt": {
+          "equal": false,
+          "left_sha256": "9eeef44c4e13ebd9c54bd37c5a7048f4cfb567ea7fe34cdf0e3dcd3d2fc09703",
+          "right_sha256": "ca352078845d9f1301ebb14a592612c63cd7e682cb03c1596b16893c246b83d7"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "1": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+          "right_sha256": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d"
+        },
+        "application.prompt": {
+          "equal": false,
+          "left_sha256": "940f2f7e18514b7f484db6cfe62feac1d58d482c840e0d405b6e29bfe7b1b60d",
+          "right_sha256": "02e48678d03745a1cb600330344fe2bbceceac44c3b055211dfc20992a87ca89"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "a3daffbb7e25ae5b94c2d115e808480562b8aceb0bc6ae4d3dcda3fa0d1a6fca",
+          "right_sha256": "b56ddc176aed9f383d86a3ebe63d2d18ad4a9cae3083d47333b4cf01aca3d330"
+        },
+        "transport.prompt": {
+          "equal": false,
+          "left_sha256": "940f2f7e18514b7f484db6cfe62feac1d58d482c840e0d405b6e29bfe7b1b60d",
+          "right_sha256": "02e48678d03745a1cb600330344fe2bbceceac44c3b055211dfc20992a87ca89"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "2": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d",
+          "right_sha256": "d4e4e5a549cd04de3c86bbb98cdef94bafef2a61787fc2e671e0df0255854c5d"
+        },
+        "application.prompt": {
+          "equal": false,
+          "left_sha256": "9f26bbd1bbf846040b92b241f1c6f51e33442c6ab4621a9b9ebbb350a070ee00",
+          "right_sha256": "b15aa4e67b2c2a743ed9406192d3c2e870673adce74abd0266bd1afdee427dd5"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "90d8674d61205cdc8a296ca7e25d1f90492b3b2a5da5dedfa52455c41258146d",
+          "right_sha256": "a23c00063dfd21575b90ed904ad6a01830d39a1118dd03354fd29f7d626a075e"
+        },
+        "transport.prompt": {
+          "equal": false,
+          "left_sha256": "9f26bbd1bbf846040b92b241f1c6f51e33442c6ab4621a9b9ebbb350a070ee00",
+          "right_sha256": "b15aa4e67b2c2a743ed9406192d3c2e870673adce74abd0266bd1afdee427dd5"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    }
+  },
+  "distinct_sessions": 8,
+  "distinct_outputs": 8,
+  "shared_sessions": {},
+  "repeated_outputs": {},
+  "literal_search": {
+    "query": "\\b(?:Mara Venn|Sera Venn|repair\\w*|mend\\w*|nurser\\w*|load-bearing)\\b",
+    "hits": [
+      {
+        "slot": "ingredients-0",
+        "path": "runs/automatic-seeding-20260910/calls/ingredients-0.json",
+        "file_sha256": "4812c8b8119f0c0ab015f6b222b6314be816efab680c9d1dd3ef4559003a6bf8",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "b15054d503bad6b02f3746ac7d4f345519a2f8a6c72ecfc2ef0cc465469db18c",
+        "start": 393,
+        "end": 400,
+        "line": 1
+      },
+      {
+        "slot": "actions-0",
+        "path": "runs/automatic-seeding-20260910/calls/actions-0.json",
+        "file_sha256": "b5cbd356fe9f6f803fff77c2aee2d796774649bbf86cc19bcfc64a85b45a1aa8",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "8ff2b802740610a1e7376be2a40351b796c8a89ea0a5b4a0019fb32005a44c5e",
+        "start": 269,
+        "end": 276,
+        "line": 1
+      },
+      {
+        "slot": "actions-0",
+        "path": "runs/automatic-seeding-20260910/calls/actions-0.json",
+        "file_sha256": "b5cbd356fe9f6f803fff77c2aee2d796774649bbf86cc19bcfc64a85b45a1aa8",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "8ff2b802740610a1e7376be2a40351b796c8a89ea0a5b4a0019fb32005a44c5e",
+        "start": 1281,
+        "end": 1290,
+        "line": 1
+      },
+      {
+        "slot": "ingredients-1",
+        "path": "runs/automatic-seeding-20260910/calls/ingredients-1.json",
+        "file_sha256": "911a20230927f4193021b04ea63cd047d9526f410d5bf235e0d20ccfccb07fbf",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "a3daffbb7e25ae5b94c2d115e808480562b8aceb0bc6ae4d3dcda3fa0d1a6fca",
+        "start": 1352,
+        "end": 1361,
+        "line": 1
+      },
+      {
+        "slot": "ingredients-1",
+        "path": "runs/automatic-seeding-20260910/calls/ingredients-1.json",
+        "file_sha256": "911a20230927f4193021b04ea63cd047d9526f410d5bf235e0d20ccfccb07fbf",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "a3daffbb7e25ae5b94c2d115e808480562b8aceb0bc6ae4d3dcda3fa0d1a6fca",
+        "start": 1741,
+        "end": 1748,
+        "line": 1
+      },
+      {
+        "slot": "ingredients-1",
+        "path": "runs/automatic-seeding-20260910/calls/ingredients-1.json",
+        "file_sha256": "911a20230927f4193021b04ea63cd047d9526f410d5bf235e0d20ccfccb07fbf",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "a3daffbb7e25ae5b94c2d115e808480562b8aceb0bc6ae4d3dcda3fa0d1a6fca",
+        "start": 4614,
+        "end": 4621,
+        "line": 1
+      },
+      {
+        "slot": "ingredients-1",
+        "path": "runs/automatic-seeding-20260910/calls/ingredients-1.json",
+        "file_sha256": "911a20230927f4193021b04ea63cd047d9526f410d5bf235e0d20ccfccb07fbf",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "a3daffbb7e25ae5b94c2d115e808480562b8aceb0bc6ae4d3dcda3fa0d1a6fca",
+        "start": 5744,
+        "end": 5751,
+        "line": 1
+      },
+      {
+        "slot": "ingredients-1",
+        "path": "runs/automatic-seeding-20260910/calls/ingredients-1.json",
+        "file_sha256": "911a20230927f4193021b04ea63cd047d9526f410d5bf235e0d20ccfccb07fbf",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "a3daffbb7e25ae5b94c2d115e808480562b8aceb0bc6ae4d3dcda3fa0d1a6fca",
+        "start": 6330,
+        "end": 6339,
+        "line": 1
+      },
+      {
+        "slot": "ingredients-2",
+        "path": "runs/automatic-seeding-20260910/calls/ingredients-2.json",
+        "file_sha256": "9cba5408346c2c1064e14a0e298c2e08cb1f307a43affa37e2abeabbb90eb5a9",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "90d8674d61205cdc8a296ca7e25d1f90492b3b2a5da5dedfa52455c41258146d",
+        "start": 89,
+        "end": 98,
+        "line": 1
+      },
+      {
+        "slot": "ingredients-2",
+        "path": "runs/automatic-seeding-20260910/calls/ingredients-2.json",
+        "file_sha256": "9cba5408346c2c1064e14a0e298c2e08cb1f307a43affa37e2abeabbb90eb5a9",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "90d8674d61205cdc8a296ca7e25d1f90492b3b2a5da5dedfa52455c41258146d",
+        "start": 2635,
+        "end": 2641,
+        "line": 1
+      },
+      {
+        "slot": "actions-2",
+        "path": "runs/automatic-seeding-20260910/calls/actions-2.json",
+        "file_sha256": "e36facd1d1b09a417b37a56c5c3c458b5fb3ef90a5a5396bb0376720615190b4",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "a23c00063dfd21575b90ed904ad6a01830d39a1118dd03354fd29f7d626a075e",
+        "start": 497,
+        "end": 505,
+        "line": 1
+      },
+      {
+        "slot": "actions-2",
+        "path": "runs/automatic-seeding-20260910/calls/actions-2.json",
+        "file_sha256": "e36facd1d1b09a417b37a56c5c3c458b5fb3ef90a5a5396bb0376720615190b4",
+        "profile": "writer.discovery.v9",
+        "field": "output.text",
+        "field_sha256": "a23c00063dfd21575b90ed904ad6a01830d39a1118dd03354fd29f7d626a075e",
+        "start": 7722,
+        "end": 7730,
+        "line": 1
+      },
+      {
+        "slot": "development-0",
+        "path": "runs/automatic-seeding-20260910/calls/development-0.json",
+        "file_sha256": "05d5acc98bccba5264f2eebae3200acca0fa27c2721131332bbe4be1812a9f26",
+        "profile": "writer.concept.discovery.v5",
+        "field": "application.prompt",
+        "field_sha256": "9db4212890c3d5c727424fb72d73890a0b8da561a691d3859ca875ab6cdf5b38",
+        "start": 988,
+        "end": 995,
+        "line": 2
+      },
+      {
+        "slot": "development-0",
+        "path": "runs/automatic-seeding-20260910/calls/development-0.json",
+        "file_sha256": "05d5acc98bccba5264f2eebae3200acca0fa27c2721131332bbe4be1812a9f26",
+        "profile": "writer.concept.discovery.v5",
+        "field": "application.prompt",
+        "field_sha256": "9db4212890c3d5c727424fb72d73890a0b8da561a691d3859ca875ab6cdf5b38",
+        "start": 1996,
+        "end": 2005,
+        "line": 6
+      },
+      {
+        "slot": "development-0",
+        "path": "runs/automatic-seeding-20260910/calls/development-0.json",
+        "file_sha256": "05d5acc98bccba5264f2eebae3200acca0fa27c2721131332bbe4be1812a9f26",
+        "profile": "writer.concept.discovery.v5",
+        "field": "transport.prompt",
+        "field_sha256": "9db4212890c3d5c727424fb72d73890a0b8da561a691d3859ca875ab6cdf5b38",
+        "start": 988,
+        "end": 995,
+        "line": 2
+      },
+      {
+        "slot": "development-0",
+        "path": "runs/automatic-seeding-20260910/calls/development-0.json",
+        "file_sha256": "05d5acc98bccba5264f2eebae3200acca0fa27c2721131332bbe4be1812a9f26",
+        "profile": "writer.concept.discovery.v5",
+        "field": "transport.prompt",
+        "field_sha256": "9db4212890c3d5c727424fb72d73890a0b8da561a691d3859ca875ab6cdf5b38",
+        "start": 1996,
+        "end": 2005,
+        "line": 6
+      },
+      {
+        "slot": "development-0",
+        "path": "runs/automatic-seeding-20260910/calls/development-0.json",
+        "file_sha256": "05d5acc98bccba5264f2eebae3200acca0fa27c2721131332bbe4be1812a9f26",
+        "profile": "writer.concept.discovery.v5",
+        "field": "output.text",
+        "field_sha256": "d7bab45920a809f57f5bcff52f3b15eee63ee35f970e914652907a0e595f9933",
+        "start": 5715,
+        "end": 5723,
+        "line": 1
+      },
+      {
+        "slot": "development-0",
+        "path": "runs/automatic-seeding-20260910/calls/development-0.json",
+        "file_sha256": "05d5acc98bccba5264f2eebae3200acca0fa27c2721131332bbe4be1812a9f26",
+        "profile": "writer.concept.discovery.v5",
+        "field": "output.text",
+        "field_sha256": "d7bab45920a809f57f5bcff52f3b15eee63ee35f970e914652907a0e595f9933",
+        "start": 6217,
+        "end": 6224,
+        "line": 1
+      },
+      {
+        "slot": "development-2",
+        "path": "runs/automatic-seeding-20260910/calls/development-2.json",
+        "file_sha256": "920748fa25075caa2bfc787ab4643c4c543e90bb1b495000d8fe2cb99bb02e99",
+        "profile": "writer.concept.discovery.v5",
+        "field": "application.prompt",
+        "field_sha256": "a45f95e844a4ceb28fd2a0e471d40fc0a585929f0ce28730c83cdd2fe1f9ccfe",
+        "start": 1214,
+        "end": 1222,
+        "line": 4
+      },
+      {
+        "slot": "development-2",
+        "path": "runs/automatic-seeding-20260910/calls/development-2.json",
+        "file_sha256": "920748fa25075caa2bfc787ab4643c4c543e90bb1b495000d8fe2cb99bb02e99",
+        "profile": "writer.concept.discovery.v5",
+        "field": "application.prompt",
+        "field_sha256": "a45f95e844a4ceb28fd2a0e471d40fc0a585929f0ce28730c83cdd2fe1f9ccfe",
+        "start": 8448,
+        "end": 8456,
+        "line": 32
+      },
+      {
+        "slot": "development-2",
+        "path": "runs/automatic-seeding-20260910/calls/development-2.json",
+        "file_sha256": "920748fa25075caa2bfc787ab4643c4c543e90bb1b495000d8fe2cb99bb02e99",
+        "profile": "writer.concept.discovery.v5",
+        "field": "transport.prompt",
+        "field_sha256": "a45f95e844a4ceb28fd2a0e471d40fc0a585929f0ce28730c83cdd2fe1f9ccfe",
+        "start": 1214,
+        "end": 1222,
+        "line": 4
+      },
+      {
+        "slot": "development-2",
+        "path": "runs/automatic-seeding-20260910/calls/development-2.json",
+        "file_sha256": "920748fa25075caa2bfc787ab4643c4c543e90bb1b495000d8fe2cb99bb02e99",
+        "profile": "writer.concept.discovery.v5",
+        "field": "transport.prompt",
+        "field_sha256": "a45f95e844a4ceb28fd2a0e471d40fc0a585929f0ce28730c83cdd2fe1f9ccfe",
+        "start": 8448,
+        "end": 8456,
+        "line": 32
+      },
+      {
+        "slot": "development-2",
+        "path": "runs/automatic-seeding-20260910/calls/development-2.json",
+        "file_sha256": "920748fa25075caa2bfc787ab4643c4c543e90bb1b495000d8fe2cb99bb02e99",
+        "profile": "writer.concept.discovery.v5",
+        "field": "output.text",
+        "field_sha256": "27725cb52dde653b8d42a11113f7de80fa03943526503e71e94f6dbbc8fed59b",
+        "start": 5438,
+        "end": 5446,
+        "line": 1
+      }
+    ],
+    "interpretation": "Passage locations only"
+  }
+}
