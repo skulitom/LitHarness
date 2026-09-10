@@ -1,0 +1,17 @@
+{
+  "manifest_sha256": "8f47b4fd5cfac9e0fc4133948fceb81b3ca4e8f79f7991f542082e908e954e63",
+  "order": [
+    "action-1",
+    "action-2"
+  ],
+  "parent_registration_sha256": "ff7d971b8d991b59f79517dad1e87ae3aef7be3230b0316bb56da8b2ecfc5e49",
+  "original_packet": 2,
+  "comparison": "post-hoc, more prescriptive author brief",
+  "request_sha256": {
+    "action-1": "600c33f3c992be2c579b0147ba41fcd67d6b631873f2ae060484d5a5eac4ed2a",
+    "action-2": "600c33f3c992be2c579b0147ba41fcd67d6b631873f2ae060484d5a5eac4ed2a"
+  },
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "native_sampler_seed": null
+}

@@ -152,6 +152,20 @@ setting and core power premise. These references do not enter later development 
 creation; the saved discovery request records them. This supplies a novelty constraint, not
 an automatic judgment that the returned concept is distinct enough.
 
+For repeatable starting ingredients, the experimental [invention seed tool](tools/invention_seed.py)
+writes author briefs without calling a model:
+
+```bash
+uv run python tools/invention_seed.py --seed my-series --count 3 --out runs/my-seeds
+```
+
+Pass a generated file to `concept --brief-file runs/my-seeds/seed-00000.brief.txt` with your
+usual provider and output settings. Use `--start 3` for the next positions. The same label and
+position reproduce the brief; different positions within one label have different combinations
+from a finite, authored adventure palette. This does not seed the native sampler or guarantee
+unique prose. The [pilot protocol](research/quality-measurement/invention-seeding-20260910/RUNBOOK.md)
+defines the initial comparison with empty briefs and opaque identifiers.
+
 New discovery requests develop an early gain's use toward a personal pursuit and the appeal
 of further capabilities. Advancement follows the chosen magic system through discovery,
 conflict, exploration, choices or practice. Earlier saved discoveries keep their original

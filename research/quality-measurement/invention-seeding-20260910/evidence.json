@@ -1,0 +1,3100 @@
+{
+  "purpose": "Input seeding trial; no quality scores or candidate selection",
+  "registration": "research/quality-measurement/invention-seeding-20260910/registration.json",
+  "manifest_sha256": "8f60c04ff18f4ba33c98cecd44a531b2c3d43c3057e4c14914de586dd3869856",
+  "manifest_matches_registration": true,
+  "frozen_file_drift": [],
+  "progress": {
+    "status": "finished",
+    "attempts": 12,
+    "tokens": 71291,
+    "slots": [
+      {
+        "name": "control-1",
+        "status": "completed"
+      },
+      {
+        "name": "nonce-1",
+        "status": "completed"
+      },
+      {
+        "name": "ingredients-0-a",
+        "status": "completed"
+      },
+      {
+        "name": "ingredients-1-a",
+        "status": "completed"
+      },
+      {
+        "name": "control-2",
+        "status": "completed"
+      },
+      {
+        "name": "nonce-2",
+        "status": "completed"
+      },
+      {
+        "name": "ingredients-2-a",
+        "status": "completed"
+      },
+      {
+        "name": "ingredients-0-b",
+        "status": "completed"
+      },
+      {
+        "name": "nonce-3",
+        "status": "completed"
+      },
+      {
+        "name": "ingredients-1-b",
+        "status": "completed"
+      },
+      {
+        "name": "ingredients-2-b",
+        "status": "completed"
+      },
+      {
+        "name": "control-3",
+        "status": "completed"
+      }
+    ],
+    "stop": null
+  },
+  "calls": [
+    {
+      "slot": "control-1",
+      "path": "runs/invention-seeding-20260910/calls/control-1.json",
+      "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+      "profile": "writer.discovery.v8",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08cb1-6ef1-70b0-b12a-22bc085a033f"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 91,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 91,
+        "transport.schema": 182,
+        "output.text": 5776
+      },
+      "application_input_sha256": "ef0038fd8ced9398b4f15973f6d898cebb6505705e0e6ddd8ee709332194a622",
+      "transport_input_sha256": "2476b012ef0a3b4fdeadbe3989cee2dcd0ea31ee69088e930732125b9305c602",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T19:00:33.332451+00:00",
+      "finished_at": "2026-09-10T19:01:59.960697+00:00",
+      "request_matches_prepared": true,
+      "usage": {
+        "input_tokens": 4227,
+        "output_tokens": 1053,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 412
+      }
+    },
+    {
+      "slot": "nonce-1",
+      "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+      "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+      "profile": "writer.discovery.v8",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08cb2-c219-7e83-b174-165ac6133af7"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "6ff972d8b3f36375742883455046ef863ef3f63bc0f4b43b700d9ff07b8731c7",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "6ff972d8b3f36375742883455046ef863ef3f63bc0f4b43b700d9ff07b8731c7",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 216,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 216,
+        "transport.schema": 182,
+        "output.text": 5563
+      },
+      "application_input_sha256": "af7c139bc197911023c250957a10ff8b9e2decef7e87991a022ee57fe488730f",
+      "transport_input_sha256": "ff302e6221863fc179c58b3be440b2797cf3076e3df6d0802a566a555a571122",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T19:02:00.183219+00:00",
+      "finished_at": "2026-09-10T19:03:18.765407+00:00",
+      "request_matches_prepared": true,
+      "usage": {
+        "input_tokens": 1714,
+        "output_tokens": 1025,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 516
+      }
+    },
+    {
+      "slot": "ingredients-0-a",
+      "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+      "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+      "profile": "writer.discovery.v8",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08cb3-f5f2-78e2-9793-cd53d3356520"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 695,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 695,
+        "transport.schema": 182,
+        "output.text": 7025
+      },
+      "application_input_sha256": "373d78a05bcd9b2a783e82e17cf6d240832b3f78207ad8acdf2c145b9a9f4ede",
+      "transport_input_sha256": "10a255c53abdc6f4f2bc76542ec7203b70bb97ecac79c157a07ddc0585f66585",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T19:03:18.983976+00:00",
+      "finished_at": "2026-09-10T19:04:44.668340+00:00",
+      "request_matches_prepared": true,
+      "usage": {
+        "input_tokens": 4339,
+        "output_tokens": 1301,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 342
+      }
+    },
+    {
+      "slot": "ingredients-1-a",
+      "path": "runs/invention-seeding-20260910/calls/ingredients-1-a.json",
+      "file_sha256": "def2950cb33851cb9a18279dd6fc4855a20d887f45932ec398fd53de0d56ad05",
+      "profile": "writer.discovery.v8",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08cb5-456e-7f72-ac9f-17eecd7be2e3"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "abe19ed0bd0ad6e966b19d80bd033a4de3d55e5ba5fe210b5dd1517fa2841f66",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "abe19ed0bd0ad6e966b19d80bd033a4de3d55e5ba5fe210b5dd1517fa2841f66",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "6c065de936fc3697ec0f9c1b18bcad62e03ab3cf3c946a9b27c1847399101e1f"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 713,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 713,
+        "transport.schema": 182,
+        "output.text": 7173
+      },
+      "application_input_sha256": "3480902298d5cd27e1bb6e6a68a5738250dd4f6d287b4464b6b5a03d351100a7",
+      "transport_input_sha256": "f34e2844633eb7a3c172947d831d86cf501e90c642bbf7fffcc59079f4fa2574",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T19:04:44.884013+00:00",
+      "finished_at": "2026-09-10T19:06:40.987178+00:00",
+      "request_matches_prepared": true,
+      "usage": {
+        "input_tokens": 4343,
+        "output_tokens": 1362,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 797
+      }
+    },
+    {
+      "slot": "control-2",
+      "path": "runs/invention-seeding-20260910/calls/control-2.json",
+      "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+      "profile": "writer.discovery.v8",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08cb7-0bd6-7be1-ace7-461b07129e9f"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 91,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 91,
+        "transport.schema": 182,
+        "output.text": 5828
+      },
+      "application_input_sha256": "ef0038fd8ced9398b4f15973f6d898cebb6505705e0e6ddd8ee709332194a622",
+      "transport_input_sha256": "2476b012ef0a3b4fdeadbe3989cee2dcd0ea31ee69088e930732125b9305c602",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T19:06:41.201981+00:00",
+      "finished_at": "2026-09-10T19:07:59.404415+00:00",
+      "request_matches_prepared": true,
+      "usage": {
+        "input_tokens": 4227,
+        "output_tokens": 1069,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 322
+      }
+    },
+    {
+      "slot": "nonce-2",
+      "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+      "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+      "profile": "writer.discovery.v8",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08cb8-3e28-7453-8d6c-aee90e975de4"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "63a7da422109f6594885aa8cea93c4d375e2fbe679f77dd7bb0515686ba3b8f8",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "63a7da422109f6594885aa8cea93c4d375e2fbe679f77dd7bb0515686ba3b8f8",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 216,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 216,
+        "transport.schema": 182,
+        "output.text": 5209
+      },
+      "application_input_sha256": "4af83bcb0224ccc29dc7bc383532c6d0e4e0a367388c516cbbb4f6cd18a8eaf1",
+      "transport_input_sha256": "7e9da0f6bea07e146b6bc2d2184a69cdd644d59b3468276e78cba8173a497709",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T19:07:59.623935+00:00",
+      "finished_at": "2026-09-10T19:09:18.975164+00:00",
+      "request_matches_prepared": true,
+      "usage": {
+        "input_tokens": 4276,
+        "output_tokens": 1024,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 440
+      }
+    },
+    {
+      "slot": "ingredients-2-a",
+      "path": "runs/invention-seeding-20260910/calls/ingredients-2-a.json",
+      "file_sha256": "254cf8fe83486fa1b0aa6502c4125009e90364c1fadbd17ef1a299fe755ca520",
+      "profile": "writer.discovery.v8",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08cb9-750a-7bd1-960b-340ba239e535"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "f5f52696b0f99ee3fd0bd8e613d5995dcaa99059f65dfc125f82ab228db7a0b4",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "f5f52696b0f99ee3fd0bd8e613d5995dcaa99059f65dfc125f82ab228db7a0b4",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "f84f9837da8e7e9aa0d17e99b5796bd3e4e9b73b118c75f96c32f18544b768d1"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 712,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 712,
+        "transport.schema": 182,
+        "output.text": 7010
+      },
+      "application_input_sha256": "d44c3b365a295771e78014c5fc2b2123018b115040dcbbb22b8e5b252b6d48e8",
+      "transport_input_sha256": "483624d81fc9c104814896aca78d00580a997044eafc275df0ee2d5498277a6d",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T19:09:19.196544+00:00",
+      "finished_at": "2026-09-10T19:10:58.320425+00:00",
+      "request_matches_prepared": true,
+      "usage": {
+        "input_tokens": 4347,
+        "output_tokens": 1323,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 505
+      }
+    },
+    {
+      "slot": "ingredients-0-b",
+      "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+      "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+      "profile": "writer.discovery.v8",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08cba-f91d-7320-896c-cf47f6ac2870"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 695,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 695,
+        "transport.schema": 182,
+        "output.text": 6915
+      },
+      "application_input_sha256": "373d78a05bcd9b2a783e82e17cf6d240832b3f78207ad8acdf2c145b9a9f4ede",
+      "transport_input_sha256": "10a255c53abdc6f4f2bc76542ec7203b70bb97ecac79c157a07ddc0585f66585",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T19:10:58.544943+00:00",
+      "finished_at": "2026-09-10T19:12:39.650592+00:00",
+      "request_matches_prepared": true,
+      "usage": {
+        "input_tokens": 4345,
+        "output_tokens": 1286,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 458
+      }
+    },
+    {
+      "slot": "nonce-3",
+      "path": "runs/invention-seeding-20260910/calls/nonce-3.json",
+      "file_sha256": "f6c7ea27acd9a32678287122d5c6fb0bb703d9a601addd7578a308b70e678815",
+      "profile": "writer.discovery.v8",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08cbc-84db-7510-a8a7-a10f864b32c0"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "12caeb71dd6456fea6c57613781a6c2a9ab64bdf71ad07d1f1057c36b07ab232",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "12caeb71dd6456fea6c57613781a6c2a9ab64bdf71ad07d1f1057c36b07ab232",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "735d0c06683af93002d8cc8a425eb575b0ae310d9d219e6bba4d8c119e7a3e11"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 216,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 216,
+        "transport.schema": 182,
+        "output.text": 5320
+      },
+      "application_input_sha256": "76101e263d036f61c17102d32a25f0cf4597da62f566f793e09c17ff428a7b79",
+      "transport_input_sha256": "ff8171236ab22f97c7ffa69e014dd3fa7957f8c393d12314037faf9716f45cef",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T19:12:39.865523+00:00",
+      "finished_at": "2026-09-10T19:14:24.093721+00:00",
+      "request_matches_prepared": true,
+      "usage": {
+        "input_tokens": 176,
+        "output_tokens": 1003,
+        "cache_read_tokens": 4096,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 450
+      }
+    },
+    {
+      "slot": "ingredients-1-b",
+      "path": "runs/invention-seeding-20260910/calls/ingredients-1-b.json",
+      "file_sha256": "03cf1c308d499a42084513b4927a974ee0c38c5af87afcb0b368346e00948e67",
+      "profile": "writer.discovery.v8",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08cbe-1cd6-7b51-9ef2-ada528f3c8b1"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "abe19ed0bd0ad6e966b19d80bd033a4de3d55e5ba5fe210b5dd1517fa2841f66",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "abe19ed0bd0ad6e966b19d80bd033a4de3d55e5ba5fe210b5dd1517fa2841f66",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "325905f340429022d8b265e988157ade500f32da1ab010157e0085e60d032c11"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 713,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 713,
+        "transport.schema": 182,
+        "output.text": 7143
+      },
+      "application_input_sha256": "3480902298d5cd27e1bb6e6a68a5738250dd4f6d287b4464b6b5a03d351100a7",
+      "transport_input_sha256": "f34e2844633eb7a3c172947d831d86cf501e90c642bbf7fffcc59079f4fa2574",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T19:14:24.306411+00:00",
+      "finished_at": "2026-09-10T19:16:02.701539+00:00",
+      "request_matches_prepared": true,
+      "usage": {
+        "input_tokens": 4345,
+        "output_tokens": 1343,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 484
+      }
+    },
+    {
+      "slot": "ingredients-2-b",
+      "path": "runs/invention-seeding-20260910/calls/ingredients-2-b.json",
+      "file_sha256": "34956f28820ed2b4ef49559b7f5cdb44f28dac3110eb10e906c0ddfbc137dd09",
+      "profile": "writer.discovery.v8",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08cbf-9e11-7d20-b4b5-62ac7cbd460e"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "f5f52696b0f99ee3fd0bd8e613d5995dcaa99059f65dfc125f82ab228db7a0b4",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "f5f52696b0f99ee3fd0bd8e613d5995dcaa99059f65dfc125f82ab228db7a0b4",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "98a6a1533df43d83ac058d35b398ee7a9c95bde4a59e098a88a062aa321d2047"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 712,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 712,
+        "transport.schema": 182,
+        "output.text": 6680
+      },
+      "application_input_sha256": "d44c3b365a295771e78014c5fc2b2123018b115040dcbbb22b8e5b252b6d48e8",
+      "transport_input_sha256": "483624d81fc9c104814896aca78d00580a997044eafc275df0ee2d5498277a6d",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T19:16:02.925328+00:00",
+      "finished_at": "2026-09-10T19:17:33.952888+00:00",
+      "request_matches_prepared": true,
+      "usage": {
+        "input_tokens": 4347,
+        "output_tokens": 1259,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 480
+      }
+    },
+    {
+      "slot": "control-3",
+      "path": "runs/invention-seeding-20260910/calls/control-3.json",
+      "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+      "profile": "writer.discovery.v8",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a08cc1-0284-78c1-aa03-788847f39c2d"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 91,
+        "application.schema": 182,
+        "application.parameters": 155,
+        "transport.system": 2267,
+        "transport.prompt": 91,
+        "transport.schema": 182,
+        "output.text": 5503
+      },
+      "application_input_sha256": "ef0038fd8ced9398b4f15973f6d898cebb6505705e0e6ddd8ee709332194a622",
+      "transport_input_sha256": "2476b012ef0a3b4fdeadbe3989cee2dcd0ea31ee69088e930732125b9305c602",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "validation": "passed",
+      "started_at": "2026-09-10T19:17:34.178274+00:00",
+      "finished_at": "2026-09-10T19:19:00.442893+00:00",
+      "request_matches_prepared": true,
+      "usage": {
+        "input_tokens": 4225,
+        "output_tokens": 1035,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 435
+      }
+    }
+  ],
+  "comparisons": {
+    "control-1/control-2": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+          "right_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "right_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "control-1/control-3": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+          "right_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "right_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "control-1/nonce-1": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+          "right_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12"
+        },
+        "application.prompt": {
+          "equal": false,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "6ff972d8b3f36375742883455046ef863ef3f63bc0f4b43b700d9ff07b8731c7"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "right_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f"
+        },
+        "transport.prompt": {
+          "equal": false,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "6ff972d8b3f36375742883455046ef863ef3f63bc0f4b43b700d9ff07b8731c7"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "control-1/ingredients-0-a": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+          "right_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12"
+        },
+        "application.prompt": {
+          "equal": false,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "right_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447"
+        },
+        "transport.prompt": {
+          "equal": false,
+          "left_sha256": "39b2c7f035a4f25b54ffda42afee3276773d1f9a4844f216ebf779432b7e3f65",
+          "right_sha256": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "ingredients-0-a/ingredients-0-b": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+          "right_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3",
+          "right_sha256": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "right_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3",
+          "right_sha256": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "ingredients-1-a/ingredients-1-b": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+          "right_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "abe19ed0bd0ad6e966b19d80bd033a4de3d55e5ba5fe210b5dd1517fa2841f66",
+          "right_sha256": "abe19ed0bd0ad6e966b19d80bd033a4de3d55e5ba5fe210b5dd1517fa2841f66"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "6c065de936fc3697ec0f9c1b18bcad62e03ab3cf3c946a9b27c1847399101e1f",
+          "right_sha256": "325905f340429022d8b265e988157ade500f32da1ab010157e0085e60d032c11"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "abe19ed0bd0ad6e966b19d80bd033a4de3d55e5ba5fe210b5dd1517fa2841f66",
+          "right_sha256": "abe19ed0bd0ad6e966b19d80bd033a4de3d55e5ba5fe210b5dd1517fa2841f66"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "ingredients-2-a/ingredients-2-b": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12",
+          "right_sha256": "f807f935e3be581fb2c55e8985cb4e9789116e1f4db1e1071b5d0a7623952c12"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "f5f52696b0f99ee3fd0bd8e613d5995dcaa99059f65dfc125f82ab228db7a0b4",
+          "right_sha256": "f5f52696b0f99ee3fd0bd8e613d5995dcaa99059f65dfc125f82ab228db7a0b4"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "application.system": {
+          "equal": true,
+          "left_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+          "right_sha256": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "f84f9837da8e7e9aa0d17e99b5796bd3e4e9b73b118c75f96c32f18544b768d1",
+          "right_sha256": "98a6a1533df43d83ac058d35b398ee7a9c95bde4a59e098a88a062aa321d2047"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "f5f52696b0f99ee3fd0bd8e613d5995dcaa99059f65dfc125f82ab228db7a0b4",
+          "right_sha256": "f5f52696b0f99ee3fd0bd8e613d5995dcaa99059f65dfc125f82ab228db7a0b4"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+          "right_sha256": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41"
+        },
+        "transport.system": {
+          "equal": true,
+          "left_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+          "right_sha256": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    }
+  },
+  "distinct_sessions": 12,
+  "distinct_outputs": 12,
+  "shared_sessions": {},
+  "repeated_outputs": {},
+  "literal_searches": {
+    "previous_recurring_name": {
+      "pattern": "\\bMara Venn\\b",
+      "hits": [
+        {
+          "slot": "ingredients-1-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-1-a.json",
+          "file_sha256": "def2950cb33851cb9a18279dd6fc4855a20d887f45932ec398fd53de0d56ad05",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "6c065de936fc3697ec0f9c1b18bcad62e03ab3cf3c946a9b27c1847399101e1f",
+          "start": 103,
+          "end": 112,
+          "line": 1
+        }
+      ]
+    },
+    "repair_vocabulary": {
+      "pattern": "\\b(?:repair\\w*|mend\\w*|salvag\\w*)\\b",
+      "hits": [
+        {
+          "slot": "control-1",
+          "path": "runs/invention-seeding-20260910/calls/control-1.json",
+          "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "start": 306,
+          "end": 313,
+          "line": 1
+        },
+        {
+          "slot": "control-1",
+          "path": "runs/invention-seeding-20260910/calls/control-1.json",
+          "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "start": 1363,
+          "end": 1372,
+          "line": 1
+        },
+        {
+          "slot": "control-1",
+          "path": "runs/invention-seeding-20260910/calls/control-1.json",
+          "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "start": 1477,
+          "end": 1483,
+          "line": 1
+        },
+        {
+          "slot": "control-1",
+          "path": "runs/invention-seeding-20260910/calls/control-1.json",
+          "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "start": 2609,
+          "end": 2617,
+          "line": 1
+        },
+        {
+          "slot": "control-1",
+          "path": "runs/invention-seeding-20260910/calls/control-1.json",
+          "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "start": 2673,
+          "end": 2679,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 644,
+          "end": 651,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 1210,
+          "end": 1216,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 2770,
+          "end": 2778,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 3242,
+          "end": 3250,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 5143,
+          "end": 5149,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 5254,
+          "end": 5261,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 719,
+          "end": 727,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 5117,
+          "end": 5124,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-1-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-1-a.json",
+          "file_sha256": "def2950cb33851cb9a18279dd6fc4855a20d887f45932ec398fd53de0d56ad05",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "6c065de936fc3697ec0f9c1b18bcad62e03ab3cf3c946a9b27c1847399101e1f",
+          "start": 1015,
+          "end": 1022,
+          "line": 1
+        },
+        {
+          "slot": "control-2",
+          "path": "runs/invention-seeding-20260910/calls/control-2.json",
+          "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6",
+          "start": 1150,
+          "end": 1159,
+          "line": 1
+        },
+        {
+          "slot": "control-2",
+          "path": "runs/invention-seeding-20260910/calls/control-2.json",
+          "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6",
+          "start": 2352,
+          "end": 2358,
+          "line": 1
+        },
+        {
+          "slot": "control-2",
+          "path": "runs/invention-seeding-20260910/calls/control-2.json",
+          "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6",
+          "start": 3389,
+          "end": 3395,
+          "line": 1
+        },
+        {
+          "slot": "control-2",
+          "path": "runs/invention-seeding-20260910/calls/control-2.json",
+          "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6",
+          "start": 3909,
+          "end": 3916,
+          "line": 1
+        },
+        {
+          "slot": "control-2",
+          "path": "runs/invention-seeding-20260910/calls/control-2.json",
+          "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6",
+          "start": 4118,
+          "end": 4124,
+          "line": 1
+        },
+        {
+          "slot": "control-2",
+          "path": "runs/invention-seeding-20260910/calls/control-2.json",
+          "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6",
+          "start": 4706,
+          "end": 4714,
+          "line": 1
+        },
+        {
+          "slot": "control-2",
+          "path": "runs/invention-seeding-20260910/calls/control-2.json",
+          "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6",
+          "start": 5245,
+          "end": 5251,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 619,
+          "end": 628,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 1238,
+          "end": 1244,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 1707,
+          "end": 1716,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 1790,
+          "end": 1798,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 2462,
+          "end": 2468,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 2791,
+          "end": 2797,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 3591,
+          "end": 3597,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 4101,
+          "end": 4108,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 4629,
+          "end": 4638,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-2-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-2-a.json",
+          "file_sha256": "254cf8fe83486fa1b0aa6502c4125009e90364c1fadbd17ef1a299fe755ca520",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f84f9837da8e7e9aa0d17e99b5796bd3e4e9b73b118c75f96c32f18544b768d1",
+          "start": 5977,
+          "end": 5986,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 1468,
+          "end": 1472,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 4095,
+          "end": 4106,
+          "line": 1
+        },
+        {
+          "slot": "nonce-3",
+          "path": "runs/invention-seeding-20260910/calls/nonce-3.json",
+          "file_sha256": "f6c7ea27acd9a32678287122d5c6fb0bb703d9a601addd7578a308b70e678815",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "735d0c06683af93002d8cc8a425eb575b0ae310d9d219e6bba4d8c119e7a3e11",
+          "start": 1133,
+          "end": 1140,
+          "line": 1
+        },
+        {
+          "slot": "nonce-3",
+          "path": "runs/invention-seeding-20260910/calls/nonce-3.json",
+          "file_sha256": "f6c7ea27acd9a32678287122d5c6fb0bb703d9a601addd7578a308b70e678815",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "735d0c06683af93002d8cc8a425eb575b0ae310d9d219e6bba4d8c119e7a3e11",
+          "start": 1529,
+          "end": 1536,
+          "line": 1
+        },
+        {
+          "slot": "nonce-3",
+          "path": "runs/invention-seeding-20260910/calls/nonce-3.json",
+          "file_sha256": "f6c7ea27acd9a32678287122d5c6fb0bb703d9a601addd7578a308b70e678815",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "735d0c06683af93002d8cc8a425eb575b0ae310d9d219e6bba4d8c119e7a3e11",
+          "start": 2284,
+          "end": 2290,
+          "line": 1
+        },
+        {
+          "slot": "nonce-3",
+          "path": "runs/invention-seeding-20260910/calls/nonce-3.json",
+          "file_sha256": "f6c7ea27acd9a32678287122d5c6fb0bb703d9a601addd7578a308b70e678815",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "735d0c06683af93002d8cc8a425eb575b0ae310d9d219e6bba4d8c119e7a3e11",
+          "start": 2752,
+          "end": 2760,
+          "line": 1
+        },
+        {
+          "slot": "nonce-3",
+          "path": "runs/invention-seeding-20260910/calls/nonce-3.json",
+          "file_sha256": "f6c7ea27acd9a32678287122d5c6fb0bb703d9a601addd7578a308b70e678815",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "735d0c06683af93002d8cc8a425eb575b0ae310d9d219e6bba4d8c119e7a3e11",
+          "start": 4136,
+          "end": 4143,
+          "line": 1
+        },
+        {
+          "slot": "nonce-3",
+          "path": "runs/invention-seeding-20260910/calls/nonce-3.json",
+          "file_sha256": "f6c7ea27acd9a32678287122d5c6fb0bb703d9a601addd7578a308b70e678815",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "735d0c06683af93002d8cc8a425eb575b0ae310d9d219e6bba4d8c119e7a3e11",
+          "start": 4620,
+          "end": 4629,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-1-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-1-b.json",
+          "file_sha256": "03cf1c308d499a42084513b4927a974ee0c38c5af87afcb0b368346e00948e67",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "325905f340429022d8b265e988157ade500f32da1ab010157e0085e60d032c11",
+          "start": 271,
+          "end": 278,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-1-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-1-b.json",
+          "file_sha256": "03cf1c308d499a42084513b4927a974ee0c38c5af87afcb0b368346e00948e67",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "325905f340429022d8b265e988157ade500f32da1ab010157e0085e60d032c11",
+          "start": 5701,
+          "end": 5707,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-2-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-2-b.json",
+          "file_sha256": "34956f28820ed2b4ef49559b7f5cdb44f28dac3110eb10e906c0ddfbc137dd09",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "98a6a1533df43d83ac058d35b398ee7a9c95bde4a59e098a88a062aa321d2047",
+          "start": 395,
+          "end": 403,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-2-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-2-b.json",
+          "file_sha256": "34956f28820ed2b4ef49559b7f5cdb44f28dac3110eb10e906c0ddfbc137dd09",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "98a6a1533df43d83ac058d35b398ee7a9c95bde4a59e098a88a062aa321d2047",
+          "start": 5626,
+          "end": 5633,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 998,
+          "end": 1005,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 1056,
+          "end": 1062,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 1124,
+          "end": 1130,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 1321,
+          "end": 1328,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 2399,
+          "end": 2405,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 2682,
+          "end": 2688,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 3963,
+          "end": 3970,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 4051,
+          "end": 4060,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 4259,
+          "end": 4265,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 4334,
+          "end": 4340,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 4753,
+          "end": 4760,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 4865,
+          "end": 4871,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 5155,
+          "end": 5162,
+          "line": 1
+        }
+      ]
+    },
+    "aquatic_vocabulary": {
+      "pattern": "\\b(?:water|sea|ocean|flood\\w*|drown\\w*|tidal|tide\\w*|island\\w*)\\b",
+      "hits": [
+        {
+          "slot": "control-1",
+          "path": "runs/invention-seeding-20260910/calls/control-1.json",
+          "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "start": 24,
+          "end": 29,
+          "line": 1
+        },
+        {
+          "slot": "control-1",
+          "path": "runs/invention-seeding-20260910/calls/control-1.json",
+          "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "start": 143,
+          "end": 150,
+          "line": 1
+        },
+        {
+          "slot": "control-1",
+          "path": "runs/invention-seeding-20260910/calls/control-1.json",
+          "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "start": 261,
+          "end": 268,
+          "line": 1
+        },
+        {
+          "slot": "control-1",
+          "path": "runs/invention-seeding-20260910/calls/control-1.json",
+          "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "start": 1914,
+          "end": 1919,
+          "line": 1
+        },
+        {
+          "slot": "control-1",
+          "path": "runs/invention-seeding-20260910/calls/control-1.json",
+          "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "start": 2137,
+          "end": 2142,
+          "line": 1
+        },
+        {
+          "slot": "control-1",
+          "path": "runs/invention-seeding-20260910/calls/control-1.json",
+          "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "start": 2252,
+          "end": 2258,
+          "line": 1
+        },
+        {
+          "slot": "control-1",
+          "path": "runs/invention-seeding-20260910/calls/control-1.json",
+          "file_sha256": "8a614969ed0798cf96f478b06da8cc31fa4b32135e28d45367c5dc973fdb2df8",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "59968e4f990baf3946df78a75443989a19396e7b5ed38e977aae7291dcd12a36",
+          "start": 4157,
+          "end": 4162,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 20,
+          "end": 27,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 207,
+          "end": 211,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 536,
+          "end": 541,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 876,
+          "end": 881,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 1897,
+          "end": 1907,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 2117,
+          "end": 2122,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 4125,
+          "end": 4130,
+          "line": 1
+        },
+        {
+          "slot": "nonce-1",
+          "path": "runs/invention-seeding-20260910/calls/nonce-1.json",
+          "file_sha256": "3de3fd61050f27e7bdad475730cba3fe62160d3a6f00da090dbb493e719e4764",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "02f96be6f8aeac7e23839d9d19c4f94bde59fd0c327d6ca42f4a8a77ef8bf60f",
+          "start": 4761,
+          "end": 4766,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "application.prompt",
+          "field_sha256": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3",
+          "start": 370,
+          "end": 377,
+          "line": 4
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "transport.prompt",
+          "field_sha256": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3",
+          "start": 370,
+          "end": 377,
+          "line": 4
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 44,
+          "end": 51,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 140,
+          "end": 145,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 268,
+          "end": 277,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 437,
+          "end": 444,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 772,
+          "end": 779,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 1148,
+          "end": 1154,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 2184,
+          "end": 2190,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 4091,
+          "end": 4097,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 4113,
+          "end": 4118,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 5260,
+          "end": 5266,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-a.json",
+          "file_sha256": "6fd81132115a63ffcd0c4c1f686cb7c2108975efecd65a70554275cc16d8c8f4",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "5c1ee815c31e2c91dd05c8040ce2d68328cc3f54c36000a78756ef063fce8447",
+          "start": 6840,
+          "end": 6846,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-1-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-1-a.json",
+          "file_sha256": "def2950cb33851cb9a18279dd6fc4855a20d887f45932ec398fd53de0d56ad05",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "6c065de936fc3697ec0f9c1b18bcad62e03ab3cf3c946a9b27c1847399101e1f",
+          "start": 532,
+          "end": 537,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-1-a",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-1-a.json",
+          "file_sha256": "def2950cb33851cb9a18279dd6fc4855a20d887f45932ec398fd53de0d56ad05",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "6c065de936fc3697ec0f9c1b18bcad62e03ab3cf3c946a9b27c1847399101e1f",
+          "start": 4838,
+          "end": 4843,
+          "line": 1
+        },
+        {
+          "slot": "control-2",
+          "path": "runs/invention-seeding-20260910/calls/control-2.json",
+          "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6",
+          "start": 42,
+          "end": 45,
+          "line": 1
+        },
+        {
+          "slot": "control-2",
+          "path": "runs/invention-seeding-20260910/calls/control-2.json",
+          "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6",
+          "start": 110,
+          "end": 117,
+          "line": 1
+        },
+        {
+          "slot": "control-2",
+          "path": "runs/invention-seeding-20260910/calls/control-2.json",
+          "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6",
+          "start": 344,
+          "end": 347,
+          "line": 1
+        },
+        {
+          "slot": "control-2",
+          "path": "runs/invention-seeding-20260910/calls/control-2.json",
+          "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6",
+          "start": 1820,
+          "end": 1823,
+          "line": 1
+        },
+        {
+          "slot": "control-2",
+          "path": "runs/invention-seeding-20260910/calls/control-2.json",
+          "file_sha256": "ec1dc8bb085ae2b297e1f6bb62dad73ae3585926c6fbe0065cd9a8b4d53785e1",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "b251f0baeb7baf0bdca729ac97f9aad9b56ee92cd4611c7acabe14e941a6bad6",
+          "start": 4855,
+          "end": 4860,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 20,
+          "end": 27,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 113,
+          "end": 118,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 122,
+          "end": 126,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 273,
+          "end": 278,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 367,
+          "end": 372,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 559,
+          "end": 564,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 1011,
+          "end": 1016,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 1597,
+          "end": 1601,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 1630,
+          "end": 1640,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 1811,
+          "end": 1818,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 1903,
+          "end": 1908,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 2013,
+          "end": 2017,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 2341,
+          "end": 2345,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 3482,
+          "end": 3487,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 3642,
+          "end": 3646,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 4435,
+          "end": 4440,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 4676,
+          "end": 4680,
+          "line": 1
+        },
+        {
+          "slot": "nonce-2",
+          "path": "runs/invention-seeding-20260910/calls/nonce-2.json",
+          "file_sha256": "fea0add3ba279a8598259ce62f8c0cf7805aeab10d4bc09d779a8944f848924c",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "f64c53261a08b5163326b605762fe18d72c8ddd97ba2e585c27c4df141d1f68d",
+          "start": 4728,
+          "end": 4733,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "application.prompt",
+          "field_sha256": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3",
+          "start": 370,
+          "end": 377,
+          "line": 4
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "transport.prompt",
+          "field_sha256": "e9c0938e46e573d00a165abf4f47cdedbb3d86227c92d5678ef2ba66f392a0c3",
+          "start": 370,
+          "end": 377,
+          "line": 4
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 48,
+          "end": 55,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 70,
+          "end": 73,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 183,
+          "end": 188,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 339,
+          "end": 348,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 364,
+          "end": 370,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 560,
+          "end": 566,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 3132,
+          "end": 3137,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 3587,
+          "end": 3595,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 4544,
+          "end": 4550,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 4740,
+          "end": 4747,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-0-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-0-b.json",
+          "file_sha256": "690f890a9e330ed043e26194f0efb1bd60b3507804a45b8b39c6cf8145bb4ad0",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "dd04b4a7b713f5fef841f82f5878eff927867494ea3bb27bded9e6499d1603a0",
+          "start": 4786,
+          "end": 4791,
+          "line": 1
+        },
+        {
+          "slot": "nonce-3",
+          "path": "runs/invention-seeding-20260910/calls/nonce-3.json",
+          "file_sha256": "f6c7ea27acd9a32678287122d5c6fb0bb703d9a601addd7578a308b70e678815",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "735d0c06683af93002d8cc8a425eb575b0ae310d9d219e6bba4d8c119e7a3e11",
+          "start": 21,
+          "end": 24,
+          "line": 1
+        },
+        {
+          "slot": "nonce-3",
+          "path": "runs/invention-seeding-20260910/calls/nonce-3.json",
+          "file_sha256": "f6c7ea27acd9a32678287122d5c6fb0bb703d9a601addd7578a308b70e678815",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "735d0c06683af93002d8cc8a425eb575b0ae310d9d219e6bba4d8c119e7a3e11",
+          "start": 104,
+          "end": 109,
+          "line": 1
+        },
+        {
+          "slot": "nonce-3",
+          "path": "runs/invention-seeding-20260910/calls/nonce-3.json",
+          "file_sha256": "f6c7ea27acd9a32678287122d5c6fb0bb703d9a601addd7578a308b70e678815",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "735d0c06683af93002d8cc8a425eb575b0ae310d9d219e6bba4d8c119e7a3e11",
+          "start": 648,
+          "end": 653,
+          "line": 1
+        },
+        {
+          "slot": "nonce-3",
+          "path": "runs/invention-seeding-20260910/calls/nonce-3.json",
+          "file_sha256": "f6c7ea27acd9a32678287122d5c6fb0bb703d9a601addd7578a308b70e678815",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "735d0c06683af93002d8cc8a425eb575b0ae310d9d219e6bba4d8c119e7a3e11",
+          "start": 1847,
+          "end": 1852,
+          "line": 1
+        },
+        {
+          "slot": "nonce-3",
+          "path": "runs/invention-seeding-20260910/calls/nonce-3.json",
+          "file_sha256": "f6c7ea27acd9a32678287122d5c6fb0bb703d9a601addd7578a308b70e678815",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "735d0c06683af93002d8cc8a425eb575b0ae310d9d219e6bba4d8c119e7a3e11",
+          "start": 2101,
+          "end": 2106,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-1-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-1-b.json",
+          "file_sha256": "03cf1c308d499a42084513b4927a974ee0c38c5af87afcb0b368346e00948e67",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "325905f340429022d8b265e988157ade500f32da1ab010157e0085e60d032c11",
+          "start": 70,
+          "end": 77,
+          "line": 1
+        },
+        {
+          "slot": "ingredients-2-b",
+          "path": "runs/invention-seeding-20260910/calls/ingredients-2-b.json",
+          "file_sha256": "34956f28820ed2b4ef49559b7f5cdb44f28dac3110eb10e906c0ddfbc137dd09",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "98a6a1533df43d83ac058d35b398ee7a9c95bde4a59e098a88a062aa321d2047",
+          "start": 4383,
+          "end": 4388,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 20,
+          "end": 27,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 62,
+          "end": 65,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 82,
+          "end": 86,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 1781,
+          "end": 1788,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 1962,
+          "end": 1967,
+          "line": 1
+        },
+        {
+          "slot": "control-3",
+          "path": "runs/invention-seeding-20260910/calls/control-3.json",
+          "file_sha256": "da0bea7d20cc53d3b9d8182be77859f723e268a2e9f70100849c025b20e4f6a6",
+          "profile": "writer.discovery.v8",
+          "field": "output.text",
+          "field_sha256": "66fd3b0a633c9b8d221cfed34020689b235dff6d9294fbd2db10661d75bd88d3",
+          "start": 5020,
+          "end": 5024,
+          "line": 1
+        }
+      ]
+    }
+  },
+  "limits": [
+    "Literal searches locate passages; inspect full treatments to interpret them.",
+    "Distinct output bytes do not establish distinct premises or global originality.",
+    "Seeds reproduce authored ingredient combinations, not native sampling or prose.",
+    "Transport receipts do not expose every backend instruction or sampling setting."
+  ]
+}
