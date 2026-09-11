@@ -223,8 +223,21 @@ class Tier:
     cli_form: str
 
 
-def _read(tool: str, cli_form: str) -> Tier:
-    return Tier("read", tool, "a read; opened read-only", cli_form)
+#: What a read tier says about the store its CLI form opens (§241.5): most CLI reads go
+#: through `SqliteStore.open`, which creates and migrates; `cmd_world`'s read views open
+#: read-only, and `roster vocabulary` opens nothing.
+_CLI_MAY_MIGRATE = (
+    "a read; the tool opens the store read-only, and the CLI form may create or migrate it"
+)
+_CLI_READ_ONLY = (
+    "a read; the tool and the CLI form both open the store read-only, and refuse an absent "
+    "or lagging one"
+)
+_NO_STORE = "a read; neither the tool nor the CLI form opens a store"
+
+
+def _read(tool: str, cli_form: str, reason: str = _CLI_MAY_MIGRATE) -> Tier:
+    return Tier("read", tool, reason, cli_form)
 
 
 def _operator(cli_form: str, reason: str) -> Tier:
@@ -269,16 +282,16 @@ TIERS: dict[tuple[str, ...], Tier] = {
     ("state",): _read("state", "litharness state --json"),
     ("characters",): _read("characters", "litharness characters --json"),
     ("audit",): _read("audit", "litharness audit --json"),
-    ("world", "summary"): _read("world", "litharness world summary"),
-    ("world", "show"): _read("world", "litharness world show"),
-    ("world", "rules"): _read("world", "litharness world rules"),
-    ("world", "ladders"): _read("world", "litharness world ladders"),
-    ("world", "abilities"): _read("world", "litharness world abilities"),
-    ("world", "cast"): _read("world", "litharness world cast"),
-    ("world", "threads"): _read("world", "litharness world threads"),
-    ("world", "vocabulary"): _read("world", "litharness world vocabulary"),
-    ("world", "presence"): _read("world", "litharness world presence"),
-    ("world", "check"): _read("world", "litharness world check"),
+    ("world", "summary"): _read("world", "litharness world summary", _CLI_READ_ONLY),
+    ("world", "show"): _read("world", "litharness world show", _CLI_READ_ONLY),
+    ("world", "rules"): _read("world", "litharness world rules", _CLI_READ_ONLY),
+    ("world", "ladders"): _read("world", "litharness world ladders", _CLI_READ_ONLY),
+    ("world", "abilities"): _read("world", "litharness world abilities", _CLI_READ_ONLY),
+    ("world", "cast"): _read("world", "litharness world cast", _CLI_READ_ONLY),
+    ("world", "threads"): _read("world", "litharness world threads", _CLI_READ_ONLY),
+    ("world", "vocabulary"): _read("world", "litharness world vocabulary", _CLI_READ_ONLY),
+    ("world", "presence"): _read("world", "litharness world presence", _CLI_READ_ONLY),
+    ("world", "check"): _read("world", "litharness world check", _CLI_READ_ONLY),
     ("world", "declare"): Tier(
         "propose",
         "world_declare",
@@ -305,7 +318,7 @@ TIERS: dict[tuple[str, ...], Tier] = {
     ),
     ("roster", "show"): _read("roster", "litharness roster show"),
     ("roster", "check"): _read("roster", "litharness roster check"),
-    ("roster", "vocabulary"): _read("roster", "litharness roster vocabulary"),
+    ("roster", "vocabulary"): _read("roster", "litharness roster vocabulary", _NO_STORE),
     ("roster", "declare"): _operator(
         "litharness roster declare NAME ...",
         "a registered arm stamps the shelf and the form; a caller choosing them files a "
@@ -416,6 +429,8 @@ RESULT_KEYS: dict[str, tuple[str, ...]] = {
         "client",
         "books",
         "migrations_pending",
+        "pending",
+        "hint",
         "tools",
         "prompts",
         "resources",
@@ -558,10 +573,11 @@ def _keys(tool: str) -> str:
 #: keys, and — on every read — the fence. One place, rendered once.
 DESCRIPTIONS: dict[str, str] = {
     "store_info": (
-        "READ. Which store this server is bound to, every (book_id, branch_id, head) it holds, "
-        "how many migrations are pending, and the tools, prompts and resources this profile "
-        "registers. Start here: book_id and branch_id are needed on the other tools only when "
-        f"the store holds more than one book. {_keys('store_info')} {FENCE}"
+        "READ. Which store this server is bound to for the whole session, every (book_id, "
+        "branch_id, head) it holds, which migrations are pending, and the tools, prompts and "
+        "resources this profile registers; `hint` says why a store with no book, or one that "
+        "lags, cannot be read here. Start here: book_id and branch_id are needed on the other "
+        f"tools only when the store holds more than one book. {_keys('store_info')} {FENCE}"
     ),
     "guide": (
         "READ. Every verb of the `litharness` command line with where it stands on this "
@@ -870,21 +886,35 @@ def _guard(binding: Binding) -> Callable[[Tool], Tool]:
     return decorate
 
 
+def _opening(profile: str) -> str:
+    """The read that follows `store_info` on a store this profile can read (§241.5): `book`
+    under `read`, and `world` under `propose`, which registers no `book`."""
+    return next(tool for tool in ("book", "world") if tool in PROFILES[profile])
+
+
 def instructions(binding: Binding) -> str:
     """What a client is told once, before any tool: the binding, the ids, the result
     contract, what spends and where, and the fence."""
     excluded = sorted(
         " ".join(path) for path, tier in TIERS.items() if tier.reason.startswith("spends")
     )
+    opening = _opening(binding.profile)
+    shows = (
+        "every scene with whether it is drafted"
+        if opening == "book"
+        else "its `vocabulary` view before any declare"
+    )
     return "\n".join(
         [
             f"LitHarness agent surface, profile `{binding.profile}`, over {binding.database} "
-            f"(roster: {binding.roster_database}).",
+            f"(roster: {binding.roster_database}). Both paths are fixed for the whole "
+            "session, and no tool takes a path.",
             "Call `store_info` first: it lists every (book_id, branch_id, head) the store "
             "holds. `book_id` and `branch_id` are needed on other tools only when the store "
             "holds more than one book; an ambiguous store comes back as a result with "
-            "`error_kind: ambiguous_branch` and the known pairs. Call `book` second: every "
-            "scene with whether it is drafted.",
+            f"`error_kind: ambiguous_branch` and the known pairs. Call `{opening}` second "
+            f"({shows}) when `store_info` names it in `next`; an empty `next` beside a `hint` "
+            "means this store cannot be read here, so report the hint to the operator.",
             "Result contract: `attention: true` is a result to read (a gap, a blocking "
             "finding, an open exception), never an error. A tool error is a fault: a locked "
             "store (retry after the current tick), pending migrations, an absent path, a "
@@ -895,7 +925,9 @@ def instructions(binding: Binding) -> str:
             + ", ".join(f"`litharness {verb}`" for verb in excluded)
             + ". `guide` names every verb with its tier and CLI form.",
             "The CLI form of any read is `litharness --database PATH <verb> --json`; the "
-            "`--database` flag goes before the verb, or set LITHARNESS_DATABASE.",
+            "`--database` flag goes before the verb, or set LITHARNESS_DATABASE. A CLI read "
+            "other than a `world` view may create or migrate the store it opens, so run none "
+            "against a store another session holds or one kept as evidence.",
             FENCE,
         ]
     )
@@ -1061,6 +1093,26 @@ def _page(rows: list[Any], *, limit: int, offset: int) -> tuple[list[Any], dict[
     }
 
 
+def _store_hint(database: Path, *, books: bool, pending: Sequence[str]) -> str | None:
+    """What an agent is told about a store it cannot read here (stage-0 §241.5). No tool can
+    move the binding, so the hint says what is wrong with this store and what reading another
+    one takes; None when the store holds a book and lags nothing."""
+    if books and not pending:
+        return None
+    wrong = [] if books else ["holds no book"]
+    if pending:
+        wrong.append(
+            f"lags {len(pending)} migration(s), so every tool that reads it except "
+            "`store_info` refuses it until an operator migrates it at the CLI; a reading agent "
+            "reports the lag and does not run the migration"
+        )
+    return (
+        f"{database} {' and '.join(wrong)}. This server's binding is fixed for the whole "
+        "session and no tool takes a path: reading another store takes the MCP server "
+        "restarted with LITHARNESS_DATABASE (or --database) set to its absolute path."
+    )
+
+
 def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
     """Every tool this module can register, closed over one binding. A tool opens its own
     store inside the call and closes it before returning: no resident handle, so a ticking
@@ -1089,8 +1141,9 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             return {
                 "error_kind": "no_book",
                 "message": str(error),
+                "hint": _store_hint(binding.database, books=False, pending=()),
                 "attention": True,
-                "next": ["store_info"],
+                "next": [],
             }
 
     def no_head(book: str, br: str) -> dict[str, Any]:
@@ -1121,6 +1174,8 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             ]
         finally:
             store.close()
+        # `next` names only a tool that will answer: while migrations are pending every other
+        # read refuses the store, and the propose profile registers no `book` (§241.5).
         return {
             "database": str(binding.database),
             "roster_database": str(binding.roster_database),
@@ -1128,11 +1183,13 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
             "client": binding.client,
             "books": books,
             "migrations_pending": len(pending),
+            "pending": pending,
+            "hint": _store_hint(binding.database, books=bool(books), pending=pending),
             "tools": list(PROFILES[binding.profile]),
             "prompts": list(PROMPTS[binding.profile]),
             "resources": list(RESOURCES[binding.profile]),
-            "attention": bool(pending),
-            "next": ["book"] if books else [],
+            "attention": bool(pending) or not books,
+            "next": [_opening(binding.profile)] if books and not pending else [],
         }
 
     @guarded

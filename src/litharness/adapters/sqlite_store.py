@@ -160,10 +160,13 @@ def _existing_database(path: str | Path) -> Path:
 def _refuse_pending(connection: sqlite3.Connection, resolved: Path, migrations: Path) -> None:
     pending = pending_migrations(connection, migrations)
     if pending:
+        # The verb is named as the operator's, never as the next step: on a store another
+        # session holds or a run kept as evidence, following it is a migration (§241.5).
         raise MigrationsPending(
             f"{len(pending)} migration(s) pending on {resolved} ({pending[0]} first); this "
-            f"open never migrates. Run `litharness --database {resolved} status` at the CLI "
-            "to apply them, then retry"
+            "open never migrates. An operator applies them with "
+            f"`litharness --database {resolved} status`, which migrates the file in place; an "
+            "agent reading on the operator's behalf reports the lag and does not run it"
         )
 
 

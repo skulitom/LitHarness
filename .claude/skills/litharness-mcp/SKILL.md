@@ -15,7 +15,15 @@ The repository's `.mcp.json` registers the server as `litharness`. Install its o
 dependency with `uv sync --extra mcp`, set `LITHARNESS_DATABASE` before starting the host,
 and approve the connection once when the host requests it. Tools appear as
 `mcp__litharness__<tool>`. The default store is `litharness.db` in the project directory
-(`CLAUDE_PROJECT_DIR`); the server refuses to start if that file is absent.
+(`CLAUDE_PROJECT_DIR`); the server refuses to start if that file is absent. The binding is
+fixed for the whole session (a separate roster store too, when one is named) and no tool
+takes a path, so reading another book means restarting the host with `LITHARNESS_DATABASE`
+set to its store's absolute path. In this checkout the books that pilots and runs draw sit
+in ignored stores under `runs/` (`runs/**/*.db`, e.g. `runs/pilots/databases/serialN.db` or
+`runs/<run>/serial.db`), not in the root `litharness.db`; not every store holds a book, and
+`store_info` says which. A `hint` on `store_info` or on a `no_book` result says the bound
+store holds no book or lags a migration: report it to the operator rather than migrating
+the store.
 
 For another project or host, use absolute paths:
 
@@ -31,7 +39,8 @@ Each call logs actor, tool, argument digest, elapsed time and outcome to stderr,
 `LITHARNESS_MCP_LOG` when set.
 
 Call `store_info` first for bound paths, books, heads, pending migrations and available
-tools; call `book` next. Book-scoped calls can omit `book_id` and `branch_id` when there
+tools; then call what its `next` names (`book` under `read`, `world` under `propose`; none
+when the store cannot be read). Book-scoped calls can omit `book_id` and `branch_id` when there
 is only one pair. Otherwise the result reports `error_kind: ambiguous_branch` and the
 known pairs. `guide` lists CLI verbs by tier and explains which are tools; with `tool`,
 it lists that tool's result keys.

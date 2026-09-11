@@ -51,6 +51,7 @@ from litharness.mcp_server import (
     VERB_HELP,
     WORLD_VIEWS,
     Binding,
+    instructions,
     make_tools,
     prompt_names,
     prompt_text,
@@ -750,6 +751,9 @@ def test_the_propose_profile_holds_the_architects_shape_and_no_dossier(db: Path)
     tools = make_tools(binding(db, "propose"))
     assert set(PROFILES["propose"]) <= set(tools)
     assert tools["store_info"]()["tools"] == list(PROPOSE_TOOLS)
+    assert tools["store_info"]()["next"] == ["world"], "this profile registers no `book`"
+    told = instructions(binding(db, "propose"))
+    assert "Call `world` second" in told and "`book`" not in told
     assert tools["guide"]()["verbs"]
     named = {row["verb"]: row["tool"] for row in tools["guide"]()["verbs"]}
     assert named["why"] is None, "a read tool the propose profile does not register reads as absent"
@@ -760,19 +764,72 @@ def test_the_propose_profile_holds_the_architects_shape_and_no_dossier(db: Path)
 
 
 def test_store_info_still_answers_with_pending_migrations(db: Path, tmp_path: Path) -> None:
+    """A lagging store answers `store_info` alone, and nothing on the surface tells a reading
+    agent to migrate it (§241.5): the fault names the verb as the operator's, `next` names no
+    tool that would fault, and the hint says the binding cannot move."""
     copy = tmp_path / "lagging.db"
     copy.write_bytes(db.read_bytes())
     connection = sqlite3.connect(str(copy))
-    connection.execute(
-        "DELETE FROM schema_migrations WHERE name = (SELECT max(name) FROM schema_migrations)"
-    )
+    (latest,) = connection.execute("SELECT max(name) FROM schema_migrations").fetchone()
+    connection.execute("DELETE FROM schema_migrations WHERE name = ?", (latest,))
     connection.commit()
     connection.close()
     tools = make_tools(binding(copy))
     info = tools["store_info"]()
     assert info["migrations_pending"] == 1 and info["attention"] is True
-    with pytest.raises(Exception, match=r"MigrationsPending: 1 migration\(s\) pending"):
+    assert info["pending"] == [latest] and info["books"]
+    assert info["next"] == [], "every read but store_info refuses a lagging store"
+    assert "lags 1 migration(s)" in info["hint"] and "does not run the migration" in info["hint"]
+    assert "holds no book" not in info["hint"], "a lagging store with a book is not bookless"
+    assert "fixed for the whole session" in info["hint"] and "LITHARNESS_DATABASE" in info["hint"]
+    with pytest.raises(Exception, match=r"MigrationsPending: 1 migration\(s\) pending") as fault:
         tools["status"]()
+    assert "then retry" not in str(fault.value)
+    assert "An operator applies them" in str(fault.value)
+
+
+def test_a_store_with_no_book_says_the_binding_cannot_move_and_names_no_tool_that_loops(
+    db: Path, tmp_path: Path
+) -> None:
+    """The committed `.mcp.json` binds `litharness.db` unless the session's environment names
+    a store, and on this checkout that store held no book and lagged a migration (§241.5):
+    `store_info` answered `next: []` and nothing else, and `book` faulted with advice to
+    migrate. On a current store with no book, `book` pointed back at `store_info`."""
+    empty = tmp_path / "empty.db"
+    assert run(empty, "init") == EXIT_OK
+    lagging = tmp_path / "empty-lagging.db"
+    lagging.write_bytes(empty.read_bytes())
+    connection = sqlite3.connect(str(lagging))
+    connection.execute(
+        "DELETE FROM schema_migrations WHERE name = (SELECT max(name) FROM schema_migrations)"
+    )
+    connection.commit()
+    connection.close()
+    tools = make_tools(binding(empty))
+    info = tools["store_info"]()
+    assert info["books"] == [] and info["pending"] == [] and info["attention"] is True
+    assert info["next"] == []
+    assert "holds no book" in info["hint"] and "no tool takes a path" in info["hint"]
+    missing = tools["book"]()
+    assert missing["error_kind"] == "no_book" and missing["next"] == []
+    assert missing["hint"] == info["hint"]
+    both = make_tools(binding(lagging))
+    default = both["store_info"]()
+    assert default["books"] == [] and len(default["pending"]) == 1 and default["next"] == []
+    assert "holds no book and lags 1 migration(s)" in default["hint"]
+    with pytest.raises(Exception, match=r"MigrationsPending: 1 migration\(s\) pending"):
+        both["book"]()  # the open refuses before `no_book` can answer
+    full = make_tools(binding(db))
+    readable = full["store_info"]()
+    assert readable["hint"] is None and readable["attention"] is False
+    assert readable["next"] == ["book"]
+    (status,) = full["guide"](verb="status")["verbs"]
+    assert "may create or migrate" in status["reason"], "the CLI form is not the tool's open"
+    for view in WORLD_VIEWS:
+        (row,) = full["guide"](verb=f"world {view}")["verbs"]
+        assert "may create" not in row["reason"], "cmd_world opens its read views read-only"
+    (vocabulary,) = full["guide"](verb="roster vocabulary")["verbs"]
+    assert "neither" in vocabulary["reason"], "roster vocabulary opens no store"
 
 
 def test_the_guide_names_every_excluded_verb_with_its_reason_and_cli_form(db: Path) -> None:

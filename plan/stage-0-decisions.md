@@ -25253,7 +25253,10 @@ are readable), every access log, the grader and the analysis are under
 The outcome: 97 of 100 runs passed the grader, at $62.91 in total (mean $0.63, from $0.36 for a
 four-call glance to $1.04 for the propose-a-character task); no run timed out, no permission
 was denied, no tool faulted outside the store built to fault (`MigrationsPending`, thirteen
-times, each answered with the CLI verb that clears it); every call answered in under a
+times, ~~each answered with the CLI verb that clears it~~ **each relayed with the fault's
+advice to run a CLI verb that migrates the store in place — a pass only on a throwaway copy,
+and not a reader's act on a shared or evidence store; the advice is withdrawn in §241.5**);
+every call answered in under a
 quarter of a second. Four grader verdicts were false negatives (`Scene 1` for `scene-1`) and
 were re-graded from the saved answers, which is why the grader's widening is recorded here
 rather than hidden. Argument choices, read off the transcripts: `why` was called 54 times and
@@ -25309,6 +25312,84 @@ in place.
 **No bar declared.** A pass rate on one afternoon's battery is a measurement of that battery.
 **Anti-scope.** No prompt, rule or writer instruction changed; the internal agents are where
 §241 left them; nothing here touches the volume draw or its store.
+
+### 241.5. The first two calls on this checkout dead-ended: the bound store could not be read, the surface did not say so, and its fault told the agent to migrate
+
+**2026-09-11.** The operator asked for one small change that would greatly improve the MCP
+experience for other agents. Measured first, on this box, read-only.
+
+**Measured first.** The committed `.mcp.json` binds `${LITHARNESS_DATABASE:-litharness.db}`;
+the variable was unset, so every session in this checkout (this one and one other live
+session at the time) was bound to the root `litharness.db`, which held no revision and no job
+and lagged one migration (`039_release_queue.sql`). On it `store_info` answered `books: []`,
+`attention: true`, `next: []` and nothing else; `book` and `status` faulted, and the fault said
+to run `litharness --database … status` "then retry": a verb that goes through
+`SqliteStore.open` and migrates the file in place, on a store another session held, after
+which it would still hold no book. `guide` called that CLI form "a read; opened read-only". A
+census of `runs/**/*.db` (193 stores, the `source/` code copies excluded, opened `mode=ro`):
+151 hold a book, 51 of those lag the migration set, and 47 of the 51 lag only on
+`038_pre_revision_drafts.sql` and/or `039_release_queue.sql`, which create tables and indexes
+and alter nothing. On a lagging store with a book `store_info` said `next: ["book"]` and `book`
+was certain to fault; under the `propose` profile it named `book`, which that profile does not
+register. Seven Opus probes then held the tools in-process (the server's own functions, no
+transport, no spend, no store written) on six stores and the 2026-09-07 dogfood record; the
+friction they found was ranked into seven candidate changes and scored by three judges (agent
+impact, doctrine, size). Doctrine and size picked the fault text and impact picked the dead
+end; they are the same first two calls, so both shipped as one change.
+
+**What shipped.**
+
+- The pending-migration fault (`sqlite_store._refuse_pending`, shared by both
+  never-migrating opens) names the verb as the operator's, "an operator applies them with
+  `litharness --database X status`, which migrates the file in place; an agent reading on the
+  operator's behalf reports the lag and does not run it", instead of "then retry". The count
+  and the verb stay, so both existing pins hold.
+- `store_info` carries `pending` (the names) and `hint`, which is None when the store holds a
+  book and lags nothing; otherwise it says what is wrong with this store, that the binding is
+  fixed for the session with no tool taking a path, and that another store takes the server
+  restarted with `LITHARNESS_DATABASE` set. `attention` is also true on a store with no book,
+  and `next` names only a tool that will answer: none while migrations are pending or the
+  store holds no book, otherwise `book` under `read` and `world` under `propose`. The
+  connect-time instructions name that same tool second, where they named `book` to every
+  profile. The `no_book` result carries the same hint and `next: []` instead of pointing back
+  at `store_info` (`test_store_info_still_answers_with_pending_migrations`, extended;
+  `test_a_store_with_no_book_says_the_binding_cannot_move_and_names_no_tool_that_loops`, which
+  also builds the default store's case, no book and a lag; the propose-profile test).
+- `guide`'s reason for a read says the tool opens the store read-only and the CLI form may
+  create or migrate it, except on the ten `world` views, whose CLI form opens read-only too
+  (`cmd_world`), and `roster vocabulary`, which opens no store. The connect-time instructions
+  say the binding is fixed for the session and that a CLI read other than a `world` view may
+  create or migrate the store it opens, so none is run against a store another session holds
+  or one kept as evidence.
+- The skill's connect section says the same, and that this checkout's books live in ignored
+  stores under `runs/` (`runs/**/*.db`), not in the root store.
+
+**Reviewed before merge.** An adversarial review (four lenses, one skeptic per finding)
+confirmed the sixteen findings it verified and refuted none; each is folded in above: the
+eleven read rows whose CLI form does not migrate, the roster store a binding can also name,
+the skill's first glob (`runs/**/serial.db` missed 32 of the 33 pilot stores), the
+instructions naming `book` to every profile, and two hint cases no test pinned.
+
+**Refused, and why.** Reading through a lag that only adds tables: the largest capability gain
+found (47 of the 51 lagging book stores; with the refusal lifted in-process, a store lagging on
+038 and 039 answered every tool but `why`, `scene_trace` and `release_show`, which read the
+missing tables), but it reverses §241's pinned refusal
+(`test_a_read_only_open_refuses_a_store_with_pending_migrations`) and needs a caveat on every
+result so that an absent table does not read as "nothing happened"; the operator's decision,
+and its own entry. A server-side list of candidate stores: it is the discovery chain §60
+deleted and would bake this checkout's `runs/` layout into `src/`; the pointer lives in the
+skill. Refusing to start without `LITHARNESS_DATABASE`: a server that does not start teaches an
+agent nothing, and it reverses §241.1's choice. A per-call database argument: §151, §196, §241.
+**Next on the ranked list, not built:** connect-time instructions telling a host that defers
+tool schemas to load the profile in one `ToolSearch` call (§241.4 called that cost not this
+surface's to change; 56 of its 156 turns came after each run's first, and four runs used the
+bare spelling and loaded nothing, so part of it is); `guide(tool=…)` returning the whole verb
+census for one tool's keys; `audit` with no visible bound (173,628 characters by default on the
+volume-one store).
+
+**No bar declared.** **Anti-scope.** No tool, prompt, rule or writer instruction added or
+removed; read opens still never migrate and nothing takes a path; no store was written (the
+one `propose` probe ran on a scratchpad copy).
 
 ## 242. The first whole-volume draw: one arc of twenty-four scenes read end to end, four pipeline defects that only a long book could show, and the book read across its scenes as a tool
 
