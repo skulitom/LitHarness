@@ -1,0 +1,54 @@
+{
+  "manifest_sha256": "aae491f3a6877aff585b208d4faccbc6c7158df970e656f0fc18028d3ba8c34b",
+  "source_revision": "d4ebdb5",
+  "parent_manifest_sha256": "e6e402acae7c0d305a05eaae4e4fa78d508c48fecc0c808f561505a36a89af67",
+  "inputs_sha256": "835bc92428f932061401e0dc13da13e6050d141c056d4b09b39ce704f1d2c176",
+  "sources": {
+    "1": {
+      "path": "runs/invention-memory-20260911/calls/structure-1.json",
+      "index": 4,
+      "receipt_sha256": "64370f66714ff017e134f1e0914c836e70037492f301723f53916720c3d3e7f5",
+      "text_sha256": "773cb8b90c4ef7a541c2fc22e4341f67e91d3050b3e075c52786e5ffb6cbfe2d"
+    },
+    "2": {
+      "path": "runs/invention-memory-20260911/calls/structure-2.json",
+      "index": 1,
+      "receipt_sha256": "83de4aa409adb0753fa36df6d46ee5723eb0f7a38cf9778fc6d18f3fbbfee98d",
+      "text_sha256": "aa99ef7f43ca73e6c46b654a99439006ec023ebda12a9ea2df710a88667a4a42"
+    }
+  },
+  "order": [
+    "clean-1-1",
+    "preserve-1-1",
+    "combined-1-1",
+    "preserve-2-1",
+    "combined-2-1",
+    "clean-2-1",
+    "combined-1-2",
+    "preserve-1-2",
+    "clean-1-2",
+    "clean-2-2",
+    "combined-2-2",
+    "preserve-2-2"
+  ],
+  "requested_model": "gpt-6-astra",
+  "effort": "medium",
+  "runbook_sha256": "6a0f100e37cab65843d6f94aaf15bfdc4ed95c335de1e198d1bd115ba3d8adec",
+  "runner_sha256": "2f26c025f22b3f4db925626c92cd17dfe8273232a7920747466a9a8348df1db8",
+  "audit_sha256": "711158f6eef6b20531d137001b08c1beda387ea93dcb90978221d7a9be2a20c6",
+  "request_sha256": {
+    "clean-1-1": "57a217a03ea4b6e3dd1fb8e931225c4a63d6ae3cf392e3073c58592f45595208",
+    "preserve-1-1": "7221a194b5fb3067587495e0bc7d193702bebaec8f9281b024f29f7ebcf701d5",
+    "combined-1-1": "14305fddd9c7cfa2aa99899430a76c36bafa97d9b40ef6eb9122f9921857b6f7",
+    "preserve-2-1": "bc77c1e22a14de9fc5ad47b1d18a472deeddd70e528bb6c04c66bd4f7d8a15e3",
+    "combined-2-1": "5c49abfc6cbd0f9613fed534828ac27985c5a52d0981c9d00b9c05e59a1eff0a",
+    "clean-2-1": "224f11f7d0bc715fed41cc09f1acc073b053657091006b7fad500739b06e5340",
+    "combined-1-2": "14305fddd9c7cfa2aa99899430a76c36bafa97d9b40ef6eb9122f9921857b6f7",
+    "preserve-1-2": "7221a194b5fb3067587495e0bc7d193702bebaec8f9281b024f29f7ebcf701d5",
+    "clean-1-2": "57a217a03ea4b6e3dd1fb8e931225c4a63d6ae3cf392e3073c58592f45595208",
+    "clean-2-2": "224f11f7d0bc715fed41cc09f1acc073b053657091006b7fad500739b06e5340",
+    "combined-2-2": "5c49abfc6cbd0f9613fed534828ac27985c5a52d0981c9d00b9c05e59a1eff0a",
+    "preserve-2-2": "bc77c1e22a14de9fc5ad47b1d18a472deeddd70e528bb6c04c66bd4f7d8a15e3"
+  },
+  "binary_sha256": "3d6ca7085c932b62ef4ee4877e92f15b050fb94b2eb8e6c10a346a06248c6004"
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "invention-preserve-20260911",
+  "statement": "An explicit premise-preservation instruction alone may retain the initiating action and continuing pursuit through expansion beyond clean-request variation, without carrying prior plot history.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/invention-preserve-20260911/RUNBOOK.md",
+      "sha256": "6a0f100e37cab65843d6f94aaf15bfdc4ed95c335de1e198d1bd115ba3d8adec"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/invention-preserve-20260911/registration.json",
+      "sha256": "64b24de7432c8f31d1104f9bffee6cce0e9ef5a284f4d42e3e24949a1e31ccef"
+    }
+  ]
+}
