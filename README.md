@@ -162,7 +162,7 @@ the realized story and keep its seed receipt as provenance.
 With `--out`, `invention-seed.json` is written before the first model call, and the completed
 `concept.json` also retains the integer or label, version, position and exact prefix. The
 seed is printed on stderr, including with `--json`. Development retries reuse the same
-invention. Reproduce a brief with its recorded `--seed` and `--seed-version`, and take another
+invention. Reproduce an input with its recorded `--seed` and `--seed-version`, and take another
 position with `--seed-index`:
 
 ```bash
@@ -175,6 +175,8 @@ integers produce longer prefixes. Named labels or alternate positions determinis
 256 bytes with SHAKE-256. Use the stored decimal integer for exact replay of a default draw.
 This changes model input, not the provider's sampling seed, and does not guarantee unique
 prose or reproducible output. Use the recorded version when replaying a seed.
+The [Base64-prefix investigation](research/quality-measurement/invention-nonce-20260911/REPORT.md)
+records the controlled comparisons and their remaining repetition.
 
 Explicit `--seed-version invention-seed.v1` selects the previous ingredient/activity palette;
 v2 adds concrete world conditions. Those were a different interpretation of seeding. The

@@ -1,0 +1,25 @@
+{
+  "manifest_sha256": "e8c6ed70af0f82206d7708724a21fc35b6a6b712dc4c13abf7d6a9456e56dc42",
+  "order": [
+    "native-1",
+    "prompt-json-1",
+    "free-premise-1",
+    "free-premise-2",
+    "prompt-json-2",
+    "native-2"
+  ],
+  "initial_manifest_sha256": "1261a2f4aacf517de46de2cc05924bae6a4cf051ab9022e9d694de4b6a819371",
+  "runbook_sha256": "fc853b95942e6a4b49960488bf9e9e9857a2ae80a6ee4ade1f9ad365a67ac1e9",
+  "runner_sha256": "cd27196cb41ef431e14db159bd6167089df08488efe96a153b5ac0a41eac1659",
+  "request_sha256": {
+    "native-1": "2036d1e5f61aa0ae83efefdba86cdca7f308bf58a29671338c6f990d9d555316",
+    "prompt-json-1": "97c7731b32a73235102d62d97a0edd077dd7dadbc94e8357dc7320117171ea13",
+    "free-premise-1": "4acd5f8c96f66e43672b89ad6c719dae23105e6f14eac35310681ec813bd3ac3",
+    "free-premise-2": "4acd5f8c96f66e43672b89ad6c719dae23105e6f14eac35310681ec813bd3ac3",
+    "prompt-json-2": "97c7731b32a73235102d62d97a0edd077dd7dadbc94e8357dc7320117171ea13",
+    "native-2": "2036d1e5f61aa0ae83efefdba86cdca7f308bf58a29671338c6f990d9d555316"
+  },
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "fixed_seed_slot": "short-1"
+}
