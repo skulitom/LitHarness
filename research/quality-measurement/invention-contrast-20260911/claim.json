@@ -2,7 +2,7 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "invention-contrast-20260911",
   "statement": "Joint premise generation, explicit contrast wording, and representative-sample wording may change recurring first-response story families under the registered controls; selected premises may retain their differences through discovery expansion.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -23,6 +23,16 @@
       "kind": "literature",
       "path": "research/quality-measurement/invention-contrast-20260911/sources.json",
       "sha256": "b95fa23d8887953f9412fbcba66603c4baea26e8474b5cf1958e83db473ba7c0"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/invention-contrast-20260911/evidence.json",
+      "sha256": "ddc05a912ccb4bd8b021d23fe684446c6f2e7d05186d084475300ec25ae359f7"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/invention-contrast-20260911/evidence.json",
+      "sha256": "ddc05a912ccb4bd8b021d23fe684446c6f2e7d05186d084475300ec25ae359f7"
     }
   ]
 }

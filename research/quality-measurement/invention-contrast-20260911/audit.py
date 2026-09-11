@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import dataclasses
+import json
 import re
 import sys
 from collections import Counter
@@ -12,6 +13,11 @@ from run import HERE, LOCAL, ROOT, imports, parse_premises, read, sha, text_sha,
 
 sys.path.insert(0, str(ROOT))
 from tools.generation_trace import compare, load_trace, search
+
+
+def request_matches(saved: dict, request) -> bool:
+    """Compare persisted JSON with the renderer, including tuple-to-array serialization."""
+    return saved == json.loads(json.dumps(dataclasses.asdict(request)))
 
 
 def main() -> None:
@@ -74,8 +80,9 @@ def main() -> None:
                 "source_receipt_matches": row["source"]["receipt_sha256"] == sha(parent_path),
                 "source_index_matches": row["source"]["index"] == index,
                 "selected_text_hash_matches": row["source"]["text_sha256"] == text_sha(premise),
-                "request_is_unmodified_discovery_with_selected_brief": saved
-                == dataclasses.asdict(discovery.render_request(premise, person="third")),
+                "request_is_unmodified_discovery_with_selected_brief": request_matches(
+                    saved, discovery.render_request(premise, person="third")
+                ),
             }
             reading.append(trace.fields.get("output.text", "No final output captured.") + "\n")
     comparisons = {}
@@ -101,6 +108,7 @@ def main() -> None:
     candidate_hashes = Counter(c["text_sha256"] for c in candidates)
     evidence = {
         "purpose": "Batch and wording contrasts; all items retained without ranking or scores",
+        "audit_sha256": sha(Path(__file__)),
         "manifest_matches_registration":
         sha(LOCAL / "manifest.json") == registration["manifest_sha256"],
         "frozen_file_drift": [p for p, h in manifest["files"].items() if sha(Path(p)) != h],

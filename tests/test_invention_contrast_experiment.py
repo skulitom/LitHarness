@@ -2,9 +2,13 @@
 
 import importlib.util
 import random
+import sys
+from dataclasses import asdict
 from pathlib import Path
 
 import pytest
+
+from litharness.domain.generation import CompletionRequest
 
 PATH = (
     Path(__file__).resolve().parents[1]
@@ -55,3 +59,18 @@ def test_selection_preserves_exact_text_and_list_order():
     selected = experiment.selected_index("123456789")
     assert parsed[selected] == premises[selected]
     assert parsed == premises
+
+
+def test_expansion_audit_accepts_json_arrays_but_rejects_changed_prompt(monkeypatch):
+    monkeypatch.setitem(sys.modules, "run", experiment)
+    monkeypatch.setattr(sys, "path", sys.path.copy())
+    spec = importlib.util.spec_from_file_location(
+        "invention_contrast_audit", PATH.with_name("audit.py")
+    )
+    assert spec is not None and spec.loader is not None
+    audit = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(audit)
+    request = CompletionRequest(prompt="The preselected premise.")
+    saved = {**asdict(request), "allowed_tools": []}
+    assert audit.request_matches(saved, request)
+    assert not audit.request_matches({**saved, "prompt": "A different premise."}, request)
