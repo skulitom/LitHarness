@@ -2,7 +2,7 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "invention-memory-20260911",
   "statement": "Full generated plot history with explicit structural contrast may change recurring premises, and retaining that instruction during expansion may preserve the difference.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -23,6 +23,16 @@
       "kind": "literature",
       "path": "research/quality-measurement/invention-memory-20260911/sources.json",
       "sha256": "dad3de45b4f2da1a02f5e50516978e580d5527d4034bcb1fa38e1ebfeb5182f5"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/invention-memory-20260911/evidence.json",
+      "sha256": "0c03f2e80d9ad53c33eb3d7e64e4f288d3fe705792a1eebfb49e2babe6f73fc3"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/invention-memory-20260911/evidence.json",
+      "sha256": "0c03f2e80d9ad53c33eb3d7e64e4f288d3fe705792a1eebfb49e2babe6f73fc3"
     }
   ]
 }
