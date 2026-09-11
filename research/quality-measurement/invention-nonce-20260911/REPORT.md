@@ -74,15 +74,67 @@ operator-requested random-prefix method, with its limitation made explicit.
 All source prose is retained in the local
 [reading copy](../../../runs/invention-nonce-20260911/TREATMENTS.md) and complete receipts.
 
-## Registered follow-up
+## Fixed-prefix format comparison
 
-[Protocol](FORMAT.md), [registration](format-registration.json). The follow-up retains the
-first short prefix and compares the native constraint, identical submitted JSON instructions
-without native enforcement, and a brief undivided plain-text premise request. This tests
-remaining format controls; it is not a new setting seed or a production prompt change.
+[Protocol](FORMAT.md), [registration](format-registration.json), [audit](format-evidence.json).
+The follow-up was committed as `9530671` before dispatch. It retains the first short prefix
+and compares the native constraint, identical submitted JSON instructions without native
+enforcement, and a brief undivided plain-text premise request. This tests remaining format
+controls; it is not a new setting seed or a production prompt change.
 
-Rebuild the initial evidence without model calls:
+All six calls completed in separate native sessions with distinct output texts, using
+32,621 recorded tokens. The four structured outputs pass the original schema and discovery
+validation; the two free-premise outputs pass a non-empty text check, not production plan
+validation. No frozen files drifted, operational stops occurred or responses were replaced.
+Every full response was read. Across the two registered batches, there were 14 calls and
+80,974 recorded tokens.
+
+The audit verifies that both native requests equal the initial short-1 request and that all
+prepared and captured systems start with its exact prefix. Non-format request fields match.
+Within each native/prompt-json pair, captured system and user text are identical; the schema
+and its native flag differ, and the remaining launch configuration is equal. Both prompt-json
+and free-premise omit native schema enforcement and share launch configuration. JSONL event
+logging remains enabled in every arm; it does not prescribe the final story format.
+
+| Slot | Protagonist and situation | First and later power purpose |
+| --- | --- | --- |
+| native-1 | Mara, apprentice stonemason, brother missing after a flood into a tilted shell city | Build a nursery-cart passage, gain anchoring, then develop shared routes while investigating a return door. |
+| prompt-json-1 | Rhea, lift mechanic, father trapped in a carriage above suspended canals | Brace a walkway without crushing a living gate's young, then develop load sight and distributed support for transport and return. |
+| free-premise-1 | Mara Venn, piano mover, city suspended above an ocean | Choose Porter to lift a beam during a rescue; carrying others' burdens grows into moving an entire district to safety. |
+| free-premise-2 | Mara Venn, ferrykeeper, flooded city and dead passengers | Deliver a dead child home to earn a level, hull repair and sounding power; restore a submerged hospital while confronting a seawall powered by souls. |
+| prompt-json-2 | Nell, locksmith, missing father in a drowned country inside a tree | Repair a nursery flood shutter and gain temporary bracing, then develop load sight and distributed supports without draining inhabited waterways. |
+| native-2 | Mara, ferry mechanic, missing mother among shell cities and suspended seas | Brace a nursery pipe, gain load sight, then develop temporary bearings and stabilize shared transit. |
+
+The native controls reproduce the earlier family. Removing native JSON enforcement changes
+the names to Rhea and Nell on these draws but retains the aquatic repair/support structure.
+Removing the JSON instructions and detailed production task still yields two Mara Venn
+stories centered on water, transport and rescue. The porter treatment also retains load
+support and community evacuation. The ghost-ferry treatment introduces a different death
+and soul economy; it is a counterexample to any claim that format changes leave every
+story mechanism unchanged. It does not repeat the same first-scene mechanical repair plot.
+
+These responses show that neither native JSON enforcement nor the detailed production
+task and three-field plan are necessary for the observed repetition on these draws. They
+do not establish that format has no effect. The plain-text contrast changes several prompt
+features and length together, and two responses per arm cannot estimate their causal weights.
+
+The repetition is already present in the first isolated provider completions. These calls
+do not use a book store, previous manuscripts, candidate selection or downstream development.
+The remaining explanation lies within the retained minimal request and provider/model
+generation path; the receipts cannot distinguish model tendencies from unobserved backend
+context or sampling. They also do not independently verify the backend-resolved model.
+The cause remains unresolved, and a fresh Base64 prefix is not a demonstrated remedy.
+
+Complete follow-up prose and receipts remain in the local
+[reading copy](../../../runs/invention-nonce-20260911/format/TREATMENTS.md).
+
+Rebuild both evidence files without model calls:
 
 ```bash
 uv run python research/quality-measurement/invention-nonce-20260911/audit.py
+uv run python research/quality-measurement/invention-nonce-20260911/phase2_audit.py
 ```
+
+`uv run python tools/check.py handoff` passed after the final audit changes. The local
+[validation log](../../../runs/invention-nonce-20260911/handoff-final.log) retains lint,
+type checks, regression tests, coverage, wheel build and corpus-history audit results.

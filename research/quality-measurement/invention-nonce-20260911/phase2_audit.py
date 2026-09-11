@@ -7,7 +7,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from phase2 import HERE, LOCAL, ROOT, read, sha, write
+from phase2 import BASELOCAL, HERE, LOCAL, ROOT, read, sha, write
 
 sys.path.insert(0, str(ROOT))
 from tools.generation_trace import compare, load_trace, search
@@ -19,8 +19,20 @@ def main() -> None:
         raise RuntimeError("Do not inspect an unfinished batch")
     manifest = read(LOCAL / "manifest.json")
     registration = read(HERE / "format-registration.json")
-    rows, traces, reading = [], {}, ["# All invention-format first responses\n"]
+    rows, traces, controls = [], {}, {}
+    reading = ["# All invention-format first responses\n"]
+    baseline = read(BASELOCAL / "requests/short-1.json")
+    prefix = read(BASELOCAL / "seeds/short-1.json")["brief"] + "\n\n"
     for name in manifest["order"]:
+        saved = read(LOCAL / "requests" / f"{name}.json")
+        controls[name] = {
+            "native_request_matches_initial": saved == baseline
+            if name.startswith("native-") else None,
+            "non_format_request_fields_match_initial": {
+                k: v for k, v in saved.items() if k not in ("system", "schema")
+            } == {k: v for k, v in baseline.items() if k not in ("system", "schema")},
+            "prepared_system_starts_with_fixed_prefix": saved["system"].startswith(prefix),
+        }
         path = LOCAL / "calls" / f"{name}.json"
         if not path.exists():
             rows.append({"slot": name, "status": "not_attempted"})
@@ -28,12 +40,19 @@ def main() -> None:
         row = read(path)
         trace = traces[name] = load_trace(path)
         summary = trace.summary()
+        controls[name].update({
+            "captured_system_starts_with_fixed_prefix":
+            trace.fields.get("transport.system", "").startswith(prefix),
+            "native_schema_flag_matches_arm":
+            (trace.configuration or {}).get("output_schema") is name.startswith("native-"),
+            "json_event_logging_present": (trace.configuration or {}).get("json") is True,
+        })
         summary["path"] = path.relative_to(ROOT).as_posix()
         rows.append({
             "slot": name, **summary,
             "validation": row.get("validation"),
             "usage": (row.get("result") or {}).get("usage"),
-            "request_matches_saved": row["request"] == read(LOCAL / "requests" / f"{name}.json"),
+            "request_matches_saved": row["request"] == saved,
         })
         reading.append(f"## {name}\n\nReceipt: calls/{name}.json\n")
         reading.append(trace.fields.get("output.text", "No final output captured.") + "\n")
@@ -46,7 +65,15 @@ def main() -> None:
             if left in traces and right in traces:
                 compared = compare(traces[left], traces[right])
                 comparisons[f"{left}:{right}"] = {
-                    k: compared[k] for k in ("fields", "configuration_equal", "same_native_session")
+                    **{k: compared[k] for k in (
+                        "fields", "configuration_equal", "same_native_session",
+                    )},
+                    "configuration_except_native_schema_equal": {
+                        k: v for k, v in traces[left].configuration.items() if k != "output_schema"
+                    } == {
+                        k: v for k, v in traces[right].configuration.items() if k != "output_schema"
+                    } if traces[left].configuration is not None
+                    and traces[right].configuration is not None else None,
                 }
     query = r"\b(?:Mara Venn|Mara|Venn|water|flood\w*|repair\w*|bridge\w*|refuge\w*|registr\w*)\b"
     hits = []
@@ -64,6 +91,7 @@ def main() -> None:
         == registration["manifest_sha256"],
         "frozen_file_drift": [p for p, h in manifest["files"].items() if sha(Path(p)) != h],
         "progress": progress, "calls": rows, "comparisons": comparisons,
+        "fixed_prefix_controls": controls,
         "distinct_sessions": len(sessions), "distinct_outputs": len(outputs),
         "shared_sessions": {s: n for s, n in sessions.items() if n > 1},
         "repeated_outputs": {s: n for s, n in outputs.items() if n > 1},
