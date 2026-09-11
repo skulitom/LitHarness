@@ -1,0 +1,17 @@
+{
+  "transcript": {
+    "path": "runs/invention-contrast-20260911/sources/video-transcript.txt",
+    "sha256": "bbee5c372b258d1b575cf6a3ea265ed79016459512ce903168dd0d10b59319a2",
+    "location": "10:18 prompting experiment"
+  },
+  "paper": {
+    "url": "https://arxiv.org/html/2605.26492v1",
+    "path": "runs/invention-contrast-20260911/sources/paper-v1.html",
+    "sha256": "3002cbc6df0d70c2d292f16d5ea7294c63fb8945e253c197b9873f3a4cd2ade8",
+    "locations": [
+      "section 3",
+      "section 4",
+      "section 6"
+    ]
+  }
+}
