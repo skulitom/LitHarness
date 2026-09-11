@@ -1,0 +1,63 @@
+{
+  "original_registration_sha256": "64b24de7432c8f31d1104f9bffee6cce0e9ef5a284f4d42e3e24949a1e31ccef",
+  "records": {
+    "clean-1-1": {
+      "status": "completed",
+      "usage": {
+        "input_tokens": 4350,
+        "output_tokens": 1338,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 352
+      },
+      "path": "runs/invention-preserve-20260911/calls/clean-1-1.json",
+      "sha256": "a4101cab3290839a572b9aa40a0a54fdc0b39edccd28114e4f8948d4fa4bca26"
+    },
+    "preserve-1-1": {
+      "status": "completed",
+      "usage": {
+        "input_tokens": 1809,
+        "output_tokens": 1284,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 504
+      },
+      "path": "runs/invention-preserve-20260911/calls/preserve-1-1.json",
+      "sha256": "d2b1c65133b750cf2bae1b3d6dc036daedb41e945763cbf7fe994be68dc764fa"
+    },
+    "combined-1-1": {
+      "status": "lost_after_shutdown",
+      "usage": null,
+      "path": "runs/invention-preserve-20260911/calls/combined-1-1.json",
+      "sha256": "0dec4d6ca08550314c1b242e13d9b3187fb5bc6f7812b53bc39a69e63a7f7e0d"
+    },
+    "preserve-2-1": {
+      "status": "lost_after_shutdown",
+      "usage": null,
+      "path": "runs/invention-preserve-20260911/calls/preserve-2-1.json",
+      "sha256": "827afd3908ec193e7d093296f5b84651f8df5572473e7676b3e71650eaf7834d"
+    }
+  },
+  "known_original_tokens": 12197,
+  "unknown_original_usage_slots": [
+    "combined-1-1",
+    "preserve-2-1"
+  ],
+  "remaining": [
+    "combined-2-1",
+    "clean-2-1",
+    "combined-1-2",
+    "preserve-1-2",
+    "clean-1-2",
+    "clean-2-2",
+    "combined-2-2",
+    "preserve-2-2"
+  ],
+  "attempt_stop_remaining": 8,
+  "token_stop_remaining": 65000,
+  "manifest_sha256": "9a955847da1408b0a133ffba0b00596869206887ae3df58121091ebb064efe4b",
+  "amendment_sha256": "8fe2982380aefaf8f39076bc7c3ce8f5165046f52f406dc8b5ffde397964088e",
+  "runner_sha256": "a39091233ee5fdce826ac7a9046dd9f2a77571966a1d5644c23b07b53d6637a9",
+  "audit_sha256": "59c2a1d021bc2d8e3a986ef496869a4369bceba77b598f33bd440d2f6e911928",
+  "snapshot_manifest_sha256": "d868c6afce6bd469f1c453829ed01babf3a6811470f68dbefa11fc0a6ccb9f37"
+}

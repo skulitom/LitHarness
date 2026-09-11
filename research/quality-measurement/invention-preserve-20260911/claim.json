@@ -13,6 +13,16 @@
       "kind": "registration",
       "path": "research/quality-measurement/invention-preserve-20260911/registration.json",
       "sha256": "64b24de7432c8f31d1104f9bffee6cce0e9ef5a284f4d42e3e24949a1e31ccef"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/invention-preserve-20260911/RECOVERY.md",
+      "sha256": "8fe2982380aefaf8f39076bc7c3ce8f5165046f52f406dc8b5ffde397964088e"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/invention-preserve-20260911/recovery-registration.json",
+      "sha256": "f9347cba6c0af7c57d4362ecb4948ee4f6a106153d22202c0345c79db092a525"
     }
   ]
 }
