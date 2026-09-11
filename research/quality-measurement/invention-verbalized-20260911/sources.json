@@ -1,0 +1,16 @@
+[
+  {
+    "read_date": "2026-09-11",
+    "url": "https://arxiv.org/html/2510.01171v4",
+    "path": "runs/invention-memory-20260911/sources/2510.01171v4.html",
+    "enters_generation": false,
+    "sha256": "1baa6e90d59c614337649a644a4ef50276b6d986638a47c03f68c70a2b30ec79"
+  },
+  {
+    "read_date": "2026-09-11",
+    "url": "https://www.verbalized-sampling.com/",
+    "path": "runs/invention-verbalized-20260911/sources/project.html",
+    "enters_generation": false,
+    "sha256": "367378b2f053bae94aef7da1a1a6a3d49f7ace4a839df08714481e1eeca5ae7c"
+  }
+]
