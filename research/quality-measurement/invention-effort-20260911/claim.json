@@ -2,7 +2,7 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "invention-effort-20260911",
   "statement": "Changing initial invention from medium to low reasoning effort may alter recurring story structures, and differences may survive unchanged medium-effort discovery expansion.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,16 @@
       "kind": "registration",
       "path": "research/quality-measurement/invention-effort-20260911/registration.json",
       "sha256": "762f9100c60ea01f2b64ea348e76ee97293415ed41e79df054d8dc70ae82ccb8"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/invention-effort-20260911/evidence.json",
+      "sha256": "b1cf43c75e75bab8f1e9c679e14678941ee46e2938c67bf1ebfd5f7df9bc9edf"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/invention-effort-20260911/evidence.json",
+      "sha256": "b1cf43c75e75bab8f1e9c679e14678941ee46e2938c67bf1ebfd5f7df9bc9edf"
     }
   ]
 }
