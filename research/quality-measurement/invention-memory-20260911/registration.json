@@ -1,0 +1,156 @@
+{
+  "manifest_sha256": "e6e402acae7c0d305a05eaae4e4fa78d508c48fecc0c808f561505a36a89af67",
+  "source_revision": "d4ebdb5",
+  "parent_manifest_sha256": "c252388e15bf2cecb993ad1b62283d3f6ec84681a6ae1a31c4f7dae22f886f90",
+  "numbers": {
+    "1": "24581083252811056332752797101855417383757404896830358131190837243920055407153584862322960710894126978831964843754746482520294511323632716079370178427982022490428024573159866420015699858249091990408596846764709859008933251248711304177133100788992086000669241865091573749819297886074015000407073855129687811003480555351348092036271933175826612537447957160985469371301760915368030969670113068520755521537700002067889223700186834027915505731216886275503543479559191387835188128127310069305990864914086113010653940781102891132826847584536032615714657355271904198934893500619058487878694367857175981670977343450075960193932",
+    "2": "13739575591740287806207878464409630885359240660472611066536175286730810107489352789412852384075418543389568830652109601550700963172197773422347105965093010046299466978366446342550418530613861337782537834721419673860757296438926261704053739947423671042889575630103146528237908857096274466238192192119562673865379239558122596118565940485054832676423073403661336360889688970227514738746294878630278736617995820199538824854786669414032739585001766553215050949091633444133409710196799764993419223918862014814610744558012632834260381038063984630735304763871544946922789192586806199310426075202558195119316673327487543026910"
+  },
+  "selections": {
+    "1": 4,
+    "2": 1
+  },
+  "order": [
+    "baseline-1",
+    "identity-1",
+    "structure-1",
+    "structure-2",
+    "identity-2",
+    "baseline-2"
+  ],
+  "expansions": [
+    "expand-baseline-1",
+    "expand-identity-1",
+    "expand-structure-1",
+    "retain-structure-1",
+    "retain-structure-2",
+    "expand-structure-2",
+    "expand-identity-2",
+    "expand-baseline-2"
+  ],
+  "requested_model": "gpt-6-astra",
+  "effort": "medium",
+  "history_sha256": "215b7a65bea6879050cc3dfa1bd2e441f9071d71fbdfe685675ef646819765aa",
+  "history_provenance": [
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-1.json",
+      "index": 0,
+      "receipt_sha256": "db8411ec18c59ff32a430691fea4a4d7e5952aecc12f88d71fa13d2d23af2826",
+      "text_sha256": "92fb0163412be2a84a08c20e55f550c3ee8d59fccaf24301ec0c1fab7bb3eb23"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-1.json",
+      "index": 1,
+      "receipt_sha256": "db8411ec18c59ff32a430691fea4a4d7e5952aecc12f88d71fa13d2d23af2826",
+      "text_sha256": "868e2ccbd601b4c654f788f6913aa0362b311d0aa9928dfb7af02c6c30bd42ba"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-1.json",
+      "index": 2,
+      "receipt_sha256": "db8411ec18c59ff32a430691fea4a4d7e5952aecc12f88d71fa13d2d23af2826",
+      "text_sha256": "622a2c0d37c3b4be49f9b5db6d55fa7fc094980eba4f54a038d256c7a125db95"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-1.json",
+      "index": 3,
+      "receipt_sha256": "db8411ec18c59ff32a430691fea4a4d7e5952aecc12f88d71fa13d2d23af2826",
+      "text_sha256": "184ebc18fd98f6ab1e4afe78b706961ff581710ff733da061129d045dbd2d850"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-1.json",
+      "index": 4,
+      "receipt_sha256": "db8411ec18c59ff32a430691fea4a4d7e5952aecc12f88d71fa13d2d23af2826",
+      "text_sha256": "3b64a99a28ba703c2edb66bfa328456ba9d4de8b6aa25b2d18a950d4d1511752"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-1.json",
+      "index": 5,
+      "receipt_sha256": "db8411ec18c59ff32a430691fea4a4d7e5952aecc12f88d71fa13d2d23af2826",
+      "text_sha256": "59621e679e58a76f7076bb2b8f7b826ec2aced7e9d5bd1fff554b128973bdee3"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-2.json",
+      "index": 0,
+      "receipt_sha256": "9b198910a04ddee6dbff923e8d5454135c644d4b07e40ab847d6ece2af8ea9c6",
+      "text_sha256": "0d514e7ace99fd3b7dc18044bfc68fb30b602f4c5d17946ef9150a87a3c3856d"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-2.json",
+      "index": 1,
+      "receipt_sha256": "9b198910a04ddee6dbff923e8d5454135c644d4b07e40ab847d6ece2af8ea9c6",
+      "text_sha256": "dbfec9f8bbabfdfd4df585aa800479481e98a9d345da21ca11ead122c89eeb2b"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-2.json",
+      "index": 2,
+      "receipt_sha256": "9b198910a04ddee6dbff923e8d5454135c644d4b07e40ab847d6ece2af8ea9c6",
+      "text_sha256": "f814d86ee20c9080da5fda758c567eec2c08600d44856ba09e58c5098733a805"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-2.json",
+      "index": 3,
+      "receipt_sha256": "9b198910a04ddee6dbff923e8d5454135c644d4b07e40ab847d6ece2af8ea9c6",
+      "text_sha256": "b044154ac9a302783b3c7023e7f1831b1d774e731dff50d8304406d778ffe4e5"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-2.json",
+      "index": 4,
+      "receipt_sha256": "9b198910a04ddee6dbff923e8d5454135c644d4b07e40ab847d6ece2af8ea9c6",
+      "text_sha256": "fdf6181f8885c473435fabb6ec7ff24fff402f77d911149ac5f5fa495be0d8ad"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-2.json",
+      "index": 5,
+      "receipt_sha256": "9b198910a04ddee6dbff923e8d5454135c644d4b07e40ab847d6ece2af8ea9c6",
+      "text_sha256": "e8b0bd2a9c8f4db884c0a0053c17c03a9f7eec8979c7b80c1679fee889054c71"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-3.json",
+      "index": 0,
+      "receipt_sha256": "c1a42c35d6be9388f0b0ba085ea723879cb75abe8efe964a128fcd343de5f085",
+      "text_sha256": "2b69f51b7a0f613d1801209f79904eb5c0ef09289c1625775991b7ce1a06a733"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-3.json",
+      "index": 1,
+      "receipt_sha256": "c1a42c35d6be9388f0b0ba085ea723879cb75abe8efe964a128fcd343de5f085",
+      "text_sha256": "70391afe2e4f019d8fa30536beadda4a390bfe2fa4624cd69eecfc33363700b5"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-3.json",
+      "index": 2,
+      "receipt_sha256": "c1a42c35d6be9388f0b0ba085ea723879cb75abe8efe964a128fcd343de5f085",
+      "text_sha256": "fe187022bb24b32f97fbf50db64af21f69d0847f70f9e23689ec5eab67a95d01"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-3.json",
+      "index": 3,
+      "receipt_sha256": "c1a42c35d6be9388f0b0ba085ea723879cb75abe8efe964a128fcd343de5f085",
+      "text_sha256": "0cccb84a6aaead2043475131694220fb125c42cdec665a6b50546df25bdd4345"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-3.json",
+      "index": 4,
+      "receipt_sha256": "c1a42c35d6be9388f0b0ba085ea723879cb75abe8efe964a128fcd343de5f085",
+      "text_sha256": "9198a682b9006c92b21d48b7aca01405037e40a616a5ad23afdb6be04a4c9fa1"
+    },
+    {
+      "source": "runs/invention-effort-20260911/calls/medium-3.json",
+      "index": 5,
+      "receipt_sha256": "c1a42c35d6be9388f0b0ba085ea723879cb75abe8efe964a128fcd343de5f085",
+      "text_sha256": "a8339984183c5f2573019806d5f2597c18616d3b56b27b30764a859ca2e21edf"
+    }
+  ],
+  "runbook_sha256": "3571647fdedfba1e67d68c668cb1628583ac3c5a142f213e8ed7a78913f0802e",
+  "runner_sha256": "b64d540f5a80db92e4799245f2f7e52d054727f16a570a70146c1546ef67779d",
+  "sources_sha256": "dad3de45b4f2da1a02f5e50516978e580d5527d4034bcb1fa38e1ebfeb5182f5",
+  "request_sha256": {
+    "baseline-1": "b9749523c0b6e573e2f3c04bf8504e9d8e8af0c180c3bb690bcaa39d3a89e298",
+    "identity-1": "8da53911fe21e214cb79451536ca4417913f0072049af7fdc72cc8135e48619a",
+    "structure-1": "1ec61ab008deea4184945f6b447047175a036f4979e8406f013407601d57753f",
+    "structure-2": "6366f8e02cfe2e4728d1998c58705a71fbc2293e04095742903105c530956ddd",
+    "identity-2": "6114ad6a0caebe5de7946b663a8641a3c339d9ef8951f66f96310af3f59fe05d",
+    "baseline-2": "d61498f540162bf5db7ae38c60da5d7469a5c8be8d8d9a698ee21003fcc6c54b"
+  },
+  "binary_sha256": "3d6ca7085c932b62ef4ee4877e92f15b050fb94b2eb8e6c10a346a06248c6004"
+}
