@@ -1,0 +1,2615 @@
+{
+  "purpose": "VS contrasts with random positional expansion; no probability-based selection",
+  "audit_sha256": "27a5252235f09d7787428f8c17db6aaf91f55e434b550a00a14b30120446110d",
+  "manifest_matches_registration": true,
+  "frozen_file_drift": [],
+  "progress": {
+    "status": "finished",
+    "attempts": 16,
+    "tokens": 87858,
+    "slots": [
+      {
+        "name": "batch-1",
+        "status": "completed"
+      },
+      {
+        "name": "format-1",
+        "status": "completed"
+      },
+      {
+        "name": "full-1",
+        "status": "completed"
+      },
+      {
+        "name": "tail-1",
+        "status": "completed"
+      },
+      {
+        "name": "tail-2",
+        "status": "completed"
+      },
+      {
+        "name": "full-2",
+        "status": "completed"
+      },
+      {
+        "name": "format-2",
+        "status": "completed"
+      },
+      {
+        "name": "batch-2",
+        "status": "completed"
+      },
+      {
+        "name": "expand-batch-2",
+        "status": "completed"
+      },
+      {
+        "name": "expand-format-2",
+        "status": "completed"
+      },
+      {
+        "name": "expand-full-2",
+        "status": "completed"
+      },
+      {
+        "name": "expand-tail-2",
+        "status": "completed"
+      },
+      {
+        "name": "expand-tail-1",
+        "status": "completed"
+      },
+      {
+        "name": "expand-full-1",
+        "status": "completed"
+      },
+      {
+        "name": "expand-format-1",
+        "status": "completed"
+      },
+      {
+        "name": "expand-batch-1",
+        "status": "completed"
+      }
+    ],
+    "stop": null
+  },
+  "calls": [
+    {
+      "slot": "batch-1",
+      "path": "runs/invention-verbalized-20260911/calls/batch-1.json",
+      "file_sha256": "53368c5942c79c6574eb81b191b112562409381bcf18de2d461249ace937f88c",
+      "profile": "experiment.invention-contrast.v1",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090b9-2252-7c52-93f8-341ace07903b"
+      ],
+      "field_sha256": {
+        "application.system": "3eb3fb324820c67b0c983cb40436bd71ebc38845774ab11936f4badf724d8c91",
+        "application.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "application.schema": "84f4e23a3077e848306701c2144828b9a147bf79d4e5124db337d6a33e42a650",
+        "application.parameters": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+        "transport.system": "965775a31db68e130a5da4f57b14070712e059e7436a280725f33e6b07222315",
+        "transport.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "transport.schema": "84f4e23a3077e848306701c2144828b9a147bf79d4e5124db337d6a33e42a650",
+        "output.text": "0278d3ab8d4fbc964f0a822232f79b6a1b4a6367e15495ec26e38cd7e5f3d1d4"
+      },
+      "field_characters": {
+        "application.system": 685,
+        "application.prompt": 36,
+        "application.schema": 139,
+        "application.parameters": 166,
+        "transport.system": 940,
+        "transport.prompt": 36,
+        "transport.schema": 139,
+        "output.text": 4165
+      },
+      "application_input_sha256": "c4e02405781622f671387ccd1d5a93099c02d673597ab07eb161c8eb66aaf922",
+      "transport_input_sha256": "4049d304f36753a6abccd6da2d2107d7ffa0b99112c38f0a6223d49f0478c7b9",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "53368c5942c79c6574eb81b191b112562409381bcf18de2d461249ace937f88c",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 4146,
+        "output_tokens": 756,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 48
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "format-1",
+      "path": "runs/invention-verbalized-20260911/calls/format-1.json",
+      "file_sha256": "9a3a680e870844421f2bbcd6f58ccf6c3500f0219ce29e0cc1a13dbc909a1a53",
+      "profile": "experiment.invention-contrast.v1",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090b9-e356-7173-8bb3-f7f8904d56b0"
+      ],
+      "field_sha256": {
+        "application.system": "ff14f7362f7d56bc8dd3c5a8151140cfbf837d0c584ef81ad3307fef94630f87",
+        "application.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "application.schema": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+        "application.parameters": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+        "transport.system": "b1c7e16f0c392a45a64fd50b84f277d2a75416bf0d35ec60cf83ec68d82a2567",
+        "transport.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "transport.schema": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+        "output.text": "fcb11a0ec56d4eb15c09bd21bb95650fe5e99ddb7b827b5602af5e6dfa9c7fb8"
+      },
+      "field_characters": {
+        "application.system": 828,
+        "application.prompt": 36,
+        "application.schema": 274,
+        "application.parameters": 166,
+        "transport.system": 1230,
+        "transport.prompt": 36,
+        "transport.schema": 274,
+        "output.text": 4241
+      },
+      "application_input_sha256": "284d19f6c4220919df959bfeee0f1dd784b6e87971e555e448655d23073e1394",
+      "transport_input_sha256": "196e93285edf50094ef7233810ffb27732220bbc63545f896fccd126d92c2705",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "9a3a680e870844421f2bbcd6f58ccf6c3500f0219ce29e0cc1a13dbc909a1a53",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 4240,
+        "output_tokens": 813,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 57
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "full-1",
+      "path": "runs/invention-verbalized-20260911/calls/full-1.json",
+      "file_sha256": "4d4134fa1dd8ca8bb8614f6a930cbc6fb9eee8488ca3edb076c93966034210a7",
+      "profile": "experiment.invention-contrast.v1",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090ba-bddd-7f43-b564-25cd31a56b04"
+      ],
+      "field_sha256": {
+        "application.system": "68d6cfa56af92df1d3b21ee10c0be4441b1cac35c666cd32f6a7c1685827f7ce",
+        "application.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "application.schema": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+        "application.parameters": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+        "transport.system": "eea4b5acbc0589f922957fd3af7158e2d3a33da9e5243ae6c735952a015db951",
+        "transport.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "transport.schema": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+        "output.text": "d1e0c7f02a8079d98ce215fee42bd0d7aacbb7077b5d1cfd9d5a9b22e232b17f"
+      },
+      "field_characters": {
+        "application.system": 944,
+        "application.prompt": 36,
+        "application.schema": 274,
+        "application.parameters": 166,
+        "transport.system": 1346,
+        "transport.prompt": 36,
+        "transport.schema": 274,
+        "output.text": 4296
+      },
+      "application_input_sha256": "51e81f0a39e1bd5ab08e84e5619a521fa23b6950b9b6cf4e5d5630b549f5d7f9",
+      "transport_input_sha256": "b0b3780d4a8aef616991a906d286bdf0463c16007c9a153455fdccd4432da26d",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "4d4134fa1dd8ca8bb8614f6a930cbc6fb9eee8488ca3edb076c93966034210a7",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 4255,
+        "output_tokens": 817,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 99
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "tail-1",
+      "path": "runs/invention-verbalized-20260911/calls/tail-1.json",
+      "file_sha256": "abaa5f539d8cfefb32156f643f1a2a11c73e4b40ba3096fb5ce67efc9c88f01b",
+      "profile": "experiment.invention-contrast.v1",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090bb-a09c-7d70-bb23-06e367e63f0e"
+      ],
+      "field_sha256": {
+        "application.system": "02e077826966e689e45036ebb812fb65f674aa23cbe1f7e720a093df34ce120a",
+        "application.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "application.schema": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+        "application.parameters": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+        "transport.system": "3a1fc81aa3d9c3008e7c9f8fa3d2717a7dc922e7d47bda79affe5d4a5ece6707",
+        "transport.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "transport.schema": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+        "output.text": "a2a632d98b3ca5735eeb77d67f154da2c338fcd39fc819e34e2ad1f1c14b5424"
+      },
+      "field_characters": {
+        "application.system": 1085,
+        "application.prompt": 36,
+        "application.schema": 274,
+        "application.parameters": 166,
+        "transport.system": 1487,
+        "transport.prompt": 36,
+        "transport.schema": 274,
+        "output.text": 4530
+      },
+      "application_input_sha256": "1f92d58f5308b9afcf8f4ee58a006c205fdcc66de14b111e5fea851827013466",
+      "transport_input_sha256": "2dae54bbd7b36dfb973146eca60f3e3819be1bc556357b748a36cca5c6c72d4f",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "abaa5f539d8cfefb32156f643f1a2a11c73e4b40ba3096fb5ce67efc9c88f01b",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 4278,
+        "output_tokens": 851,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 52
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "tail-2",
+      "path": "runs/invention-verbalized-20260911/calls/tail-2.json",
+      "file_sha256": "7b155c05558e8be3ca57d7c9607f2cd6c3a9d058ebf7795503036b9034916f20",
+      "profile": "experiment.invention-contrast.v1",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090bc-681a-7151-b4af-c58a5891f36c"
+      ],
+      "field_sha256": {
+        "application.system": "aed384d031ff88a4d0fdf9a87da0e120df4597a596938b4aeffac9e23d5fb39f",
+        "application.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "application.schema": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+        "application.parameters": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+        "transport.system": "9f75921128a7a01780093b7c7200aecb1bee045bed86340ec25886b9539480fc",
+        "transport.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "transport.schema": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+        "output.text": "aa37ee43a31185dbcadc66658becf367315f7612b2f8905ddb1f35dbdc125496"
+      },
+      "field_characters": {
+        "application.system": 1085,
+        "application.prompt": 36,
+        "application.schema": 274,
+        "application.parameters": 166,
+        "transport.system": 1487,
+        "transport.prompt": 36,
+        "transport.schema": 274,
+        "output.text": 4284
+      },
+      "application_input_sha256": "b60880afbff60432ee617e13869b0756feec859b06e0ba409cfa121460807d28",
+      "transport_input_sha256": "83b65ba753be884794fd0f777201979ba523ba0cb11115e792b37f6103d2f2db",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "7b155c05558e8be3ca57d7c9607f2cd6c3a9d058ebf7795503036b9034916f20",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 4276,
+        "output_tokens": 815,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 100
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "full-2",
+      "path": "runs/invention-verbalized-20260911/calls/full-2.json",
+      "file_sha256": "3cb7a0e37058d3f37f79712ae81977c586634d77d2e40f3851b770390085b034",
+      "profile": "experiment.invention-contrast.v1",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090bd-516d-79c0-a63d-29e6498a1401"
+      ],
+      "field_sha256": {
+        "application.system": "bd5e37c5957d56ab880c4ac4a00082d7ab1b2a5555e7ac39766fa68c6e09df3f",
+        "application.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "application.schema": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+        "application.parameters": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+        "transport.system": "f01ccfc2bab64010756ec328d265a947abf87efe11429d9608db4dedd27d3ac8",
+        "transport.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "transport.schema": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+        "output.text": "13b08f3db9165025fde236d570330aafbaf9835647a83ffa2db184933d991645"
+      },
+      "field_characters": {
+        "application.system": 944,
+        "application.prompt": 36,
+        "application.schema": 274,
+        "application.parameters": 166,
+        "transport.system": 1346,
+        "transport.prompt": 36,
+        "transport.schema": 274,
+        "output.text": 4167
+      },
+      "application_input_sha256": "79e7e9e72b3001207218d188f65c37f1946626a4e5c207fcd3a61e8396c48726",
+      "transport_input_sha256": "40a10229e413b9b03d2996c5f37b300b37c33f096e76b08f880c3fa6ba7821b2",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "3cb7a0e37058d3f37f79712ae81977c586634d77d2e40f3851b770390085b034",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 4247,
+        "output_tokens": 784,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 107
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "format-2",
+      "path": "runs/invention-verbalized-20260911/calls/format-2.json",
+      "file_sha256": "5d516e92d856ad225732f6d676207c8f368c19b83de6d6328a77e2b34276b82b",
+      "profile": "experiment.invention-contrast.v1",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090be-4549-7721-8f27-a2c775bfd739"
+      ],
+      "field_sha256": {
+        "application.system": "b7847f248827893c09bf5c0a9d97cd2fcf28f1a1f6d532be76fa7f7715d4751d",
+        "application.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "application.schema": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+        "application.parameters": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+        "transport.system": "a9df77272ac5d00b20a066311160934927b8d5bd990cda98da4b9bb8149a3295",
+        "transport.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "transport.schema": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+        "output.text": "5f232d5889d74a15fcf4b5ea6c47da593fc62026b10a1f57ded0aa113499f922"
+      },
+      "field_characters": {
+        "application.system": 828,
+        "application.prompt": 36,
+        "application.schema": 274,
+        "application.parameters": 166,
+        "transport.system": 1230,
+        "transport.prompt": 36,
+        "transport.schema": 274,
+        "output.text": 4296
+      },
+      "application_input_sha256": "a6e23ec1263bbd5375e6e03d5c530bb2e245c58d9fa173ea676c39f89ec84107",
+      "transport_input_sha256": "d017a7eafa5f46fb09b05cf2d34734a505ed2e44303e297094756bfb80ad2855",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "5d516e92d856ad225732f6d676207c8f368c19b83de6d6328a77e2b34276b82b",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 4232,
+        "output_tokens": 795,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 76
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "batch-2",
+      "path": "runs/invention-verbalized-20260911/calls/batch-2.json",
+      "file_sha256": "7f94eb6e1593674e5054ccd4df7620963dd4765fbd95c3f5fcfdbcc7672453a7",
+      "profile": "experiment.invention-contrast.v1",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090bf-25de-7753-a937-2ad030e64912"
+      ],
+      "field_sha256": {
+        "application.system": "c79361a76d0772bebeed07788ff91e3bbfa408c803f8b6d76512d1b22c5e2caa",
+        "application.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "application.schema": "84f4e23a3077e848306701c2144828b9a147bf79d4e5124db337d6a33e42a650",
+        "application.parameters": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+        "transport.system": "c89eaff38ca8a7afa419ef4bca819299dbb1a75e8668220ee0899e7be220a5ad",
+        "transport.prompt": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+        "transport.schema": "84f4e23a3077e848306701c2144828b9a147bf79d4e5124db337d6a33e42a650",
+        "output.text": "94816421b6bb89970aacc82e5954b80421a7a4efbfb979858805fcf8b986f3d5"
+      },
+      "field_characters": {
+        "application.system": 685,
+        "application.prompt": 36,
+        "application.schema": 139,
+        "application.parameters": 166,
+        "transport.system": 940,
+        "transport.prompt": 36,
+        "transport.schema": 139,
+        "output.text": 4249
+      },
+      "application_input_sha256": "f60a8354e7cd85c0b5888500fd0ee36a7eb9290b895fcd92382852749c602e9b",
+      "transport_input_sha256": "0f0dad1e438f22eac12261a4849c39409b8be03fc8d9eec7c9b5c39e6c381d42",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "7f94eb6e1593674e5054ccd4df7620963dd4765fbd95c3f5fcfdbcc7672453a7",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 4146,
+        "output_tokens": 776,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 78
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "expand-batch-2",
+      "path": "runs/invention-verbalized-20260911/calls/expand-batch-2.json",
+      "file_sha256": "a68ce0f02d7b7dc478534b86dd7ee50c0d20f2077662c581e4b54d84b3a35389",
+      "profile": "writer.discovery.v10",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090bf-efd1-7253-9032-e181dd455675"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "840449d59dbb4b0b08f40c8bdc48c86140b3fafb735bd3efaf8b73b14602af37",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "9987111b3743ed70065c8583a3fc376b82b977a4f575e355651f7611d6eb7f3c",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "840449d59dbb4b0b08f40c8bdc48c86140b3fafb735bd3efaf8b73b14602af37",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "24313ae74c631a0dafe52ad2264dfe863b0b276ffdd07116b3b8ab9b2b588102"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 749,
+        "application.schema": 182,
+        "application.parameters": 156,
+        "transport.system": 2267,
+        "transport.prompt": 749,
+        "transport.schema": 182,
+        "output.text": 7371
+      },
+      "application_input_sha256": "c439d3fd59e867a58d8698815796b75c8587885e5f5020e701cc378367d3a1e3",
+      "transport_input_sha256": "06411865892c62ce3e0891ef1861b40ffe616704beb615b4b4fed9126cf12251",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "a68ce0f02d7b7dc478534b86dd7ee50c0d20f2077662c581e4b54d84b3a35389",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 4344,
+        "output_tokens": 1333,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 139
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "expand-format-2",
+      "path": "runs/invention-verbalized-20260911/calls/expand-format-2.json",
+      "file_sha256": "4ddf0db535141029de301cb1ed06643b9a55157d710c82d90cc2d8a26d0bf97a",
+      "profile": "writer.discovery.v10",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090c1-314b-71f2-9c71-2d9c14156a29"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "05848c99b99453bef89b7773f83e18f7c3efc2fd62a5f370e81fe93f1d33fe3c",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "9987111b3743ed70065c8583a3fc376b82b977a4f575e355651f7611d6eb7f3c",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "05848c99b99453bef89b7773f83e18f7c3efc2fd62a5f370e81fe93f1d33fe3c",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "8390d3b9c66cdc5cf554573f17e3d9a5b3f566357f21d6f70dd7c14016596eb5"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 764,
+        "application.schema": 182,
+        "application.parameters": 156,
+        "transport.system": 2267,
+        "transport.prompt": 764,
+        "transport.schema": 182,
+        "output.text": 7409
+      },
+      "application_input_sha256": "62b6b84a5636e2aa63e7cac547e1850636846942fba9c3ea3bb39d9e1208efd3",
+      "transport_input_sha256": "6f726ceb7b911a65fccf552df098c7c33f32f689dc29c037fca63712ff98065a",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "4ddf0db535141029de301cb1ed06643b9a55157d710c82d90cc2d8a26d0bf97a",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 1783,
+        "output_tokens": 1344,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 127
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "expand-full-2",
+      "path": "runs/invention-verbalized-20260911/calls/expand-full-2.json",
+      "file_sha256": "9cbc437997736b1e637cdf518257997b472a7d6359ff4f273efd9adbc114b9df",
+      "profile": "writer.discovery.v10",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090c2-425f-7102-a413-60d02dbc9159"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "49c5a9f40a1f5ee2c0adba17cbce44a48723cadd4fc0dd1dc6d07cd17d84cb1e",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "9987111b3743ed70065c8583a3fc376b82b977a4f575e355651f7611d6eb7f3c",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "49c5a9f40a1f5ee2c0adba17cbce44a48723cadd4fc0dd1dc6d07cd17d84cb1e",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "3740890b84a8298d75b9960aa5b97291547f3bfca3b8c91a58e309d8ef06bba8"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 674,
+        "application.schema": 182,
+        "application.parameters": 156,
+        "transport.system": 2267,
+        "transport.prompt": 674,
+        "transport.schema": 182,
+        "output.text": 6437
+      },
+      "application_input_sha256": "8c79e271454d7c8cab35126ae1d2908fed6febd67fe3cc386aecd837c1f5efc2",
+      "transport_input_sha256": "e2087dc59b2176d894e50b1d8e818d4fcb5722d2c4e8f0ecdb8613ce5227910f",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "9cbc437997736b1e637cdf518257997b472a7d6359ff4f273efd9adbc114b9df",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 1773,
+        "output_tokens": 1179,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 174
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "expand-tail-2",
+      "path": "runs/invention-verbalized-20260911/calls/expand-tail-2.json",
+      "file_sha256": "a04ed23668ae36e69a75dd63a6dcd7e54418c1b7fe14fc72f5f5088476fbc368",
+      "profile": "writer.discovery.v10",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090c3-4939-7422-ac25-98826e494e08"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "e04423ac34f90c6dcc7d87e45be4ce5c6e465ea4a78570e7191ee424097aae1f",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "9987111b3743ed70065c8583a3fc376b82b977a4f575e355651f7611d6eb7f3c",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "e04423ac34f90c6dcc7d87e45be4ce5c6e465ea4a78570e7191ee424097aae1f",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "b83614070b88bf2613a7ed4283b226013f4a9560aaed91e46aea4d339dd8c4bf"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 693,
+        "application.schema": 182,
+        "application.parameters": 156,
+        "transport.system": 2267,
+        "transport.prompt": 693,
+        "transport.schema": 182,
+        "output.text": 7374
+      },
+      "application_input_sha256": "b2ecd8d1616e0bf371bb3c1c640d86af3100359423b0408b42fce641c0e21eba",
+      "transport_input_sha256": "5d5ccd6d2893e38ab02eaa73c0eba567f56f0e9bd82962254cdfa41f48277231",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "a04ed23668ae36e69a75dd63a6dcd7e54418c1b7fe14fc72f5f5088476fbc368",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 1784,
+        "output_tokens": 1391,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 356
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "expand-tail-1",
+      "path": "runs/invention-verbalized-20260911/calls/expand-tail-1.json",
+      "file_sha256": "53fc527ab9532c673bce0ea8896e65e17d0e7964a9f87f3b7d9749c026b89906",
+      "profile": "writer.discovery.v10",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090c4-b132-7413-9322-e3cb9d22eb44"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "63787daae096e823dbfe25615f6b33e55fe1813170f9d18bae4eae2f45639c78",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "9987111b3743ed70065c8583a3fc376b82b977a4f575e355651f7611d6eb7f3c",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "63787daae096e823dbfe25615f6b33e55fe1813170f9d18bae4eae2f45639c78",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "897b9d6f2f176bac62130b00667e0f16e64bf023924c15285397994cdb78bb56"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 690,
+        "application.schema": 182,
+        "application.parameters": 156,
+        "transport.system": 2267,
+        "transport.prompt": 690,
+        "transport.schema": 182,
+        "output.text": 7035
+      },
+      "application_input_sha256": "883d47dff5ba3cb12efd2097ea997264687c1fded510892c172bb3efd7579646",
+      "transport_input_sha256": "604b4c733add2c8bdac5319480d6b84384582dcb2bb5cfef919445a50ded968f",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "53fc527ab9532c673bce0ea8896e65e17d0e7964a9f87f3b7d9749c026b89906",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 1776,
+        "output_tokens": 1305,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 272
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "expand-full-1",
+      "path": "runs/invention-verbalized-20260911/calls/expand-full-1.json",
+      "file_sha256": "9af830eb7d3aeac8a853dd9e5509030e168bc5e2ba60b366b5efb3709fec5d1c",
+      "profile": "writer.discovery.v10",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090c6-1c0d-7942-bb69-5d7137119c99"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "5b890abf565637829f770768175337bf517c4f7da2610f24f327c8491dc83188",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "9987111b3743ed70065c8583a3fc376b82b977a4f575e355651f7611d6eb7f3c",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "5b890abf565637829f770768175337bf517c4f7da2610f24f327c8491dc83188",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "9c45375a5038063ecff1d0a333ac977f9bff9589317e4cbd3146180377108da7"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 704,
+        "application.schema": 182,
+        "application.parameters": 156,
+        "transport.system": 2267,
+        "transport.prompt": 704,
+        "transport.schema": 182,
+        "output.text": 6573
+      },
+      "application_input_sha256": "1c61c198efe67f1423dbad1be502273b9749d69ad53e4956c8ba9a740a9dd6a1",
+      "transport_input_sha256": "8bc90140bfcf651a054c3aca8cb02e71b24f26d646b26797caafbc3cf491675f",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "9af830eb7d3aeac8a853dd9e5509030e168bc5e2ba60b366b5efb3709fec5d1c",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 4340,
+        "output_tokens": 1205,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 499
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "expand-format-1",
+      "path": "runs/invention-verbalized-20260911/calls/expand-format-1.json",
+      "file_sha256": "27c8ca6600eb245da2c39685f783c6299cca9204c5293df3c6f967aa625c598f",
+      "profile": "writer.discovery.v10",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090c7-912c-7760-b3c5-39eef000c3cb"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "52bdf782b778dc102c7cc8cbf2bc5080fa8ce42926f962c0d3945a1facbfe0f5",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "9987111b3743ed70065c8583a3fc376b82b977a4f575e355651f7611d6eb7f3c",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "52bdf782b778dc102c7cc8cbf2bc5080fa8ce42926f962c0d3945a1facbfe0f5",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "cca4f9b39f6391160263286501c6d0ce56cd45ccbcc2cabcd47950cc42ecb4de"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 715,
+        "application.schema": 182,
+        "application.parameters": 156,
+        "transport.system": 2267,
+        "transport.prompt": 715,
+        "transport.schema": 182,
+        "output.text": 6713
+      },
+      "application_input_sha256": "51ce2f28b3966cb8c9a2329b16c118658c9ff198735dcde82ffd6de8a08697df",
+      "transport_input_sha256": "ea1ce2e4040f76444e5b6f5505eeb79f02fa63a9560c2a2d58ddbc4d61168d9a",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "27c8ca6600eb245da2c39685f783c6299cca9204c5293df3c6f967aa625c598f",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 1773,
+        "output_tokens": 1203,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 278
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    },
+    {
+      "slot": "expand-batch-1",
+      "path": "runs/invention-verbalized-20260911/calls/expand-batch-1.json",
+      "file_sha256": "ec1c191b8ba8a8363820b378b023c5e77097b81572f4c3161ceec7137646cb17",
+      "profile": "writer.discovery.v10",
+      "recorded_model": "gpt-6-astra",
+      "status": "completed",
+      "sessions": [
+        "01a090c8-c368-73c1-84b9-015dfd2fff0d"
+      ],
+      "field_sha256": {
+        "application.system": "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18",
+        "application.prompt": "9fd710fac2bf220213145412296d31498f3386cd7880876b1bb3c15d0ca71aae",
+        "application.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "application.parameters": "9987111b3743ed70065c8583a3fc376b82b977a4f575e355651f7611d6eb7f3c",
+        "transport.system": "fc6aad0dc6022975ecc8d8be8ca7c19fc317b68b9f6f57d373e8dec88e883b3f",
+        "transport.prompt": "9fd710fac2bf220213145412296d31498f3386cd7880876b1bb3c15d0ca71aae",
+        "transport.schema": "c8426f5deb8f35a961843d1db2c22bb96234fed0f46073d8bea928826a363c41",
+        "output.text": "2fbbcf8795efb009cfabe3513d47176bf41002aab79ebf4f88e69c6994644aa7"
+      },
+      "field_characters": {
+        "application.system": 1964,
+        "application.prompt": 726,
+        "application.schema": 182,
+        "application.parameters": 156,
+        "transport.system": 2267,
+        "transport.prompt": 726,
+        "transport.schema": 182,
+        "output.text": 7105
+      },
+      "application_input_sha256": "a69b24ca9985bb4fc0b30ea293b124e3cb495f952ac1b55c80902552c3d8dbdf",
+      "transport_input_sha256": "d5a1a1b11686efa4bb8ed9bc842b377528cd244549d0d8e57d0299ab6e7ff6f6",
+      "configuration": {
+        "provider": "codex",
+        "requested_model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.153.4",
+        "mode": "completion",
+        "settings": {
+          "forced_login_method": "chatgpt",
+          "model_provider": "openai",
+          "model_reasoning_effort": "medium",
+          "project_doc_max_bytes": 0,
+          "web_search": "disabled",
+          "hide_agent_reasoning": true,
+          "features.shell_tool": false,
+          "features.multi_agent": false,
+          "features.apps": false,
+          "features.plugins": false,
+          "features.hooks": false,
+          "features.memories": false,
+          "features.code_mode": false,
+          "features.view_image": false,
+          "features.browser_use": false,
+          "features.browser_use_external": false,
+          "features.browser_use_full_cdp_access": false,
+          "features.in_app_browser": false,
+          "features.computer_use": false,
+          "features.image_generation": false,
+          "features.sleep_tool": false,
+          "features.goals": false,
+          "features.skill_search": false,
+          "features.tool_suggest": false,
+          "features.workspace_dependencies": false,
+          "features.skill_mcp_dependency_install": false,
+          "features.multi_agent_v2": false,
+          "tools.update_plan.enabled": false,
+          "tools.experimental_request_user_input.enabled": false,
+          "skills.include_instructions": false,
+          "skills.bundled.enabled": false,
+          "history.persistence": "none"
+        },
+        "sampler_requested": null,
+        "output_schema": true,
+        "json": true,
+        "ephemeral": true,
+        "ignore_user_config": true,
+        "ignore_rules": true,
+        "safe_mode": false,
+        "no_session_persistence": false,
+        "strict_mcp_config": false,
+        "tools": null,
+        "allowed_tools": null,
+        "setting_sources": null,
+        "permission_mode": null
+      },
+      "gaps": [
+        "Backend-resolved model not reported.",
+        "Resolved sampling distribution is not reported."
+      ],
+      "receipt_sha256": "ec1c191b8ba8a8363820b378b023c5e77097b81572f4c3161ceec7137646cb17",
+      "validation": "passed",
+      "usage": {
+        "input_tokens": 1782,
+        "output_tokens": 1304,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 190
+      },
+      "request_matches_saved": true,
+      "request_hash_matches": true
+    }
+  ],
+  "candidates": [
+    {
+      "slot": "batch-1",
+      "index": 0,
+      "text_sha256": "e8eeb75eeb69bfc491e4f669e90442d2fe80eee4c0943f8420eb870b4f435a62",
+      "words": 102,
+      "selected": true,
+      "stated_probability": null,
+      "within_probability_range": null,
+      "below_tail_threshold": null,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "batch-1",
+      "index": 1,
+      "text_sha256": "6e99762efd532d9c69c96b516a7f29b2f7cdd8131779df226e92cb1940b967f5",
+      "words": 99,
+      "selected": false,
+      "stated_probability": null,
+      "within_probability_range": null,
+      "below_tail_threshold": null,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "batch-1",
+      "index": 2,
+      "text_sha256": "803121bee530c71bfe2d37757343a067b4c6627c0dbb597cb14224d2f260a8de",
+      "words": 103,
+      "selected": false,
+      "stated_probability": null,
+      "within_probability_range": null,
+      "below_tail_threshold": null,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "batch-1",
+      "index": 3,
+      "text_sha256": "180c4cd26b69ce9e719275eedf4ce1031daf4944a5143245ab305d79f82b9947",
+      "words": 100,
+      "selected": false,
+      "stated_probability": null,
+      "within_probability_range": null,
+      "below_tail_threshold": null,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "batch-1",
+      "index": 4,
+      "text_sha256": "b7b01f40c0741a1f96edd57fa5d89c6fd47abfa21689940a1097d275d63e401a",
+      "words": 103,
+      "selected": false,
+      "stated_probability": null,
+      "within_probability_range": null,
+      "below_tail_threshold": null,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "batch-1",
+      "index": 5,
+      "text_sha256": "5744440c2dc5a79e068e0a74daae2ff5279274c2a3c4e12c3deb59fea749d455",
+      "words": 100,
+      "selected": false,
+      "stated_probability": null,
+      "within_probability_range": null,
+      "below_tail_threshold": null,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "format-1",
+      "index": 0,
+      "text_sha256": "4f57c671bab4ab6360656cc82e124542882432e89768b953bd15b8683239d56e",
+      "words": 98,
+      "selected": true,
+      "stated_probability": 0.0,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": true
+    },
+    {
+      "slot": "format-1",
+      "index": 1,
+      "text_sha256": "47f5d394aba78c524c7afb4a137277c96fa3e0cbf3355b4b41014913d9c1a433",
+      "words": 99,
+      "selected": false,
+      "stated_probability": 0.0,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": true
+    },
+    {
+      "slot": "format-1",
+      "index": 2,
+      "text_sha256": "a560a68a690c8bc76cb23355c60de0ec27334006258bb8b53d345d1972ad4f8d",
+      "words": 100,
+      "selected": false,
+      "stated_probability": 0.0,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": true
+    },
+    {
+      "slot": "format-1",
+      "index": 3,
+      "text_sha256": "f9f40f9b5cd9105746da6db871bb91269349e453b5f3ccf41b5c706c250f1517",
+      "words": 101,
+      "selected": false,
+      "stated_probability": 0.0,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": true
+    },
+    {
+      "slot": "format-1",
+      "index": 4,
+      "text_sha256": "ac7878afe40cd266e58c37184cb2adf55b80884113c37e6bd059fd1a38019958",
+      "words": 100,
+      "selected": false,
+      "stated_probability": 0.0,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": true
+    },
+    {
+      "slot": "format-1",
+      "index": 5,
+      "text_sha256": "006e30a182b23f985977f5bb54fa636aae84bba2485a194db120f7b9ea2aa8b5",
+      "words": 101,
+      "selected": false,
+      "stated_probability": 0.0,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": true
+    },
+    {
+      "slot": "full-1",
+      "index": 0,
+      "text_sha256": "4a611ead72b2a7ae5e360743887653e788127531e52ebe282491f3221e6139d7",
+      "words": 100,
+      "selected": true,
+      "stated_probability": 1.7e-128,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "full-1",
+      "index": 1,
+      "text_sha256": "93f38c5b318b0346b8bb1d8d428b64cd42246b1ff6615cb7825e74da73aa5eae",
+      "words": 100,
+      "selected": false,
+      "stated_probability": 2.3e-131,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "full-1",
+      "index": 2,
+      "text_sha256": "43969b155a60837138f6486c613d44d12d5b3e11bfe85d2c2eb2461be1a27afd",
+      "words": 99,
+      "selected": false,
+      "stated_probability": 1.1e-129,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "full-1",
+      "index": 3,
+      "text_sha256": "a8ee7b7464a008c77ad34fbd416ff4358c0f249bd8c80cb53208724ceddc890a",
+      "words": 100,
+      "selected": false,
+      "stated_probability": 3.2e-133,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "full-1",
+      "index": 4,
+      "text_sha256": "ecf573d0e48938557a7e9cac6ebc08bd180bc6572a43972c2e7d03e5f16564bd",
+      "words": 102,
+      "selected": false,
+      "stated_probability": 2.6e-130,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "full-1",
+      "index": 5,
+      "text_sha256": "14c7b9565ae4e4e20300f0a809d542bc7212761918d35fff84bc8093890b4729",
+      "words": 100,
+      "selected": false,
+      "stated_probability": 1.9e-132,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "tail-1",
+      "index": 0,
+      "text_sha256": "3de5621e0106052c271b07d1075b29ea6299e10e8b8fa11693387e7cc10183c4",
+      "words": 100,
+      "selected": true,
+      "stated_probability": 1.7e-08,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "tail-1",
+      "index": 1,
+      "text_sha256": "9d1407b14fb1096703011076450adca9f76c2391665d655a76556e750f8f8d7b",
+      "words": 99,
+      "selected": false,
+      "stated_probability": 2.3e-08,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "tail-1",
+      "index": 2,
+      "text_sha256": "6c996ebd503382c4d2ebdae59eb40532fdc0e0ce26aac6c389e03f43624ac723",
+      "words": 103,
+      "selected": false,
+      "stated_probability": 9e-09,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "tail-1",
+      "index": 3,
+      "text_sha256": "5975df0c1e2a73fc65e357d20358f4337601fe8e2a91b0f50c32c4a0f79d6153",
+      "words": 104,
+      "selected": false,
+      "stated_probability": 6e-09,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "tail-1",
+      "index": 4,
+      "text_sha256": "e15edd0c404f76cbe5e57c7c6a1c74f1e84ff16c3011fb333902f37537a61a1a",
+      "words": 106,
+      "selected": false,
+      "stated_probability": 1.4e-08,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "tail-1",
+      "index": 5,
+      "text_sha256": "62367179b2de390c31a949fdf7af0c5742a0bc1175cbe524fa6e3b2b7be2e64e",
+      "words": 104,
+      "selected": false,
+      "stated_probability": 1.1e-08,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "tail-2",
+      "index": 0,
+      "text_sha256": "71eede58370d04ff49ee8dbead87ebf37289c199fb49fcf517e13f03578d2c8d",
+      "words": 100,
+      "selected": false,
+      "stated_probability": 1.7e-08,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "tail-2",
+      "index": 1,
+      "text_sha256": "7602839f3765adb6464b86ace1c3dedf6edcb55514f9f48c3c9a61df1f858418",
+      "words": 101,
+      "selected": false,
+      "stated_probability": 1.1e-08,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "tail-2",
+      "index": 2,
+      "text_sha256": "2dd530ffe2924198a7735c563cb8b003602db59b21ab4d03e2b1d035dbdfb641",
+      "words": 99,
+      "selected": false,
+      "stated_probability": 2.3e-08,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "tail-2",
+      "index": 3,
+      "text_sha256": "c22aeff0fbc2c91e5d4f93efc18dac92d3f30260421c9efe76db8d81a9498c7c",
+      "words": 99,
+      "selected": false,
+      "stated_probability": 1.3e-08,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "tail-2",
+      "index": 4,
+      "text_sha256": "474245fd476838c7ea5df31a1d7af80d7224af1b71d5e12ab752e4cfc7a288cd",
+      "words": 101,
+      "selected": false,
+      "stated_probability": 1.9e-08,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "tail-2",
+      "index": 5,
+      "text_sha256": "dd7874fbe0a11035e6946533cd3d7a16f3099c4c98650cd181ef30e5eb47f95d",
+      "words": 102,
+      "selected": true,
+      "stated_probability": 1.4e-08,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "full-2",
+      "index": 0,
+      "text_sha256": "000cd42df30db1145f1dfec24b878fbaee5127a249885ba77c251b80106ff8f6",
+      "words": 97,
+      "selected": false,
+      "stated_probability": 2e-115,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "full-2",
+      "index": 1,
+      "text_sha256": "e8bd169a167df53f0074fb391045fcecf2dd48279be66f2185eb3c4645e37159",
+      "words": 98,
+      "selected": false,
+      "stated_probability": 7e-119,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "full-2",
+      "index": 2,
+      "text_sha256": "5bea7219094b596f51e4059cf983c1b617504bc7aed698962418639aba824fce",
+      "words": 101,
+      "selected": false,
+      "stated_probability": 4e-117,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "full-2",
+      "index": 3,
+      "text_sha256": "c4e35aea924761b7fca886adc2f0cef03a75499222a3e0be9c6666f733fb8b7e",
+      "words": 99,
+      "selected": false,
+      "stated_probability": 3e-116,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "full-2",
+      "index": 4,
+      "text_sha256": "7d454471b72427eb26136d9f8a80d9507ebf4abbecf08183ae8bbd2a76c239a0",
+      "words": 103,
+      "selected": false,
+      "stated_probability": 6e-120,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "full-2",
+      "index": 5,
+      "text_sha256": "33ef9b508ab50a3a80edc1fe15d67a9bf359ccdc3d8a846799824827df9d8ba1",
+      "words": 103,
+      "selected": true,
+      "stated_probability": 8e-118,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "format-2",
+      "index": 0,
+      "text_sha256": "8d32a9d5ba0d75b6d0083c2b88816e8eea99bf087449783f9997355e54339c62",
+      "words": 99,
+      "selected": false,
+      "stated_probability": 0.0,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": true
+    },
+    {
+      "slot": "format-2",
+      "index": 1,
+      "text_sha256": "94c63935c3e4d321433796b930ca13df027d61d250eae28e69d22a2e22176c90",
+      "words": 100,
+      "selected": false,
+      "stated_probability": 0.0,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": true
+    },
+    {
+      "slot": "format-2",
+      "index": 2,
+      "text_sha256": "65e4900c29969861295602e1db47f881737642564ee3a67e9c85016d2576f3a9",
+      "words": 101,
+      "selected": false,
+      "stated_probability": 0.0,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": true
+    },
+    {
+      "slot": "format-2",
+      "index": 3,
+      "text_sha256": "d040a39f9075fe7d947f1b91fc5669637b75582bbf5d9a1568added99f39987c",
+      "words": 98,
+      "selected": false,
+      "stated_probability": 0.0,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": true
+    },
+    {
+      "slot": "format-2",
+      "index": 4,
+      "text_sha256": "35524361e7e5a4b18b5706f157721b0738f780eeff048afaf1bf1f605eeceeb7",
+      "words": 100,
+      "selected": false,
+      "stated_probability": 0.0,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": true
+    },
+    {
+      "slot": "format-2",
+      "index": 5,
+      "text_sha256": "944e88060e19fd3949d411f7d4043dc5b6309b5bf5dbba7c24c617a412efbc7b",
+      "words": 102,
+      "selected": true,
+      "stated_probability": 0.0,
+      "within_probability_range": true,
+      "below_tail_threshold": true,
+      "placeholder_is_zero": true
+    },
+    {
+      "slot": "batch-2",
+      "index": 0,
+      "text_sha256": "25b4e724bfe775eefd5e13fad8187e6f0b4f44e23742caac37df5884605cb1a2",
+      "words": 100,
+      "selected": false,
+      "stated_probability": null,
+      "within_probability_range": null,
+      "below_tail_threshold": null,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "batch-2",
+      "index": 1,
+      "text_sha256": "d3b67f92b8445c25fb1bfa5fe4b92abc370cbabdb1bf5fad6e68970ceab23730",
+      "words": 100,
+      "selected": false,
+      "stated_probability": null,
+      "within_probability_range": null,
+      "below_tail_threshold": null,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "batch-2",
+      "index": 2,
+      "text_sha256": "9ef088aee2f442a10f8f2ce8cab0028f724484229f017e98fe78bed4bae36b98",
+      "words": 104,
+      "selected": false,
+      "stated_probability": null,
+      "within_probability_range": null,
+      "below_tail_threshold": null,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "batch-2",
+      "index": 3,
+      "text_sha256": "0c19db6b6494ae1504a9fb700ffbce5bca0b2122ed5cfe8e807a322d472f8f12",
+      "words": 105,
+      "selected": false,
+      "stated_probability": null,
+      "within_probability_range": null,
+      "below_tail_threshold": null,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "batch-2",
+      "index": 4,
+      "text_sha256": "689d9f765811dbf874d2bb7139b7fb1b36c8d60fa6653bf0e9e7599b3ffe0f24",
+      "words": 102,
+      "selected": false,
+      "stated_probability": null,
+      "within_probability_range": null,
+      "below_tail_threshold": null,
+      "placeholder_is_zero": null
+    },
+    {
+      "slot": "batch-2",
+      "index": 5,
+      "text_sha256": "a64178d3c5f7dcc8e0c23f474ea8224aa72e2db433a930919389d8c47be4cba2",
+      "words": 105,
+      "selected": true,
+      "stated_probability": null,
+      "within_probability_range": null,
+      "below_tail_threshold": null,
+      "placeholder_is_zero": null
+    }
+  ],
+  "controls": {
+    "batch-1": {
+      "request_matches_registered_renderer": true,
+      "captured_system_matches": false,
+      "captured_prefix_matches": true,
+      "precommitted_index_matches": true,
+      "selected_item_matches": true
+    },
+    "format-1": {
+      "request_matches_registered_renderer": true,
+      "captured_system_matches": false,
+      "captured_prefix_matches": true,
+      "precommitted_index_matches": true,
+      "selected_item_matches": true
+    },
+    "full-1": {
+      "request_matches_registered_renderer": true,
+      "captured_system_matches": false,
+      "captured_prefix_matches": true,
+      "precommitted_index_matches": true,
+      "selected_item_matches": true
+    },
+    "tail-1": {
+      "request_matches_registered_renderer": true,
+      "captured_system_matches": false,
+      "captured_prefix_matches": true,
+      "precommitted_index_matches": true,
+      "selected_item_matches": true
+    },
+    "tail-2": {
+      "request_matches_registered_renderer": true,
+      "captured_system_matches": false,
+      "captured_prefix_matches": true,
+      "precommitted_index_matches": true,
+      "selected_item_matches": true
+    },
+    "full-2": {
+      "request_matches_registered_renderer": true,
+      "captured_system_matches": false,
+      "captured_prefix_matches": true,
+      "precommitted_index_matches": true,
+      "selected_item_matches": true
+    },
+    "format-2": {
+      "request_matches_registered_renderer": true,
+      "captured_system_matches": false,
+      "captured_prefix_matches": true,
+      "precommitted_index_matches": true,
+      "selected_item_matches": true
+    },
+    "batch-2": {
+      "request_matches_registered_renderer": true,
+      "captured_system_matches": false,
+      "captured_prefix_matches": true,
+      "precommitted_index_matches": true,
+      "selected_item_matches": true
+    },
+    "expand-batch-2": {
+      "source_receipt_matches": true,
+      "source_index_matches": true,
+      "selected_text_hash_matches": true,
+      "request_is_unmodified_discovery_with_story_only": true
+    },
+    "expand-format-2": {
+      "source_receipt_matches": true,
+      "source_index_matches": true,
+      "selected_text_hash_matches": true,
+      "request_is_unmodified_discovery_with_story_only": true
+    },
+    "expand-full-2": {
+      "source_receipt_matches": true,
+      "source_index_matches": true,
+      "selected_text_hash_matches": true,
+      "request_is_unmodified_discovery_with_story_only": true
+    },
+    "expand-tail-2": {
+      "source_receipt_matches": true,
+      "source_index_matches": true,
+      "selected_text_hash_matches": true,
+      "request_is_unmodified_discovery_with_story_only": true
+    },
+    "expand-tail-1": {
+      "source_receipt_matches": true,
+      "source_index_matches": true,
+      "selected_text_hash_matches": true,
+      "request_is_unmodified_discovery_with_story_only": true
+    },
+    "expand-full-1": {
+      "source_receipt_matches": true,
+      "source_index_matches": true,
+      "selected_text_hash_matches": true,
+      "request_is_unmodified_discovery_with_story_only": true
+    },
+    "expand-format-1": {
+      "source_receipt_matches": true,
+      "source_index_matches": true,
+      "selected_text_hash_matches": true,
+      "request_is_unmodified_discovery_with_story_only": true
+    },
+    "expand-batch-1": {
+      "source_receipt_matches": true,
+      "source_index_matches": true,
+      "selected_text_hash_matches": true,
+      "request_is_unmodified_discovery_with_story_only": true
+    }
+  },
+  "comparisons": {
+    "batch-1:format-1": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+          "right_sha256": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+          "right_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29"
+        },
+        "application.schema": {
+          "equal": false,
+          "left_sha256": "84f4e23a3077e848306701c2144828b9a147bf79d4e5124db337d6a33e42a650",
+          "right_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24"
+        },
+        "application.system": {
+          "equal": false,
+          "left_sha256": "3eb3fb324820c67b0c983cb40436bd71ebc38845774ab11936f4badf724d8c91",
+          "right_sha256": "ff14f7362f7d56bc8dd3c5a8151140cfbf837d0c584ef81ad3307fef94630f87"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "0278d3ab8d4fbc964f0a822232f79b6a1b4a6367e15495ec26e38cd7e5f3d1d4",
+          "right_sha256": "fcb11a0ec56d4eb15c09bd21bb95650fe5e99ddb7b827b5602af5e6dfa9c7fb8"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+          "right_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29"
+        },
+        "transport.schema": {
+          "equal": false,
+          "left_sha256": "84f4e23a3077e848306701c2144828b9a147bf79d4e5124db337d6a33e42a650",
+          "right_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24"
+        },
+        "transport.system": {
+          "equal": false,
+          "left_sha256": "965775a31db68e130a5da4f57b14070712e059e7436a280725f33e6b07222315",
+          "right_sha256": "b1c7e16f0c392a45a64fd50b84f277d2a75416bf0d35ec60cf83ec68d82a2567"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "format-1:full-1": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+          "right_sha256": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+          "right_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+          "right_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24"
+        },
+        "application.system": {
+          "equal": false,
+          "left_sha256": "ff14f7362f7d56bc8dd3c5a8151140cfbf837d0c584ef81ad3307fef94630f87",
+          "right_sha256": "68d6cfa56af92df1d3b21ee10c0be4441b1cac35c666cd32f6a7c1685827f7ce"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "fcb11a0ec56d4eb15c09bd21bb95650fe5e99ddb7b827b5602af5e6dfa9c7fb8",
+          "right_sha256": "d1e0c7f02a8079d98ce215fee42bd0d7aacbb7077b5d1cfd9d5a9b22e232b17f"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+          "right_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+          "right_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24"
+        },
+        "transport.system": {
+          "equal": false,
+          "left_sha256": "b1c7e16f0c392a45a64fd50b84f277d2a75416bf0d35ec60cf83ec68d82a2567",
+          "right_sha256": "eea4b5acbc0589f922957fd3af7158e2d3a33da9e5243ae6c735952a015db951"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "full-1:tail-1": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+          "right_sha256": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+          "right_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+          "right_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24"
+        },
+        "application.system": {
+          "equal": false,
+          "left_sha256": "68d6cfa56af92df1d3b21ee10c0be4441b1cac35c666cd32f6a7c1685827f7ce",
+          "right_sha256": "02e077826966e689e45036ebb812fb65f674aa23cbe1f7e720a093df34ce120a"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "d1e0c7f02a8079d98ce215fee42bd0d7aacbb7077b5d1cfd9d5a9b22e232b17f",
+          "right_sha256": "a2a632d98b3ca5735eeb77d67f154da2c338fcd39fc819e34e2ad1f1c14b5424"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+          "right_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+          "right_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24"
+        },
+        "transport.system": {
+          "equal": false,
+          "left_sha256": "eea4b5acbc0589f922957fd3af7158e2d3a33da9e5243ae6c735952a015db951",
+          "right_sha256": "3a1fc81aa3d9c3008e7c9f8fa3d2717a7dc922e7d47bda79affe5d4a5ece6707"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "batch-2:format-2": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+          "right_sha256": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+          "right_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29"
+        },
+        "application.schema": {
+          "equal": false,
+          "left_sha256": "84f4e23a3077e848306701c2144828b9a147bf79d4e5124db337d6a33e42a650",
+          "right_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24"
+        },
+        "application.system": {
+          "equal": false,
+          "left_sha256": "c79361a76d0772bebeed07788ff91e3bbfa408c803f8b6d76512d1b22c5e2caa",
+          "right_sha256": "b7847f248827893c09bf5c0a9d97cd2fcf28f1a1f6d532be76fa7f7715d4751d"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "94816421b6bb89970aacc82e5954b80421a7a4efbfb979858805fcf8b986f3d5",
+          "right_sha256": "5f232d5889d74a15fcf4b5ea6c47da593fc62026b10a1f57ded0aa113499f922"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+          "right_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29"
+        },
+        "transport.schema": {
+          "equal": false,
+          "left_sha256": "84f4e23a3077e848306701c2144828b9a147bf79d4e5124db337d6a33e42a650",
+          "right_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24"
+        },
+        "transport.system": {
+          "equal": false,
+          "left_sha256": "c89eaff38ca8a7afa419ef4bca819299dbb1a75e8668220ee0899e7be220a5ad",
+          "right_sha256": "a9df77272ac5d00b20a066311160934927b8d5bd990cda98da4b9bb8149a3295"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "format-2:full-2": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+          "right_sha256": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+          "right_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+          "right_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24"
+        },
+        "application.system": {
+          "equal": false,
+          "left_sha256": "b7847f248827893c09bf5c0a9d97cd2fcf28f1a1f6d532be76fa7f7715d4751d",
+          "right_sha256": "bd5e37c5957d56ab880c4ac4a00082d7ab1b2a5555e7ac39766fa68c6e09df3f"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "5f232d5889d74a15fcf4b5ea6c47da593fc62026b10a1f57ded0aa113499f922",
+          "right_sha256": "13b08f3db9165025fde236d570330aafbaf9835647a83ffa2db184933d991645"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+          "right_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+          "right_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24"
+        },
+        "transport.system": {
+          "equal": false,
+          "left_sha256": "a9df77272ac5d00b20a066311160934927b8d5bd990cda98da4b9bb8149a3295",
+          "right_sha256": "f01ccfc2bab64010756ec328d265a947abf87efe11429d9608db4dedd27d3ac8"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    },
+    "full-2:tail-2": {
+      "fields": {
+        "application.parameters": {
+          "equal": true,
+          "left_sha256": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365",
+          "right_sha256": "45dfec44c85cec6e70ba77bd57214df4c3b815f0bd638fd116c38c0c539db365"
+        },
+        "application.prompt": {
+          "equal": true,
+          "left_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+          "right_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29"
+        },
+        "application.schema": {
+          "equal": true,
+          "left_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+          "right_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24"
+        },
+        "application.system": {
+          "equal": false,
+          "left_sha256": "bd5e37c5957d56ab880c4ac4a00082d7ab1b2a5555e7ac39766fa68c6e09df3f",
+          "right_sha256": "aed384d031ff88a4d0fdf9a87da0e120df4597a596938b4aeffac9e23d5fb39f"
+        },
+        "output.text": {
+          "equal": false,
+          "left_sha256": "13b08f3db9165025fde236d570330aafbaf9835647a83ffa2db184933d991645",
+          "right_sha256": "aa37ee43a31185dbcadc66658becf367315f7612b2f8905ddb1f35dbdc125496"
+        },
+        "transport.prompt": {
+          "equal": true,
+          "left_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29",
+          "right_sha256": "3440c6c3eb5e1de2f583f4981094a6702014934e9eea97d68977695cb9dc0d29"
+        },
+        "transport.schema": {
+          "equal": true,
+          "left_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24",
+          "right_sha256": "ba5a6255f6a8280b4e979964bc95eca04f0acaa99e6d649663677cdc6cdedc24"
+        },
+        "transport.system": {
+          "equal": false,
+          "left_sha256": "f01ccfc2bab64010756ec328d265a947abf87efe11429d9608db4dedd27d3ac8",
+          "right_sha256": "9f75921128a7a01780093b7c7200aecb1bee045bed86340ec25886b9539480fc"
+        }
+      },
+      "configuration_equal": true,
+      "same_native_session": false
+    }
+  },
+  "distinct_sessions": 16,
+  "distinct_outputs": 16,
+  "shared_sessions": {},
+  "repeated_outputs": {},
+  "repeated_premise_text": {}
+}

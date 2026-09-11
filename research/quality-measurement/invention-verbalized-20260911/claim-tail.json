@@ -2,7 +2,7 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "invention-verbalized-tail-20260911",
   "statement": "In the registered two-block pilot, tail probability framing produces causal plot departures beyond both batch and format controls in both blocks, preserved in both preselected unchanged expansions.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -18,6 +18,21 @@
       "kind": "literature",
       "path": "research/quality-measurement/invention-verbalized-20260911/sources.json",
       "sha256": "c6da128e94800dd18b0a0eae22c28874522241bbe0a8004032c572ccd167ea64"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/invention-verbalized-20260911/evidence.json",
+      "sha256": "3b084a8b277adda8a1780c9ffda50ace47fa5540eb4ac61f61d3ae1b0aba1843"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/invention-verbalized-20260911/evidence.json",
+      "sha256": "3b084a8b277adda8a1780c9ffda50ace47fa5540eb4ac61f61d3ae1b0aba1843"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/invention-verbalized-20260911/transport-review.json",
+      "sha256": "d76841e05d83387419e3dc3b8984fe8aa53862728d11d345ec50c268aec45ba4"
     }
   ]
 }

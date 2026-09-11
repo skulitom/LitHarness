@@ -1,0 +1,137 @@
+{
+  "post_observation": true,
+  "reviewer_sha256": "4a0ffcebd7faf2eb54f8ea39741b28984877406c5ec70e886c1988a6b4fbe441",
+  "original_audit_sha256": "27a5252235f09d7787428f8c17db6aaf91f55e434b550a00a14b30120446110d",
+  "original_evidence_sha256": "3b084a8b277adda8a1780c9ffda50ace47fa5540eb4ac61f61d3ae1b0aba1843",
+  "explanation": "The registered raw-system equality omitted CompletionRequest.effective_system's schema instruction. Original failed flags remain unchanged.",
+  "calls": {
+    "batch-1": {
+      "receipt_sha256": "53368c5942c79c6574eb81b191b112562409381bcf18de2d461249ace937f88c",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "batch-2": {
+      "receipt_sha256": "7f94eb6e1593674e5054ccd4df7620963dd4765fbd95c3f5fcfdbcc7672453a7",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "expand-batch-1": {
+      "receipt_sha256": "ec1c191b8ba8a8363820b378b023c5e77097b81572f4c3161ceec7137646cb17",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "expand-batch-2": {
+      "receipt_sha256": "a68ce0f02d7b7dc478534b86dd7ee50c0d20f2077662c581e4b54d84b3a35389",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "expand-format-1": {
+      "receipt_sha256": "27c8ca6600eb245da2c39685f783c6299cca9204c5293df3c6f967aa625c598f",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "expand-format-2": {
+      "receipt_sha256": "4ddf0db535141029de301cb1ed06643b9a55157d710c82d90cc2d8a26d0bf97a",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "expand-full-1": {
+      "receipt_sha256": "9af830eb7d3aeac8a853dd9e5509030e168bc5e2ba60b366b5efb3709fec5d1c",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "expand-full-2": {
+      "receipt_sha256": "9cbc437997736b1e637cdf518257997b472a7d6359ff4f273efd9adbc114b9df",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "expand-tail-1": {
+      "receipt_sha256": "53fc527ab9532c673bce0ea8896e65e17d0e7964a9f87f3b7d9749c026b89906",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "expand-tail-2": {
+      "receipt_sha256": "a04ed23668ae36e69a75dd63a6dcd7e54418c1b7fe14fc72f5f5088476fbc368",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "format-1": {
+      "receipt_sha256": "9a3a680e870844421f2bbcd6f58ccf6c3500f0219ce29e0cc1a13dbc909a1a53",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "format-2": {
+      "receipt_sha256": "5d516e92d856ad225732f6d676207c8f368c19b83de6d6328a77e2b34276b82b",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "full-1": {
+      "receipt_sha256": "4d4134fa1dd8ca8bb8614f6a930cbc6fb9eee8488ca3edb076c93966034210a7",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "full-2": {
+      "receipt_sha256": "3cb7a0e37058d3f37f79712ae81977c586634d77d2e40f3851b770390085b034",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "tail-1": {
+      "receipt_sha256": "abaa5f539d8cfefb32156f643f1a2a11c73e4b40ba3096fb5ce67efc9c88f01b",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    },
+    "tail-2": {
+      "receipt_sha256": "7b155c05558e8be3ca57d7c9607f2cd6c3a9d058ebf7795503036b9034916f20",
+      "raw_system_equal": false,
+      "effective_system_equal": true,
+      "prompt_equal": true,
+      "native_schema_equal": true,
+      "extra_instruction_negative_control_rejected": true
+    }
+  }
+}
