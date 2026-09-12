@@ -100,6 +100,8 @@ are recorded in the [life-scope experiment](research/quality-measurement/discove
 The subsequent [fresh chapter and close reading](research/quality-measurement/past-action-continuity-20260912/REPORT.md)
 returned to water, nurseries and permission-based conflict with an empty brief and a new seed.
 The earlier result does not establish a solution to repetition in fresh invention.
+The [empty-brief follow-up](research/quality-measurement/empty-brief-life-20260912/REPORT.md)
+also retained the repair/access pattern when that sentence was removed entirely.
 Stable world material stays in the discovery treatment's world field; proposed encounters stay
 in its opening field.
 World seeding is instructed to keep observable traces separate from undisclosed explanations

@@ -1,0 +1,194 @@
+{
+  "all_transport_controls_pass": true,
+  "controls": 45,
+  "outputs": [
+    {
+      "name": "control-1",
+      "receipt_sha256": "dba4318e51f7bfbfbc0fa9280e96c0acdfd0421e5e633ef3a976e3cd833e1302",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4474,
+        "output_tokens": 1092,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 482
+      },
+      "fields": {
+        "world": {
+          "sha256": "2521ae00ac372ef487e72f0a43b1e3f738b487e3f6b6edb877fc59f43782bbb5",
+          "words": 244
+        },
+        "opening": {
+          "sha256": "ee6e3c156ac8ef857e81883e8af839239f732e74dfcd27d7832c4b33b1695457",
+          "words": 377
+        },
+        "growth": {
+          "sha256": "62cb51745ad31c94fc297d610eacba02cc4b7dcaefe0228d05f9dd78bcc193d4",
+          "words": 268
+        }
+      }
+    },
+    {
+      "name": "omit-1",
+      "receipt_sha256": "66f6484173c1f9abd02324a0f07e8e06f2e39d03bbc401d0d18c599f75c5081e",
+      "valid": true,
+      "usage": {
+        "input_tokens": 1891,
+        "output_tokens": 952,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 316
+      },
+      "fields": {
+        "world": {
+          "sha256": "69375087695361af91c0713eb80680a0a3c67c0a9cfea11930c73eac095d6531",
+          "words": 181
+        },
+        "opening": {
+          "sha256": "a8d207e270480def8a9bd74602a864cbe6b1a72420ec7a4bd7b3b78835e85df1",
+          "words": 396
+        },
+        "growth": {
+          "sha256": "4c5429ee6c178f059152782c185aa3d6d19611f21d547c69bd66e2dc26458e7f",
+          "words": 208
+        }
+      }
+    },
+    {
+      "name": "omit-2",
+      "receipt_sha256": "6d70661e995685cc29752427128b0b6114fa6ce5be678095e164a3652ccbd7fa",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4443,
+        "output_tokens": 974,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 469
+      },
+      "fields": {
+        "world": {
+          "sha256": "d322580a3dabdffac73c0b239f0d937dcadb22db1d6ab03e0ceba2053daaa024",
+          "words": 221
+        },
+        "opening": {
+          "sha256": "85d149771d30206f6205a394e8f58aa9083f33db2d5ff5ee75d0b11de63f9596",
+          "words": 382
+        },
+        "growth": {
+          "sha256": "4d6ef6fee3cc9aff1125552fb7423f82d1bce85190365dd8e98b7799ea9994a4",
+          "words": 205
+        }
+      }
+    },
+    {
+      "name": "control-2",
+      "receipt_sha256": "bf9895c58be62f172b8950812e1651aa9793f45ebe25213106bfd334c6f14d1a",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4472,
+        "output_tokens": 1117,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 280
+      },
+      "fields": {
+        "world": {
+          "sha256": "eeb23ed364b4e47572dabd81ef2c7af272ab887fc8a10e2d6a8bcb53a0b9f4de",
+          "words": 273
+        },
+        "opening": {
+          "sha256": "ee6b995259bedc29ea56b90189f011212012a1d5dc30c762bf72885d444c9c5b",
+          "words": 401
+        },
+        "growth": {
+          "sha256": "fb2fc8ea201f6dee8a7aa21fe4a56025d8f39cb12f0513d386817974e8c9a899",
+          "words": 249
+        }
+      }
+    },
+    {
+      "name": "control-3",
+      "receipt_sha256": "6f8daeafceac9815b64603b94de00dfb381c5ddc784a4641604fbe1e128c0b8d",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4467,
+        "output_tokens": 1025,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 291
+      },
+      "fields": {
+        "world": {
+          "sha256": "8cdd446cebd1655c46a7109e96ddcac615851ffcd5115a8a7262abb64476668f",
+          "words": 224
+        },
+        "opening": {
+          "sha256": "e86a2540806bd7c300860b2e9166a0a94082a77b8a54ba468cecf2a60f4daa4f",
+          "words": 357
+        },
+        "growth": {
+          "sha256": "dca62e0a9dfaeef620bb225d7e8b0eceb93937c2b98a174cd0028075d539ea66",
+          "words": 258
+        }
+      }
+    },
+    {
+      "name": "omit-3",
+      "receipt_sha256": "f16cd50e1e7b760ed4d32d14d9b614685d6ce58d0619f3fd73d4a1518d4488b9",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4436,
+        "output_tokens": 935,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 388
+      },
+      "fields": {
+        "world": {
+          "sha256": "96d942498a867a911b3806648b50aa584bbfe59883dde444743581e99ceecc3a",
+          "words": 196
+        },
+        "opening": {
+          "sha256": "1ca740c8393736596b51449e74acb222af4983e4164a08faa5a825c392859000",
+          "words": 363
+        },
+        "growth": {
+          "sha256": "a05d2436598c8befc8d5701c404c1ad3b546f5cc80a889aefda82e145301688d",
+          "words": 201
+        }
+      }
+    }
+  ],
+  "progress": {
+    "attempts": 6,
+    "tokens": 35064,
+    "status": "complete",
+    "slots": [
+      {
+        "name": "control-1",
+        "status": "completed"
+      },
+      {
+        "name": "omit-1",
+        "status": "completed"
+      },
+      {
+        "name": "omit-2",
+        "status": "completed"
+      },
+      {
+        "name": "control-2",
+        "status": "completed"
+      },
+      {
+        "name": "control-3",
+        "status": "completed"
+      },
+      {
+        "name": "omit-3",
+        "status": "completed"
+      }
+    ]
+  },
+  "registration_sha256": "669edff0c13f6f39ed75d9a8054c421c82171a1c3b2dfba07c7bcd652d01157a"
+}

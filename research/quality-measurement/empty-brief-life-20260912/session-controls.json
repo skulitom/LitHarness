@@ -1,0 +1,67 @@
+{
+  "unique_sessions": 6,
+  "recorded_sessions": 6,
+  "rows": [
+    {
+      "slot": "control-1",
+      "thread_ids": [
+        "01a096a1-648d-7072-886e-2ff2aca8c38f"
+      ],
+      "ephemeral": true,
+      "ignore_rules": true,
+      "project_doc_max_bytes": 0,
+      "memories_enabled": false
+    },
+    {
+      "slot": "omit-1",
+      "thread_ids": [
+        "01a096a3-0003-7a53-b865-700b8581fb53"
+      ],
+      "ephemeral": true,
+      "ignore_rules": true,
+      "project_doc_max_bytes": 0,
+      "memories_enabled": false
+    },
+    {
+      "slot": "omit-2",
+      "thread_ids": [
+        "01a096a4-2863-7a62-8535-9c0e56a9e0ca"
+      ],
+      "ephemeral": true,
+      "ignore_rules": true,
+      "project_doc_max_bytes": 0,
+      "memories_enabled": false
+    },
+    {
+      "slot": "control-2",
+      "thread_ids": [
+        "01a096a5-7f9f-7c12-8baa-4050bd93ae24"
+      ],
+      "ephemeral": true,
+      "ignore_rules": true,
+      "project_doc_max_bytes": 0,
+      "memories_enabled": false
+    },
+    {
+      "slot": "control-3",
+      "thread_ids": [
+        "01a096a6-c120-70a0-a0fd-e5217a7d3e2e"
+      ],
+      "ephemeral": true,
+      "ignore_rules": true,
+      "project_doc_max_bytes": 0,
+      "memories_enabled": false
+    },
+    {
+      "slot": "omit-3",
+      "thread_ids": [
+        "01a096a8-1a61-7cb3-bab1-e37e8e9f141b"
+      ],
+      "ephemeral": true,
+      "ignore_rules": true,
+      "project_doc_max_bytes": 0,
+      "memories_enabled": false
+    }
+  ],
+  "note": "Additional offline transport inspection; not a new semantic decision rule."
+}
