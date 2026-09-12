@@ -1,0 +1,18 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "discovery-life-scope-20260912",
+  "statement": "The unconditional unfamiliar-life elaboration sentence causes the registered added obligation family in both fixed-source expansions, and conditioning it on the supplied brief removes that addition across repeats and assigned chapters while preserving the source pursuits and progression.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/discovery-life-scope-20260912/RUNBOOK.md",
+      "sha256": "7d9a4bde9cb20c2ee39e78315ee2a51a9dc45f1baba2a13bf6aa73b4e3d9ca42"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/discovery-life-scope-20260912/registration.json",
+      "sha256": "c4cfb0c01f0b7c01d12ee01333a24d1eddc1741b45711461873e600c9c75dbc7"
+    }
+  ]
+}
