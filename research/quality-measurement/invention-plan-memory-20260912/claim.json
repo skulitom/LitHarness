@@ -2,7 +2,7 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "invention-plan-memory-20260912",
   "statement": "Including the full generated plans of prior stories may reduce recurring added world and plot material during expansion beyond matched short-history and clean controls, without replacing the supplied premise.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -18,6 +18,16 @@
       "kind": "literature",
       "path": "research/quality-measurement/invention-plan-memory-20260912/sources.json",
       "sha256": "8ddd2c2b19640c714c780d666255057590aa1974f21fcc5ef4ed7b18395bc05d"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/invention-plan-memory-20260912/evidence.json",
+      "sha256": "39750791d6206fb4f7051de8f16ebd4cfbb061e5f448efcb0c6435089ab26f03"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/invention-plan-memory-20260912/evidence.json",
+      "sha256": "39750791d6206fb4f7051de8f16ebd4cfbb061e5f448efcb0c6435089ab26f03"
     }
   ]
 }
