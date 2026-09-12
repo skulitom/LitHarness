@@ -1,0 +1,17 @@
+[
+  {
+    "source": "https://arxiv.org/abs/1811.05701v3",
+    "path": "runs/invention-genre-deferral-20260912/sources/plan-and-write.html",
+    "sha256": "bb863f1871050525527900caa585c53b878480d4f8e35c004fe168cf5c31a66a"
+  },
+  {
+    "source": "local prior result",
+    "path": "research/quality-measurement/invention-active-seed-20260912/REPORT.md",
+    "sha256": "37b4d5e7f98bd6452df320efdd6c05d5f1a2e11cb8c654338dfb024d39831267"
+  },
+  {
+    "source": "local prior result",
+    "path": "research/quality-measurement/premise-before-development/RESULTS.md",
+    "sha256": "754b3d2f6d2acd9f25caed4836e9c55839640592fec0a58e9173e2b5fe2052bd"
+  }
+]
