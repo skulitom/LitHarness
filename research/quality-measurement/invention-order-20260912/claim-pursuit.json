@@ -2,7 +2,7 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "invention-order-pursuit-20260912",
   "statement": "Adding the registered first personal-undertaking field consistently avoids the recurring repair/access engine across these three seeds while preserving distinct pursuits through opening and growth.",
-  "status": "registered",
+  "status": "refuted",
   "artifacts": [
     {
       "kind": "registration",
@@ -18,6 +18,21 @@
       "kind": "registration",
       "path": "research/quality-measurement/invention-order-20260912/run.py",
       "sha256": "23643f09f71855e35b90b6e57540439ffc8043a09660c738d307bba6eb618f28"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/invention-order-20260912/evidence.json",
+      "sha256": "c4a2462edf19ab4eb19b073dd582ada6ca5be8a77b326e2518a253085bd1bce2"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/invention-order-20260912/evidence.json",
+      "sha256": "c4a2462edf19ab4eb19b073dd582ada6ca5be8a77b326e2518a253085bd1bce2"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/invention-order-20260912/REPORT.md",
+      "sha256": "ac0427bcb2d145dca898e67bac3904208337f5e991d9c48f5cad91ee255f2f00"
     }
   ]
 }

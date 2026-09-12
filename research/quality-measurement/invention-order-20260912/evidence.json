@@ -1,0 +1,519 @@
+{
+  "all_transport_controls_pass": true,
+  "controls": {
+    "control-1": {
+      "frozen_request": true,
+      "renderer": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "native_order": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "opening-1": {
+      "frozen_request": true,
+      "renderer": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "native_order": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "pursuit-1": {
+      "frozen_request": true,
+      "renderer": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "native_order": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "opening-2": {
+      "frozen_request": true,
+      "renderer": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "native_order": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "pursuit-2": {
+      "frozen_request": true,
+      "renderer": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "native_order": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "control-2": {
+      "frozen_request": true,
+      "renderer": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "native_order": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "pursuit-3": {
+      "frozen_request": true,
+      "renderer": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "native_order": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "control-3": {
+      "frozen_request": true,
+      "renderer": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "native_order": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "opening-3": {
+      "frozen_request": true,
+      "renderer": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "native_order": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "distinct_sessions": {
+      "pass": true
+    }
+  },
+  "outputs": [
+    {
+      "name": "control-1",
+      "receipt_sha256": "f78ca410ae6b06aad9f398aed19e74634b14cf876a919d4d6c3f3590f80c2739",
+      "valid": true,
+      "usage": {
+        "input_tokens": 1907,
+        "output_tokens": 1093,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 389
+      },
+      "session_ids": [
+        "01a096ca-1e90-7ec3-8501-336edfc16dde"
+      ],
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "order_compliant": true,
+      "fields": {
+        "world": {
+          "sha256": "04d91a075833b68316c14ed690511a0ffd5b701057374b54f82e4aaf388d6e47",
+          "words": 233
+        },
+        "opening": {
+          "sha256": "c30a984624435fbad8c63ab5d081dd61749d4b612d49b4891cc8970dd60081b3",
+          "words": 368
+        },
+        "growth": {
+          "sha256": "779b64b61fc3fc7219cad87247aa7e551c21826752ad73bd51f886f64d8c99eb",
+          "words": 251
+        }
+      }
+    },
+    {
+      "name": "opening-1",
+      "receipt_sha256": "ac96c51c8dde027c0952bb934960c62cad3baadfdbd12a76855933a550fbc8b2",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4465,
+        "output_tokens": 1016,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 403
+      },
+      "session_ids": [
+        "01a096cb-9554-7a93-8127-161c2342335f"
+      ],
+      "returned_order": [
+        "opening",
+        "world",
+        "growth"
+      ],
+      "order_compliant": true,
+      "fields": {
+        "opening": {
+          "sha256": "397fa2e8ede019e29d15769a25f2c15891c6ef0d49491bb2baab0147b74f7812",
+          "words": 385
+        },
+        "world": {
+          "sha256": "3e9b891da52ef3fd8521cab2d3233a6dec8ae0192d23bf5c467a5cc4c620db21",
+          "words": 203
+        },
+        "growth": {
+          "sha256": "8593e8ce94ff2bd29c0ffa632a601fcdf2989b3db2dce115c8bdf62c4a4461c3",
+          "words": 228
+        }
+      }
+    },
+    {
+      "name": "pursuit-1",
+      "receipt_sha256": "dbee3e9edbdc1e595235cf421bcd451ad2fcdec4ff4a95a28dd6aa44aa454caf",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4559,
+        "output_tokens": 1127,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 516
+      },
+      "session_ids": [
+        "01a096cc-e2c7-7de1-a819-33b94f009846"
+      ],
+      "returned_order": [
+        "pursuit",
+        "opening",
+        "world",
+        "growth"
+      ],
+      "order_compliant": true,
+      "fields": {
+        "pursuit": {
+          "sha256": "fc257443e2f37c386df256eafe3a0bd8e257c792013991f3d6c9068cdb702b9b",
+          "words": 119
+        },
+        "opening": {
+          "sha256": "e084b63f2079b745f2ffbb01b94be06064ce0646361877ce3f0a8cdaaa4130d4",
+          "words": 368
+        },
+        "world": {
+          "sha256": "32fe5589b0e970df5faa73a5fed3bedb682feae9f75ebfc60596cd8809108cb8",
+          "words": 213
+        },
+        "growth": {
+          "sha256": "4e067ff6f9f54cf26efeb0da59ef56cec8f3597c6875b0f1baabba86d56ee83b",
+          "words": 215
+        }
+      }
+    },
+    {
+      "name": "opening-2",
+      "receipt_sha256": "ca48a1f63dd81d30adf7c6288860f06c801c1325dfa408b9059e9b2a5dd5c04f",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4476,
+        "output_tokens": 1066,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 397
+      },
+      "session_ids": [
+        "01a096ce-461f-70d2-88c2-6aa7df0162d0"
+      ],
+      "returned_order": [
+        "opening",
+        "world",
+        "growth"
+      ],
+      "order_compliant": true,
+      "fields": {
+        "opening": {
+          "sha256": "7301fce2b2d56834ccf60a8713642c19cbf5c4eceb8f3855163c471cccf8261f",
+          "words": 398
+        },
+        "world": {
+          "sha256": "b5eb2e1186a2e5a0445a59ff6c111b063c917f7d5980f543894e7978b11c8da0",
+          "words": 206
+        },
+        "growth": {
+          "sha256": "87cbf3174e12d610dc70c6adbb2a8e93c898a7780a857dba0d1ea6014cf0ab4d",
+          "words": 257
+        }
+      }
+    },
+    {
+      "name": "pursuit-2",
+      "receipt_sha256": "f430e5a26fd701816ec0f9b5c4d23f8410436764a7356a2444ba7be7b809d351",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4566,
+        "output_tokens": 1098,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 441
+      },
+      "session_ids": [
+        "01a096cf-8b22-7172-a692-ebe56f9b028a"
+      ],
+      "returned_order": [
+        "pursuit",
+        "opening",
+        "world",
+        "growth"
+      ],
+      "order_compliant": true,
+      "fields": {
+        "pursuit": {
+          "sha256": "838190c6bac97cfe6ec7358370eafacc24376f48bdfdeba25eafd4f1056ddd68",
+          "words": 107
+        },
+        "opening": {
+          "sha256": "a95b91a3c1832a78bccf2efcf0303927fa670210cc53e40dc2678061bd7f49f3",
+          "words": 373
+        },
+        "world": {
+          "sha256": "a52bc249d88d3e7f4cff50e4d27ac97ccfb1ac7b62d9757fb7cb1fb3d8672298",
+          "words": 190
+        },
+        "growth": {
+          "sha256": "cca82cd18652ee6294d11d80dff51cb9f431aaad3c9b7af94cc3a1000c5bf02c",
+          "words": 198
+        }
+      }
+    },
+    {
+      "name": "control-2",
+      "receipt_sha256": "bbee3add9e4905fe07319c6ac685038817e11d43a89a11488fc7d736c985a2ed",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4472,
+        "output_tokens": 1129,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 516
+      },
+      "session_ids": [
+        "01a096d0-e33b-7342-ab85-a23f2beb4739"
+      ],
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "order_compliant": true,
+      "fields": {
+        "world": {
+          "sha256": "0b0589f4539eba8f41852967b451efdd228bb251a61f94068498f33ef5848414",
+          "words": 256
+        },
+        "opening": {
+          "sha256": "7b8805e71f44fc8032e382f18560a7673bc1baf4c5a2c34d34647f3c5cb6e28f",
+          "words": 406
+        },
+        "growth": {
+          "sha256": "7aeccb07552191bd15bbab690e8788646a2d312a58d2154152efca0359e21347",
+          "words": 239
+        }
+      }
+    },
+    {
+      "name": "pursuit-3",
+      "receipt_sha256": "4d9e49ce0dc18855966e4da874d9bf8ab8b5935ac82446e6b0a0da5057359bfd",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4570,
+        "output_tokens": 1096,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 421
+      },
+      "session_ids": [
+        "01a096d2-6947-7bc0-b976-811b91d2bc59"
+      ],
+      "returned_order": [
+        "pursuit",
+        "opening",
+        "world",
+        "growth"
+      ],
+      "order_compliant": true,
+      "fields": {
+        "pursuit": {
+          "sha256": "dd0a9e099da3e7519a908c9ab2a4938bb19d5ecac817b936aa3f13947bbe195c",
+          "words": 138
+        },
+        "opening": {
+          "sha256": "6cd744b0544711e82496feefaf9be61bfd865fb9c893460819df26b654f2af8b",
+          "words": 299
+        },
+        "world": {
+          "sha256": "5ffefb058a654c557a0a85537cf785482f4860d81f25296fd51536b2a37e6708",
+          "words": 229
+        },
+        "growth": {
+          "sha256": "fc44274ae3eaceefcfceb3120e0076b36c16993b90d70217002b8573878ec581",
+          "words": 245
+        }
+      }
+    },
+    {
+      "name": "control-3",
+      "receipt_sha256": "704de1b2eba431bb54377d87cf412bc5c1b4c9a96d409971faf7f4693012d864",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4472,
+        "output_tokens": 961,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 422
+      },
+      "session_ids": [
+        "01a096d3-cb71-7a23-bd70-fb170ba32030"
+      ],
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "order_compliant": true,
+      "fields": {
+        "world": {
+          "sha256": "822c16eb680855a3dca17b1557438e66ec60e1cb0bb76ca5a6482c67b4a29991",
+          "words": 241
+        },
+        "opening": {
+          "sha256": "89355ee9d2fbabb5f558012e60f310c40ef89193638fc50162f56b69a2c1e6e1",
+          "words": 322
+        },
+        "growth": {
+          "sha256": "cdca2c6facffc89b2e4d2b6c0921d6043a2dc55689229e061c67743f8c658d31",
+          "words": 215
+        }
+      }
+    },
+    {
+      "name": "opening-3",
+      "receipt_sha256": "14725e6fac6dca76598fcc48327a6d32769b02a12c1e84f52c3276fe2e5163e6",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4478,
+        "output_tokens": 1114,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 157
+      },
+      "session_ids": [
+        "01a096d4-f76e-7460-bb13-aba42dae9c57"
+      ],
+      "returned_order": [
+        "opening",
+        "world",
+        "growth"
+      ],
+      "order_compliant": true,
+      "fields": {
+        "opening": {
+          "sha256": "61cd8623deed5cf4feceb55c9c59b6635404a3b91320ed1131837f1f660e65b3",
+          "words": 451
+        },
+        "world": {
+          "sha256": "5063c645ee7d63b08f27dc151a0fddc01dbbd7d6ad7a8e38fcd4ea484879b412",
+          "words": 223
+        },
+        "growth": {
+          "sha256": "f13c7a645b5abaebfdfcebe9e7ad83c0e157b9f451e9c2bb662dc36678b2a4e6",
+          "words": 244
+        }
+      }
+    }
+  ],
+  "progress": {
+    "attempts": 9,
+    "tokens": 53887,
+    "status": "complete",
+    "slots": [
+      {
+        "name": "control-1",
+        "status": "completed"
+      },
+      {
+        "name": "opening-1",
+        "status": "completed"
+      },
+      {
+        "name": "pursuit-1",
+        "status": "completed"
+      },
+      {
+        "name": "opening-2",
+        "status": "completed"
+      },
+      {
+        "name": "pursuit-2",
+        "status": "completed"
+      },
+      {
+        "name": "control-2",
+        "status": "completed"
+      },
+      {
+        "name": "pursuit-3",
+        "status": "completed"
+      },
+      {
+        "name": "control-3",
+        "status": "completed"
+      },
+      {
+        "name": "opening-3",
+        "status": "completed"
+      }
+    ]
+  },
+  "registration_sha256": "9b289c54672f3fcff204d999d1ca39eb1d6ea69a2c58c4fdccf3b2684061493d"
+}
