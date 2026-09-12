@@ -2,7 +2,7 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "invention-active-seed-20260912",
   "statement": "Explicitly directing invention toward an external Base64 prefix produces causal plot departures beyond passive-prefix and diversity-wording controls across both registered seeds and repeats, preserved in both preselected active expansions.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -18,6 +18,16 @@
       "kind": "literature",
       "path": "research/quality-measurement/invention-active-seed-20260912/sources.json",
       "sha256": "b05af7f75ceb7dbc79f8531e3f23d332953695f50c72ac303bb30c8071aa42d1"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/invention-active-seed-20260912/evidence.json",
+      "sha256": "1619099f15efd5b79b4617a28b92854619c3274fcce4c7aca1cfc1646773c3b9"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/invention-active-seed-20260912/evidence.json",
+      "sha256": "1619099f15efd5b79b4617a28b92854619c3274fcce4c7aca1cfc1646773c3b9"
     }
   ]
 }
