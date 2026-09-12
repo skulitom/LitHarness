@@ -212,7 +212,7 @@ def test_new_invention_defaults_to_the_requested_genres_under_the_author_brief(b
         assert "unless the author's brief calls for something else" in request.system
         if brief:
             assert brief in request.prompt
-    assert discovery.Discovery.from_invention(_discovery()).version == "magical-discovery.v5"
+    assert discovery.Discovery.from_invention(_discovery()).version == "magical-discovery.v6"
 
 
 # --- where it lives ------------------------------------------------------------------------
@@ -624,6 +624,40 @@ def test_stored_v4_discovery_keeps_its_direction_when_developed_again() -> None:
     request = concept.render_concept_request("Keep this story.", scenes=6, discovery=restored)
     assert restored.render() in request.prompt
     assert discovery.DIRECTION not in request.system + request.prompt
+
+
+def test_stored_v5_discovery_keeps_its_direction_when_developed_again() -> None:
+    payload = {**_discovery(), "version": "magical-discovery.v5"}
+    original_direction = (
+        "Create a LitRPG fantasy experience in portal fantasy, isekai, or system apocalypse, or "
+        "a combination, unless the author's brief calls for something else: an unfamiliar world "
+        "worth exploring and powers the character wants to acquire and use. Give unfamiliar life "
+        "or intelligence its own pursuits, relationships and history, with tangible traces "
+        "inviting contact and investigation. Let the chosen magic system determine how "
+        "advancement is earned through the story's events, including discovery, conflict, "
+        "exploration, choices or practice. Let an early gain advance a personal pursuit, reveal "
+        "limitations through use and make further capabilities desirable."
+    )
+    saved = discovery.Discovery.from_payload(payload)
+    restored = discovery.Discovery.from_payload(saved.to_jsonable())
+    assert restored.to_jsonable() == payload
+    assert restored.render().splitlines()[0] == (
+        f"Intended fantasy experience (magical-discovery.v5): {original_direction}"
+    )
+    request = concept.render_concept_request("Keep this story.", scenes=6, discovery=restored)
+    assert restored.render() in request.prompt
+    assert discovery.DIRECTION not in request.system + request.prompt
+
+
+def test_new_discovery_retains_the_scoped_direction_through_concept_development() -> None:
+    source = discovery.Discovery.from_invention(_discovery())
+    developed = concept.Concept.from_development(_example(), source, author_brief="Keep this.")
+    restored = concept.Concept.from_text(developed.to_text())
+    assert restored.discovery == source
+    request = concept.render_concept_request("Keep this.", scenes=6, discovery=restored.discovery)
+    assert source.render() in request.prompt
+    assert "If the author's brief introduces unfamiliar life or intelligence" in request.prompt
+    assert discovery.DIRECTIONS["magical-discovery.v5"] not in request.system + request.prompt
 
 
 def _discovery() -> dict[str, object]:

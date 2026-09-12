@@ -1,8 +1,8 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "discovery-life-scope-20260912",
-  "statement": "The unconditional unfamiliar-life elaboration sentence causes the registered added obligation family in both fixed-source expansions, and conditioning it on the supplied brief removes that addition across repeats and assigned chapters while preserving the source pursuits and progression.",
-  "status": "registered",
+  "statement": "In this registered test, the unconditional unfamiliar-life sentence contributed to added nonhuman family and maintenance dependencies during planning for both fixed sources. Omission and conditional elaboration avoided the addition across the assigned repeats while retaining source pursuits and progression; neither assigned conditional opening chapter restored it. This is local support, not a general repetition or quality claim.",
+  "status": "supported",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,21 @@
       "kind": "registration",
       "path": "research/quality-measurement/discovery-life-scope-20260912/registration.json",
       "sha256": "c4cfb0c01f0b7c01d12ee01333a24d1eddc1741b45711461873e600c9c75dbc7"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/discovery-life-scope-20260912/evidence.json",
+      "sha256": "b82a797c5139f9d0d060a6bdd4a4268e10cae199926755770beb7ad1f7b0973a"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/discovery-life-scope-20260912/evidence.json",
+      "sha256": "b82a797c5139f9d0d060a6bdd4a4268e10cae199926755770beb7ad1f7b0973a"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/discovery-life-scope-20260912/REPORT.md",
+      "sha256": "58cb8ec681b31f8871472c1cce7f822ae3397b233f6184f1a004eae89fcf8931"
     }
   ]
 }

@@ -18,8 +18,8 @@ from litharness.domain.generation import CompletionRequest
 from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v10"
-VERSION = "magical-discovery.v5"
+PROFILE = "writer.discovery.v11"
+VERSION = "magical-discovery.v6"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
 _V1_DIRECTION = (
@@ -57,7 +57,7 @@ _V4_DIRECTION = (
     "the protagonist accomplish for a personal pursuit, and what makes a further capability "
     "desirable. Let them experience and use a reward as well as encounter its limitations."
 )
-DIRECTION = (
+_V5_DIRECTION = (
     "Create a LitRPG fantasy experience in portal fantasy, isekai, or system apocalypse, or "
     "a combination, unless the author's brief calls for something else: an unfamiliar world "
     "worth exploring and powers the character wants to acquire and use. Give unfamiliar life "
@@ -67,11 +67,23 @@ DIRECTION = (
     "exploration, choices or practice. Let an early gain advance a personal pursuit, reveal "
     "limitations through use and make further capabilities desirable."
 )
+DIRECTION = (
+    "Create a LitRPG fantasy experience in portal fantasy, isekai, or system apocalypse, or "
+    "a combination, unless the author's brief calls for something else: an unfamiliar world "
+    "worth exploring and powers the character wants to acquire and use. If the author's "
+    "brief introduces unfamiliar life or intelligence, develop its own pursuits, "
+    "relationships and history, with tangible traces inviting contact and investigation. "
+    "Let the chosen magic system determine how advancement is earned through the story's "
+    "events, including discovery, conflict, exploration, choices or practice. Let an early "
+    "gain advance a personal pursuit, reveal limitations through use and make further "
+    "capabilities desirable."
+)
 DIRECTIONS = {
     "magical-discovery.v1": _V1_DIRECTION,
     "magical-discovery.v2": _V2_DIRECTION,
     "magical-discovery.v3": _V3_DIRECTION,
     "magical-discovery.v4": _V4_DIRECTION,
+    "magical-discovery.v5": _V5_DIRECTION,
     VERSION: DIRECTION,
 }
 
