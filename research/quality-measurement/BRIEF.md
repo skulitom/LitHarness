@@ -409,3 +409,10 @@ acquisition exercises into fresh plans and a chapter, while its independent magi
 already converged and repair/access plots formed around them. Its broad avoidance claim was
 refuted; the narrow preservation result does not rescue it. Inspect both component invention
 and downstream use before treating successful preservation as evidence of creative variety.
+
+The subsequent [crossed inventor/expander observation](invention-boundaries-20260912/REPORT.md)
+keeps the same first mechanics objects across providers and finds different downstream stories,
+alongside recurring professional/infrastructure patterns within both providers. Its separate
+Nico chapter contrast does not show the current plan displacing that supplied pursuit; the
+padding placebo fails token matching. These are scoped observations about two boundaries,
+not a qualified provider choice, diversity rate or general verdict on planning.

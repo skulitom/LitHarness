@@ -1,0 +1,38 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "invention-boundaries-chapter-pursuit-20260912",
+  "statement": "All four first Nico chapters in the registered premise/plan/placebo contrast retain the evidence-and-sale pursuit and buyer-notification consequence; the additional-input token placebo does not meet the registered matching tolerance.",
+  "status": "observed",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/invention-boundaries-20260912/RUNBOOK.md",
+      "sha256": "7be579be2a4f3946607a1836206c459802d7ec1569e7deec9dbf64a3adc4ef8a"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/invention-boundaries-20260912/registration.json",
+      "sha256": "cf0a2882cf459971f1200c88b953a5764554142d0d6e771d41ae8239a599fd92"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/invention-boundaries-20260912/run.py",
+      "sha256": "6aac24fb7a757eb33611ff8928ec0d333c311baa22708f0cfa29c513263c7ed4"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/invention-boundaries-20260912/evidence.json",
+      "sha256": "77501becad3bd50439fe243572771b1f0da27c0c6f88d04b4ca0f60846366f03"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/invention-boundaries-20260912/evidence.json",
+      "sha256": "77501becad3bd50439fe243572771b1f0da27c0c6f88d04b4ca0f60846366f03"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/invention-boundaries-20260912/REPORT.md",
+      "sha256": "b7d1639b1b8540cda0a5870c1476377e392b92bf82a6586f3be72bc867bb4b85"
+    }
+  ]
+}

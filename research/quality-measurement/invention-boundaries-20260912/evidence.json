@@ -1,0 +1,1022 @@
+{
+  "all_controls_pass": true,
+  "controls": {
+    "frozen": {
+      "C:\\DEV\\LitHarness\\src\\litharness\\cli.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\mcp_server.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\__main__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\continuity_cli.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\contracts_fixtures.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\evaluation_artifact.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_audience.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_errors.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_jobs.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_plans.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_release.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_roster.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_store.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_voice.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\bookaudit.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\concept.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\conductor.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\covers.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\directive_planner.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\director.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\discovery.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\dossier.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\editorial.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\evaluation.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\exemplars.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\export.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\handlers.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\instrument.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\library.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\model_context.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\narrative_planner.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\operations.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\outline.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\overview.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\planner.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\plan_refinement.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\policy_events.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\ports.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\precision.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\prompt_sources.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\prompt_source_view.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\readers.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\recruiter.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\release.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\repair.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\reviser.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\revoice.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\roster.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\scene_trace.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\status.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\statusline.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\summarize.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\tells_pass.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\titles.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\views.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\world.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\world_agent.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\advancement.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\audience.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\beats.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\budget.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\characters.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\context.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\directives.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\directors.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\draft.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\editorial.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\events.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\exceptions.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\extraction.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\failures.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\findings.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\gamesystem.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\generation.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\genre.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\graphline.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\house.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\integrity.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\invention.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\jobs.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\moves.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\names.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\nodes.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\patch.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\plans.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\plan_refinement.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\policy.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\position.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\progression.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\promises.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\propagation.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\release.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\reviser.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\revision.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\rivals.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\salience.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\scene_brief.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\schema_words.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\serials.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\sheet.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\staging.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\state.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\systems.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\tells.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\text.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\voice.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\worlds.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\world_brief.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\writers.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\packs\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\base.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\cli.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\codex_cli.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\codex_schema.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\codex_tools.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\fake.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\registry.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\packs\\litrpg\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\packs\\plain\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\research\\quality-measurement\\invention-boundaries-20260912\\run.py": true,
+      "C:\\DEV\\LitHarness\\research\\quality-measurement\\invention-boundaries-20260912\\RUNBOOK.md": true,
+      "C:\\DEV\\LitHarness\\research\\quality-measurement\\mechanics-fresh-transfer-20260912\\run.py": true,
+      "C:\\DEV\\LitHarness\\research\\quality-measurement\\past-action-continuity-20260912\\run.py": true,
+      "C:\\Users\\artem\\AppData\\Local\\OpenAI\\Codex\\bin\\7ac07f4ce733f89a\\codex.exe": true,
+      "C:\\Users\\artem\\.local\\bin\\claude.exe": true,
+      "C:\\DEV\\LitHarness\\tests\\test_invention_boundaries_experiment.py": true,
+      "C:\\DEV\\LitHarness\\runs\\discovery-life-scope-20260912\\sources\\2.json": true,
+      "C:\\DEV\\LitHarness\\runs\\discovery-life-scope-20260912\\calls\\scoped-2-1.json": true,
+      "C:\\DEV\\LitHarness\\runs\\discovery-life-scope-20260912\\requests\\scoped-2-1.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-genre-deferral-20260912\\calls\\adapt-late-2-1.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-boundaries-20260912\\nico.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-boundaries-20260912\\seeds\\0.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-boundaries-20260912\\seeds\\1.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-boundaries-20260912\\seeds\\2.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-boundaries-20260912\\requests\\chapter-plan.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-boundaries-20260912\\requests\\chapter-source.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-boundaries-20260912\\requests\\chapter-pad.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-boundaries-20260912\\requests\\chapter-both.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-boundaries-20260912\\requests\\magic-astra-1.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-boundaries-20260912\\requests\\magic-opus-1.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-boundaries-20260912\\requests\\magic-opus-2.json": true,
+      "C:\\DEV\\LitHarness\\runs\\invention-boundaries-20260912\\requests\\magic-astra-2.json": true
+    },
+    "manifest": {
+      "hash": true
+    },
+    "chapter-plan": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "effort": true,
+      "ephemeral": true,
+      "docs_off": true,
+      "memory_off": true
+    },
+    "chapter-source": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "effort": true,
+      "ephemeral": true,
+      "docs_off": true,
+      "memory_off": true
+    },
+    "chapter-pad": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "effort": true,
+      "ephemeral": true,
+      "docs_off": true,
+      "memory_off": true
+    },
+    "chapter-both": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "effort": true,
+      "ephemeral": true,
+      "docs_off": true,
+      "memory_off": true
+    },
+    "magic-astra-1": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "effort": true,
+      "ephemeral": true,
+      "docs_off": true,
+      "memory_off": true
+    },
+    "magic-opus-1": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "reported_model": true,
+      "effort": true,
+      "safe": true,
+      "ephemeral": true,
+      "tools_off": true,
+      "mcp_off": true,
+      "memory_off": true,
+      "subscription": true
+    },
+    "magic-opus-2": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "reported_model": true,
+      "effort": true,
+      "safe": true,
+      "ephemeral": true,
+      "tools_off": true,
+      "mcp_off": true,
+      "memory_off": true,
+      "subscription": true
+    },
+    "magic-astra-2": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "effort": true,
+      "ephemeral": true,
+      "docs_off": true,
+      "memory_off": true
+    },
+    "plan-astra-astra-1": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "effort": true,
+      "ephemeral": true,
+      "docs_off": true,
+      "memory_off": true
+    },
+    "plan-astra-opus-1": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "reported_model": true,
+      "effort": true,
+      "safe": true,
+      "ephemeral": true,
+      "tools_off": true,
+      "mcp_off": true,
+      "memory_off": true,
+      "subscription": true
+    },
+    "plan-opus-opus-1": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "reported_model": true,
+      "effort": true,
+      "safe": true,
+      "ephemeral": true,
+      "tools_off": true,
+      "mcp_off": true,
+      "memory_off": true,
+      "subscription": true
+    },
+    "plan-opus-astra-1": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "effort": true,
+      "ephemeral": true,
+      "docs_off": true,
+      "memory_off": true
+    },
+    "plan-opus-opus-2": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "reported_model": true,
+      "effort": true,
+      "safe": true,
+      "ephemeral": true,
+      "tools_off": true,
+      "mcp_off": true,
+      "memory_off": true,
+      "subscription": true
+    },
+    "plan-opus-astra-2": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "effort": true,
+      "ephemeral": true,
+      "docs_off": true,
+      "memory_off": true
+    },
+    "plan-astra-astra-2": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "effort": true,
+      "ephemeral": true,
+      "docs_off": true,
+      "memory_off": true
+    },
+    "plan-astra-opus-2": {
+      "request": true,
+      "hash": true,
+      "lineage": true,
+      "prompt": true,
+      "system": true,
+      "returncode": true,
+      "schema": true,
+      "model": true,
+      "reported_model": true,
+      "effort": true,
+      "safe": true,
+      "ephemeral": true,
+      "tools_off": true,
+      "mcp_off": true,
+      "memory_off": true,
+      "subscription": true
+    },
+    "sessions": {
+      "distinct": true
+    }
+  },
+  "outputs": [
+    {
+      "name": "chapter-plan",
+      "provider": "astra",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "0b47ae3e626e69e996f4d8e302d572772389e18ce4f50d711b3a430ef8941baa",
+      "lineage": {
+        "nico_sha256": "3dda43b4a5a001b316a723450b356eb0974d4320c17b5cf9e6a958f21292e643"
+      },
+      "usage": {
+        "input_tokens": 5371,
+        "output_tokens": 2242,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 68
+      },
+      "session_ids": [
+        "01a097c6-7045-7a00-8465-e0c6fdf12024"
+      ],
+      "fields": {
+        "story": {
+          "sha256": "f605ed0e39449eed5cfb893ef725b437e3a198065a83744ba2924ffbe85aa91b",
+          "words": 1546
+        }
+      }
+    },
+    {
+      "name": "chapter-source",
+      "provider": "astra",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "2d0b6004d0f3483be5afd161986ee93702ec5bffb9a5e97d9b83b0ba7138ae2d",
+      "lineage": {
+        "nico_sha256": "3dda43b4a5a001b316a723450b356eb0974d4320c17b5cf9e6a958f21292e643"
+      },
+      "usage": {
+        "input_tokens": 4281,
+        "output_tokens": 2193,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 251
+      },
+      "session_ids": [
+        "01a097c8-14b0-7b52-9e7d-28fca1d6fab5"
+      ],
+      "fields": {
+        "story": {
+          "sha256": "e71737905596a0e751d31d4ae9e6d8e25ed18808ed47bb0650295df3206619cd",
+          "words": 1464
+        }
+      }
+    },
+    {
+      "name": "chapter-pad",
+      "provider": "astra",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "0b8f43801767794a82d5ece887923a40929411e2c309250d4ddc566fe3870162",
+      "lineage": {
+        "nico_sha256": "3dda43b4a5a001b316a723450b356eb0974d4320c17b5cf9e6a958f21292e643"
+      },
+      "usage": {
+        "input_tokens": 5155,
+        "output_tokens": 2231,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 44
+      },
+      "session_ids": [
+        "01a097c9-ec5a-7f01-b4aa-7bc27a6c8b75"
+      ],
+      "fields": {
+        "story": {
+          "sha256": "f745c60ef81c0faad87ff56fa55afcf0f5b6ae46b4284e804a59d28ae7c7460e",
+          "words": 1469
+        }
+      }
+    },
+    {
+      "name": "chapter-both",
+      "provider": "astra",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "bf93baf922dbc7223ccd57ea77deba9d2590cb4c396ea9ffd4e2c562f99ee2a4",
+      "lineage": {
+        "nico_sha256": "3dda43b4a5a001b316a723450b356eb0974d4320c17b5cf9e6a958f21292e643"
+      },
+      "usage": {
+        "input_tokens": 2954,
+        "output_tokens": 2196,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 106
+      },
+      "session_ids": [
+        "01a097cb-8b97-7022-9d11-1c56d04d527f"
+      ],
+      "fields": {
+        "story": {
+          "sha256": "060752cd57b35e1c8611ec87f6bb8eb7b818d405fae8efe02b9840b534262944",
+          "words": 1488
+        }
+      }
+    },
+    {
+      "name": "magic-astra-1",
+      "provider": "astra",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "bc8291412207a31a6c69b31649c605f8f52a11a0c07e6555cac09e80c67ced49",
+      "lineage": null,
+      "usage": {
+        "input_tokens": 4241,
+        "output_tokens": 423,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 113
+      },
+      "session_ids": [
+        "01a097cd-46f0-7711-85e9-e2cbeb4ed2eb"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "93ce19da554b07ac2271e59aaac4e905a46b5e3ac2bee3cf8a5937c547efd348",
+          "words": 81
+        },
+        "limitation": {
+          "sha256": "64480a2e28c8c983de39f4df49381d02aac72af5f27c55d90ddbe808431aa918",
+          "words": 88
+        },
+        "advancement": {
+          "sha256": "78786c90a7065ee1504e30aee723c119d708f7efd9e0e6197b62e9690ec1355c",
+          "words": 85
+        },
+        "extension": {
+          "sha256": "1675b329e8fb26bd8ecfe343a77cb7701761ced620da9fd3a60e056257aa9247",
+          "words": 65
+        }
+      }
+    },
+    {
+      "name": "magic-opus-1",
+      "provider": "opus",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "0085e004767521dcad6d6a30ccc0107aa76d7f56b11017f75fb9379f60f5d760",
+      "lineage": null,
+      "usage": {
+        "input_tokens": 2,
+        "output_tokens": 1430,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 1566,
+        "reasoning_tokens": 0
+      },
+      "session_ids": [
+        "997c0d0e-bbca-41b5-8e76-e4df2c00e4ca"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "58856c234532f8922ab0291ca9c1e2451138ee7d94870c1db472c8211712accd",
+          "words": 137
+        },
+        "limitation": {
+          "sha256": "a4058bb38ef1ccdc6c4c97361aaf8ab51103f9f74b2c097ca166ddd9cb8347a7",
+          "words": 84
+        },
+        "advancement": {
+          "sha256": "34d5b086821de5b14cbfff4dfbaa7a52b3fc665264447a9710b3b20804680a07",
+          "words": 80
+        },
+        "extension": {
+          "sha256": "6f6f95de167f9cc57f8cc44fb731b9b4bfda0fb00d29daafe5ec2a3a4800cdda",
+          "words": 63
+        }
+      }
+    },
+    {
+      "name": "magic-opus-2",
+      "provider": "opus",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "02d94e38167b54cdb625e53fcb4a419d216a9144c47f2f67cf8982b72f2a14ed",
+      "lineage": null,
+      "usage": {
+        "input_tokens": 2,
+        "output_tokens": 1402,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 1574,
+        "reasoning_tokens": 0
+      },
+      "session_ids": [
+        "e8cafc2a-cd60-48dc-bd8a-e7cc58b76024"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "cdfa4a6060d5bfc10b4bd2cacf9f602c20dc5892eb6541d42efd5ef2332393db",
+          "words": 117
+        },
+        "limitation": {
+          "sha256": "eefe527bfee9eb5c9e39498ddb393a9fc7d8c47cc7e8ce66256b983fbc4f2143",
+          "words": 95
+        },
+        "advancement": {
+          "sha256": "649aa11985c4b05d3d7edd40304a07025910b18354869710329c05eeef4a4728",
+          "words": 68
+        },
+        "extension": {
+          "sha256": "443fe6eb46cb30738de7f3d839f4bd35fe0d3150e9bd91b5418d4bcb62156a84",
+          "words": 79
+        }
+      }
+    },
+    {
+      "name": "magic-astra-2",
+      "provider": "astra",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "616543de6cb4989561c53feb0d07708bffb62e17c8436d023ce12472d3043cca",
+      "lineage": null,
+      "usage": {
+        "input_tokens": 4265,
+        "output_tokens": 420,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 164
+      },
+      "session_ids": [
+        "01a097ce-a703-7c10-b36f-58b4a213d8da"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "b984b074a924e975778aa3261961c594d3b14caf5a8016d0c44b9becbc4ee53c",
+          "words": 82
+        },
+        "limitation": {
+          "sha256": "55743cdbad7c4e38cb7061e36074fb0cd377ae9ffd6b38390784c6aba7e95aa6",
+          "words": 89
+        },
+        "advancement": {
+          "sha256": "0bd6082ecc3481d6c9702011f164db442f71b073393af8f036385862e0a364e2",
+          "words": 82
+        },
+        "extension": {
+          "sha256": "6417f612f8161b837b1b4e470363e3ead45d2ed5e42c43ec8c0b978bed553d4a",
+          "words": 67
+        }
+      }
+    },
+    {
+      "name": "plan-astra-astra-1",
+      "provider": "astra",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "3abfd075f619f971e5c9bb1e007373ad6b09af2471b3daeeb4e5fba3c5e06614",
+      "lineage": {
+        "slot": "magic-astra-1",
+        "receipt_sha256": "bc8291412207a31a6c69b31649c605f8f52a11a0c07e6555cac09e80c67ced49"
+      },
+      "usage": {
+        "input_tokens": 4860,
+        "output_tokens": 987,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 417
+      },
+      "session_ids": [
+        "01a097cf-2db4-77d3-b780-5fbc743dfe13"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "308337c2a096b3a8c628c2a3a6a188ccc4d08c1b6db0e0448ac75ff2404ed8f2",
+          "words": 153
+        },
+        "opening": {
+          "sha256": "9c82fa1ea664781da38bd8998062f45a78a71e2d0bef7349d6e3a0ee7bac8a7a",
+          "words": 426
+        },
+        "growth": {
+          "sha256": "5c3b8ecaad808666f3f99c058bbc934841a176bcd2e8b7f603f3bc89bd75d2b9",
+          "words": 217
+        }
+      }
+    },
+    {
+      "name": "plan-astra-opus-1",
+      "provider": "opus",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "da04af43a6cbcea990c855f5c0b57831304f6b9dbe5951a775330374a66452b8",
+      "lineage": {
+        "slot": "magic-astra-1",
+        "receipt_sha256": "bc8291412207a31a6c69b31649c605f8f52a11a0c07e6555cac09e80c67ced49"
+      },
+      "usage": {
+        "input_tokens": 4,
+        "output_tokens": 10327,
+        "cache_read_tokens": 2616,
+        "cache_write_tokens": 9299,
+        "reasoning_tokens": 0
+      },
+      "session_ids": [
+        "4e29cef1-4e36-4096-b6a8-cf9416b05aa4"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "b5c7d2c129a5b33ac2f4441dddd673f6f0e4a80ff47bdd4e3af14cea1a671686",
+          "words": 572
+        },
+        "opening": {
+          "sha256": "b834ed8058cb94047f402e1ce567380ea9aa6d6acbd17c028f21db4c56b4db2d",
+          "words": 878
+        },
+        "growth": {
+          "sha256": "9473a52c955219b26b9d6daea3f250d986d506c6285264704de72c95336f0403",
+          "words": 552
+        }
+      }
+    },
+    {
+      "name": "plan-opus-opus-1",
+      "provider": "opus",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "adbb7bc37e0e79205e9aaef571fa9a315b55bcedcdb353bb23991f05290ac4fa",
+      "lineage": {
+        "slot": "magic-opus-1",
+        "receipt_sha256": "0085e004767521dcad6d6a30ccc0107aa76d7f56b11017f75fb9379f60f5d760"
+      },
+      "usage": {
+        "input_tokens": 2,
+        "output_tokens": 9558,
+        "cache_read_tokens": 1418,
+        "cache_write_tokens": 1320,
+        "reasoning_tokens": 0
+      },
+      "session_ids": [
+        "338f8679-e28e-43fb-bb08-0293fe6c2123"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "4da1721117047e016063611f5bad80f1cea7918139f5bef723930693bbc9f915",
+          "words": 585
+        },
+        "opening": {
+          "sha256": "864e86208363f6e7f01183069604fabe93a599754234324962a86835dc6aa540",
+          "words": 880
+        },
+        "growth": {
+          "sha256": "89c961e9e57c40e92b55e0c1eb911ca284de2906c818a898ae65d3afc92416af",
+          "words": 653
+        }
+      }
+    },
+    {
+      "name": "plan-opus-astra-1",
+      "provider": "astra",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "b5201406c9dc19a8e2fb8a5d7793cc6035ded31fbbe79f7e9411297799467504",
+      "lineage": {
+        "slot": "magic-opus-1",
+        "receipt_sha256": "0085e004767521dcad6d6a30ccc0107aa76d7f56b11017f75fb9379f60f5d760"
+      },
+      "usage": {
+        "input_tokens": 4968,
+        "output_tokens": 1192,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 604
+      },
+      "session_ids": [
+        "01a097d5-285c-7913-b0d8-509bb927d4f3"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "0e16b0e60b09bb08636f1cb0a4aaf66e26d171b2781bfa8aabebef65d646bcca",
+          "words": 197
+        },
+        "opening": {
+          "sha256": "9d4db07ee8d51f915888421ad032c757da1f8e7ae5b7a7dd8b8ae81616630bee",
+          "words": 437
+        },
+        "growth": {
+          "sha256": "f5a4b5dc7796c8415c091b06647ecd37899d2cf7e9c962d04e8b1d65d48abbb1",
+          "words": 313
+        }
+      }
+    },
+    {
+      "name": "plan-opus-opus-2",
+      "provider": "opus",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "db631ef0be1e38cf83cbbd4eac13ef50ec5d43a2e1b2895977bc74230a087cc8",
+      "lineage": {
+        "slot": "magic-opus-2",
+        "receipt_sha256": "02d94e38167b54cdb625e53fcb4a419d216a9144c47f2f67cf8982b72f2a14ed"
+      },
+      "usage": {
+        "input_tokens": 2,
+        "output_tokens": 6971,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 2678,
+        "reasoning_tokens": 0
+      },
+      "session_ids": [
+        "24a2e68e-d5b6-417d-869a-d8fbe7924ce8"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "dfffb9fcb0df4b6f77f5337bdaf162c95dfe9df3b9e0260384c9e62125bd00c5",
+          "words": 601
+        },
+        "opening": {
+          "sha256": "c95a80eb4b2a0dbd74395350250820d5241fd834f5b86d05c70ae177632ea01c",
+          "words": 1074
+        },
+        "growth": {
+          "sha256": "150800ada7529fccbbeeaf21eeb853043c637cf070493e4ecca8072afd6ec445",
+          "words": 647
+        }
+      }
+    },
+    {
+      "name": "plan-opus-astra-2",
+      "provider": "astra",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "204c4f8509ec6dfd616136f5bc49aa26a0741c24a08d852b2e4d613b35449b2b",
+      "lineage": {
+        "slot": "magic-opus-2",
+        "receipt_sha256": "02d94e38167b54cdb625e53fcb4a419d216a9144c47f2f67cf8982b72f2a14ed"
+      },
+      "usage": {
+        "input_tokens": 4952,
+        "output_tokens": 1251,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 516
+      },
+      "session_ids": [
+        "01a097d8-79bf-7140-9978-3850408831c1"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "3724da15fca6c9469f85b667e9fdfd10b7024642193b47cc14a94396a28fb8dc",
+          "words": 272
+        },
+        "opening": {
+          "sha256": "c9b5f71b7b5537bf825805ed3157740ee4e0ee20d61328e14a24c11f04daf73a",
+          "words": 425
+        },
+        "growth": {
+          "sha256": "3ebaba0258bd13e83f6f0c88bc005d5c3b95bc1803b8bac4ab20538dcab5c6ec",
+          "words": 312
+        }
+      }
+    },
+    {
+      "name": "plan-astra-astra-2",
+      "provider": "astra",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "4178f1f16b1a3e4edf7347e4a0d8a51fe1de7bf3e54d82c4f3a411b34caba479",
+      "lineage": {
+        "slot": "magic-astra-2",
+        "receipt_sha256": "616543de6cb4989561c53feb0d07708bffb62e17c8436d023ce12472d3043cca"
+      },
+      "usage": {
+        "input_tokens": 4883,
+        "output_tokens": 1387,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 827
+      },
+      "session_ids": [
+        "01a097d9-e99a-7770-9380-66dc7a439933"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "3aa70ba14b98b297a10405230ff0cdb71622412bb043a1c08325394668208466",
+          "words": 304
+        },
+        "opening": {
+          "sha256": "7828cebb828b511470c57c939808f84ebf0edf722a31f1174fa98db8ea76bbc2",
+          "words": 518
+        },
+        "growth": {
+          "sha256": "bcdb035f56e93e1dda61aee7303d015c1d50d9cb52ae56819692e80a4cf4eba2",
+          "words": 316
+        }
+      }
+    },
+    {
+      "name": "plan-astra-opus-2",
+      "provider": "opus",
+      "status": "completed",
+      "valid": true,
+      "receipt_sha256": "0a92e7844c3412ba96bc2fe45510427d5413eac4d961764d02952c6ac1711015",
+      "lineage": {
+        "slot": "magic-astra-2",
+        "receipt_sha256": "616543de6cb4989561c53feb0d07708bffb62e17c8436d023ce12472d3043cca"
+      },
+      "usage": {
+        "input_tokens": 4,
+        "output_tokens": 7629,
+        "cache_read_tokens": 4069,
+        "cache_write_tokens": 5464,
+        "reasoning_tokens": 0
+      },
+      "session_ids": [
+        "f4888873-8a45-4208-81d8-ede999221452"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "9c6ea3df4f2c4ce57d98a4c6e2ae7313eaece5a8360e5761ca0a66b91b237c4d",
+          "words": 522
+        },
+        "opening": {
+          "sha256": "a41d1a431f3a1cd4bf55c43b6ca27f5fbe1d5d0face7cc3de3bfaabcc8ff1496",
+          "words": 585
+        },
+        "growth": {
+          "sha256": "9d61cd20b379f7e5ca3cae05e34aa00479c36f12ae89af15ee987b84921ee1fc",
+          "words": 614
+        }
+      }
+    }
+  ],
+  "padding_placebo": {
+    "available": true,
+    "input_tokens": {
+      "chapter-plan": 5371,
+      "chapter-source": 4281,
+      "chapter-pad": 5155,
+      "chapter-both": 5514
+    },
+    "added_both": 1233,
+    "added_pad": 874,
+    "matched": false
+  },
+  "progress": {
+    "status": "complete",
+    "attempts": 16,
+    "tokens": 133459,
+    "slots": [
+      {
+        "name": "chapter-plan",
+        "status": "completed"
+      },
+      {
+        "name": "chapter-source",
+        "status": "completed"
+      },
+      {
+        "name": "chapter-pad",
+        "status": "completed"
+      },
+      {
+        "name": "chapter-both",
+        "status": "completed"
+      },
+      {
+        "name": "magic-astra-1",
+        "status": "completed"
+      },
+      {
+        "name": "magic-opus-1",
+        "status": "completed"
+      },
+      {
+        "name": "magic-opus-2",
+        "status": "completed"
+      },
+      {
+        "name": "magic-astra-2",
+        "status": "completed"
+      },
+      {
+        "name": "plan-astra-astra-1",
+        "status": "completed"
+      },
+      {
+        "name": "plan-astra-opus-1",
+        "status": "completed"
+      },
+      {
+        "name": "plan-opus-opus-1",
+        "status": "completed"
+      },
+      {
+        "name": "plan-opus-astra-1",
+        "status": "completed"
+      },
+      {
+        "name": "plan-opus-opus-2",
+        "status": "completed"
+      },
+      {
+        "name": "plan-opus-astra-2",
+        "status": "completed"
+      },
+      {
+        "name": "plan-astra-astra-2",
+        "status": "completed"
+      },
+      {
+        "name": "plan-astra-opus-2",
+        "status": "completed"
+      }
+    ]
+  },
+  "registration_sha256": "cf0a2882cf459971f1200c88b953a5764554142d0d6e771d41ae8239a599fd92"
+}
