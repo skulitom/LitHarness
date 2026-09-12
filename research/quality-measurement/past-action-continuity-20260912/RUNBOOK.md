@@ -76,3 +76,12 @@ uv run python research/quality-measurement/past-action-continuity-20260912/run.p
 
 Raw prose stays under ignored runs. Commit derived hashes, usage, controls and located
 observations only. Keep comparator text and digests entirely outside generation.
+
+## Pre-dispatch correction
+
+The first launch after commit 610caf9 stopped at an import before constructing a provider,
+creating progress, or attempting any call: the class is CodexCliProvider, not CodexProvider.
+Preserve that log and the first registration. Correct the constructor, add a test that
+constructs the actual adapter without dispatch, and update only the affected frozen code
+and protocol hashes. All six request hashes, order, rule, source and ceilings remain exact.
+Run handoff and commit this correction before the first actual dispatch.

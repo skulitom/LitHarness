@@ -40,3 +40,15 @@ def test_continuity_slots_include_unchanged_repeats_and_secret_boundary():
     assert "Iona disabled the signal" in module.SECRET
     assert "conceal that fact" in module.SECRET
     assert "Do not make Vey complicit" in module.SECRET
+
+
+def test_experiment_constructs_the_real_provider_without_dispatch():
+    from litharness.providers.codex_cli import CodexCliProvider
+
+    module = experiment()
+    provider = module.provider_for("never-executed.exe")
+    assert isinstance(provider, CodexCliProvider)
+    assert provider.binary == "never-executed.exe"
+    assert provider.model == "gpt-6-astra"
+    assert provider.reasoning_effort == "medium"
+    assert provider.last_attempt == {}

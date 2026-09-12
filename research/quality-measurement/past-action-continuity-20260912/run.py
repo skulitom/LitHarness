@@ -120,9 +120,14 @@ def prepare() -> None:
     print("Prepared six requests; no model calls.")
 
 
+def provider_for(binary: str):
+    from litharness.providers.codex_cli import CodexCliProvider
+
+    return CodexCliProvider(binary=binary, trace_directory=LOCAL / "transport")
+
+
 def run() -> None:
     from litharness.domain.generation import CompletionRequest
-    from litharness.providers.codex_cli import CodexProvider
 
     lock()
     if (LOCAL / "progress.json").exists():
@@ -138,7 +143,7 @@ def run() -> None:
     manifest = read(LOCAL / "manifest.json")
     if sha(LOCAL / "manifest.json") != read(HERE / "registration.json")["manifest_sha256"]:
         raise RuntimeError("Manifest changed")
-    provider = CodexProvider(binary=manifest["binary"], trace_directory=LOCAL / "transport")
+    provider = provider_for(manifest["binary"])
     progress = {"attempts": 0, "tokens": 0, "status": "running", "slots": []}
     write(LOCAL / "progress.json", progress)
     try:

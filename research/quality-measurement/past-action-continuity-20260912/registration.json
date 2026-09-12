@@ -1,5 +1,5 @@
 {
-  "manifest_sha256": "c727c6213332e333e1430e1d92f7c71c6a42dba21e1dccb2299d77701c37ca72",
+  "manifest_sha256": "991a0aac55de2b5c230970dd75419b76ca874fc68e03715471890aa28388b605",
   "order": [
     "actual-control-1",
     "actual-treatment-1",
@@ -11,8 +11,8 @@
   "source_sha256": "85f5b472a26e3adbc0bd52c13cc6a38916e06579a61e8a4e71ef72a20b97aff4",
   "binary_sha256": "3d6ca7085c932b62ef4ee4877e92f15b050fb94b2eb8e6c10a346a06248c6004",
   "source_revision": "afefd1435d3cccb3d0b07f20e46749d73a872463",
-  "runbook_sha256": "22d01731e41ac91cf675ca3917eab5a0947a50c78aa76e03b3d9864569591961",
-  "runner_sha256": "d7cd08d7d5d805927e79a71d05290aeb3beb88716975852cff4b31bcc41a105e",
+  "runbook_sha256": "dc72dd94ff16c237ed0a83e2befe344d4dbadc154ae76a54f6725f7b14dafd2a",
+  "runner_sha256": "96d50bb661dbca1012b41c7e6c101035537af28ce225a1bf797447966108085e",
   "requests": {
     "actual-control-1": "67abe2db3e1e1937b2a5d2dd346ab3d65d8842c562e845c6a928447e5148fd9f",
     "actual-treatment-1": "cb43f3d5f9db92131d5a0cd50e9fe71ccfcd7443f21aa84aa4b95df21ff612ff",
@@ -23,5 +23,11 @@
   },
   "rule_sha256": "3b985413e4cf410bab4749e8fbc472f2eb379f277b2cff6cdc1ccb80ba43ecd2",
   "model": "gpt-6-astra",
-  "effort": "medium"
+  "effort": "medium",
+  "pre_dispatch_correction": {
+    "old_registration_sha256": "892849bad6c85528a1b01b064cb157543b7402821f65d4aa504fda2cdf9da5d8",
+    "failed_launch_log_sha256": "2f6d5e4c35bedc9d284277875337ecf56e483d4eb2f953f53e61cf282da03916",
+    "calls_attempted": 0,
+    "requests_unchanged": true
+  }
 }
