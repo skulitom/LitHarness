@@ -2,7 +2,7 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "invention-genre-deferral-20260912",
   "statement": "Deferring the initial genre cue produces causal story departures beyond an otherwise identical early-genre control across both fresh seeds and repeats, preserved through both preselected late adaptation, planning and opening-prose chains.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -18,6 +18,16 @@
       "kind": "literature",
       "path": "research/quality-measurement/invention-genre-deferral-20260912/sources.json",
       "sha256": "3d6dc9d801f0b6a518245f902ed6c05f7c27d0b240460ae14f603216461e740a"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/invention-genre-deferral-20260912/evidence.json",
+      "sha256": "ae53905c22c8f8556f467acdae3b58f8017aabe844d5bbd5a1b5bdcec23fb995"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/invention-genre-deferral-20260912/evidence.json",
+      "sha256": "ae53905c22c8f8556f467acdae3b58f8017aabe844d5bbd5a1b5bdcec23fb995"
     }
   ]
 }
