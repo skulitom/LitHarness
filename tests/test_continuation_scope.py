@@ -87,6 +87,7 @@ def test_continuation_scopes_original_request_and_preserves_author_decisions(
             scoped = index > 0 and brief_kind in {"original", "locked"}
             assert ("continuation of accepted prose" in system) is scoped
             assert (house.OPENING_OFFER in system) is (index == 0)
+            assert (house.PAST_ACTION_CONTINUITY in system) is (index > 0)
             assert house.CLARITY in system and house._SCENE_ATTENTION in system
             assert house.QUANTITY_DETAIL in system
             assert (house.ACCUMULATION in system) is (index == 0)
@@ -104,6 +105,7 @@ def test_continuation_scopes_original_request_and_preserves_author_decisions(
         assert third is not None and third.job_kind == planner.SCENE_DRAFT
         assert "chapter 3 (3 of this arc); scene 1 of 1" in third.payload["prompt"]
         assert house.OPENING_OFFER not in third.payload["system"]
+        assert house.PAST_ACTION_CONTINUITY in third.payload["system"]
         assert house.ACCUMULATION not in third.payload["system"]
         assert house._MAGICAL_OFFER not in third.payload["system"]
         assert chapter_three.text in third.payload["system"]
@@ -120,6 +122,26 @@ def test_continuation_scopes_original_request_and_preserves_author_decisions(
         resumed = conductor.select(store, "resumed-writer", START + 3, 60)
         assert resumed is not None and resumed.job_id == third.job_id
         assert resumed.payload == third.payload
+
+
+def test_past_action_rule_matches_the_registered_instruction_and_stays_outside_other_roles():
+    import hashlib
+    import json
+    from pathlib import Path
+
+    from litharness.application import discovery, reviser, world_agent
+
+    registration = json.loads((Path(__file__).resolve().parents[1] / (
+        "research/quality-measurement/past-action-continuity-20260912/registration.json"
+    )).read_text(encoding="utf-8"))
+    assert hashlib.sha256(house.PAST_ACTION_CONTINUITY.encode()).hexdigest() == (
+        registration["rule_sha256"]
+    )
+    for system in (
+        discovery.render_request("").system, reviser.revision_system(),
+        world_agent.render_seed_request("A world.").system,
+    ):
+        assert house.PAST_ACTION_CONTINUITY not in (system or "")
 
 
 def test_continuation_depends_on_reading_order_not_scene_number_or_future_prose():

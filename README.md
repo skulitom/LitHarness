@@ -93,10 +93,13 @@ The default applies even with an empty brief; `--brief` can choose another subge
 Stored treatments retain their original direction. All stages use the configured subscription
 CLI and the ordinary quota checks.
 
-When the author's brief introduces unfamiliar life or intelligence, world invention develops
-its own activities, relationships and history, alongside tangible things people can discover.
-This elaboration is conditional on the brief. The scoped correction and its limited evidence
+The invention prompt asks for unfamiliar life's activities, relationships and history when
+the author's brief introduces that life or intelligence, alongside tangible things to discover.
+The scoped instruction and its limited evidence
 are recorded in the [life-scope experiment](research/quality-measurement/discovery-life-scope-20260912/REPORT.md).
+The subsequent [fresh chapter and close reading](research/quality-measurement/past-action-continuity-20260912/REPORT.md)
+returned to water, nurseries and permission-based conflict with an empty brief and a new seed.
+The earlier result does not establish a solution to repetition in fresh invention.
 Stable world material stays in the discovery treatment's world field; proposed encounters stay
 in its opening field.
 World seeding is instructed to keep observable traces separate from undisclosed explanations

@@ -402,10 +402,15 @@ def render_prompt(
     """
     # Accepted predecessors determine whether this is still the opening. Continuations
     # keep comprehension guidance; declared mechanics and author locks are appended below.
-    system = house.with_house_rules(
+    task = (
         "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
         "no commentary, no summary of what you wrote. Respect established facts and author "
-        "locks; future intentions are plans, not events that have already happened.",
+        "locks; future intentions are plans, not events that have already happened."
+    )
+    if has_prior_prose:
+        task += "\n\n" + house.PAST_ACTION_CONTINUITY
+    system = house.with_house_rules(
+        task,
         opening=not has_prior_prose,
         limited_viewpoint=bool(point_of_view),
     )

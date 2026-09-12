@@ -1,0 +1,116 @@
+{
+  "all_transport_controls_pass": true,
+  "controls": 52,
+  "progress": {
+    "attempts": 6,
+    "tokens": 79332,
+    "status": "complete",
+    "slots": [
+      {
+        "name": "actual-control-1",
+        "status": "completed"
+      },
+      {
+        "name": "actual-treatment-1",
+        "status": "completed"
+      },
+      {
+        "name": "secret-control-1",
+        "status": "completed"
+      },
+      {
+        "name": "secret-treatment-1",
+        "status": "completed"
+      },
+      {
+        "name": "actual-treatment-2",
+        "status": "completed"
+      },
+      {
+        "name": "actual-control-2",
+        "status": "completed"
+      }
+    ]
+  },
+  "outputs": [
+    {
+      "name": "actual-control-1",
+      "receipt_sha256": "807ee84349e9fb461f9d32db050a2afdb79e02854560c15ecc75e2b655334011",
+      "text_sha256": "608782d248f4e474a779886d5a337b43369466067ed9af5b7fcb8a61901aafe1",
+      "words": 1005,
+      "usage": {
+        "input_tokens": 15887,
+        "output_tokens": 1295,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 138
+      }
+    },
+    {
+      "name": "actual-treatment-1",
+      "receipt_sha256": "399267693d69f41a700587ad5f1a469fc2b3ff40b8523ae3577deda38e91d324",
+      "text_sha256": "1a1e85b8bfcbf01fb89e64c46ef9f807a68e95331cc24854d3587d81871a1ab7",
+      "words": 970,
+      "usage": {
+        "input_tokens": 15936,
+        "output_tokens": 1265,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 185
+      }
+    },
+    {
+      "name": "secret-control-1",
+      "receipt_sha256": "d801d29880f486d118bb99448c4e5f7e0024e6bfff59f7cfa1258afb154c9909",
+      "text_sha256": "48b775b23ce76c15d28df39025109d8d9414110002bfd005683b99864ca2e37a",
+      "words": 684,
+      "usage": {
+        "input_tokens": 3958,
+        "output_tokens": 879,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 171
+      }
+    },
+    {
+      "name": "secret-treatment-1",
+      "receipt_sha256": "946f501b91880064604b613d8f9cb55d6c2e5f24e7b5e6c41c59690575d53c31",
+      "text_sha256": "2d66386a29cca9f0872266167c113aa8fa866092e0427e02993c011ebb52966b",
+      "words": 653,
+      "usage": {
+        "input_tokens": 4007,
+        "output_tokens": 848,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 149
+      }
+    },
+    {
+      "name": "actual-treatment-2",
+      "receipt_sha256": "d715e50b627dd94ff06fc89cac7a443fd5d4669936b657311e0b4ce89f14da87",
+      "text_sha256": "bd573bd3ac3a31bff6aa35588b833ecbc83f579fb5ba545be0a617c55aeb5664",
+      "words": 989,
+      "usage": {
+        "input_tokens": 15936,
+        "output_tokens": 1282,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 121
+      }
+    },
+    {
+      "name": "actual-control-2",
+      "receipt_sha256": "4488f8f66bc3fd0028cd333694662bdb49e40c79ca491fe8889ad630a6952ed6",
+      "text_sha256": "14cdeaa3ef2f8652fe26439f328b73456abadef8edfae4d59f2740bdc0067471",
+      "words": 964,
+      "usage": {
+        "input_tokens": 15889,
+        "output_tokens": 1252,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 134
+      }
+    }
+  ],
+  "registration_sha256": "644a66ea98db9fd7e5ff701a3d345a8f2fb8add425d0920e2a9013adf48aae75"
+}

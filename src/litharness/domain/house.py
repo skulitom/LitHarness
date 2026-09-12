@@ -44,6 +44,15 @@ CLARITY = f"{_CLARITY_CONTEXT}{_GENERAL_ACCESS}\n{_CLARITY_REFERENCES}"
 SCENE_CLARITY = f"{_CLARITY_CONTEXT}{_PERCEPTUAL_ACCESS}\n{_CLARITY_REFERENCES}"
 
 
+# Applied only to drafting after accepted prose, not invention or sentence revision.
+PAST_ACTION_CONTINUITY = (
+    "Before adding a past action or revealing what someone already knew, check it against "
+    "their behavior in the accepted prose. Preserve established motives and secrets; an "
+    "explanation of the current problem must also make sense of what those people said "
+    "and did before."
+)
+
+
 # Shared precision policy for invention and prose; stage-0 decision 244.
 QUANTITY_DETAIL = (
     "Use relative scale and duration for ordinary description. Give an exact quantity "

@@ -1,0 +1,33 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "past-action-continuity-20260912",
+  "statement": "On the one registered known continuation, unexplained prior responsibility recurred in one of two fresh controls and neither of two treatment repeats; both treatments retained the required events, and both manufactured secret-case outputs preserved motivated concealment. This supports this narrow authoring instruction locally, not a general continuity, reader-quality or invention-diversity claim.",
+  "status": "supported",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/past-action-continuity-20260912/RUNBOOK.md",
+      "sha256": "dc72dd94ff16c237ed0a83e2befe344d4dbadc154ae76a54f6725f7b14dafd2a"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/past-action-continuity-20260912/registration.json",
+      "sha256": "644a66ea98db9fd7e5ff701a3d345a8f2fb8add425d0920e2a9013adf48aae75"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/past-action-continuity-20260912/evidence.json",
+      "sha256": "730331c25de5313d50d1c3122633df0cdd24aad9ebc3f3f8084538d8c75c8915"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/past-action-continuity-20260912/evidence.json",
+      "sha256": "730331c25de5313d50d1c3122633df0cdd24aad9ebc3f3f8084538d8c75c8915"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/past-action-continuity-20260912/REPORT.md",
+      "sha256": "232eff66baec6e0284fd9624adf1c6d9f230a35b84b0096aaf79295c50708d3f"
+    }
+  ]
+}

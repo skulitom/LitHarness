@@ -85,5 +85,49 @@ does not test or resolve invention diversity.
 
 ## Registered continuation comparison
 
-Pending the six frozen calls and complete readings specified in RUNBOOK.md. No production
-instruction has been changed on the strength of the baseline reading alone.
+All six calls completed, with 79332 recorded tokens. All transport/request controls in
+evidence.json pass. The initial launch failed at a misspelled provider import before any
+call; registration.json and the visible RUNBOOK amendment preserve that correction. The
+corrected registration was committed as 12ddc59 before actual dispatch.
+
+Every output was read completely in registered order. Paragraphs below are one-based,
+split on blank lines; evidence.json identifies the exact output and receipt hashes.
+
+| Output | Located reading |
+| --- | --- |
+| actual-control-1 | Paragraph 9 describes a shared restricted feed but does not assign prior responsibility to Tavi. It avoids the located defect. Paragraph 65 repeats the bicycle instruction without first establishing the bicycle's present location. |
+| actual-treatment-1 | Paragraphs 13–17 give Oren knowledge of an intake problem that worsened this morning; Tavi believed yesterday's supply was enough. Her earlier behavior remains intelligible. Paragraphs 49–74 retain the gains, renewed contact and physical-rescue requirement. There is no bicycle reference. |
+| secret-control-1 | Paragraphs 12–16 retain Iona's concealed contact and her reason to delay. Paragraphs 46–60 wait for the signal before she reveals responsibility. Vey remains an adversary. |
+| secret-treatment-1 | Paragraphs 22 and 28 retain the removed contact and escape motive. Paragraphs 52–63 wait for confirmation, then plan a concealed restoration. The instruction has not erased the authorized secret. |
+| actual-treatment-2 | Paragraphs 9–14 discover the competing demand by testing the common supply, without inventing Tavi as the prior cause. Paragraphs 45–72 retain both gains and the rescue change. Ben establishes his bicycle at paragraph 68 before Mara tells him to leave it. Paragraphs 30–43 still make the hose inlet's reach from the lower shelf unclear; this is not a general continuity cure. |
+| actual-control-2 | Paragraph 13 says Tavi throttled the feed before Mara arrived. No reason reconciles her earlier cooperative investigation and silence. The registered defect recurs. Paragraphs 65–66 do establish the bicycle before the instruction to leave it. |
+
+The registered narrow rule is met: one fresh control reproduces the unexplained prior
+responsibility, neither treatment does, both retain the specified scene developments,
+and the deliberate-secret control remains intact in both arms. This is local support on
+one known continuation with sampling repeats and a manufactured boundary case. The other
+unchanged retry already avoids the defect. It is not evidence of a general quality gain,
+nor a guarantee that a later scene will respect every implication of earlier prose.
+
+The exact tested instruction is installed only for drafts after accepted prose. Integration
+tests follow real planner jobs through acceptance and later selection, with and without
+outlines and original/locked briefs. They check the instruction's scope and retained author
+directions; a hash check ties its wording to registration. Invention, world creation and
+content-preserving sentence revision do not receive it. Existing accepted jobs and manuscript
+are not rewritten. The original chapter remains the production baseline.
+
+The predesignated first treatment is used for an isolated revised chapter with the original
+first three scenes. This is an experimental reading artifact, not an accepted database
+revision or a quality-selected manuscript. Its local path is
+`runs/past-action-continuity-20260912/chapter-01-experimental.md`; chapter-index.json records
+each scene hash and verifies that the first three scenes are unchanged.
+
+The full 3784-word experimental chapter was then read end to end. The changed explanation
+fits Tavi's preceding uncertainty, and the absent bicycle assumption no longer interrupts
+the ending. The book still spends its middle on guided procedure, and Tavi still offers
+little friction beyond caution. The reread also leaves a planning concern: scene 2 agrees
+Oren must hear about Ben inside the machinery, but the chapter defers that warning until
+after the scene-3 repair. The local drive is isolated, yet the text has not established why
+that wider warning can wait. The new instruction does not fix this earlier pacing/action
+choice. The practical-magic appeal remains, and the comparison judgment is unchanged:
+this is not evidence that the book now meets the standard of the published comparators.
