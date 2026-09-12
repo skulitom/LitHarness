@@ -1,0 +1,16 @@
+[
+  {
+    "url": "https://arxiv.org/html/2510.21150v1",
+    "path": "runs/invention-memory-20260911/sources/2510.21150v1.html",
+    "sha256": "ed08dfd5c7e192dc3252b0004d047f0aeb8ce1a08986300c93f741a111d731ae",
+    "read_date": "2026-09-12",
+    "enters_generation": false
+  },
+  {
+    "url": "https://developers.openai.com/api/docs/guides/reasoning-best-practices.md",
+    "path": "runs/invention-active-seed-20260912/sources/reasoning-best-practices.md",
+    "sha256": "00d3f8ee705eb2340513512da669b45aa534ea8c8412e65470cf576aa59baa76",
+    "read_date": "2026-09-12",
+    "enters_generation": false
+  }
+]
