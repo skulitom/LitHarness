@@ -1,0 +1,51 @@
+{
+  "source_revision": "afefd1435d3cccb3d0b07f20e46749d73a872463",
+  "local_root": "runs/fresh-chapter-review-20260912",
+  "artifacts": {
+    "manifest.json": "491e93635ad986113225bdd0004b70810ecc459a2745b728eccb8793ad45e080",
+    "chapter-index.json": "9d235345e67bb5bf05ee351510ac955a35c396631298b87ccdcc3c8e1c366491",
+    "chapter-01.md": "a2b544747363cb3c525f531316055b977ccce58f288a96ae6766ebe3ed0e1d57",
+    "baseline-reading.md": "3ec12455f233785649487d3259296e0f109a490cded73eb212331586dce08d5b",
+    "discovery-trace.json": "491b8ec511cac5938eebed422ac73677c510c21052c710692540d1083b58f2a2",
+    "concept.json": "a8716c68655763d83658d439257e7f7e01f6b00dad99ae3960d2d4a815001cc4",
+    "wrapper-recovery.json": "b983b6c04617ad6bf795bc84c3ab4a6739ad4447f6b62a624dc64909b38e0bdc"
+  },
+  "scenes": [
+    {
+      "scene": 1,
+      "id": "gen:scene-1",
+      "words": 915,
+      "sha256": "cdb7342033189944c3ef4e64670c8a818ec8b6152554ebe93ea49d47e827e276",
+      "paragraphs": 60
+    },
+    {
+      "scene": 2,
+      "id": "gen:scene-2",
+      "words": 914,
+      "sha256": "868cf8d46e22a2f1b5abbb912038053581591b0b124710fce888476ca439d552",
+      "paragraphs": 68
+    },
+    {
+      "scene": 3,
+      "id": "gen:scene-3",
+      "words": 985,
+      "sha256": "b0bd95d8c5283f2603c384bd45b4cebcfca6aa714f84a1b4b69db853bc059f45",
+      "paragraphs": 69
+    },
+    {
+      "scene": 4,
+      "id": "gen:scene-4",
+      "words": 996,
+      "sha256": "1d143bc4978d9172e275ad23ce35435310edf06110acc012e2bca7fa4b90ca57",
+      "paragraphs": 74
+    }
+  ],
+  "recorded_generation_invocations": 19,
+  "recorded_generation_tokens": 401794,
+  "discovery": {
+    "world": "e3fedb425b880b399fef4e816b2362d4ad6795c92cb13f6c6d0e693280dc7a16",
+    "opening": "a72072e0f4999e78dd352c07aa625830d6a2b0b5d4af833f778073f1219c2d42",
+    "growth": "035cc0b94fe10bf00c1b124421caf686b430aa30c9ab16bb2d277ae539f77236"
+  },
+  "findings": "Located editorial observations and their limitations are in REPORT.md; no quality score."
+}

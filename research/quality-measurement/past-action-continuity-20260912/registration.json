@@ -1,0 +1,27 @@
+{
+  "manifest_sha256": "c727c6213332e333e1430e1d92f7c71c6a42dba21e1dccb2299d77701c37ca72",
+  "order": [
+    "actual-control-1",
+    "actual-treatment-1",
+    "secret-control-1",
+    "secret-treatment-1",
+    "actual-treatment-2",
+    "actual-control-2"
+  ],
+  "source_sha256": "85f5b472a26e3adbc0bd52c13cc6a38916e06579a61e8a4e71ef72a20b97aff4",
+  "binary_sha256": "3d6ca7085c932b62ef4ee4877e92f15b050fb94b2eb8e6c10a346a06248c6004",
+  "source_revision": "afefd1435d3cccb3d0b07f20e46749d73a872463",
+  "runbook_sha256": "22d01731e41ac91cf675ca3917eab5a0947a50c78aa76e03b3d9864569591961",
+  "runner_sha256": "d7cd08d7d5d805927e79a71d05290aeb3beb88716975852cff4b31bcc41a105e",
+  "requests": {
+    "actual-control-1": "67abe2db3e1e1937b2a5d2dd346ab3d65d8842c562e845c6a928447e5148fd9f",
+    "actual-treatment-1": "cb43f3d5f9db92131d5a0cd50e9fe71ccfcd7443f21aa84aa4b95df21ff612ff",
+    "secret-control-1": "382644ed0c989362e5ee66154e87f82cf516c5154c8b86bedeea2e56c6093a4c",
+    "secret-treatment-1": "f51fdc49f3c2232b4499995828e01cc3648b9ff5e1010b8e15b48a2b96bcc941",
+    "actual-treatment-2": "cb43f3d5f9db92131d5a0cd50e9fe71ccfcd7443f21aa84aa4b95df21ff612ff",
+    "actual-control-2": "67abe2db3e1e1937b2a5d2dd346ab3d65d8842c562e845c6a928447e5148fd9f"
+  },
+  "rule_sha256": "3b985413e4cf410bab4749e8fbc472f2eb379f277b2cff6cdc1ccb80ba43ecd2",
+  "model": "gpt-6-astra",
+  "effort": "medium"
+}
