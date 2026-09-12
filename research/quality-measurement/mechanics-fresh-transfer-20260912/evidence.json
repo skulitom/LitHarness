@@ -1,0 +1,795 @@
+{
+  "all_controls_pass": true,
+  "controls": {
+    "frozen_inputs": {
+      "C:\\DEV\\LitHarness\\src\\litharness\\cli.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\mcp_server.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\__main__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\continuity_cli.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\contracts_fixtures.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\evaluation_artifact.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_audience.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_errors.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_jobs.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_plans.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_release.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_roster.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_store.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\sqlite_voice.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\adapters\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\bookaudit.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\concept.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\conductor.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\covers.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\directive_planner.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\director.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\discovery.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\dossier.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\editorial.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\evaluation.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\exemplars.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\export.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\handlers.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\instrument.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\library.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\model_context.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\narrative_planner.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\operations.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\outline.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\overview.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\planner.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\plan_refinement.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\policy_events.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\ports.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\precision.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\prompt_sources.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\prompt_source_view.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\readers.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\recruiter.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\release.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\repair.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\reviser.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\revoice.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\roster.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\scene_trace.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\status.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\statusline.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\summarize.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\tells_pass.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\titles.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\views.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\world.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\world_agent.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\application\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\advancement.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\audience.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\beats.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\budget.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\characters.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\context.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\directives.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\directors.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\draft.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\editorial.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\events.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\exceptions.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\extraction.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\failures.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\findings.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\gamesystem.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\generation.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\genre.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\graphline.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\house.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\integrity.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\invention.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\jobs.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\moves.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\names.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\nodes.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\patch.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\plans.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\plan_refinement.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\policy.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\position.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\progression.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\promises.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\propagation.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\release.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\reviser.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\revision.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\rivals.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\salience.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\scene_brief.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\schema_words.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\serials.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\sheet.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\staging.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\state.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\systems.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\tells.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\text.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\voice.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\worlds.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\world_brief.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\writers.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\domain\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\packs\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\base.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\cli.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\codex_cli.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\codex_schema.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\codex_tools.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\fake.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\registry.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\providers\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\packs\\litrpg\\__init__.py": true,
+      "C:\\DEV\\LitHarness\\src\\litharness\\packs\\plain\\__init__.py": true,
+      "C:\\Users\\artem\\AppData\\Local\\OpenAI\\Codex\\bin\\7ac07f4ce733f89a\\codex.exe": true,
+      "C:\\DEV\\LitHarness\\research\\quality-measurement\\past-action-continuity-20260912\\run.py": true,
+      "C:\\DEV\\LitHarness\\research\\quality-measurement\\mechanics-fresh-transfer-20260912\\run.py": true,
+      "C:\\DEV\\LitHarness\\research\\quality-measurement\\mechanics-fresh-transfer-20260912\\RUNBOOK.md": true,
+      "C:\\DEV\\LitHarness\\research\\quality-measurement\\mechanics-isolation-20260912\\run.py": true,
+      "C:\\DEV\\LitHarness\\tests\\test_mechanics_fresh_transfer_experiment.py": true,
+      "C:\\DEV\\LitHarness\\runs\\mechanics-fresh-transfer-20260912\\seeds\\1.json": true,
+      "C:\\DEV\\LitHarness\\runs\\mechanics-fresh-transfer-20260912\\seeds\\2.json": true,
+      "C:\\DEV\\LitHarness\\runs\\mechanics-fresh-transfer-20260912\\seeds\\3.json": true,
+      "C:\\DEV\\LitHarness\\runs\\mechanics-fresh-transfer-20260912\\requests\\magic-staged-1.json": true,
+      "C:\\DEV\\LitHarness\\runs\\mechanics-fresh-transfer-20260912\\requests\\magic-staged-2.json": true,
+      "C:\\DEV\\LitHarness\\runs\\mechanics-fresh-transfer-20260912\\requests\\magic-staged-3.json": true,
+      "C:\\DEV\\LitHarness\\runs\\mechanics-fresh-transfer-20260912\\requests\\plan-direct-1.json": true,
+      "C:\\DEV\\LitHarness\\runs\\mechanics-fresh-transfer-20260912\\requests\\plan-direct-2.json": true,
+      "C:\\DEV\\LitHarness\\runs\\mechanics-fresh-transfer-20260912\\requests\\plan-direct-3.json": true
+    },
+    "manifest": {
+      "hash": true,
+      "seeds_distinct": true
+    },
+    "magic-staged-1": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "magic-staged-2": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "magic-staged-3": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "plan-direct-1": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "plan-staged-1": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "plan-staged-2": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "plan-direct-2": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "plan-direct-3": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "plan-staged-3": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "draft-staged-1": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "draft-direct-1": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "sessions": {
+      "distinct": true
+    }
+  },
+  "outputs": [
+    {
+      "name": "magic-staged-1",
+      "status": "completed",
+      "receipt_sha256": "a03835450448b40d847f3d42773a6018a31df78b1d194a2ab5d54667b8796bbe",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4242,
+        "output_tokens": 411,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 103
+      },
+      "session_ids": [
+        "01a0978e-988e-7853-88be-43aeebc2a4b7"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "novice",
+        "limitation",
+        "advancement",
+        "extension"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "b36dba65874c789c8bdfb538d61998adaf4336a2c644eaea93023803f686f5e7",
+          "words": 77
+        },
+        "limitation": {
+          "sha256": "2e1d36ca9df8a21f909f05267a932b516fd16f2c3b07d60f469c42d375dc1f5e",
+          "words": 84
+        },
+        "advancement": {
+          "sha256": "e8fda7b677f6832af1a6fa056265e272bcaec71ed37991dbd903c9c440cc9fdc",
+          "words": 81
+        },
+        "extension": {
+          "sha256": "cfd03d5928be16c99b4422b99395b3389e90e513537a4eb2aa360edf2083c592",
+          "words": 72
+        }
+      }
+    },
+    {
+      "name": "magic-staged-2",
+      "status": "completed",
+      "receipt_sha256": "e92ed685f355d0b69611781d203c15617eff46fbcff59e55776cd1278b749318",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4253,
+        "output_tokens": 425,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 179
+      },
+      "session_ids": [
+        "01a0978f-135c-7572-8452-11b8c748ceb7"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "novice",
+        "limitation",
+        "advancement",
+        "extension"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "b6079e86015877e6ecbb36232f54cb61638e1b8acb5f48c0a319be757b2b08b4",
+          "words": 79
+        },
+        "limitation": {
+          "sha256": "8ec4271f5acb5504990393c4c062327deb5ad1d77ec98f21a00ea06642ac4697",
+          "words": 85
+        },
+        "advancement": {
+          "sha256": "acafc385173345c9adcd9ed400d187db83d987d7a45ed1bcc9001bd2600f733a",
+          "words": 89
+        },
+        "extension": {
+          "sha256": "f5e1918d16d2ff6ba650d1fdda9e6818f34833144b6e214731668d934efcd027",
+          "words": 66
+        }
+      }
+    },
+    {
+      "name": "magic-staged-3",
+      "status": "completed",
+      "receipt_sha256": "10eae198069311946bd31f88a1e102dba446e8dce903476afa3c8e9512f361e9",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4253,
+        "output_tokens": 422,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 133
+      },
+      "session_ids": [
+        "01a0978f-a315-74f3-b1d6-704469b44341"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "novice",
+        "limitation",
+        "advancement",
+        "extension"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "28ca644b7fd8d3cdae38ce01107979a62891f93d7dc6dc12ec7869e693551db6",
+          "words": 83
+        },
+        "limitation": {
+          "sha256": "54b958f0d58d77b2f72c8d59621c3323140a451a54f21a058f6119c0adf55be7",
+          "words": 94
+        },
+        "advancement": {
+          "sha256": "934c117e30632d3ddf14ad8466797f862292e441605e96a40e5b984b6cf8520e",
+          "words": 81
+        },
+        "extension": {
+          "sha256": "290ecf31386a76168145d6706808d22c1f43d79940aba3dd37295a010b7341c9",
+          "words": 63
+        }
+      }
+    },
+    {
+      "name": "plan-direct-1",
+      "status": "completed",
+      "receipt_sha256": "30ee8b10a5af0c3815710530b41db696d4450f2931c58b1a9fd2fd766b1b5fd1",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4460,
+        "output_tokens": 1023,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 422
+      },
+      "session_ids": [
+        "01a09790-3845-7e72-86f3-a3cda01e2b26"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "c83baf34ad35f77a64741208d8a1ede73fe5228608b061daa7ca6811ed2c6965",
+          "words": 224
+        },
+        "opening": {
+          "sha256": "aa9a9a9640aafc3af403221a86059b17ea034949bbb38855de367c39a69c5a4d",
+          "words": 357
+        },
+        "growth": {
+          "sha256": "12ca38c14418b0eb7821ad2c043d5ace8f4dbd5a12030f237231f4b53b63539c",
+          "words": 258
+        }
+      }
+    },
+    {
+      "name": "plan-staged-1",
+      "status": "completed",
+      "receipt_sha256": "6ca1eeba534180253f1f46fa82bcbec920bb4b3a230ae04461312c490c1d1f9d",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4853,
+        "output_tokens": 1249,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 516
+      },
+      "session_ids": [
+        "01a09791-bc9e-7160-ab5a-a0d2f1b95833"
+      ],
+      "lineage": {
+        "slot": "magic-staged-1",
+        "receipt_sha256": "a03835450448b40d847f3d42773a6018a31df78b1d194a2ab5d54667b8796bbe"
+      },
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "a38352baf553de429897a5fd320fb8bda54029256e61c8dbfecae893f653b6de",
+          "words": 277
+        },
+        "opening": {
+          "sha256": "29a9aa9e63a9e2b7603f912c6d332b70fe61f85f399e7cafe7b845a2f7f901a9",
+          "words": 416
+        },
+        "growth": {
+          "sha256": "0def9364bd0fd1abe2359d65ba6b742251a555bbe0f5612cd1561066ea3fbd51",
+          "words": 331
+        }
+      }
+    },
+    {
+      "name": "plan-staged-2",
+      "status": "completed",
+      "receipt_sha256": "90130b52905bc3dd794fb94954ad6a892c72a0583315eb509f37daf4f07bc3e6",
+      "valid": true,
+      "usage": {
+        "input_tokens": 2310,
+        "output_tokens": 1179,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 394
+      },
+      "session_ids": [
+        "01a09793-5e35-7452-be01-3abd076da05b"
+      ],
+      "lineage": {
+        "slot": "magic-staged-2",
+        "receipt_sha256": "e92ed685f355d0b69611781d203c15617eff46fbcff59e55776cd1278b749318"
+      },
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "b031080014491a8d24b30a0be7059060a326037118f6dd24cd1cd7d680469976",
+          "words": 245
+        },
+        "opening": {
+          "sha256": "019fe99af1ce5e258d3400afcbe0b58816f707a1dce25dc76aa26051a31a4066",
+          "words": 443
+        },
+        "growth": {
+          "sha256": "f531d45cfff0380937a72f665098f912292fe6ee24b67d90cd3a039820c1e07c",
+          "words": 275
+        }
+      }
+    },
+    {
+      "name": "plan-direct-2",
+      "status": "completed",
+      "receipt_sha256": "a96a025c3356b4b11fbdfd74f747e913a645db55c2c640dc684a305fce45128e",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4469,
+        "output_tokens": 1072,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 516
+      },
+      "session_ids": [
+        "01a09794-bc52-7691-9228-82d611bb3e8b"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "208f446d2094048be7438b799464aabf4156c046b8d623a9e0d0fc83a3c258d1",
+          "words": 249
+        },
+        "opening": {
+          "sha256": "15d9a4e432c7c9fcdcad1c7a23bef54eb459fe58e7cb4883df2b127ace6fc0e7",
+          "words": 397
+        },
+        "growth": {
+          "sha256": "2580be0afcece3be8b403f557f6fe4be9b1002c0d2f87c6050a4ba56e0f1be86",
+          "words": 229
+        }
+      }
+    },
+    {
+      "name": "plan-direct-3",
+      "status": "completed",
+      "receipt_sha256": "8f8cf336ecf6fc841355278083c592415f35655ee1fe20bbd34c36f8e5c5bff4",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4469,
+        "output_tokens": 990,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 376
+      },
+      "session_ids": [
+        "01a09796-7137-7a73-8b64-bbf71909c9f9"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "41c9be091f5de3f8f5b95ee49dad8fe69ea48c3db85972ea5c6ea06495c40700",
+          "words": 218
+        },
+        "opening": {
+          "sha256": "122e735e24ac71dd9891c2d1ff538dbd69edf6e5e674976a9488d1e41ffab97b",
+          "words": 360
+        },
+        "growth": {
+          "sha256": "810f71af6b97d62646da1ee5b62e829478c4f6e3948c85d1b6c8d1359b301c81",
+          "words": 236
+        }
+      }
+    },
+    {
+      "name": "plan-staged-3",
+      "status": "completed",
+      "receipt_sha256": "34b757bc27b96868a154c4a44a73e077b2cbf597a4cbc39bc18c3f53f2388f5a",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4869,
+        "output_tokens": 1299,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 472
+      },
+      "session_ids": [
+        "01a09797-e3a6-7982-88af-489df4297cfc"
+      ],
+      "lineage": {
+        "slot": "magic-staged-3",
+        "receipt_sha256": "10eae198069311946bd31f88a1e102dba446e8dce903476afa3c8e9512f361e9"
+      },
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "51d6907316c555cc76ed108a067cc96bff5f19267d1d2ba635ce318503ac0bbb",
+          "words": 223
+        },
+        "opening": {
+          "sha256": "52a430d6ccbb2916e41f511319bb1dd69a53dcc975ef9cda185d2f1e36f3359c",
+          "words": 528
+        },
+        "growth": {
+          "sha256": "b2de244a52c48e9f2a4f5ac3de48483335650c0d87249d47fd6d0c23bf7ad721",
+          "words": 317
+        }
+      }
+    },
+    {
+      "name": "draft-staged-1",
+      "status": "completed",
+      "receipt_sha256": "8a009f1c5900c5f83f6855daae957ae590b011c4d447be48139205b8953f2065",
+      "valid": true,
+      "usage": {
+        "input_tokens": 5351,
+        "output_tokens": 2303,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 63
+      },
+      "session_ids": [
+        "01a09799-4f52-7e33-8db7-9c2a709a8910"
+      ],
+      "lineage": {
+        "slot": "plan-staged-1",
+        "receipt_sha256": "6ca1eeba534180253f1f46fa82bcbec920bb4b3a230ae04461312c490c1d1f9d"
+      },
+      "returned_order": [
+        "story"
+      ],
+      "fields": {
+        "story": {
+          "sha256": "6f813fcb01d930fdcc0c26f035efa2bbaa0d1535af4d21c3a7a5fc91bee9bb51",
+          "words": 1506
+        }
+      }
+    },
+    {
+      "name": "draft-direct-1",
+      "status": "completed",
+      "receipt_sha256": "57f9111330cc1c9be050b4fe65cfdf87ff96a921703279d2b706ef42bfbfd8c4",
+      "valid": true,
+      "usage": {
+        "input_tokens": 5125,
+        "output_tokens": 2280,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 43
+      },
+      "session_ids": [
+        "01a0979b-3a0f-77d2-b5cd-5fb9a749caa2"
+      ],
+      "lineage": {
+        "slot": "plan-direct-1",
+        "receipt_sha256": "30ee8b10a5af0c3815710530b41db696d4450f2931c58b1a9fd2fd766b1b5fd1"
+      },
+      "returned_order": [
+        "story"
+      ],
+      "fields": {
+        "story": {
+          "sha256": "86a5616104efdeecc2e47dbdeaaa849446b18e0d937296aef181db8f290426e6",
+          "words": 1505
+        }
+      }
+    }
+  ],
+  "progress": {
+    "attempts": 11,
+    "tokens": 67084,
+    "status": "complete",
+    "slots": [
+      {
+        "name": "magic-staged-1",
+        "status": "completed"
+      },
+      {
+        "name": "magic-staged-2",
+        "status": "completed"
+      },
+      {
+        "name": "magic-staged-3",
+        "status": "completed"
+      },
+      {
+        "name": "plan-direct-1",
+        "status": "completed"
+      },
+      {
+        "name": "plan-staged-1",
+        "status": "completed"
+      },
+      {
+        "name": "plan-staged-2",
+        "status": "completed"
+      },
+      {
+        "name": "plan-direct-2",
+        "status": "completed"
+      },
+      {
+        "name": "plan-direct-3",
+        "status": "completed"
+      },
+      {
+        "name": "plan-staged-3",
+        "status": "completed"
+      },
+      {
+        "name": "draft-staged-1",
+        "status": "completed"
+      },
+      {
+        "name": "draft-direct-1",
+        "status": "completed"
+      }
+    ]
+  },
+  "registration_sha256": "731fb775672c5d2ae6368e824e37d1753b43c9328903432903bd65b8ca4f2010"
+}

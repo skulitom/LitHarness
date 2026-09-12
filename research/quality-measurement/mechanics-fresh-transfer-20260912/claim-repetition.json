@@ -1,0 +1,38 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "mechanics-fresh-transfer-repetition-20260912",
+  "statement": "The registered separate mechanics procedure consistently avoids the recurring repair/access engine across these three fresh plans and the preassigned staged chapter without converging on one replacement calibration-and-support engine.",
+  "status": "refuted",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/mechanics-fresh-transfer-20260912/RUNBOOK.md",
+      "sha256": "3935c243095d1557d2f74673285c4f8ab91e2d2eb518e946b88e1665da4e15da"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/mechanics-fresh-transfer-20260912/registration.json",
+      "sha256": "731fb775672c5d2ae6368e824e37d1753b43c9328903432903bd65b8ca4f2010"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/mechanics-fresh-transfer-20260912/run.py",
+      "sha256": "1dab788ed8d96a5b97d7915ef2a88e675d0fcc0a073964e6d51d5e5ac96bb280"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/mechanics-fresh-transfer-20260912/evidence.json",
+      "sha256": "9a9b3b6d7d1444f9aac4f61da51d29352057ef17e26edecc079fe1736c32c330"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/mechanics-fresh-transfer-20260912/evidence.json",
+      "sha256": "9a9b3b6d7d1444f9aac4f61da51d29352057ef17e26edecc079fe1736c32c330"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/mechanics-fresh-transfer-20260912/REPORT.md",
+      "sha256": "34d445b97a622e92039476050af80920f6f9c7235d06cf1619d8ffa601a2f94f"
+    }
+  ]
+}

@@ -400,3 +400,12 @@ until it was closed, so the list is a changelog rather than a checklist.
 
 Derived from `research/certified-bounded-revision`, whose §5 found (3) as an executable
 counterexample against this repository's own domain object.
+
+## Authoring transfer failure, outside the proxy ledger
+
+Separate component design is not itself a diversity control. The registered
+[fresh mechanics transfer](mechanics-fresh-transfer-20260912/REPORT.md) preserved supplied
+acquisition exercises into fresh plans and a chapter, while its independent magic designs
+already converged and repair/access plots formed around them. Its broad avoidance claim was
+refuted; the narrow preservation result does not rescue it. Inspect both component invention
+and downstream use before treating successful preservation as evidence of creative variety.
