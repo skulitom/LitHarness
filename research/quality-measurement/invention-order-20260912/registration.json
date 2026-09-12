@@ -1,0 +1,37 @@
+{
+  "manifest_sha256": "aa43ab3604bd5ea82f6d78f236edad8ecd2985ee0a643768c83423097ffd462c",
+  "order": [
+    "control-1",
+    "opening-1",
+    "pursuit-1",
+    "opening-2",
+    "pursuit-2",
+    "control-2",
+    "pursuit-3",
+    "control-3",
+    "opening-3"
+  ],
+  "runner_sha256": "23643f09f71855e35b90b6e57540439ffc8043a09660c738d307bba6eb618f28",
+  "runbook_sha256": "88b4ba0903c01ceec77926fb3a3816ac8715393c7e998753ecf93873fbe4fe2a",
+  "utility_sha256": "96d50bb661dbca1012b41c7e6c101035537af28ce225a1bf797447966108085e",
+  "binary_sha256": "3d6ca7085c932b62ef4ee4877e92f15b050fb94b2eb8e6c10a346a06248c6004",
+  "pursuit_instruction_sha256": "27d1e4aa3ec39752ccd6fa06117842730fbaa7d1a4aa353413e59f8d06ac487b",
+  "seeds": {
+    "1": "1c92147133f170f293cd0ea520811645f58baa1cd10ba4402dc479854f1fb1bd",
+    "2": "6b8e9adc8ec01cc688369fb5e78d0d58bffb6cf21f393fd6bcc488f888732c38",
+    "3": "ee179341e9b9428c6b117826486394bd7ddfb200afbc89f02eaf28560e6ff063"
+  },
+  "requests": {
+    "control-1": "6704305a82ad05c7d176e415605f300255cb54c5ca1e319f13d02f9fcc505bfd",
+    "opening-1": "3c2ac214c6b041310b06d4825fb23394282f998b95aa1d5b5f6ae33c2ab67973",
+    "pursuit-1": "e14111942dcee25c9dc8067b22c41690b7ce16fd1e036615d8071bd92bc9ca35",
+    "opening-2": "5581c1fdb17925359f7ea7874ec09b724f0dfd6e38fd7a3f8073f57d518c2bf6",
+    "pursuit-2": "1211958d93795063f749d0a95de3153cddb24b401ebd6ff31461edee60099b68",
+    "control-2": "f0943005b8cc2598f47995ed0526549225e351afabc837fa48a0febf12043c97",
+    "pursuit-3": "3c44aa76f55a14897b372afa7b87a5b7268da499e636e8e5559167e46eb230dd",
+    "control-3": "ce8dc468351ed70bf2e0f762aa2cc7be5202cbe74dc97172ec030c81da6c76a5",
+    "opening-3": "0fda303f5554b9c15c243f49694129e5ebb188b10e462fdd0781c770f239df01"
+  },
+  "source_revision": "46ac08533c35bfa198fb7f3e3260506205bb81c1",
+  "precommit_formatting_note": "Two line wraps after lint, before registration commit and any dispatch; seed and request bytes unchanged. Initial hashes retained under local pre-lint files."
+}
