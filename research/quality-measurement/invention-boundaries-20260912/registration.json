@@ -1,0 +1,56 @@
+{
+  "manifest_sha256": "29f25fda24e5a95d40ec71c93d41a1ac04f65a2867b5d8380c939c6cf020e7c6",
+  "order": [
+    "chapter-plan",
+    "chapter-source",
+    "chapter-pad",
+    "chapter-both",
+    "magic-astra-1",
+    "magic-opus-1",
+    "magic-opus-2",
+    "magic-astra-2",
+    "plan-astra-astra-1",
+    "plan-astra-opus-1",
+    "plan-opus-opus-1",
+    "plan-opus-astra-1",
+    "plan-opus-opus-2",
+    "plan-opus-astra-2",
+    "plan-astra-astra-2",
+    "plan-astra-opus-2"
+  ],
+  "models": {
+    "astra": "gpt-6-astra",
+    "opus": "claude-opus-5"
+  },
+  "source_revision": "0ad45a5cfe4dee1a7e10c147d7ca917f912dbfd0",
+  "runner_sha256": "6aac24fb7a757eb33611ff8928ec0d333c311baa22708f0cfa29c513263c7ed4",
+  "runbook_sha256": "7be579be2a4f3946607a1836206c459802d7ec1569e7deec9dbf64a3adc4ef8a",
+  "nico_sha256": "3dda43b4a5a001b316a723450b356eb0974d4320c17b5cf9e6a958f21292e643",
+  "seeds": {
+    "0": "d6e2617e0c4ffbf018d932380c118f1af5c98bd13bfe205ccd03cf6c3dea0e96",
+    "1": "434dd53f615abdabdb980bb8f7e2c66ecf8ec6fd510f319bb582d8607cf015df",
+    "2": "339a49b06de87b5c97ec1a6ffae32f9ea4b0e45c4a9c0ae3115f331172547632"
+  },
+  "static_requests": {
+    "chapter-plan": "6c2e185f304e9bf024e5472c4aa4eaa5e3a12dd7eeb8b88a9a4be76974fb5458",
+    "chapter-source": "ad7290e1745cf9f3fd5be5018e2c2b0a95e2aad02e024687f68209fc34801e31",
+    "chapter-pad": "f2fddf2d13fcbb06606ac8005bf2ce6845657207297726f46dcd91c23666d145",
+    "chapter-both": "94981e7b3d23c3ca78dc3a46083860d3a4142b65d4905559432f375141ac520f",
+    "magic-astra-1": "49ec1fb3796d11b2c218858508eb7a1a6a293047e53fa92d7cbbc2fb6e3b1cb2",
+    "magic-opus-1": "49ec1fb3796d11b2c218858508eb7a1a6a293047e53fa92d7cbbc2fb6e3b1cb2",
+    "magic-opus-2": "c996071553f1e5f2ea34b864094707c70f78eaef214fec60c966914bd448abee",
+    "magic-astra-2": "c996071553f1e5f2ea34b864094707c70f78eaef214fec60c966914bd448abee"
+  },
+  "chapter_prompt_characters": {
+    "chapter-plan": 7008,
+    "chapter-source": 815,
+    "chapter-pad": 7807,
+    "chapter-both": 7807
+  },
+  "padding_added_input_tolerance": 0.1,
+  "pre_dispatch_amendment": {
+    "reason": "Review added immediate nonzero-exit rejection and returned Claude model attribution checks. No generation calls or output reads; all drawn seeds and static requests unchanged. Initial handoff interrupted; final handoff rerun.",
+    "previous_manifest_sha256": "9bf39d0f132d1f92bf580427b6b6d6461606db79a8c485774839b8a432a09169",
+    "previous_registration_sha256": "f233a4b41a29b73039c1a1afdf6bd50cbc6a811d7819c39793d2a99a1ee25f71"
+  }
+}
