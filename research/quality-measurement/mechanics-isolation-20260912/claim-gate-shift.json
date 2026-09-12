@@ -1,7 +1,7 @@
 {
   "schema": "litharness.epistemic-claim.v1",
-  "claim_id": "mechanics-isolation-staging-20260912",
-  "statement": "The registered separate mechanics-design procedure consistently avoids the recurring repair/access engine across these three fixed goals while preserving supplied goals, conflicts and mechanics.",
+  "claim_id": "mechanics-isolation-gate-shift-20260912",
+  "statement": "In these nine plans for three fixed goals, all six plans supplied with separately generated mechanics retain their specified first acquisition exercise, while the three direct controls invent service for another inhabitant as the route to the first power. This is an observed local procedural contrast, not a registered literary success or a general repetition fix.",
   "status": "observed",
   "artifacts": [
     {
@@ -13,11 +13,6 @@
       "kind": "registration",
       "path": "research/quality-measurement/mechanics-isolation-20260912/registration.json",
       "sha256": "587d00fcd5ee7cd8ad19bbd733b70328f6fc251079855c1ec871b101788e121a"
-    },
-    {
-      "kind": "registration",
-      "path": "research/quality-measurement/mechanics-isolation-20260912/run.py",
-      "sha256": "b2e5d77356b5a986ac9721845483925667e5dc16a9d62672a71eb50a1dae6945"
     },
     {
       "kind": "derived_result",

@@ -1,0 +1,930 @@
+{
+  "all_controls_pass": true,
+  "controls": {
+    "goal-1": {
+      "source": true,
+      "exact_extraction": true,
+      "field_hash": true
+    },
+    "goal-2": {
+      "source": true,
+      "exact_extraction": true,
+      "field_hash": true
+    },
+    "goal-3": {
+      "source": true,
+      "exact_extraction": true,
+      "field_hash": true
+    },
+    "magic-linked-1": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "magic-blind-1": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "magic-blind-2": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "magic-linked-2": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "magic-linked-3": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "magic-blind-3": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "plan-direct-1": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "plan-linked-1": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "plan-blind-1": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "plan-linked-2": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "plan-blind-2": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "plan-direct-2": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "plan-blind-3": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "plan-direct-3": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true,
+      "frozen_static": true
+    },
+    "plan-linked-3": {
+      "renderer": true,
+      "receipt_request": true,
+      "saved_request_hash": true,
+      "lineage": true,
+      "captured_prompt": true,
+      "captured_schema": true,
+      "effective_system": true,
+      "native_schema": true,
+      "returncode": true,
+      "model_request": true,
+      "effort": true,
+      "ephemeral": true,
+      "project_docs_off": true,
+      "memory_off": true
+    },
+    "sessions": {
+      "distinct": true
+    }
+  },
+  "outputs": [
+    {
+      "name": "magic-linked-1",
+      "status": "completed",
+      "receipt_sha256": "75a7cec6c8cc59511cbc3028131247af1b847cbf74f1e25389127c3afab354fd",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4390,
+        "output_tokens": 418,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 140
+      },
+      "session_ids": [
+        "01a0973d-afe0-7f02-85a9-8c99e2357282"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "novice",
+        "limitation",
+        "advancement",
+        "extension"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "a1a3cb45ca0a4b835a6f429fabd7ff53cb97d075f394efff840832fc0b7fbbf4",
+          "words": 81
+        },
+        "limitation": {
+          "sha256": "290ca0c2f336a352a34ef82fc2ed9f0b92dddbbdbbd860f15ee890bedd3f7f53",
+          "words": 88
+        },
+        "advancement": {
+          "sha256": "0e240d94ed9314dfadc75f7788abf86ce4b5a452afcf94c8d96c69daf4162cef",
+          "words": 83
+        },
+        "extension": {
+          "sha256": "1b7ba9fdeed1ab8625f16c8feb0f43e7f6d0835f8a08dc591cd20e44ca2c1ac9",
+          "words": 66
+        }
+      }
+    },
+    {
+      "name": "magic-blind-1",
+      "status": "completed",
+      "receipt_sha256": "86527731c80b0186adb95e07a24b3ed316f7a4f62f71aa2be2fc9191ff5fd649",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4249,
+        "output_tokens": 416,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 119
+      },
+      "session_ids": [
+        "01a0973e-2447-73c1-bf65-a7487e45f3ce"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "novice",
+        "limitation",
+        "advancement",
+        "extension"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "d76fd7b5522e4ae31180476ca97c34f91bc92e6e507190d4adb353ec11df7ccc",
+          "words": 70
+        },
+        "limitation": {
+          "sha256": "96c17d6733d2034ced2af4ea99a8c937949fc5631f44016fa4a87030674bcbde",
+          "words": 83
+        },
+        "advancement": {
+          "sha256": "18e6830909e03f62f5ff487b133d256f1dc7150569f91231682e7302b7b798fd",
+          "words": 90
+        },
+        "extension": {
+          "sha256": "0e76615499dabb964e04cefd401eec87e01502bfbd12a5cb736db0529f8d4fc5",
+          "words": 76
+        }
+      }
+    },
+    {
+      "name": "magic-blind-2",
+      "status": "completed",
+      "receipt_sha256": "11d65779056016a264a870dc51855d1f12f9616d4636b1369bb3ab7109269893",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4247,
+        "output_tokens": 415,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 227
+      },
+      "session_ids": [
+        "01a0973e-93bd-7b02-b094-8d5c6996588c"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "novice",
+        "limitation",
+        "advancement",
+        "extension"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "e838a98c394803dc88ffb9e8742f498c9a6e5b0c5405fe5cdcf5571ff13c47a5",
+          "words": 71
+        },
+        "limitation": {
+          "sha256": "b5efdfc9640cdef64dc9b4a90b3356c536d3b9bb8c1880da32f567cf3eba792a",
+          "words": 79
+        },
+        "advancement": {
+          "sha256": "460a64ced4780641da1d81ee33f04f5d50dc07fc591533dfb02e081bee3bce2e",
+          "words": 85
+        },
+        "extension": {
+          "sha256": "b3cb809185f0103d010a1ee19a98abfd6651cc5bbf32af29295446f3abe26e31",
+          "words": 81
+        }
+      }
+    },
+    {
+      "name": "magic-linked-2",
+      "status": "completed",
+      "receipt_sha256": "25409b4e8d7d387ba1167b562ed0680618d64019cbde07b3c40b407ddc682c7d",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4378,
+        "output_tokens": 411,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 184
+      },
+      "session_ids": [
+        "01a0973e-f87f-72c2-9f82-2819f7b6da6c"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "novice",
+        "limitation",
+        "advancement",
+        "extension"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "ecd819e368b65a57d2c5e6459d11fa9429aef2a70becc014156a5720af849204",
+          "words": 80
+        },
+        "limitation": {
+          "sha256": "3ae0a6cbefe0675209a3edb7f0b0a4bca3a02d848a60ce1b8ffcf9963a6e58f7",
+          "words": 81
+        },
+        "advancement": {
+          "sha256": "79525cc6c1d40cf37096a59c8c740dd0f9653b5d00e64aa74f9a4e1b3d458468",
+          "words": 84
+        },
+        "extension": {
+          "sha256": "f55d5ee879ab7099231a0c7bdc818c75493c8e169ce31502cb92618332e7bc2c",
+          "words": 69
+        }
+      }
+    },
+    {
+      "name": "magic-linked-3",
+      "status": "completed",
+      "receipt_sha256": "273fb99c9cfc393587ee9519cf48ef58ba7eef3d23912ef9fe6fa52d88efb807",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4407,
+        "output_tokens": 417,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 356
+      },
+      "session_ids": [
+        "01a0973f-74cc-7760-8047-6600c05d5e41"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "novice",
+        "limitation",
+        "advancement",
+        "extension"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "6de80569cb3aaffb06e6045f1aa22e0bd6f4160e018d88668764883ca3aa9e18",
+          "words": 80
+        },
+        "limitation": {
+          "sha256": "12fe5e95bad7991010dfec1446ff352a8620dad32178baaa0ca306539fd29938",
+          "words": 99
+        },
+        "advancement": {
+          "sha256": "e2f929055f5aae3b46fb9d2ca9eb606a07546a5d947f869a7376467cdcb131a2",
+          "words": 85
+        },
+        "extension": {
+          "sha256": "274a480d7eff30d9671e2acf7efb4cccbc4664b3c28b63bffe7f4e843c33a184",
+          "words": 57
+        }
+      }
+    },
+    {
+      "name": "magic-blind-3",
+      "status": "completed",
+      "receipt_sha256": "fe6d525399e835024af2d82533de8649c8419c2dce565f42ddcf6bb487ed3710",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4254,
+        "output_tokens": 427,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 212
+      },
+      "session_ids": [
+        "01a09740-1652-7373-8de3-93a149fee2c7"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "novice",
+        "limitation",
+        "advancement",
+        "extension"
+      ],
+      "fields": {
+        "novice": {
+          "sha256": "98559daefc59aa88e532d89755707d7cb584f3f6d2acf4020e775a22fc6b69aa",
+          "words": 93
+        },
+        "limitation": {
+          "sha256": "bf16d2fa245805909fc2b1cabcc9d5ee87599fdd902b17cfc138096317556af5",
+          "words": 89
+        },
+        "advancement": {
+          "sha256": "5cf82c3b2ad0330c007ed558bb8a48caf3859da3403abaf0fbaf1a46e9dde0ba",
+          "words": 77
+        },
+        "extension": {
+          "sha256": "501940ddba29204157007114966c204ab84d59138adbcda58c568d0154566ada",
+          "words": 61
+        }
+      }
+    },
+    {
+      "name": "plan-direct-1",
+      "status": "completed",
+      "receipt_sha256": "b9232bd5bb6b80f7f939554bbd2950dbf8456918dadc1370f7c7ada2f216c5b6",
+      "valid": true,
+      "usage": {
+        "input_tokens": 2049,
+        "output_tokens": 1369,
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 509
+      },
+      "session_ids": [
+        "01a09740-8e66-7961-b59d-151b2119d82d"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "0924112f589c8299d08196980dd0ffa35f69dcaef91e754c088759b2f7c6d01b",
+          "words": 305
+        },
+        "opening": {
+          "sha256": "db730deb88ceb37b9df86125dcce7f389dee2a51c207fabf6798356fc8717263",
+          "words": 531
+        },
+        "growth": {
+          "sha256": "13642d99b68ae82d73fbefffad0c0ca8112eb6164262f94ed074400c8a78a3da",
+          "words": 296
+        }
+      }
+    },
+    {
+      "name": "plan-linked-1",
+      "status": "completed",
+      "receipt_sha256": "e3d072e17a848eb129be553273d0c9c72e20a9478fcdedf9798c9e88232141cd",
+      "valid": true,
+      "usage": {
+        "input_tokens": 5011,
+        "output_tokens": 1297,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 504
+      },
+      "session_ids": [
+        "01a09741-dd8c-7830-b9a4-31128a23a254"
+      ],
+      "lineage": {
+        "slot": "magic-linked-1",
+        "receipt_sha256": "75a7cec6c8cc59511cbc3028131247af1b847cbf74f1e25389127c3afab354fd"
+      },
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "bb267ea269113d39443f9e12f9f92c1d54cd6df37c1eb7ea3710e59fea8f6854",
+          "words": 290
+        },
+        "opening": {
+          "sha256": "1d55fd3f5bf977192ea68e6d7e783612215f47d07029c417a9fd89fb767d00bc",
+          "words": 448
+        },
+        "growth": {
+          "sha256": "13104ad0ad20b9fdd38e9648db3877a6b1e07168596e097d9b133dcdf455d229",
+          "words": 296
+        }
+      }
+    },
+    {
+      "name": "plan-blind-1",
+      "status": "completed",
+      "receipt_sha256": "4764273cfd6682efd698584ed508bab66d0c7c381e3cdf737ecd39a153887695",
+      "valid": true,
+      "usage": {
+        "input_tokens": 5013,
+        "output_tokens": 1411,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 516
+      },
+      "session_ids": [
+        "01a09743-0093-7d42-9737-497f65f125be"
+      ],
+      "lineage": {
+        "slot": "magic-blind-1",
+        "receipt_sha256": "86527731c80b0186adb95e07a24b3ed316f7a4f62f71aa2be2fc9191ff5fd649"
+      },
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "9b75b161bed09799744e30b8f513f72a9bf70d1388d75148b7bd5408dbae50b2",
+          "words": 286
+        },
+        "opening": {
+          "sha256": "d033779476709dbc47f7c9f5298ffcc55abd8e6ab6e9876b85965386d17ea784",
+          "words": 554
+        },
+        "growth": {
+          "sha256": "8437372e0622a9d86d812e5059e69ba4daab256657554a12b85f512e85238e02",
+          "words": 323
+        }
+      }
+    },
+    {
+      "name": "plan-linked-2",
+      "status": "completed",
+      "receipt_sha256": "ef648983cf1a62ba89fe15a53d0ff73eb4a7a6ab4a57abe83aeba9731a7993d2",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4994,
+        "output_tokens": 1233,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 506
+      },
+      "session_ids": [
+        "01a09744-521c-7b63-97eb-67be89ac1ec7"
+      ],
+      "lineage": {
+        "slot": "magic-linked-2",
+        "receipt_sha256": "25409b4e8d7d387ba1167b562ed0680618d64019cbde07b3c40b407ddc682c7d"
+      },
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "8d06c95c8ca667a2f07d31ec699762ae393139baeb6c2415c90ba61499c15710",
+          "words": 282
+        },
+        "opening": {
+          "sha256": "e25a0346a00b7ee21a4e4af1c9f1f1e54db845d99c4fd4826a38ab7df658d83e",
+          "words": 418
+        },
+        "growth": {
+          "sha256": "3c32d5d4ddfad797b2f8197ca6ddf9dec7993e6ee05ae828e1556187aad88998",
+          "words": 306
+        }
+      }
+    },
+    {
+      "name": "plan-blind-2",
+      "status": "completed",
+      "receipt_sha256": "d0f5318170dee655647b863d9c6d8c5f7121a499e773b304572c98db4d897de0",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4996,
+        "output_tokens": 1559,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 516
+      },
+      "session_ids": [
+        "01a09745-63ce-7fb1-859b-2990ee2a25df"
+      ],
+      "lineage": {
+        "slot": "magic-blind-2",
+        "receipt_sha256": "11d65779056016a264a870dc51855d1f12f9616d4636b1369bb3ab7109269893"
+      },
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "13581e3e3c4306f34200093c04e476cc4be16164054cfada540ac53dea1c969c",
+          "words": 360
+        },
+        "opening": {
+          "sha256": "138baf7dda54a239f2e96148ad04539e13f8e18bca1754274482d0b05efa9fcc",
+          "words": 522
+        },
+        "growth": {
+          "sha256": "66c4e026ecdd74771fc0267e4366cd64aab4fd8c2e49f91b741fe5988ba6e1ae",
+          "words": 425
+        }
+      }
+    },
+    {
+      "name": "plan-direct-2",
+      "status": "completed",
+      "receipt_sha256": "4f1b0fd34bebb50ecc414c8403611e95321cebf9534695e8f8833d16f9422a43",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4593,
+        "output_tokens": 1203,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 372
+      },
+      "session_ids": [
+        "01a09746-ab82-7e01-82ef-9c9ebbb557f6"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "8ec881d81a4691e1256c85b207306c02ecee77fb3a81b136849fb716f994a494",
+          "words": 242
+        },
+        "opening": {
+          "sha256": "b40ebd26e1612cc1c17a94c220a72dd1d47ac824abf2cf17a99cdc1d3d1336aa",
+          "words": 437
+        },
+        "growth": {
+          "sha256": "b9a002a39e9dcb3b3e919a3a2f04f9bcb55a99ef87e000654944becb7a602b03",
+          "words": 281
+        }
+      }
+    },
+    {
+      "name": "plan-blind-3",
+      "status": "completed",
+      "receipt_sha256": "833f415fbe43833601618435abb5d3855d5714255b2812e12e741ce55945ec27",
+      "valid": true,
+      "usage": {
+        "input_tokens": 5037,
+        "output_tokens": 1571,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 973
+      },
+      "session_ids": [
+        "01a09747-c872-7523-8380-933f1f0a52bf"
+      ],
+      "lineage": {
+        "slot": "magic-blind-3",
+        "receipt_sha256": "fe6d525399e835024af2d82533de8649c8419c2dce565f42ddcf6bb487ed3710"
+      },
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "e95781e34a97d180f35d6b6edfdab565c262264a82a878b317b7f8a1519f6e0b",
+          "words": 282
+        },
+        "opening": {
+          "sha256": "3135e1f6907ce81bebf161b6eebc3abeac30963efddf13b1748a5cb67cfa2d17",
+          "words": 640
+        },
+        "growth": {
+          "sha256": "3377682b5d2825419f0bafbe4ad1a9d9659e40cdb47f83ad781d812d8610686f",
+          "words": 383
+        }
+      }
+    },
+    {
+      "name": "plan-direct-3",
+      "status": "completed",
+      "receipt_sha256": "750246eb983332812a3cf973b834e53c913b754c29961014291f8294f47f96a4",
+      "valid": true,
+      "usage": {
+        "input_tokens": 4626,
+        "output_tokens": 1225,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 226
+      },
+      "session_ids": [
+        "01a09749-9311-7901-b64d-490f973aca64"
+      ],
+      "lineage": null,
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "aecf477baf967dd485abf80b0a54ee1e6eea1396533bb1bdc1d7858075e62e2c",
+          "words": 253
+        },
+        "opening": {
+          "sha256": "e48b5dc6472846433264a8f29b510c9590f562124a9eafca207d00f47cca0501",
+          "words": 507
+        },
+        "growth": {
+          "sha256": "69b3b6da78d63a75eb05bfe5ff2a198999b786b5d14bcaba6a3bbb343d53fb21",
+          "words": 241
+        }
+      }
+    },
+    {
+      "name": "plan-linked-3",
+      "status": "completed",
+      "receipt_sha256": "f8550fdf2c9be497e56efa2292241569874e3e0ac9f10cae0f14c03db1dfc0b7",
+      "valid": true,
+      "usage": {
+        "input_tokens": 5027,
+        "output_tokens": 1279,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 422
+      },
+      "session_ids": [
+        "01a0974a-a09a-7153-b814-950303ba02c7"
+      ],
+      "lineage": {
+        "slot": "magic-linked-3",
+        "receipt_sha256": "273fb99c9cfc393587ee9519cf48ef58ba7eef3d23912ef9fe6fa52d88efb807"
+      },
+      "returned_order": [
+        "world",
+        "opening",
+        "growth"
+      ],
+      "fields": {
+        "world": {
+          "sha256": "122170fa8c6e144f2a2b160de35881a0da4ae0e8f7d78bc5baa44645798c85aa",
+          "words": 224
+        },
+        "opening": {
+          "sha256": "b7b38cfc4f6d94835bb76b037f6171fc8a268365482b422a686c3c5a63429bf7",
+          "words": 551
+        },
+        "growth": {
+          "sha256": "29340f09f407bb1cab87de7029bb0a363c0c756895a1f8bba7626c98eea0eb0c",
+          "words": 282
+        }
+      }
+    }
+  ],
+  "progress": {
+    "attempts": 15,
+    "tokens": 90264,
+    "status": "complete",
+    "slots": [
+      {
+        "name": "magic-linked-1",
+        "status": "completed"
+      },
+      {
+        "name": "magic-blind-1",
+        "status": "completed"
+      },
+      {
+        "name": "magic-blind-2",
+        "status": "completed"
+      },
+      {
+        "name": "magic-linked-2",
+        "status": "completed"
+      },
+      {
+        "name": "magic-linked-3",
+        "status": "completed"
+      },
+      {
+        "name": "magic-blind-3",
+        "status": "completed"
+      },
+      {
+        "name": "plan-direct-1",
+        "status": "completed"
+      },
+      {
+        "name": "plan-linked-1",
+        "status": "completed"
+      },
+      {
+        "name": "plan-blind-1",
+        "status": "completed"
+      },
+      {
+        "name": "plan-linked-2",
+        "status": "completed"
+      },
+      {
+        "name": "plan-blind-2",
+        "status": "completed"
+      },
+      {
+        "name": "plan-direct-2",
+        "status": "completed"
+      },
+      {
+        "name": "plan-blind-3",
+        "status": "completed"
+      },
+      {
+        "name": "plan-direct-3",
+        "status": "completed"
+      },
+      {
+        "name": "plan-linked-3",
+        "status": "completed"
+      }
+    ]
+  },
+  "registration_sha256": "587d00fcd5ee7cd8ad19bbd733b70328f6fc251079855c1ec871b101788e121a"
+}

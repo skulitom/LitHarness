@@ -2,7 +2,7 @@
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "mechanics-isolation-withholding-20260912",
   "statement": "Withholding the pursuit from the registered mechanics designer consistently avoids the recurring repair/access engine beyond the linked and direct controls across these three fixed goals.",
-  "status": "registered",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -18,6 +18,21 @@
       "kind": "registration",
       "path": "research/quality-measurement/mechanics-isolation-20260912/run.py",
       "sha256": "b2e5d77356b5a986ac9721845483925667e5dc16a9d62672a71eb50a1dae6945"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/mechanics-isolation-20260912/evidence.json",
+      "sha256": "1272f4cc94b21f9cdea0ac89f58d8c7cd90081e55beb8ff7e4ed448760467d8d"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/mechanics-isolation-20260912/evidence.json",
+      "sha256": "1272f4cc94b21f9cdea0ac89f58d8c7cd90081e55beb8ff7e4ed448760467d8d"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/mechanics-isolation-20260912/REPORT.md",
+      "sha256": "9352324f756a0e8d19f7488deb15e9fbc0e0ba09307c2c9ecb43b239bfef3b5c"
     }
   ]
 }
