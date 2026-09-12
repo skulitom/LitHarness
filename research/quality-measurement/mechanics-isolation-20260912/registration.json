@@ -1,0 +1,47 @@
+{
+  "manifest_sha256": "3aefcbb75e54a9d2e20266e0a23f7c5ba5c2dfd1e220570878b84275a7bb18b9",
+  "order": [
+    "magic-linked-1",
+    "magic-blind-1",
+    "magic-blind-2",
+    "magic-linked-2",
+    "magic-linked-3",
+    "magic-blind-3",
+    "plan-direct-1",
+    "plan-linked-1",
+    "plan-blind-1",
+    "plan-linked-2",
+    "plan-blind-2",
+    "plan-direct-2",
+    "plan-blind-3",
+    "plan-direct-3",
+    "plan-linked-3"
+  ],
+  "runner_sha256": "b2e5d77356b5a986ac9721845483925667e5dc16a9d62672a71eb50a1dae6945",
+  "runbook_sha256": "7b44dbedd1ce17aa114278ab10dd4a20ef1fd3ac32e1aea73b4172071841848e",
+  "utility_sha256": "96d50bb661dbca1012b41c7e6c101035537af28ce225a1bf797447966108085e",
+  "binary_sha256": "3d6ca7085c932b62ef4ee4877e92f15b050fb94b2eb8e6c10a346a06248c6004",
+  "mechanics_task_sha256": "64ea2108c3cddb63823191a112ba212dc2bb20f7f929498557030850d420490c",
+  "source_revision": "60b0b4c194d0ea45ea960e99d8645241b7d1b35c",
+  "seeds": {
+    "1": "193973fca6afb8a1de8f098c4dfaf4a98f5f6a6ca699e0332de921f09b75aba2",
+    "2": "6ae6041bd4175313e5884e1b085fbf5ea7bde0e9ec6a45ef62247c50be05073e",
+    "3": "34c77ada617e0aeec55a937d73b0fc7538fd2a59c7a10759d85a506fc4efb4b5"
+  },
+  "goals": {
+    "1": "8637aa5aa05a041870335074f77d21e08667ffa1055f2f96d741ed95e3bf24a7",
+    "2": "96d83727f531121b10e600287e72d04c61fb99d815f8b4f26c74dab392fca406",
+    "3": "e9ed5ee3433e900ed1b3f0bb87f0ac717a4c9808e748d6e2a68e1e5557daefde"
+  },
+  "static_requests": {
+    "magic-linked-1": "4a6f8e68418943cdd01790d027cc0c44c4ff6dbacfd5575e897dd9fd6f199471",
+    "magic-blind-1": "c147b190952d9046decb320bad4f4778f1ecef48c45efa344f12ae9b7d5a7302",
+    "magic-blind-2": "aa10313cc1ef3be0c2c9e06720f407ce70c2d226532948e41f283dbb5ff80d29",
+    "magic-linked-2": "f86b8d45fb266628662c80f2062f8a424b4007916c71c22182b4859a4fb7e785",
+    "magic-linked-3": "17549a7218636a587ddd6ac0e8f2d245f737c0b30fb685c0bf5507996bb823cb",
+    "magic-blind-3": "79719bf38833d42e4d64c773b19f380201d110974c917be671cc40dae588be0b",
+    "plan-direct-1": "4abdb1464ded646c81ee8d7532d301da3f7d12fd45df975df8385c04151386f1",
+    "plan-direct-2": "3f2a96cf1796a9888039c7c69b0dd6e236d55447e6db15a9a9911f100c3c82f8",
+    "plan-direct-3": "3ef2219c2d8db7482865d974b8b74a03a85015a40be74d5990593e8633fec990"
+  }
+}
