@@ -1,8 +1,8 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "next-priorities-20260913",
-  "statement": "The fixed tests examine whether a scoped reconciliation clarification preserves adopted goals without promoting a conditional thought, whether the existing Wren plan supports continued numerical investment through Chapter 6, and whether exact-payoff deletion provides mechanically matched and semantically verified reader-test material. Architect retrieval cost is profiled descriptively.",
-  "status": "registered",
+  "statement": "The fixed goal contrast avoids a homeward proposal under the scoped clarification while retaining an explicitly adopted pursuit. The unchanged production baseline completes six chapters and two different purchases, while an in-memory funded control identifies the depth-one ceiling as blocking a second Load investment. Exact-payoff deletion supplies no verified semantic damage/sham pairs in the registered cohort. Architect cost is descriptive.",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,26 @@
       "kind": "registration",
       "path": "research/quality-measurement/next-priorities-20260913/registration.json",
       "sha256": "51a459851d6cad86736906975e816ef1c714fcc30bf96c104d8439eb0f1dad9d"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/next-priorities-20260913/evidence.json",
+      "sha256": "70e62686a2550299f3b1ef6b6bb6857f1c79ec31b05d4f8aa753f6e70d7b2b7d"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/next-priorities-20260913/probes.json",
+      "sha256": "c7aa95b9422773b8eb1c94495e41bf00c0a7cde9939b4c368c107621bd3c30cd"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/next-priorities-20260913/progression-probe.json",
+      "sha256": "7317d5dff0ebbbcdcdc068b24aa2e55c9e02a68ad400a82c224a986ed5dbb962"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/next-priorities-20260913/REPORT.md",
+      "sha256": "38c906186e7ab65521a926579054769d9ed258db0ca6df96f39c2c257ae5f372"
     }
   ]
 }

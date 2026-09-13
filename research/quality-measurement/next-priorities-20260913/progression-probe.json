@@ -1,0 +1,65 @@
+{
+  "schema": "litharness.next-priorities-ceiling-diagnostic.v1",
+  "model_calls": 0,
+  "design_timing": "post-observation: designed after reading the accepted Chapter 4",
+  "script_sha256": "4c3dbac0562d2d58258a66711489cb22df17edfcb3adf930a4092130e7888512",
+  "database_sha256": "cb1a354e10675ea26a5836a349a394d94544c2ce7ada4c154dc3adff0664e1d0",
+  "actual_chapter_four": {
+    "scale_maximum": 1,
+    "rank_id": "rank_1",
+    "magnitudes": {
+      "articulated": 0,
+      "duration": 0,
+      "length": 0,
+      "load": 1,
+      "loadstitch": 1,
+      "point": 0,
+      "split": 0
+    },
+    "load_deepening_available": false,
+    "duration_gain_available": false,
+    "after_load_deepening": null
+  },
+  "funded_current_ceiling": {
+    "scale_maximum": 1,
+    "rank_id": "rank_2",
+    "magnitudes": {
+      "articulated": 0,
+      "duration": 0,
+      "length": 0,
+      "load": 1,
+      "loadstitch": 1,
+      "point": 1,
+      "split": 0
+    },
+    "load_deepening_available": false,
+    "duration_gain_available": true,
+    "after_load_deepening": null
+  },
+  "funded_ceiling_two_control": {
+    "scale_maximum": 2,
+    "rank_id": "rank_2",
+    "magnitudes": {
+      "articulated": 0,
+      "duration": 0,
+      "length": 0,
+      "load": 1,
+      "loadstitch": 1,
+      "point": 1,
+      "split": 0
+    },
+    "load_deepening_available": true,
+    "duration_gain_available": true,
+    "after_load_deepening": {
+      "articulated": 0,
+      "duration": 0,
+      "length": 0,
+      "load": 2,
+      "loadstitch": 1,
+      "point": 0,
+      "split": 0
+    }
+  },
+  "database_unchanged": true,
+  "limitation": "The in-memory rank grant and raised ceiling are controls, not accepted story events or a production fix. They test a second Load investment, not an unbounded progression representation."
+}

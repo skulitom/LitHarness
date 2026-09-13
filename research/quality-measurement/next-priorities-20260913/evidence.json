@@ -1,0 +1,1926 @@
+{
+  "schema": "litharness.next-priorities-evidence.v1",
+  "status": "observed",
+  "auditor_sha256": "a789d0a2a62d0969d20008fd1bd0b1cd362a951f752df20db584ce9d83747526",
+  "registration_sha256": "51a459851d6cad86736906975e816ef1c714fcc30bf96c104d8439eb0f1dad9d",
+  "progress_sha256": "b21f6efbb71f09625ec0beb4d27ee10ab060bea8432ed1deca988ed0c0009071",
+  "progress": {
+    "status": "completed",
+    "started_at": "2026-09-13T14:20:52.781526+00:00",
+    "calls": 14,
+    "tokens": 1542801,
+    "assignments": [
+      {
+        "name": "current-conditional",
+        "status": "completed"
+      },
+      {
+        "name": "clarified-adopted",
+        "status": "completed"
+      },
+      {
+        "name": "current-adopted",
+        "status": "completed"
+      },
+      {
+        "name": "clarified-conditional",
+        "status": "completed"
+      },
+      {
+        "name": "chapter-4",
+        "status": "completed"
+      },
+      {
+        "name": "chapter-5",
+        "status": "completed"
+      },
+      {
+        "name": "chapter-6",
+        "status": "completed"
+      }
+    ],
+    "fatal": null,
+    "finished_at": "2026-09-13T14:41:20.266821+00:00",
+    "elapsed_seconds": 1227.5
+  },
+  "controls": {
+    "registered_manifest": true,
+    "source_scripts_inputs_unchanged": true,
+    "all_usage_known": true,
+    "usage_matches_progress": true,
+    "calls_match_progress": true,
+    "independent_native_sessions": true,
+    "native_containment": true,
+    "prior_chapters_preserved": true,
+    "revision_attribution": true,
+    "reader_full_scene_inputs_verified": true
+  },
+  "all_provenance_controls_pass": true,
+  "native_tokens": 1542801,
+  "profiles": {
+    "architect.grow.v4": {
+      "calls": 7,
+      "tokens": 1416625
+    },
+    "default": {
+      "calls": 4,
+      "tokens": 102898
+    },
+    "mechanical": {
+      "calls": 3,
+      "tokens": 23278
+    }
+  },
+  "calls": [
+    {
+      "path": "runs/next-priorities-20260913/clarified-adopted/calls/003.json",
+      "sha256": "cc1aa1964300738ea78c766f8176b8477de05b0f21ed4a05375807098fac983d",
+      "status": "completed",
+      "profile": "architect.grow.v4",
+      "tokens": 143379,
+      "reported_usage": [
+        {
+          "input_tokens": 141465,
+          "cached_input_tokens": 112640,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1914,
+          "reasoning_output_tokens": 78
+        }
+      ],
+      "sessions": [
+        "01a09b26-3aa0-7260-adb2-690532dd9ae6"
+      ],
+      "native_containment": true,
+      "tool_payloads": {
+        "world vocabulary": {
+          "calls": 1,
+          "stdout_bytes": 14447
+        },
+        "world summary": {
+          "calls": 1,
+          "stdout_bytes": 510
+        },
+        "world query": {
+          "calls": 8,
+          "stdout_bytes": 44789
+        },
+        "world declare-batch": {
+          "calls": 2,
+          "stdout_bytes": 7673
+        },
+        "world check": {
+          "calls": 1,
+          "stdout_bytes": 299
+        }
+      },
+      "goal_declaration_locators": [
+        {
+          "command_jsonl_line": 24,
+          "batch_index": 12,
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "343874e9463de0b7890c5fda5e3911da1aa8d76cca2ecbdade9f56b9e3fa5e96"
+        }
+      ],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/clarified-conditional/calls/005.json",
+      "sha256": "b30a2f91ef544b814ff00e25a515aa8db1503fdb62ba31919d6439f1f0336dd1",
+      "status": "completed",
+      "profile": "architect.grow.v4",
+      "tokens": 198555,
+      "reported_usage": [
+        {
+          "input_tokens": 196616,
+          "cached_input_tokens": 159104,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1939,
+          "reasoning_output_tokens": 169
+        }
+      ],
+      "sessions": [
+        "01a09b28-f565-76b1-983e-b1b8cee320a6"
+      ],
+      "native_containment": true,
+      "tool_payloads": {
+        "": {
+          "calls": 2,
+          "stdout_bytes": 0
+        },
+        "world vocabulary": {
+          "calls": 1,
+          "stdout_bytes": 14447
+        },
+        "world summary": {
+          "calls": 1,
+          "stdout_bytes": 510
+        },
+        "world query": {
+          "calls": 6,
+          "stdout_bytes": 41878
+        },
+        "world declare-batch": {
+          "calls": 2,
+          "stdout_bytes": 7441
+        },
+        "world check": {
+          "calls": 1,
+          "stdout_bytes": 299
+        }
+      },
+      "goal_declaration_locators": [
+        {
+          "command_jsonl_line": 24,
+          "batch_index": 7,
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "0376768a376c3c289de728662f996b880ac85416431773d7c606bb7d0ec2aaf0"
+        }
+      ],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/continuation/calls/006.json",
+      "sha256": "e7a20b82ee302afcf6ae3bf700913992d353cb38a9ed13fc625596c8da125e4d",
+      "status": "completed",
+      "profile": "default",
+      "tokens": 26748,
+      "reported_usage": [
+        {
+          "input_tokens": 24010,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2738,
+          "reasoning_output_tokens": 99
+        }
+      ],
+      "sessions": [
+        "01a09b2a-579a-7580-b2ab-c141a6e2cb0e"
+      ],
+      "native_containment": true,
+      "tool_payloads": {},
+      "goal_declaration_locators": [],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/continuation/calls/007.json",
+      "sha256": "0ed1545cc87a6b9ad6384575acd66b74516890c1c462c3b557a733ecce19f3e2",
+      "status": "completed",
+      "profile": "mechanical",
+      "tokens": 8053,
+      "reported_usage": [
+        {
+          "input_tokens": 7597,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 456,
+          "reasoning_output_tokens": 83
+        }
+      ],
+      "sessions": [
+        "01a09b2c-6bd8-7092-9f88-c4a84c5c5212"
+      ],
+      "native_containment": true,
+      "tool_payloads": {},
+      "goal_declaration_locators": [],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/continuation/calls/008.json",
+      "sha256": "09eb6796fd74caaca36c20feaafc63cc6e6fe9c4c0f4454b80a2fcf13058b162",
+      "status": "completed",
+      "profile": "architect.grow.v4",
+      "tokens": 233779,
+      "reported_usage": [
+        {
+          "input_tokens": 230597,
+          "cached_input_tokens": 192256,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3182,
+          "reasoning_output_tokens": 104
+        }
+      ],
+      "sessions": [
+        "01a09b2c-b375-71d0-aa47-81848332314a"
+      ],
+      "native_containment": true,
+      "tool_payloads": {
+        "world vocabulary": {
+          "calls": 1,
+          "stdout_bytes": 14447
+        },
+        "world summary": {
+          "calls": 1,
+          "stdout_bytes": 510
+        },
+        "world query": {
+          "calls": 18,
+          "stdout_bytes": 73119
+        },
+        "world declare-batch": {
+          "calls": 3,
+          "stdout_bytes": 13597
+        },
+        "world check": {
+          "calls": 1,
+          "stdout_bytes": 299
+        }
+      },
+      "goal_declaration_locators": [
+        {
+          "command_jsonl_line": 46,
+          "batch_index": 13,
+          "subject": "stair_repairer",
+          "order_key": "s000004",
+          "value_sha256": "8044b66e0ed44b75eade81574a9472407b688505855f2cb63b46b650f944a0b3"
+        },
+        {
+          "command_jsonl_line": 46,
+          "batch_index": 16,
+          "subject": "wren",
+          "order_key": "s000004",
+          "value_sha256": "d0bcc9e37cea7a8667ed150513776be24bc0ba4ba9ac1b2307756f61469b5f0d"
+        },
+        {
+          "command_jsonl_line": 46,
+          "batch_index": 17,
+          "subject": "hessa",
+          "order_key": "s000004",
+          "value_sha256": "d1b73ad431292dbb2a6db8b520a07f4b6b8f974461c3a4baf2821c16eec5ebd2"
+        }
+      ],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/continuation/calls/009.json",
+      "sha256": "5c84772c20e9ff282dcf83c74f6be653dbd694e3fecd7f668c77c0f0dda8fa6e",
+      "status": "completed",
+      "profile": "default",
+      "tokens": 33118,
+      "reported_usage": [
+        {
+          "input_tokens": 30540,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2578,
+          "reasoning_output_tokens": 80
+        }
+      ],
+      "sessions": [
+        "01a09b2e-cc33-7df2-9db8-c629f112e4d5"
+      ],
+      "native_containment": true,
+      "tool_payloads": {},
+      "goal_declaration_locators": [],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/continuation/calls/010.json",
+      "sha256": "391fa9707053db50df70bc8b38df2c3b11f223a8e6db2ee517f179b944d3d465",
+      "status": "completed",
+      "profile": "mechanical",
+      "tokens": 7762,
+      "reported_usage": [
+        {
+          "input_tokens": 7382,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 380,
+          "reasoning_output_tokens": 46
+        }
+      ],
+      "sessions": [
+        "01a09b30-d297-73d3-8407-254bb6ecdb35"
+      ],
+      "native_containment": true,
+      "tool_payloads": {},
+      "goal_declaration_locators": [],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/continuation/calls/011.json",
+      "sha256": "339c890e2843cf9287dd921fb7cc23df57fc85b1f3d77f6ce8c34d04f9b174d1",
+      "status": "completed",
+      "profile": "architect.grow.v4",
+      "tokens": 234754,
+      "reported_usage": [
+        {
+          "input_tokens": 231981,
+          "cached_input_tokens": 194048,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2773,
+          "reasoning_output_tokens": 65
+        }
+      ],
+      "sessions": [
+        "01a09b31-0e04-7c43-ae34-ee4251695b08"
+      ],
+      "native_containment": true,
+      "tool_payloads": {
+        "world vocabulary": {
+          "calls": 1,
+          "stdout_bytes": 14447
+        },
+        "world summary": {
+          "calls": 1,
+          "stdout_bytes": 510
+        },
+        "world query": {
+          "calls": 12,
+          "stdout_bytes": 76870
+        },
+        "world declare-batch": {
+          "calls": 3,
+          "stdout_bytes": 12247
+        },
+        "world check": {
+          "calls": 1,
+          "stdout_bytes": 299
+        }
+      },
+      "goal_declaration_locators": [
+        {
+          "command_jsonl_line": 32,
+          "batch_index": 23,
+          "subject": "wren",
+          "order_key": "s000005",
+          "value_sha256": "43b01062416dd0e0b0928a0d13c28200764b5d02ce90bfb53ae3901235cc2134"
+        },
+        {
+          "command_jsonl_line": 32,
+          "batch_index": 24,
+          "subject": "hessa",
+          "order_key": "s000005",
+          "value_sha256": "6e3cb2cc750822d126372dc6849d9be6104ccfdc8e67a785a085601fca7ab3e1"
+        }
+      ],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/continuation/calls/012.json",
+      "sha256": "d36af8aa136a67ef29e2e6d2032664eb7394b40420653cd5606734ac3dbe6e02",
+      "status": "completed",
+      "profile": "default",
+      "tokens": 39270,
+      "reported_usage": [
+        {
+          "input_tokens": 36652,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2618,
+          "reasoning_output_tokens": 249
+        }
+      ],
+      "sessions": [
+        "01a09b32-ef1b-7d20-adbc-f9157ae1f10f"
+      ],
+      "native_containment": true,
+      "tool_payloads": {},
+      "goal_declaration_locators": [],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/continuation/calls/013.json",
+      "sha256": "65ae9c6dd2d7d35df6473ecf840fc2a50be26d0944db11478910edd2d85d9c88",
+      "status": "completed",
+      "profile": "mechanical",
+      "tokens": 7463,
+      "reported_usage": [
+        {
+          "input_tokens": 7221,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 242,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "sessions": [
+        "01a09b34-c820-71d2-b3a4-1a0d89bdaf2c"
+      ],
+      "native_containment": true,
+      "tool_payloads": {},
+      "goal_declaration_locators": [],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/continuation/calls/014.json",
+      "sha256": "998440dbdb30c1e1163cc59a26463da0ab0c09c17b4191851f2fd38ec29d0598",
+      "status": "completed",
+      "profile": "architect.grow.v4",
+      "tokens": 262198,
+      "reported_usage": [
+        {
+          "input_tokens": 258968,
+          "cached_input_tokens": 219648,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3230,
+          "reasoning_output_tokens": 140
+        }
+      ],
+      "sessions": [
+        "01a09b34-fd7d-78a1-8708-8cb029bb4a06"
+      ],
+      "native_containment": true,
+      "tool_payloads": {
+        "world vocabulary": {
+          "calls": 1,
+          "stdout_bytes": 14447
+        },
+        "world summary": {
+          "calls": 1,
+          "stdout_bytes": 510
+        },
+        "world query": {
+          "calls": 15,
+          "stdout_bytes": 79004
+        },
+        "world declare-batch": {
+          "calls": 3,
+          "stdout_bytes": 15385
+        },
+        "world check": {
+          "calls": 1,
+          "stdout_bytes": 299
+        }
+      },
+      "goal_declaration_locators": [
+        {
+          "command_jsonl_line": 40,
+          "batch_index": 4,
+          "subject": "wren",
+          "order_key": "s000006",
+          "value_sha256": "96a91dfa588310b95586c71ae4a5e0ffbbb240fbe5a093a861642aa8986bc502"
+        },
+        {
+          "command_jsonl_line": 40,
+          "batch_index": 5,
+          "subject": "hessa",
+          "order_key": "s000006",
+          "value_sha256": "5c0ec954dc72323bc8f05fc2334db1e761072a9f1e06d0a59bed666481f2afae"
+        }
+      ],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/current-adopted/calls/004.json",
+      "sha256": "5237bfd4fcaef102487e2f731e42b961347e84b00e023afdf2f3746a164f8fe5",
+      "status": "completed",
+      "profile": "architect.grow.v4",
+      "tokens": 166112,
+      "reported_usage": [
+        {
+          "input_tokens": 164077,
+          "cached_input_tokens": 134656,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2035,
+          "reasoning_output_tokens": 45
+        }
+      ],
+      "sessions": [
+        "01a09b27-a197-74f0-8be8-8c4e7c24cd85"
+      ],
+      "native_containment": true,
+      "tool_payloads": {
+        "world vocabulary": {
+          "calls": 1,
+          "stdout_bytes": 14447
+        },
+        "world summary": {
+          "calls": 1,
+          "stdout_bytes": 510
+        },
+        "world query": {
+          "calls": 9,
+          "stdout_bytes": 46120
+        },
+        "world declare-batch": {
+          "calls": 2,
+          "stdout_bytes": 8264
+        },
+        "world check": {
+          "calls": 1,
+          "stdout_bytes": 299
+        }
+      },
+      "goal_declaration_locators": [
+        {
+          "command_jsonl_line": 26,
+          "batch_index": 11,
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "2bb4750429bbd8bb6c9b0612b7287f036a951d46d2e41619d0e3928a7c8dae5c"
+        }
+      ],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/current-conditional/calls/001.json",
+      "sha256": "5fffa89292c42b89349f4776a8e60057d3570ea0f3e05444625dcba5f19517d2",
+      "status": "completed",
+      "profile": "default",
+      "tokens": 3762,
+      "reported_usage": [
+        {
+          "input_tokens": 3757,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 5,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "sessions": [
+        "01a09b24-766c-7582-be0a-9623c3e945a4"
+      ],
+      "native_containment": true,
+      "tool_payloads": {},
+      "goal_declaration_locators": [],
+      "error": null
+    },
+    {
+      "path": "runs/next-priorities-20260913/current-conditional/calls/002.json",
+      "sha256": "6a7183d50e59e0e9bb1cc9f95ebee0bf4f367a8fdd7a62df96aab29c57d2116e",
+      "status": "completed",
+      "profile": "architect.grow.v4",
+      "tokens": 177848,
+      "reported_usage": [
+        {
+          "input_tokens": 175662,
+          "cached_input_tokens": 138112,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2186,
+          "reasoning_output_tokens": 62
+        }
+      ],
+      "sessions": [
+        "01a09b24-98cc-7083-a5f9-7d103003e55b"
+      ],
+      "native_containment": true,
+      "tool_payloads": {
+        "": {
+          "calls": 2,
+          "stdout_bytes": 0
+        },
+        "world vocabulary": {
+          "calls": 1,
+          "stdout_bytes": 14447
+        },
+        "world summary": {
+          "calls": 1,
+          "stdout_bytes": 510
+        },
+        "world query": {
+          "calls": 8,
+          "stdout_bytes": 39712
+        },
+        "world declare-batch": {
+          "calls": 2,
+          "stdout_bytes": 9597
+        },
+        "world check": {
+          "calls": 1,
+          "stdout_bytes": 299
+        }
+      },
+      "goal_declaration_locators": [
+        {
+          "command_jsonl_line": 28,
+          "batch_index": 22,
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "36c558217205e012b89d3c8314db7039534be6b9968d36e9fe5ec1ecdc7f50c7"
+        }
+      ],
+      "error": null
+    }
+  ],
+  "goal_cases": [
+    {
+      "case": "current-conditional",
+      "completed": true,
+      "world_sha256": "b4c676c175264be9f777aa15fb257fffff3e29439cafd4da34688e47839cf050",
+      "goals": [
+        {
+          "record_id": "rec-w74e20dfec9d4b8d3aaa8b2b8",
+          "subject": "wren",
+          "order_key": "s000002",
+          "canon": false
+        }
+      ]
+    },
+    {
+      "case": "clarified-adopted",
+      "completed": true,
+      "world_sha256": "3b491aedc38010d1a87a8e091c0f048bd3d2ea75ea1c0ff84b567c571f3df8b9",
+      "goals": [
+        {
+          "record_id": "rec-wbfeb58c0979721be07b3dfb5",
+          "subject": "wren",
+          "order_key": "s000002",
+          "canon": false
+        }
+      ]
+    },
+    {
+      "case": "current-adopted",
+      "completed": true,
+      "world_sha256": "b2a1f2d76c8703d15ab9bdcf6166cc2a583dc5cf96c641123645b7ccf8bf75c9",
+      "goals": [
+        {
+          "record_id": "rec-w3ee4a7754be781b17b33c6cc",
+          "subject": "wren",
+          "order_key": "s000002",
+          "canon": false
+        }
+      ]
+    },
+    {
+      "case": "clarified-conditional",
+      "completed": true,
+      "world_sha256": "3f3d83ac0140e32c65fe62879efe184a1da99b2ea042dbb763aa873fefaf1ecc",
+      "goals": [
+        {
+          "record_id": "rec-w06028fbe6f1391fd0a055316",
+          "subject": "wren",
+          "order_key": "s000002",
+          "canon": false
+        }
+      ]
+    }
+  ],
+  "continuation_chapters": 6,
+  "chapter_hashes": {
+    "Chapter1.txt": "2988d8f341a82c9efbe1147f3260cf5b4f307c55bb687a5496f09e1615a8357a",
+    "Chapter2.txt": "b047e1359ad46640d03c9ba6902344362a915046797c17e3c6bad3b11a247133",
+    "Chapter3.txt": "2e0c1ab43bd8ac0aaeb3b3d66dc12b7e0c59705404006e07c5deb30e80a727ec",
+    "Chapter4.txt": "43dc53aba046f8dbb82f07cd9a4c3371e295e42d2b7a34afef4eb9b76baf7a9c",
+    "Chapter5.txt": "375bf7b5183dceb933faf4accc1b11be851b3c9e96c9e6217ce8705126d98cdc",
+    "Chapter6.txt": "9349f5407601feba792b9a89b04d7a25fd1b6e0719267f43f206027e210759b2"
+  },
+  "world_checkpoints": [
+    {
+      "checkpoint": "initial",
+      "world_sha256": "2af04b70aecfc329630e1e807d1b0fd2ca7e2c4edc90348bc09dcae59b636a4d",
+      "records": [
+        {
+          "record_id": "rec-h9c4676803b08cb3119961bb1",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": "s000001",
+          "canon": true
+        },
+        {
+          "record_id": "rec-x9a01d73b8d5dca30bf594000",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000001",
+          "canon": true
+        },
+        {
+          "record_id": "milestone-s000004",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000004",
+          "canon": false
+        },
+        {
+          "record_id": "milestone-s000006",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000006",
+          "canon": false
+        },
+        {
+          "record_id": "rec-w078ad5aadb23172100e08153",
+          "subject": "duration",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w08683c4e6b53a51d0627fb08",
+          "subject": "articulated",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w0a65b85cad54b8e9fa320051",
+          "subject": "split",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w1d895df343003e453abcdfcc",
+          "subject": "point",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w3966b13fb561fc3e4d435aa7",
+          "subject": "length",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w443ec2729d75593b81d07bef",
+          "subject": "load",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w484dba4d89138eb088b7502c",
+          "subject": "split",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w5bf0787e6e461e8cd175af55",
+          "subject": "loadstitch",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w668bdd13b406506e31e31b56",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w836cbc37ea0abebea135db95",
+          "subject": "length",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w868e5eea17b9f44ab59501a9",
+          "subject": "length",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w90f03cff3306feacbaa6645a",
+          "subject": "duration",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w93a9a80c0836be78c1d5d592",
+          "subject": "point",
+          "predicate": "per_rung",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w9ba4e465c449381aa9d05081",
+          "subject": "duration",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w9dd51c346877a05e871c2131",
+          "subject": "articulated",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wa56bca9de6a125b9039b3685",
+          "subject": "load",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wc0388751b4466d8f5473efbc",
+          "subject": "articulated",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-we00aeaaad281eb2a04d934ff",
+          "subject": "split",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wefe4c3d633f223bafdd488d1",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wf069ddcd7c17a7b89f56568c",
+          "subject": "load",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        }
+      ]
+    },
+    {
+      "checkpoint": "chapter-4",
+      "world_sha256": "6e54503ee7df3f906e2fdf02059c89960208852c7ffcb59df243c9435690b786",
+      "records": [
+        {
+          "record_id": "rec-h9c4676803b08cb3119961bb1",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": "s000001",
+          "canon": true
+        },
+        {
+          "record_id": "rec-x9a01d73b8d5dca30bf594000",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000001",
+          "canon": true
+        },
+        {
+          "record_id": "milestone-s000004",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000004",
+          "canon": false
+        },
+        {
+          "record_id": "rec-g6382bd35c8b4e1cb3f80e7b2",
+          "subject": "wren",
+          "predicate": "stands_at",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-h2a9f6e6c3153f917f51b42d0",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-wb216ca974fa80c3e9f165862",
+          "subject": "dain",
+          "predicate": "can_do",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-xdb2ee99038c9610812cbb105",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "milestone-s000006",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000006",
+          "canon": false
+        },
+        {
+          "record_id": "rec-w078ad5aadb23172100e08153",
+          "subject": "duration",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w08683c4e6b53a51d0627fb08",
+          "subject": "articulated",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w0a65b85cad54b8e9fa320051",
+          "subject": "split",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w1d895df343003e453abcdfcc",
+          "subject": "point",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w3966b13fb561fc3e4d435aa7",
+          "subject": "length",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w443ec2729d75593b81d07bef",
+          "subject": "load",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w484dba4d89138eb088b7502c",
+          "subject": "split",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w5bf0787e6e461e8cd175af55",
+          "subject": "loadstitch",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w668bdd13b406506e31e31b56",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w836cbc37ea0abebea135db95",
+          "subject": "length",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w868e5eea17b9f44ab59501a9",
+          "subject": "length",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w90f03cff3306feacbaa6645a",
+          "subject": "duration",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w93a9a80c0836be78c1d5d592",
+          "subject": "point",
+          "predicate": "per_rung",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w9ba4e465c449381aa9d05081",
+          "subject": "duration",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w9dd51c346877a05e871c2131",
+          "subject": "articulated",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wa56bca9de6a125b9039b3685",
+          "subject": "load",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wc0388751b4466d8f5473efbc",
+          "subject": "articulated",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-we00aeaaad281eb2a04d934ff",
+          "subject": "split",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wefe4c3d633f223bafdd488d1",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wf069ddcd7c17a7b89f56568c",
+          "subject": "load",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        }
+      ]
+    },
+    {
+      "checkpoint": "chapter-5",
+      "world_sha256": "3d15b08abfa024186375c68aa67a2161e3c6d7a28e902de610d59194e0dcf843",
+      "records": [
+        {
+          "record_id": "rec-h9c4676803b08cb3119961bb1",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": "s000001",
+          "canon": true
+        },
+        {
+          "record_id": "rec-x9a01d73b8d5dca30bf594000",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000001",
+          "canon": true
+        },
+        {
+          "record_id": "milestone-s000004",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000004",
+          "canon": false
+        },
+        {
+          "record_id": "rec-g6382bd35c8b4e1cb3f80e7b2",
+          "subject": "wren",
+          "predicate": "stands_at",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-h2a9f6e6c3153f917f51b42d0",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-wb216ca974fa80c3e9f165862",
+          "subject": "dain",
+          "predicate": "can_do",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-xdb2ee99038c9610812cbb105",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-w56d4c982b6a6275c7ca736a2",
+          "subject": "chalk_worker",
+          "predicate": "can_do",
+          "order_key": "s000005",
+          "canon": true
+        },
+        {
+          "record_id": "milestone-s000006",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000006",
+          "canon": false
+        },
+        {
+          "record_id": "rec-w078ad5aadb23172100e08153",
+          "subject": "duration",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w08683c4e6b53a51d0627fb08",
+          "subject": "articulated",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w0a65b85cad54b8e9fa320051",
+          "subject": "split",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w1d895df343003e453abcdfcc",
+          "subject": "point",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w3966b13fb561fc3e4d435aa7",
+          "subject": "length",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w443ec2729d75593b81d07bef",
+          "subject": "load",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w484dba4d89138eb088b7502c",
+          "subject": "split",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w5bf0787e6e461e8cd175af55",
+          "subject": "loadstitch",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w668bdd13b406506e31e31b56",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w836cbc37ea0abebea135db95",
+          "subject": "length",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w868e5eea17b9f44ab59501a9",
+          "subject": "length",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w90f03cff3306feacbaa6645a",
+          "subject": "duration",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w93a9a80c0836be78c1d5d592",
+          "subject": "point",
+          "predicate": "per_rung",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w9ba4e465c449381aa9d05081",
+          "subject": "duration",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w9dd51c346877a05e871c2131",
+          "subject": "articulated",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wa56bca9de6a125b9039b3685",
+          "subject": "load",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wc0388751b4466d8f5473efbc",
+          "subject": "articulated",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-we00aeaaad281eb2a04d934ff",
+          "subject": "split",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wefe4c3d633f223bafdd488d1",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wf069ddcd7c17a7b89f56568c",
+          "subject": "load",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        }
+      ]
+    },
+    {
+      "checkpoint": "chapter-6",
+      "world_sha256": "56712460c13c9a862662a25df30a9e7b1640e60651bad8e4f9dbe5dc8b133e85",
+      "records": [
+        {
+          "record_id": "rec-h9c4676803b08cb3119961bb1",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": "s000001",
+          "canon": true
+        },
+        {
+          "record_id": "rec-x9a01d73b8d5dca30bf594000",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000001",
+          "canon": true
+        },
+        {
+          "record_id": "milestone-s000004",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000004",
+          "canon": false
+        },
+        {
+          "record_id": "rec-g6382bd35c8b4e1cb3f80e7b2",
+          "subject": "wren",
+          "predicate": "stands_at",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-h2a9f6e6c3153f917f51b42d0",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-wb216ca974fa80c3e9f165862",
+          "subject": "dain",
+          "predicate": "can_do",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-xdb2ee99038c9610812cbb105",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-w56d4c982b6a6275c7ca736a2",
+          "subject": "chalk_worker",
+          "predicate": "can_do",
+          "order_key": "s000005",
+          "canon": true
+        },
+        {
+          "record_id": "milestone-s000006",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000006",
+          "canon": false
+        },
+        {
+          "record_id": "rec-g9434248749ddbe11bfe46256",
+          "subject": "wren",
+          "predicate": "stands_at",
+          "order_key": "s000006",
+          "canon": true
+        },
+        {
+          "record_id": "rec-h7fdede65c72079817fc7475d",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": "s000006",
+          "canon": true
+        },
+        {
+          "record_id": "rec-wa8af86f19d39f86a59247f6f",
+          "subject": "duration",
+          "predicate": "costs",
+          "order_key": "s000006",
+          "canon": true
+        },
+        {
+          "record_id": "rec-xa3c6285f97e19b773bacfac6",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000006",
+          "canon": true
+        },
+        {
+          "record_id": "rec-w078ad5aadb23172100e08153",
+          "subject": "duration",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w08683c4e6b53a51d0627fb08",
+          "subject": "articulated",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w0a65b85cad54b8e9fa320051",
+          "subject": "split",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w1d895df343003e453abcdfcc",
+          "subject": "point",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w3966b13fb561fc3e4d435aa7",
+          "subject": "length",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w443ec2729d75593b81d07bef",
+          "subject": "load",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w484dba4d89138eb088b7502c",
+          "subject": "split",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w5bf0787e6e461e8cd175af55",
+          "subject": "loadstitch",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w668bdd13b406506e31e31b56",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w836cbc37ea0abebea135db95",
+          "subject": "length",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w868e5eea17b9f44ab59501a9",
+          "subject": "length",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w90f03cff3306feacbaa6645a",
+          "subject": "duration",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w93a9a80c0836be78c1d5d592",
+          "subject": "point",
+          "predicate": "per_rung",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w9ba4e465c449381aa9d05081",
+          "subject": "duration",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w9dd51c346877a05e871c2131",
+          "subject": "articulated",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wa56bca9de6a125b9039b3685",
+          "subject": "load",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wc0388751b4466d8f5473efbc",
+          "subject": "articulated",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-we00aeaaad281eb2a04d934ff",
+          "subject": "split",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wefe4c3d633f223bafdd488d1",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wf069ddcd7c17a7b89f56568c",
+          "subject": "load",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        }
+      ]
+    },
+    {
+      "checkpoint": "audit-final",
+      "world_sha256": "56712460c13c9a862662a25df30a9e7b1640e60651bad8e4f9dbe5dc8b133e85",
+      "records": [
+        {
+          "record_id": "rec-h9c4676803b08cb3119961bb1",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": "s000001",
+          "canon": true
+        },
+        {
+          "record_id": "rec-x9a01d73b8d5dca30bf594000",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000001",
+          "canon": true
+        },
+        {
+          "record_id": "milestone-s000004",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000004",
+          "canon": false
+        },
+        {
+          "record_id": "rec-g6382bd35c8b4e1cb3f80e7b2",
+          "subject": "wren",
+          "predicate": "stands_at",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-h2a9f6e6c3153f917f51b42d0",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-wb216ca974fa80c3e9f165862",
+          "subject": "dain",
+          "predicate": "can_do",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-xdb2ee99038c9610812cbb105",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000004",
+          "canon": true
+        },
+        {
+          "record_id": "rec-w56d4c982b6a6275c7ca736a2",
+          "subject": "chalk_worker",
+          "predicate": "can_do",
+          "order_key": "s000005",
+          "canon": true
+        },
+        {
+          "record_id": "milestone-s000006",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000006",
+          "canon": false
+        },
+        {
+          "record_id": "rec-g9434248749ddbe11bfe46256",
+          "subject": "wren",
+          "predicate": "stands_at",
+          "order_key": "s000006",
+          "canon": true
+        },
+        {
+          "record_id": "rec-h7fdede65c72079817fc7475d",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": "s000006",
+          "canon": true
+        },
+        {
+          "record_id": "rec-wa8af86f19d39f86a59247f6f",
+          "subject": "duration",
+          "predicate": "costs",
+          "order_key": "s000006",
+          "canon": true
+        },
+        {
+          "record_id": "rec-xa3c6285f97e19b773bacfac6",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": "s000006",
+          "canon": true
+        },
+        {
+          "record_id": "rec-w078ad5aadb23172100e08153",
+          "subject": "duration",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w08683c4e6b53a51d0627fb08",
+          "subject": "articulated",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w0a65b85cad54b8e9fa320051",
+          "subject": "split",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w1d895df343003e453abcdfcc",
+          "subject": "point",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w3966b13fb561fc3e4d435aa7",
+          "subject": "length",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w443ec2729d75593b81d07bef",
+          "subject": "load",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w484dba4d89138eb088b7502c",
+          "subject": "split",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w5bf0787e6e461e8cd175af55",
+          "subject": "loadstitch",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w668bdd13b406506e31e31b56",
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w836cbc37ea0abebea135db95",
+          "subject": "length",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w868e5eea17b9f44ab59501a9",
+          "subject": "length",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w90f03cff3306feacbaa6645a",
+          "subject": "duration",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w93a9a80c0836be78c1d5d592",
+          "subject": "point",
+          "predicate": "per_rung",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w9ba4e465c449381aa9d05081",
+          "subject": "duration",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-w9dd51c346877a05e871c2131",
+          "subject": "articulated",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wa56bca9de6a125b9039b3685",
+          "subject": "load",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wc0388751b4466d8f5473efbc",
+          "subject": "articulated",
+          "predicate": "requires",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-we00aeaaad281eb2a04d934ff",
+          "subject": "split",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wefe4c3d633f223bafdd488d1",
+          "subject": "wren",
+          "predicate": "can_do",
+          "order_key": null,
+          "canon": true
+        },
+        {
+          "record_id": "rec-wf069ddcd7c17a7b89f56568c",
+          "subject": "load",
+          "predicate": "costs",
+          "order_key": null,
+          "canon": true
+        }
+      ]
+    }
+  ],
+  "reader_source_checks": [
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-00/0f5fb005-b02d-49a8-957b-59b92a5dfcba/ec75c53b-2042-43b7-833e-78f97f0bcb71/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "bbcb7f9c02f0685b3c85d95157de7123f8431cb19cc334959e82ac0a96503d57"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-00/19f3121b-4128-4282-adf6-8d700f89b778/b0103f35-4403-48b1-992f-bf96393d6563/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "bbcb7f9c02f0685b3c85d95157de7123f8431cb19cc334959e82ac0a96503d57"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-01/f4f56678-47a8-4504-9276-af008844d3a9/a3a9835d-ac76-486c-a623-85f001205b71/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "cbb251098ed122bb7fa577429b6440a89e4c0d10ec1a0be04a0576a5a6ca8d32"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-02/322ea40c-13da-4c8d-a738-8ddc259945dd/c0eeeb00-ab8e-4c39-93e9-ba2ee98b4bec/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "21920834502947ffe641eebd1295844163bd367c502b369bf15489bc9855aa36"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-03/55ac1dfa-2c1e-4f9e-88e6-414b61449e50/669992d2-3b89-460a-91ce-968896adda62/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "e544e3a7a06d0c5594bd8c88dd63a5f81821fccab40d46e14454c89da56b3cc4"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-04/c6d3fe1d-5e12-4c4e-8cfb-a1d0d9e9dda9/71ed7b4c-5062-4752-8b5f-0c072a220d3b/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "c174468436b4b055dc546ed0bfb6b3806d22624155f16bdac4426efb3085844e"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-05/ff7125cd-ec38-4557-ab24-594590af4229/a83e8668-976e-4c89-a817-68ba73dba2f1/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "c3d1ad9509e0421bf1eea9928adb7f1133e0613fd9f6cb50b11e32e25895688b"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-06/04f476d1-858f-4b0d-8216-c66adc1d8a18/b5f69e83-f17a-4540-b4d9-277c392f8a27/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "87dd9af7b79374c58e29dc271460810624ff44fbb2db05c37e5e98e36dfad77b"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-07/b8379d46-9fcd-4374-838b-622dff664406/9bd1015f-c14e-44d8-956b-e39d3214e5d7/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "d756673a228ec5ec8c82e0863ae73dfaafdaffab19eba6196d78731deb51e963"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-08/eb573d90-6e34-4f1a-994d-366f27c1bfa9/24f55aac-b2f5-41b8-a968-11db3366f8a3/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "9b8e1368522b8432eb238c7af7b233dfbc5f9219cc62740a6ad5e9108a658cb6"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-09/5150f91f-76af-4bcd-bd5c-420c9c7e9d1d/121dc666-ebe1-40cf-b5cf-4a25cb59e9f7/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "b61206c49d68b8f9fa35e6cfb0c2d893576e61499918a90d428172d6c3f258e2"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-10/e245edca-2cd7-4a62-aee0-dfae6c4ff8fc/f1b15301-0d93-4da2-bbef-c62dd470fba0/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "3f55da2c41a0bb0c9badf78edd4abe6daef0f0cf68f48a6980778c37786b59b8"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-11/4022db86-14a1-40c4-803e-7238fbeeb6d8/1c77410d-d578-4d0b-af45-62627b7bbf8c/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "3db651571ea4ab5a27b3d325895503415157e4a2321ee29b25ec814b4e193030"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-12/8a49f3a6-cf2b-4524-85e1-83e073fc70c0/fc802d0e-65bb-48d3-84da-2baaedc14a60/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "3c6795c205d4666fe2b30caaeb1b144a9b0005c69202ca5a938fcd18878a4963"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-13/e2a789b3-cc4e-4b08-b410-fbf7a9637d0c/5869dab5-2006-4808-b725-b72a916048a0/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "fccae1c66b837a7f277564fd6db6969877f2d7696f7c71957daa7017c1e0a266"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-14/fc6b11d3-3a9e-4ebf-9a90-aa8783e473d7/45bd9358-80a9-497d-9ef0-7d29af516e75/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "6e47d652c159af2f2604fe8ed40fbc3f2477c3fb2db5c64cda54f956fc8efe9c"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-15/2ab40499-f8cc-47f0-a2f8-1a0505be5fc2/23b87da1-c017-4674-8b47-ec9873e93528/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "cc5543507a4686478fadefc0a8b107550f17c66f424f292760ae3401f4a21506"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-16/dd4c99b0-0ed6-4ea1-b50d-11c17c2946af/fa038901-3041-49c2-98c5-15bbd55eddc6/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "ef7d0806363fd9f29a85921e8c5b3763fdbb7893e9a5fd312c125cece57e01ed"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-17/8563980e-953e-4571-b67c-1273fd54adf3/2b47e116-afee-4d58-a9f2-d55711dcf0fe/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "c8b357b6da02aecd7056947f6b0a9fab0acc854b871c09a1c2d4c2c526015364"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-18/de34b0a0-68ab-49a7-b101-a65da35bc444/e60e7744-cfe4-4e82-89c1-6db42b45bcf2/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "b1f4470d74d014f22403af5f6a5c7158dbe8583d3e90a0a1787af1eb915755f0"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-19/472b4322-04ca-43da-9d69-b6ff65d85a37/5753ed43-f238-4b35-871f-54c2a3e42026/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "72745fbc3a4607ff3b6f82a1c48ced148a69d17fc65a3f4040345297f2addc60"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-20/84a7f12e-e1ab-454d-8852-307591f29c0e/4962f24f-30a0-43c3-a251-43e6f0be829b/battery.private.json",
+      "spans": 4,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "1d0c78ed1e96f70e000182a07a6659def874ab16f5d9f8238a5c13b94484bd3c"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-21/dde58116-23ec-4ff4-b2d2-4a38ddab0613/601c47b4-ab4e-4ebd-a12d-33ac89a9688a/battery.private.json",
+      "spans": 0,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "d0ce4c0542efdb289ca6b8d53f80947be40a84b4566d10840a658b333b2e7f32"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-23/52c2a0f0-1984-4b75-8e1f-f91ffe92a1de/063bd8c9-f69a-4540-9499-aa878a0f619e/battery.private.json",
+      "spans": 80,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "f646b2445bde5bcd7634a7686f7c6a39e1d7eda8a10a9aa86bbb2511842f4745"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-24/674891a1-e996-4465-bc7c-ec1703f11621/707f7c91-6930-42d2-ad7c-b5cfb2afd637/battery.private.json",
+      "spans": 18,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "470dbbe25ce58224d0c55d8648c208fd849d5be736656047d098f56e9e4a24ae"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-25/aa9f56a7-5015-415e-9062-1976b623f075/75fccfaf-2bb5-4c1e-94dd-32ffe0b71319/battery.private.json",
+      "spans": 2,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "5155bd6fd1f36bcacbf0ddd32a156857577dccbbc7061292b909d09e6bd7ec57"
+    },
+    {
+      "packet": "runs/causal-reader-admission-20260913/source-26/9cdf099c-ec2b-4f18-b40f-3461642b1b5e/bb7884c1-8a63-4566-92b5-3cd00b80203b/battery.private.json",
+      "spans": 4,
+      "whole_scene_hashes_match": true,
+      "database_sha256": "741f61bb480cad36d1f33f047e91cf7f9d8c7a15c6ce7a4e2afeb30ab8e922d9"
+    }
+  ],
+  "limitation": "Provenance checks and source locators do not score semantic preservation or literary quality."
+}
