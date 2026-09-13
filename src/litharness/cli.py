@@ -4358,6 +4358,9 @@ def cmd_world(args: argparse.Namespace) -> int:
         in_force,
         name=args.view,
         subject=getattr(args, "subject", None),
+        subjects=getattr(args, "subjects", None),
+        predicate=getattr(args, "predicate", None),
+        current=getattr(args, "current", False),
         holder=getattr(args, "holder", None),
         at=getattr(args, "at", None),
     )
@@ -6044,7 +6047,16 @@ def build_parser() -> argparse.ArgumentParser:
         view.add_argument("--book")
         view.add_argument("--branch")
         view.add_argument("--json", action="store_true", help="ignored; output is JSON")
-        if name in {"show", "threads"}:
+        if name == "show":
+            selection = view.add_mutually_exclusive_group()
+            selection.add_argument("--subject", help="one subject id")
+            selection.add_argument("--subjects", nargs="+", help="several subject ids in one read")
+            view.add_argument("--predicate", help="one predicate, such as can_do")
+            view.add_argument(
+                "--current", action="store_true",
+                help="in-force declarations including proposals; omit superseded history",
+            )
+        if name == "threads":
             view.add_argument("--subject", help="one subject id")
         if name == "abilities":
             view.add_argument("--holder", help="one subject id")

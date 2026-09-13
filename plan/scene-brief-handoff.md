@@ -23,6 +23,15 @@ concept is unchanged. For a concept-backed book, it returns a structured brief f
 - `future_dependencies`: later-story commitments this scene must leave possible, or an empty
   list. These are kept separate from events to enact now.
 
+World-seeding amendment, 2026-09-13: the property-only seed input did not identify the
+unfinished acquisition in the [fixed continuation](../research/quality-measurement/distinctive-continuation-20260913/REPORT.md).
+Seed v5 also receives the exact opening and growth in a separate pending-intentions block.
+It uses these to initialize before the opening's actions and preserve later capability access;
+they do not authorize declaring future events as accomplished. This changes seed context,
+including its risk of source leakage; the [registered boundary probe](../research/quality-measurement/world-boundary-fixes-20260913/RUNBOOK.md)
+tests that risk. Reconciliation still receives established chapter prose, and the outline
+and prose projections described here are unchanged.
+
 The planner may revise provisional obstacles, props and choreography while preserving the
 premise's pursuit and magical promise, author choices and established facts. It receives a
 planning contract rather than the prose writer's house-style rules. The structured fields

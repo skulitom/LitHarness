@@ -1,7 +1,8 @@
 """World creation and chapter reconciliation through a restricted proposal-only tool surface.
 
-Concept-backed calls receive world properties, not the full story treatment. Future actions
-stay in the concept and scene plans. Declarations remain proposals until world acceptance;
+Concept-backed seeds separate world properties from pending story intentions. Those intentions
+constrain starting state and future access; they are not declaration material. Reconciliation
+receives established prose. Declarations remain proposals until world acceptance;
 the agent's command allowance deliberately excludes that operation.
 """
 
@@ -16,8 +17,8 @@ if TYPE_CHECKING:
     from litharness.application.concept import Concept
 
 #: Frozen profiles, one per job, so seeding a world and growing one are separable on the rows.
-SEED_PROFILE = "architect.seed.v4"
-GROW_PROFILE = "architect.grow.v2"
+SEED_PROFILE = "architect.seed.v5"
+GROW_PROFILE = "architect.grow.v3"
 
 # Explicit subcommands exclude acceptance. A broad world:* allowance would permit it.
 # Transport joins entries with commas; tests compare this list with the real parser.
@@ -51,9 +52,10 @@ _TOOLS = (
     "there. Declare related facts together with `litharness world declare-batch --records "
     "'<JSON array>'`, about twenty-five records per batch, using the vocabulary's record "
     "fields and passing the JSON as one literal argument.\n"
-    "`litharness world check` reports what contradicts itself; run it as you go and fix what it "
-    "names. `litharness world ladders`, `abilities`, `cast`, `threads` and `presence` read back "
-    "what you have built.\n"
+    "Inspect relevant entities with `litharness world show --subjects <ids> --current`, "
+    "optionally `--predicate <name>`; `ladders`, `abilities`, `cast` and `threads` give focused "
+    "views, while unfiltered `show` returns the entire declaration history. "
+    "Run `litharness world check` as you go and fix what it names.\n"
     "Everything you declare is a proposal. Accepting it into the book is somebody else's act, so "
     "declare what the book needs and keep it coherent. "
     "World rules describe how the world works, and manifestations describe in-world forms. "
@@ -78,17 +80,16 @@ _SYSTEM = (
     "five to eight grants per system.\n"
     "Let entry-level capabilities be useful without separately acquired perception or "
     "control grants; fundamental handling can be part of the capability. Put prerequisite "
-    "depth where it opens meaningful later choices. Mechanics explicitly required by the "
-    "author's brief take precedence.\n"
+    "depth where it opens meaningful later choices, preserving the supplied story's "
+    "acquisition conditions and access to later capabilities.\n"
     "Use a system-following status sheet with show_unheld set to false unless the author's "
     "brief explicitly requests a complete skill tree on the page. "
     "Declaring a grant does not "
     "give it to the viewpoint character or require its introduction in chapter one.\n"
-    "Somewhere up that ladder the system puts a fork nobody takes twice: declare it, the two or "
-    "three ways of taking it, which of the grants each way opens and which rung it opens at, "
-    "and leave what any of them costs to the world. A way may say what it looks like "
-    "(manifests_as) and what a person must already hold to be offered it (requires a "
-    "grant, at a depth), so the fork a person meets is the one their own record earned.\n"
+    "Declare a permanent fork only when the supplied story specifies mutually exclusive "
+    "paths, with its ways, grants and opening rungs; spending one resource among upgrades "
+    "does not permanently exclude those upgrades. A way may have manifests_as and requires "
+    "edges for grants at a depth.\n"
     "Where the system hands out something to be spent on its grants, declare it as a grant "
     "of its own that says per_rung how much every rung gives, and say on each grant it "
     "buys what that grant costs in it; a grant the rungs hand out is never gained or "
@@ -97,8 +98,11 @@ _SYSTEM = (
 
 _SEED = (
     "Build the supplied world, including its history, inhabitants' own pursuits, magical "
-    "effects and usable capabilities. Declare observable forms, activity and historical "
-    "traces through manifests_as, separately from undisclosed explanations in claim.content.\n\n"
+    "effects and usable capabilities, using only the detail needed to support it. "
+    "Supplied motives and mechanics take precedence over defaults; leave unspecified "
+    "advancement quotas and additional cast open. Declare observable forms, activity and "
+    "historical traces through manifests_as, separately from undisclosed explanations in "
+    "claim.content.\n\n"
     f"{_TOOLS}\n\n"
     f"{_SYSTEM}\n\n"
     "Establish which people the viewpoint character can understand and be understood by, "
@@ -132,14 +136,25 @@ _GROW = (
 def render_seed_request(
     overview: str, writer: Writer | None = None, *, concept: Concept | None = None
 ) -> CompletionRequest:
-    """Build from the listing and world properties; detailed future plans stay with planning."""
+    """Give seeding the source boundary without treating planned events as completed facts."""
     prompt = (
         "Reader-facing listing (a promise to support, not completed events or scene "
         f"instructions):\n\n{overview.strip()}"
     )
     seed = _SEED
     if concept is not None:
+        opening = concept.discovery.opening if concept.discovery else concept.first_arc.opens
         prompt += f"\n\n{concept.render_for_world()}"
+        prompt += (
+            "\n\nPending story intentions (constraints, not facts to declare):\n"
+            "Initialize before the opening's actions, retaining capabilities already owned "
+            "there; its acquisitions, completed tests, meetings and discoveries have not "
+            "happened. Support the later possibilities without declaring their occurrence "
+            "or adding access restrictions.\n"
+            f"Opening:\n{opening}"
+        )
+        if concept.discovery is not None:
+            prompt += f"\nLater possibilities:\n{concept.discovery.growth}"
         if concept.second_system is not None:
             seed = f"{_SEED}\n{_SECOND_SYSTEM}"
     prompt += _author_constraints(concept)

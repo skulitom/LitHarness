@@ -836,7 +836,7 @@ def test_discovery_material_reaches_listing_and_later_arcs_with_scoped_world_inp
         assert not any("numbers must actually move" in rule for rule in parsed["rules"])
 
 
-def test_inhabited_world_survives_development_and_seed_without_future_discoveries() -> None:
+def test_inhabited_world_survives_with_pending_discoveries_separate_from_world_properties() -> None:
     source = discovery.Discovery.from_invention({
         "world": (
             "An old hill settlement surrounds a sealed kiln. Its inhabitants repair tiles "
@@ -858,14 +858,17 @@ def test_inhabited_world_survives_development_and_seed_without_future_discoverie
     assert restored.discovery == source
     assert restored.first_arc.opens == source.opening
     assert restored.author_brief == brief
-    assert seed.profile == "architect.seed.v4"
+    assert seed.profile == "architect.seed.v5"
     assert "world declare-batch --records" in seed.system
     assert source.world in seed.prompt
     assert brief in seed.prompt
     assert restored.system.manner in seed.prompt
     assert restored.system.pays in seed.prompt
-    for future_or_replaced in (source.opening, source.growth, "REPLACEMENT_WORLD"):
-        assert future_or_replaced not in seed.prompt
+    properties, pending = seed.prompt.split("Pending story intentions", 1)
+    for future in (source.opening, source.growth):
+        assert future not in properties
+        assert future in pending
+    assert "REPLACEMENT_WORLD" not in seed.prompt
     assert restored.to_text() == developed.to_text()
 
 
@@ -901,7 +904,8 @@ def test_future_story_fields_cannot_return_as_world_declaration_material(
         "ARC_MIDDLE_MARKER", "ARC_END_MARKER", "DEBT_SUBJECT_MARKER", "DEBT_ANSWER_MARKER",
         "SECOND_DEBT_MARKER", "SECOND_ANSWER_MARKER",
     ):
-        assert marker not in seed.prompt
+        assert (marker in seed.prompt) is (marker == "ARC_START_MARKER" and not with_discovery)
+        assert marker not in drawn.render_for_world()
         assert marker not in grow.prompt
         assert (marker in json.dumps(drawn.for_outline())) is (
             marker not in {"FIRST_USE_MARKER", "FIRST_REACH_MARKER", "ARC_START_MARKER"}
@@ -919,7 +923,8 @@ def test_future_story_fields_cannot_return_as_world_declaration_material(
     if with_discovery:
         assert "SETTING_MARKER" in seed.prompt
         for marker in ("OPENING_MARKER", "GROWTH_MARKER"):
-            assert marker not in seed.prompt
+            assert marker in seed.prompt.split("Pending story intentions", 1)[1]
+            assert marker not in drawn.render_for_world()
             assert (marker in json.dumps(drawn.for_outline())) is (marker == "GROWTH_MARKER")
     assert grow.prompt.startswith("The chapter just drafted (s1):\n\nCHAPTER_MARKER")
     assert "TURN_MARKER" not in grow.prompt
@@ -928,6 +933,34 @@ def test_future_story_fields_cannot_return_as_world_declaration_material(
     assert "GROWTH_MARKER" not in grow.prompt
     assert concept.concept_of((drawn.plan_item(),)) == drawn
     assert drawn.to_text() == original
+
+
+@pytest.mark.parametrize("opening, growth", [
+    (
+        "Ivo arrives without magic and must complete a trial to acquire Thread.",
+        "Thread later opens both Split and Hinge; neither excludes the other.",
+    ),
+    (
+        "Ivo already holds Thread and Hinge; she enters the trial to find her way home.",
+        "At the final fork she must permanently choose either Mirror or Echo.",
+    ),
+])
+def test_seed_retains_opposing_source_boundaries_without_mutating_or_replaying_them(
+    opening: str, growth: str,
+) -> None:
+    source = discovery.Discovery("A cliff city with a public trial.", opening, growth)
+    drawn = concept.Concept.from_development(_example(), source)
+    before = drawn.to_text()
+    request = world_agent.render_seed_request("listing", concept=drawn)
+    properties, pending = request.prompt.split("Pending story intentions", 1)
+    assert opening not in properties and growth not in properties
+    assert opening in pending and growth in pending
+    assert "retaining capabilities already owned" in pending
+    assert "only when the supplied story specifies mutually exclusive" in request.system
+    # Reconciliation is driven by accepted prose, not another replay of the source.
+    grow = world_agent.render_grow_request("An actual chapter.", logical_id="s1", concept=drawn)
+    assert opening not in grow.prompt and growth not in grow.prompt
+    assert drawn.to_text() == before
 
 
 def test_a_supplied_treatment_owns_development_despite_different_writer_preferences() -> None:

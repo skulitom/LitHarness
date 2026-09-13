@@ -25941,3 +25941,28 @@ is covered by `test_claude_tool_free_calls_use_fresh_empty_directories_and_clean
 These are implementation checks, not evidence that the prose is better or the complete model
 context is isolated. No model generation, quality ranking, extra agent or narrative template
 is part of this change.
+
+## 249. World seeding separates pending intentions from initial facts (2026-09-13)
+
+The operator requested fixes after the [fixed continuation](../research/quality-measurement/distinctive-continuation-20260913/REPORT.md)
+located an already-completed assessment and a new exclusive capability restriction in the
+initial seed. The engine supports a system without a permanent fork; the seed prompt required
+one regardless. Seed v5 makes such forks conditional on supplied exclusive paths, preserves
+supplied acquisition/access conditions and leaves unspecified quotas and extra cast open.
+Development v6 extracts the supplied motive rather than adding another pursuit.
+
+**Amendment to the property-only seed projection:** exact opening/growth source material now
+arrives separately as pending intentions, constraining initial ownership and later access.
+It is not authority to declare future accomplishments. The outline/draft handoff of §248
+remains unchanged, as does grow's chapter-only reconciliation. This is an input-contract
+change; it cannot by itself establish that a model preserves those boundaries. The
+[prospective probe](../research/quality-measurement/world-boundary-fixes-20260913/RUNBOOK.md)
+retains first outputs from Wren and an opposing case, including any source leakage.
+
+CLI and MCP world reads now share multi-subject, predicate and unsuperseded-record selection.
+Unfiltered history and full provenance remain available. `current` retains proposals and
+story-time changes; it is not an as-of snapshot. Grow v3 and seed v5 advertise these scoped
+reads. `test_scoped_world_reads_match_cli_keep_proposals_and_preserve_history` exercises both
+surfaces without changing the store. The opposing-source test
+`test_seed_retains_opposing_source_boundaries_without_mutating_or_replaying_them` checks
+request routing and preservation, not semantic compliance or literary quality.

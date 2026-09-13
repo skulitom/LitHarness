@@ -1170,3 +1170,41 @@ def test_plans_carry_the_head_plans_items_on_request(db: Path) -> None:
     assert full["items"], "the litrpg fixture imports a plan"
     assert {"plan_item_id", "kind", "text", "locked", "authority"} <= set(full["items"][0])
     assert any(item["locked"] for item in full["items"])
+
+
+def test_scoped_world_reads_match_cli_keep_proposals_and_preserve_history(
+    db: Path, capsys: pytest.CaptureFixture[str],
+) -> None:
+    propose = make_tools(binding(db, "propose"))
+    for value in ("old mark", "corrected mark"):
+        propose["world_declare_batch"](items=[
+            {"subject": "test_arch", "predicate": "manifests_as", "value": value},
+        ])
+    propose["world_declare_batch"](items=[
+        {"subject": "test_arch", "predicate": "manifests_as", "value": "broken mark",
+         "order_key": "010"},
+        {"subject": "test_arch", "predicate": "entity_role", "value": "location"},
+        {"subject": "test_beam", "predicate": "manifests_as", "value": "brass mark"},
+    ])
+    read = make_tools(binding(db))
+    history = read["world"](view="show")["result"]
+    before = hashlib.sha256(db.read_bytes()).hexdigest()
+    result = read["world"](
+        view="show", subjects=["test_arch", "test_beam", "absent"],
+        predicate="manifests_as", current=True,
+    )["result"]
+    assert result["absent"] == []
+    assert {row["value"] for row in result["test_arch"]} == {"corrected mark", "broken mark"}
+    assert len(result["test_beam"]) == 1
+    assert all(not row["canon"] for rows in result.values() for row in rows)
+    assert run(
+        db, "world", "show", "--subjects", "test_arch", "test_beam", "absent",
+        "--predicate", "manifests_as", "--current",
+    ) == EXIT_OK
+    assert json.loads(capsys.readouterr().out) == result
+    assert read["world"](view="show")["result"] == history
+    assert run(
+        db, "world", "show", "--subject", "test_arch", "--predicate", "manifests_as",
+    ) == EXIT_OK
+    assert len(json.loads(capsys.readouterr().out)) == 3
+    assert hashlib.sha256(db.read_bytes()).hexdigest() == before

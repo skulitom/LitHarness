@@ -367,6 +367,12 @@ refuse on this world before any scene (a declared shape the seed itself breaches
 `world accept` is a recorded state transition, not a ranking step. After a chapter, `architect
 grow` reconciles and extends the same world through the same constrained tool surface.
 
+To inspect several entities without dumping the entire declaration history, use
+`world show --subjects <ids> --current`, optionally with `--predicate <name>`.
+The result is keyed by subject. `--current` omits superseded declarations while retaining
+proposals and changes at different story positions; it is not a historical snapshot.
+Omit the filters to read the complete history with provenance.
+
 The whole recipe under one settled listing and concept, with a fresh store per arm, both
 spend ceilings on every call, the simulated readership on chapter one after the shelf, and a
 folder per arm that records the listing's digests, every command, the spend and the reading,

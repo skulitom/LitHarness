@@ -662,7 +662,9 @@ DESCRIPTIONS: dict[str, str] = {
     "world": (
         "READ. Ask this world a question, by `view`. `subjects` lists several subjects for "
         "`show` in one call (the result is then keyed by subject); `ladders` carries each "
-        "rung's `manifests_as`. "
+        "rung's `manifests_as`. For `show`, `predicate` filters exact predicate names and "
+        "`current` omits superseded declarations, retaining proposals and story-time changes; "
+        "it is not a historical snapshot. "
         + _views_help("world", WORLD_VIEWS)
         + " `threads` exposes disclosure reasons and supporting record IDs; `subject` narrows "
         "that view to one claim. Pass its exact story key as `at`, not a reading-order position. "
@@ -1542,6 +1544,8 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
         at: str | None = None,
         book_id: str | None = None,
         branch_id: str | None = None,
+        predicate: str | None = None,
+        current: bool = False,
     ) -> dict[str, Any]:
         store = open_read()
         try:
@@ -1560,20 +1564,18 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
                         for node in head.nodes
                         if node.kind is NodeKind.SCENE
                     }
-            if subjects and view == "show":
-                # Several subjects in one call (§241.4): an agent modelling a character on
-                # the cast read sixteen subjects one `show` at a time.
-                result = {name: world_mod.declarations(records, subject=name) for name in subjects}
-            else:
-                result = world_mod.view(
-                    records,
-                    in_force,
-                    name=view,
-                    scenes=scenes,
-                    subject=subject,
-                    holder=holder,
-                    at=at,
-                )
+            result = world_mod.view(
+                records,
+                in_force,
+                name=view,
+                scenes=scenes,
+                subject=subject,
+                subjects=subjects,
+                predicate=predicate,
+                current=current,
+                holder=holder,
+                at=at,
+            )
         finally:
             store.close()
         return {

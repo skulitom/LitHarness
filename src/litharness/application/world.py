@@ -60,6 +60,9 @@ def view(
     name: str,
     scenes: Mapping[str, str] | None = None,
     subject: str | None = None,
+    subjects: Sequence[str] | None = None,
+    predicate: str | None = None,
+    current: bool = False,
     holder: str | None = None,
     at: str | None = None,
 ) -> Any:
@@ -68,13 +71,21 @@ def view(
 
     `records` is everything ever declared on the branch and `in_force` is what the world
     says now (`integrity.in_force`); `show` and `summary` are the two that read the former,
-    for the reasons `cmd_world` gives. `presence` needs the scenes' prose, which only the
+    for the reasons `cmd_world` gives. `show(current=True)` instead omits superseded rows;
+    it keeps proposals and changes at different story positions, not a historical snapshot.
+    Subject and predicate selection preserve the declaration rows' provenance.
+    `presence` needs the scenes' prose, which only the
     caller holds. An unknown name is a `ValueError`, never a default view.
     """
     if name == "summary":
         return summary(records, in_force)
     if name == "show":
-        return declarations(records, subject=subject)
+        selected = in_force if current else records
+        if subjects:
+            return {
+                key: declarations(selected, subject=key, predicate=predicate) for key in subjects
+            }
+        return declarations(selected, subject=subject, predicate=predicate)
     if name == "rules":
         return rules(in_force)
     if name == "ladders":
@@ -460,7 +471,8 @@ def _canon_only(records: Sequence[lc.StateRecord]) -> tuple[lc.StateRecord, ...]
 
 
 def declarations(
-    records: Sequence[lc.StateRecord], *, subject: str | None = None
+    records: Sequence[lc.StateRecord], *, subject: str | None = None,
+    predicate: str | None = None,
 ) -> list[dict[str, Any]]:
     """Every declaration, in story order, with provenance on each line.
 
@@ -471,6 +483,8 @@ def declarations(
     rows: list[dict[str, Any]] = []
     for record in state_mod.in_story_order(records):
         if subject is not None and record.subject != subject:
+            continue
+        if predicate is not None and record.predicate != predicate:
             continue
         position = record.story_position
         rows.append(

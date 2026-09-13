@@ -24,7 +24,7 @@ from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
 CONCEPT_PROFILE = "writer.concept.v1"
-DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v5"
+DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v6"
 
 #: The plan item id the concept is persisted under; one per book, like `plan-premise`.
 CONCEPT_PLAN_ID = "plan-concept"
@@ -777,10 +777,11 @@ def render_concept_request(
         # schema remains readable by historical books; its fields now develop this story.
         task = (
             "Develop the supplied discovery treatment into the requested book concept. "
-            "Preserve its magical encounter, character pursuit and growth direction while "
-            "making their mechanics coherent.\n"
+            "Develop its supplied encounter and growth without adding a different motive "
+            "or new restrictions on its promised capabilities.\n"
             f"{house.QUANTITY_DETAIL}\n"
-            "Use person_before and want for this character; exception for their distinctive "
+            "Extract person_before and want from the treatment's background and pursuits; "
+            "use exception for their distinctive "
             "magical advantage, which need not be exclusive in the universe; first_use for "
             "a proposed early effective use, with chapter placement left to planning unless "
             "the author specifies it.\n"
