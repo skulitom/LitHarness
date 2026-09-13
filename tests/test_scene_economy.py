@@ -20,4 +20,4 @@ def test_the_demand_rides_the_scene_writers_live_assembled_prompt() -> None:
             branch_id="main", base_revision_id="r0",
         ),
     )
-    assert system.count(house.HOUSE_RULES) == 1
+    assert system.count(house.with_house_rules("", scene_draft=True)) == 1

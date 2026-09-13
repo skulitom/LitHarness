@@ -1,0 +1,18 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "scene-focus-20260913",
+  "status": "registered",
+  "statement": "One first six-chapter opening will test delivery of selective scene treatment, character-grounded choices and a scoped opening offer, with preserved mechanical contracts. The bundled historical comparison cannot establish causal improvement or literary qualification.",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/scene-focus-20260913/RUNBOOK.md",
+      "sha256": "0cdf6e7e48e81edcc87228f92d9473e06065836837b1749d6eead678387cd517"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/scene-focus-20260913/registration.json",
+      "sha256": "5908b107c751661cdaee21eb58994ec168b93e93e4c03b1384b31a8b2b477eb1"
+    }
+  ]
+}

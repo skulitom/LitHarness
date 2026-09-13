@@ -91,7 +91,8 @@ def test_continuation_scopes_original_request_and_preserves_author_decisions(
             assert house.CLARITY in system and house._SCENE_ATTENTION in system
             assert house.QUANTITY_DETAIL in system
             assert (house.ACCUMULATION in system) is (index == 0)
-            assert (house._MAGICAL_OFFER in system) is (index == 0)
+            assert (house.SCENE_MAGICAL_OFFER in system) is (index == 0)
+            assert house._MAGICAL_OFFER not in system
             assert "1800 words" in system
             assert f"chapter {index + 1} ({index + 1} of this arc); scene 1 of 1" in prompt
             assert chapter_three.text not in system
@@ -108,6 +109,7 @@ def test_continuation_scopes_original_request_and_preserves_author_decisions(
         assert house.PAST_ACTION_CONTINUITY in third.payload["system"]
         assert house.ACCUMULATION not in third.payload["system"]
         assert house._MAGICAL_OFFER not in third.payload["system"]
+        assert house.SCENE_MAGICAL_OFFER not in third.payload["system"]
         assert chapter_three.text in third.payload["system"]
         if brief_kind in {"original", "locked"}:
             assert "follow applicable author locks within their stated scope" in (

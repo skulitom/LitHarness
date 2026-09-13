@@ -11,7 +11,7 @@ import pytest
 from litharness.application import planner
 from litharness.application.prompt_sources import PromptSources
 from litharness.domain import context as ctx
-from litharness.domain import writers
+from litharness.domain import house, writers
 from tests import test_prompt_budget as examples
 
 
@@ -66,6 +66,11 @@ def test_composed_prompt_preserves_pre_instrumentation_bytes(shelf):
         ),
     }
     system, prompt = planner.render_prompt(examples._BEAT, **request_case(shelf))
+    # Normalize only the explicitly scoped scene offer; every other byte still
+    # matches the retained fixture, including prompt-source instrumentation.
+    scene_offer = f"{house.SCENE_MAGICAL_OFFER}\n{house.QUANTITY_DETAIL}"
+    assert system.count(scene_offer) == 1
+    system = system.replace(scene_offer, house._MAGICAL_OFFER, 1)
     assert tuple(sha256(text.encode()).hexdigest() for text in (system, prompt)) == expected[shelf]
 
 

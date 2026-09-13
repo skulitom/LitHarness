@@ -34,10 +34,10 @@ _GENERAL_ACCESS = (
 _PERCEPTUAL_ACCESS = (
     "Keep narration within what the viewpoint character can perceive from their position, "
     "remember or infer; other minds and unseen events remain inferred or reported.\n"
-    "Connect new information through what draws or redirects their attention, leaving "
-    "routine glances and movements implicit when easy to follow. Explain uncertainty when "
-    "it changes an interpretation or choice; let conduct and events carry distinctions "
-    "they already make clear, without repeatedly stating what those events do not imply."
+    "Move through routine actions in summary or omission, dwelling where perception, memory "
+    "or feeling changes what the character does or avoids. Once conduct and events make a "
+    "distinction clear, continue from its effect; explain uncertainty when a live ambiguity "
+    "changes an interpretation or choice."
 )
 _CLARITY_REFERENCES = (
     "Use clear references so the reader knows who perceives or acts and what changes."
@@ -82,6 +82,14 @@ _MAGICAL_OFFER = (
     f"ceiling has told the reader where to stop.\n{QUANTITY_DETAIL}"
 )
 READER = f"{_SCENE_ATTENTION}\n{OPENING_OFFER}\n{_MAGICAL_OFFER}"
+
+# Scene drafting develops a particular encounter; other roles retain the genre brief.
+SCENE_MAGICAL_OFFER = (
+    "Let the planned encounter make the book's magical possibilities concrete: an observed "
+    "effect, a limit that changes a choice or a consequential use can do this. Preserve the "
+    "character's immediate need when introducing a capability, and leave further applications "
+    "to later events."
+)
 
 # The retained-capability direction is separate from scene comprehension.
 ACCUMULATION = (
@@ -136,10 +144,12 @@ def demands(text: str) -> tuple[str, ...]:
 
 def with_house_rules(
     system: str, *, opening: bool = True, limited_viewpoint: bool = False,
+    scene_draft: bool = False,
 ) -> str:
     """Append shared rules within the requested drafting scope.
 
-    Default callers and opening drafts retain the complete block. Continuations keep
+    Default callers retain the complete block; scene drafts use the scoped magical
+    offer in their opening. Continuations keep
     comprehension, character attention and quantity guidance; the book's own mechanics
     and author directions reach drafting separately from general genre appeals.
     Named-viewpoint drafting uses perceptual access in place of general event clarity;
@@ -147,7 +157,11 @@ def with_house_rules(
     """
     body = system.strip()
     clarity = SCENE_CLARITY if limited_viewpoint else CLARITY
-    rules = f"{clarity}\n\n{READER}\n\n{ACCUMULATION}" if opening else (
+    reader = (
+        f"{_SCENE_ATTENTION}\n{OPENING_OFFER}\n{SCENE_MAGICAL_OFFER}\n{QUANTITY_DETAIL}"
+        if scene_draft else READER
+    )
+    rules = f"{clarity}\n\n{reader}\n\n{ACCUMULATION}" if opening else (
         f"{clarity}\n\n{_SCENE_ATTENTION}\n{QUANTITY_DETAIL}"
     )
     return f"{body}\n\n{rules}" if body else rules

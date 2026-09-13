@@ -112,7 +112,7 @@ BOOK_OUTLINE = "book_outline"
 
 #: Frozen generation profile, recorded in provenance like every other model call here.
 PROFILE = "planner.outline.v1"
-CONCEPT_PROFILE = "planner.outline.v2"
+CONCEPT_PROFILE = "planner.outline.v3"
 
 #: Ranks above scene drafting (0) and below director direction (500+). A scene drafted before
 #: its statement exists would be drafted against the empty plan this module exists to fill, so
@@ -270,14 +270,19 @@ SCENE_HANDOFF_RULES = (
     "Return a brief for each scene: situation establishes the place, relevant relationships "
     "and the viewpoint character's understanding and concerns on entering it; pursuit is "
     "what they try to accomplish. changes records developments in their circumstances, "
-    "understanding or pursuit. Connect intended actions and consequences "
-    "through what the character notices, wants, fears or misunderstands at consequential choices. "
+    "understanding or pursuit, rather than every step of a task. Locate the choices where "
+    "a personal concern changes their response: what they want from another person, protect, "
+    "avoid admitting or cannot yet bring themselves to do, where the supplied character "
+    "supports it. "
     "Distinguish what is true from what the character knows. Use plain planning facts, "
     "not dialogue, finished narration, or explanations of how a line should sound.",
-    "An unchanged world condition stays in world context. Plan the developments that need "
-    "to be experienced; familiar checks and procedures can remain implicit unless their "
-    "outcome changes a decision. A new material, location or reward does not by itself "
-    "make another demonstration a different dramatic development.",
+    "Organize each scene around the change that matters to its participants. Identify where "
+    "attention belongs and which necessary activity can pass in summary or between scenes; "
+    "retain the causal facts that make the outcome understandable. Let an unresolved response "
+    "or relationship occupy that space when it matters. An unchanged condition stays in world "
+    "context; another material, location or reward alone does not require another fully staged "
+    "demonstration. Across the sequence, develop what earlier events have made possible "
+    "or difficult.",
     "When adapting a choice the concept makes consequential, retain what attracts the "
     "character, what they pass up and how that choice affects later action. A choice meant "
     "to disappoint must not quietly become the optimal prerequisite for its own solution; "

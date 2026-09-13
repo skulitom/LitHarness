@@ -1,0 +1,16 @@
+{
+  "manifest_sha256": "f3b73770b63521eec3a382c30d46c922d8199f089ae5d627370e9e7db1c33f94",
+  "concept_sha256": "d03736987bd10cbdb05ecdfff376cf1433c814bb38529b768721fbf73063650e",
+  "chapters": 6,
+  "max_calls": 32,
+  "max_tokens": 2200000,
+  "max_seconds": 5400,
+  "source_base_revision": "be11fd3150e1f5699e8146c83135568bfc9552e5",
+  "source_overrides": {
+    "src/litharness/application/outline.py": "0a075b85355bf25fdc8f3a837b67d439734b2c0dab23a4df365d328f8bb8799d",
+    "src/litharness/domain/house.py": "a413089d33f3dcf3159c89f9dc90297ed3f6d4082452463dd72ff1ce94fbf9bc",
+    "src/litharness/application/planner.py": "0660601545c205882b4361b1cb8c6d098bebe8251164edc20d33a0970f015f27",
+    "src/litharness/domain/scene_brief.py": "6af683de02c561d1809fc7f1af2b2c0a983f44285e4c3c5d0edf1974deca42cf"
+  },
+  "contrast": "historical opening versus one fresh opening; bundled directions, no ranking"
+}

@@ -45,6 +45,7 @@ def test_later_arc_keeps_continuation_scope_when_prior_prose_is_evicted(tmp_path
         assert house.OPENING_OFFER not in selected.payload["system"]
         assert house.ACCUMULATION not in selected.payload["system"]
         assert house._MAGICAL_OFFER not in selected.payload["system"]
+        assert house.SCENE_MAGICAL_OFFER not in selected.payload["system"]
         assert house._SCENE_ATTENTION in selected.payload["system"]
         assert house.QUANTITY_DETAIL in selected.payload["system"]
 
@@ -71,12 +72,14 @@ def test_rebuilding_a_request_for_accepted_prose_keeps_its_original_opening_scop
         )
         assert (house.OPENING_OFFER in system) is (target == "scene-1")
         assert (house.ACCUMULATION in system) is (target == "scene-1")
-        assert (house._MAGICAL_OFFER in system) is (target == "scene-1")
+        assert (house.SCENE_MAGICAL_OFFER in system) is (target == "scene-1")
+        assert house._MAGICAL_OFFER not in system
         assert house._SCENE_ATTENTION in system and house.QUANTITY_DETAIL in system
 
 
 @pytest.mark.parametrize(
-    "direction", [house.OPENING_OFFER, house._MAGICAL_OFFER, house.ACCUMULATION],
+    "direction", [house.OPENING_OFFER, house._MAGICAL_OFFER,
+                  house.SCENE_MAGICAL_OFFER, house.ACCUMULATION],
 )
 def test_an_explicit_author_lock_is_not_removed_by_house_scope(tmp_path, direction):
     from litharness.adapters.sqlite_store import SqliteStore

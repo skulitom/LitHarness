@@ -413,6 +413,7 @@ def render_prompt(
         task,
         opening=not has_prior_prose,
         limited_viewpoint=bool(point_of_view),
+        scene_draft=True,
     )
     sources = PromptSources()
     system = sources.append("system", "", system, "house_guidance")

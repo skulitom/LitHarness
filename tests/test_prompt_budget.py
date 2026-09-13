@@ -157,7 +157,8 @@ def _roles() -> dict[str, str]:
             floor := house.with_house_rules(
                 "You are drafting one scene of a novel. Write only the scene's prose: no headings, "
                 "no commentary, no summary of what you wrote. Respect established facts and author "
-                "locks; future intentions are plans, not events that have already happened."
+                "locks; future intentions are plans, not events that have already happened.",
+                scene_draft=True,
             )
         ),
         # **The floor plus who is writing, which was unreachable until 2026-08-25.**

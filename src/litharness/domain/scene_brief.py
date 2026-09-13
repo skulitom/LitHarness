@@ -8,6 +8,12 @@ from dataclasses import dataclass
 from typing import Any
 
 PREFIX = "litharness.scene-brief.v1\n"
+TREATMENT = (
+    "Give space to the moments that change a choice, expectation or relationship; necessary "
+    "routine activity can pass in summary or omission while its causal facts remain clear. "
+    "The changes below establish what develops, not equal-length episodes or a requirement "
+    "to narrate every operation; allow the character's response to affect the next moment."
+)
 SCHEMA: dict[str, Any] = {
     "type": "object",
     "additionalProperties": False,
@@ -83,6 +89,7 @@ class SceneBrief:
         lines = [
             "Planned scene. Established prose, world rules and author locks take precedence. "
             "Develop the action in fresh prose; the wording here is planning material.",
+            TREATMENT,
             f"Starting situation: {self.situation}",
             f"Immediate pursuit: {self.pursuit}",
             "Intended changes, in causal order:",
