@@ -1,0 +1,18 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "growth-continuation-20260913",
+  "status": "registered",
+  "statement": "The registered six-chapter continuation tests whether the retained declared-growth seed proceeds through the ordinary production loop with preserved rules, attributable chapters and consistent stock transitions; repeated investment is observed if it occurs, never required or inferred from the scripted integration test.",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/growth-continuation-20260913/RUNBOOK.md",
+      "sha256": "ac348a2283dd60d50acf281da8a6e1532234ccfa17ac36d0e627b853af01a5eb"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/growth-continuation-20260913/registration.json",
+      "sha256": "2a047e8b273144167881a0fa178bf09dc6af8219f8c4169d5f75b6c754f323c3"
+    }
+  ]
+}

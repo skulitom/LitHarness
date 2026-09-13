@@ -1,0 +1,9 @@
+{
+  "manifest_sha256": "8bb40f2817e5bb12476de65a63015d2b9303eef3c9a531ff5f39434af8bf3da6",
+  "source_revision": "23243c303e9949adc3b6fa4710c46e11fe7ae59a",
+  "concept_sha256": "d03736987bd10cbdb05ecdfff376cf1433c814bb38529b768721fbf73063650e",
+  "chapters": 6,
+  "max_calls": 32,
+  "max_tokens": 2200000,
+  "max_seconds": 5400
+}
