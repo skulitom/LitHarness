@@ -1,8 +1,8 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "world-fixed-continuation-20260913",
-  "statement": "Test whether the latest world-completion repairs preserve the fixed source through three Wren chapters and the opposing seed, with attributable revisions, usable world positions and retained first outputs.",
-  "status": "registered",
+  "statement": "The registered fresh run completes three Wren chapters and the opposing seed with preserved earlier chapters, attributable revisions and usable world positions; ownership and rank gates survive without forced depth, while goal promotion and repeated numerical investment remain unresolved.",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,16 @@
       "kind": "registration",
       "path": "research/quality-measurement/world-fixed-continuation-20260913/registration.json",
       "sha256": "8baecef33f4b0fc567aabef5e7445d71a1c620f45e2e5e3d9894d907406595d6"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/world-fixed-continuation-20260913/evidence.json",
+      "sha256": "74d65525c409ddd1148c8aab5abbf5805255752cb0abff8d146e0086db1f73b1"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/world-fixed-continuation-20260913/REPORT.md",
+      "sha256": "d3a5f13b0d180f1c4bd7d088347e5eee891534488f9c8e55ec49a08abb0eedb4"
     }
   ]
 }
