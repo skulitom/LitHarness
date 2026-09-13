@@ -1,0 +1,18 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "growth-declarations-20260913",
+  "statement": "The five registered fresh Architect cells will test whether installed growth declarations preserve repeatable, ownership-only and explicitly capped source mechanics while retaining the conditional/adopted goal distinction. No result is yet observed.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/growth-declarations-20260913/RUNBOOK.md",
+      "sha256": "d71edb923fb871fba895b3e7b92ea2b53aef2449a0f5f635d429e96a06e585ef"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/growth-declarations-20260913/registration.json",
+      "sha256": "d71b0e1f1ccfd7da3d9ee377c2f8d8b75b566df4b3eb9e69ea6940d38307feaf"
+    }
+  ]
+}

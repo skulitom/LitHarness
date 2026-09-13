@@ -1,0 +1,14 @@
+{
+  "manifest_sha256": "3ece08852ea0215d74c33e233691ee314076dd5adb1ec14972d43affa598201a",
+  "source_revision": "11d3aea77bc585edd3591ea66af3515d5bdfea7d",
+  "assignments": [
+    "wren-seed",
+    "opposing-seed",
+    "capped-seed",
+    "conditional-goal",
+    "adopted-goal"
+  ],
+  "max_calls": 8,
+  "max_tokens": 1600000,
+  "max_seconds": 5400
+}
