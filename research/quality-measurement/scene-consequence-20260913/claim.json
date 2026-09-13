@@ -1,0 +1,18 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "scene-consequence-20260913",
+  "status": "registered",
+  "statement": "One fresh six-chapter opening will test delivery of the operator-requested directions for consequential choices, participant aims and explanations while preserving mechanical contracts. Editorial observations motivate this bundled trial; a historical comparison and one first output do not establish causal improvement or literary qualification.",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/scene-consequence-20260913/RUNBOOK.md",
+      "sha256": "913902efa2f945c52258d65c8d372448a3d1186ef2a66e0b6ec0d7b1def04494"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/scene-consequence-20260913/registration.json",
+      "sha256": "d4162c45d0e76a73ea8d0f08f8ef6f0defa4f858568fe4e3d842af7d048171f1"
+    }
+  ]
+}

@@ -222,6 +222,7 @@ def test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon
         assert outline_job is not None and outline_job.job_kind == outline.BOOK_OUTLINE
         conductor.handlers[outline.BOOK_OUTLINE](outline_job, START)
         request = registry.requests[0]
+        assert request.profile == outline.CONCEPT_PROFILE
         assert json.loads(request.prompt)["target_scene_words"] == 1300
         chapters = [item["chapter"] for item in json.loads(request.prompt)["scenes"]]
         assert chapters == list(range(1, 7))

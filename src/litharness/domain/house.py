@@ -35,7 +35,9 @@ _PERCEPTUAL_ACCESS = (
     "Keep narration within what the viewpoint character can perceive from their position, "
     "remember or infer; other minds and unseen events remain inferred or reported.\n"
     "Connect new information through what draws or redirects their attention, leaving "
-    "routine glances and movements implicit when easy to follow."
+    "routine glances and movements implicit when easy to follow. Explain uncertainty when "
+    "it changes an interpretation or choice; let conduct and events carry distinctions "
+    "they already make clear, without repeatedly stating what those events do not imply."
 )
 _CLARITY_REFERENCES = (
     "Use clear references so the reader knows who perceives or acts and what changes."

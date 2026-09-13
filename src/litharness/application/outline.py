@@ -112,6 +112,7 @@ BOOK_OUTLINE = "book_outline"
 
 #: Frozen generation profile, recorded in provenance like every other model call here.
 PROFILE = "planner.outline.v1"
+CONCEPT_PROFILE = "planner.outline.v2"
 
 #: Ranks above scene drafting (0) and below director direction (500+). A scene drafted before
 #: its statement exists would be drafted against the empty plan this module exists to fill, so
@@ -270,12 +271,21 @@ SCENE_HANDOFF_RULES = (
     "and the viewpoint character's understanding and concerns on entering it; pursuit is "
     "what they try to accomplish. changes records developments in their circumstances, "
     "understanding or pursuit. Connect intended actions and consequences "
-    "through what the character can notice, infer or misunderstand at consequential choices. "
+    "through what the character notices, wants, fears or misunderstands at consequential choices. "
     "Distinguish what is true from what the character knows. Use plain planning facts, "
     "not dialogue, finished narration, or explanations of how a line should sound.",
-    "An unchanged world condition stays in world context. Include a learning trial or rule "
-    "discovery in changes when its outcome affects what the character attempts or decides; "
-    "do not add an episode solely to demonstrate that a supplied rule still holds.",
+    "An unchanged world condition stays in world context. Plan the developments that need "
+    "to be experienced; familiar checks and procedures can remain implicit unless their "
+    "outcome changes a decision. A new material, location or reward does not by itself "
+    "make another demonstration a different dramatic development.",
+    "When adapting a choice the concept makes consequential, retain what attracts the "
+    "character, what they pass up and how that choice affects later action. A choice meant "
+    "to disappoint must not quietly become the optimal prerequisite for its own solution; "
+    "stated regret followed by a compensating gain does not preserve that consequence. "
+    "Do not impose mistakes or losses where the supplied story does not call for them.",
+    "In consequential exchanges, include the other participants' own aims and reasons to "
+    "agree, refuse or delay. Establishing a fact can settle a misunderstanding without "
+    "settling competing interests; cooperation remains possible where those interests align.",
     "The writer will receive this scene's brief, the premise, the author's original brief, "
     "and established story context. It will not receive book_concept or the original "
     "treatment. Include the scene's necessary setup and causal connections in the brief.",
@@ -636,7 +646,7 @@ def render_outline_request(
         schema=CONCEPT_OUTLINE_SCHEMA if concept is not None else OUTLINE_SCHEMA,
         max_output_tokens=8192,
         timeout_seconds=CONCEPT_TIMEOUT_SECONDS if concept is not None else 300.0,
-        profile=PROFILE,
+        profile=CONCEPT_PROFILE if concept is not None else PROFILE,
         call_class="generation",
     )
 

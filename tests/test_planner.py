@@ -911,7 +911,9 @@ def test_named_viewpoint_scopes_perception_without_changing_story_context(
     assert prompt.replace(" Point of view: silas.", "", 1) == base_prompt
     guidance = next(e for e in mapping["entries"] if e["section"] == "house_guidance")
     assert house.SCENE_CLARITY in system[guidance["start"]:guidance["end"]]
-    assert len(house.demands(system)) == len(house.demands(base_system))
+    # Named-viewpoint drafting adds one explanation-limit instruction; the general
+    # clarity floor used by other roles retains its existing scope and size.
+    assert len(house.demands(system)) == len(house.demands(base_system)) + 1
     assert (house.OPENING_OFFER in system) is (not has_prior_prose)
     assert house._SCENE_ATTENTION in system
 
