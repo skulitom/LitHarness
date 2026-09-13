@@ -88,6 +88,11 @@ def test_batch_json_passes_literally_with_fixed_environment_and_no_shell(
     recorded = json.loads(result["content"][0]["text"])
     assert recorded["stdout"] == "été" and recorded["returncode"] == 0
     assert "environment" not in recorded
+    assert "arguments" not in recorded and "argv" not in recorded
+    retained = json.loads(bridge.trace.read_text(encoding="utf-8").splitlines()[-1])
+    assert retained["arguments"] == arguments and retained["argv"] == argv
+    assert retained["call"] == recorded["call"]
+    assert retained["stdout"] == recorded["stdout"]
 
 
 def test_real_python_cli_output_uses_pinned_utf8_despite_parent_encoding(

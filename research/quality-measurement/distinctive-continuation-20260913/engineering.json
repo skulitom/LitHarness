@@ -1,0 +1,138 @@
+[
+  {
+    "path": "runs/continuation-baseline-20260910/book-1/transport/attempt-38ed25ff0fb84b6b9a0eb7591c3957d6.json",
+    "sha256": "177e5980ff122ce68a626ad53d2b69232faf5170332cde5fd122e9ce4d99b9f6",
+    "usage": [
+      {
+        "input_tokens": 203427,
+        "cached_input_tokens": 168320,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2542,
+        "reasoning_output_tokens": 495
+      }
+    ],
+    "commands": {
+      "world vocabulary": 1,
+      "world summary": 1,
+      "world cast": 1,
+      "world abilities": 2,
+      "world threads": 2,
+      "world presence": 1,
+      "world ladders": 1,
+      "world declare": 50,
+      "world --help": 1,
+      "world check": 3
+    },
+    "original_result_bytes": 127442,
+    "compact_success_result_bytes": 93126
+  },
+  {
+    "path": "runs/continuation-baseline-20260910/book-1/transport/attempt-c97a2b7f05fd415e802910e8fb5565c3.json",
+    "sha256": "f3f3209d30ff7a96b2454c2aebc13c52ed4893bd6f1fe02c113af506c097edb6",
+    "usage": [
+      {
+        "input_tokens": 262493,
+        "cached_input_tokens": 217728,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1525,
+        "reasoning_output_tokens": 158
+      }
+    ],
+    "commands": {
+      "world vocabulary": 1,
+      "world summary": 1,
+      "world cast": 1,
+      "world abilities": 1,
+      "world ladders": 1,
+      "world threads": 1,
+      "world presence": 1,
+      "world --help": 1,
+      "world show": 2,
+      "world declare": 26,
+      "world check": 2
+    },
+    "original_result_bytes": 210231,
+    "compact_success_result_bytes": 194627
+  },
+  {
+    "path": "runs/continuation-baseline-20260910/book-1/transport/attempt-e3c0e619781841289bf642319c57ae37.json",
+    "sha256": "6412dc3b1861e41ddfe4d1538027bec752a529e88044e31c067cd12795e7cc33",
+    "usage": [
+      {
+        "input_tokens": 253436,
+        "cached_input_tokens": 211328,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 9091,
+        "reasoning_output_tokens": 1311
+      }
+    ],
+    "commands": {
+      "world vocabulary": 1,
+      "world summary": 2,
+      "world --help": 1,
+      "world declare-batch": 14,
+      "world ladders": 2,
+      "world check": 5,
+      "world abilities": 1,
+      "world cast": 1,
+      "world threads": 1,
+      "world presence": 1
+    },
+    "original_result_bytes": 185610,
+    "compact_success_result_bytes": 90642
+  },
+  {
+    "path": "runs/continuation-baseline-20260910/book-2/transport/attempt-902d98e3f0914431b637a91cd86b6d85.json",
+    "sha256": "75db09e5b1f3d70ba16f1c17e7d6bd9ccb7de1fcb6acb033d74ba473ac09834b",
+    "usage": [
+      {
+        "input_tokens": 147863,
+        "cached_input_tokens": 107392,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1873,
+        "reasoning_output_tokens": 364
+      }
+    ],
+    "commands": {
+      "world vocabulary": 1,
+      "world summary": 2,
+      "world ladders": 1,
+      "world abilities": 1,
+      "world cast": 1,
+      "world threads": 1,
+      "world presence": 1,
+      "world --help": 1,
+      "world declare": 23,
+      "world check": 2
+    },
+    "original_result_bytes": 58479,
+    "compact_success_result_bytes": 44463
+  },
+  {
+    "path": "runs/continuation-baseline-20260910/book-2/transport/attempt-e08c9e16d6624ce39aaf5593ffc8383e.json",
+    "sha256": "a3551337800319cbe596249a802d23d70bace49365cf94d5c984b722593227ca",
+    "usage": [
+      {
+        "input_tokens": 166990,
+        "cached_input_tokens": 131712,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 6628,
+        "reasoning_output_tokens": 475
+      }
+    ],
+    "commands": {
+      "": 2,
+      "world vocabulary": 1,
+      "world summary": 1,
+      "world declare-batch": 12,
+      "world check": 3,
+      "world ladders": 1,
+      "world abilities": 1,
+      "world cast": 1,
+      "world threads": 1,
+      "world presence": 1
+    },
+    "original_result_bytes": 146489,
+    "compact_success_result_bytes": 70253
+  }
+]

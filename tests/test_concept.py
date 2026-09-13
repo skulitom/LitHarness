@@ -858,7 +858,8 @@ def test_inhabited_world_survives_development_and_seed_without_future_discoverie
     assert restored.discovery == source
     assert restored.first_arc.opens == source.opening
     assert restored.author_brief == brief
-    assert seed.profile == "architect.seed.v3"
+    assert seed.profile == "architect.seed.v4"
+    assert "world declare-batch --records" in seed.system
     assert source.world in seed.prompt
     assert brief in seed.prompt
     assert restored.system.manner in seed.prompt

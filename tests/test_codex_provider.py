@@ -493,8 +493,29 @@ def test_codex_scoped_bridge_pins_database_without_exposing_it_to_completion(mon
     assert "mcp_servers.litharness.default_tools_approval_mode" not in result.raw["settings"]
 
 
+@pytest.mark.parametrize("tool", [
+    "list_mcp_resources", "list_mcp_resource_templates", "read_mcp_resource",
+])
+def test_codex_resource_builtins_remain_outside_bridge_allowance(monkeypatch, tmp_path, tool):
+    monkeypatch.setenv("LITHARNESS_DATABASE", str(tmp_path / "book.db"))
+    runner = Runner()
+    runner.extra_events = [{"type": "item.completed", "item": {
+        "type": "mcp_tool_call", "server": "codex", "tool": tool,
+        "status": "completed", "result": {"resources": []},
+    }}]
+    provider = CodexCliProvider(runner=runner)
+    with pytest.raises(ProviderError):
+        provider.complete(CompletionRequest(
+            prompt="Inspect the world.", allowed_tools=("Bash(litharness world show:*)",),
+        ))
+    assert "Do not call list_mcp_resources" in provider.last_attempt["system"]
+    assert tool in provider.last_attempt["stdout"]
+    assert len(runner.calls) == 3
+
+
 @pytest.mark.parametrize("profile", [
-    "architect.seed.v1", "architect.seed.v2", "architect.seed.v3", "architect.grow.v1",
+    "architect.seed.v1", "architect.seed.v2", "architect.seed.v3", "architect.seed.v4",
+    "architect.grow.v1", "architect.grow.v2",
 ])
 def test_codex_architect_cannot_succeed_without_a_command_receipt(profile):
     with pytest.raises(ValueError, match="without any successful"):

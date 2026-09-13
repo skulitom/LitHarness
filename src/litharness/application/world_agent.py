@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     from litharness.application.concept import Concept
 
 #: Frozen profiles, one per job, so seeding a world and growing one are separable on the rows.
-SEED_PROFILE = "architect.seed.v3"
-GROW_PROFILE = "architect.grow.v1"
+SEED_PROFILE = "architect.seed.v4"
+GROW_PROFILE = "architect.grow.v2"
 
 # Explicit subcommands exclude acceptance. A broad world:* allowance would permit it.
 # Transport joins entries with commas; tests compare this list with the real parser.
@@ -48,7 +48,9 @@ SEED_TIMEOUT_SECONDS = 3600.0
 _TOOLS = (
     "Start with `litharness world vocabulary`, which tells you every predicate and role the "
     "world's language admits, and `litharness world summary`, which tells you what is already "
-    "there. Then `litharness world declare <subject> <predicate>` with `--value` or `--object`.\n"
+    "there. Declare related facts together with `litharness world declare-batch --records "
+    "'<JSON array>'`, about twenty-five records per batch, using the vocabulary's record "
+    "fields and passing the JSON as one literal argument.\n"
     "`litharness world check` reports what contradicts itself; run it as you go and fix what it "
     "names. `litharness world ladders`, `abilities`, `cast`, `threads` and `presence` read back "
     "what you have built.\n"

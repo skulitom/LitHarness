@@ -72,7 +72,10 @@ _BRIDGE_ENV_KEYS = (
 _BRIDGE_NOTE = (
     "Use the litharness_command MCP tool for the litharness commands described above. "
     "Pass their arguments as a JSON array, excluding the leading litharness executable. "
-    "The bridge executes only the commands this task permits, without a shell."
+    "The bridge executes only the commands this task permits, without a shell. "
+    "This task exposes no MCP resources. Do not call list_mcp_resources, "
+    "list_mcp_resource_templates or read_mcp_resource. All world and roster reads go "
+    "through litharness_command; resource discovery is outside this task's allowance."
 )
 _BRIDGE_APPROVAL_KEY = "mcp_servers.litharness.tools.litharness_command.approval_mode"
 

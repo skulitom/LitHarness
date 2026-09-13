@@ -132,9 +132,16 @@ class ToolBridge:
             self._record({**row, "phase": "result"})
         except OSError as error:
             row.update(error=f"unable to record tool result: {error}", error_kind="trace")
+        failed = bool(row.get("error")) or row["returncode"] != 0
+        # Successful calls already contain their arguments in the model's history. Keep
+        # both copies in the audit trace, without repeating them in every tool result.
+        # Failures retain the complete receipt used by the transport's exact-match guard.
+        visible = row if failed else {
+            key: value for key, value in row.items() if key not in {"arguments", "argv"}
+        }
         return {
-            "content": [{"type": "text", "text": json.dumps(row, ensure_ascii=False)}],
-            "isError": bool(row.get("error")) or row["returncode"] != 0,
+            "content": [{"type": "text", "text": json.dumps(visible, ensure_ascii=False)}],
+            "isError": failed,
         }
 
 

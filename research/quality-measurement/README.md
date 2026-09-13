@@ -8,6 +8,10 @@ rules; the full research archive is not an onboarding checklist.
 | Diagnose a generated chapter | [Debug-book workflow](../../.claude/skills/debug-book/SKILL.md): identify the actual manuscript, frozen request, job-bound plan and raw/accepted stages. |
 | Continue Chapter 1 prose work | [Forensic audit](prose-chapter-one-forensics/RESULTS.md), then [Recall clarification results](prose-recall-clarification/RESULTS.md), its registration and runbook. |
 | Check what an earlier prose experiment established | [Chapter 1 experiment history](../../RESEARCH.md#451-chapter-1-prose-experiment-history), then that experiment's registration, results and deviations. |
+| Investigate fresh-start repetition and planner differences | [Crossed inventor/expander comparison](invention-boundaries-20260912/REPORT.md): identical mechanics produce different plans, with recurring patterns within both providers. |
+| Check whether those different plans reach prose | [Common-writer chapter transfer](planner-chapter-transfer-20260913/REPORT.md): both fixed pursuits survive, alongside an inherited assessment gap; this is isolated chapter evidence, not real-pipeline continuation. |
+| Work on real multi-chapter continuation | [Frozen baseline findings](continuation-baseline-20260910/REPORT.md), its registration and runbook: budget and provider containment stopped the assigned batch. |
+| Prepare a subtler reader-validity test | [Causal-reader admission census](causal-reader-admission-20260910/REPORT.md): candidate relations do not by themselves supply verified damage/sham transformations. Refresh admission before new reader calls. |
 | Propose a quality measure | [BRIEF.md](BRIEF.md) owns the failed-proxy ledger; [EPISTEMIC_GOVERNANCE.md](EPISTEMIC_GOVERNANCE.md) owns claim states and evidence requirements. |
 | Work on reader perception or qualification | [Reader architecture programme](../../plan/reader-architecture-program.md). |
 | Run an existing experiment | That arm's `RUNBOOK.md`; use the shared [box-lock procedure](RUNBOOK.md#guard-and-go-how-several-sessions-share-one-box) for sustained work. |
