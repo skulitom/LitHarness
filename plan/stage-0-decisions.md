@@ -26022,3 +26022,36 @@ and the explicit-depth control complete under the changed contract. The opposing
 was taken before ability definitions and remains incomplete, so the full registered
 criterion is not met. The [result record](../research/quality-measurement/world-depth-fixes-20260913/REPORT.md)
 preserves that limit; this is not fresh model-compliance evidence for seed v7.
+
+## 252. Separate declared repeatable growth from ownership and preserve adopted wants (2026-09-13)
+
+The [registered next-priorities study](../research/quality-measurement/next-priorities-20260913/REPORT.md)
+found two distinct purchases in a six-chapter continuation, while its deterministic probe
+showed the shared maximum-one scale blocking another funded investment in the same grant.
+This extends §251: an ownership-only inventory remains valid, but a repeatable investment
+needs a representation independent of that inventory's default ceiling.
+
+`growth_limit` is a timeless capability value: a positive integer retains a supplied cap,
+one means ownership only, and `open` records repeatable growth with no supplied cap.
+Absence retains the legacy scale and digest. Prices alone do not imply repeatability, and
+stocks handed out per rung cannot declare it. Offers and direct advancement share the
+per-capability cap; each investment still pays its declared price. Prerequisite depths
+are checked against the required capability. Completion derives the default ceiling only
+from capabilities without their own growth declaration, so deep repeatable growth cannot
+raise another capability's limit. No existing book records are rewritten.
+
+Seed v8 and grow v5 expose this declaration only for supplied mechanics. Grow v5 also
+includes the study's exact clarification distinguishing an established desire or adopted
+pursuit from a conditional possibility. That clarification preserves changed desires; it
+does not impose a requirement for explicit decision language. The prompt budgets record
+the added instructions. The study had one call per goal cell; adding the growth guidance
+has not been tested in a fresh model run.
+
+`test_repeatable_purchase_spends_each_point_and_replays_at_the_right_position` checks
+successive paid investments, unaffordable refusal, deterministic records and historical
+state reconstruction. `test_absent_growth_declarations_preserve_the_legacy_digest_and_moves`
+pins a digest from the preceding implementation. The opposing cap, ownership, rank-gate,
+malformed-declaration and completion controls live in `tests/test_growth_limits.py`.
+`test_grow_preserves_adopted_wants_without_promoting_a_conditional_thought` checks request
+routing and exact clarification text, not semantic compliance. These are implementation
+contracts, not literary-quality evidence or qualification of a reader mechanism.

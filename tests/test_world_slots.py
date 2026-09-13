@@ -205,6 +205,14 @@ def _per_rung() -> lc.StateRecord:
     return record
 
 
+def _growth_limit() -> lc.StateRecord:
+    record = rec("threadpull", worlds.GROWTH_LIMIT, value="open")
+    assert "threadpull can be gained or deepened repeatedly; no cap is declared" in sentences(
+        [record]
+    )
+    return record
+
+
 def _participant() -> lc.StateRecord:
     """§212: who a change happened to; `gamesystem.changes_of` reads it beside the effects."""
     record = rec("the_turn", worlds.PARTICIPANT_ROLE, object_ref="kell")
@@ -429,6 +437,7 @@ _PROBES: dict[str, Callable[[], lc.StateRecord]] = {
     "participant": _participant,
     "effect": _effect,
     "per_rung": _per_rung,
+    "growth_limit": _growth_limit,
     "taught_by": _taught_by,
     "comparator": _comparator,
     "evaluates": _evaluates,

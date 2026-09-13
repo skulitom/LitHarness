@@ -157,6 +157,20 @@ COSTS = "costs"
 #: with the engine.
 PER_RUNG = "per_rung"
 
+#: A per-capability advancement cap, or repeatable growth with no supplied cap. Absence
+#: leaves legacy systems' shared scale in force; this is never inferred from prose costs.
+GROWTH_LIMIT = "growth_limit"
+GrowthLimit = int | Literal["open"]
+
+
+def parse_growth_limit(value: object) -> GrowthLimit | None:
+    """Read only the two declared shapes; absence and malformed values return None."""
+    if value == "open":
+        return "open"
+    if isinstance(value, int) and not isinstance(value, bool) and value > 0:
+        return value
+    return None
+
 #: A capability or a criterion belongs to a named system. An edge: the **governed thing is the
 #: subject and the system is the object**, the same direction as `RECOGNIZED_BY`, so the two can
 #: never invert against each other.
@@ -690,6 +704,7 @@ def operating_rule_ids(records: Sequence[lc.StateRecord]) -> frozenset[str]:
     predicates = {
         WORLD_RULE_PREDICATE,
         COSTS,
+        GROWTH_LIMIT,
         REQUIRES,
         PRICE_PREDICATE,
         EDGE_PREDICATE,
@@ -1281,8 +1296,31 @@ def validate(records: Sequence[lc.StateRecord]) -> tuple[str, ...]:
     """
     complaints: list[str] = []
     roles = entity_roles(records)
+    stocks = {
+        record.subject for record in records
+        if record.predicate == PER_RUNG
+        and isinstance(record.value, int) and not isinstance(record.value, bool)
+        and record.value > 0
+    }
 
     for record in records:
+        if record.predicate == GROWTH_LIMIT:
+            if (
+                parse_growth_limit(record.value) is None
+                or record.object_ref is not None
+                or state_mod.order_key_of(record) is not None
+            ):
+                complaints.append(
+                    f"{record.subject} growth_limit requires a timeless --value that is a "
+                    "positive whole number or open, with no object"
+                )
+            if "capability" not in roles.get(record.subject, ()):
+                complaints.append(f"{record.subject} growth_limit belongs to a capability")
+            if record.subject in stocks:
+                complaints.append(
+                    f"{record.subject} is a stock handed out per_rung and cannot have a "
+                    "growth_limit; a stock is never gained or deepened"
+                )
         if record.predicate == ENTITY_ROLE_PREDICATE:
             role = str(record.value or "").strip()
             if role not in ENTITY_ROLES:
@@ -2017,6 +2055,16 @@ def _record_sentence(
         and not isinstance(record.value, bool)
     ):
         return f"every rung hands out {record.value} {record.subject}"
+    if record.predicate == GROWTH_LIMIT:
+        limit = parse_growth_limit(record.value)
+        if limit == "open":
+            return (
+                f"{record.subject} can be gained or deepened repeatedly; no cap is declared"
+            )
+        if limit == 1:
+            return f"{record.subject} is held or unheld; it does not deepen"
+        if limit is not None:
+            return f"{record.subject} can be gained or deepened up to {limit}"
     if record.predicate == PRICE_PREDICATE and value:
         return f"It costs {record.subject}: {value}"
     if record.predicate == ENTITY_ROLE_PREDICATE:
@@ -2100,6 +2148,7 @@ __all__ = [
     "GRAPH_LINE_PREDICATE",
     "GROUP_KEYS",
     "GROUP_KEY_PREDICATE",
+    "GROWTH_LIMIT",
     "MANIFESTS_PREDICATE",
     "MAXIMUM_PREDICATE",
     "MEMBER",
@@ -2132,6 +2181,7 @@ __all__ = [
     "DisclosureComparison",
     "DisclosureEvidence",
     "DisclosureReason",
+    "GrowthLimit",
     "Protagonist",
     "capabilities",
     "capabilities_of",
@@ -2161,6 +2211,7 @@ __all__ = [
     "normalise_id",
     "offered_by",
     "operating_rule_ids",
+    "parse_growth_limit",
     "project",
     "protagonist_brief",
     "questions",

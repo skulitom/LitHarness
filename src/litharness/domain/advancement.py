@@ -111,6 +111,7 @@ def legal_moves(sheet: CharacterSheet) -> tuple[Move, ...]:
             # its own (§210); a beat can therefore never name one.
             continue
         held = sheet.magnitude(ability.ability_id)
+        limit = system.depth_limit(ability.ability_id)
         if held == 0:
             if (
                 sheet.unlocked(ability.ability_id)
@@ -118,7 +119,7 @@ def legal_moves(sheet: CharacterSheet) -> tuple[Move, ...]:
                 and not _unpaid(sheet, ability)
             ):
                 moves.append(Move(AdvanceKind.GAIN, ability_id=ability.ability_id))
-        elif held < system.scale.maximum and not _unpaid(sheet, ability):
+        elif (limit is None or held < limit) and not _unpaid(sheet, ability):
             # **Deepening a held ability is never re-gated**, on `deepen`'s own rule: the gate is
             # the condition for having it at all, and re-asking would make a sheet's past illegal
             # whenever the world's declaration moved underneath it.
@@ -386,9 +387,10 @@ def deepen(sheet: CharacterSheet, ability_id: str, *, at: str) -> Advancement:
         raise IllegalAdvance(
             f"{sheet.character} does not hold {ability_id}, so there is nothing to deepen"
         )
-    if held >= sheet.system.scale.maximum:
+    limit = sheet.system.depth_limit(ability_id)
+    if limit is not None and held >= limit:
         raise IllegalAdvance(
-            f"{sheet.character} holds {ability_id} at {held}, which is this system's maximum"
+            f"{sheet.character} holds {ability_id} at {held}, at or above its maximum of {limit}"
         )
     if unpaid := _unpaid(sheet, ability):
         raise IllegalAdvance("; ".join(unpaid))

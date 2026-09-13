@@ -170,6 +170,9 @@ class Ability:
     #: grant written before this; prose about a price stays in `costs`, which is a fact about
     #: the world and not arithmetic.
     price: tuple[tuple[str, int], ...] = ()
+    #: A declared per-capability cap, or "open" for repeatable growth with no supplied cap.
+    #: Absence preserves the legacy system scale; one represents ownership only.
+    growth_limit: worlds_mod.GrowthLimit | None = None
 
     def __post_init__(self) -> None:
         """Prerequisites and prices are held in a canonical order. See
@@ -275,7 +278,7 @@ class Choice:
 
 @dataclass(frozen=True, slots=True)
 class Scale:
-    """What this system's magnitudes are called, and how high they run."""
+    """The legacy default depth cap; a capability may declare its own growth limit."""
 
     label: str
     maximum: int
@@ -394,6 +397,14 @@ class SystemDef:
             if any(ability.per_rung or ability.price for ability in self.abilities)
             else {}
         )
+        growth = (
+            {"growth_limits": [
+                [ability.ability_id, ability.growth_limit]
+                for ability in self.abilities if ability.growth_limit is not None
+            ]}
+            if any(ability.growth_limit is not None for ability in self.abilities)
+            else {}
+        )
         material = payload_digest(
             {
                 "id": self.system_id,
@@ -414,6 +425,7 @@ class SystemDef:
                 "scale": [self.scale.label, self.scale.maximum],
                 **forks,
                 **stocks,
+                **growth,
             }
         )
         return f"sys-{sha256(material.encode()).hexdigest()[:24]}"
@@ -437,6 +449,13 @@ class SystemDef:
     @property
     def ability_ids(self) -> tuple[str, ...]:
         return tuple(ability.ability_id for ability in self.abilities)
+
+    def depth_limit(self, ability_id: str) -> int | None:
+        """The declared cap, no supplied cap, or the unchanged legacy scale."""
+        limit = self.ability(ability_id).growth_limit
+        if limit == "open":
+            return None
+        return limit if isinstance(limit, int) else self.scale.maximum
 
     @property
     def stocks(self) -> tuple[str, ...]:
@@ -807,10 +826,11 @@ def check_draw(system: SystemDef, *, drawn: bool = True) -> tuple[str, ...]:
                 continue
             if need.ref == ability.ability_id:
                 complaints.append(f"{ability.ability_id} is its own prerequisite")
-            if not 1 <= need.threshold <= system.scale.maximum:
+            limit = system.depth_limit(need.ref)
+            if need.threshold < 1 or (limit is not None and need.threshold > limit):
                 complaints.append(
                     f"{ability.ability_id} needs {need.ref} at {need.threshold}, which is "
-                    f"outside this system's scale of 1 to {system.scale.maximum}"
+                    f"outside its depth range of 1 to {limit if limit is not None else 'open'}"
                 )
     if edges == 0 and len(system.abilities) >= MIN_ABILITIES:
         complaints.append(
@@ -829,6 +849,16 @@ def check_draw(system: SystemDef, *, drawn: bool = True) -> tuple[str, ...]:
     stocks = set(system.stocks)
     gates = system.gates
     for ability in system.abilities:
+        if ability.growth_limit is not None:
+            if worlds_mod.parse_growth_limit(ability.growth_limit) is None:
+                complaints.append(
+                    f"{ability.ability_id} growth_limit must be a positive whole number or open"
+                )
+            if ability.is_stock:
+                complaints.append(
+                    f"{ability.ability_id} is handed out by the rungs and cannot declare "
+                    "a growth_limit; a stock is never gained or deepened"
+                )
         if ability.per_rung < 0:
             complaints.append(
                 f"{ability.ability_id} says every rung hands out {ability.per_rung} of it; a "
@@ -1155,6 +1185,12 @@ def records_for(system: SystemDef) -> tuple[lc.StateRecord, ...]:
         if ability.costs:
             records.append(
                 worlds_mod.world_record(ability.ability_id, worlds_mod.COSTS, value=ability.costs)
+            )
+        if ability.growth_limit is not None:
+            records.append(
+                worlds_mod.world_record(
+                    ability.ability_id, worlds_mod.GROWTH_LIMIT, value=ability.growth_limit
+                )
             )
         # **The stock and the price, as records the vocabulary names** (§210): `per_rung` on
         # the stock, and a `costs` whose object is the stock and whose value is the amount on

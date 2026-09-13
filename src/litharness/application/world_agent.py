@@ -20,8 +20,8 @@ if TYPE_CHECKING:
     from litharness.application.concept import Concept
 
 #: Frozen profiles, one per job, so seeding a world and growing one are separable on the rows.
-SEED_PROFILE = "architect.seed.v7"
-GROW_PROFILE = "architect.grow.v4"
+SEED_PROFILE = "architect.seed.v8"
+GROW_PROFILE = "architect.grow.v5"
 
 # Explicit subcommands exclude acceptance. A broad world:* allowance would permit it.
 # Transport joins entries with commas; tests compare this list with the real parser.
@@ -69,6 +69,13 @@ _TOOLS = (
     "Future scene actions, explanations and endings belong in story plans, not world rules."
 )
 
+_GROWTH = (
+    "On a capability, use growth_limit when supplied mechanics establish its growth: 1 for "
+    "ownership only, the explicit positive maximum when given, or open when repeatable "
+    "gains or investments have no supplied cap. A price alone does not establish repeatability. "
+    "Leave unspecified growth undeclared."
+)
+
 # System mechanics use the vocabulary returned by the world tool.
 _SYSTEM = (
     "Something in this world grants what people can do, and a ladder belongs to whatever hands "
@@ -96,7 +103,8 @@ _SYSTEM = (
     "Where the system hands out something to be spent on its grants, declare it as a grant "
     "of its own that says per_rung how much every rung gives, and say on each grant it "
     "buys what that grant costs in it; a grant the rungs hand out is never gained or "
-    "deepened, and a grant that costs it is not offered until it can be paid."
+    "deepened, and a grant that costs it is not offered until it can be paid.\n"
+    f"{_GROWTH}"
 )
 
 _SEED = (
@@ -132,7 +140,13 @@ _GROW = (
     "world material need not appear on the page. A grant the system hands out that the seed "
     "did not declare is declared "
     "the way the seed declared its grants, governed_by the system, and the line follows it. "
-    "Then say, in two or three sentences, what changed."
+    "Then say, in two or three sentences, what changed.\n\n"
+    "A wants assertion records an established desire or adopted pursuit. A conditional "
+    "possibility, question, passing association, or conjecture about what somebody else might "
+    "know does not by itself establish that desire. Preserve established wants unless the "
+    "chapter establishes a change, and retain a new desire or pursuit when the character "
+    "actually adopts it.\n\n"
+    f"{_GROWTH}"
 )
 
 

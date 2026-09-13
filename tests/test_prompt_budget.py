@@ -304,7 +304,9 @@ BUDGET: dict[str, int] = {
     # book prints when a standing changes may carry a second phrase for a grant gained.
     # **Raised 47 -> 48 on 2026-09-03 for §210**: one sentence saying the system may hand
     # out something to be spent on its grants, as a grant of its own.
-    "architect seed, second system": 48,
+    # §252: three clauses expose declared growth, refuse inference from price and leave
+    # unspecified growth open to future declaration. These are mechanics, not craft advice.
+    "architect seed, second system": 51,
     "title lookup": 6,
     # **Raised 24 -> 25 on 2026-08-29, deliberately and for one named sentence.** The house
     # genre had been living nowhere (`plan/house-genre-constraint.md`; pilot 13 §8.2), carried
@@ -444,7 +446,8 @@ BUDGET: dict[str, int] = {
     # **Raised 45 -> 46 on 2026-09-03 for §210**: one sentence saying the system may hand
     # out something to be spent on its grants, as a grant of its own, so a spend is a
     # declared fall and not a fight with the engine.
-    "architect seed": 46,
+    # §252: the same three growth-declaration clauses as the second-system seed.
+    "architect seed": 49,
     # **42 -> 43 on 2026-08-30, the §176 clause.** §163's note above says this row "stays
     # on 42", which was true of §163's seed-only raise and is not a rule: this row stands on the
     # whole house floor, so a floor clause lands here as surely as it lands on the scene writer.
@@ -456,7 +459,9 @@ BUDGET: dict[str, int] = {
     # **Raised 39 -> 40 on 2026-09-03 for §211**: one sentence saying a grant the system
     # hands out after the seed is declared the way the seed declared its grants, because the
     # sheet now follows the system and a grown system is what a book handing things out is.
-    "architect grow": 40,
+    # §252: the tested three-sentence wants clarification and the three growth clauses.
+    # Existing headroom absorbs three; the resulting maximum is 43.
+    "architect grow": 43,
     # **28 -> 29 and 32 -> 33 on 2026-08-30, the §176 clause.** These two rows are the
     # ones the raise is actually for: the drafting call is where comparisons are written, so
     # this is the one place the demand is neither inert nor a delimiter. The four-demand gap

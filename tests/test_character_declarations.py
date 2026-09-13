@@ -143,3 +143,20 @@ def test_absent_disposition_adds_no_invented_trait_to_existing_characters() -> N
     assert character.disposition == ""
     assert "disposition" not in character.to_jsonable()
     assert character.render() == "stranger"
+
+
+def test_grow_preserves_adopted_wants_without_promoting_a_conditional_thought() -> None:
+    """Pin request routing; semantic compliance is measured by the registered goal contrast."""
+    chapter = "Perhaps the visitor knew the route. Rook still wanted to mend the roof."
+    request = world_agent.render_grow_request(chapter, logical_id="scene-2", story_order_key="s2")
+    assert request.profile == "architect.grow.v5"
+    assert chapter in request.prompt and "exact story key: s2" in request.prompt
+    assert (
+        "A wants assertion records an established desire or adopted pursuit. A conditional "
+        "possibility, question, passing association, or conjecture about what somebody else might "
+        "know does not by itself establish that desire. Preserve established wants unless the "
+        "chapter establishes a change, and retain a new desire or pursuit when the character "
+        "actually adopts it."
+    ) in request.system
+    assert "A wants assertion records" not in world_agent.render_seed_request("Premise").system
+    assert request.allowed_tools == world_agent.ALLOWED_TOOLS

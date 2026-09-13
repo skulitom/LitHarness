@@ -325,6 +325,13 @@ def vocabulary() -> dict[str, Any]:
                 "grant with it opens at nothing, is never gained or deepened, and is what "
                 "other grants are paid in"
             ),
+            "growth_limit": (
+                "how far a capability can be gained or deepened; the capability is the subject, "
+                "--value a positive whole number for its supplied maximum (1 means ownership "
+                "only), or open for declared repeatable growth with no supplied cap. This is "
+                "timeless. Omit when growth is unspecified; a price alone does not imply "
+                "repeatability. Stocks handed out per_rung never take this declaration"
+            ),
             "taught_by": "who teaches it; --object the teacher",
             "comparator": (
                 "how a criterion judges; the criterion is the subject, --value one of "

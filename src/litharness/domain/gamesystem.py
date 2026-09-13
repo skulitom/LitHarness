@@ -240,6 +240,11 @@ def _assemble(
             manifests_as=_first_value(records, ability_id, worlds_mod.MANIFESTS_PREDICATE),
             per_rung=_first_int(records, ability_id, worlds_mod.PER_RUNG),
             price=_price_of(records, ability_id),
+            growth_limit=next((
+                worlds_mod.parse_growth_limit(record.value)
+                for record in records
+                if record.subject == ability_id and record.predicate == worlds_mod.GROWTH_LIMIT
+            ), None),
         )
         for ability_id in ability_ids
     )
@@ -498,7 +503,9 @@ def completion_records(
                 "needs exactly one criterion under `governed_by` and a `precedes` chain for it"
             )
             continue
-        declared_depth = _declared_depth(records, skeleton.ability_ids)
+        declared_depth = _declared_depth(records, tuple(
+            ability.ability_id for ability in skeleton.abilities if ability.growth_limit is None
+        ))
         maximum = MIN_SCALE_MAXIMUM if declared_depth in (None, 0) else declared_depth
         system = _assemble(
             records,
@@ -517,11 +524,12 @@ def completion_records(
     return tuple(minted), tuple(reasons)
 
 def _declared_depth(records: Sequence[lc.StateRecord], ability_ids: Sequence[str]) -> int | None:
-    """The deepest magnitude this world has declared on these capabilities, or `None` for none.
+    """The deepest declared magnitude of capabilities still using the legacy scale.
 
     Both slots §160 reused are read: `can_do`'s value is how far a holder has taken a capability,
     `requires`' is how far a prerequisite has to have been taken. A scale that did not contain
-    both would be one `check_draw` refuses on the world's own numbers.
+    both would be one `check_draw` refuses on the world's own numbers. Capabilities with
+    their own growth declaration do not raise an unrelated capability's default ceiling.
     """
     wanted = set(ability_ids)
     depths = [
@@ -531,7 +539,7 @@ def _declared_depth(records: Sequence[lc.StateRecord], ability_ids: Sequence[str
         and not isinstance(record.value, bool)
         and (
             (record.predicate == worlds_mod.CAN_DO and record.object_ref in wanted)
-            or (record.predicate == worlds_mod.REQUIRES and record.subject in wanted)
+            or (record.predicate == worlds_mod.REQUIRES and record.object_ref in wanted)
         )
     ]
     return max(depths) if depths else None
