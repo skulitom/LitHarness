@@ -1,0 +1,18 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "world-depth-fixes-20260913",
+  "statement": "Replay the captured first world checks before and after the ownership-only system fix, with an explicit-depth control.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/world-depth-fixes-20260913/RUNBOOK.md",
+      "sha256": "ebe79fe1d79ab7ef9d16d605b9f2a4cc83e38ac3f923b62034ca66c2c9712493"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/world-depth-fixes-20260913/registration.json",
+      "sha256": "a8951ae1e40f52db234da53cad971257157285e356b37df6fe4fab2c14dc0d1e"
+    }
+  ]
+}
