@@ -26055,3 +26055,9 @@ malformed-declaration and completion controls live in `tests/test_growth_limits.
 `test_grow_preserves_adopted_wants_without_promoting_a_conditional_thought` checks request
 routing and exact clarification text, not semantic compliance. These are implementation
 contracts, not literary-quality evidence or qualification of a reader mechanism.
+
+Follow-up to §252: the [registered fresh-model controls](../research/quality-measurement/growth-declarations-20260913/REPORT.md)
+retain repeatable, ownership-only and explicitly capped declarations, and the installed
+grow prompt retains the fixed conditional/adopted distinction. The result addresses the
+untested-guidance limitation above on these fixtures only. It supplies no fresh serial
+outcome, no general compliance rate and no migration of legacy worlds.

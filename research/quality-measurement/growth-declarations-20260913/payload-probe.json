@@ -1,0 +1,55 @@
+{
+  "design_timing": "post-observation; not part of the five registered model cells",
+  "model_calls": 0,
+  "source_receipts": [
+    {
+      "path": "runs/next-priorities-20260913/continuation/calls/008.json",
+      "sha256": "09eb6796fd74caaca36c20feaafc63cc6e6fe9c4c0f4454b80a2fcf13058b162"
+    },
+    {
+      "path": "runs/next-priorities-20260913/continuation/calls/011.json",
+      "sha256": "339c890e2843cf9287dd921fb7cc23df57fc85b1f3d77f6ce8c34d04f9b174d1"
+    },
+    {
+      "path": "runs/next-priorities-20260913/continuation/calls/014.json",
+      "sha256": "998440dbdb30c1e1163cc59a26463da0ab0c09c17b4191851f2fd38ec29d0598"
+    }
+  ],
+  "script_sha256": "cc47a4f0f9ee4ef19715f62838877f1c6d9598b45e8cbd31ca54efaa8c3a1ebd",
+  "by_command": {
+    "world vocabulary": {
+      "replies": 3,
+      "before_bytes": 43341,
+      "after_bytes": 41538
+    },
+    "world summary": {
+      "replies": 3,
+      "before_bytes": 1530,
+      "after_bytes": 1083
+    },
+    "world query": {
+      "replies": 45,
+      "before_bytes": 228993,
+      "after_bytes": 174848
+    },
+    "world declare-batch": {
+      "replies": 9,
+      "before_bytes": 41229,
+      "after_bytes": 41229
+    },
+    "world check": {
+      "replies": 3,
+      "before_bytes": 897,
+      "after_bytes": 690
+    }
+  },
+  "queries": {
+    "replies": 45,
+    "records": 617,
+    "original_utf8_bytes": 228993,
+    "canonical_object_utf8_bytes": 174848,
+    "columnar_utf8_bytes": 128317,
+    "round_trips": 45
+  },
+  "limitation": "Byte-only prototypes; no model behavior, native token, latency or monetary savings measured. No production output was changed."
+}

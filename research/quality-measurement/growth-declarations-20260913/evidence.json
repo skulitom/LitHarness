@@ -1,0 +1,1799 @@
+{
+  "schema": "litharness.growth-declarations-evidence.v1",
+  "manifest_sha256": "3ece08852ea0215d74c33e233691ee314076dd5adb1ec14972d43affa598201a",
+  "progress_sha256": "4822930a2514d977ad84a0e39edeac6f20e955e414386ed95b37232a01823c15",
+  "status": "completed",
+  "fatal": null,
+  "cells": [
+    {
+      "name": "wren-seed",
+      "completed": true,
+      "database_sha256": "c147b9ccb9ef5d8ff72cd991c7e9cd43ad0acb7ffcbb36da415c94226d572551",
+      "request_sha256": "03ef470ee7124fce86b952f3ed4046c4b7731fc13063e56efb43f1b06e77f141",
+      "completion_reasons": [],
+      "systems": [
+        {
+          "system_id": "engine",
+          "digest": "sys-65938f04903a1e8f44ac083c",
+          "default_maximum": 1,
+          "rank_ids": [
+            "rank_1",
+            "rank_2",
+            "rank_3",
+            "rank_4",
+            "rank_5",
+            "rank_6",
+            "rank_7",
+            "rank_8",
+            "rank_9",
+            "rank_10"
+          ],
+          "complaints": [],
+          "abilities": [
+            {
+              "id": "articulated",
+              "label": "Articulated Stitch",
+              "growth_limit": 1,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                },
+                {
+                  "ref": "rank_10",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "duration",
+              "label": "Duration",
+              "growth_limit": "open",
+              "effective_limit": null,
+              "per_rung": 0,
+              "price": [
+                [
+                  "point",
+                  1
+                ]
+              ],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 2,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 2,
+                      "inspection": 1,
+                      "length": 1,
+                      "load": 1,
+                      "loadstitch": 1,
+                      "point": 1,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w3b1e1cd2b0f69b83a3508849",
+                      "rec-w12392e75001a19a76ac133f9",
+                      "rec-web0cdc11b1f4f575cbbbe0ba"
+                    ]
+                  },
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 3,
+                      "inspection": 1,
+                      "length": 1,
+                      "load": 1,
+                      "loadstitch": 1,
+                      "point": 0,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w5b2553c6b19317c3534160c0",
+                      "rec-w0aa596d2cb162b4e59c45c5d",
+                      "rec-w46afa4373f2184027d1da89e"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "inspection",
+              "label": "Inspection",
+              "growth_limit": "open",
+              "effective_limit": null,
+              "per_rung": 0,
+              "price": [],
+              "needs": [],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 1,
+                      "inspection": 2,
+                      "length": 1,
+                      "load": 1,
+                      "loadstitch": 1,
+                      "point": 0,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w9e92294f0b311598cf059701",
+                      "rec-wa66b8aece01825f3a3f77e1a"
+                    ]
+                  },
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 1,
+                      "inspection": 3,
+                      "length": 1,
+                      "load": 1,
+                      "loadstitch": 1,
+                      "point": 0,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w6d1e957b51c2c9e73312b6d0",
+                      "rec-w0f4cd2ae319f9a8bec9ea40d"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "length",
+              "label": "Length",
+              "growth_limit": "open",
+              "effective_limit": null,
+              "per_rung": 0,
+              "price": [
+                [
+                  "point",
+                  1
+                ]
+              ],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 2,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 1,
+                      "inspection": 1,
+                      "length": 2,
+                      "load": 1,
+                      "loadstitch": 1,
+                      "point": 1,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w656fcdaa73e82f9ab8304942",
+                      "rec-w12392e75001a19a76ac133f9",
+                      "rec-weaf640f3c4245ab0bdb2dc7d"
+                    ]
+                  },
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 1,
+                      "inspection": 1,
+                      "length": 3,
+                      "load": 1,
+                      "loadstitch": 1,
+                      "point": 0,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-wd2e97be5428c2758b5bd9664",
+                      "rec-w0aa596d2cb162b4e59c45c5d",
+                      "rec-wab1f373b6cfc63cc2963b73c"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "load",
+              "label": "Load",
+              "growth_limit": "open",
+              "effective_limit": null,
+              "per_rung": 0,
+              "price": [
+                [
+                  "point",
+                  1
+                ]
+              ],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 2,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 1,
+                      "inspection": 1,
+                      "length": 1,
+                      "load": 2,
+                      "loadstitch": 1,
+                      "point": 1,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w4ce3b3a6bac3155f2312d9ec",
+                      "rec-w12392e75001a19a76ac133f9",
+                      "rec-w1ce17309fbe47bbb8b8d4155"
+                    ]
+                  },
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 1,
+                      "inspection": 1,
+                      "length": 1,
+                      "load": 3,
+                      "loadstitch": 1,
+                      "point": 0,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w3ef0ead5114589c4633c1a6d",
+                      "rec-w0aa596d2cb162b4e59c45c5d",
+                      "rec-w330f508a50b0f7e61102ac9a"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "loadstitch",
+              "label": "Loadstitch",
+              "growth_limit": 1,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "point",
+              "label": "Point",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 1,
+              "price": [],
+              "needs": [],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "split",
+              "label": "Split Stitch",
+              "growth_limit": 1,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                },
+                {
+                  "ref": "rank_5",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "wants": [
+        {
+          "record_id": "rec-w090c2c4dedc697cc1d6397da",
+          "subject": "ossik",
+          "value_sha256": "1271437446f955d68cf6da0a9aebba13d82c8b70372c21e2fdfd51bc1b20202a",
+          "authority": "proposed"
+        },
+        {
+          "record_id": "rec-w1964639e100a40c0f21ef002",
+          "subject": "condemner",
+          "value_sha256": "16655df35b9443edd8724b3fc9b0972e13c50410432f19f4d3b8ec7ca02191f0",
+          "authority": "proposed"
+        },
+        {
+          "record_id": "rec-w5ca673c413518ae7845f3cba",
+          "subject": "watcher",
+          "value_sha256": "ce9b9e05b1fd32a99f32f022d44bb63e20d27b6eaccbbdd43e6a4bce513a6785",
+          "authority": "proposed"
+        },
+        {
+          "record_id": "rec-w7c43b83085f41c8f67d18dcd",
+          "subject": "wren",
+          "value_sha256": "5a8aa07bed88bc031191530b3cc944c23fb5914e4c4da4d0ff3d2ff5659d0add",
+          "authority": "proposed"
+        },
+        {
+          "record_id": "rec-wca13995c602dc1613058ac70",
+          "subject": "sill",
+          "value_sha256": "7651aa68f0c1f660fa49fb3206f7378fc36e8753b5dd1949ee113c90717db5af",
+          "authority": "proposed"
+        }
+      ],
+      "world_sha256": "30dc29af216e5cafa53886289571ac4179983969d0c78cc17cc43787d17541fb",
+      "check_sha256": "f832c2e5111aff4f03822dd5ee0443718692e85220334f8e05acbb8dc1abd951",
+      "check": {
+        "ok": true,
+        "complaints": 0,
+        "would_not_finish": 0,
+        "unplaceable": 0
+      },
+      "verify_sha256": "c57a1a2c835cf39f3c90464d02eb0d60cb3436075702be8550932fc6490e4d17",
+      "database_unchanged": true
+    },
+    {
+      "name": "opposing-seed",
+      "completed": true,
+      "database_sha256": "921bbcd8192c36e423b62a254960e43d51cddd6a4ec4922a6a2c905c75ef435e",
+      "request_sha256": "e84bd09b593964c5ee59c550d3f565d174edf151c4b0c611de9e759fcfe1a88c",
+      "completion_reasons": [],
+      "systems": [
+        {
+          "system_id": "orchard",
+          "digest": "sys-d9d9c87c7df24f70b77aad11",
+          "default_maximum": 1,
+          "rank_ids": [
+            "rank_one",
+            "rank_two",
+            "rank_three",
+            "rank_four",
+            "rank_five",
+            "rank_six",
+            "rank_seven",
+            "rank_eight",
+            "rank_nine",
+            "rank_ten",
+            "rank_eleven",
+            "rank_twelve"
+          ],
+          "complaints": [],
+          "abilities": [
+            {
+              "id": "anchor",
+              "label": "Anchor",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [
+                {
+                  "ref": "fold",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "anchor": 1,
+                  "echo": 1,
+                  "fold": 1,
+                  "mirror": 1,
+                  "step": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "echo",
+              "label": "Echo",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [
+                {
+                  "ref": "rank_five",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "anchor": 1,
+                  "echo": 1,
+                  "fold": 1,
+                  "mirror": 1,
+                  "step": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "fold",
+              "label": "Fold",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "anchor": 1,
+                  "echo": 1,
+                  "fold": 1,
+                  "mirror": 1,
+                  "step": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "mirror",
+              "label": "Mirror",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [
+                {
+                  "ref": "rank_five",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "anchor": 1,
+                  "echo": 1,
+                  "fold": 1,
+                  "mirror": 1,
+                  "step": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "step",
+              "label": "Step",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [
+                {
+                  "ref": "fold",
+                  "threshold": 1
+                },
+                {
+                  "ref": "rank_three",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "anchor": 1,
+                  "echo": 1,
+                  "fold": 1,
+                  "mirror": 1,
+                  "step": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "wants": [
+        {
+          "record_id": "rec-wd2d33865c3ebb1aa058bd4bb",
+          "subject": "kio",
+          "value_sha256": "95511f60a05f5446c25673f36337f5a2e2d3ec7bdba45cef4e1afc6190f6c5e5",
+          "authority": "proposed"
+        },
+        {
+          "record_id": "rec-wfb43dd512aad431f84b0dc04",
+          "subject": "mara",
+          "value_sha256": "432876843266866fe87d18c760468cd587a52e71ec1348fde98a90178f431127",
+          "authority": "proposed"
+        }
+      ],
+      "world_sha256": "e3b43d9d5d82613b03ee4e8a221a6f16587dc8c136158642f2fa3c0e4bd6295f",
+      "check_sha256": "0d8de247da698eed214f2821f029ccd791e0e26c10af915a1d14199b3375efd4",
+      "check": {
+        "ok": true,
+        "complaints": 0,
+        "would_not_finish": 0,
+        "unplaceable": 0
+      },
+      "verify_sha256": "c57a1a2c835cf39f3c90464d02eb0d60cb3436075702be8550932fc6490e4d17",
+      "database_unchanged": true
+    },
+    {
+      "name": "capped-seed",
+      "completed": true,
+      "database_sha256": "86f9e41bc5fefd2e7d0ed2020bb6ce2babefea7f6cfbb2e4cac00c4bd54bd086",
+      "request_sha256": "3e7b6bef422517af2fbb2021712930e061a07d138427ca8bef7fe03b3a33308e",
+      "completion_reasons": [],
+      "systems": [
+        {
+          "system_id": "engine",
+          "digest": "sys-658fd35cb3d7ef4844cfd45e",
+          "default_maximum": 1,
+          "rank_ids": [
+            "r1",
+            "r2",
+            "r3",
+            "r4",
+            "r5",
+            "r6",
+            "r7",
+            "r8",
+            "r9",
+            "r10"
+          ],
+          "complaints": [],
+          "abilities": [
+            {
+              "id": "articulated",
+              "label": "Articulated Stitch",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                },
+                {
+                  "ref": "r10",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "duration",
+              "label": "Duration",
+              "growth_limit": "open",
+              "effective_limit": null,
+              "per_rung": 0,
+              "price": [
+                [
+                  "point",
+                  1
+                ]
+              ],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 2,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 2,
+                      "inspection": 1,
+                      "length": 1,
+                      "load": 1,
+                      "loadstitch": 1,
+                      "point": 1,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w3b1e1cd2b0f69b83a3508849",
+                      "rec-w12392e75001a19a76ac133f9",
+                      "rec-web0cdc11b1f4f575cbbbe0ba"
+                    ]
+                  },
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 3,
+                      "inspection": 1,
+                      "length": 1,
+                      "load": 1,
+                      "loadstitch": 1,
+                      "point": 0,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w5b2553c6b19317c3534160c0",
+                      "rec-w0aa596d2cb162b4e59c45c5d",
+                      "rec-w46afa4373f2184027d1da89e"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "inspection",
+              "label": "Inspection",
+              "growth_limit": "open",
+              "effective_limit": null,
+              "per_rung": 0,
+              "price": [],
+              "needs": [],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 1,
+                      "inspection": 2,
+                      "length": 1,
+                      "load": 1,
+                      "loadstitch": 1,
+                      "point": 0,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w9e92294f0b311598cf059701",
+                      "rec-wa66b8aece01825f3a3f77e1a"
+                    ]
+                  },
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 1,
+                      "inspection": 3,
+                      "length": 1,
+                      "load": 1,
+                      "loadstitch": 1,
+                      "point": 0,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w6d1e957b51c2c9e73312b6d0",
+                      "rec-w0f4cd2ae319f9a8bec9ea40d"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "length",
+              "label": "Length",
+              "growth_limit": "open",
+              "effective_limit": null,
+              "per_rung": 0,
+              "price": [
+                [
+                  "point",
+                  1
+                ]
+              ],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 2,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 1,
+                      "inspection": 1,
+                      "length": 2,
+                      "load": 1,
+                      "loadstitch": 1,
+                      "point": 1,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w656fcdaa73e82f9ab8304942",
+                      "rec-w12392e75001a19a76ac133f9",
+                      "rec-weaf640f3c4245ab0bdb2dc7d"
+                    ]
+                  },
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 1,
+                      "inspection": 1,
+                      "length": 3,
+                      "load": 1,
+                      "loadstitch": 1,
+                      "point": 0,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-wd2e97be5428c2758b5bd9664",
+                      "rec-w0aa596d2cb162b4e59c45c5d",
+                      "rec-wab1f373b6cfc63cc2963b73c"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "load",
+              "label": "Load",
+              "growth_limit": 2,
+              "effective_limit": 2,
+              "per_rung": 0,
+              "price": [
+                [
+                  "point",
+                  1
+                ]
+              ],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 2,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": true,
+                    "direct_execution": true,
+                    "after": {
+                      "articulated": 1,
+                      "duration": 1,
+                      "inspection": 1,
+                      "length": 1,
+                      "load": 2,
+                      "loadstitch": 1,
+                      "point": 1,
+                      "split": 1
+                    },
+                    "record_ids": [
+                      "rec-w4ce3b3a6bac3155f2312d9ec",
+                      "rec-w12392e75001a19a76ac133f9",
+                      "rec-w1ce17309fbe47bbb8b8d4155"
+                    ]
+                  },
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "loadstitch",
+              "label": "Loadstitch",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "point",
+              "label": "Point",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 1,
+              "price": [],
+              "needs": [],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "split",
+              "label": "Split Stitch",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                },
+                {
+                  "ref": "r5",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "inspection": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "wants": [
+        {
+          "record_id": "rec-w1c9ac7080979c08320f2b041",
+          "subject": "chalkrats",
+          "value_sha256": "a7e63b09365c58a1c6f7179b4749ed069678dc602deffeb19d6859f56726eab3",
+          "authority": "proposed"
+        },
+        {
+          "record_id": "rec-w587723ed8d0dbb65267c3bdc",
+          "subject": "wren",
+          "value_sha256": "a446b586922ad7e7cde446b06d1a40c755508b21a1d6771388615b9c695061e0",
+          "authority": "proposed"
+        },
+        {
+          "record_id": "rec-w7393256724770d76c80391b3",
+          "subject": "watcher",
+          "value_sha256": "1a10d3c4e0803bff6b0f12395e8f68c3fc94e57a4be3dfabcdf392f2c7e191e9",
+          "authority": "proposed"
+        },
+        {
+          "record_id": "rec-wbbe026f9adec4d147edaaa94",
+          "subject": "sill",
+          "value_sha256": "0bf88f8288cc6694621eb77ea20e953ccbaea36c14d0cad66ba23345e3972bbe",
+          "authority": "proposed"
+        }
+      ],
+      "world_sha256": "d5876d19ea58df5b236359d6a2cfedfe23e1b021c9b3fe2031435be8b1b92021",
+      "check_sha256": "d0146e4c0b88582c5e9ff6659bfe7c808d9112c2a32194a575a21471ad7b175a",
+      "check": {
+        "ok": true,
+        "complaints": 0,
+        "would_not_finish": 0,
+        "unplaceable": 0
+      },
+      "verify_sha256": "c57a1a2c835cf39f3c90464d02eb0d60cb3436075702be8550932fc6490e4d17",
+      "database_unchanged": true
+    },
+    {
+      "name": "conditional-goal",
+      "completed": true,
+      "database_sha256": "3e334437523de5ac1c46e2d953ce07902e6ba56166bcb2995467c404456806fc",
+      "request_sha256": "0c412c7b2305cdea6d2299218b3b21457970dbb727701078e1c2c36bcfd252ba",
+      "completion_reasons": [],
+      "systems": [
+        {
+          "system_id": "engine",
+          "digest": "sys-460afb3c166768282c3f9ac5",
+          "default_maximum": 1,
+          "rank_ids": [
+            "rank_1",
+            "rank_2",
+            "rank_3",
+            "rank_4",
+            "rank_5",
+            "rank_6",
+            "rank_7",
+            "rank_8",
+            "rank_9",
+            "rank_10"
+          ],
+          "complaints": [],
+          "abilities": [
+            {
+              "id": "articulated",
+              "label": "Articulated Stitch",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                },
+                {
+                  "ref": "rank_10",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "duration",
+              "label": "Duration",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [
+                [
+                  "point",
+                  1
+                ]
+              ],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 2,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "length",
+              "label": "Length",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [
+                [
+                  "point",
+                  1
+                ]
+              ],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 2,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "load",
+              "label": "Load",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [
+                [
+                  "point",
+                  1
+                ]
+              ],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 2,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "loadstitch",
+              "label": "Loadstitch",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "point",
+              "label": "Point",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 1,
+              "price": [],
+              "needs": [],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "split",
+              "label": "Split Stitch",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                },
+                {
+                  "ref": "rank_5",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "wants": [
+        {
+          "record_id": "rec-w462a0c5a1d4d5a3e55449d40",
+          "subject": "wren",
+          "value_sha256": "e81efce5b63906d75a95011646f38fbed9fca75cfb7cebd442d16189d8a0041c",
+          "authority": "proposed"
+        }
+      ],
+      "world_sha256": "744eb96e6d30fff2397d7cd31fd57cc8d88e85253ef4f84e1aaee36a80e874db",
+      "check_sha256": "7db0eb74425a165977f34af2c09495211243575830916ecb8dcd8cb84f923d79",
+      "check": {
+        "ok": true,
+        "complaints": 0,
+        "would_not_finish": 0,
+        "unplaceable": 0
+      },
+      "verify_sha256": "c57a1a2c835cf39f3c90464d02eb0d60cb3436075702be8550932fc6490e4d17",
+      "database_unchanged": true
+    },
+    {
+      "name": "adopted-goal",
+      "completed": true,
+      "database_sha256": "8d9599d7acd5255fa82441f6acc12daacd3fff14b5718e9931b533c6e01e60fe",
+      "request_sha256": "fc0e00904c3d618df9d167147948beda977dcc9abeb10bacf6954a6bf039d666",
+      "completion_reasons": [],
+      "systems": [
+        {
+          "system_id": "engine",
+          "digest": "sys-460afb3c166768282c3f9ac5",
+          "default_maximum": 1,
+          "rank_ids": [
+            "rank_1",
+            "rank_2",
+            "rank_3",
+            "rank_4",
+            "rank_5",
+            "rank_6",
+            "rank_7",
+            "rank_8",
+            "rank_9",
+            "rank_10"
+          ],
+          "complaints": [],
+          "abilities": [
+            {
+              "id": "articulated",
+              "label": "Articulated Stitch",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                },
+                {
+                  "ref": "rank_10",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "duration",
+              "label": "Duration",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [
+                [
+                  "point",
+                  1
+                ]
+              ],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 2,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "length",
+              "label": "Length",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [
+                [
+                  "point",
+                  1
+                ]
+              ],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 2,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "load",
+              "label": "Load",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [
+                [
+                  "point",
+                  1
+                ]
+              ],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 2,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "loadstitch",
+              "label": "Loadstitch",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "point",
+              "label": "Point",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 1,
+              "price": [],
+              "needs": [],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            },
+            {
+              "id": "split",
+              "label": "Split Stitch",
+              "growth_limit": null,
+              "effective_limit": 1,
+              "per_rung": 0,
+              "price": [],
+              "needs": [
+                {
+                  "ref": "loadstitch",
+                  "threshold": 1
+                },
+                {
+                  "ref": "rank_5",
+                  "threshold": 1
+                }
+              ],
+              "control": {
+                "counterfactual": true,
+                "before": {
+                  "articulated": 1,
+                  "duration": 1,
+                  "length": 1,
+                  "load": 1,
+                  "loadstitch": 1,
+                  "point": 0,
+                  "split": 1
+                },
+                "steps": [
+                  {
+                    "offered": false,
+                    "direct_execution": false
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "wants": [
+        {
+          "record_id": "rec-w36fa5d770ccde86f68b0156a",
+          "subject": "wren",
+          "value_sha256": "3e3ff488e016ea36fd027496744ff57ce739b88b844a30fb9ae47690dff28d61",
+          "authority": "proposed"
+        }
+      ],
+      "world_sha256": "ccc9341e35f13ccd2858dbd39de27b705f540303bec74182ce74451b1c5d6f73",
+      "check_sha256": "7db0eb74425a165977f34af2c09495211243575830916ecb8dcd8cb84f923d79",
+      "check": {
+        "ok": true,
+        "complaints": 0,
+        "would_not_finish": 0,
+        "unplaceable": 0
+      },
+      "verify_sha256": "c57a1a2c835cf39f3c90464d02eb0d60cb3436075702be8550932fc6490e4d17",
+      "database_unchanged": true
+    }
+  ],
+  "calls": [
+    {
+      "path": "runs/growth-declarations-20260913/adopted-goal/calls/006.json",
+      "sha256": "9a10f86b5abd74a2843864a9710ead94327ac8309d183e546dc757c776d4cac4",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 167623,
+      "mode": "bridge",
+      "session_ids": [
+        "01a09b87-1416-7b11-96cb-b0d2c636112f"
+      ],
+      "command_count": 13,
+      "commands_contained": true
+    },
+    {
+      "path": "runs/growth-declarations-20260913/capped-seed/calls/004.json",
+      "sha256": "af2462a0a0baabf9dfab3030526a8c32ea3961aff96fbc01d000aa22b06ca115",
+      "profile": "architect.seed.v8",
+      "status": "completed",
+      "native_tokens": 206373,
+      "mode": "bridge",
+      "session_ids": [
+        "01a09b82-f237-75b2-8344-8ae0b4cbe9ff"
+      ],
+      "command_count": 16,
+      "commands_contained": true
+    },
+    {
+      "path": "runs/growth-declarations-20260913/conditional-goal/calls/005.json",
+      "sha256": "c018860fc94ea8c0b67e55ef7408ad012d1f5b4c9ed418e2cc7bc3c72188a517",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 171357,
+      "mode": "bridge",
+      "session_ids": [
+        "01a09b85-cd97-71b2-b2f7-c1b337c523a6"
+      ],
+      "command_count": 14,
+      "commands_contained": true
+    },
+    {
+      "path": "runs/growth-declarations-20260913/opposing-seed/calls/003.json",
+      "sha256": "dfd0b6e5d3903c8b316c34bdf069ee73ccfbc9cabd7165dd94741d05a687760d",
+      "profile": "architect.seed.v8",
+      "status": "completed",
+      "native_tokens": 152240,
+      "mode": "bridge",
+      "session_ids": [
+        "01a09b80-fa53-7ae1-9ac3-4ebd1d22caa0"
+      ],
+      "command_count": 12,
+      "commands_contained": true
+    },
+    {
+      "path": "runs/growth-declarations-20260913/wren-seed/calls/001.json",
+      "sha256": "2fb3e71ab0ad0d6193df445b6f7e221bb671d049f498b3225a8c91d22ba4d002",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 3766,
+      "mode": "completion",
+      "session_ids": [
+        "01a09b7d-49c5-71e0-a677-f0f0df045ce1"
+      ],
+      "command_count": 0,
+      "commands_contained": true
+    },
+    {
+      "path": "runs/growth-declarations-20260913/wren-seed/calls/002.json",
+      "sha256": "0a154bf2a3855a9a232f1cf70e21628e989a62f3ddb639564c648fc1e3ff230b",
+      "profile": "architect.seed.v8",
+      "status": "completed",
+      "native_tokens": 245457,
+      "mode": "bridge",
+      "session_ids": [
+        "01a09b7d-5dba-7e91-b18b-86c84d61f72f"
+      ],
+      "command_count": 15,
+      "commands_contained": true
+    }
+  ],
+  "total_native_tokens": 946816,
+  "session_count": 6,
+  "distinct_session_count": 6,
+  "usage_matches_progress": true,
+  "protected_inputs_unchanged": true
+}

@@ -1,8 +1,8 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "growth-declarations-20260913",
-  "statement": "The five registered fresh Architect cells will test whether installed growth declarations preserve repeatable, ownership-only and explicitly capped source mechanics while retaining the conditional/adopted goal distinction. No result is yet observed.",
-  "status": "registered",
+  "statement": "The five fixed fresh Architect outputs preserve the tested repeatable, ownership-only and explicitly capped growth distinctions and retain the conditional/adopted goal contrast. Counterfactual arithmetic exercises the returned declarations; no new serial chapters or legacy-world migration were tested.",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,21 @@
       "kind": "registration",
       "path": "research/quality-measurement/growth-declarations-20260913/registration.json",
       "sha256": "d71b0e1f1ccfd7da3d9ee377c2f8d8b75b566df4b3eb9e69ea6940d38307feaf"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/growth-declarations-20260913/evidence.json",
+      "sha256": "08ff762787886096fbd83fd212a9b363af20c4906492a5f6709701834673aec2"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/growth-declarations-20260913/REPORT.md",
+      "sha256": "b099d82a9e456eeaaead639e9fa49b918453cad54b2086b0f3dc69e947d8412e"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/growth-declarations-20260913/payload-probe.json",
+      "sha256": "897899b2e92d671c49353ba34397c979abb1704aabf806b366d660512cba8f79"
     }
   ]
 }
