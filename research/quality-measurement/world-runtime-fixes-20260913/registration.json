@@ -1,0 +1,19 @@
+{
+  "manifest_sha256": "e7400f2c0c561466302a6f85407404d5890c84d09e0484c5d87641a025599fbe",
+  "source_revision": "91271ac801c60cee968716eab0d013d49037f3ff",
+  "binary_sha256": "081e4de4be8e38fac6ed4d95e3b1a0b9f6d31c090ddc36e1696b349fe406f575",
+  "parent_path": "runs/invention-boundaries-20260912/calls/plan-astra-opus-1.json",
+  "parent_sha256": "da04af43a6cbcea990c855f5c0b57831304f6b9dbe5951a775330374a66452b8",
+  "max_calls": 40,
+  "max_tokens": 1600000,
+  "control_sha256": "1cdb21f7ea7152e1718d7629ff59d38a443f7438703f20b70c27b142fcc94c8a",
+  "assigned_books": 2,
+  "chapters_by_book": [
+    1,
+    0
+  ],
+  "capture_helpers": {
+    "run.py": "36c823a887018ffcd3c500c60aa51f07078412269bd29a8449805863ffb8c9df",
+    "audit.py": "bd24b4f4bed79591c360e95994fe7b58e1af73eb7b2f78b3c2c79f2c2e0c950b"
+  }
+}
