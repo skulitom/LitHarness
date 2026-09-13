@@ -1,8 +1,8 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "world-boundary-fixes-20260913",
-  "statement": "The registered input-boundary changes preserve the assigned treatments at development and world seeding, with scoped world retrieval observed separately.",
-  "status": "registered",
+  "statement": "The assigned first outputs preserve the located acquisition, access and motive boundaries, while repeated whole-world reads and unusable reconciliation timing remain observed failures.",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,16 @@
       "kind": "registration",
       "path": "research/quality-measurement/world-boundary-fixes-20260913/registration.json",
       "sha256": "188fe4d9cde0d10ae0ffb26d6d478cfef52d7cf52c521d0760bbb28759df3bc5"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/world-boundary-fixes-20260913/evidence.json",
+      "sha256": "c2d8d5ce74688665f0d812dff09759872f39bb8332fa27d99564a1d77218be29"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/world-boundary-fixes-20260913/REPORT.md",
+      "sha256": "9195725b6699d36a26aaf936e549f2aa84826a0a1c5cc205aa6d17c16c3b218b"
     }
   ]
 }

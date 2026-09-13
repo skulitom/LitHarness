@@ -1,0 +1,3455 @@
+{
+  "schema": "litharness.world-boundary-evidence.v1",
+  "status": "observed",
+  "registration_sha256": "188fe4d9cde0d10ae0ffb26d6d478cfef52d7cf52c521d0760bbb28759df3bc5",
+  "progress_sha256": "fd0c77abe8f8f8574044cb53761333035a174ff086f9075cb7351a29bf6ee44f",
+  "audit_sha256": "bd24b4f4bed79591c360e95994fe7b58e1af73eb7b2f78b3c2c79f2c2e0c950b",
+  "controls": {
+    "manifest": true,
+    "source": true,
+    "parent": true,
+    "contrast": true,
+    "runner": true,
+    "prior_book_unchanged": true,
+    "attempts": true,
+    "known_usage": true,
+    "tokens": true,
+    "fresh_sessions": true,
+    "native_containment": true,
+    "book-1_source_preserved": true,
+    "book-1_empty_attributed": true,
+    "book-1_initially_empty": true,
+    "book-1_seeded_attributed": true,
+    "book-1_checkpoint-1_attributed": true,
+    "book-1_final_attributed": true,
+    "book-2_source_preserved": true,
+    "book-2_empty_attributed": true,
+    "book-2_initially_empty": true,
+    "book-2_seeded_attributed": true,
+    "book-2_final_attributed": true
+  },
+  "all_provenance_controls_pass": true,
+  "assigned_execution_completed": true,
+  "native_tokens": 740661,
+  "profiles": {
+    "default": {
+      "calls": 2,
+      "tokens": 16279
+    },
+    "writer.concept.discovery.v6": {
+      "calls": 2,
+      "tokens": 16486
+    },
+    "architect.seed.v5": {
+      "calls": 2,
+      "tokens": 400660
+    },
+    "planner.outline.v1": {
+      "calls": 1,
+      "tokens": 20969
+    },
+    "mechanical": {
+      "calls": 1,
+      "tokens": 7532
+    },
+    "architect.grow.v3": {
+      "calls": 1,
+      "tokens": 278735
+    }
+  },
+  "calls": [
+    {
+      "path": "runs/world-boundary-fixes-20260913/book-1/calls/001.json",
+      "sha256": "2a7ad3d4a97ceec5bb6c1aa1d51693e06e4b2eb27f5ad7a74a01bf145212edf1",
+      "status": "completed",
+      "profile": "default",
+      "tokens": 3768,
+      "returned_usage": {
+        "input_tokens": 3763,
+        "output_tokens": 5,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0
+      },
+      "sessions": [
+        "01a09887-a404-7052-bb27-2639f4c842eb"
+      ],
+      "mode": "completion",
+      "native_tools": [],
+      "tool_counts": {},
+      "show_reads": [],
+      "declarations": [],
+      "error": null
+    },
+    {
+      "path": "runs/world-boundary-fixes-20260913/book-1/calls/002.json",
+      "sha256": "6615b11b67f649d3374f1b3dfe2d19236c3ebf3a31141306586da743bc029425",
+      "status": "completed",
+      "profile": "writer.concept.discovery.v6",
+      "tokens": 9420,
+      "returned_usage": {
+        "input_tokens": 7467,
+        "output_tokens": 1774,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 179
+      },
+      "sessions": [
+        "01a09887-b22e-7cb2-ab85-b37f0d0c42a0"
+      ],
+      "mode": "completion",
+      "native_tools": [],
+      "tool_counts": {},
+      "show_reads": [],
+      "declarations": [],
+      "error": null
+    },
+    {
+      "path": "runs/world-boundary-fixes-20260913/book-1/calls/003.json",
+      "sha256": "61d482da4e4609feb8fed28a93c1e2efa683dd940a3c4d728b4830b61180394f",
+      "status": "completed",
+      "profile": "architect.seed.v5",
+      "tokens": 237140,
+      "returned_usage": {
+        "input_tokens": 69985,
+        "output_tokens": 5491,
+        "cache_read_tokens": 161024,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 640
+      },
+      "sessions": [
+        "01a09889-3225-7a90-b1fe-67623917e3b4"
+      ],
+      "mode": "bridge",
+      "native_tools": [
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        }
+      ],
+      "tool_counts": {
+        "": 2,
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world declare-batch": 9,
+        "world check": 3,
+        "world ladders": 1,
+        "world show": 1
+      },
+      "show_reads": [
+        {
+          "bridge_call": 16,
+          "arguments": [
+            "world",
+            "show",
+            "--subjects",
+            "wren",
+            "engine",
+            "inspection",
+            "ossik_design",
+            "--current"
+          ],
+          "bytes": 15098,
+          "stdout_sha256": "0af8a36208763c91bb2681ece61c048ac12049abec66c7842e1f1d9ba7bdd678",
+          "scoped": true
+        }
+      ],
+      "declarations": [
+        {
+          "bridge_call": 5,
+          "batch_index": 0,
+          "subject": "engine",
+          "predicate": "entity_role",
+          "record_sha256": "4eb78e019968f9b773c50d19d83ad74b14a3c67342efc9f283ef4505f6c58624"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 1,
+          "subject": "engine",
+          "predicate": "is_a",
+          "record_sha256": "e3cee4058a6c11fbbc6a4c85bacd54d42fee14569495562455d9bc125d36f139"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 2,
+          "subject": "engine",
+          "predicate": "manifests_as",
+          "record_sha256": "218d8da08185c73e85981900443521c41fe6d21752dc88953b786f49841dbc36"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 3,
+          "subject": "engine",
+          "predicate": "world_rule",
+          "record_sha256": "5f22749dc7c553cf637aada2d0fa67603900029123e3bf015249cb9ebe85d8fb"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 4,
+          "subject": "rank",
+          "predicate": "type",
+          "record_sha256": "1091a2ca19201b10dc3abad24f95f20044a2498b9862302fa4b3487847fe3ba7"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 5,
+          "subject": "rank",
+          "predicate": "is_a",
+          "record_sha256": "6a878560764075d4f7c153ba6c472fb716c17eb20a82b79606fb40dd40d35574"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 6,
+          "subject": "rank",
+          "predicate": "comparator",
+          "record_sha256": "e570fce6882d7299d2ccadee6a49816b862b5adf6a60a19dbf4d38fef1de8cd5"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 7,
+          "subject": "rank",
+          "predicate": "governed_by",
+          "record_sha256": "258816f15b7d943bddf6d81dfb0ce65bb87af420ce182f424e315802d3e026a6"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 8,
+          "subject": "rank",
+          "predicate": "evaluates",
+          "record_sha256": "417c7bef2c2ff0bb799a0485b152acdf25bff02b5a3ca25545ed125265226d92"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 9,
+          "subject": "rank_1",
+          "predicate": "is_a",
+          "record_sha256": "f7a7a23b8386ec51cbd6bde7a85e335d05d59c57d80340feea398fbf6eae9b3e"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 10,
+          "subject": "rank_1",
+          "predicate": "precedes",
+          "record_sha256": "63ec7b36ede67e48755908a4aa3095a21d9f7269f69a725a2d3a47d6ba9a1959"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 11,
+          "subject": "rank_2",
+          "predicate": "is_a",
+          "record_sha256": "facc7872ba73c9009511a5b13942dd13a6677715ad9eee23b5d7da5fe932ce3b"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 12,
+          "subject": "rank_2",
+          "predicate": "precedes",
+          "record_sha256": "acd7632f89e2b55359f176e6620813d5229897cde6d5525648a92a0f57af14da"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 13,
+          "subject": "rank_3",
+          "predicate": "is_a",
+          "record_sha256": "43ec11e0d8f733efbf9542f618442d03c16b0a4c3922d6aec7ec6381b48ad15a"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 14,
+          "subject": "rank_3",
+          "predicate": "precedes",
+          "record_sha256": "e6423230b16cc7144d7879c0aff3f8865419ce7f0ae3c319c64f729850d8fb39"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 15,
+          "subject": "rank_4",
+          "predicate": "is_a",
+          "record_sha256": "0b932b20d7cbb729d360e6be52a8bfefd49fac9e7b45b4bfdbfe0dd3b89bebbf"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 16,
+          "subject": "rank_4",
+          "predicate": "precedes",
+          "record_sha256": "91e5d854d1d77d3aba74fa6cf2c8941f4c1312a3c918df21f79ed4e79a383ba4"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 17,
+          "subject": "rank_5",
+          "predicate": "is_a",
+          "record_sha256": "21056ef1fe5aecdfb2779c5e0085b444a1c49551ab5392c16eb6cbab3962ee09"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 18,
+          "subject": "rank_5",
+          "predicate": "precedes",
+          "record_sha256": "c8bef9a3e8a246d4f10bf33130c05aac34ab9dcf61ca090df45bf7643cf86143"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 19,
+          "subject": "rank_6",
+          "predicate": "is_a",
+          "record_sha256": "556fdd55ac2ea47f10f23e26055cd9ce4ccea4ac354147aab939966853989272"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 20,
+          "subject": "rank_6",
+          "predicate": "precedes",
+          "record_sha256": "941ba7fff637bbf3b285cbca935aa3e98e33bd79a27099b77d774435fa691ba5"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 21,
+          "subject": "rank_7",
+          "predicate": "is_a",
+          "record_sha256": "9729be8af2b999b467042eed94f505455f94093a0d1aaaaf36aab97d2a7041fd"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 22,
+          "subject": "rank_7",
+          "predicate": "precedes",
+          "record_sha256": "bccbedc29b02cae27137fb0531daeb94c0f6e094768570a866136310e122a9f9"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 23,
+          "subject": "rank_8",
+          "predicate": "is_a",
+          "record_sha256": "986418b2d74bb5d4ccbc9ebf37e51fb4195502fba5e13e263cd8511ef295e1f3"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 24,
+          "subject": "rank_8",
+          "predicate": "precedes",
+          "record_sha256": "bd56e53376e9a099a92821438abe44ae1577d18eb808d462822ff91e2596b65d"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 25,
+          "subject": "rank_9",
+          "predicate": "is_a",
+          "record_sha256": "92ad8ef3fbc77821a323a71a878f796e471cb2b13f38f6bc66f4c55ad62f6e52"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 26,
+          "subject": "rank_9",
+          "predicate": "precedes",
+          "record_sha256": "7a044330c6f3d70f00c15a9b8b681dc55ff6c1009a56f4357fc6fada50287a81"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 27,
+          "subject": "rank_10",
+          "predicate": "is_a",
+          "record_sha256": "ac295f31108786a57c46209888f3283aef9b7ac4ab2a135aa71d831014235f8a"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 0,
+          "subject": "point",
+          "predicate": "entity_role",
+          "record_sha256": "5b53350591e9bd3b44d27a7654b71e87fae813f10e476ac8b7b8e567df96e024"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 1,
+          "subject": "point",
+          "predicate": "is_a",
+          "record_sha256": "a38ade410e14639eab7a531bfc5c0d898469dfb7c43bf87386d62608d4bd0eae"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 2,
+          "subject": "point",
+          "predicate": "governed_by",
+          "record_sha256": "320a11edadd3f1c8653bdd5c9d4148966ff4b1dfcd52e5ccd4cea04870fbc66d"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 3,
+          "subject": "point",
+          "predicate": "manifests_as",
+          "record_sha256": "abf8f9d652f3cb543230297a60c268198a12cbfea9c5d553db08327f984e743d"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 4,
+          "subject": "loadstitch",
+          "predicate": "entity_role",
+          "record_sha256": "7404ff3a91524f85b905327df4b959562b5c1fb98b7a6684ca67a8e818c7dd3e"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 5,
+          "subject": "loadstitch",
+          "predicate": "is_a",
+          "record_sha256": "187083a07bdf2fa15d88f63fa964bc4fdbc6b23648008be7b657f416eab6d9d3"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 6,
+          "subject": "loadstitch",
+          "predicate": "governed_by",
+          "record_sha256": "eb7a721b83397bd871d9397fba8edc46cc016405d5e8cf5aa62db0aec0f177f2"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 7,
+          "subject": "loadstitch",
+          "predicate": "manifests_as",
+          "record_sha256": "6e7b6870df8f0563347c3c90fee633deaca6372d6d6c6e945148a300b60b8e92"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 8,
+          "subject": "length",
+          "predicate": "entity_role",
+          "record_sha256": "c4726c132a92a5d0ae81bb041b05af976ef9a75c88e1a1ba42b90209ad1524fc"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 9,
+          "subject": "length",
+          "predicate": "is_a",
+          "record_sha256": "e78b00405ac89eda319ecb997eea983b8360aba9626829d1d66c57e7612accaa"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 10,
+          "subject": "length",
+          "predicate": "governed_by",
+          "record_sha256": "a43fac0743e11e7050cecbac4768c71a2579b87a75fcf9793d8e37fb777e3a2f"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 11,
+          "subject": "length",
+          "predicate": "manifests_as",
+          "record_sha256": "d0c0caf069a0530bcb3808b18911fdc54726f75fe8d696ec7cd8b7b635ddb011"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 12,
+          "subject": "duration",
+          "predicate": "entity_role",
+          "record_sha256": "f5047e21f346b4c9b5261da96c64168a410986d8044629ca3476ee47a092ef58"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 13,
+          "subject": "duration",
+          "predicate": "is_a",
+          "record_sha256": "73915967656af843ee1068063660f5c73f1f4cb1c9bc3a13a25b3cc86c364ff2"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 14,
+          "subject": "duration",
+          "predicate": "governed_by",
+          "record_sha256": "23de1361fa1648bcdc4adf557d9e6a5cfbefcf45531ffe28f8dbdd5e293e55d1"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 15,
+          "subject": "duration",
+          "predicate": "manifests_as",
+          "record_sha256": "1294547c8a7f7961b9e1b29e06893b213f612b909eb2fb21410351745fe19fd5"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 16,
+          "subject": "load",
+          "predicate": "entity_role",
+          "record_sha256": "472f890adef8337ed6ba05ee87edcea98649ef62aa526e6abec884775b4451e6"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 17,
+          "subject": "load",
+          "predicate": "is_a",
+          "record_sha256": "11bbe5ec5c1dae7510b539a22d1534d9681dc3fd2bea5c62a7e185bd42622c73"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 18,
+          "subject": "load",
+          "predicate": "governed_by",
+          "record_sha256": "e40e8e4001b4479652458925864b976a63ab756ebd68d26d567f22998068097f"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 19,
+          "subject": "load",
+          "predicate": "manifests_as",
+          "record_sha256": "c6acf41acac59e34a996e5508ac3263b69e0e659fb7a9a6c3fc9b59f0278deed"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 20,
+          "subject": "inspection",
+          "predicate": "entity_role",
+          "record_sha256": "c9202e0da1b9723a73c75c66888892dcc375f1d3bf0efcd4237a898e766f642a"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 21,
+          "subject": "inspection",
+          "predicate": "is_a",
+          "record_sha256": "e53a1294d2365fff4c24c0318058ae8ebc61ad4ac1252fec139eedd5f892ba57"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 22,
+          "subject": "inspection",
+          "predicate": "governed_by",
+          "record_sha256": "abafd45b86f53b7c6955e5e2e7e56592a7b5d1d93c34fb811c3ff4fda149839f"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 23,
+          "subject": "inspection",
+          "predicate": "manifests_as",
+          "record_sha256": "0166b34491847f0fac6f0c01b03395145aabad4d4712556c205219df4bbb3b01"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 0,
+          "subject": "split",
+          "predicate": "entity_role",
+          "record_sha256": "97191ffe058e2db3cb723604e088b2529f93ea7f1baa95f782fdc0ea2fd20c35"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 1,
+          "subject": "split",
+          "predicate": "is_a",
+          "record_sha256": "a7c1bac31011f0f8ede54e84e884524642e0bceb2dab5d5e9e24449c533d7e2c"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 2,
+          "subject": "split",
+          "predicate": "governed_by",
+          "record_sha256": "806c361b40c117fa93ccfd8f165d92624b111b0b920bbf9aa53eb569ade007eb"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 3,
+          "subject": "split",
+          "predicate": "manifests_as",
+          "record_sha256": "c98948a696fdc7d44bb139547e3fedbfe9b661b9f1780772bf56ad48d0062b85"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 4,
+          "subject": "articulated",
+          "predicate": "entity_role",
+          "record_sha256": "3b2717cc97da3f70e3007feb69caa0151dc9b1410aec2d6ee4e1b84730019292"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 5,
+          "subject": "articulated",
+          "predicate": "is_a",
+          "record_sha256": "0719edbbfa726031b2f4a0a652a8c6ebc9db74f06e68bd1d8b0821e8917c91c2"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 6,
+          "subject": "articulated",
+          "predicate": "governed_by",
+          "record_sha256": "b577eca37adcf231c17331839f067b3a08430a47ae658a2ca0dcae714cec0315"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 7,
+          "subject": "articulated",
+          "predicate": "manifests_as",
+          "record_sha256": "dbac598b8df232d272dd76bd5ee267b77f61a1db90c4f0098e575ba1fde49b08"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 0,
+          "subject": "point",
+          "predicate": "per_rung",
+          "record_sha256": "9317ab7ecf2e2a864bde4fae704c010da54cecae8ae2626c55aa636dbee572c3"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 1,
+          "subject": "point",
+          "predicate": "costs",
+          "record_sha256": "9780f5ce7610556570c94769b548bc8a86dffd16fd52f3cba98c900693c40b5d"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 2,
+          "subject": "loadstitch",
+          "predicate": "costs",
+          "record_sha256": "c6293c5ee85883a7b99e9ca2a906bcbcbb17cc54d2a78bab786b6bd413120773"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 3,
+          "subject": "loadstitch",
+          "predicate": "world_rule",
+          "record_sha256": "3d95713180b2fe4df4f1722118e07c03efb9003ee53194c590499e15e4f09154"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 4,
+          "subject": "length",
+          "predicate": "requires",
+          "record_sha256": "15ad751fca87300221ad4418773f81410de3fda0efa708176ed41256c4ace478"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 5,
+          "subject": "length",
+          "predicate": "costs",
+          "record_sha256": "d3be4effb5c8c38ba5d1f334ec21745e5ee0239d101ab6266fbc5cc894e5c8b0"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 6,
+          "subject": "length",
+          "predicate": "world_rule",
+          "record_sha256": "ce7ada2c1fec47e2db3eaeb264174f29b07192f52ea94e51384c813598f27b71"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 7,
+          "subject": "duration",
+          "predicate": "requires",
+          "record_sha256": "807f623616946e78daa70347e94fc13b1d1ff2dab2e0b91c6b00b66ccd13513a"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 8,
+          "subject": "duration",
+          "predicate": "costs",
+          "record_sha256": "468329532d2e8ed76093a3cb1f531f2664abfddd042ce135d8e356893bd3b45d"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 9,
+          "subject": "duration",
+          "predicate": "world_rule",
+          "record_sha256": "3a43c324798a9426f392cb8a3ab4532531c06eb19b752fb652e6fe89ee5ef6de"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 10,
+          "subject": "load",
+          "predicate": "requires",
+          "record_sha256": "47a1524d946c2b2f81deddbfcebf462544475bab72b23475aff52b4c62cd1bc9"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 11,
+          "subject": "load",
+          "predicate": "costs",
+          "record_sha256": "0e04a236c4ea637b8bdda79e7e27023519ef9bba7db955f5b68a4a0bea6b9909"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 12,
+          "subject": "load",
+          "predicate": "world_rule",
+          "record_sha256": "15906b9921dfb0335371e11fe20c0ea320b5e2b9f2dfa0afd67a698c3a9c2778"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 13,
+          "subject": "inspection",
+          "predicate": "costs",
+          "record_sha256": "a88791b66c536a462d406b98aad4acd32186d5d430fac2df1715cb4e4d311241"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 14,
+          "subject": "inspection",
+          "predicate": "world_rule",
+          "record_sha256": "8a93bec8117dcb42e750d8c4db8b5acf9b8ad152dea78f1f3bac578c575beca6"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 15,
+          "subject": "split",
+          "predicate": "requires",
+          "record_sha256": "1e0e261bfebbf558a276f74102c5e19a2d6624f9449a085474137c1977987fdd"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 16,
+          "subject": "split",
+          "predicate": "requires",
+          "record_sha256": "a3967f8d88cf5ec1c70c240f17257b535e0e68c026ed55cf9f6c873d6f312fae"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 17,
+          "subject": "split",
+          "predicate": "costs",
+          "record_sha256": "ad39f18cf1baa3df14759b19f377702638c17d53819e04786ec72c1f5808503f"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 18,
+          "subject": "split",
+          "predicate": "world_rule",
+          "record_sha256": "384752252fdd3490b5e2c761f792da8793285b75d2d96410d68b3dfce9f9a877"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 19,
+          "subject": "articulated",
+          "predicate": "requires",
+          "record_sha256": "b17711c79751f820277335b6859bfbf9c4479e33fcfa855dbc2fc8d8e0dad2e4"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 20,
+          "subject": "articulated",
+          "predicate": "requires",
+          "record_sha256": "a4e7ad8338c41b9bcff34588a73f846130ea96255674da1845429e5dcdd26add"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 21,
+          "subject": "articulated",
+          "predicate": "costs",
+          "record_sha256": "a26cc2531c819472c9f2ffdc45482493016d8d5e74df083e8fa8b18d293badbf"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 22,
+          "subject": "articulated",
+          "predicate": "world_rule",
+          "record_sha256": "54fc37a98651b46cb8e49cb4b7280f93949e403ba9d87bf686c9d4277bf00bf1"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 23,
+          "subject": "engine",
+          "predicate": "status_sheet",
+          "record_sha256": "ac6e6f089589e6dc2bc917c8ec35084bd802e1a5f88e71882c58b07eed9b17df"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 24,
+          "subject": "engine",
+          "predicate": "graph_line",
+          "record_sha256": "a42a0d68e1fb6d32a06927ddbf0e5fbe217c883c36c003bcb18bcb766739ace2"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 0,
+          "subject": "engine",
+          "predicate": "status_sheet",
+          "record_sha256": "2318e7ef933962771edc49b188fe792db1bf85480f3da3f711f55228a7737877"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 1,
+          "subject": "wren",
+          "predicate": "entity_role",
+          "record_sha256": "044261f56087f7dc7a7e3588b896fba7f177caeb23749b3c29fa144daf45a723"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 2,
+          "subject": "wren",
+          "predicate": "is_a",
+          "record_sha256": "6619ac6fa834104960be550c9cfd92a28e3ef6255c7d9aedfd1b952e640f3a05"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 3,
+          "subject": "wren",
+          "predicate": "manifests_as",
+          "record_sha256": "7195085fce51b344ff6c034c7a0b2fbf804dfeef2e02b767c63e6fadb6a8491a"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 4,
+          "subject": "wren",
+          "predicate": "disposition",
+          "record_sha256": "d5a8d2a79f13a21891c24545a82151f15d08efe0aad25d164a7d79234a9e6f43"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 5,
+          "subject": "wren",
+          "predicate": "voice_tag",
+          "record_sha256": "356be978dbb301a9707b7ab819ff23ddfbdae63db3a23f5a9e70a02040bcf5e5"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 6,
+          "subject": "wren",
+          "predicate": "wants",
+          "record_sha256": "0444130e2adbad5010d3c23ea1efa57dfb5491e69b909db177440457aabbe9f1"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 7,
+          "subject": "wren",
+          "predicate": "status_snapshot",
+          "record_sha256": "34c92d6d4dc2a94401959647f4c67610c22d35c5c02a1568277c18d1b50d36e0"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 8,
+          "subject": "wren",
+          "predicate": "world_rule",
+          "record_sha256": "37afbb0aecddc164017a43f6625beb0185e5267175f2024e39ad872078003872"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 9,
+          "subject": "earth_gantry",
+          "predicate": "entity_role",
+          "record_sha256": "8c4884c7947ed194115d3286cb5b1ac4e4b2770edb860bb68c96bb29576b69d8"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 10,
+          "subject": "earth_gantry",
+          "predicate": "manifests_as",
+          "record_sha256": "2e2a6c4d8533ab0c5c59bc6ee8acf1ec254de8259f1c0cc3efc23f1726f858c7"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 11,
+          "subject": "ossik_design",
+          "predicate": "entity_role",
+          "record_sha256": "ca4556b8f4ca8c64c9950f85127ecc7b45960b965773dbf9d17ccb44e861a081"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 12,
+          "subject": "ossik_design",
+          "predicate": "is_a",
+          "record_sha256": "4eba7fdcfb78e988637c2b1f33e13ad03368a5aae306bd9b1fe0b2b6d08639d4"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 13,
+          "subject": "ossik_design",
+          "predicate": "manifests_as",
+          "record_sha256": "8e4acb12a2298ff89990c7f2ded43016990018ac2dee0eb7d4daeddf1b0e14a2"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 14,
+          "subject": "ossik_design",
+          "predicate": "can_do",
+          "record_sha256": "94f26d5eb639202a511aa409a9ad55ea5ba8971fb90fff47fa0d6ec2cc2f536c"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 15,
+          "subject": "inspection",
+          "predicate": "world_rule",
+          "record_sha256": "b5862ff3ea2f20eba51afc94b956b3faac9b3322954644e17bc146a78d70f5f6"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 16,
+          "subject": "rank_1",
+          "predicate": "manifests_as",
+          "record_sha256": "0e77978e9c353b0fb6fe73a3dd46cdc08f0bf7570b7e69e7bf665ab22a83ebdb"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 17,
+          "subject": "rank_2",
+          "predicate": "manifests_as",
+          "record_sha256": "0690e44743b46eb17d6c40e1d8ed96504762dde53ea5ee8a1dd4b70c0b37dccd"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 18,
+          "subject": "rank_3",
+          "predicate": "manifests_as",
+          "record_sha256": "2c816615827dfe4d5fb50b22c0bfc2686432cc1788fd865838cc82fb9eb1b35c"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 19,
+          "subject": "rank_4",
+          "predicate": "manifests_as",
+          "record_sha256": "f16f245bca6b334f1876c4947509a5752a135e90158deec585bbfe990adce284"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 20,
+          "subject": "rank_5",
+          "predicate": "manifests_as",
+          "record_sha256": "54e9e97ef33ec009f70e300a1b4e9cd941b6bec718d298821572f8aa94447709"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 21,
+          "subject": "rank_6",
+          "predicate": "manifests_as",
+          "record_sha256": "af918ba366421972039d93ef09a5ea9744452a3c7e1f042f3ef86575a47267be"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 22,
+          "subject": "rank_7",
+          "predicate": "manifests_as",
+          "record_sha256": "d95e57a853069438f1d4324843d768410b16f4f7c1c4cff33f5c46bf29a343a3"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 23,
+          "subject": "rank_8",
+          "predicate": "manifests_as",
+          "record_sha256": "f69ea3827117bccc2f437d485abdcbfec90da10e9ac309d63d1589f397393a72"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 24,
+          "subject": "rank_9",
+          "predicate": "manifests_as",
+          "record_sha256": "02bbc7f114ce72935db0dcf61f02b53268b88384e7be022d30aea9990bfdb447"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 25,
+          "subject": "rank_10",
+          "predicate": "manifests_as",
+          "record_sha256": "72a0b104da9a6935348dd5441e66046a759a3e2ec328f3fb1020c2cf46bb8716"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 0,
+          "subject": "wren",
+          "predicate": "wants",
+          "record_sha256": "85b6e2ca16d323aa40781d314bed637582e7bbc76d8f5a7df2b01d592fe327c2"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 1,
+          "subject": "inspection",
+          "predicate": "world_rule",
+          "record_sha256": "c994fb8e155b272cdc0d8ba27514f40f22b77e89ef831266598129989f96616b"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 2,
+          "subject": "gorge",
+          "predicate": "entity_role",
+          "record_sha256": "407afc7ffe6bbd1c610ba7d4adbfc29f58183c93377b249dc56e34511b081972"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 3,
+          "subject": "gorge",
+          "predicate": "is_a",
+          "record_sha256": "6dba5da8ab24a6be54bb265932e81c0b21f8dd4f973578954af7931ef0ce2ec2"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 4,
+          "subject": "gorge",
+          "predicate": "manifests_as",
+          "record_sha256": "0247881d6e7a8ad99d30a1531b74e366b2ab8717b1b25ec18b22ff054ef0fbc8"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 5,
+          "subject": "trestle",
+          "predicate": "entity_role",
+          "record_sha256": "21e046325849134b0f3febfbb1fdd176b696428bc6120a2b07a5acb6143c21a4"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 6,
+          "subject": "trestle",
+          "predicate": "is_a",
+          "record_sha256": "c40b9231af741a07c457f956e4153043d79a55b7b59b41a32e425146ef3e1710"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 7,
+          "subject": "trestle",
+          "predicate": "manifests_as",
+          "record_sha256": "43889d2a2f3a7f8c1dbeeac81da7e1f870a08c8f97517aa3f258e3cfbe23d525"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 8,
+          "subject": "trestle_history",
+          "predicate": "claim.content",
+          "record_sha256": "e54a25f691d510c66c8d566f2ae231063796b4f85c129aa08afeaea1daa5f076"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 9,
+          "subject": "paste",
+          "predicate": "entity_role",
+          "record_sha256": "ffca3065861102dc074923bb0cbb5d82168e692588cd669411fba4512117ee38"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 10,
+          "subject": "paste",
+          "predicate": "is_a",
+          "record_sha256": "bdf7ac750a348398ac0e5569199874c94c9e382e4e88b0117e1100a0984cf1a3"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 11,
+          "subject": "paste",
+          "predicate": "manifests_as",
+          "record_sha256": "e4b8dad11d097a9ceb3066a5a10ba70bfbcbb98a2161542d3205808de2a0b4e5"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 12,
+          "subject": "paste",
+          "predicate": "world_rule",
+          "record_sha256": "2889153a84e0e11dfe618e9834c5e2d0b4a35af043d20b90ec380bff9a3d5ef7"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 13,
+          "subject": "stair",
+          "predicate": "entity_role",
+          "record_sha256": "4e156b6de4dc792e4b0cca0de854fbe864e7ab75f2e8636b7a270e0d64b3116a"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 14,
+          "subject": "stair",
+          "predicate": "is_a",
+          "record_sha256": "0dd8af5318ee464843d239c01fa5501620691798a55ba266c51a4ba15699d1f5"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 15,
+          "subject": "stair",
+          "predicate": "manifests_as",
+          "record_sha256": "97aca3a3983bea688c310d5e7779ecd998960a25c300e7fa43fd4e54910ade70"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 16,
+          "subject": "stair",
+          "predicate": "world_rule",
+          "record_sha256": "4fc92aba563f7f79ec35f3d46354904dc314132646ede16dea64b1fc595829af"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 17,
+          "subject": "seep",
+          "predicate": "entity_role",
+          "record_sha256": "8516272e42ab6f306f4f932e9016675e64da165a0e7f5688087cd9999e0e308c"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 18,
+          "subject": "seep",
+          "predicate": "is_a",
+          "record_sha256": "0cb0aa73ce7c82a30a62ba35824f955760145f9817f8c3a852594b8bd6820719"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 19,
+          "subject": "seep",
+          "predicate": "manifests_as",
+          "record_sha256": "f5db97057d117ce2d1446155fa152247bde04412cc23ba5321d2c245345aa1ec"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 20,
+          "subject": "tests",
+          "predicate": "entity_role",
+          "record_sha256": "978de63a0cd3ad5d43cc0618ea67e09648b73de2907fe78d92ff37cd250bd343"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 21,
+          "subject": "tests",
+          "predicate": "is_a",
+          "record_sha256": "dc6b78ea5ee32646f96a80e3fb9637a45e0614e31ca861416272a10f53b63ad0"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 22,
+          "subject": "tests",
+          "predicate": "manifests_as",
+          "record_sha256": "d3e278d464741b54bb5ed34a172ac1b3dbb9dad72ffed5d5d6965e65a5093686"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 23,
+          "subject": "tests",
+          "predicate": "world_rule",
+          "record_sha256": "f797e83926af0d2a72d8a121731f53f5b863cb9265589f571fb5c08689ab6de0"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 24,
+          "subject": "vault",
+          "predicate": "entity_role",
+          "record_sha256": "754fe4791f84a8cebd34b740a1bc1e4a454b59a08347f27d7da60de5e73057d3"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 25,
+          "subject": "vault",
+          "predicate": "is_a",
+          "record_sha256": "cb12698abf502a580f5d1bf08dfc95aaf3207e0fa15332946002865e8b41efa6"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 26,
+          "subject": "vault",
+          "predicate": "manifests_as",
+          "record_sha256": "68d8ac1d911bbc22b55fdb2488a77a7114b85bba073db78880dcbaaae1cda968"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 27,
+          "subject": "vault_design",
+          "predicate": "claim.content",
+          "record_sha256": "3dc8055562bbaee45d9c1ac6aeb74a0c937465cb9de0c619b8077da7c8d73bc0"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 28,
+          "subject": "quartz_story",
+          "predicate": "claim.content",
+          "record_sha256": "5a4f19810977576538c298fdde816ca6990997ae9f512bda254ed8695e0abb8f"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 29,
+          "subject": "quartz_story",
+          "predicate": "claim.false",
+          "record_sha256": "cdbdf9af5dfb22446a4efe1e0c1e163f4b832045b4c7ad005ab8455a635aa2a2"
+        },
+        {
+          "bridge_call": 12,
+          "batch_index": 30,
+          "subject": "vault_treasure",
+          "predicate": "claim.content",
+          "record_sha256": "a21dc7a685b0dce60aaba52afd72f88369e99567913f3c4e7df412fefb90bd45"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 0,
+          "subject": "sill",
+          "predicate": "entity_role",
+          "record_sha256": "ad807e93c857a6b55d9e4bc11e52c84bafa8877e3c4f72db8b5b96c75959e4b4"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 1,
+          "subject": "sill",
+          "predicate": "is_a",
+          "record_sha256": "7c83fbb64ab0d6a22f49c75d036df6b62429a87a45c8051ab12bc197cbdaed16"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 2,
+          "subject": "sill",
+          "predicate": "manifests_as",
+          "record_sha256": "acb47ccabe0c52bdd4d98f297d29be9433b13e23b4939307d7a8ca8d7a758faa"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 3,
+          "subject": "sill_folk",
+          "predicate": "entity_role",
+          "record_sha256": "06ad7d1d67fc0fb6a82e18b03bd3f337c0204ae85a2d8458fe28ce063dab33bf"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 4,
+          "subject": "sill_folk",
+          "predicate": "is_a",
+          "record_sha256": "d93627924b1067c867f9f25ca10966241f5cf1a520c8b7ae9ba097e6d2daf24c"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 5,
+          "subject": "sill_folk",
+          "predicate": "manifests_as",
+          "record_sha256": "af936a7110dca79f5580d78e9f678028e422a98a8ff6b603f77c087286bdabcf"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 6,
+          "subject": "sill_folk",
+          "predicate": "wants",
+          "record_sha256": "ddba4b6f9932a327c54f9767c9114af9ccf7acdd3b23b706b001cb3675d20aa2"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 7,
+          "subject": "sill_folk",
+          "predicate": "believes",
+          "record_sha256": "3f5717c510950c38454e6ea8e9c6e2bb682d7afc8f970223b2d53fbf0c43d7b5"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 8,
+          "subject": "sill_folk",
+          "predicate": "believes",
+          "record_sha256": "49cf6f94edb0c8a6106e8041b84c5a1c91bb4aa76176c3623c586c9d21097ceb"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 9,
+          "subject": "cruel_engine",
+          "predicate": "claim.content",
+          "record_sha256": "c49f017d2145a7fe55d51140611267bb094ded53d5822edbb53ec105d39ec9ee"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 10,
+          "subject": "cruel_engine",
+          "predicate": "claim.false",
+          "record_sha256": "1d8cb2454ad125bfce00e56e394434af2baec1bc5ba6e7ff28af8a469631089f"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 11,
+          "subject": "sill_folk",
+          "predicate": "believes",
+          "record_sha256": "3ba36bc825fff9893d2767e0bdbd1cee0ed781e06ad7859f96579ad9277d8483"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 12,
+          "subject": "ossik",
+          "predicate": "entity_role",
+          "record_sha256": "a866ae21b3bca0d2ad573bcafcaa199e3543b7e3c18db7bfa0ce4fbf331e6ee4"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 13,
+          "subject": "ossik",
+          "predicate": "is_a",
+          "record_sha256": "f7951b3bbf53fb9424147b81946b83509f8053e44e2164d7459ee76e3d52c2ae"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 14,
+          "subject": "ossik",
+          "predicate": "manifests_as",
+          "record_sha256": "7490f2ef9060839e0e3e82da5b0df221ae1ea858965cdb3683454146122c2f72"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 15,
+          "subject": "ossik",
+          "predicate": "world_rule",
+          "record_sha256": "3af80f74b926447ed58b1bfb628c1708cd7cb2a44ea2dcc76dad5c5f332aa76a"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 16,
+          "subject": "maintenance",
+          "predicate": "entity_role",
+          "record_sha256": "e179a72d473de63eab5e4d1d50139cc38d94e38701cd9d4993699fd74ab231a8"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 17,
+          "subject": "maintenance",
+          "predicate": "is_a",
+          "record_sha256": "d7c2b7142d2056e0e52c16ad8f84edcbedeb72a582a623d581e91eb3f727f9cd"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 18,
+          "subject": "maintenance",
+          "predicate": "manifests_as",
+          "record_sha256": "2b76a2524d6733d1c5e673e8cb7ca64e021475b43d5a78bdf510c2562128a979"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 19,
+          "subject": "maintenance",
+          "predicate": "wants",
+          "record_sha256": "29368c61a6a4419098987b3eaf4b4693867c792ff9ef6cf0f123d9eb57439174"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 20,
+          "subject": "maintenance",
+          "predicate": "disposition",
+          "record_sha256": "4388823390c7b4a595c46830ab37b689a11eceb706a0abaf2d61f87dbaf54ec6"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 21,
+          "subject": "maintenance_history",
+          "predicate": "claim.content",
+          "record_sha256": "c64c33bb5e3ccc49959f62fe90b1586881114f3a4b3a9a40f33b15fb75574afa"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 22,
+          "subject": "verdicts",
+          "predicate": "entity_role",
+          "record_sha256": "2b4aaab2cddd5e2bb6b5f5caf6f94d9b5ec44812027e06469fd22b840e90c92b"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 23,
+          "subject": "verdicts",
+          "predicate": "is_a",
+          "record_sha256": "4b19da50645c4eed9cc0a1e174d53059542aafe38f4f2392341dfdd514eb7c88"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 24,
+          "subject": "verdicts",
+          "predicate": "manifests_as",
+          "record_sha256": "d3d59c40eb0c93e8e18004b1ff9fde03830fab1354de75c0d044628d3fa52662"
+        },
+        {
+          "bridge_call": 13,
+          "batch_index": 25,
+          "subject": "verdicts",
+          "predicate": "world_rule",
+          "record_sha256": "845600c45e9331a54b0a1633de6770d3581bb51922bc61527f784e5c1a4463c4"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 0,
+          "subject": "stair_keeper",
+          "predicate": "entity_role",
+          "record_sha256": "2eea46442b0fe418eb7473a108d6c51a05047c31fae365f6943112153553eaf7"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 1,
+          "subject": "stair_keeper",
+          "predicate": "is_a",
+          "record_sha256": "b96597efc7f165e8694fe749dec9b9fe33aecd4c6ab2f87ef239eccd64c00c8f"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 2,
+          "subject": "stair_keeper",
+          "predicate": "manifests_as",
+          "record_sha256": "59e5d3e5ea5668f509875880656b8bb596811a73ffdb65e7df83cb6f0b18e5d2"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 3,
+          "subject": "stair_keeper",
+          "predicate": "wants",
+          "record_sha256": "de9c6917b5e3cb4daebd8cff069cbd13236520ccc69b36b246ae53129c52455f"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 4,
+          "subject": "stair_keeper",
+          "predicate": "disposition",
+          "record_sha256": "074a2796b4f1f0854ea0968cfabd6940e78b3c1f9a9c61d70fa88460e6230952"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 5,
+          "subject": "stair_keeper",
+          "predicate": "voice_tag",
+          "record_sha256": "b0facf1d88027c92a0072f112332bf53df6de9f0e16a7774f4667a596ca869d5"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 6,
+          "subject": "communication",
+          "predicate": "world_rule",
+          "record_sha256": "3e4f8b68dcf4c9ba420b4cec0f630f852c7328623b34a46a6bbcc74fd57a969a"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 7,
+          "subject": "communication",
+          "predicate": "manifests_as",
+          "record_sha256": "1fc00053a07913780dbf64aed7493bda5485deeb23b236a9b0b41acd45a03c35"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 8,
+          "subject": "condemnations",
+          "predicate": "entity_role",
+          "record_sha256": "3ce66bdc40663e441c30684b063b132554d922062bf3d5d36377d9f6dd6196f3"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 9,
+          "subject": "condemnations",
+          "predicate": "is_a",
+          "record_sha256": "288b102c1c3ef73d15fc98c29cebb12e1fb31fb379f31dcdd7cdccd2e2f678fb"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 10,
+          "subject": "condemnations",
+          "predicate": "manifests_as",
+          "record_sha256": "51f7e0978c58872cbfa67c9bbf838863f05477c16b817616383b9edec5a45a23"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 11,
+          "subject": "saboteur",
+          "predicate": "entity_role",
+          "record_sha256": "936d3b636d8526bfa4fd0deea5f3d12cfa1a5c834220693a0ca92ac5fd811a02"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 12,
+          "subject": "saboteur",
+          "predicate": "is_a",
+          "record_sha256": "075c52ca5edb4aec5749e740eda379a4a6af7816215751a670d838b1c32ee5c9"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 13,
+          "subject": "saboteur",
+          "predicate": "manifests_as",
+          "record_sha256": "dbba9ca9c4a2b1ac782cd936dbae51f3b5f997a7ca677d4047eea84d781181bf"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 14,
+          "subject": "saboteur",
+          "predicate": "wants",
+          "record_sha256": "d72e3b3d4108e330e7203b4446dc5bbd2d73e76a06af24feedbf94dd605b1a05"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 15,
+          "subject": "sabotage_truth",
+          "predicate": "claim.content",
+          "record_sha256": "4a30509c1de360374f236f5c8a36913c1d24b5a6ea43ab401e7a8c5db95287b2"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 16,
+          "subject": "load_transfer",
+          "predicate": "world_rule",
+          "record_sha256": "5f780c8e303a3c7a35d5698daf5884a18925e8424874706450894418ebf4b49e"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 17,
+          "subject": "load_transfer",
+          "predicate": "consequence",
+          "record_sha256": "4677fc1b8006ee243dc39348c2ff0d25cfba59451a0fb81d596700625933d7a7"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 18,
+          "subject": "unresolved_history",
+          "predicate": "claim.content",
+          "record_sha256": "53b4d2a21dbcf45060d32bafa61152bb2aa5fd7d87322716d69da19a4bcb9b7b"
+        },
+        {
+          "bridge_call": 14,
+          "batch_index": 19,
+          "subject": "engine",
+          "predicate": "world_rule",
+          "record_sha256": "cb6dab7fd0fd3006c706fb26078eb5919ff60e1f63e918362724a7a5d17d40b0"
+        },
+        {
+          "bridge_call": 17,
+          "batch_index": 0,
+          "subject": "engine",
+          "predicate": "is_a",
+          "record_sha256": "f75d96d46915bde02d3bc06c66c0fbf42f3bd2faf8b25ca6f55ede8dc3f9ab24"
+        },
+        {
+          "bridge_call": 17,
+          "batch_index": 1,
+          "subject": "engine",
+          "predicate": "manifests_as",
+          "record_sha256": "1d80296e773e0bf48315d2b44cf189401f1388ad1e635ee1057067fe24b7412d"
+        },
+        {
+          "bridge_call": 17,
+          "batch_index": 2,
+          "subject": "load_transfer",
+          "predicate": "manifests_as",
+          "record_sha256": "ee8c8376feefabd6337ba5b6c9e87df2d729766baf72190e4f45b7f5675c368a"
+        },
+        {
+          "bridge_call": 17,
+          "batch_index": 3,
+          "subject": "condemnations",
+          "predicate": "manifests_as",
+          "record_sha256": "180bc60aa0bd03f45410ef4259b93b670f95df5b4c4df1d3818795e563627a32"
+        }
+      ],
+      "error": null
+    },
+    {
+      "path": "runs/world-boundary-fixes-20260913/book-1/calls/004.json",
+      "sha256": "0d15b6245c15b05b4c15c679c0192a16b97f00f82346b22936c698232563be07",
+      "status": "completed",
+      "profile": "planner.outline.v1",
+      "tokens": 20969,
+      "returned_usage": {
+        "input_tokens": 17051,
+        "output_tokens": 3631,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 287
+      },
+      "sessions": [
+        "01a0988c-b4e7-7553-a595-526929e5f943"
+      ],
+      "mode": "completion",
+      "native_tools": [],
+      "tool_counts": {},
+      "show_reads": [],
+      "declarations": [],
+      "error": null
+    },
+    {
+      "path": "runs/world-boundary-fixes-20260913/book-1/calls/005.json",
+      "sha256": "d8afd9f8cdbc2d30d6f3b0bd96bf33a806ee359153346c278b1ad85d437ba4c1",
+      "status": "completed",
+      "profile": "default",
+      "tokens": 12511,
+      "returned_usage": {
+        "input_tokens": 9902,
+        "output_tokens": 2452,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 157
+      },
+      "sessions": [
+        "01a0988f-32e9-7e20-975a-00c784ee7c66"
+      ],
+      "mode": "completion",
+      "native_tools": [],
+      "tool_counts": {},
+      "show_reads": [],
+      "declarations": [],
+      "error": null
+    },
+    {
+      "path": "runs/world-boundary-fixes-20260913/book-1/calls/006.json",
+      "sha256": "f5873d536f7e1e3a5db871ae27195879d5624bf76582531e4baf610eabea820c",
+      "status": "completed",
+      "profile": "mechanical",
+      "tokens": 7532,
+      "returned_usage": {
+        "input_tokens": 7127,
+        "output_tokens": 405,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0
+      },
+      "sessions": [
+        "01a09891-5655-7a31-903b-e623bb57d703"
+      ],
+      "mode": "completion",
+      "native_tools": [],
+      "tool_counts": {},
+      "show_reads": [],
+      "declarations": [],
+      "error": null
+    },
+    {
+      "path": "runs/world-boundary-fixes-20260913/book-1/calls/007.json",
+      "sha256": "8067da5ba0b6552914ecd47da9909aed5221e58952301dd339e8250f57f9519d",
+      "status": "completed",
+      "profile": "architect.grow.v3",
+      "tokens": 278735,
+      "returned_usage": {
+        "input_tokens": 46741,
+        "output_tokens": 2215,
+        "cache_read_tokens": 229120,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 659
+      },
+      "sessions": [
+        "01a09891-93c8-7561-bba5-e8201f1598a0"
+      ],
+      "mode": "bridge",
+      "native_tools": [
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        }
+      ],
+      "tool_counts": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world show": 5,
+        "world declare-batch": 3,
+        "world check": 2
+      },
+      "show_reads": [
+        {
+          "bridge_call": 3,
+          "arguments": [
+            "world",
+            "show",
+            "--current"
+          ],
+          "bytes": 87209,
+          "stdout_sha256": "fcddb2bd26a4ecc359685a36f9638f400159f78ac6a91705bf0fd9003b25f299",
+          "scoped": false
+        },
+        {
+          "bridge_call": 4,
+          "arguments": [
+            "world",
+            "show",
+            "--current"
+          ],
+          "bytes": 87209,
+          "stdout_sha256": "fcddb2bd26a4ecc359685a36f9638f400159f78ac6a91705bf0fd9003b25f299",
+          "scoped": false
+        },
+        {
+          "bridge_call": 5,
+          "arguments": [
+            "world",
+            "show",
+            "--subjects",
+            "wren,stair_keeper,stair,engine,loadstitch,load,condemnations",
+            "--current",
+            "--predicate",
+            "manifests_as"
+          ],
+          "bytes": 76,
+          "stdout_sha256": "dd47782d57eb680fa44a88251ffd524fca006714c19f190efc287f645899153d",
+          "scoped": true
+        },
+        {
+          "bridge_call": 6,
+          "arguments": [
+            "world",
+            "show",
+            "--subjects",
+            "wren",
+            "stair_keeper",
+            "stair",
+            "engine",
+            "loadstitch",
+            "load",
+            "condemnations",
+            "--current",
+            "--predicate",
+            "manifests_as"
+          ],
+          "bytes": 5772,
+          "stdout_sha256": "d0fd9eeab63719e095668e205127425a65779628ea4e027e98d4cdd5441d5e14",
+          "scoped": true
+        },
+        {
+          "bridge_call": 10,
+          "arguments": [
+            "world",
+            "show",
+            "--current"
+          ],
+          "bytes": 102814,
+          "stdout_sha256": "0dc6c84d803d1096e8b09e7ebe9944b166f68921f5256cc2971645867df59c75",
+          "scoped": false
+        }
+      ],
+      "declarations": [
+        {
+          "bridge_call": 7,
+          "batch_index": 0,
+          "subject": "wren",
+          "predicate": "manifests_as",
+          "record_sha256": "548306c4ea44cd7f16d18f76cfa2e23d5bc57d2f78b7be168a7eebb5f324d268"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 1,
+          "subject": "wren",
+          "predicate": "wants",
+          "record_sha256": "53931d1d901e1d370a35dfcccda55f0c7f577dafcde69fc3060ecdce78f2f58f"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 2,
+          "subject": "earth_gantry",
+          "predicate": "manifests_as",
+          "record_sha256": "cd153cb470aedea23ada2a5dd72eb884e6a8086c0a2de6cbb4c94aa47bd950bd"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 3,
+          "subject": "stair_keeper",
+          "predicate": "manifests_as",
+          "record_sha256": "f97a3c0c078c103af8edb375c333de36d732a4b067acf887fdcd3c9f3a1f06ab"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 4,
+          "subject": "stair",
+          "predicate": "manifests_as",
+          "record_sha256": "8f49ee078cd012755ec35971e0e8bf143be5f643217fdd891a0c88faff02bbaa"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 5,
+          "subject": "seep",
+          "predicate": "manifests_as",
+          "record_sha256": "912cd9c4bfba1783df8e48d23f1e4a9e9dbe6ae3996d07095e03c48a798345cb"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 6,
+          "subject": "stair_keeper_disc",
+          "predicate": "entity_role",
+          "record_sha256": "e122ff3a3be6afb2f4fc6a9190b3643bedde817192768b63bd6fee0432f27a01"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 7,
+          "subject": "stair_keeper_disc",
+          "predicate": "is_a",
+          "record_sha256": "28ed6755824abaaddb54f4f8eaf57fa88e82a4a43a033f03d3fdfe2af33dece6"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 8,
+          "subject": "stair_keeper_disc",
+          "predicate": "manifests_as",
+          "record_sha256": "50ce887c1ba436e187fe1b507c0118245450c7914ef5fe838acf935abbdcc978"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 9,
+          "subject": "wren_first_crossing",
+          "predicate": "claim.content",
+          "record_sha256": "825b4acf79740c1f19d50b8507a875f2170099db906891c37dc1378e3d5d4f5c"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 10,
+          "subject": "wren",
+          "predicate": "disclosed_to",
+          "record_sha256": "bef609b6839557927290b9b59b333ba1f3c7ac1be49f300a75ce15243557273e"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 11,
+          "subject": "wren_scene_one_resources",
+          "predicate": "claim.content",
+          "record_sha256": "8a12e3e5215e08f3c24ca093d0e2fd40c4c1dba7ea7fd93d6b8f1c069c691e49"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 12,
+          "subject": "wren",
+          "predicate": "disclosed_to",
+          "record_sha256": "dca077516957a5bd7714b53b2e478266f2e0f208cd5fde6e1456136a3a0b3ad4"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 13,
+          "subject": "wren_disc_uncertainty",
+          "predicate": "claim.content",
+          "record_sha256": "d0b0200c28bd83fba5359b0a02447a67cbd65217fccfe40d782333666c6abc20"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 14,
+          "subject": "wren",
+          "predicate": "believes",
+          "record_sha256": "b54e50f2784de15b13e7dad197d2bc62bf906bd5af5490445751a4969711a3ef"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 15,
+          "subject": "wren",
+          "predicate": "disclosed_to",
+          "record_sha256": "d565585950dfc3e16009d48e77cbbf8b9277191da2d928c2d45ea10ef2bb577e"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 16,
+          "subject": "wren_roofs_expectation",
+          "predicate": "claim.content",
+          "record_sha256": "47aaa2518ac09388265e5d9e853d434235cb407f7c8b4ea595dad48933324ee8"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 17,
+          "subject": "wren",
+          "predicate": "believes",
+          "record_sha256": "d33c8f70f1502c8229b9411f06b75fcf7ab3c6d2616e3d1a9978ea2ca66990ef"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 18,
+          "subject": "wren",
+          "predicate": "disclosed_to",
+          "record_sha256": "79358a6722eef3378522c358e0227052e8beb12b50439a7f6a8906290f6961b5"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 19,
+          "subject": "wren_condemnation_observation",
+          "predicate": "claim.content",
+          "record_sha256": "7f0a92d3c5686dad4427f87ec8bf8d786a662c1112efec489a48d14e57d4d10b"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 20,
+          "subject": "wren",
+          "predicate": "believes",
+          "record_sha256": "e8cd7b335f6ad3c943a7332db389ec72928b9f3392a315b1a7159e5480006b08"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 21,
+          "subject": "wren",
+          "predicate": "disclosed_to",
+          "record_sha256": "ecdf66b2417d0523f4d3f44771fb16bf75fb3f56faac9be646f0669032173522"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 22,
+          "subject": "assessment_record",
+          "predicate": "world_rule",
+          "record_sha256": "5beffbbdc75f9d201fc240e182ddf425f669b37c31ddfbf4bb3b8eb57fa86b52"
+        },
+        {
+          "bridge_call": 7,
+          "batch_index": 23,
+          "subject": "assessment_record",
+          "predicate": "manifests_as",
+          "record_sha256": "0e13265c3aeaaada996f013324a857a9f80f07ca4a3f2d17677abbd3fe9ca9cc"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 0,
+          "subject": "wren",
+          "predicate": "manifests_as",
+          "record_sha256": "ebdf8bb5d291b3581045c0ff7a9a8e2a4d273904518ada02045d82b5bfcdde19"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 1,
+          "subject": "wren_scene_one_resources",
+          "predicate": "claim.content",
+          "record_sha256": "be7278b5ab623673709cac39592a63a998df84dea1bb3b5905458a89ef2b2e61"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 0,
+          "subject": "earth_gantry",
+          "predicate": "manifests_as",
+          "record_sha256": "12c540a034816c488c7ccece3b26e7aca0bd3654f5ea267fa42193e42bd552f8"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 1,
+          "subject": "wren_first_crossing",
+          "predicate": "claim.content",
+          "record_sha256": "22e263d8aedcb7f974b225197c0b1cfb734086a82f3d77170134637e76df5657"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 2,
+          "subject": "wren",
+          "predicate": "disclosed_to",
+          "record_sha256": "aeb76d64bb481434f8f9ffc4ed12a6d76b87a250e7aa480e9250ed74398fd574"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 3,
+          "subject": "wren_condemnation_observation",
+          "predicate": "claim.content",
+          "record_sha256": "9375da233fbd4b633c97d46dffb457985b4fe597d7db80bda69ab20369d222fa"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 4,
+          "subject": "wren",
+          "predicate": "disclosed_to",
+          "record_sha256": "1d4cc7aaf4586a22d5c9034e6bdb604b67567b1d4849982119fa54830b7214e5"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 5,
+          "subject": "wren",
+          "predicate": "disclosed_to",
+          "record_sha256": "2a8e7e8090d96922a48d3b80259aedb4f7d8402d1370bc21e4a365c028d2fa55"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 6,
+          "subject": "wren",
+          "predicate": "believes",
+          "record_sha256": "0c09d58d710b43f08588ae8013594499e010146a9ac01947c54325e128d0d729"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 7,
+          "subject": "wren",
+          "predicate": "believes",
+          "record_sha256": "686f7d87ee2e84e04f26d930e5c0e3b4a0064aba4119bcd5e30ab809ef93391b"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 8,
+          "subject": "wren",
+          "predicate": "disclosed_to",
+          "record_sha256": "16043e5ba068db95428502dce7a37a4746a7f850a71f73192fa902293e14297d"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 9,
+          "subject": "wren",
+          "predicate": "believes",
+          "record_sha256": "42880d1adcdc684455564f49b7e8955d3ba67a1e8fb9331e6578829440bab3cb"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 10,
+          "subject": "wren_scene_one_resources",
+          "predicate": "claim.content",
+          "record_sha256": "3fa81756365a1751f17c3c707719d4bb3862b2b992c273a4db8f0f6e53ec4616"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 11,
+          "subject": "wren_roofs_expectation",
+          "predicate": "claim.content",
+          "record_sha256": "3ee7f5c219c09e2329f18518f3d694dc9543b2f19b552e4d2aa4a8cb3fd12132"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 12,
+          "subject": "wren_disc_uncertainty",
+          "predicate": "claim.content",
+          "record_sha256": "39930636c37c33d7b7f7303a66bc9888a457d90449a286779f4790d5ed69bd9c"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 13,
+          "subject": "stair_keeper",
+          "predicate": "manifests_as",
+          "record_sha256": "983b04d12b5c4e25721314c02d4869bc4fb5f21af40ad79e1f509127f87474eb"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 14,
+          "subject": "wren",
+          "predicate": "manifests_as",
+          "record_sha256": "74981222a1c44e1dc85310039f885dd3d50e9274bda388ed2aa4b9cc98c4ed80"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 15,
+          "subject": "wren",
+          "predicate": "disclosed_to",
+          "record_sha256": "d9661bf961aca5aebcd2f87310bde9a4ece2d727bda584f1d0fdc19317836be7"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 16,
+          "subject": "wren",
+          "predicate": "wants",
+          "record_sha256": "453d1fa32f40fb34afebd92918e5ed76614122ace4243e8c0f2b82024891dec3"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 17,
+          "subject": "stair_keeper_disc",
+          "predicate": "manifests_as",
+          "record_sha256": "f7b3274a61b77a6ea3aaa05059ec342e2b77082588de86ead45b066fab8ee42f"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 18,
+          "subject": "seep",
+          "predicate": "manifests_as",
+          "record_sha256": "1f451db67a10b987d38d4bacd491ee9c75f2c0afbe127630c531138d146a25e7"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 19,
+          "subject": "stair",
+          "predicate": "manifests_as",
+          "record_sha256": "fa0009cca41a3b2ce94050eac7fa929244ad875b6aa6ac1dfb44067d929a9ce1"
+        }
+      ],
+      "error": null
+    },
+    {
+      "path": "runs/world-boundary-fixes-20260913/book-2/calls/001.json",
+      "sha256": "35fb95f5c619ad5af0721de2fff8f22a611b5be5161aa0282898d41cc9b12552",
+      "status": "completed",
+      "profile": "writer.concept.discovery.v6",
+      "tokens": 7066,
+      "returned_usage": {
+        "input_tokens": 5475,
+        "output_tokens": 1358,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 233
+      },
+      "sessions": [
+        "01a09893-8983-7d42-8d6c-c5307853131d"
+      ],
+      "mode": "completion",
+      "native_tools": [],
+      "tool_counts": {},
+      "show_reads": [],
+      "declarations": [],
+      "error": null
+    },
+    {
+      "path": "runs/world-boundary-fixes-20260913/book-2/calls/002.json",
+      "sha256": "df068427e60f79afec572b599d54c5dde59eefe28d4c6265df6c99c81c643840",
+      "status": "completed",
+      "profile": "architect.seed.v5",
+      "tokens": 163520,
+      "returned_usage": {
+        "input_tokens": 37044,
+        "output_tokens": 3706,
+        "cache_read_tokens": 122624,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 146
+      },
+      "sessions": [
+        "01a09894-9af5-7fc1-b1eb-5612c1a694d1"
+      ],
+      "mode": "bridge",
+      "native_tools": [
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        }
+      ],
+      "tool_counts": {
+        "": 2,
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world declare-batch": 7,
+        "world check": 2,
+        "world show": 2,
+        "world abilities": 1
+      },
+      "show_reads": [
+        {
+          "bridge_call": 13,
+          "arguments": [
+            "world",
+            "show",
+            "--subjects",
+            "mara,orchard,step,route_choice",
+            "--current"
+          ],
+          "bytes": 46,
+          "stdout_sha256": "d033350296dd1f06a22b65ff39d36c4aa55e2a24633b3f2bb64dbe9b1e9e8cc3",
+          "scoped": true
+        },
+        {
+          "bridge_call": 14,
+          "arguments": [
+            "world",
+            "show",
+            "--subjects",
+            "mara",
+            "orchard",
+            "step",
+            "route_choice",
+            "--current"
+          ],
+          "bytes": 14039,
+          "stdout_sha256": "d2acd035ef14313b913f3c76a1bf9b748f090840f90012c9da818b8450627bd1",
+          "scoped": true
+        }
+      ],
+      "declarations": [
+        {
+          "bridge_call": 5,
+          "batch_index": 0,
+          "subject": "orchard",
+          "predicate": "entity_role",
+          "record_sha256": "1dceedf05d8a1593ae5a473fa7a5fa91483ff44ba6ed0f0981364219e49490c2"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 1,
+          "subject": "orchard",
+          "predicate": "is_a",
+          "record_sha256": "e482beaf79836bee157a6191bebed57241a5e776a13c6b6e4bcc2398abbb5b65"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 2,
+          "subject": "orchard",
+          "predicate": "world_rule",
+          "record_sha256": "39cb0bc8a432a8e4cd9ee147995e6b4df4a29d7e207ba2f6132b298e699814fd"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 3,
+          "subject": "orchard",
+          "predicate": "manifests_as",
+          "record_sha256": "33ed6bcf367f3256517e3b799f2383b6f7f8cfcb573e499e3ad2d64310feda85"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 4,
+          "subject": "rank",
+          "predicate": "type",
+          "record_sha256": "1091a2ca19201b10dc3abad24f95f20044a2498b9862302fa4b3487847fe3ba7"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 5,
+          "subject": "rank",
+          "predicate": "is_a",
+          "record_sha256": "6a878560764075d4f7c153ba6c472fb716c17eb20a82b79606fb40dd40d35574"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 6,
+          "subject": "rank",
+          "predicate": "comparator",
+          "record_sha256": "e570fce6882d7299d2ccadee6a49816b862b5adf6a60a19dbf4d38fef1de8cd5"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 7,
+          "subject": "rank",
+          "predicate": "governed_by",
+          "record_sha256": "4aaf6cf09d00f66ce86d71fb2edbc3d0b6114c60496a70b20898dcdc0f59358f"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 8,
+          "subject": "rank",
+          "predicate": "evaluates",
+          "record_sha256": "5d4ee3457066d954de82c72a177eaee3e4dc3d1cfc55529eaf88cffb9b53c1b3"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 9,
+          "subject": "rank",
+          "predicate": "world_rule",
+          "record_sha256": "af31291ce741bab4af733cdc8621964f342f1c0790421cd74d99e4b4a61e41d9"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 10,
+          "subject": "rank_1",
+          "predicate": "is_a",
+          "record_sha256": "f7a7a23b8386ec51cbd6bde7a85e335d05d59c57d80340feea398fbf6eae9b3e"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 11,
+          "subject": "rank_2",
+          "predicate": "is_a",
+          "record_sha256": "facc7872ba73c9009511a5b13942dd13a6677715ad9eee23b5d7da5fe932ce3b"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 12,
+          "subject": "rank_3",
+          "predicate": "is_a",
+          "record_sha256": "43ec11e0d8f733efbf9542f618442d03c16b0a4c3922d6aec7ec6381b48ad15a"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 13,
+          "subject": "rank_4",
+          "predicate": "is_a",
+          "record_sha256": "0b932b20d7cbb729d360e6be52a8bfefd49fac9e7b45b4bfdbfe0dd3b89bebbf"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 14,
+          "subject": "rank_5",
+          "predicate": "is_a",
+          "record_sha256": "21056ef1fe5aecdfb2779c5e0085b444a1c49551ab5392c16eb6cbab3962ee09"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 15,
+          "subject": "rank_6",
+          "predicate": "is_a",
+          "record_sha256": "556fdd55ac2ea47f10f23e26055cd9ce4ccea4ac354147aab939966853989272"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 16,
+          "subject": "rank_7",
+          "predicate": "is_a",
+          "record_sha256": "9729be8af2b999b467042eed94f505455f94093a0d1aaaaf36aab97d2a7041fd"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 17,
+          "subject": "rank_8",
+          "predicate": "is_a",
+          "record_sha256": "986418b2d74bb5d4ccbc9ebf37e51fb4195502fba5e13e263cd8511ef295e1f3"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 18,
+          "subject": "rank_9",
+          "predicate": "is_a",
+          "record_sha256": "92ad8ef3fbc77821a323a71a878f796e471cb2b13f38f6bc66f4c55ad62f6e52"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 19,
+          "subject": "rank_10",
+          "predicate": "is_a",
+          "record_sha256": "ac295f31108786a57c46209888f3283aef9b7ac4ab2a135aa71d831014235f8a"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 20,
+          "subject": "rank_11",
+          "predicate": "is_a",
+          "record_sha256": "d8d5b466985fea0753438f1b7eec44d43b4be00c4b5ad391e883ffaaaec4bc7b"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 21,
+          "subject": "rank_12",
+          "predicate": "is_a",
+          "record_sha256": "5c2f6686b8123454dc870bbed869a0439900abc7e571f3021d9ae4c75e252d38"
+        },
+        {
+          "bridge_call": 5,
+          "batch_index": 22,
+          "subject": "personal_capability",
+          "predicate": "manifests_as",
+          "record_sha256": "de9a8cc2da9a8a99c2c5f68e6c91cebbb7d7c2deadd242fa8ee76046fffc29e8"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 0,
+          "subject": "rank_1",
+          "predicate": "precedes",
+          "record_sha256": "63ec7b36ede67e48755908a4aa3095a21d9f7269f69a725a2d3a47d6ba9a1959"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 1,
+          "subject": "rank_2",
+          "predicate": "precedes",
+          "record_sha256": "acd7632f89e2b55359f176e6620813d5229897cde6d5525648a92a0f57af14da"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 2,
+          "subject": "rank_3",
+          "predicate": "precedes",
+          "record_sha256": "e6423230b16cc7144d7879c0aff3f8865419ce7f0ae3c319c64f729850d8fb39"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 3,
+          "subject": "rank_4",
+          "predicate": "precedes",
+          "record_sha256": "91e5d854d1d77d3aba74fa6cf2c8941f4c1312a3c918df21f79ed4e79a383ba4"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 4,
+          "subject": "rank_5",
+          "predicate": "precedes",
+          "record_sha256": "c8bef9a3e8a246d4f10bf33130c05aac34ab9dcf61ca090df45bf7643cf86143"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 5,
+          "subject": "rank_6",
+          "predicate": "precedes",
+          "record_sha256": "941ba7fff637bbf3b285cbca935aa3e98e33bd79a27099b77d774435fa691ba5"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 6,
+          "subject": "rank_7",
+          "predicate": "precedes",
+          "record_sha256": "bccbedc29b02cae27137fb0531daeb94c0f6e094768570a866136310e122a9f9"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 7,
+          "subject": "rank_8",
+          "predicate": "precedes",
+          "record_sha256": "bd56e53376e9a099a92821438abe44ae1577d18eb808d462822ff91e2596b65d"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 8,
+          "subject": "rank_9",
+          "predicate": "precedes",
+          "record_sha256": "7a044330c6f3d70f00c15a9b8b681dc55ff6c1009a56f4357fc6fada50287a81"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 9,
+          "subject": "rank_10",
+          "predicate": "precedes",
+          "record_sha256": "ab0f03a172411e2df986d2966e34ff0a021318d3f182e89c94fc7493d623da4b"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 10,
+          "subject": "rank_11",
+          "predicate": "precedes",
+          "record_sha256": "7cd6ac19f8974e1a27e5cf9e807a922fb1b3c7d36b23c6cec07d0493075c90ae"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 11,
+          "subject": "fold",
+          "predicate": "entity_role",
+          "record_sha256": "50e2fee0cc19369be8218dd65a960825f8bc4879c98fe83bb4c0a6d435fcc946"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 12,
+          "subject": "fold",
+          "predicate": "is_a",
+          "record_sha256": "c1b5c2a53dc0cb1659c60c1ae2cd882d9c6f16b5b0384e0c62388a92425ffce3"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 13,
+          "subject": "fold",
+          "predicate": "governed_by",
+          "record_sha256": "2f1dce16bc641b24ed39aa602aea55fa0d5fac64b5ed954e8db5deb46cf686dc"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 14,
+          "subject": "anchor",
+          "predicate": "entity_role",
+          "record_sha256": "748976faf4e9f09e46433ccb76d3185723c724d0d202e4b3fd8248ba250319e6"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 15,
+          "subject": "anchor",
+          "predicate": "is_a",
+          "record_sha256": "0a5ba7bce6aa94c6209c341f0b1311ac6ddb8fbb4392c9cf512ebfca2238fc8e"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 16,
+          "subject": "anchor",
+          "predicate": "governed_by",
+          "record_sha256": "bd8d2f95f93954e91b99d1cc6a6f0fef1f82f9dd6dd1a79328320b8cbd67b168"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 17,
+          "subject": "step",
+          "predicate": "entity_role",
+          "record_sha256": "6457ecb2444b4d9d83591858c391183ce25741e601d4afa3ebec7ae67acb9b4d"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 18,
+          "subject": "step",
+          "predicate": "is_a",
+          "record_sha256": "a28c96b5feba118fdbb8c37b9a773c3160d6204af18a4b14526b0573aefe7366"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 19,
+          "subject": "step",
+          "predicate": "governed_by",
+          "record_sha256": "a9358537e3c742492486f6448122f0ad369e0202fa43cb949264d803afc42886"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 20,
+          "subject": "mirror",
+          "predicate": "entity_role",
+          "record_sha256": "2c9d30f798d03b4785c02eb07165650e3d82709e13b1f6a1f142e7786d450f18"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 21,
+          "subject": "mirror",
+          "predicate": "is_a",
+          "record_sha256": "aa8521cdf9863695df789203d93c2399e4fdc7e336300da50c0edc7e96a8814e"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 22,
+          "subject": "mirror",
+          "predicate": "governed_by",
+          "record_sha256": "67274dcb65e93ad0fd84d44dcc6b1036d86265ee1b3f586f9cc4ec385cfe35b3"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 23,
+          "subject": "echo",
+          "predicate": "entity_role",
+          "record_sha256": "f27ec55d7d26acc3fb7a764624c7289b9785219d76d1a24f6f8fed2c2971af11"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 24,
+          "subject": "echo",
+          "predicate": "is_a",
+          "record_sha256": "1bc52a9c5098dfc1fc9f06f561ea60471f981e57c2625620a4321206023940e0"
+        },
+        {
+          "bridge_call": 6,
+          "batch_index": 25,
+          "subject": "echo",
+          "predicate": "governed_by",
+          "record_sha256": "936aa55e6c8eb693f6d672154123ec78fc44748848da1ff1e27ae71623e63e4e"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 0,
+          "subject": "fold",
+          "predicate": "requires",
+          "record_sha256": "349d0668211bbe37aa85279f08dcf9dc4e0148d36118f634fd816bff49e22b7e"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 1,
+          "subject": "fold",
+          "predicate": "world_rule",
+          "record_sha256": "77997a3ed961ade066bcd66495dc7ca9b27f5fa240d7524453f026f47bc73b6a"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 2,
+          "subject": "fold",
+          "predicate": "manifests_as",
+          "record_sha256": "2e22e7865c9a8cd47ff1d0182e38860b1600684d665b9673cc52a04666b63354"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 3,
+          "subject": "fold",
+          "predicate": "costs",
+          "record_sha256": "1dc42548a36098fc3a02b65277fc710a8b0e2d16673a9ae423c7668250b615b9"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 4,
+          "subject": "anchor",
+          "predicate": "requires",
+          "record_sha256": "6958f9fe06c446b04a5a401fb9ba851bc14c7b6d84f9019cf9ce20011fbddfb2"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 5,
+          "subject": "anchor",
+          "predicate": "requires",
+          "record_sha256": "18c529cd861828eedc3122a85af4803a68a93120fb3ee6b8787f0935c7201f01"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 6,
+          "subject": "anchor",
+          "predicate": "world_rule",
+          "record_sha256": "b6b8f490fa2f0ca0c02fe1193e38dc76e0195ac531aa468a6c8490a79e9be2a8"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 7,
+          "subject": "anchor",
+          "predicate": "manifests_as",
+          "record_sha256": "de15f6a31a15b9109eeffec9a3332600687dd6a0edfe375444b4db36f0726b77"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 8,
+          "subject": "anchor",
+          "predicate": "costs",
+          "record_sha256": "64e246ba3875ef389756a7ebfa7fd9cc8f26d9600db060faf2394bf6371a22e7"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 9,
+          "subject": "step",
+          "predicate": "requires",
+          "record_sha256": "444eb82afbdfd1079de69fecebce85ea3e06c07a5b4ea46c9a45e7f2212d5abb"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 10,
+          "subject": "step",
+          "predicate": "requires",
+          "record_sha256": "0f5b750e625a83cc3dd9dcda35054abf9a4ac4f4e4007009f4778b8e8755dee9"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 11,
+          "subject": "step",
+          "predicate": "world_rule",
+          "record_sha256": "dad991337854a658be442dbc467854f940a988a64d203705a7d31b9a0ad2ec6e"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 12,
+          "subject": "step",
+          "predicate": "manifests_as",
+          "record_sha256": "09466a5e932874fc8d58d36b8c1165892e5305d0dc4114bddcb678769f9fcfe3"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 13,
+          "subject": "step",
+          "predicate": "costs",
+          "record_sha256": "9df5dd55620d90fc4dbb32c7bb90110b9e45aae5a8fcdc3fd43821029bddc0bb"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 14,
+          "subject": "mirror",
+          "predicate": "requires",
+          "record_sha256": "5196d49d4a6b168e4f723ef5b1efab4e16fec545f19aba6be2b6dcdabecd1a21"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 15,
+          "subject": "mirror",
+          "predicate": "requires",
+          "record_sha256": "5477d4b565b51cad98e084add8d335fc312c4cb0fa0c41de7a815e4d3708d373"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 16,
+          "subject": "mirror",
+          "predicate": "world_rule",
+          "record_sha256": "b96dcfbb87f19ef03d196e092134be76c5a58ec88034fa9395d1baa109531143"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 17,
+          "subject": "mirror",
+          "predicate": "manifests_as",
+          "record_sha256": "9617d5be6a2dc84b0d2525b87641e05bdb804424f3262d471429503d551a9b0c"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 18,
+          "subject": "mirror",
+          "predicate": "costs",
+          "record_sha256": "8e5fb101b5ae9455fd1a4217ee118a19d62af2e2561339b0cde476601015874a"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 19,
+          "subject": "echo",
+          "predicate": "requires",
+          "record_sha256": "4a061b387d83313d743202d094b9188996ebc8c53f5948f1218bef2bce290f89"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 20,
+          "subject": "echo",
+          "predicate": "requires",
+          "record_sha256": "fb6fd3a668e3af43c3354521c08ad8b3702c4d350c2c3f2d1a84ca646da15329"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 21,
+          "subject": "echo",
+          "predicate": "world_rule",
+          "record_sha256": "dbbae8aec4746c977b065a9bda06c58247c430eaf6ae3b7d25c478536709038c"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 22,
+          "subject": "echo",
+          "predicate": "manifests_as",
+          "record_sha256": "1b39b01b998a66ed8b293d9ab8d221fb27afe0ddbf95baba4f56533645e5d23a"
+        },
+        {
+          "bridge_call": 8,
+          "batch_index": 23,
+          "subject": "echo",
+          "predicate": "costs",
+          "record_sha256": "bd798e424ba76d04bc675c73680624fd3357a915c272dea04bed672b83598cc1"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 0,
+          "subject": "route_choice",
+          "predicate": "governed_by",
+          "record_sha256": "d83c06fa0f40a15d386d6a2616208072237d6963eeb7ee461c69100290a96699"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 1,
+          "subject": "route_choice",
+          "predicate": "is_a",
+          "record_sha256": "e96cf68839575f333bbe003a87026ee7013986df72fd4c4ab1c625c267760aa8"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 2,
+          "subject": "route_choice",
+          "predicate": "requires",
+          "record_sha256": "9aaa55ed3e4a001b65f726de59f02c5990c355847a2829df0655eeb76c40349b"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 3,
+          "subject": "route_choice",
+          "predicate": "offers",
+          "record_sha256": "72cb0406bc7125194cfd872354443217708421d9451eb6c60a8e8506656218c4"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 4,
+          "subject": "route_choice",
+          "predicate": "offers",
+          "record_sha256": "36020fb0fcbd4b81157190a48e90b9867fc9fc6f43551ee784843465274d2aa0"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 5,
+          "subject": "mirror_way",
+          "predicate": "is_a",
+          "record_sha256": "845c5ec2f93e9c4fe7c2bdd2a720b0ed665d686a6d92d5e3e52948bd3dd9b2e2"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 6,
+          "subject": "mirror_way",
+          "predicate": "grants",
+          "record_sha256": "4db592bc61cd388ae381c057e295f5c1fd2fdcc81c129f8ea3a383ff2fcc89d6"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 7,
+          "subject": "mirror_way",
+          "predicate": "manifests_as",
+          "record_sha256": "85ddcc91ef8476ec53bfa98709546729db464e37beece8b250f4a6864937c9ef"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 8,
+          "subject": "echo_way",
+          "predicate": "is_a",
+          "record_sha256": "8aae0e3efded333de5afbca4dde5d9fa2f3dcf242fb0508015151cb06f4de7c4"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 9,
+          "subject": "echo_way",
+          "predicate": "grants",
+          "record_sha256": "1925502318437e9ffce597f4406b4a457f685fdf5dfdd0835dd7823592d26fc9"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 10,
+          "subject": "echo_way",
+          "predicate": "manifests_as",
+          "record_sha256": "dd6e6904ffc3e38d9c05f96b9ce56317b69ec950e401cc322d349cdacffe65c1"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 11,
+          "subject": "orchard",
+          "predicate": "world_rule",
+          "record_sha256": "29fc6bf01a236bfd223d60f0c804f25f131d2a08ee8307126893b45b7ad2651b"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 12,
+          "subject": "mara",
+          "predicate": "entity_role",
+          "record_sha256": "6d6c8367521783f771f317d5f21d57c999062bdba539920064768d3bd1ee2797"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 13,
+          "subject": "mara",
+          "predicate": "entity_role",
+          "record_sha256": "20c28be12ce73a2699a493f8bf8dd90a93891d0af9f9ce3375819f958fcbde81"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 14,
+          "subject": "mara",
+          "predicate": "is_a",
+          "record_sha256": "95ad2f00ddce80fb6b84ab867bf83bc5b6e597aa05cf7a5d8405d99d749e9636"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 15,
+          "subject": "mara",
+          "predicate": "stands_at",
+          "record_sha256": "53bacf388d744beaa511277f9f36db7930c60cf001d9559f7f440edde836717d"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 16,
+          "subject": "mara",
+          "predicate": "can_do",
+          "record_sha256": "784ca5102e87564cf62244693ef3181b86a2323b7164e806b88d651993f4042e"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 17,
+          "subject": "mara",
+          "predicate": "can_do",
+          "record_sha256": "2483ce8ad657c130332f6be565ab900e11cd14ab268f4184a59329ef25df0b18"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 18,
+          "subject": "orchard",
+          "predicate": "status_sheet",
+          "record_sha256": "d8433ae444e442ef166f29ad85a633b69045664f847af0e397d8c7c58e9555e9"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 19,
+          "subject": "mara",
+          "predicate": "status_snapshot",
+          "record_sha256": "6c6557183931addedf3d7c6e3ca83c7e53b195ab6cad93e4e03df6aa4530af5d"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 20,
+          "subject": "mara",
+          "predicate": "manifests_as",
+          "record_sha256": "94bf8508337f9ce26c4af973e9d1e5eb64de061cc178441ec22ea6d9e17941c8"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 21,
+          "subject": "mara",
+          "predicate": "wants",
+          "record_sha256": "b397f9f0cc8fd5b26725fa0dbe1e1dcde286ee4efc9cb0986307a7e4232dde33"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 22,
+          "subject": "mara",
+          "predicate": "disposition",
+          "record_sha256": "3fd2f08b6f22ade9adc139791261e68ef890994aaaed383a01e6e922f6605f19"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 23,
+          "subject": "mara",
+          "predicate": "voice_tag",
+          "record_sha256": "90deb7dab549a3a0bf7e0ed842fa3790945f1475043696020dd1de11efdd6ce1"
+        },
+        {
+          "bridge_call": 9,
+          "batch_index": 24,
+          "subject": "orchard",
+          "predicate": "manifests_as",
+          "record_sha256": "d877e043f91fa6bba8c14a21bc46088f76b98fe295363805a703ab636a6c6b95"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 0,
+          "subject": "mara",
+          "predicate": "entity_role",
+          "record_sha256": "6d6c8367521783f771f317d5f21d57c999062bdba539920064768d3bd1ee2797"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 1,
+          "subject": "orchard",
+          "predicate": "status_sheet",
+          "record_sha256": "ad6f4e7284c5e14dc07e3ecb76f5777915016a593a784a6f7ded0ba17823451c"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 2,
+          "subject": "orchard",
+          "predicate": "world_rule",
+          "record_sha256": "b379f684b85c849777f4a92548f87ff4523b899c7cf7c549a9d502c69a4b8e4f"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 3,
+          "subject": "orchard",
+          "predicate": "manifests_as",
+          "record_sha256": "da74b729b3956686e30af0a8f5e3da2a7d44fdfe1f0817d7b872c476ca968d84"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 4,
+          "subject": "rank",
+          "predicate": "manifests_as",
+          "record_sha256": "1258cdd1609c403b108bdbb13a51a5c28dd37b08abf3b302b7a0905d144d1fb9"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 5,
+          "subject": "rank_1",
+          "predicate": "manifests_as",
+          "record_sha256": "ba019c1182ba5bfb46911dd8283e448270f67372a5bcdae9567445f5d6476639"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 6,
+          "subject": "rank_2",
+          "predicate": "manifests_as",
+          "record_sha256": "2dd9c8bbbc8b53280cc191488f1caea492b642c126913366c846cd2021e8ae9c"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 7,
+          "subject": "rank_3",
+          "predicate": "manifests_as",
+          "record_sha256": "18d80306dbf5cba364a35350f5cac3f95dab05020836d413ad9ba5e754c04653"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 8,
+          "subject": "rank_4",
+          "predicate": "manifests_as",
+          "record_sha256": "4fd845de3fa3b49b660e1dfec6ccc9bf0c36b3e63895f71c91305038ef75eeb8"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 9,
+          "subject": "rank_5",
+          "predicate": "manifests_as",
+          "record_sha256": "4ac51f89c04d0a892a01d481b3439bdeff98d7192ad867341851545ad683c104"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 10,
+          "subject": "rank_6",
+          "predicate": "manifests_as",
+          "record_sha256": "b913fe1dc28e258e1b68fd63d3c22b9673cb9260ac0d6b48cb97a3611d82eee9"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 11,
+          "subject": "rank_7",
+          "predicate": "manifests_as",
+          "record_sha256": "d3985cfb5991e5f26b82e0df9daa2959d492dd43942d8d1e68a8b8bfd3cfe128"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 12,
+          "subject": "rank_8",
+          "predicate": "manifests_as",
+          "record_sha256": "106037e83610e89870c4325f6d109364597912e95adeebb019addc0ff087c5e9"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 13,
+          "subject": "rank_9",
+          "predicate": "manifests_as",
+          "record_sha256": "ac9c20f2bc2ad88617934cfbabf9890f63e532ff84491e9ad93cade654acfc6c"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 14,
+          "subject": "rank_10",
+          "predicate": "manifests_as",
+          "record_sha256": "7d8725879db95b5bee8ec0824dc931076296368dea0e750eebd4c33dc73aa3a3"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 15,
+          "subject": "rank_11",
+          "predicate": "manifests_as",
+          "record_sha256": "b9372b547900260dc9aab8e04253f65339ffe2e1e83f82709b0ff2daf443f2b6"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 16,
+          "subject": "rank_12",
+          "predicate": "manifests_as",
+          "record_sha256": "fbeb7789146b364d08cd3522471016fe858d831167bc653166d14855086470e5"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 17,
+          "subject": "route_choice",
+          "predicate": "manifests_as",
+          "record_sha256": "d0d4e6cfe2dda8623fc69250d6ead7177a83942285a1ea9d632805153ac8fff9"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 18,
+          "subject": "kio",
+          "predicate": "entity_role",
+          "record_sha256": "9ffc924397b2c7c441fac306109576e1b61508b355a468c52df6eb2bc237a0de"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 19,
+          "subject": "kio",
+          "predicate": "is_a",
+          "record_sha256": "9a3096a19e94e09d7df3c3b59445383b9f4cd9fa10edded63fae986c835b3441"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 20,
+          "subject": "kio",
+          "predicate": "manifests_as",
+          "record_sha256": "797ea32943e50599b923a506e666ce1d34b566613483b3f4d07141e53aa47a63"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 21,
+          "subject": "kio",
+          "predicate": "wants",
+          "record_sha256": "1c7bfadfa83b669b5792308967a257f301cd9913ec1e44dfb11520311c4a2af7"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 22,
+          "subject": "kio",
+          "predicate": "voice_tag",
+          "record_sha256": "7594387a155a6baf9f007f8095a45f0eef66cf011f9532ddf0af6128ba33e1de"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 23,
+          "subject": "kio",
+          "predicate": "disposition",
+          "record_sha256": "aeb10cdba038ab9fc9d35aec3acb9d58a5eb79836abbef16c511d566f8192447"
+        },
+        {
+          "bridge_call": 10,
+          "batch_index": 24,
+          "subject": "shared_speech",
+          "predicate": "world_rule",
+          "record_sha256": "3cc16e5fd487c91f58fc805a8eff2669f6a785fa223725aa43b81b30acd60033"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 0,
+          "subject": "star_orchard",
+          "predicate": "entity_role",
+          "record_sha256": "5d4f20e19323208a7e7afed579d27ffd2018885f5d351b087c738cb3b6458e38"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 1,
+          "subject": "star_orchard",
+          "predicate": "is_a",
+          "record_sha256": "5030d4a8be0ca3c625c93970a48d12ae68f8dfe689882596b67c63e25fd64f9e"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 2,
+          "subject": "star_orchard",
+          "predicate": "manifests_as",
+          "record_sha256": "585149410a932655ef9bc5828a4c83b48ad9f18f4bb7f134b1def82c3e942bf1"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 3,
+          "subject": "observatory",
+          "predicate": "entity_role",
+          "record_sha256": "d16e1df37b6af6e631185c340cde9beb4a0da98bd2d9d547ec00846cbe446738"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 4,
+          "subject": "observatory",
+          "predicate": "manifests_as",
+          "record_sha256": "64819694107cfb8c3711df6b9c51f4c2bbdf23089dfdfcc5b9d2bdd545de3c23"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 5,
+          "subject": "relay_moths",
+          "predicate": "entity_role",
+          "record_sha256": "c3cd32941b81e2b9f4bf50633ead041b0f154aa539a9b29d9478d32e3f04eb85"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 6,
+          "subject": "relay_moths",
+          "predicate": "manifests_as",
+          "record_sha256": "e24c835f3a4b7738a12cb6ffc9a5fe2144b58234520646f771ded4009eff7822"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 7,
+          "subject": "relay_moths",
+          "predicate": "world_rule",
+          "record_sha256": "08168c41240444b691ebecc4750f4bf542bfcbcabef3870195cfa8dd09ac4bd7"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 8,
+          "subject": "sky_fragment",
+          "predicate": "entity_role",
+          "record_sha256": "3d9878fdad8e6a72c73b5c9e439bf7f0cfc494713d336ec5134b82841322b6a6"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 9,
+          "subject": "sky_fragment",
+          "predicate": "manifests_as",
+          "record_sha256": "f3d7ed5b99a054d51396f6ab24935a43269e89358e218506a6a72f4c2bd62801"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 10,
+          "subject": "sky_fragment_origin",
+          "predicate": "claim.content",
+          "record_sha256": "6abfc8dd094e326498082360d3aaa9ecded402a8ca1477b3d844b6acb61e9a00"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 11,
+          "subject": "trail_keepers",
+          "predicate": "entity_role",
+          "record_sha256": "5b57052f87cf1434dae2bda897a3b95e5487ba628ce4b3174b4f95f5c891e7be"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 12,
+          "subject": "trail_keepers",
+          "predicate": "manifests_as",
+          "record_sha256": "d2fbc7055f950ee1d11d13dec8c3a9d68b8a8ac4a15331222ea4a725eb51450e"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 13,
+          "subject": "trail_keepers",
+          "predicate": "wants",
+          "record_sha256": "2b392b913efd5d90d62304446dc6c34d19c1725870cb44f7483f7bfa3d093553"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 14,
+          "subject": "migration_history",
+          "predicate": "manifests_as",
+          "record_sha256": "d0918297fa055c9ffc6b8d2681a9596005aeb7a7a7f218e83c1f2c5161254455"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 15,
+          "subject": "migration_network",
+          "predicate": "entity_role",
+          "record_sha256": "f77a9ac026e123b991f1a21bfe0f2cdb2e8773c97b813e61aa8db6e67034dfc5"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 16,
+          "subject": "migration_network",
+          "predicate": "manifests_as",
+          "record_sha256": "6dbf9a0e922630b906c1dfb7239206f67b6dc7fff6ce1f4eeb7c05b5d9c93eed"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 17,
+          "subject": "misalignment",
+          "predicate": "claim.content",
+          "record_sha256": "72decf08a92449b8fa40f2646e071dfd293f7976258cdd9446e1e858126612e1"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 18,
+          "subject": "misalignment",
+          "predicate": "manifests_as",
+          "record_sha256": "089a57ed2b74b667491e0dfc3d3c556cec68d2e8bddebb8dd4215152b003a014"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 19,
+          "subject": "route_hazards",
+          "predicate": "world_rule",
+          "record_sha256": "e355c5b577eb195bbd4f26845e8e1a08d22908103356045faef6ede72d989e4f"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 20,
+          "subject": "mara_history",
+          "predicate": "manifests_as",
+          "record_sha256": "6b5180449c0299d5b75220ca7dc7500367de16b093573d9debd802daa4a2ac3b"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 21,
+          "subject": "mara_background",
+          "predicate": "claim.content",
+          "record_sha256": "3e30b8c0c83b47367022a52f4bd384111900f3fb9336984749739f6ed9a617c7"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 22,
+          "subject": "mara",
+          "predicate": "believes",
+          "record_sha256": "d3e59a3c2f954e8773e133f4f21726f020c7f5f91c8d9e617ca50a7ab4190927"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 23,
+          "subject": "mara",
+          "predicate": "disclosed_to",
+          "record_sha256": "b4258023c969bb0c2c5fd99759a0d6313639918d3cd5de4daa3f5fb5be90ab69"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 24,
+          "subject": "home_possibility",
+          "predicate": "claim.content",
+          "record_sha256": "ae861ec7ea30057e33bed4b3c7f6b58e79b8acee74771c9172e019e149df8103"
+        },
+        {
+          "bridge_call": 11,
+          "batch_index": 25,
+          "subject": "shared_speech",
+          "predicate": "manifests_as",
+          "record_sha256": "81b12166323f3b174c4d14dd4436c2c20d1b255779ba43fe60bff17d835be5e0"
+        },
+        {
+          "bridge_call": 15,
+          "batch_index": 0,
+          "subject": "route_hazards",
+          "predicate": "manifests_as",
+          "record_sha256": "5656c35768feaab8ecb9c5ab9328eeec1a8ccc06e17629f1ae95d1fc08d8281c"
+        }
+      ],
+      "error": null
+    }
+  ],
+  "books": [
+    {
+      "id": "book-1",
+      "status": "completed",
+      "chapters": 1,
+      "concept_sha256": "e9fe98fbe9f9de7ca7db5dd0f1d68b9a4c8c9a3365a156baabf026daa9d85a33",
+      "checkpoints": [
+        {
+          "label": "empty",
+          "verification": {
+            "rebuilt": 1,
+            "unattributed": []
+          },
+          "world_records": 0,
+          "world_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "chapter_hashes": {}
+        },
+        {
+          "label": "seeded",
+          "verification": {
+            "rebuilt": 1,
+            "unattributed": []
+          },
+          "world_records": 194,
+          "world_sha256": "c69d8c1513649b4608c3e6f0e60b26f548e03b5062c8b82b2c406f63b4e45e32",
+          "chapter_hashes": {}
+        },
+        {
+          "label": "checkpoint-1",
+          "verification": {
+            "rebuilt": 2,
+            "unattributed": []
+          },
+          "world_records": 243,
+          "world_sha256": "feadd7b8a6eaeeab6fab260e8feda2f0c8fafbef1b1b90153a52c6e9e9723657",
+          "chapter_hashes": {
+            "Chapter1.txt": "ee61eaacfeed20853de650f6bef8c047fd78d4d43675f6867da3be7478d90815"
+          }
+        },
+        {
+          "label": "final",
+          "verification": {
+            "rebuilt": 2,
+            "unattributed": []
+          },
+          "world_records": 243,
+          "world_sha256": "feadd7b8a6eaeeab6fab260e8feda2f0c8fafbef1b1b90153a52c6e9e9723657",
+          "chapter_hashes": {
+            "Chapter1.txt": "ee61eaacfeed20853de650f6bef8c047fd78d4d43675f6867da3be7478d90815"
+          }
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "book-2",
+      "status": "completed",
+      "chapters": 0,
+      "concept_sha256": "40e6923a0a69acfb411b64046b91cadb8afdb8029e9b3f6993a4e0732a604613",
+      "checkpoints": [
+        {
+          "label": "empty",
+          "verification": {
+            "rebuilt": 1,
+            "unattributed": []
+          },
+          "world_records": 0,
+          "world_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "chapter_hashes": {}
+        },
+        {
+          "label": "seeded",
+          "verification": {
+            "rebuilt": 1,
+            "unattributed": []
+          },
+          "world_records": 151,
+          "world_sha256": "6c2669b0ed8b6c917457d66a007422055aba3d07c7768e4b36bbe07a490b995a",
+          "chapter_hashes": {}
+        },
+        {
+          "label": "final",
+          "verification": {
+            "rebuilt": 1,
+            "unattributed": []
+          },
+          "world_records": 151,
+          "world_sha256": "6c2669b0ed8b6c917457d66a007422055aba3d07c7768e4b36bbe07a490b995a",
+          "chapter_hashes": {}
+        }
+      ],
+      "reason": null
+    }
+  ],
+  "limitation": "Execution checks do not establish semantic preservation or quality."
+}
