@@ -1,0 +1,778 @@
+{
+  "schema": "litharness.growth-continuation-readout.v1",
+  "analysis_stage": "registered",
+  "script_sha256": "36fb59dcdc7f4e84770e4309fb9a1c0c6cb7d84e5ce9ac1fc5b2e71898300611",
+  "registered_evidence_sha256": "5acb714b1b144558c16c99b21a599e08b37806f4a6819047b340d1fd13f85c5d",
+  "source_seed_sha256": "c147b9ccb9ef5d8ff72cd991c7e9cd43ad0acb7ffcbb36da415c94226d572551",
+  "final_database_sha256": "9e781b8b7a93978e7b99fdd3373e523d1a3bc9a503f3afef635dea1b149646ba",
+  "seed_acceptance_receipt_sha256": "9d0fcf4c4dbaedb4ff83a7c42105e9e0e0ae2ba4a6282e1810941f4fe06c60b4",
+  "checkpoints": [
+    {
+      "label": "seeded",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": null,
+        "subject": "wren",
+        "values": {
+          "rank": 0
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "16204151a494b8d12001b741a593fd89ece2a694b473cb5c2720dd1531d0275e",
+        "exit_code": 1,
+        "words": 0,
+        "status_column_sets": 0,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 0
+      },
+      "database_unchanged": true
+    },
+    {
+      "label": "checkpoint-1",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": "s000001",
+        "subject": "wren",
+        "values": {
+          "rank": 0,
+          "loadstitch": 1
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-x9a01d73b8d5dca30bf594000",
+            "order_key": "s000001",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "loadstitch": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000004",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000006",
+            "order_key": "s000006",
+            "authority": "proposed",
+            "value": {
+              "rank": 2
+            }
+          },
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "8ac98b074baf96a39f4173b1f0c04dd4b1d2ffde4f0e9a23239f941958f4265b",
+        "exit_code": 1,
+        "words": 1948,
+        "status_column_sets": 1,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 1
+      },
+      "database_unchanged": true
+    },
+    {
+      "label": "checkpoint-2",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": "s000001",
+        "subject": "wren",
+        "values": {
+          "rank": 0,
+          "loadstitch": 1
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-x9a01d73b8d5dca30bf594000",
+            "order_key": "s000001",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "loadstitch": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000004",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000006",
+            "order_key": "s000006",
+            "authority": "proposed",
+            "value": {
+              "rank": 2
+            }
+          },
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "4c1a1f09c7141a4ec58eda76e25bc1df18d44139bde7fd5a166a2d505e82dc53",
+        "exit_code": 1,
+        "words": 3864,
+        "status_column_sets": 1,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 1
+      },
+      "database_unchanged": true
+    },
+    {
+      "label": "checkpoint-3",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": "s000001",
+        "subject": "wren",
+        "values": {
+          "rank": 0,
+          "loadstitch": 1
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-x9a01d73b8d5dca30bf594000",
+            "order_key": "s000001",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "loadstitch": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000004",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000006",
+            "order_key": "s000006",
+            "authority": "proposed",
+            "value": {
+              "rank": 2
+            }
+          },
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "165226000f71cc45f0e72a22a843de8505cac43501cb1acf0cd720d6494b71ec",
+        "exit_code": 1,
+        "words": 5899,
+        "status_column_sets": 1,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 1
+      },
+      "database_unchanged": true
+    },
+    {
+      "label": "checkpoint-4",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": "s000004",
+        "subject": "wren",
+        "values": {
+          "rank": 1,
+          "loadstitch": 1,
+          "point": 0,
+          "inspection": 1,
+          "load": 1
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-x9a01d73b8d5dca30bf594000",
+            "order_key": "s000001",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "loadstitch": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000004",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1
+            }
+          },
+          {
+            "record_id": "rec-xd02202eac7c9d57782f7683d",
+            "order_key": "s000004",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 1,
+              "loadstitch": 1,
+              "point": 0,
+              "inspection": 1,
+              "load": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000006",
+            "order_key": "s000006",
+            "authority": "proposed",
+            "value": {
+              "rank": 2
+            }
+          },
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "d01faf1b088fe0084ce2a8df6bc32710eb6084914d21e05e2141ada794a97ece",
+        "exit_code": 1,
+        "words": 7872,
+        "status_column_sets": 3,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 1
+      },
+      "database_unchanged": true
+    },
+    {
+      "label": "checkpoint-5",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": "s000004",
+        "subject": "wren",
+        "values": {
+          "rank": 1,
+          "loadstitch": 1,
+          "point": 0,
+          "inspection": 1,
+          "load": 1
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-x9a01d73b8d5dca30bf594000",
+            "order_key": "s000001",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "loadstitch": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000004",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1
+            }
+          },
+          {
+            "record_id": "rec-xd02202eac7c9d57782f7683d",
+            "order_key": "s000004",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 1,
+              "loadstitch": 1,
+              "point": 0,
+              "inspection": 1,
+              "load": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000006",
+            "order_key": "s000006",
+            "authority": "proposed",
+            "value": {
+              "rank": 2
+            }
+          },
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "7ec0af3fe77bfee108032e6acd6697276bcee0c588b11e292b9684e28ac965ce",
+        "exit_code": 1,
+        "words": 9899,
+        "status_column_sets": 3,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 1
+      },
+      "database_unchanged": true
+    },
+    {
+      "label": "checkpoint-6",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": "s000006",
+        "subject": "wren",
+        "values": {
+          "rank": 2,
+          "loadstitch": 1,
+          "point": 0,
+          "inspection": 1,
+          "load": 1,
+          "duration": 1
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-x9a01d73b8d5dca30bf594000",
+            "order_key": "s000001",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "loadstitch": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000004",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1
+            }
+          },
+          {
+            "record_id": "rec-xd02202eac7c9d57782f7683d",
+            "order_key": "s000004",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 1,
+              "loadstitch": 1,
+              "point": 0,
+              "inspection": 1,
+              "load": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000006",
+            "order_key": "s000006",
+            "authority": "proposed",
+            "value": {
+              "rank": 2
+            }
+          },
+          {
+            "record_id": "rec-xf24340370e1ce975eea93e04",
+            "order_key": "s000006",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 2,
+              "loadstitch": 1,
+              "point": 0,
+              "inspection": 1,
+              "load": 1,
+              "duration": 1
+            }
+          },
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "62f8b57f189f5e0f4c5cb26315704a07d9d7dd27758abfeab2c8d0122e910a81",
+        "exit_code": 1,
+        "words": 11825,
+        "status_column_sets": 5,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 1
+      },
+      "database_unchanged": true
+    }
+  ],
+  "request_phrase_hashes": {
+    "1": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+    "2": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+    "3": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+    "4": "b6e4d2e542ef414bcfde2c1da943cbc4f54abe6b16bdcf80aa003787637b46d4",
+    "5": "27731ddbd604fcc608960dacb9a704f3a0289a6f61d258ac4eda17cc14c71033"
+  },
+  "requests": [
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/001.json",
+      "sha256": "31ab2970452be8c8ef8102a9cdb33f32aa57bef42bdf79219f1b38fdc4fb34c2",
+      "profile": "default",
+      "locations": []
+    },
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/003.json",
+      "sha256": "a94d1b930092dd9d25e1219d55aeb08ee5b6fc6390f4f0390e1afdc1aa9e08d6",
+      "profile": "default",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "system",
+          "start": 10258,
+          "end": 10319
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "system",
+          "start": 10000,
+          "end": 10065
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "system",
+          "start": 8814,
+          "end": 8862
+        }
+      ]
+    },
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/006.json",
+      "sha256": "89e3e4944d9dbe75019143f71d1dc1579fe6d34f683b9f36bbf0116eadd24d0d",
+      "profile": "default",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "system",
+          "start": 9839,
+          "end": 9900
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "system",
+          "start": 9581,
+          "end": 9646
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "system",
+          "start": 8395,
+          "end": 8443
+        }
+      ]
+    },
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/009.json",
+      "sha256": "29e259faed9a8cecdce32a715c115976a679b9d77e70f32077c82afeac1054d6",
+      "profile": "default",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "system",
+          "start": 9839,
+          "end": 9900
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "system",
+          "start": 9581,
+          "end": 9646
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "system",
+          "start": 8395,
+          "end": 8443
+        }
+      ]
+    },
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/012.json",
+      "sha256": "7a82e95f3ed4a0a1e997c42ef8e75ddc026b47ea3116a51d29e3e5894be24a23",
+      "profile": "default",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "system",
+          "start": 9839,
+          "end": 9900
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "system",
+          "start": 9581,
+          "end": 9646
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "system",
+          "start": 8395,
+          "end": 8443
+        }
+      ]
+    },
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/015.json",
+      "sha256": "265118b2d8d62e35fd1daa65ee2d5b2a9c5b25a0420be0a35186363b5540a3fe",
+      "profile": "default",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "system",
+          "start": 9863,
+          "end": 9924
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "system",
+          "start": 9605,
+          "end": 9670
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "system",
+          "start": 8419,
+          "end": 8467
+        },
+        {
+          "text_sha256": "b6e4d2e542ef414bcfde2c1da943cbc4f54abe6b16bdcf80aa003787637b46d4",
+          "field": "prompt",
+          "start": 25713,
+          "end": 25734
+        },
+        {
+          "text_sha256": "27731ddbd604fcc608960dacb9a704f3a0289a6f61d258ac4eda17cc14c71033",
+          "field": "prompt",
+          "start": 25679,
+          "end": 25700
+        }
+      ]
+    },
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/018.json",
+      "sha256": "29e0ad170345353e23e6ba28d39dc7755c775eaec4d0272c0ace7eb00a1483bc",
+      "profile": "default",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "system",
+          "start": 9863,
+          "end": 9924
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "system",
+          "start": 9605,
+          "end": 9670
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "system",
+          "start": 8419,
+          "end": 8467
+        },
+        {
+          "text_sha256": "b6e4d2e542ef414bcfde2c1da943cbc4f54abe6b16bdcf80aa003787637b46d4",
+          "field": "prompt",
+          "start": 26585,
+          "end": 26606
+        },
+        {
+          "text_sha256": "27731ddbd604fcc608960dacb9a704f3a0289a6f61d258ac4eda17cc14c71033",
+          "field": "prompt",
+          "start": 26551,
+          "end": 26572
+        }
+      ]
+    }
+  ],
+  "analysis_scripts": {
+    "research/quality-measurement/scene-consequence-20260913/audit.py": "b82ecfd4503cc9fd5659d9e10f34d26dbb734f17e733988d667696811203a3c5",
+    "research/quality-measurement/growth-continuation-20260913/readout.py": "36fb59dcdc7f4e84770e4309fb9a1c0c6cb7d84e5ce9ac1fc5b2e71898300611"
+  },
+  "prompt_contracts": [
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/002.json",
+      "sha256": "c6ca3313e68fc93eba483e7ad56f5168adb2992f811b22420227fa49fc637bcd",
+      "controls": {
+        "all_concept_handoff_rules_present": true,
+        "prose_clarity_absent_from_planner": true
+      }
+    },
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/003.json",
+      "sha256": "a94d1b930092dd9d25e1219d55aeb08ee5b6fc6390f4f0390e1afdc1aa9e08d6",
+      "controls": {
+        "named_viewpoint_clarity_present": true,
+        "planner_directions_absent_from_writer": true
+      }
+    },
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/006.json",
+      "sha256": "89e3e4944d9dbe75019143f71d1dc1579fe6d34f683b9f36bbf0116eadd24d0d",
+      "controls": {
+        "named_viewpoint_clarity_present": true,
+        "planner_directions_absent_from_writer": true
+      }
+    },
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/009.json",
+      "sha256": "29e259faed9a8cecdce32a715c115976a679b9d77e70f32077c82afeac1054d6",
+      "controls": {
+        "named_viewpoint_clarity_present": true,
+        "planner_directions_absent_from_writer": true
+      }
+    },
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/012.json",
+      "sha256": "7a82e95f3ed4a0a1e997c42ef8e75ddc026b47ea3116a51d29e3e5894be24a23",
+      "controls": {
+        "named_viewpoint_clarity_present": true,
+        "planner_directions_absent_from_writer": true
+      }
+    },
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/015.json",
+      "sha256": "265118b2d8d62e35fd1daa65ee2d5b2a9c5b25a0420be0a35186363b5540a3fe",
+      "controls": {
+        "named_viewpoint_clarity_present": true,
+        "planner_directions_absent_from_writer": true
+      }
+    },
+    {
+      "path": "runs/scene-consequence-20260913/book/calls/018.json",
+      "sha256": "29e0ad170345353e23e6ba28d39dc7755c775eaec4d0272c0ace7eb00a1483bc",
+      "controls": {
+        "named_viewpoint_clarity_present": true,
+        "planner_directions_absent_from_writer": true
+      }
+    }
+  ]
+}
