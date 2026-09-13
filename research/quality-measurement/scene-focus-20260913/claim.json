@@ -1,8 +1,8 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "scene-focus-20260913",
-  "status": "registered",
-  "statement": "One first six-chapter opening will test delivery of selective scene treatment, character-grounded choices and a scoped opening offer, with preserved mechanical contracts. The bundled historical comparison cannot establish causal improvement or literary qualification.",
+  "status": "observed",
+  "statement": "The registered first six-chapter output and derived audit are retained. Actual requests carry the scoped scene directions, earlier prose and seed authority are preserved, and declared mechanical rules remain unchanged. Full reading locates consequential personal responses alongside continuing procedural pacing and repeated explanation; the failed-repair cost softens and the replacement Point arrives sooner. Partial numerical coverage remains. This bundled historical comparison does not establish causal improvement or literary qualification.",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,21 @@
       "kind": "registration",
       "path": "research/quality-measurement/scene-focus-20260913/registration.json",
       "sha256": "5908b107c751661cdaee21eb58994ec168b93e93e4c03b1384b31a8b2b477eb1"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/scene-focus-20260913/evidence.json",
+      "sha256": "c299fa85152e2775164464ae6e2f12503208b2911d042ad75f745a40f0f4830a"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/scene-focus-20260913/readout.json",
+      "sha256": "2718b0b8db8e94c226b40780d907d486af8b2ab05f76d8c3d83467f11e79c93f"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/scene-focus-20260913/REPORT.md",
+      "sha256": "f6cdf704112f617caecdf682cf7ac7529631a407f01ae57f4b914c1dff5252a1"
     }
   ]
 }

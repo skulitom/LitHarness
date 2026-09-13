@@ -1,0 +1,991 @@
+{
+  "schema": "litharness.growth-continuation.v1",
+  "status": "completed",
+  "fatal": null,
+  "manifest_sha256": "f3b73770b63521eec3a382c30d46c922d8199f089ae5d627370e9e7db1c33f94",
+  "progress_sha256": "6f29ea668a255704900e0fc8920c81dd73ca5b61512e82a6eb0c6d122615bd7f",
+  "calls": [
+    {
+      "path": "runs/scene-focus-20260913/book/calls/001.json",
+      "sha256": "0d36aaa228ca77243fb907af761ec9b4eeba8e138d18514ed9401db8d50ff6b1",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 3766,
+      "sessions": [
+        "01a09c86-865f-7a70-9683-139157559566"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/002.json",
+      "sha256": "28d68c7bb524f0c5eef625ee4898f6d94c46c638f148e040e5cce8791bc3221b",
+      "profile": "planner.outline.v3",
+      "status": "completed",
+      "native_tokens": 21866,
+      "sessions": [
+        "01a09c86-96af-7432-a60e-42e66d2bdacd"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "91a2253d6e3980cc194c4e9890b15939c4a8b4a2e0fad7f4fe6525b098043857"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/003.json",
+      "sha256": "4e22c6a0306aaf647a3aac3fa2dfd2f4a127724b15efeaa515d6fa496de1f9e1",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 12874,
+      "sessions": [
+        "01a09c89-715a-7673-84b4-942bc1e2b907"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "6f40fa68a852c9fc36709e2bd0ea9df434b278145cef9017dba0a68fbfde803e"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/004.json",
+      "sha256": "405df3d002cc4b3f7701562476748ab4c155deeb47a9e44e964e3d3f3b7498b8",
+      "profile": "mechanical",
+      "status": "completed",
+      "native_tokens": 7495,
+      "sessions": [
+        "01a09c8b-d1e0-73b2-9ab7-be5704f5383f"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "4a2b95253294677a7c0b08e26faaae5e222d9f3a684e70a6b78c2a075c3cf3ef"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/005.json",
+      "sha256": "d17d7455289e7b2c453e3253cd83dc7cc93e8774f8bad931da8fb93257015dfa",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 205653,
+      "sessions": [
+        "01a09c8c-0d7a-7fd1-9416-ec78aed0ac6c"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 7,
+        "world declare-batch": 2,
+        "world check": 1
+      },
+      "failed_commands": [],
+      "request_sha256": "b1096bb3a94a7bee34b91168b92ce283c440711280392d5a9adc389fdd1368e9"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/006.json",
+      "sha256": "d2dff23ac9fbb57302f7f3b5a944e0be142b0da0fea8c176e46821e241fa7c16",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 16677,
+      "sessions": [
+        "01a09c8d-73c9-73e0-8499-dfbe5e8d23e6"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "a33380626a4be2630393ff41408fa407230a75ecd1e33772d2d3e2172d53e7ed"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/007.json",
+      "sha256": "d2b2589c0e50c638871e0307d39cb7fbb570339f3cd5b7499425547d5c94570e",
+      "profile": "mechanical",
+      "status": "completed",
+      "native_tokens": 7446,
+      "sessions": [
+        "01a09c8f-6db2-7081-af7a-6fc02a297ebd"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "40190b67987a7b427c8aaa3e0bd032639b584f783683d821b0d415cb7f297a4e"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/008.json",
+      "sha256": "9b622ee247794736fad3ce79e694fca988ff3c7cba971f6f93fe20c9d4aef5d1",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 146865,
+      "sessions": [
+        "01a09c8f-b3fb-7d41-9393-eedfb4df958e"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {
+        "invalid tool request": 2,
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 9,
+        "world declare-batch": 2,
+        "world check": 1
+      },
+      "failed_commands": [
+        {
+          "call": 1,
+          "returncode": null,
+          "error_kind": "invalid_arguments"
+        },
+        {
+          "call": 2,
+          "returncode": null,
+          "error_kind": "invalid_arguments"
+        }
+      ],
+      "request_sha256": "80462935ac7369df1f6c48f919c9a6b41169a20646c2885f0d8dadbc383c5181"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/009.json",
+      "sha256": "26e7c367fb4d6d7c8c32e71e8e15e106a13467fc097528413a6285f1bbaaa1b3",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 20991,
+      "sessions": [
+        "01a09c91-2a6d-7f72-ac9c-c2b22ad9d7c7"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "34fe6f8493288452fb5da1b6405820310905a38104887d288151c579e8f79f8e"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/010.json",
+      "sha256": "7dfba22e64beca914a8c9513d6d9f590334013886817a470cb7f929038d6c9a0",
+      "profile": "mechanical",
+      "status": "completed",
+      "native_tokens": 8127,
+      "sessions": [
+        "01a09c93-60d7-7901-8cf1-ac86ffe59287"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "a395cda2102951a9ba8f3ba52a1423057c33fb477797f96e8dea6f5cbbdc9ace"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/011.json",
+      "sha256": "cbb2cdba5ccc95066b656be1f9bcc4a8797f67900c62abe0aa3fc13830e771ec",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 186050,
+      "sessions": [
+        "01a09c93-ba5d-7c43-8dfe-70a4f1f2988f"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 9,
+        "world declare-batch": 3,
+        "world check": 1
+      },
+      "failed_commands": [],
+      "request_sha256": "f0937dbb14a80429e9f6e8703bd9be1050bfc3f8a6363b88db723e30d40735c1"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/012.json",
+      "sha256": "a3141b2a3a19afdf263c8e9d4feb248ac8704271e6e5204f5d2de1b637017af8",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 26763,
+      "sessions": [
+        "01a09c95-ba54-7b70-8f5a-f3d5853231d6"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "8a3dd2a10f096f89e4c61a086cfe5f32c003bacf36ef3d257529427ea5348916"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/013.json",
+      "sha256": "b100cb63509d8ec75c5b23f9ce505ca30a03777ea4aeefc3b1bd0ede1a2bc1e1",
+      "profile": "mechanical",
+      "status": "completed",
+      "native_tokens": 7713,
+      "sessions": [
+        "01a09c97-c49f-7f93-82cf-6663ed97a09a"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "3bbf79f2ad6d645ba96f1401c31d2f24ce9d3aadd8342646f669d6e1451aef6b"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/014.json",
+      "sha256": "a35ea479a1b58cd941e072e376e7d57ed2d1238da36037c0517cd18604cee32b",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 210019,
+      "sessions": [
+        "01a09c98-05b1-7eb1-ba60-681c15821521"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 13,
+        "world declare-batch": 2,
+        "world check": 1
+      },
+      "failed_commands": [],
+      "request_sha256": "94fb4344ab6e11ca28fcb3bb46ca56317f7aee160d4ab027667f7f9f236306fb"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/015.json",
+      "sha256": "f4fa4c2dfb094b19c51ffe04de07099aeb75a0462eb748a22cefab408ef94ca8",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 32203,
+      "sessions": [
+        "01a09c99-d705-7a60-ab75-0c24de451175"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "54bac7096812e03a4de6a50225f69529cf1b43e753f2d6f9f829a56cf76326cd"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/016.json",
+      "sha256": "a994a467283152c90fd067c001c3d663935dbc52f3925d422e4411bef432a8e8",
+      "profile": "mechanical",
+      "status": "completed",
+      "native_tokens": 7904,
+      "sessions": [
+        "01a09c9b-9ef1-71a2-ae89-6e1c4030e62e"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "5859b622f8b77d1bd39d0ab8c3e0b98826d12b7c15e52b953a8dc0c5b5c55fa2"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/017.json",
+      "sha256": "80971c6d01bb01659c2bb5032449f47dfd0bf0b04c20d8d5b104994fcb56d6e0",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 205688,
+      "sessions": [
+        "01a09c9b-eb6f-78b2-9a46-2c32f1572bf5"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 8,
+        "world declare-batch": 2,
+        "world check": 1
+      },
+      "failed_commands": [],
+      "request_sha256": "ccd40d8d1d4e1f0b81bd5e015b981abc69976e44483ed59d7ae4d9e48949a453"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/018.json",
+      "sha256": "f6534c5ee7daa07809c62890a2beb0de6f119dd2c8a2e784be9ea53dc3d42db1",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 37401,
+      "sessions": [
+        "01a09c9d-9d3f-76a3-ad6e-44ae83350831"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "5d7f9f0afa175721b777af8d9d162f57915b82053869e71bd28cdc1ace7552a9"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/019.json",
+      "sha256": "5423c4b1a57a692eb3c49e63a7fcbd97df458c848c26508b5d67dedae93dcf4f",
+      "profile": "mechanical",
+      "status": "completed",
+      "native_tokens": 7991,
+      "sessions": [
+        "01a09c9f-114b-7d81-9247-9a227728bb1c"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "5224fc747a194958923a736d6a74ac0fdd48f0afe5598f068335e31270309b52"
+    },
+    {
+      "path": "runs/scene-focus-20260913/book/calls/020.json",
+      "sha256": "a5c7cd62bc27bbeaf11f4fd69a7f1c425b21b6ead3e0230ad1defbdfac714075",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 235043,
+      "sessions": [
+        "01a09c9f-61fb-7290-a160-7092c2be6fde"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 12,
+        "world declare-batch": 3,
+        "world check": 1
+      },
+      "failed_commands": [],
+      "request_sha256": "601c012f0cc84a7752a91e2f0f9010e290672f3fa14c9f1b1d9c13987e7bf2c8"
+    }
+  ],
+  "native_tokens": 1408535,
+  "usage_matches_progress": true,
+  "session_count": 20,
+  "distinct_sessions": 20,
+  "profiles": {
+    "default": {
+      "calls": 7,
+      "tokens": 150675
+    },
+    "planner.outline.v3": {
+      "calls": 1,
+      "tokens": 21866
+    },
+    "mechanical": {
+      "calls": 6,
+      "tokens": 46676
+    },
+    "architect.grow.v5": {
+      "calls": 6,
+      "tokens": 1189318
+    }
+  },
+  "checkpoints": [
+    {
+      "label": "seeded",
+      "complete": true,
+      "database_sha256": "b90e6371b15586601c099c060c96357c176a1ec93a0f041e032e58b766a71398",
+      "database_unchanged": true,
+      "world_sha256": "eabf7e56f4bab1fae32518de127cafa1b4205d30855ee8ec7965be1830093dcc",
+      "check_sha256": "be7887223be10ea10e36bc39c3181b959fef2053703ba1c92d9c638eef57ff63",
+      "verify_sha256": "c57a1a2c835cf39f3c90464d02eb0d60cb3436075702be8550932fc6490e4d17",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {},
+      "earlier_chapters_preserved": true,
+      "sheet": null,
+      "new_wants": []
+    },
+    {
+      "label": "checkpoint-1",
+      "complete": true,
+      "database_sha256": "cf1bb14b52385b20371084c12cf25ec48af428009d6ba26aee083e2aad6e9b59",
+      "database_unchanged": true,
+      "world_sha256": "2290474f0db66ee145d8aa3a2157d7a6c07f2bcb281e85192bf1f9fd20d976e8",
+      "check_sha256": "be7887223be10ea10e36bc39c3181b959fef2053703ba1c92d9c638eef57ff63",
+      "verify_sha256": "97929588583dad0a135d24d0f25e4466e1d7098bde3432a856dc2b6b27cfe3e5",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {
+        "Chapter1.txt": "888302db375c7991b69f9b1734e8efa8a6bc1c51d10b677312e9dfd8e87d5eab"
+      },
+      "earlier_chapters_preserved": true,
+      "sheet": null,
+      "new_wants": [
+        {
+          "record_id": "rec-wbfc999dc3bff8ec7612dd5e1",
+          "subject": "wren",
+          "order_key": "s000001",
+          "value_sha256": "0ff0b7254ee654d56cdbf8959df57f16ad7bf0727aff3eff66e37af23f16d5a0"
+        },
+        {
+          "record_id": "rec-wf9d70c00aea2aa639b0b391f",
+          "subject": "foreman",
+          "order_key": "s000001",
+          "value_sha256": "7bbb55b8805e4970b449d0f7bfdc2e399863ac55f26e8ba82f46ef8ded2409d8"
+        }
+      ]
+    },
+    {
+      "label": "checkpoint-2",
+      "complete": true,
+      "database_sha256": "039f67c2fc7f2e2b758cf34e3d8cecd10c23e2a3fd2cb4a4bde7f62ca879e8e3",
+      "database_unchanged": true,
+      "world_sha256": "7a54835d91826e8bd29ae8dde9dc79e0c157c068a0b586ae0d21715ed8990121",
+      "check_sha256": "6b4d322d97b2137d7a1697918537b9689ccc347a9ded18a03e2da0cdfdfc5a99",
+      "verify_sha256": "8c5edb3a90784d07facf365a353e090d7637bdc8ce80f700cc33225e6ae7354b",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {
+        "Chapter1.txt": "888302db375c7991b69f9b1734e8efa8a6bc1c51d10b677312e9dfd8e87d5eab",
+        "Chapter2.txt": "0676a47618f6e0e635e8e3d48dbfab8ea7d185f5c0d108d6d6526c5506c5c2ab"
+      },
+      "earlier_chapters_preserved": true,
+      "sheet": null,
+      "new_wants": [
+        {
+          "record_id": "rec-wbfc999dc3bff8ec7612dd5e1",
+          "subject": "wren",
+          "order_key": "s000001",
+          "value_sha256": "0ff0b7254ee654d56cdbf8959df57f16ad7bf0727aff3eff66e37af23f16d5a0"
+        },
+        {
+          "record_id": "rec-wf9d70c00aea2aa639b0b391f",
+          "subject": "foreman",
+          "order_key": "s000001",
+          "value_sha256": "7bbb55b8805e4970b449d0f7bfdc2e399863ac55f26e8ba82f46ef8ded2409d8"
+        },
+        {
+          "record_id": "rec-w77eff55a3f3e319065be2b3d",
+          "subject": "watcher",
+          "order_key": "s000002",
+          "value_sha256": "66059c359ff3601f3804705012455b4b96ba9f6adf4d408fb924d69500473221"
+        },
+        {
+          "record_id": "rec-w966c55b319949179a288227e",
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "2d89def5ae062db0555f335b32b8cc09550293e1f78280b27204cbee67f242fe"
+        }
+      ]
+    },
+    {
+      "label": "checkpoint-3",
+      "complete": true,
+      "database_sha256": "dcd32a848e017a28a3fab61d6b2d7b1e90034637b5fbebf82c24b6d93b13b72c",
+      "database_unchanged": true,
+      "world_sha256": "e63fa5303e8360233556c19a8858337da8f0a57561accc658871669db211a8a6",
+      "check_sha256": "0fbec179d76f3bdcdd6abd10c390a35fb59ae1091603f22a177dc11b9dcdba4a",
+      "verify_sha256": "18d55d297fbc0bd591a6364a8e189dedc8eb54b5475062b9ee5d15edf6002437",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {
+        "Chapter1.txt": "888302db375c7991b69f9b1734e8efa8a6bc1c51d10b677312e9dfd8e87d5eab",
+        "Chapter2.txt": "0676a47618f6e0e635e8e3d48dbfab8ea7d185f5c0d108d6d6526c5506c5c2ab",
+        "Chapter3.txt": "668783217b09379e90e1fff905cf88738b5313c610a763ddb6ad24895c854e2a"
+      },
+      "earlier_chapters_preserved": true,
+      "sheet": null,
+      "new_wants": [
+        {
+          "record_id": "rec-wbfc999dc3bff8ec7612dd5e1",
+          "subject": "wren",
+          "order_key": "s000001",
+          "value_sha256": "0ff0b7254ee654d56cdbf8959df57f16ad7bf0727aff3eff66e37af23f16d5a0"
+        },
+        {
+          "record_id": "rec-wf9d70c00aea2aa639b0b391f",
+          "subject": "foreman",
+          "order_key": "s000001",
+          "value_sha256": "7bbb55b8805e4970b449d0f7bfdc2e399863ac55f26e8ba82f46ef8ded2409d8"
+        },
+        {
+          "record_id": "rec-w77eff55a3f3e319065be2b3d",
+          "subject": "watcher",
+          "order_key": "s000002",
+          "value_sha256": "66059c359ff3601f3804705012455b4b96ba9f6adf4d408fb924d69500473221"
+        },
+        {
+          "record_id": "rec-w966c55b319949179a288227e",
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "2d89def5ae062db0555f335b32b8cc09550293e1f78280b27204cbee67f242fe"
+        },
+        {
+          "record_id": "rec-w2a2119731ba14c8fa0c9675f",
+          "subject": "watcher",
+          "order_key": "s000003",
+          "value_sha256": "02f3a76ec9a5af13387f57b12aded15397d3614f0a9ee92ea51fe31bb548251f"
+        },
+        {
+          "record_id": "rec-w4b387e225bb8e1af3f3bcd1c",
+          "subject": "mara",
+          "order_key": "s000003",
+          "value_sha256": "228a50b4f6a2846f2614edaecca2194bb73910c91b5c49e4f5941181c67efcff"
+        },
+        {
+          "record_id": "rec-wbb10a9f3fe5f83f0490f2eb3",
+          "subject": "wren",
+          "order_key": "s000003",
+          "value_sha256": "feccd71af29a2a4e70a79489970e3cde8dedc86fc7f26c2a11ec872e507996b1"
+        },
+        {
+          "record_id": "rec-wd22b266a52dd1f90dca8930c",
+          "subject": "tavit",
+          "order_key": "s000003",
+          "value_sha256": "b9b6f01ac8204a77d5d90aae07f59a5ae9c76e1d37800229429995dcd4e8c5b9"
+        },
+        {
+          "record_id": "rec-wdd843dcda8a18d285c7c9526",
+          "subject": "pell",
+          "order_key": "s000003",
+          "value_sha256": "4b91f11b62e0f2a11fadcd45c42bd33da10b7fab0086a9800338e848127f1686"
+        }
+      ]
+    },
+    {
+      "label": "checkpoint-4",
+      "complete": true,
+      "database_sha256": "b463555edda726cd59d8e212f84f7a681b39862a632ce5bdb6b4a2e28a91f019",
+      "database_unchanged": true,
+      "world_sha256": "46c0cad3492c39106304f685a9e4885e0e4065fc29368fbb48536876519ab829",
+      "check_sha256": "0fbec179d76f3bdcdd6abd10c390a35fb59ae1091603f22a177dc11b9dcdba4a",
+      "verify_sha256": "5408886c0fea6d0fde6c7d0bf3f8f4907d7c490e42e67ec89e100b5bfb1885d5",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {
+        "Chapter1.txt": "888302db375c7991b69f9b1734e8efa8a6bc1c51d10b677312e9dfd8e87d5eab",
+        "Chapter2.txt": "0676a47618f6e0e635e8e3d48dbfab8ea7d185f5c0d108d6d6526c5506c5c2ab",
+        "Chapter3.txt": "668783217b09379e90e1fff905cf88738b5313c610a763ddb6ad24895c854e2a",
+        "Chapter4.txt": "60ee38062251ed004af901b5b2bc03d388c7382ea782b775b2fb62c4c172731c"
+      },
+      "earlier_chapters_preserved": true,
+      "sheet": {
+        "system": "engine",
+        "system_digest": "sys-f848654f1fa93f30e6eebefe",
+        "rank": "rank_1",
+        "default_maximum": 1,
+        "holdings": {
+          "articulated": 0,
+          "duration": 0,
+          "inspection": 0,
+          "length": 0,
+          "load": 1,
+          "loadstitch": 1,
+          "point": 0,
+          "split": 0
+        },
+        "growth_limits": {
+          "articulated": 1,
+          "duration": "open",
+          "inspection": "open",
+          "length": "open",
+          "load": "open",
+          "loadstitch": 1,
+          "point": null,
+          "split": 1
+        }
+      },
+      "new_wants": [
+        {
+          "record_id": "rec-wbfc999dc3bff8ec7612dd5e1",
+          "subject": "wren",
+          "order_key": "s000001",
+          "value_sha256": "0ff0b7254ee654d56cdbf8959df57f16ad7bf0727aff3eff66e37af23f16d5a0"
+        },
+        {
+          "record_id": "rec-wf9d70c00aea2aa639b0b391f",
+          "subject": "foreman",
+          "order_key": "s000001",
+          "value_sha256": "7bbb55b8805e4970b449d0f7bfdc2e399863ac55f26e8ba82f46ef8ded2409d8"
+        },
+        {
+          "record_id": "rec-w77eff55a3f3e319065be2b3d",
+          "subject": "watcher",
+          "order_key": "s000002",
+          "value_sha256": "66059c359ff3601f3804705012455b4b96ba9f6adf4d408fb924d69500473221"
+        },
+        {
+          "record_id": "rec-w966c55b319949179a288227e",
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "2d89def5ae062db0555f335b32b8cc09550293e1f78280b27204cbee67f242fe"
+        },
+        {
+          "record_id": "rec-w2a2119731ba14c8fa0c9675f",
+          "subject": "watcher",
+          "order_key": "s000003",
+          "value_sha256": "02f3a76ec9a5af13387f57b12aded15397d3614f0a9ee92ea51fe31bb548251f"
+        },
+        {
+          "record_id": "rec-w4b387e225bb8e1af3f3bcd1c",
+          "subject": "mara",
+          "order_key": "s000003",
+          "value_sha256": "228a50b4f6a2846f2614edaecca2194bb73910c91b5c49e4f5941181c67efcff"
+        },
+        {
+          "record_id": "rec-wbb10a9f3fe5f83f0490f2eb3",
+          "subject": "wren",
+          "order_key": "s000003",
+          "value_sha256": "feccd71af29a2a4e70a79489970e3cde8dedc86fc7f26c2a11ec872e507996b1"
+        },
+        {
+          "record_id": "rec-wd22b266a52dd1f90dca8930c",
+          "subject": "tavit",
+          "order_key": "s000003",
+          "value_sha256": "b9b6f01ac8204a77d5d90aae07f59a5ae9c76e1d37800229429995dcd4e8c5b9"
+        },
+        {
+          "record_id": "rec-wdd843dcda8a18d285c7c9526",
+          "subject": "pell",
+          "order_key": "s000003",
+          "value_sha256": "4b91f11b62e0f2a11fadcd45c42bd33da10b7fab0086a9800338e848127f1686"
+        },
+        {
+          "record_id": "rec-w01a00bf2911b195b45e00737",
+          "subject": "watcher",
+          "order_key": "s000004",
+          "value_sha256": "674e2257b40c10fcd04da9c47ff1edb453b0435e1de5d68ddf8eac77e92aa496"
+        },
+        {
+          "record_id": "rec-w1e008a9371326e0d65ada1e6",
+          "subject": "wren",
+          "order_key": "s000004",
+          "value_sha256": "30179f01e067a6edf7d6e1494d6f9904cddc11ef5204b5799d89c88522a13cba"
+        },
+        {
+          "record_id": "rec-w81808698d5ce69904667e087",
+          "subject": "tavit",
+          "order_key": "s000004",
+          "value_sha256": "5bb80a0c78620d7d3fa968a44aa9c1d6ce605145b7c0dcb99fc2a128b55c6ca9"
+        }
+      ]
+    },
+    {
+      "label": "checkpoint-5",
+      "complete": true,
+      "database_sha256": "f760553076603272cb7185c2d8bcd3cffdabc920366c696abd3a5010f4af08a2",
+      "database_unchanged": true,
+      "world_sha256": "46bfedd77a28a7114e80fe789d9cdf6ecec4c6dd84cef0e06fee526004a30242",
+      "check_sha256": "b2c88a5063b6a31e3585319f1736939c007f3ee5d4dff9e12394852a6bd4d644",
+      "verify_sha256": "6912b7741ba9b415d379769ca725dc96054d96ebe52be63da8197cd2569e4433",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {
+        "Chapter1.txt": "888302db375c7991b69f9b1734e8efa8a6bc1c51d10b677312e9dfd8e87d5eab",
+        "Chapter2.txt": "0676a47618f6e0e635e8e3d48dbfab8ea7d185f5c0d108d6d6526c5506c5c2ab",
+        "Chapter3.txt": "668783217b09379e90e1fff905cf88738b5313c610a763ddb6ad24895c854e2a",
+        "Chapter4.txt": "60ee38062251ed004af901b5b2bc03d388c7382ea782b775b2fb62c4c172731c",
+        "Chapter5.txt": "41cc0154a2f1f42fc4936e6e64c7891d88a017d36d2cbf01b8b1849de4c3d4a2"
+      },
+      "earlier_chapters_preserved": true,
+      "sheet": {
+        "system": "engine",
+        "system_digest": "sys-a81fd9c8a9ee7176c3551805",
+        "rank": "rank_2",
+        "default_maximum": 1,
+        "holdings": {
+          "articulated": 0,
+          "duration": 1,
+          "inspection": 0,
+          "length": 0,
+          "load": 1,
+          "loadstitch": 1,
+          "point": 0,
+          "split": 0
+        },
+        "growth_limits": {
+          "articulated": 1,
+          "duration": "open",
+          "inspection": "open",
+          "length": "open",
+          "load": "open",
+          "loadstitch": 1,
+          "point": null,
+          "split": 1
+        }
+      },
+      "new_wants": [
+        {
+          "record_id": "rec-wbfc999dc3bff8ec7612dd5e1",
+          "subject": "wren",
+          "order_key": "s000001",
+          "value_sha256": "0ff0b7254ee654d56cdbf8959df57f16ad7bf0727aff3eff66e37af23f16d5a0"
+        },
+        {
+          "record_id": "rec-wf9d70c00aea2aa639b0b391f",
+          "subject": "foreman",
+          "order_key": "s000001",
+          "value_sha256": "7bbb55b8805e4970b449d0f7bfdc2e399863ac55f26e8ba82f46ef8ded2409d8"
+        },
+        {
+          "record_id": "rec-w77eff55a3f3e319065be2b3d",
+          "subject": "watcher",
+          "order_key": "s000002",
+          "value_sha256": "66059c359ff3601f3804705012455b4b96ba9f6adf4d408fb924d69500473221"
+        },
+        {
+          "record_id": "rec-w966c55b319949179a288227e",
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "2d89def5ae062db0555f335b32b8cc09550293e1f78280b27204cbee67f242fe"
+        },
+        {
+          "record_id": "rec-w2a2119731ba14c8fa0c9675f",
+          "subject": "watcher",
+          "order_key": "s000003",
+          "value_sha256": "02f3a76ec9a5af13387f57b12aded15397d3614f0a9ee92ea51fe31bb548251f"
+        },
+        {
+          "record_id": "rec-w4b387e225bb8e1af3f3bcd1c",
+          "subject": "mara",
+          "order_key": "s000003",
+          "value_sha256": "228a50b4f6a2846f2614edaecca2194bb73910c91b5c49e4f5941181c67efcff"
+        },
+        {
+          "record_id": "rec-wbb10a9f3fe5f83f0490f2eb3",
+          "subject": "wren",
+          "order_key": "s000003",
+          "value_sha256": "feccd71af29a2a4e70a79489970e3cde8dedc86fc7f26c2a11ec872e507996b1"
+        },
+        {
+          "record_id": "rec-wd22b266a52dd1f90dca8930c",
+          "subject": "tavit",
+          "order_key": "s000003",
+          "value_sha256": "b9b6f01ac8204a77d5d90aae07f59a5ae9c76e1d37800229429995dcd4e8c5b9"
+        },
+        {
+          "record_id": "rec-wdd843dcda8a18d285c7c9526",
+          "subject": "pell",
+          "order_key": "s000003",
+          "value_sha256": "4b91f11b62e0f2a11fadcd45c42bd33da10b7fab0086a9800338e848127f1686"
+        },
+        {
+          "record_id": "rec-w01a00bf2911b195b45e00737",
+          "subject": "watcher",
+          "order_key": "s000004",
+          "value_sha256": "674e2257b40c10fcd04da9c47ff1edb453b0435e1de5d68ddf8eac77e92aa496"
+        },
+        {
+          "record_id": "rec-w1e008a9371326e0d65ada1e6",
+          "subject": "wren",
+          "order_key": "s000004",
+          "value_sha256": "30179f01e067a6edf7d6e1494d6f9904cddc11ef5204b5799d89c88522a13cba"
+        },
+        {
+          "record_id": "rec-w81808698d5ce69904667e087",
+          "subject": "tavit",
+          "order_key": "s000004",
+          "value_sha256": "5bb80a0c78620d7d3fa968a44aa9c1d6ce605145b7c0dcb99fc2a128b55c6ca9"
+        },
+        {
+          "record_id": "rec-wdae5c1778555f7288a16a08b",
+          "subject": "wren",
+          "order_key": "s000005",
+          "value_sha256": "7455f071edc2a625c43537642deec213a8caf97a5bcc42e5242a3f613068c7c1"
+        }
+      ],
+      "transition": {
+        "same_system": false,
+        "rank_steps": 1,
+        "paid_capability_increases": {
+          "duration": 1,
+          "length": 0,
+          "load": 0
+        },
+        "stocks": [
+          {
+            "stock": "point",
+            "before": 0,
+            "after": 0,
+            "rank_grant": 1,
+            "purchase_cost": 1,
+            "balanced_under_seed_model": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "checkpoint-6",
+      "complete": true,
+      "database_sha256": "1cc57f8112f91b5f8b039cc2789ea582d3d9c6b536adc8baf3f3f5b4cad3e7c4",
+      "database_unchanged": true,
+      "world_sha256": "06331ba1ba511d00f40ac7f64e97cb679fe53b11679f1a500a35b284be68d2c1",
+      "check_sha256": "b2c88a5063b6a31e3585319f1736939c007f3ee5d4dff9e12394852a6bd4d644",
+      "verify_sha256": "5c69c06c0b4d880e93523d89e52a0e366ab34e21f0b8a1c8c0a9daa6e7df82c2",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {
+        "Chapter1.txt": "888302db375c7991b69f9b1734e8efa8a6bc1c51d10b677312e9dfd8e87d5eab",
+        "Chapter2.txt": "0676a47618f6e0e635e8e3d48dbfab8ea7d185f5c0d108d6d6526c5506c5c2ab",
+        "Chapter3.txt": "668783217b09379e90e1fff905cf88738b5313c610a763ddb6ad24895c854e2a",
+        "Chapter4.txt": "60ee38062251ed004af901b5b2bc03d388c7382ea782b775b2fb62c4c172731c",
+        "Chapter5.txt": "41cc0154a2f1f42fc4936e6e64c7891d88a017d36d2cbf01b8b1849de4c3d4a2",
+        "Chapter6.txt": "e0aae5bfddf578f8c8bc371280621a844c5f395d408ebf56f53426a00e00e466"
+      },
+      "earlier_chapters_preserved": true,
+      "sheet": {
+        "system": "engine",
+        "system_digest": "sys-a81fd9c8a9ee7176c3551805",
+        "rank": "rank_2",
+        "default_maximum": 1,
+        "holdings": {
+          "articulated": 0,
+          "duration": 1,
+          "inspection": 0,
+          "length": 0,
+          "load": 1,
+          "loadstitch": 1,
+          "point": 0,
+          "split": 0
+        },
+        "growth_limits": {
+          "articulated": 1,
+          "duration": "open",
+          "inspection": "open",
+          "length": "open",
+          "load": "open",
+          "loadstitch": 1,
+          "point": null,
+          "split": 1
+        }
+      },
+      "new_wants": [
+        {
+          "record_id": "rec-wbfc999dc3bff8ec7612dd5e1",
+          "subject": "wren",
+          "order_key": "s000001",
+          "value_sha256": "0ff0b7254ee654d56cdbf8959df57f16ad7bf0727aff3eff66e37af23f16d5a0"
+        },
+        {
+          "record_id": "rec-wf9d70c00aea2aa639b0b391f",
+          "subject": "foreman",
+          "order_key": "s000001",
+          "value_sha256": "7bbb55b8805e4970b449d0f7bfdc2e399863ac55f26e8ba82f46ef8ded2409d8"
+        },
+        {
+          "record_id": "rec-w77eff55a3f3e319065be2b3d",
+          "subject": "watcher",
+          "order_key": "s000002",
+          "value_sha256": "66059c359ff3601f3804705012455b4b96ba9f6adf4d408fb924d69500473221"
+        },
+        {
+          "record_id": "rec-w966c55b319949179a288227e",
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "2d89def5ae062db0555f335b32b8cc09550293e1f78280b27204cbee67f242fe"
+        },
+        {
+          "record_id": "rec-w2a2119731ba14c8fa0c9675f",
+          "subject": "watcher",
+          "order_key": "s000003",
+          "value_sha256": "02f3a76ec9a5af13387f57b12aded15397d3614f0a9ee92ea51fe31bb548251f"
+        },
+        {
+          "record_id": "rec-w4b387e225bb8e1af3f3bcd1c",
+          "subject": "mara",
+          "order_key": "s000003",
+          "value_sha256": "228a50b4f6a2846f2614edaecca2194bb73910c91b5c49e4f5941181c67efcff"
+        },
+        {
+          "record_id": "rec-wbb10a9f3fe5f83f0490f2eb3",
+          "subject": "wren",
+          "order_key": "s000003",
+          "value_sha256": "feccd71af29a2a4e70a79489970e3cde8dedc86fc7f26c2a11ec872e507996b1"
+        },
+        {
+          "record_id": "rec-wd22b266a52dd1f90dca8930c",
+          "subject": "tavit",
+          "order_key": "s000003",
+          "value_sha256": "b9b6f01ac8204a77d5d90aae07f59a5ae9c76e1d37800229429995dcd4e8c5b9"
+        },
+        {
+          "record_id": "rec-wdd843dcda8a18d285c7c9526",
+          "subject": "pell",
+          "order_key": "s000003",
+          "value_sha256": "4b91f11b62e0f2a11fadcd45c42bd33da10b7fab0086a9800338e848127f1686"
+        },
+        {
+          "record_id": "rec-w01a00bf2911b195b45e00737",
+          "subject": "watcher",
+          "order_key": "s000004",
+          "value_sha256": "674e2257b40c10fcd04da9c47ff1edb453b0435e1de5d68ddf8eac77e92aa496"
+        },
+        {
+          "record_id": "rec-w1e008a9371326e0d65ada1e6",
+          "subject": "wren",
+          "order_key": "s000004",
+          "value_sha256": "30179f01e067a6edf7d6e1494d6f9904cddc11ef5204b5799d89c88522a13cba"
+        },
+        {
+          "record_id": "rec-w81808698d5ce69904667e087",
+          "subject": "tavit",
+          "order_key": "s000004",
+          "value_sha256": "5bb80a0c78620d7d3fa968a44aa9c1d6ce605145b7c0dcb99fc2a128b55c6ca9"
+        },
+        {
+          "record_id": "rec-wdae5c1778555f7288a16a08b",
+          "subject": "wren",
+          "order_key": "s000005",
+          "value_sha256": "7455f071edc2a625c43537642deec213a8caf97a5bcc42e5242a3f613068c7c1"
+        },
+        {
+          "record_id": "rec-wbe9c5ea784b65cde83d95b5d",
+          "subject": "wren",
+          "order_key": "s000006",
+          "value_sha256": "8d9eb214674b393cf0582da7ad72a630d36945d336a62f03cbd89a8cb17d2f7d"
+        }
+      ],
+      "transition": {
+        "same_system": true,
+        "rank_steps": 0,
+        "paid_capability_increases": {
+          "duration": 0,
+          "length": 0,
+          "load": 0
+        },
+        "stocks": [
+          {
+            "stock": "point",
+            "before": 0,
+            "after": 0,
+            "rank_grant": 0,
+            "purchase_cost": 0,
+            "balanced_under_seed_model": true
+          }
+        ]
+      }
+    }
+  ],
+  "protected_inputs_unchanged": true
+}
