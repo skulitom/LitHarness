@@ -1,0 +1,1071 @@
+{
+  "schema": "litharness.distinctive-continuation-evidence.v1",
+  "registration_sha256": "a52c6375c5d55db95046e663fcd51cd05f29189d417339360432d917991dfc12",
+  "progress_sha256": "02a8c3d1cf733ebaed539a9ec6aadae6883c23447c0fd97689dc771e31479093",
+  "audit_sha256": "b5927c16b77010cf12c7a37f089afadd04bfdf0b8466b0293e8be63138f7051d",
+  "controls": {
+    "manifest": true,
+    "source": true,
+    "parent": true,
+    "runner": true,
+    "accounted_attempts": true,
+    "known_usage": true,
+    "accounted_tokens": true,
+    "fresh_sessions": true,
+    "native_containment": true,
+    "checkpoint-1_preserved": true,
+    "checkpoint-1_attributed": true,
+    "checkpoint-2_preserved": true,
+    "checkpoint-2_attributed": true,
+    "checkpoint-3_preserved": true,
+    "checkpoint-3_attributed": true,
+    "final_preserved": true,
+    "final_attributed": true,
+    "current_exports_match_checkpoint": true,
+    "three_checkpoint_sequence": true
+  },
+  "all_controls_pass": true,
+  "calls": [
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/001.json",
+      "sha256": "29d02aed3cf9c138c227f7d18b724c3375298113a85c320810bbacc92f7fba1a",
+      "status": "completed",
+      "profile": "default",
+      "tokens": 3768,
+      "returned_usage": {
+        "input_tokens": 3763,
+        "output_tokens": 5,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0
+      },
+      "native_session_ids": [
+        "01a09835-a0c4-79b3-8795-a87295aac10e"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/002.json",
+      "sha256": "37ac3d03edaf26132ee9b1f3b156db75c17e2d37b20f37f1eacf5c535cd61270",
+      "status": "completed",
+      "profile": "writer.concept.discovery.v5",
+      "tokens": 9247,
+      "returned_usage": {
+        "input_tokens": 7455,
+        "output_tokens": 1668,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 124
+      },
+      "native_session_ids": [
+        "01a09835-af73-7261-ab15-414995975c6f"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/003.json",
+      "sha256": "7689c1feb6088cbace7a47b87ec655325149d3975da2e5d34d65763c02b3b0d0",
+      "status": "completed",
+      "profile": "writer.overview.concept.v2",
+      "tokens": 6911,
+      "returned_usage": {
+        "input_tokens": 6584,
+        "output_tokens": 136,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 191
+      },
+      "native_session_ids": [
+        "01a09836-e52b-7c70-9abd-40a091b7a6f4"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/004.json",
+      "sha256": "ecd947e4731b36e5e2d5d216b167126498307c2791c7b51a281a9f42fb14cc18",
+      "status": "completed",
+      "profile": "reader.appetite.v0",
+      "tokens": 4601,
+      "returned_usage": {
+        "input_tokens": 4387,
+        "output_tokens": 214,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0
+      },
+      "native_session_ids": [
+        "01a09837-323c-7143-ae9d-94176ce2a30b"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/005.json",
+      "sha256": "f900294a5075a6d911773958323b0349188424209f98d17e5aabaf3a60e2eb56",
+      "status": "completed",
+      "profile": "reader.appetite.v0",
+      "tokens": 4584,
+      "returned_usage": {
+        "input_tokens": 4378,
+        "output_tokens": 206,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0
+      },
+      "native_session_ids": [
+        "01a09837-713d-79d0-9e2f-638a6f8c990c"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/006.json",
+      "sha256": "756454ae3f308d512a8a2b9f26114ce0854e75bd1ed58aee65f306d6061286e1",
+      "status": "completed",
+      "profile": "reader.appetite.v0",
+      "tokens": 4596,
+      "returned_usage": {
+        "input_tokens": 4392,
+        "output_tokens": 204,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0
+      },
+      "native_session_ids": [
+        "01a09837-b267-7ec2-adf4-f8a4cd84caf4"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/007.json",
+      "sha256": "fe24df87615b14a6a4e76a0e6556c985c80d1422db4731d7eb0b943359e39652",
+      "status": "completed",
+      "profile": "reader.appetite.v0",
+      "tokens": 4628,
+      "returned_usage": {
+        "input_tokens": 4398,
+        "output_tokens": 230,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0
+      },
+      "native_session_ids": [
+        "01a09837-e0f2-7973-9b92-f68d09f0896f"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/008.json",
+      "sha256": "f805a23b7d5dd43ba379f8a32cc061c3067fee63c0d00dba718f611bb86a35c3",
+      "status": "completed",
+      "profile": "writer.title.v0",
+      "tokens": 4305,
+      "returned_usage": {
+        "input_tokens": 3982,
+        "output_tokens": 10,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 313
+      },
+      "native_session_ids": [
+        "01a09838-235d-7cf1-97da-99a384b8e69e"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/009.json",
+      "sha256": "8a7b2fc8c7257b68de68409b720ecb17382422b4909b8c519334e469f0fe14ce",
+      "status": "completed",
+      "profile": "reader.start.v0",
+      "tokens": 4243,
+      "returned_usage": {
+        "input_tokens": 4198,
+        "output_tokens": 45,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0
+      },
+      "native_session_ids": [
+        "01a09838-734a-72b1-8404-6ed3f4ecc766"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/010.json",
+      "sha256": "c59b97208f978dfeb000d1a7f60b72e91bde2de0710f878bc8e5b6ea572f39fd",
+      "status": "completed",
+      "profile": "reader.start.v0",
+      "tokens": 4244,
+      "returned_usage": {
+        "input_tokens": 4191,
+        "output_tokens": 53,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0
+      },
+      "native_session_ids": [
+        "01a09838-89d8-7431-9bb9-818af368baa2"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/011.json",
+      "sha256": "495bded1673e7f0264025c8bcecd2a9c328b10667da0c41aff2505e64ba6b70e",
+      "status": "completed",
+      "profile": "reader.start.v0",
+      "tokens": 4286,
+      "returned_usage": {
+        "input_tokens": 4209,
+        "output_tokens": 48,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 29
+      },
+      "native_session_ids": [
+        "01a09838-a343-7eb3-bc3a-f274ff22fda2"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/012.json",
+      "sha256": "4e4d779a4fa960152f5325212a8c1442bfa8493e32680a5ca66849c5ffcad0bf",
+      "status": "completed",
+      "profile": "reader.start.v0",
+      "tokens": 4260,
+      "returned_usage": {
+        "input_tokens": 4209,
+        "output_tokens": 51,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0
+      },
+      "native_session_ids": [
+        "01a09838-bcba-78c0-a50a-5ea0dd864cb0"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/013.json",
+      "sha256": "1d3e4180ecf3bb792525a89d4e75bd74eae920e2643060489f0f32aa520bdcd3",
+      "status": "completed",
+      "profile": "architect.seed.v4",
+      "tokens": 419867,
+      "returned_usage": {
+        "input_tokens": 92379,
+        "output_tokens": 8540,
+        "cache_read_tokens": 317568,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 1380
+      },
+      "native_session_ids": [
+        "01a09838-d519-78f0-9803-dd769b870ce7"
+      ],
+      "mode": "bridge",
+      "tool_commands": {
+        "": 2,
+        "world vocabulary": 1,
+        "world summary": 2,
+        "world --help": 1,
+        "world declare-batch": 12,
+        "world check": 5,
+        "world ladders": 2,
+        "world abilities": 2,
+        "world cast": 1,
+        "world threads": 1,
+        "world presence": 1
+      },
+      "tool_stdout_bytes": {
+        "": 0,
+        "world vocabulary": 14393,
+        "world summary": 1997,
+        "world --help": 0,
+        "world declare-batch": 40456,
+        "world check": 5009,
+        "world ladders": 1401,
+        "world abilities": 466,
+        "world cast": 1190,
+        "world threads": 19616,
+        "world presence": 1069
+      },
+      "native_tools": [
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        }
+      ]
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/014.json",
+      "sha256": "7c6a99c1204e575e5ab5a5f42024eb230222ab70f4b29503416b7ec7c6bb8266",
+      "status": "completed",
+      "profile": "planner.outline.v1",
+      "tokens": 26932,
+      "returned_usage": {
+        "input_tokens": 20050,
+        "output_tokens": 4075,
+        "cache_read_tokens": 2432,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 375
+      },
+      "native_session_ids": [
+        "01a0983f-614e-7231-b78a-1defbe0db1e9"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/015.json",
+      "sha256": "dc5e5ba8fba3cd058194fb201b657b436b7437b5acc6dff83e1b47d15f7e22d2",
+      "status": "completed",
+      "profile": "default",
+      "tokens": 15814,
+      "returned_usage": {
+        "input_tokens": 10606,
+        "output_tokens": 2553,
+        "cache_read_tokens": 2432,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 223
+      },
+      "native_session_ids": [
+        "01a09842-1877-72d0-a302-9a3533f54bcd"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/016.json",
+      "sha256": "ebeea86575f728223d5fab1274dab116eeca4b173df5433c3f8eba9a0a707503",
+      "status": "completed",
+      "profile": "mechanical",
+      "tokens": 7496,
+      "returned_usage": {
+        "input_tokens": 7227,
+        "output_tokens": 269,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0
+      },
+      "native_session_ids": [
+        "01a09844-7cf1-7112-9c88-66b3d839ccd8"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/017.json",
+      "sha256": "b544ae7a1953182e53759bdfde399fe1be94d84dd73b0d60c49d11a2551fad07",
+      "status": "completed",
+      "profile": "architect.grow.v2",
+      "tokens": 285623,
+      "returned_usage": {
+        "input_tokens": 45969,
+        "output_tokens": 1771,
+        "cache_read_tokens": 237568,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 315
+      },
+      "native_session_ids": [
+        "01a09844-ad3d-7a61-b0a4-bd1fded00104"
+      ],
+      "mode": "bridge",
+      "tool_commands": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world abilities": 1,
+        "world ladders": 1,
+        "world cast": 1,
+        "world threads": 1,
+        "world presence": 1,
+        "world --help": 1,
+        "world show": 2,
+        "world declare-batch": 2,
+        "world check": 1
+      },
+      "tool_stdout_bytes": {
+        "world vocabulary": 14393,
+        "world summary": 511,
+        "world abilities": 445,
+        "world ladders": 2487,
+        "world cast": 1452,
+        "world threads": 22116,
+        "world presence": 1858,
+        "world --help": 0,
+        "world show": 262920,
+        "world declare-batch": 6467,
+        "world check": 299
+      },
+      "native_tools": [
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        }
+      ]
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/018.json",
+      "sha256": "261fc83af9ad2fc2bb620d0fead6580e7c8d0b7a20d5a20eb03d39682eee064b",
+      "status": "completed",
+      "profile": "default",
+      "tokens": 19872,
+      "returned_usage": {
+        "input_tokens": 17070,
+        "output_tokens": 2617,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 185
+      },
+      "native_session_ids": [
+        "01a09846-3aa9-7190-bec2-3cdbd6361f40"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/019.json",
+      "sha256": "367d8a99a7486f618e6c00a66e9420545bd1d4e316593d9cabc6220814898589",
+      "status": "completed",
+      "profile": "mechanical",
+      "tokens": 7735,
+      "returned_usage": {
+        "input_tokens": 7411,
+        "output_tokens": 324,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0
+      },
+      "native_session_ids": [
+        "01a09848-c476-7343-91e0-398d1fe40f23"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/020.json",
+      "sha256": "7e001305a57915c726ded44b8ee5129a6e39bb3f9d8110b87a975838c492522b",
+      "status": "completed",
+      "profile": "architect.grow.v2",
+      "tokens": 367523,
+      "returned_usage": {
+        "input_tokens": 49218,
+        "output_tokens": 2685,
+        "cache_read_tokens": 315520,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 100
+      },
+      "native_session_ids": [
+        "01a09848-f981-7373-804f-d7973ce3db49"
+      ],
+      "mode": "bridge",
+      "tool_commands": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world cast": 1,
+        "world abilities": 2,
+        "world ladders": 1,
+        "world threads": 1,
+        "world presence": 1,
+        "world --help": 1,
+        "world show": 2,
+        "world declare-batch": 3,
+        "world check": 1
+      },
+      "tool_stdout_bytes": {
+        "world vocabulary": 14393,
+        "world summary": 512,
+        "world cast": 1551,
+        "world abilities": 462,
+        "world ladders": 2487,
+        "world threads": 41363,
+        "world presence": 2659,
+        "world --help": 0,
+        "world show": 304188,
+        "world declare-batch": 11077,
+        "world check": 299
+      },
+      "native_tools": [
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        }
+      ]
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/021.json",
+      "sha256": "eeae55828f74c36a470d1370013aff40624679b3f149c16803a3147d9552245b",
+      "status": "completed",
+      "profile": "default",
+      "tokens": 24480,
+      "returned_usage": {
+        "input_tokens": 21953,
+        "output_tokens": 2398,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 129
+      },
+      "native_session_ids": [
+        "01a0984a-dc43-76d3-81b9-0ad900be612e"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/022.json",
+      "sha256": "63dc91deaaf7f99110998d10bc0bf1dc694c953182031246768ba80258ecbc00",
+      "status": "completed",
+      "profile": "mechanical",
+      "tokens": 7663,
+      "returned_usage": {
+        "input_tokens": 7233,
+        "output_tokens": 341,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 89
+      },
+      "native_session_ids": [
+        "01a0984c-f7a1-7e00-af47-f46d6a08cd61"
+      ],
+      "mode": "completion",
+      "tool_commands": {},
+      "tool_stdout_bytes": {},
+      "native_tools": []
+    },
+    {
+      "path": "runs/distinctive-continuation-20260913/book-1/calls/023.json",
+      "sha256": "0440951e0dea661da6ac84f02b1d1fa790a47e4bc75996238106c9a44f6035f8",
+      "status": "completed",
+      "profile": "architect.grow.v2",
+      "tokens": 289901,
+      "returned_usage": {
+        "input_tokens": 47029,
+        "output_tokens": 2389,
+        "cache_read_tokens": 240384,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 99
+      },
+      "native_session_ids": [
+        "01a0984d-4539-7fa2-af0e-05a300ad46a0"
+      ],
+      "mode": "bridge",
+      "tool_commands": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world ladders": 1,
+        "world abilities": 1,
+        "world cast": 1,
+        "world threads": 1,
+        "world presence": 1,
+        "world --help": 1,
+        "world show": 2,
+        "world declare-batch": 2,
+        "world check": 1
+      },
+      "tool_stdout_bytes": {
+        "world vocabulary": 14393,
+        "world summary": 512,
+        "world ladders": 2487,
+        "world abilities": 462,
+        "world cast": 1829,
+        "world threads": 74933,
+        "world presence": 3835,
+        "world --help": 0,
+        "world show": 372906,
+        "world declare-batch": 10142,
+        "world check": 299
+      },
+      "native_tools": [
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        },
+        {
+          "type": "mcp_tool_call",
+          "server": "litharness",
+          "tool": "litharness_command"
+        }
+      ]
+    }
+  ],
+  "profiles": {
+    "default": {
+      "calls": 4,
+      "tokens": 63934
+    },
+    "writer.concept.discovery.v5": {
+      "calls": 1,
+      "tokens": 9247
+    },
+    "writer.overview.concept.v2": {
+      "calls": 1,
+      "tokens": 6911
+    },
+    "reader.appetite.v0": {
+      "calls": 4,
+      "tokens": 18409
+    },
+    "writer.title.v0": {
+      "calls": 1,
+      "tokens": 4305
+    },
+    "reader.start.v0": {
+      "calls": 4,
+      "tokens": 17033
+    },
+    "architect.seed.v4": {
+      "calls": 1,
+      "tokens": 419867
+    },
+    "planner.outline.v1": {
+      "calls": 1,
+      "tokens": 26932
+    },
+    "mechanical": {
+      "calls": 3,
+      "tokens": 22894
+    },
+    "architect.grow.v2": {
+      "calls": 3,
+      "tokens": 943047
+    }
+  },
+  "native_tokens": 1532579,
+  "checkpoints": [
+    {
+      "label": "checkpoint-1",
+      "chapters": 1,
+      "hashes": {
+        "Chapter1.txt": "6928b84c39c87c58399eb10ca1338fd691c492240cb76ce7cac92cc58576f83e"
+      },
+      "verification": {
+        "rebuilt": 2,
+        "unattributed": []
+      },
+      "audit_sha256": "8927d0aa25d849d9e9462b878829416789cdd1983c9f621ac3506800ad7dc22b",
+      "verify_sha256": "cd04fb3c949e6c170f03bc89cabe0c7f5c64b54cebaaca7269d97636069cc423"
+    },
+    {
+      "label": "checkpoint-2",
+      "chapters": 2,
+      "hashes": {
+        "Chapter1.txt": "6928b84c39c87c58399eb10ca1338fd691c492240cb76ce7cac92cc58576f83e",
+        "Chapter2.txt": "8a0074b556631a2026a897f9dd6cef76f70b28cc5ac8f7447497a9a156091cc2"
+      },
+      "verification": {
+        "rebuilt": 3,
+        "unattributed": []
+      },
+      "audit_sha256": "06dc3e4df14d836a55652d73108b3c9bad647e7db5d9c0e936d8735194264492",
+      "verify_sha256": "785d7a7e4a081aa85ccb242198fa16f3020dfb3188a263f1684609f2b5fe8d6a"
+    },
+    {
+      "label": "checkpoint-3",
+      "chapters": 3,
+      "hashes": {
+        "Chapter1.txt": "6928b84c39c87c58399eb10ca1338fd691c492240cb76ce7cac92cc58576f83e",
+        "Chapter2.txt": "8a0074b556631a2026a897f9dd6cef76f70b28cc5ac8f7447497a9a156091cc2",
+        "Chapter3.txt": "42733061b1ba12d3a887b3a973b8d7e3e5372ad75a3bb9ffbfab1f55060b73fa"
+      },
+      "verification": {
+        "rebuilt": 4,
+        "unattributed": []
+      },
+      "audit_sha256": "a9d7bd1fe82a3a494932d989453d81dcb91da7a476fee656517ac4e59c2f1dd5",
+      "verify_sha256": "3933093dff0854b257d6f70f71bc375ae6996deb333fc6c99cc0acc384b6fb49"
+    },
+    {
+      "label": "final",
+      "chapters": 3,
+      "hashes": {
+        "Chapter1.txt": "6928b84c39c87c58399eb10ca1338fd691c492240cb76ce7cac92cc58576f83e",
+        "Chapter2.txt": "8a0074b556631a2026a897f9dd6cef76f70b28cc5ac8f7447497a9a156091cc2",
+        "Chapter3.txt": "42733061b1ba12d3a887b3a973b8d7e3e5372ad75a3bb9ffbfab1f55060b73fa"
+      },
+      "verification": {
+        "rebuilt": 4,
+        "unattributed": []
+      },
+      "audit_sha256": "a9d7bd1fe82a3a494932d989453d81dcb91da7a476fee656517ac4e59c2f1dd5",
+      "verify_sha256": "3933093dff0854b257d6f70f71bc375ae6996deb333fc6c99cc0acc384b6fb49"
+    }
+  ],
+  "milestone_completed": true
+}

@@ -36,7 +36,9 @@ def write(path: Path, value: object) -> None:
 
 def main() -> None:
     holder = ROOT / "runs/box.lock/holder"
-    if not holder.read_text(encoding="utf-8-sig").startswith("distinctive-continuation-20260913: root task;"):
+    if not holder.read_text(encoding="utf-8-sig").startswith(
+        "distinctive-continuation-20260913: root task;"
+    ):
         raise RuntimeError("Task does not own the shared-machine lock")
     progress = json.loads(
         (ROOT / "runs/distinctive-continuation-20260913/progress.json").read_text(encoding="utf-8")

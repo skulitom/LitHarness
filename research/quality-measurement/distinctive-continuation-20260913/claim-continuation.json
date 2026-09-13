@@ -1,0 +1,43 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "fixed-wren-continuation-20260913",
+  "statement": "The fixed Wren case completed three attributable real-pipeline chapters with earlier chapter exports preserved. Post-run locators identify added story choices in concept development and world seeding, including a return-home motive, Mara Sen, a completed opening assessment and an exclusive advanced-power fork. These are observations on one assigned case, not creativity or reader qualification.",
+  "status": "observed",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/distinctive-continuation-20260913/RUNBOOK.md",
+      "sha256": "9df84a99448600200a8bb94d950aac3a165fe913a013ccfff2d8f65caed21bf4"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/distinctive-continuation-20260913/registration.json",
+      "sha256": "a52c6375c5d55db95046e663fcd51cd05f29189d417339360432d917991dfc12"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/distinctive-continuation-20260913/run.py",
+      "sha256": "2be79dae7776996a62a99b4f83897f2666bee359a92dd60a8eea16c3468ca1f4"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/distinctive-continuation-20260913/evidence.json",
+      "sha256": "c2f37a23703e33a0d0bddbfb4d6e92da6c717faf14cff571130793064ba52429"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/distinctive-continuation-20260913/evidence.json",
+      "sha256": "c2f37a23703e33a0d0bddbfb4d6e92da6c717faf14cff571130793064ba52429"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/distinctive-continuation-20260913/stage-trace.json",
+      "sha256": "765bb60b9c09c93397d0be2b53b9134fc1214b23e13bc7796b5f75799d1d4d1b"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/distinctive-continuation-20260913/REPORT.md",
+      "sha256": "f7749cdf5916e4e48e69eecc5da44e98318d5d0102f0421833ce3737b2d1d3c0"
+    }
+  ]
+}

@@ -1,0 +1,335 @@
+{
+  "status": "observed",
+  "analysis": "post-run descriptive locators",
+  "parent_sha256": "da04af43a6cbcea990c855f5c0b57831304f6b9dbe5951a775330374a66452b8",
+  "concept_sha256": "a0ae9477445d78bb9bf6745ab70deabdb8ff7315b73c9a3eb5f7c23c67a8fbdb",
+  "seed_receipt_sha256": "1d3e4180ecf3bb792525a89d4e75bd74eae920e2643060489f0f32aa520bdcd3",
+  "initial_world_record_count": 0,
+  "outline_receipt_sha256": "7c6a99c1204e575e5ab5a5f42024eb230222ab70f4b29503416b7ec7c6bb8266",
+  "stored_opening_matches_parent": true,
+  "stored_discovery_matches_parent_fields": true,
+  "parent_mara_mentions": 0,
+  "parent_home_mentions": 0,
+  "seed_record_locators": [
+    {
+      "bridge_call": 12,
+      "batch_index_zero_based": 20,
+      "subject": "license_fork",
+      "predicate": "governed_by",
+      "record_sha256": "caec89970c6b25b0034729d331e5a9cac1d2aaefff5d460e75032b48793fcf18"
+    },
+    {
+      "bridge_call": 12,
+      "batch_index_zero_based": 21,
+      "subject": "license_fork",
+      "predicate": "is_a",
+      "record_sha256": "8893c11c386928e718c7383dae59b277a9d79f34085e85a2730be4a38001a282"
+    },
+    {
+      "bridge_call": 12,
+      "batch_index_zero_based": 22,
+      "subject": "license_fork",
+      "predicate": "requires",
+      "record_sha256": "185c9a37f3ff5abff1353a057c6d32b96662bb02c33d38ab266690dfc1246d14"
+    },
+    {
+      "bridge_call": 12,
+      "batch_index_zero_based": 23,
+      "subject": "license_fork",
+      "predicate": "offers",
+      "record_sha256": "f6d1aa6460db84d010e0e14af4c426be45aeb6bf5c1b48eee3be1d5abf4d1a70"
+    },
+    {
+      "bridge_call": 12,
+      "batch_index_zero_based": 24,
+      "subject": "license_fork",
+      "predicate": "offers",
+      "record_sha256": "ba6a58e5e11c0fed162678ee6311f601ac05ef6dc832768a93005fa436f30cb1"
+    },
+    {
+      "bridge_call": 13,
+      "batch_index_zero_based": 8,
+      "subject": "license_fork",
+      "predicate": "world_rule",
+      "record_sha256": "0731edd074bb592a0fe55481c268d74a276ee90da753fb1769e1354dc2a3e2d8"
+    },
+    {
+      "bridge_call": 13,
+      "batch_index_zero_based": 9,
+      "subject": "license_fork",
+      "predicate": "costs",
+      "record_sha256": "82bd47a3bc765d7bf48c7cfc68d6f491fcb4bc83c74e28526e69807a9b7a738a"
+    },
+    {
+      "bridge_call": 13,
+      "batch_index_zero_based": 10,
+      "subject": "license_fork",
+      "predicate": "manifests_as",
+      "record_sha256": "e5424d5596748b6aea706ffbaab83e48497f0028ba59a379e53748a140f85605"
+    },
+    {
+      "bridge_call": 13,
+      "batch_index_zero_based": 24,
+      "subject": "wren_initial_license",
+      "predicate": "claim.content",
+      "record_sha256": "d18558b9dc51deb5ee1a54fc655dc7b0116e8573e7c046e9db2963cc1750ecb5"
+    },
+    {
+      "bridge_call": 13,
+      "batch_index_zero_based": 25,
+      "subject": "wren_initial_license",
+      "predicate": "manifests_as",
+      "record_sha256": "78858e9ddf20069793660d47cb861995a2fb2e6657f6d39c1b8aa2d2ddc934d1"
+    },
+    {
+      "bridge_call": 19,
+      "batch_index_zero_based": 17,
+      "subject": "mara",
+      "predicate": "entity_role",
+      "record_sha256": "20c28be12ce73a2699a493f8bf8dd90a93891d0af9f9ce3375819f958fcbde81"
+    },
+    {
+      "bridge_call": 19,
+      "batch_index_zero_based": 18,
+      "subject": "mara",
+      "predicate": "is_a",
+      "record_sha256": "84cfac48aef246c4e0ab6e69a9b723c924a27f10ca5e83e22bd67b2b1277a25e"
+    },
+    {
+      "bridge_call": 19,
+      "batch_index_zero_based": 19,
+      "subject": "mara",
+      "predicate": "manifests_as",
+      "record_sha256": "4bf8415e8fd1f0809db2f6d5727fc98548654a7a4c4f77ac122d8e3f5169e724"
+    },
+    {
+      "bridge_call": 19,
+      "batch_index_zero_based": 20,
+      "subject": "mara",
+      "predicate": "wants",
+      "record_sha256": "d140377ca355d1b00afd7d1520fd2a06b8be314a25747934b1ef37d51c7d7706"
+    },
+    {
+      "bridge_call": 19,
+      "batch_index_zero_based": 21,
+      "subject": "mara",
+      "predicate": "disposition",
+      "record_sha256": "47fb53a0aa86db890e21e5687e63ac24f5dbbbd3c9c9966ec71a374a1c7dc8a7"
+    },
+    {
+      "bridge_call": 19,
+      "batch_index_zero_based": 22,
+      "subject": "mara",
+      "predicate": "voice_tag",
+      "record_sha256": "5fec6cf2677b5dd13fa694054e76ee5f591c28f806ac4fcfad6454a07c39e918"
+    },
+    {
+      "bridge_call": 19,
+      "batch_index_zero_based": 23,
+      "subject": "mara",
+      "predicate": "believes",
+      "record_sha256": "c03cd0209b92fef5e7be97dc8383f259ace1f04c6e4fb9886cce5f402c5243d0"
+    },
+    {
+      "bridge_call": 19,
+      "batch_index_zero_based": 24,
+      "subject": "mara",
+      "predicate": "believes",
+      "record_sha256": "ac9d736c8dc98a70ded15928aba6a8728027c5e2c458de7b20e649b5b8ea37b4"
+    },
+    {
+      "bridge_call": 20,
+      "batch_index_zero_based": 11,
+      "subject": "mara",
+      "predicate": "believes",
+      "record_sha256": "e1718cd276a6cadaa94d1910dc64500c59e6fea0a533bbc6a0a229bf7d2e9214"
+    }
+  ],
+  "call_presence": [
+    {
+      "call": "001",
+      "profile": "default",
+      "sha256": "29d02aed3cf9c138c227f7d18b724c3375298113a85c320810bbacc92f7fba1a",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "002",
+      "profile": "writer.concept.discovery.v5",
+      "sha256": "37ac3d03edaf26132ee9b1f3b156db75c17e2d37b20f37f1eacf5c535cd61270",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "003",
+      "profile": "writer.overview.concept.v2",
+      "sha256": "7689c1feb6088cbace7a47b87ec655325149d3975da2e5d34d65763c02b3b0d0",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "004",
+      "profile": "reader.appetite.v0",
+      "sha256": "ecd947e4731b36e5e2d5d216b167126498307c2791c7b51a281a9f42fb14cc18",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "005",
+      "profile": "reader.appetite.v0",
+      "sha256": "f900294a5075a6d911773958323b0349188424209f98d17e5aabaf3a60e2eb56",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "006",
+      "profile": "reader.appetite.v0",
+      "sha256": "756454ae3f308d512a8a2b9f26114ce0854e75bd1ed58aee65f306d6061286e1",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "007",
+      "profile": "reader.appetite.v0",
+      "sha256": "fe24df87615b14a6a4e76a0e6556c985c80d1422db4731d7eb0b943359e39652",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "008",
+      "profile": "writer.title.v0",
+      "sha256": "f805a23b7d5dd43ba379f8a32cc061c3067fee63c0d00dba718f611bb86a35c3",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "009",
+      "profile": "reader.start.v0",
+      "sha256": "8a7b2fc8c7257b68de68409b720ecb17382422b4909b8c519334e469f0fe14ce",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "010",
+      "profile": "reader.start.v0",
+      "sha256": "c59b97208f978dfeb000d1a7f60b72e91bde2de0710f878bc8e5b6ea572f39fd",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "011",
+      "profile": "reader.start.v0",
+      "sha256": "495bded1673e7f0264025c8bcecd2a9c328b10667da0c41aff2505e64ba6b70e",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "012",
+      "profile": "reader.start.v0",
+      "sha256": "4e4d779a4fa960152f5325212a8c1442bfa8493e32680a5ca66849c5ffcad0bf",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "013",
+      "profile": "architect.seed.v4",
+      "sha256": "1d3e4180ecf3bb792525a89d4e75bd74eae920e2643060489f0f32aa520bdcd3",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 63
+    },
+    {
+      "call": "014",
+      "profile": "planner.outline.v1",
+      "sha256": "7c6a99c1204e575e5ab5a5f42024eb230222ab70f4b29503416b7ec7c6bb8266",
+      "mara_request_mentions": 21,
+      "mara_final_mentions": 20,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "015",
+      "profile": "default",
+      "sha256": "dc5e5ba8fba3cd058194fb201b657b436b7437b5acc6dff83e1b47d15f7e22d2",
+      "mara_request_mentions": 17,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "016",
+      "profile": "mechanical",
+      "sha256": "ebeea86575f728223d5fab1274dab116eeca4b173df5433c3f8eba9a0a707503",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "017",
+      "profile": "architect.grow.v2",
+      "sha256": "b544ae7a1953182e53759bdfde399fe1be94d84dd73b0d60c49d11a2551fad07",
+      "mara_request_mentions": 0,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 63
+    },
+    {
+      "call": "018",
+      "profile": "default",
+      "sha256": "261fc83af9ad2fc2bb620d0fead6580e7c8d0b7a20d5a20eb03d39682eee064b",
+      "mara_request_mentions": 23,
+      "mara_final_mentions": 23,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "019",
+      "profile": "mechanical",
+      "sha256": "367d8a99a7486f618e6c00a66e9420545bd1d4e316593d9cabc6220814898589",
+      "mara_request_mentions": 23,
+      "mara_final_mentions": 2,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "020",
+      "profile": "architect.grow.v2",
+      "sha256": "7e001305a57915c726ded44b8ee5129a6e39bb3f9d8110b87a975838c492522b",
+      "mara_request_mentions": 23,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 119
+    },
+    {
+      "call": "021",
+      "profile": "default",
+      "sha256": "eeae55828f74c36a470d1370013aff40624679b3f149c16803a3147d9552245b",
+      "mara_request_mentions": 61,
+      "mara_final_mentions": 4,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "022",
+      "profile": "mechanical",
+      "sha256": "63dc91deaaf7f99110998d10bc0bf1dc694c953182031246768ba80258ecbc00",
+      "mara_request_mentions": 5,
+      "mara_final_mentions": 3,
+      "mara_tool_trace_mentions": 0
+    },
+    {
+      "call": "023",
+      "profile": "architect.grow.v2",
+      "sha256": "0440951e0dea661da6ac84f02b1d1fa790a47e4bc75996238106c9a44f6035f8",
+      "mara_request_mentions": 4,
+      "mara_final_mentions": 0,
+      "mara_tool_trace_mentions": 173
+    }
+  ],
+  "limitation": "Word matches locate text; they are not measures of creativity or causes."
+}
