@@ -62,7 +62,7 @@ it lists that tool's result keys.
 | `plans` | plan lineage and the proposal behind each revision; `items=true` adds the head plan's items |
 | `state` | current story declarations with authority, provenance, subject, predicate, text and visibility |
 | `queue` | job counts, units in one status, exceptions and captured direction |
-| `world` | `summary`, `show`, `rules`, `ladders`, `abilities`, `cast`, `threads`, `vocabulary`, `presence` or `check`; `subjects` lists several subjects for `show` in one call, and `ladders` carries each rung's `manifests_as` |
+| `world` | `summary`, `query`, `show`, `rules`, `ladders`, `abilities`, `cast`, `threads`, `vocabulary`, `presence` or `check`; `subjects` selects several subjects for `query` or `show`, and `ladders` carries each rung's `manifests_as` |
 | `characters` | what canon records about each person; an empty cast includes a hint |
 | `audit` | the book read across its scenes: status-line census, promise ledger, fact timeline, cast presence, plan/summary pairs, repeated word runs, restated scene boundaries, and the sheet against the page; `views` picks some; `attention_lines` says where to look; descriptions, never a score |
 | `roster` | `show`, `check`, `vocabulary` or `rehearse`; dossier prose is withheld |
@@ -73,6 +73,13 @@ it lists that tool's result keys.
 `scene` arguments accept a logical id or 1-based reading position. `state` and `findings`
 page with `limit` / `offset` and report `total`. `why` accepts `include_prompt=false`
 to retain prompt sizes while withholding text. Prefer bounded views over a whole-book dump.
+
+`world(view=query)` pages in-force declarations, including labelled proposals, with `limit`
+(1–50, default 20), `offset`, `total` and `next_offset`. Filter by `subjects` and/or `predicate`.
+`selection_sha256` identifies the complete selection; a changed hash means earlier pages
+need refreshing. Records retain provenance but omit the duplicated `says` rendering. Full
+history remains available with `show`; the production Architect receives only `query` for
+declaration reads.
 
 `book` groups scenes using today's default chapter size. For a draft's historical boundary,
 use its frozen `why.selected_by.chapter_scenes` and `why.selected_by.chapter_end`; missing
@@ -162,8 +169,9 @@ Other operations remain CLI-only; `guide` gives the full current mapping:
 ## Propose world records
 
 Before a declare, read `world` with `vocabulary`, including its `how` instructions.
-Use zero-padded `order_key` values; ids normalize to underscores, `can_do` takes an
-`object`, and a status sheet's rung column is `rank`.
+Use the exact scene `order_key` supplied by the book for established changes; non-scene
+keys are refused before insertion. Omit the key for timeless facts. IDs normalize to
+underscores, `can_do` takes an `object`, and a status sheet's rung column is `rank`.
 
 `world_declare` writes a proposed record and reports `not_yet_coherent`,
 `will_not_resolve`, `cannot_be_read` or `supersedes` as applicable. These distinguish

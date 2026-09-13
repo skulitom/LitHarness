@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any, TextIO
 
 _WORLD = {
-    "summary", "show", "rules", "ladders", "abilities", "cast", "threads",
+    "summary", "show", "query", "rules", "ladders", "abilities", "cast", "threads",
     "vocabulary", "presence", "check", "declare", "declare-batch",
 }
 _ROSTER = {"vocabulary", "show", "check", "declare"}

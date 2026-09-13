@@ -24,6 +24,8 @@ directly", preserved *through* the tool surface rather than by denying one.
 from __future__ import annotations
 
 import dataclasses
+import hashlib
+import json
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -36,6 +38,7 @@ from litharness.domain.findings import DetectorInput
 #: Every view is addressable by name, so the CLI's subcommand table and this module cannot
 #: drift apart, and an agent can be told the list of views without a second source for it.
 VIEWS: tuple[str, ...] = (
+    "query",
     "rules",
     "ladders",
     "abilities",
@@ -51,6 +54,8 @@ VIEWS: tuple[str, ...] = (
 #: `world` tool is typed over this tuple and a test holds it equal to the parser's subtree
 #: minus the writes and the person-gate (stage-0 §241).
 WORLD_VIEWS: tuple[str, ...] = ("summary", "show", *VIEWS)
+QUERY_LIMIT = 20
+QUERY_MAX_LIMIT = 50
 
 
 def view(
@@ -63,6 +68,8 @@ def view(
     subjects: Sequence[str] | None = None,
     predicate: str | None = None,
     current: bool = False,
+    limit: int = QUERY_LIMIT,
+    offset: int = 0,
     holder: str | None = None,
     at: str | None = None,
 ) -> Any:
@@ -79,6 +86,9 @@ def view(
     """
     if name == "summary":
         return summary(records, in_force)
+    if name == "query":
+        return query(in_force, subject=subject, subjects=subjects, predicate=predicate,
+                     limit=limit, offset=offset)
     if name == "show":
         selected = in_force if current else records
         if subjects:
@@ -391,8 +401,9 @@ def vocabulary() -> dict[str, Any]:
                 "in its ladder counted from one, and a grant held on the opening line is also "
                 "a can_do edge for the same person, because the line is the printed form and "
                 "the arithmetic reads the edges; accept refuses both mistakes. --order-key "
-                "zero-padded digits (0110, 0250) to "
-                "schedule a position the book reaches later. Leave the key off for the state "
+                "must be the exact scene key supplied by the book for an established change. "
+                "Numeric schedule keys are refused by world declarations. Leave the key off "
+                "for the state "
                 "the book opens in, which `extraction.state_as_it_stands` then folds at every "
                 "scene. A scheduled snapshot is kept and is never folded into a scene, so "
                 "declaring an arc ahead of the writing does not become the state scene one is "
@@ -501,6 +512,34 @@ def declarations(
             }
         )
     return rows
+
+
+def query(
+    records: Sequence[lc.StateRecord], *, subject: str | None = None,
+    subjects: Sequence[str] | None = None, predicate: str | None = None,
+    limit: int = QUERY_LIMIT, offset: int = 0,
+) -> dict[str, Any]:
+    """A bounded page of in-force declarations, including proposals and explicit omissions."""
+    if type(limit) is not int or not 1 <= limit <= QUERY_MAX_LIMIT:
+        raise ValueError(f"world query limit must be from 1 to {QUERY_MAX_LIMIT}")
+    if type(offset) is not int or offset < 0:
+        raise ValueError("world query offset must be a non-negative integer")
+    if subject is not None and subjects is not None:
+        raise ValueError("use subject or subjects, not both")
+    selected = set(subjects) if subjects is not None else None
+    rows = [
+        {key: value for key, value in row.items() if key != "says"}
+        for row in declarations(records, subject=subject, predicate=predicate)
+        if selected is None or row["subject"] in selected
+    ]
+    page = rows[offset:offset + limit]
+    return {
+        "records": page, "total": len(rows), "offset": offset,
+        "next_offset": offset + len(page) if offset + len(page) < len(rows) else None,
+        "selection_sha256": hashlib.sha256(
+            json.dumps(rows, ensure_ascii=False, sort_keys=True).encode("utf-8")
+        ).hexdigest(),
+    }
 
 
 def rules(records: Sequence[lc.StateRecord]) -> list[dict[str, Any]]:
@@ -850,10 +889,9 @@ def unplaceable_positions(records: Sequence[lc.StateRecord]) -> list[dict[str, A
     snapshots — as `0110`, `0200`, `0810`, the schedule space, and ten more as `s000005`,
     the scene space. The packet omitted the first set at scene one with the reason "not in
     the scene key space this cutoff reads", and would have at every scene after; the
-    disclosure schedule was decoration. `world check` reported nothing, because a key in the
-    schedule space is legal. This names them where `world declare` can still re-key them,
-    and it moves nothing: a position is the Architect's to state, and the fix is a
-    declaration in the space the cutoff reads.
+    disclosure schedule was decoration. This reports retained historical or bypassed records;
+    new world declarations refuse non-scene keys before persisting an identity whose first
+    position cannot subsequently be changed. This view itself moves nothing.
     """
     out: list[dict[str, Any]] = []
     for record in records:

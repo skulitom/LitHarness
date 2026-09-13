@@ -373,6 +373,12 @@ The result is keyed by subject. `--current` omits superseded declarations while 
 proposals and changes at different story positions; it is not a historical snapshot.
 Omit the filters to read the complete history with provenance.
 
+`world query --subjects <ids>` returns a smaller page of in-force records: twenty by
+default, at most fifty via `--limit`. Follow `next_offset` with `--offset`; the selection
+hash identifies changes between pages. The Architect uses this bounded query surface.
+New world declarations require exact scene keys for dated facts; numeric schedule keys
+are refused before persistence. `architect grow` receives the book's actual scene key.
+
 The whole recipe under one settled listing and concept, with a fresh store per arm, both
 spend ceilings on every call, the simulated readership on chapter one after the shelf, and a
 folder per arm that records the listing's digests, every command, the spend and the reading,

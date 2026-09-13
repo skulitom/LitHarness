@@ -192,7 +192,7 @@ def test_the_tier_tables_architect_members_are_the_architects_allowance() -> Non
     rendered = {
         f"Bash(litharness world {path[1]}:*)"
         for path, tier in TIERS.items()
-        if path[0] == "world" and tier.kind in {"read", "propose"}
+        if path[0] == "world" and path[1] != "show" and tier.kind in {"read", "propose"}
     }
     assert rendered == set(world_agent.ALLOWED_TOOLS)
 
@@ -1182,7 +1182,7 @@ def test_scoped_world_reads_match_cli_keep_proposals_and_preserve_history(
         ])
     propose["world_declare_batch"](items=[
         {"subject": "test_arch", "predicate": "manifests_as", "value": "broken mark",
-         "order_key": "010"},
+         "order_key": "s000010"},
         {"subject": "test_arch", "predicate": "entity_role", "value": "location"},
         {"subject": "test_beam", "predicate": "manifests_as", "value": "brass mark"},
     ])
@@ -1208,3 +1208,81 @@ def test_scoped_world_reads_match_cli_keep_proposals_and_preserve_history(
     ) == EXIT_OK
     assert len(json.loads(capsys.readouterr().out)) == 3
     assert hashlib.sha256(db.read_bytes()).hexdigest() == before
+
+
+def test_world_query_pages_reconstruct_the_selection_and_detect_changed_records(
+    db: Path, capsys: pytest.CaptureFixture[str],
+) -> None:
+    propose = make_tools(binding(db, "propose"))
+    names = [f"page_probe_{i}" for i in range(55)]
+    propose["world_declare_batch"](items=[
+        {"subject": name, "predicate": "manifests_as", "value": name} for name in names
+    ])
+    read = make_tools(binding(db))
+    before = hashlib.sha256(db.read_bytes()).hexdigest()
+    received, hashes = [], set()
+    for offset, expected_next in ((0, 20), (20, 40), (40, None)):
+        page = read["world"](view="query", subjects=names, offset=offset)["result"]
+        assert page["total"] == 55 and page["next_offset"] == expected_next
+        assert len(page["records"]) <= 20
+        assert all("says" not in row and not row["canon"] for row in page["records"])
+        hashes.add(page["selection_sha256"])
+        received.extend(page["records"])
+    assert len(hashes) == 1
+    assert {row["subject"] for row in received} == set(names)
+    assert len({row["record_id"] for row in received}) == 55
+    assert run(db, "world", "query", "--subjects", *names, "--offset", "40") == EXIT_OK
+    assert json.loads(capsys.readouterr().out) == page
+    assert read["world"](view="query", subjects=[])["result"]["total"] == 0
+    assert hashlib.sha256(db.read_bytes()).hexdigest() == before
+    for kwargs in ({"limit": 51}, {"limit": 0}, {"offset": -1}):
+        with pytest.raises(Exception, match=next(iter(kwargs))):
+            read["world"](view="query", **kwargs)
+    propose["world_declare_batch"](items=[
+        {"subject": names[0], "predicate": "manifests_as", "value": "corrected mark"},
+    ])
+    changed = read["world"](view="query", subjects=names)["result"]
+    assert changed["total"] == 55 and changed["selection_sha256"] not in hashes
+    assert len(read["world"](view="show", subject=names[0])["result"]) == 2
+
+
+@pytest.mark.parametrize("bad_key", ["0110", "chapter-1", ""])
+def test_bad_world_position_is_refused_before_it_can_occupy_the_record_identity(
+    db: Path, capsys: pytest.CaptureFixture[str], bad_key: str,
+) -> None:
+    item = {"subject": "position_probe", "predicate": "claim.content", "value": "A fact."}
+    propose = make_tools(binding(db, "propose"))
+    before = hashlib.sha256(db.read_bytes()).hexdigest()
+    failed = propose["world_declare_batch"](items=[{**item, "order_key": bad_key}])
+    assert "cannot be placed" in json.dumps(failed)
+    assert hashlib.sha256(db.read_bytes()).hexdigest() == before
+    assert run(db, "world", "declare", "position_probe", "claim.content", "--value", "A fact.",
+               "--order-key", bad_key) != EXIT_OK
+    capsys.readouterr()
+    assert hashlib.sha256(db.read_bytes()).hexdigest() == before
+    propose["world_declare_batch"](items=[{**item, "order_key": "s000001"}])
+    rows = make_tools(binding(db))["world"](view="show", subject="position_probe")["result"]
+    assert len(rows) == 1 and rows[0]["order_key"] == "s000001"
+
+
+def test_architect_grow_cli_supplies_the_books_actual_scene_key(
+    db: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
+) -> None:
+    from litharness.domain.beats import beats_for, template_for
+
+    with SqliteStore.open_read_only(db) as store:
+        book, branch, _ = store.branches()[0]
+        head = store.head(book, branch)
+        assert head is not None
+        beat = beats_for(head, template_for(head))[0]
+    captured = []
+
+    def capture(request, **kwargs):
+        captured.append(request)
+        return None, "capture only"
+
+    monkeypatch.setattr(cli, "_completion_call", capture)
+    assert run(db, "architect", "grow", "--scene", beat.logical_id) != EXIT_OK
+    capsys.readouterr()
+    assert len(captured) == 1
+    assert f"exact story key: {beat.story_order_key}." in captured[0].prompt

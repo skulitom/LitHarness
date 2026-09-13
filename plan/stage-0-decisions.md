@@ -25966,3 +25966,28 @@ reads. `test_scoped_world_reads_match_cli_keep_proposals_and_preserve_history` e
 surfaces without changing the store. The opposing-source test
 `test_seed_retains_opposing_source_boundaries_without_mutating_or_replaying_them` checks
 request routing and preservation, not semantic compliance or literary quality.
+
+## 250. Bounded Architect reads and refusal of unplaceable new facts (2026-09-13)
+
+The §249 [first-output run](../research/quality-measurement/world-boundary-fixes-20260913/REPORT.md)
+retained the tested story conditions, but grow still made repeated full-world reads and
+accepted twenty facts at schedule-space keys. Its request lacked the actual scene key,
+and vocabulary still recommended numeric schedule keys for snapshots. A record's first
+position is immutable, so advice after insertion could not repair this mistake.
+
+Grow v4 receives the planner/summary scene coordinate; seed v6 and grow v4 use paginated
+`world query` instead of the full `world show` allowance. Query preserves provenance and
+proposals, returns explicit continuation metadata and caps pages at fifty records.
+Full history remains available to operator/diagnostic reads. New declarations reject
+non-scene keys before persistence, while transient world incoherence remains advisory.
+The vocabulary now describes the accepted scene-key contract. Existing stored facts,
+identities and migrations are unchanged; historical timing warnings remain visible.
+
+`test_world_query_pages_reconstruct_the_selection_and_detect_changed_records` checks
+pagination, provenance, bounded output and selection changes through CLI/MCP.
+`test_bad_world_position_is_refused_before_it_can_occupy_the_record_identity` demonstrates
+that a later correct first declaration remains possible. Actual CLI key supply and serial
+versus legacy width are separately tested. The
+[registered runtime follow-up](../research/quality-measurement/world-runtime-fixes-20260913/RUNBOOK.md)
+repeats the fixed boundary cases without replacing the earlier outputs. These engineering
+contracts do not qualify a reader mechanism or establish literary quality.

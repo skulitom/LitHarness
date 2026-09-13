@@ -2,9 +2,10 @@
 
 Lifted out of `cmd_world`'s `declare` branch (stage-0 §241) so the CLI's `world declare`, its
 `world declare-batch`, and the server's `world_declare` tools all run one function and report
-one dict. What it keeps from the CLI is the doctrine: **warned, never refused** — a world is
-built one record at a time and is transiently incoherent by nature, so a complaint here is a
-report and the gate is `world accept`, which is a person's act and is not in this module.
+one dict. Transient world incoherence remains a warning: a world is built one record at a
+time. Malformed inputs and positions that no scene read can place are refused before
+persistence; a subsequent declaration cannot repair a record's immutable first position.
+The canon gate is `world accept`, which is a person's act and is not in this module.
 What it adds is provenance: every proposal now lands with an event in the same transaction
 naming who proposed it (`actor`) and through what (`payload.via`), because a proposal a
 server wrote and a proposal the Architect wrote were otherwise indistinguishable rows.
@@ -110,7 +111,7 @@ def declare_world_record(
     project_id: str,
     via: str = VIA_CLI,
 ) -> DeclareResult:
-    """Offer the world one record. PROPOSED, never canon; warned, never refused.
+    """Offer a record as PROPOSED; refuse unusable timing before its identity is persisted.
 
     The three report lists are the CLI's, unchanged in meaning: `not_yet_coherent` is what
     the rest of the world may still settle (a question awaiting its answer, a rung awaiting
@@ -119,6 +120,11 @@ def declare_world_record(
     sheet the parser refuses, which a declaration in the same slot replaces. `supersedes`
     names the earlier proposals in this record's slot that `world accept` will leave behind.
     """
+    if item.order_key is not None and state_mod.key_space(item.order_key) != state_mod.SCENE_KEYS:
+        raise ValueError(
+            f"order_key {item.order_key!r} cannot be placed by scene reads; use the exact "
+            "scene key supplied by the book, or omit the key for timeless facts"
+        )
     record = worlds_domain.world_record(
         worlds_domain.normalise_id(item.subject),
         item.predicate,

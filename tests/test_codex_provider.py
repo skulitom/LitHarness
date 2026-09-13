@@ -515,7 +515,8 @@ def test_codex_resource_builtins_remain_outside_bridge_allowance(monkeypatch, tm
 
 @pytest.mark.parametrize("profile", [
     "architect.seed.v1", "architect.seed.v2", "architect.seed.v3", "architect.seed.v4",
-    "architect.seed.v5", "architect.grow.v1", "architect.grow.v2", "architect.grow.v3",
+    "architect.seed.v5", "architect.seed.v6",
+    "architect.grow.v1", "architect.grow.v2", "architect.grow.v3", "architect.grow.v4",
 ])
 def test_codex_architect_cannot_succeed_without_a_command_receipt(profile):
     with pytest.raises(ValueError, match="without any successful"):

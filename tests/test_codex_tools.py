@@ -64,6 +64,18 @@ def test_exact_roster_profile_prevents_dossier_access(tmp_path: Path) -> None:
     assert bridge.call(["world", "show"])["isError"]
 
 
+def test_architect_cannot_run_the_full_history_dump(tmp_path: Path) -> None:
+    from litharness.application.world_agent import ALLOWED_TOOLS
+
+    bridge = make_bridge(tmp_path, ALLOWED_TOOLS)
+    assert bridge.call(["world", "show", "--current"])["isError"]
+    rows = [json.loads(line) for line in bridge.trace.read_text().splitlines()]
+    assert rows[-1]["argv"] is None
+    assert codex_tools._validate_arguments(
+        ["world", "query", "--subject", "person"], bridge.allowances,
+    ) == ["world", "query", "--subject", "person"]
+
+
 def test_batch_json_passes_literally_with_fixed_environment_and_no_shell(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:

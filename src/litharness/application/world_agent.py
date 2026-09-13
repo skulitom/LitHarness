@@ -10,21 +10,24 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from litharness.domain.beats import TemplateMismatch, beats_for, template_for
 from litharness.domain.generation import CompletionRequest
+from litharness.domain.revision import Revision
+from litharness.domain.serials import SerialShape, arcs_of, beats_for_serial
 from litharness.domain.writers import Writer, system_for
 
 if TYPE_CHECKING:
     from litharness.application.concept import Concept
 
 #: Frozen profiles, one per job, so seeding a world and growing one are separable on the rows.
-SEED_PROFILE = "architect.seed.v5"
-GROW_PROFILE = "architect.grow.v3"
+SEED_PROFILE = "architect.seed.v6"
+GROW_PROFILE = "architect.grow.v4"
 
 # Explicit subcommands exclude acceptance. A broad world:* allowance would permit it.
 # Transport joins entries with commas; tests compare this list with the real parser.
 ALLOWED_TOOLS: tuple[str, ...] = (
     "Bash(litharness world summary:*)",
-    "Bash(litharness world show:*)",
+    "Bash(litharness world query:*)",
     "Bash(litharness world rules:*)",
     "Bash(litharness world ladders:*)",
     "Bash(litharness world abilities:*)",
@@ -52,9 +55,9 @@ _TOOLS = (
     "there. Declare related facts together with `litharness world declare-batch --records "
     "'<JSON array>'`, about twenty-five records per batch, using the vocabulary's record "
     "fields and passing the JSON as one literal argument.\n"
-    "Inspect relevant entities with `litharness world show --subjects <ids> --current`, "
-    "optionally `--predicate <name>`; `ladders`, `abilities`, `cast` and `threads` give focused "
-    "views, while unfiltered `show` returns the entire declaration history. "
+    "Inspect relevant entities with `litharness world query --subjects <id> <id>`, "
+    "optionally `--predicate <name>`; it returns at most fifty records per page, with "
+    "next_offset for `--offset` and a selection hash to detect changes between pages. "
     "Run `litharness world check` as you go and fix what it names.\n"
     "Everything you declare is a proposal. Accepting it into the book is somebody else's act, so "
     "declare what the book needs and keep it coherent. "
@@ -125,7 +128,7 @@ _GROW = (
     "You keep the world of a book that is being written. A chapter has just been drafted; your "
     "job is to reconcile what the chapter established with the existing world.\n\n"
     f"{_TOOLS}\n\n"
-    "Declare facts established by this chapter, preserving when they became true. Undisclosed "
+    "Declare facts established by this chapter at its supplied story key. Undisclosed "
     "world material need not appear on the page. A grant the system hands out that the seed "
     "did not declare is declared "
     "the way the seed declared its grants, governed_by the system, and the line follows it. "
@@ -175,10 +178,17 @@ def render_seed_request(
 
 
 def render_grow_request(
-    chapter: str, *, logical_id: str, writer: Writer | None = None, concept: Concept | None = None
+    chapter: str, *, logical_id: str, writer: Writer | None = None, concept: Concept | None = None,
+    story_order_key: str | None = None,
 ) -> CompletionRequest:
     """Reconcile chapter-established facts without replaying the planned opening."""
     prompt = f"The chapter just drafted ({logical_id}):\n\n{chapter.strip()}"
+    if story_order_key is not None:
+        prompt += (
+            f"\n\nThis chapter's exact story key: {story_order_key}. Use this order_key for "
+            "facts and disclosures established here; leave only timeless world mechanics "
+            "unkeyed."
+        )
     prompt += _author_constraints(concept)
     return CompletionRequest(
         prompt=prompt,
@@ -189,6 +199,21 @@ def render_grow_request(
         timeout_seconds=1800.0,
         allowed_tools=ALLOWED_TOOLS,
     )
+
+
+def chapter_story_key(
+    revision: Revision, logical_id: str, *, serial_shape: SerialShape,
+) -> str | None:
+    """Use the planner/summary coordinate space, including stable keys for serials."""
+    try:
+        arcs = arcs_of(revision, serial_shape)
+        beats = (
+            beats_for_serial(revision, serial_shape) if arcs and arcs[0].closed
+            else beats_for(revision, template_for(revision))
+        )
+    except TemplateMismatch:
+        return None
+    return next((beat.story_order_key for beat in beats if beat.logical_id == logical_id), None)
 
 
 def _author_constraints(concept: Concept | None) -> str:

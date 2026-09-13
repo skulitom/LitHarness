@@ -190,6 +190,7 @@ DEFAULT_EXPORT_CHARS = 120_000
 WorldView = Literal[
     "summary",
     "show",
+    "query",
     "rules",
     "ladders",
     "abilities",
@@ -284,6 +285,7 @@ TIERS: dict[tuple[str, ...], Tier] = {
     ("audit",): _read("audit", "litharness audit --json"),
     ("world", "summary"): _read("world", "litharness world summary", _CLI_READ_ONLY),
     ("world", "show"): _read("world", "litharness world show", _CLI_READ_ONLY),
+    ("world", "query"): _read("world", "litharness world query", _CLI_READ_ONLY),
     ("world", "rules"): _read("world", "litharness world rules", _CLI_READ_ONLY),
     ("world", "ladders"): _read("world", "litharness world ladders", _CLI_READ_ONLY),
     ("world", "abilities"): _read("world", "litharness world abilities", _CLI_READ_ONLY),
@@ -402,6 +404,7 @@ VERB_HELP: dict[tuple[str, ...], str] = {
     ),
     ("world", "summary"): "how big this world is and where the holes are",
     ("world", "show"): "every declaration, in story order, with provenance",
+    ("world", "query"): "a bounded page of in-force declarations, with selection and pagination",
     ("world", "rules"): "the declared rules and the domains their consequences reach",
     ("world", "ladders"): "ordinal criteria, their rungs lowest-first, and who stands where",
     ("world", "abilities"): "what a person can do here, and who holds what",
@@ -665,6 +668,9 @@ DESCRIPTIONS: dict[str, str] = {
         "rung's `manifests_as`. For `show`, `predicate` filters exact predicate names and "
         "`current` omits superseded declarations, retaining proposals and story-time changes; "
         "it is not a historical snapshot. "
+        "`query` returns in-force records without duplicate says text, at most fifty per "
+        "page; use `limit`, `offset`, `next_offset` and selection_sha256 to traverse a stable "
+        "selection. It accepts the same subject and predicate filters. "
         + _views_help("world", WORLD_VIEWS)
         + " `threads` exposes disclosure reasons and supporting record IDs; `subject` narrows "
         "that view to one claim. Pass its exact story key as `at`, not a reading-order position. "
@@ -1546,6 +1552,8 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
         branch_id: str | None = None,
         predicate: str | None = None,
         current: bool = False,
+        limit: int = world_mod.QUERY_LIMIT,
+        offset: int = 0,
     ) -> dict[str, Any]:
         store = open_read()
         try:
@@ -1573,6 +1581,8 @@ def make_tools(binding: Binding) -> dict[str, Callable[..., dict[str, Any]]]:
                 subjects=subjects,
                 predicate=predicate,
                 current=current,
+                limit=limit,
+                offset=offset,
                 holder=holder,
                 at=at,
             )

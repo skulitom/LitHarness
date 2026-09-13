@@ -2663,9 +2663,18 @@ def cmd_architect(args: argparse.Namespace) -> int:
                     print("no drafted scene for the Architect to read")
                     return EXIT_OK
                 node = drafted[-1]
+            story_key = world_agent.chapter_story_key(
+                head, node.logical_id,
+                serial_shape=SerialShape(args.chapter_scenes, args.arc_chapters),
+            )
+            if story_key is None:
+                print("litharness: cannot place this scene in the book's story coordinate space",
+                      file=sys.stderr)
+                return EXIT_FAULT
             request = world_agent.render_grow_request(
                 node.content or "",
                 logical_id=node.logical_id,
+                story_order_key=story_key,
                 writer=writer,
                 concept=concept_mod.concept_of(store.plan_items(book_id, branch_id)),
             )
@@ -4361,6 +4370,8 @@ def cmd_world(args: argparse.Namespace) -> int:
         subjects=getattr(args, "subjects", None),
         predicate=getattr(args, "predicate", None),
         current=getattr(args, "current", False),
+        limit=getattr(args, "limit", world_mod.QUERY_LIMIT),
+        offset=getattr(args, "offset", 0),
         holder=getattr(args, "holder", None),
         at=getattr(args, "at", None),
     )
@@ -6034,6 +6045,7 @@ def build_parser() -> argparse.ArgumentParser:
     for name, helptext in (
         ("summary", "how big this world is and where the holes are"),
         ("show", "every declaration, in story order, with provenance"),
+        ("query", "a bounded page of in-force declarations, with selection and pagination"),
         ("rules", "the declared rules and the domains their consequences reach"),
         ("ladders", "ordinal criteria, their rungs lowest-first, and who stands where"),
         ("abilities", "what a person can do here, and who holds what"),
@@ -6047,14 +6059,21 @@ def build_parser() -> argparse.ArgumentParser:
         view.add_argument("--book")
         view.add_argument("--branch")
         view.add_argument("--json", action="store_true", help="ignored; output is JSON")
-        if name == "show":
+        if name in {"show", "query"}:
             selection = view.add_mutually_exclusive_group()
             selection.add_argument("--subject", help="one subject id")
             selection.add_argument("--subjects", nargs="+", help="several subject ids in one read")
             view.add_argument("--predicate", help="one predicate, such as can_do")
+            if name == "show":
+                view.add_argument(
+                    "--current", action="store_true",
+                    help="in-force declarations including proposals; omit superseded history",
+                )
+        if name == "query":
+            view.add_argument("--limit", type=int, default=world_mod.QUERY_LIMIT,
+                              help=f"records per page, 1 to {world_mod.QUERY_MAX_LIMIT}")
             view.add_argument(
-                "--current", action="store_true",
-                help="in-force declarations including proposals; omit superseded history",
+                "--offset", type=int, default=0, help="next_offset from the prior page",
             )
         if name == "threads":
             view.add_argument("--subject", help="one subject id")

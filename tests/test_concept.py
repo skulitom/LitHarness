@@ -858,7 +858,7 @@ def test_inhabited_world_survives_with_pending_discoveries_separate_from_world_p
     assert restored.discovery == source
     assert restored.first_arc.opens == source.opening
     assert restored.author_brief == brief
-    assert seed.profile == "architect.seed.v5"
+    assert seed.profile == "architect.seed.v6"
     assert "world declare-batch --records" in seed.system
     assert source.world in seed.prompt
     assert brief in seed.prompt
@@ -961,6 +961,22 @@ def test_seed_retains_opposing_source_boundaries_without_mutating_or_replaying_t
     grow = world_agent.render_grow_request("An actual chapter.", logical_id="s1", concept=drawn)
     assert opening not in grow.prompt and growth not in grow.prompt
     assert drawn.to_text() == before
+
+
+def test_reconciliation_uses_serial_coordinates_without_changing_legacy_book_width() -> None:
+    from litharness.domain.serials import SerialShape
+
+    revision = new_book("book", "main", title="Test", scenes=6)
+    target = beats_for(revision, arc_template(6))[-1].logical_id
+    assert world_agent.chapter_story_key(
+        revision, target, serial_shape=SerialShape(1, 6),
+    ) == "s000006"
+    assert world_agent.chapter_story_key(
+        revision, target, serial_shape=SerialShape(4, 6),
+    ) == "s6"
+    assert world_agent.chapter_story_key(
+        revision, "absent", serial_shape=SerialShape(1, 6),
+    ) is None
 
 
 def test_a_supplied_treatment_owns_development_despite_different_writer_preferences() -> None:

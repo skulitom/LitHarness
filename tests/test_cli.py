@@ -1199,7 +1199,7 @@ def test_the_architects_allowance_is_every_world_command_except_accept() -> None
         assert "," not in entry, "the CLI transport joins the allowance with a comma"
         allowed.add(entry.removeprefix("Bash(litharness world ").removesuffix(":*)"))
 
-    assert allowed == set(world_sub.choices) - {"accept"}
+    assert allowed == set(world_sub.choices) - {"accept", "show"}
     assert world_agent.render_seed_request("a listing").allowed_tools == world_agent.ALLOWED_TOOLS
     assert (
         world_agent.render_grow_request("prose", logical_id="s1").allowed_tools

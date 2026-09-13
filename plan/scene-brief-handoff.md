@@ -32,6 +32,11 @@ including its risk of source leakage; the [registered boundary probe](../researc
 tests that risk. Reconciliation still receives established chapter prose, and the outline
 and prose projections described here are unchanged.
 
+Reconciliation timing amendment, 2026-09-13: grow v4 receives the scene's exact key in the
+planner/summary coordinate space, rather than only its logical identifier. New declarations
+refuse keys that scene reads cannot place. The Architect uses paginated `world query`;
+the full `world show` history remains on the operator and diagnostic read surface.
+
 The planner may revise provisional obstacles, props and choreography while preserving the
 premise's pursuit and magical promise, author choices and established facts. It receives a
 planning contract rather than the prose writer's house-style rules. The structured fields
