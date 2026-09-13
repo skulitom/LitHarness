@@ -26016,3 +26016,9 @@ acquisition, rank gates, refusal of deepening, round trips and configuration-onl
 The [registered deterministic replay](../research/quality-measurement/world-depth-fixes-20260913/RUNBOOK.md)
 reconstructs the captured pre-check worlds in both versions, with an explicit-depth control.
 It tests the engineering change without a model reroll or a claim of literary improvement.
+
+Replay result: both original checks were reproduced exactly. Wren's unchanged declarations
+and the explicit-depth control complete under the changed contract. The opposing snapshot
+was taken before ability definitions and remains incomplete, so the full registered
+criterion is not met. The [result record](../research/quality-measurement/world-depth-fixes-20260913/REPORT.md)
+preserves that limit; this is not fresh model-compliance evidence for seed v7.

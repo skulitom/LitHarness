@@ -1,0 +1,158 @@
+{
+  "schema": "litharness.world-depth-replay-evidence.v1",
+  "audit_sha256": "625a5091ab1d0721af1e612f384950aa3d3470cdd3ff7c888796c46ae82cfaec",
+  "registration_sha256": "a8951ae1e40f52db234da53cad971257157285e356b37df6fe4fab2c14dc0d1e",
+  "raw_sha256": {
+    "before.json": "55e147858e85eb55c577a4160187efa715b672a692cfb6426f2ef31cc189d355",
+    "after.json": "39619ff423e04604543105eb8b77db6d8d193c212222936ebe191468f360043a"
+  },
+  "provenance_controls": {
+    "registered_inputs_unchanged": true,
+    "new_source_unchanged": true,
+    "old_source_unchanged": true,
+    "captured_checks_reproduced": true,
+    "same_input_material": true,
+    "synthetic_control_differs": true
+  },
+  "cases": {
+    "wren": {
+      "input_sha256": "621133cea4e664173adeb1816c0a22897d5b3cc6620ab75c0cdd79a89e2482e2",
+      "records": 89,
+      "before_check_ok": true,
+      "after_check_ok": true,
+      "before_completion_refusals": 1,
+      "after_completion_refusals": 0,
+      "minted_predicates": [
+        "magnitude_scale",
+        "system_digest"
+      ],
+      "systems": [
+        {
+          "id": "engine",
+          "maximum": 1,
+          "needs": {
+            "articulated": [
+              [
+                "loadstitch",
+                1
+              ],
+              [
+                "rank_10",
+                1
+              ]
+            ],
+            "duration": [
+              [
+                "loadstitch",
+                1
+              ]
+            ],
+            "inspection": [],
+            "length": [
+              [
+                "loadstitch",
+                1
+              ]
+            ],
+            "load": [
+              [
+                "loadstitch",
+                1
+              ]
+            ],
+            "loadstitch": [],
+            "point": [],
+            "split": [
+              [
+                "loadstitch",
+                1
+              ],
+              [
+                "rank_5",
+                1
+              ]
+            ]
+          },
+          "deepening_available": false
+        }
+      ],
+      "registered_completion_condition_met": true
+    },
+    "explicit_depth_control": {
+      "input_sha256": "e3563b3c9c82f965b6f080c579a8fd7f2dfe2e599a4008ade3fdefd290edf234",
+      "records": 89,
+      "before_check_ok": true,
+      "after_check_ok": true,
+      "before_completion_refusals": 1,
+      "after_completion_refusals": 0,
+      "minted_predicates": [
+        "magnitude_scale",
+        "system_digest"
+      ],
+      "systems": [
+        {
+          "id": "engine",
+          "maximum": 2,
+          "needs": {
+            "articulated": [
+              [
+                "loadstitch",
+                1
+              ],
+              [
+                "rank_10",
+                1
+              ]
+            ],
+            "duration": [
+              [
+                "loadstitch",
+                1
+              ]
+            ],
+            "inspection": [],
+            "length": [
+              [
+                "loadstitch",
+                1
+              ]
+            ],
+            "load": [
+              [
+                "loadstitch",
+                1
+              ]
+            ],
+            "loadstitch": [],
+            "point": [],
+            "split": [
+              [
+                "loadstitch",
+                2
+              ],
+              [
+                "rank_5",
+                1
+              ]
+            ]
+          },
+          "deepening_available": true
+        }
+      ],
+      "registered_completion_condition_met": true
+    },
+    "opposing": {
+      "input_sha256": "dc2057df83bacf85a2afc25be2c2faab913d4b3899ee14917046430491f1a73a",
+      "records": 47,
+      "before_check_ok": false,
+      "after_check_ok": false,
+      "before_completion_refusals": 1,
+      "after_completion_refusals": 1,
+      "minted_predicates": [],
+      "systems": [],
+      "registered_completion_condition_met": false
+    }
+  },
+  "all_registered_conditions_met": false,
+  "model_calls": 0
+}

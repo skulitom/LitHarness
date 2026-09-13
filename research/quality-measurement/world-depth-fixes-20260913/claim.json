@@ -1,8 +1,8 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "world-depth-fixes-20260913",
-  "statement": "Replay the captured first world checks before and after the ownership-only system fix, with an explicit-depth control.",
-  "status": "registered",
+  "statement": "The captured Wren world completes unchanged after removal of the forced-depth and configuration-label refusals; explicit depth remains functional, while the opposing interim world is still incomplete and the full registered criterion is not met.",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,16 @@
       "kind": "registration",
       "path": "research/quality-measurement/world-depth-fixes-20260913/registration.json",
       "sha256": "a8951ae1e40f52db234da53cad971257157285e356b37df6fe4fab2c14dc0d1e"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/world-depth-fixes-20260913/evidence.json",
+      "sha256": "d689cd89e85bfaf6b820bf0acb14d2fee41458be73786311b5582799bc28fbb3"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/world-depth-fixes-20260913/REPORT.md",
+      "sha256": "2810372ac0166625ad29d64b4b5e8318fbd75badf527041c7eaa64d3a04f1d21"
     }
   ]
 }
