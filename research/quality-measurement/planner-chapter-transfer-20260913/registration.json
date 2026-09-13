@@ -1,0 +1,27 @@
+{
+  "manifest_sha256": "3407f54d5a6d7d8c27c4a5ae468eb2588745d4804ff7a1304f8073aeb015abf4",
+  "order": [
+    "draft-astra-1",
+    "draft-opus-1"
+  ],
+  "source_revision": "02611eb5c77956cda65f4b7c0e3043451aa52335",
+  "seed_sha256": "76525e135564efdaef3926c42b11b5949d9c565e5b006ebb757009444ffb7c28",
+  "binary_sha256": "081e4de4be8e38fac6ed4d95e3b1a0b9f6d31c090ddc36e1696b349fe406f575",
+  "binary_version": "codex-cli 0.154.0-alpha.6.2",
+  "static_requests": {
+    "draft-astra-1": "a62fbee8c10a4fca4277e01b348e70bf6e6a06980daf41095312675e008cb3e3",
+    "draft-opus-1": "9b0086c5facf411f6db9062df73c362d96108d699e2fc69e74b7b2933baa44f6"
+  },
+  "parents": {
+    "astra": {
+      "source_path": "runs/invention-boundaries-20260912/calls/plan-astra-astra-1.json",
+      "receipt_sha256": "3abfd075f619f971e5c9bb1e007373ad6b09af2471b3daeeb4e5fba3c5e06614",
+      "mechanics_receipt_sha256": "bc8291412207a31a6c69b31649c605f8f52a11a0c07e6555cac09e80c67ced49"
+    },
+    "opus": {
+      "source_path": "runs/invention-boundaries-20260912/calls/plan-astra-opus-1.json",
+      "receipt_sha256": "da04af43a6cbcea990c855f5c0b57831304f6b9dbe5951a775330374a66452b8",
+      "mechanics_receipt_sha256": "bc8291412207a31a6c69b31649c605f8f52a11a0c07e6555cac09e80c67ced49"
+    }
+  }
+}
