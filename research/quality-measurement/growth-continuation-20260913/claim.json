@@ -1,8 +1,8 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "growth-continuation-20260913",
-  "status": "registered",
-  "statement": "The registered six-chapter continuation tests whether the retained declared-growth seed proceeds through the ordinary production loop with preserved rules, attributable chapters and consistent stock transitions; repeated investment is observed if it occurs, never required or inferred from the scripted integration test.",
+  "status": "observed",
+  "statement": "The retained first declared-growth seed completed six attributable chapters with unchanged mechanical rules and preserved earlier prose. Two distinct paid upgrades appear in prose and accepted holding edges; repeated paid investment occurs only in the scripted integration test. The original all-seed-canon audit flag fails because five superseded proposals stay proposed; the separate post-observation audit verifies preservation. Partial status snapshots, default stock zero and missing early ladder standings limit stock validation; no general semantic compliance or literary-quality qualification follows.",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,21 @@
       "kind": "registration",
       "path": "research/quality-measurement/growth-continuation-20260913/registration.json",
       "sha256": "2a047e8b273144167881a0fa178bf09dc6af8219f8c4169d5f75b6c754f323c3"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/growth-continuation-20260913/evidence.json",
+      "sha256": "4e0a360a5d57fca292b54c8bd65c3063d23f7e5b4f0a3998d1faec0facf9c773"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/growth-continuation-20260913/readout.json",
+      "sha256": "877fedaf4ee3c8138dc281928a30941d6cefc3966c5d1eaed9c7415d0293bf9a"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/growth-continuation-20260913/REPORT.md",
+      "sha256": "ef1a6d14b1bdefb587597e6a153a1e2b56d6e93eb156063bcfd47fbc4192edd8"
     }
   ]
 }

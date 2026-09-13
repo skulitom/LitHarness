@@ -1,0 +1,859 @@
+{
+  "schema": "litharness.growth-continuation-readout.v1",
+  "analysis_stage": "post-observation",
+  "script_sha256": "36fb59dcdc7f4e84770e4309fb9a1c0c6cb7d84e5ce9ac1fc5b2e71898300611",
+  "registered_evidence_sha256": "4e0a360a5d57fca292b54c8bd65c3063d23f7e5b4f0a3998d1faec0facf9c773",
+  "source_seed_sha256": "c147b9ccb9ef5d8ff72cd991c7e9cd43ad0acb7ffcbb36da415c94226d572551",
+  "final_database_sha256": "f338b281689a8575797fe4e1c3019f499c152347d8e11314f2f891282fb7a657",
+  "seed_acceptance_receipt_sha256": "ed6c8f1675a2b80f1a5db5a746e83cee3bfccd25651f75c0266eb2512f16a2d7",
+  "checkpoints": [
+    {
+      "label": "seeded",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": null,
+        "subject": "wren",
+        "values": {
+          "rank": 0
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "0bd99355616f7a118fb9ad8bad69dd80720d686ffa4d3f7003e1c3a8a64b1e43",
+        "exit_code": 1,
+        "words": 0,
+        "status_column_sets": 0,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 0
+      },
+      "database_unchanged": true
+    },
+    {
+      "label": "checkpoint-1",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": "s000001",
+        "subject": "wren",
+        "values": {
+          "rank": 0,
+          "inspection": 1,
+          "loadstitch": 1
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-xb14d29c6b9897ad3c6fe38bf",
+            "order_key": "s000001",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "inspection": 1,
+              "loadstitch": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000004",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000006",
+            "order_key": "s000006",
+            "authority": "proposed",
+            "value": {
+              "rank": 2
+            }
+          },
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "cd12fe4de8ddd44d8178f97920ee98c82652a63d3ea4a58a859e8af7b09ba117",
+        "exit_code": 1,
+        "words": 1982,
+        "status_column_sets": 2,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 1
+      },
+      "database_unchanged": true
+    },
+    {
+      "label": "checkpoint-2",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": "s000002",
+        "subject": "wren",
+        "values": {
+          "rank": 0,
+          "inspection": 1,
+          "loadstitch": 1,
+          "mana": 35
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-xb14d29c6b9897ad3c6fe38bf",
+            "order_key": "s000001",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "inspection": 1,
+              "loadstitch": 1
+            }
+          },
+          {
+            "record_id": "rec-wf034d568fb594ad05b5a527d",
+            "order_key": "s000002",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "inspection": 1,
+              "loadstitch": 1,
+              "mana": 35
+            }
+          },
+          {
+            "record_id": "milestone-s000004",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000006",
+            "order_key": "s000006",
+            "authority": "proposed",
+            "value": {
+              "rank": 2
+            }
+          },
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "1547775a4a6fd9ba8f2a226ce61244f6bd721d54a81d6e57284567d132024f81",
+        "exit_code": 1,
+        "words": 3902,
+        "status_column_sets": 2,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 1
+      },
+      "database_unchanged": true
+    },
+    {
+      "label": "checkpoint-3",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": "s000002",
+        "subject": "wren",
+        "values": {
+          "rank": 0,
+          "inspection": 1,
+          "loadstitch": 1,
+          "mana": 35
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-xb14d29c6b9897ad3c6fe38bf",
+            "order_key": "s000001",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "inspection": 1,
+              "loadstitch": 1
+            }
+          },
+          {
+            "record_id": "rec-wf034d568fb594ad05b5a527d",
+            "order_key": "s000002",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "inspection": 1,
+              "loadstitch": 1,
+              "mana": 35
+            }
+          },
+          {
+            "record_id": "milestone-s000004",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1
+            }
+          },
+          {
+            "record_id": "milestone-s000006",
+            "order_key": "s000006",
+            "authority": "proposed",
+            "value": {
+              "rank": 2
+            }
+          },
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "50c20e3016056408fd50ed1f4fa67f1833abe6fba5293cded341083fbe599da4",
+        "exit_code": 1,
+        "words": 5864,
+        "status_column_sets": 2,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 1
+      },
+      "database_unchanged": true
+    },
+    {
+      "label": "checkpoint-4",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": "s000004",
+        "subject": "wren",
+        "values": {
+          "rank": 1,
+          "inspection": 2,
+          "loadstitch": 1,
+          "mana": 25
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-xb14d29c6b9897ad3c6fe38bf",
+            "order_key": "s000001",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "inspection": 1,
+              "loadstitch": 1
+            }
+          },
+          {
+            "record_id": "rec-wf034d568fb594ad05b5a527d",
+            "order_key": "s000002",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "inspection": 1,
+              "loadstitch": 1,
+              "mana": 35
+            }
+          },
+          {
+            "record_id": "milestone-s000004",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1
+            }
+          },
+          {
+            "record_id": "rec-we2396b5aa805eda989828dc6",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1,
+              "inspection": 2,
+              "loadstitch": 1,
+              "load": 1,
+              "point": 0,
+              "mana": 25
+            }
+          },
+          {
+            "record_id": "rec-xaf0f51ba7cce929b1409801d",
+            "order_key": "s000004",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 1,
+              "inspection": 2,
+              "loadstitch": 1,
+              "mana": 25
+            }
+          },
+          {
+            "record_id": "milestone-s000006",
+            "order_key": "s000006",
+            "authority": "proposed",
+            "value": {
+              "rank": 2
+            }
+          },
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "3ffeb8aeadaf454792c20868f469ad9a900b92a7432f7ba0da5afa8b389a4192",
+        "exit_code": 1,
+        "words": 7837,
+        "status_column_sets": 4,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 1
+      },
+      "database_unchanged": true
+    },
+    {
+      "label": "checkpoint-5",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": "s000005",
+        "subject": "wren",
+        "values": {
+          "rank": 1,
+          "inspection": 2,
+          "loadstitch": 1,
+          "mana": 20
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-xb14d29c6b9897ad3c6fe38bf",
+            "order_key": "s000001",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "inspection": 1,
+              "loadstitch": 1
+            }
+          },
+          {
+            "record_id": "rec-wf034d568fb594ad05b5a527d",
+            "order_key": "s000002",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "inspection": 1,
+              "loadstitch": 1,
+              "mana": 35
+            }
+          },
+          {
+            "record_id": "milestone-s000004",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1
+            }
+          },
+          {
+            "record_id": "rec-we2396b5aa805eda989828dc6",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1,
+              "inspection": 2,
+              "loadstitch": 1,
+              "load": 1,
+              "point": 0,
+              "mana": 25
+            }
+          },
+          {
+            "record_id": "rec-xaf0f51ba7cce929b1409801d",
+            "order_key": "s000004",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 1,
+              "inspection": 2,
+              "loadstitch": 1,
+              "mana": 25
+            }
+          },
+          {
+            "record_id": "rec-xa6ab7225bf9030eb5a6ffb47",
+            "order_key": "s000005",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 1,
+              "inspection": 2,
+              "loadstitch": 1,
+              "mana": 20
+            }
+          },
+          {
+            "record_id": "milestone-s000006",
+            "order_key": "s000006",
+            "authority": "proposed",
+            "value": {
+              "rank": 2
+            }
+          },
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "4c60085b9c64ceebe8ec8a87d9446c828184b405f4acfbd1a25883a0fd3ec848",
+        "exit_code": 1,
+        "words": 9826,
+        "status_column_sets": 4,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 2
+      },
+      "database_unchanged": true
+    },
+    {
+      "label": "checkpoint-6",
+      "seed_preservation": {
+        "original_count": 196,
+        "superseded_ids": [
+          "rec-w0ee439d1459c01d35cd7af5a",
+          "rec-w1d88432b0ea01767d808fc9b",
+          "rec-w8434eb6e72a6a87f90147521",
+          "rec-wbf1c979aebaf19bb5268cef5",
+          "rec-wed482a346793380a46840288"
+        ],
+        "expected_accepted_count": 191,
+        "all_preserved_with_expected_authority": true,
+        "problems": []
+      },
+      "all_system_fields_except_manifestation_text_unchanged": true,
+      "folded_state": {
+        "at": "s000006",
+        "subject": "wren",
+        "values": {
+          "rank": 2,
+          "inspection": 2,
+          "loadstitch": 1,
+          "mana": 10
+        },
+        "snapshots": [
+          {
+            "record_id": "rec-xb14d29c6b9897ad3c6fe38bf",
+            "order_key": "s000001",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "inspection": 1,
+              "loadstitch": 1
+            }
+          },
+          {
+            "record_id": "rec-wf034d568fb594ad05b5a527d",
+            "order_key": "s000002",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0,
+              "inspection": 1,
+              "loadstitch": 1,
+              "mana": 35
+            }
+          },
+          {
+            "record_id": "milestone-s000004",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1
+            }
+          },
+          {
+            "record_id": "rec-we2396b5aa805eda989828dc6",
+            "order_key": "s000004",
+            "authority": "proposed",
+            "value": {
+              "rank": 1,
+              "inspection": 2,
+              "loadstitch": 1,
+              "load": 1,
+              "point": 0,
+              "mana": 25
+            }
+          },
+          {
+            "record_id": "rec-xaf0f51ba7cce929b1409801d",
+            "order_key": "s000004",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 1,
+              "inspection": 2,
+              "loadstitch": 1,
+              "mana": 25
+            }
+          },
+          {
+            "record_id": "rec-xa6ab7225bf9030eb5a6ffb47",
+            "order_key": "s000005",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 1,
+              "inspection": 2,
+              "loadstitch": 1,
+              "mana": 20
+            }
+          },
+          {
+            "record_id": "milestone-s000006",
+            "order_key": "s000006",
+            "authority": "proposed",
+            "value": {
+              "rank": 2
+            }
+          },
+          {
+            "record_id": "rec-x9e902964674ce156aadfda97",
+            "order_key": "s000006",
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 2,
+              "inspection": 2,
+              "loadstitch": 1,
+              "mana": 10
+            }
+          },
+          {
+            "record_id": "rec-w668bdd13b406506e31e31b56",
+            "order_key": null,
+            "authority": "accepted_canon",
+            "value": {
+              "rank": 0
+            }
+          }
+        ]
+      },
+      "diagnostic": {
+        "sha256": "e88ce1d0de169666776b14d8f19a5af512bd122d9c77d2e01144202729db14d3",
+        "exit_code": 1,
+        "words": 11765,
+        "status_column_sets": 4,
+        "sheet_mismatches": 0,
+        "unresolved_sheet_comparisons": 3
+      },
+      "database_unchanged": true
+    }
+  ],
+  "request_phrase_hashes": {
+    "1": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+    "2": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+    "3": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+    "4": "b6e4d2e542ef414bcfde2c1da943cbc4f54abe6b16bdcf80aa003787637b46d4",
+    "5": "27731ddbd604fcc608960dacb9a704f3a0289a6f61d258ac4eda17cc14c71033"
+  },
+  "requests": [
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/001.json",
+      "sha256": "a43c8759aeea01b71033b8d576421ca515ee7646b69f29894507dd336880513c",
+      "profile": "default",
+      "locations": []
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/002.json",
+      "sha256": "d624630c434ecae7549526917618e80dbdc6ad99d338a156f89432d3f9be2ef8",
+      "profile": "planner.outline.v1",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "prompt",
+          "start": 34007,
+          "end": 34068
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "prompt",
+          "start": 33513,
+          "end": 33578
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "prompt",
+          "start": 30422,
+          "end": 30470
+        }
+      ]
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/003.json",
+      "sha256": "4796e6ab2b741c889211a1676b223f892d3fa594f2591b892a739fd228acb579",
+      "profile": "default",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "system",
+          "start": 10067,
+          "end": 10128
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "system",
+          "start": 9809,
+          "end": 9874
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "system",
+          "start": 8623,
+          "end": 8671
+        }
+      ]
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/006.json",
+      "sha256": "1faa3b404204dcf184774be1e434d3718e09a86857a18723d06b3f76a63d387c",
+      "profile": "default",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "system",
+          "start": 9663,
+          "end": 9724
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "system",
+          "start": 9405,
+          "end": 9470
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "system",
+          "start": 8219,
+          "end": 8267
+        }
+      ]
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/009.json",
+      "sha256": "99259c8634a61438e0e3ccfcfb15982f49b25822cb84afbd8312b41f63002559",
+      "profile": "default",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "system",
+          "start": 9243,
+          "end": 9304
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "system",
+          "start": 8985,
+          "end": 9050
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "system",
+          "start": 7799,
+          "end": 7847
+        }
+      ]
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/012.json",
+      "sha256": "1d878bde20f92a55c7e8ae7323beed0812d80a59ab18b8df815097375efc6450",
+      "profile": "default",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "system",
+          "start": 9243,
+          "end": 9304
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "system",
+          "start": 8985,
+          "end": 9050
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "system",
+          "start": 7799,
+          "end": 7847
+        }
+      ]
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/015.json",
+      "sha256": "b36b0a9fad0f95066519193ba40bbad9014b4c2566866047d289fcce92741abf",
+      "profile": "default",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "system",
+          "start": 9243,
+          "end": 9304
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "system",
+          "start": 8985,
+          "end": 9050
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "system",
+          "start": 7799,
+          "end": 7847
+        },
+        {
+          "text_sha256": "b6e4d2e542ef414bcfde2c1da943cbc4f54abe6b16bdcf80aa003787637b46d4",
+          "field": "prompt",
+          "start": 35493,
+          "end": 35514
+        },
+        {
+          "text_sha256": "27731ddbd604fcc608960dacb9a704f3a0289a6f61d258ac4eda17cc14c71033",
+          "field": "prompt",
+          "start": 31646,
+          "end": 31667
+        }
+      ]
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/018.json",
+      "sha256": "1f211b7b27844e083641026b14af672e4d529f656d026547479bc5fb3633b525",
+      "profile": "default",
+      "locations": [
+        {
+          "text_sha256": "6f2c9a69697f8f154726427a6f6adcfb8d0c9b0d987835dbeb185477219bace9",
+          "field": "system",
+          "start": 9243,
+          "end": 9304
+        },
+        {
+          "text_sha256": "f7e3cb97e660de3b61cd0349ba9b6fa9f382a5db6cb3c84a4f64ad4bafd3114a",
+          "field": "system",
+          "start": 8985,
+          "end": 9050
+        },
+        {
+          "text_sha256": "5f307f40dd953ec8fdf7862336d72d631a5268d8ee54cd8ce68fd93cab4efcde",
+          "field": "system",
+          "start": 7799,
+          "end": 7847
+        },
+        {
+          "text_sha256": "b6e4d2e542ef414bcfde2c1da943cbc4f54abe6b16bdcf80aa003787637b46d4",
+          "field": "prompt",
+          "start": 35076,
+          "end": 35097
+        },
+        {
+          "text_sha256": "27731ddbd604fcc608960dacb9a704f3a0289a6f61d258ac4eda17cc14c71033",
+          "field": "prompt",
+          "start": 31968,
+          "end": 31989
+        }
+      ]
+    }
+  ]
+}

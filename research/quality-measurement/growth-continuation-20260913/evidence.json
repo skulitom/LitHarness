@@ -1,0 +1,944 @@
+{
+  "schema": "litharness.growth-continuation.v1",
+  "status": "completed",
+  "fatal": null,
+  "manifest_sha256": "8bb40f2817e5bb12476de65a63015d2b9303eef3c9a531ff5f39434af8bf3da6",
+  "progress_sha256": "e8c88fa620cad78ef00c122fa2ea8ac5ee6ed6a61206cb7edec3b65f06ff8759",
+  "calls": [
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/001.json",
+      "sha256": "a43c8759aeea01b71033b8d576421ca515ee7646b69f29894507dd336880513c",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 3768,
+      "sessions": [
+        "01a09bc9-d5f8-7703-bb65-61ed343c1f70"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/002.json",
+      "sha256": "d624630c434ecae7549526917618e80dbdc6ad99d338a156f89432d3f9be2ef8",
+      "profile": "planner.outline.v1",
+      "status": "completed",
+      "native_tokens": 21083,
+      "sessions": [
+        "01a09bc9-e726-7680-bc0a-537d8d637400"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "d7e3640ea5d41701c2c565799350e23914a1227b4bc2bbf5cd6972e40b0f4dac"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/003.json",
+      "sha256": "4796e6ab2b741c889211a1676b223f892d3fa594f2591b892a739fd228acb579",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 12706,
+      "sessions": [
+        "01a09bcc-02e6-7991-95a0-815e29814ce1"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "d740f8223c2dd86321871ad89be0be15a9834cd5061085f52de26206dab9bb5a"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/004.json",
+      "sha256": "5510da84f28d74a0ff11e0c58f85ac430af49e4d3a67916eb3ef680c3e0d353c",
+      "profile": "mechanical",
+      "status": "completed",
+      "native_tokens": 7352,
+      "sessions": [
+        "01a09bcd-dbca-78b0-b967-bbc6dd959391"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "7e1a9b54813f61a27c79ea93ba4015986af6bea14af24da3ecddcbe79494d269"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/005.json",
+      "sha256": "6895cd561b220825a9d463e631f7b8ae61302c08946bfa96cc0cbc2d04084213",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 137301,
+      "sessions": [
+        "01a09bce-0a17-7ab2-a426-2bab5bb51d49"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 9,
+        "world declare-batch": 2,
+        "world check": 1
+      },
+      "failed_commands": [],
+      "request_sha256": "361f1b6850a97d037e0d88eabd0991f37f1f4824c22b0a2cdaca681c94727f11"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/006.json",
+      "sha256": "1faa3b404204dcf184774be1e434d3718e09a86857a18723d06b3f76a63d387c",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 16081,
+      "sessions": [
+        "01a09bcf-4b77-74a1-9d00-9f8b48818df9"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "f4e6247e7eb6ee8ae3d6e628ee5343485493144ef067f0b6712b2c71befde767"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/007.json",
+      "sha256": "69a8afd109f355af6a0d1e1c568e739bb726cac862bdfdd0b1f26e8194b4ac7d",
+      "profile": "mechanical",
+      "status": "completed",
+      "native_tokens": 7413,
+      "sessions": [
+        "01a09bd0-e7f1-7263-a8f3-d2a529371e7e"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "d061ad555305882c0d4561f703c40112c6d4c624f1176c8b95b9d3979df14dd9"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/008.json",
+      "sha256": "fcddc04a259d7ba04fe32ad44a2cdfd08de36ab913b93c6bea9c7da7558a5b43",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 178122,
+      "sessions": [
+        "01a09bd1-1f0a-7a13-8005-ccb63a1aa562"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 8,
+        "world declare-batch": 2,
+        "world check": 1
+      },
+      "failed_commands": [],
+      "request_sha256": "46d37eddfba0784958552ccd3e6660c459990ceaad77786f8f02b5bc8b9f8d85"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/009.json",
+      "sha256": "99259c8634a61438e0e3ccfcfb15982f49b25822cb84afbd8312b41f63002559",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 20156,
+      "sessions": [
+        "01a09bd2-64f5-78d2-848a-d5952bf4769b"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "d6186a000f38c5e4420c93f8f4924a76cd12e0dc03dcee13d3aa0fd4073e48fe"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/010.json",
+      "sha256": "c6085918884c8547c395722ae938666b9c9546fbcaa3914ee17d60a2639744cd",
+      "profile": "mechanical",
+      "status": "completed",
+      "native_tokens": 7780,
+      "sessions": [
+        "01a09bd4-2cec-73d3-ab2c-117cfcd95b71"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "b36cd21f9fbea2a2d6fc8d2954585837c2cdcc90db697be2f6476ac59079cb40"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/011.json",
+      "sha256": "8dc754364bb10e7986115d5144b7326d3210ab9c797b888fe4a1a07f304fc077",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 220282,
+      "sessions": [
+        "01a09bd4-71f4-7262-a123-ac36c383aa6c"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 7,
+        "world declare-batch": 3,
+        "world check": 1
+      },
+      "failed_commands": [],
+      "request_sha256": "16f92da953fe9e6fd53a73dfa94ddac174f01e7a1f1473fa3ed412179d866714"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/012.json",
+      "sha256": "1d878bde20f92a55c7e8ae7323beed0812d80a59ab18b8df815097375efc6450",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 25821,
+      "sessions": [
+        "01a09bd6-1a9e-7570-8c02-4401a7494136"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "719d4b6fb4214e32cc4383e3390ac0fd304955e85fbf78cdbc9d5fc2578965b9"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/013.json",
+      "sha256": "99d043ace46f83c5041a6b28a648e14e206a6154333b10635f6d002dd5e0f212",
+      "profile": "mechanical",
+      "status": "completed",
+      "native_tokens": 7751,
+      "sessions": [
+        "01a09bd7-a379-7553-a73d-63cf64e278ab"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "d10b304bf2505e70fa73232acf0683b05c10275dafb1f0585fbbc7b425e83643"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/014.json",
+      "sha256": "a5e73817d3c3dc2515b0601615410749ba4a1dbd8fb9abf592870e5da73360eb",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 234740,
+      "sessions": [
+        "01a09bd7-dfa4-7b71-9a6b-0415719ea90a"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 18,
+        "world --help": 1,
+        "world declare-batch": 3,
+        "world check": 1
+      },
+      "failed_commands": [
+        {
+          "call": 21,
+          "returncode": null,
+          "error_kind": "invalid_arguments"
+        }
+      ],
+      "request_sha256": "7e46f64894cf52864cc5cfe3c11a08c40c87518b60aa2b475d60c0007580b10a"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/015.json",
+      "sha256": "b36b0a9fad0f95066519193ba40bbad9014b4c2566866047d289fcce92741abf",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 30985,
+      "sessions": [
+        "01a09bd9-a60c-7073-83a6-499112e6c48b"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "eaf918e015b859f69886a901870d17bceb7373e12cbd2c110351ce8af5d1688b"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/016.json",
+      "sha256": "f43dcec6df7b9685947e9b1e63810dae52141618c41be5f42a788a8caf92b0b9",
+      "profile": "mechanical",
+      "status": "completed",
+      "native_tokens": 7649,
+      "sessions": [
+        "01a09bdb-61d0-7641-8cb2-2d9d1826547a"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "6e955cc4086dac83a937ea293e06f7cd370f571086970805d0e49c49787801bd"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/017.json",
+      "sha256": "bd1eec3f22973d6842ef108b6a199416fc11ac33600d84a6ee732631b6974792",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 165587,
+      "sessions": [
+        "01a09bdb-9bcb-73b3-a0c4-0b844af174d1"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 12,
+        "world declare-batch": 2,
+        "world check": 1
+      },
+      "failed_commands": [],
+      "request_sha256": "2a22d557cbb28bd3bbd5f580af2333eac4ebe3686301c7fded79249db858dd10"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/018.json",
+      "sha256": "1f211b7b27844e083641026b14af672e4d529f656d026547479bc5fb3633b525",
+      "profile": "default",
+      "status": "completed",
+      "native_tokens": 35840,
+      "sessions": [
+        "01a09bdd-1327-7ef3-8375-f166974d0e23"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "a46174d11dbf635f3549765e83563138cd3db80e87c0d6cab80cfc8360c010f2"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/019.json",
+      "sha256": "9886db2abc0c2d5c918f7b57f9b049a484442c228db81b747eab1814eff3d2a7",
+      "profile": "mechanical",
+      "status": "completed",
+      "native_tokens": 7716,
+      "sessions": [
+        "01a09bde-ce0f-7b61-93eb-dd2b36cd7f72"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {},
+      "failed_commands": [],
+      "request_sha256": "b938bdcb4fe0359072a4ae069e133c0cee264f4d4a3fef36cabeb30974985a21"
+    },
+    {
+      "path": "runs/growth-continuation-20260913/book/calls/020.json",
+      "sha256": "70d0d12a43fe2181cff418ddf928ece18264d4cf0a0062f39fa58fb1d75130d4",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_tokens": 210622,
+      "sessions": [
+        "01a09bdf-12fe-70a0-8233-e7ea93fabb0d"
+      ],
+      "malformed_event_lines": 0,
+      "contained": true,
+      "verbatim": true,
+      "commands_by_verb": {
+        "invalid tool request": 2,
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 12,
+        "world check": 2,
+        "world declare-batch": 2
+      },
+      "failed_commands": [
+        {
+          "call": 1,
+          "returncode": null,
+          "error_kind": "invalid_arguments"
+        },
+        {
+          "call": 2,
+          "returncode": null,
+          "error_kind": "invalid_arguments"
+        }
+      ],
+      "request_sha256": "aefdfe41ac253132944ffd7aeda6bdc4a80c2a45af6d8005ee4322ac3ba21d3e"
+    }
+  ],
+  "native_tokens": 1358755,
+  "usage_matches_progress": true,
+  "session_count": 20,
+  "distinct_sessions": 20,
+  "profiles": {
+    "default": {
+      "calls": 7,
+      "tokens": 145357
+    },
+    "planner.outline.v1": {
+      "calls": 1,
+      "tokens": 21083
+    },
+    "mechanical": {
+      "calls": 6,
+      "tokens": 45661
+    },
+    "architect.grow.v5": {
+      "calls": 6,
+      "tokens": 1146654
+    }
+  },
+  "checkpoints": [
+    {
+      "label": "seeded",
+      "complete": true,
+      "database_sha256": "8f557cd0fd841b584aa08f5b77fa5c00b9632c77f73facaf5294c7765f300e9a",
+      "database_unchanged": true,
+      "world_sha256": "eabf7e56f4bab1fae32518de127cafa1b4205d30855ee8ec7965be1830093dcc",
+      "check_sha256": "be7887223be10ea10e36bc39c3181b959fef2053703ba1c92d9c638eef57ff63",
+      "verify_sha256": "c57a1a2c835cf39f3c90464d02eb0d60cb3436075702be8550932fc6490e4d17",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {},
+      "earlier_chapters_preserved": true,
+      "sheet": null,
+      "new_wants": []
+    },
+    {
+      "label": "checkpoint-1",
+      "complete": true,
+      "database_sha256": "23b5052fe67caeb457be1dd9d2464aebe4a4db5b27edee50de153b4b913fd0a2",
+      "database_unchanged": true,
+      "world_sha256": "0c21f477eef6299714e2560f44271d184292a0b3f5cfd8888eb9ff474513e330",
+      "check_sha256": "be7887223be10ea10e36bc39c3181b959fef2053703ba1c92d9c638eef57ff63",
+      "verify_sha256": "97929588583dad0a135d24d0f25e4466e1d7098bde3432a856dc2b6b27cfe3e5",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {
+        "Chapter1.txt": "2f1e12a6d926242b9d4e70adc64c082e06cebae4c375ff7485691e58168e5fa4"
+      },
+      "earlier_chapters_preserved": true,
+      "sheet": null,
+      "new_wants": [
+        {
+          "record_id": "rec-w930fa5a48958ef8285926dc6",
+          "subject": "wren",
+          "order_key": "s000001",
+          "value_sha256": "03b5877384c219721517c55b6bbe12014ed0206f568c855c980ccd8207fc8cd4"
+        }
+      ]
+    },
+    {
+      "label": "checkpoint-2",
+      "complete": true,
+      "database_sha256": "45a4988d5b9a60a0abb3f8d2de86229a94720d89209a0c9da343ba9b71b3e7d1",
+      "database_unchanged": true,
+      "world_sha256": "00eb6126d166099d7e0f1e839e5a5e00bd135a8070ebbac51898e514a76a37d3",
+      "check_sha256": "9f73579c76c59b921275a6bc08bc60cc83e73ec3dc447b7c4df1fbf7bca112fd",
+      "verify_sha256": "8c5edb3a90784d07facf365a353e090d7637bdc8ce80f700cc33225e6ae7354b",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {
+        "Chapter1.txt": "2f1e12a6d926242b9d4e70adc64c082e06cebae4c375ff7485691e58168e5fa4",
+        "Chapter2.txt": "f4faea998738fd2d1bbf3949d3cd6b09247cbab4359555b7a5391f8d9466ad40"
+      },
+      "earlier_chapters_preserved": true,
+      "sheet": null,
+      "new_wants": [
+        {
+          "record_id": "rec-w930fa5a48958ef8285926dc6",
+          "subject": "wren",
+          "order_key": "s000001",
+          "value_sha256": "03b5877384c219721517c55b6bbe12014ed0206f568c855c980ccd8207fc8cd4"
+        },
+        {
+          "record_id": "rec-wb77f31299d1b085f65712c2d",
+          "subject": "watcher",
+          "order_key": "s000002",
+          "value_sha256": "fcd31722e44461abebdbf1d141f7190b62367f27e3fb867014f6e2d6ff8d2394"
+        },
+        {
+          "record_id": "rec-wd834e9c9d6a58677a95236bc",
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "64a4bd55d4cf1f01abdadbcb6172a8d58087049ae7aa0d96fc4743040efede36"
+        }
+      ]
+    },
+    {
+      "label": "checkpoint-3",
+      "complete": true,
+      "database_sha256": "813fd4db0ddb930198acd78cb485ca93804e17906c4cca2d8a21b3206b974dd7",
+      "database_unchanged": true,
+      "world_sha256": "07a34f1cbe543b038fd563856617e919d99fef55d3c904c569d67db10b42f2b5",
+      "check_sha256": "9f73579c76c59b921275a6bc08bc60cc83e73ec3dc447b7c4df1fbf7bca112fd",
+      "verify_sha256": "18d55d297fbc0bd591a6364a8e189dedc8eb54b5475062b9ee5d15edf6002437",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {
+        "Chapter1.txt": "2f1e12a6d926242b9d4e70adc64c082e06cebae4c375ff7485691e58168e5fa4",
+        "Chapter2.txt": "f4faea998738fd2d1bbf3949d3cd6b09247cbab4359555b7a5391f8d9466ad40",
+        "Chapter3.txt": "369567844816bc54de54bc2a704da292159ee657dd3847cb705e3dfa6b13e459"
+      },
+      "earlier_chapters_preserved": true,
+      "sheet": null,
+      "new_wants": [
+        {
+          "record_id": "rec-w930fa5a48958ef8285926dc6",
+          "subject": "wren",
+          "order_key": "s000001",
+          "value_sha256": "03b5877384c219721517c55b6bbe12014ed0206f568c855c980ccd8207fc8cd4"
+        },
+        {
+          "record_id": "rec-wb77f31299d1b085f65712c2d",
+          "subject": "watcher",
+          "order_key": "s000002",
+          "value_sha256": "fcd31722e44461abebdbf1d141f7190b62367f27e3fb867014f6e2d6ff8d2394"
+        },
+        {
+          "record_id": "rec-wd834e9c9d6a58677a95236bc",
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "64a4bd55d4cf1f01abdadbcb6172a8d58087049ae7aa0d96fc4743040efede36"
+        },
+        {
+          "record_id": "rec-w4aed270a34a9e5095cf40dee",
+          "subject": "sill_test_caster",
+          "order_key": "s000003",
+          "value_sha256": "94da9499db7d3b2cbc0913a6fad7aaac62e29e1abeeb76c8e7240dc23e356d2a"
+        },
+        {
+          "record_id": "rec-w61424e59d024367527e1c007",
+          "subject": "wren",
+          "order_key": "s000003",
+          "value_sha256": "de74686cc0aae5c2d921e5f6536e52be6867a7dd524c0abf30485c661a564ab6"
+        },
+        {
+          "record_id": "rec-w620f120300bba6a01c5a1919",
+          "subject": "watcher",
+          "order_key": "s000003",
+          "value_sha256": "c2e601e8799b0b286ddfea8351f62ba4bd18a8c6927362669470ebffef504c24"
+        },
+        {
+          "record_id": "rec-w6f92640df94bd75847f24f71",
+          "subject": "clay_seller",
+          "order_key": "s000003",
+          "value_sha256": "83cee09ec3b5b8974b45b17dc681cb020157d39d62394645f358b7f562c939b7"
+        }
+      ]
+    },
+    {
+      "label": "checkpoint-4",
+      "complete": true,
+      "database_sha256": "6e9f0213566ccd317534306c409942393ffc7a5bf060ea08d89e5d6dd6f8530a",
+      "database_unchanged": true,
+      "world_sha256": "872c23f2908bbeb18b130fca4f25a071d2add3e396d13d4a15a965f2c0d15b78",
+      "check_sha256": "9f73579c76c59b921275a6bc08bc60cc83e73ec3dc447b7c4df1fbf7bca112fd",
+      "verify_sha256": "5408886c0fea6d0fde6c7d0bf3f8f4907d7c490e42e67ec89e100b5bfb1885d5",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {
+        "Chapter1.txt": "2f1e12a6d926242b9d4e70adc64c082e06cebae4c375ff7485691e58168e5fa4",
+        "Chapter2.txt": "f4faea998738fd2d1bbf3949d3cd6b09247cbab4359555b7a5391f8d9466ad40",
+        "Chapter3.txt": "369567844816bc54de54bc2a704da292159ee657dd3847cb705e3dfa6b13e459",
+        "Chapter4.txt": "6e5f6e537e84b34914e1b106c31cac578acf90e0270ad7a047012d878aeeaf9a"
+      },
+      "earlier_chapters_preserved": true,
+      "sheet": {
+        "system": "engine",
+        "system_digest": "sys-e2a2d11d32ba64f5c05076b4",
+        "rank": "rank_1",
+        "default_maximum": 1,
+        "holdings": {
+          "articulated": 0,
+          "duration": 0,
+          "inspection": 2,
+          "length": 0,
+          "load": 1,
+          "loadstitch": 1,
+          "point": 0,
+          "split": 0
+        },
+        "growth_limits": {
+          "articulated": 1,
+          "duration": "open",
+          "inspection": "open",
+          "length": "open",
+          "load": "open",
+          "loadstitch": 1,
+          "point": null,
+          "split": 1
+        }
+      },
+      "new_wants": [
+        {
+          "record_id": "rec-w930fa5a48958ef8285926dc6",
+          "subject": "wren",
+          "order_key": "s000001",
+          "value_sha256": "03b5877384c219721517c55b6bbe12014ed0206f568c855c980ccd8207fc8cd4"
+        },
+        {
+          "record_id": "rec-wb77f31299d1b085f65712c2d",
+          "subject": "watcher",
+          "order_key": "s000002",
+          "value_sha256": "fcd31722e44461abebdbf1d141f7190b62367f27e3fb867014f6e2d6ff8d2394"
+        },
+        {
+          "record_id": "rec-wd834e9c9d6a58677a95236bc",
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "64a4bd55d4cf1f01abdadbcb6172a8d58087049ae7aa0d96fc4743040efede36"
+        },
+        {
+          "record_id": "rec-w4aed270a34a9e5095cf40dee",
+          "subject": "sill_test_caster",
+          "order_key": "s000003",
+          "value_sha256": "94da9499db7d3b2cbc0913a6fad7aaac62e29e1abeeb76c8e7240dc23e356d2a"
+        },
+        {
+          "record_id": "rec-w61424e59d024367527e1c007",
+          "subject": "wren",
+          "order_key": "s000003",
+          "value_sha256": "de74686cc0aae5c2d921e5f6536e52be6867a7dd524c0abf30485c661a564ab6"
+        },
+        {
+          "record_id": "rec-w620f120300bba6a01c5a1919",
+          "subject": "watcher",
+          "order_key": "s000003",
+          "value_sha256": "c2e601e8799b0b286ddfea8351f62ba4bd18a8c6927362669470ebffef504c24"
+        },
+        {
+          "record_id": "rec-w6f92640df94bd75847f24f71",
+          "subject": "clay_seller",
+          "order_key": "s000003",
+          "value_sha256": "83cee09ec3b5b8974b45b17dc681cb020157d39d62394645f358b7f562c939b7"
+        },
+        {
+          "record_id": "rec-wb725d870c3cb84f838ebefb0",
+          "subject": "wren",
+          "order_key": "s000004",
+          "value_sha256": "947b990a0275cef433f0662c9d59f9ef75296b8b73f5258b4faaa156378adb34"
+        },
+        {
+          "record_id": "rec-wb85fb39e2f7c80c479716b03",
+          "subject": "watcher",
+          "order_key": "s000004",
+          "value_sha256": "4275fd36555fa97a81079140ac024d8be9339e6a7cf8128102eac56f5c899cca"
+        },
+        {
+          "record_id": "rec-wcce4be98b514418241f3d2ae",
+          "subject": "clay_seller",
+          "order_key": "s000004",
+          "value_sha256": "a548c809a5b1c3a59033784d430003c54e086a759fb9063d397accaab4899c65"
+        }
+      ]
+    },
+    {
+      "label": "checkpoint-5",
+      "complete": true,
+      "database_sha256": "048208421b22ba0794731d8ddf7288d8c0796c2f2247342fc19241469a1f6439",
+      "database_unchanged": true,
+      "world_sha256": "a653af481c032cdd72e6d68da83da02b28db7dfb4dd23dd2ef44a55fcf47dd54",
+      "check_sha256": "9f73579c76c59b921275a6bc08bc60cc83e73ec3dc447b7c4df1fbf7bca112fd",
+      "verify_sha256": "6912b7741ba9b415d379769ca725dc96054d96ebe52be63da8197cd2569e4433",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {
+        "Chapter1.txt": "2f1e12a6d926242b9d4e70adc64c082e06cebae4c375ff7485691e58168e5fa4",
+        "Chapter2.txt": "f4faea998738fd2d1bbf3949d3cd6b09247cbab4359555b7a5391f8d9466ad40",
+        "Chapter3.txt": "369567844816bc54de54bc2a704da292159ee657dd3847cb705e3dfa6b13e459",
+        "Chapter4.txt": "6e5f6e537e84b34914e1b106c31cac578acf90e0270ad7a047012d878aeeaf9a",
+        "Chapter5.txt": "53caacd1af6537fd76c9339a07c33ba475dc9975106ebd91ea40f4c09e3f9a24"
+      },
+      "earlier_chapters_preserved": true,
+      "sheet": {
+        "system": "engine",
+        "system_digest": "sys-e2a2d11d32ba64f5c05076b4",
+        "rank": "rank_1",
+        "default_maximum": 1,
+        "holdings": {
+          "articulated": 0,
+          "duration": 0,
+          "inspection": 2,
+          "length": 0,
+          "load": 1,
+          "loadstitch": 1,
+          "point": 0,
+          "split": 0
+        },
+        "growth_limits": {
+          "articulated": 1,
+          "duration": "open",
+          "inspection": "open",
+          "length": "open",
+          "load": "open",
+          "loadstitch": 1,
+          "point": null,
+          "split": 1
+        }
+      },
+      "new_wants": [
+        {
+          "record_id": "rec-w930fa5a48958ef8285926dc6",
+          "subject": "wren",
+          "order_key": "s000001",
+          "value_sha256": "03b5877384c219721517c55b6bbe12014ed0206f568c855c980ccd8207fc8cd4"
+        },
+        {
+          "record_id": "rec-wb77f31299d1b085f65712c2d",
+          "subject": "watcher",
+          "order_key": "s000002",
+          "value_sha256": "fcd31722e44461abebdbf1d141f7190b62367f27e3fb867014f6e2d6ff8d2394"
+        },
+        {
+          "record_id": "rec-wd834e9c9d6a58677a95236bc",
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "64a4bd55d4cf1f01abdadbcb6172a8d58087049ae7aa0d96fc4743040efede36"
+        },
+        {
+          "record_id": "rec-w4aed270a34a9e5095cf40dee",
+          "subject": "sill_test_caster",
+          "order_key": "s000003",
+          "value_sha256": "94da9499db7d3b2cbc0913a6fad7aaac62e29e1abeeb76c8e7240dc23e356d2a"
+        },
+        {
+          "record_id": "rec-w61424e59d024367527e1c007",
+          "subject": "wren",
+          "order_key": "s000003",
+          "value_sha256": "de74686cc0aae5c2d921e5f6536e52be6867a7dd524c0abf30485c661a564ab6"
+        },
+        {
+          "record_id": "rec-w620f120300bba6a01c5a1919",
+          "subject": "watcher",
+          "order_key": "s000003",
+          "value_sha256": "c2e601e8799b0b286ddfea8351f62ba4bd18a8c6927362669470ebffef504c24"
+        },
+        {
+          "record_id": "rec-w6f92640df94bd75847f24f71",
+          "subject": "clay_seller",
+          "order_key": "s000003",
+          "value_sha256": "83cee09ec3b5b8974b45b17dc681cb020157d39d62394645f358b7f562c939b7"
+        },
+        {
+          "record_id": "rec-wb725d870c3cb84f838ebefb0",
+          "subject": "wren",
+          "order_key": "s000004",
+          "value_sha256": "947b990a0275cef433f0662c9d59f9ef75296b8b73f5258b4faaa156378adb34"
+        },
+        {
+          "record_id": "rec-wb85fb39e2f7c80c479716b03",
+          "subject": "watcher",
+          "order_key": "s000004",
+          "value_sha256": "4275fd36555fa97a81079140ac024d8be9339e6a7cf8128102eac56f5c899cca"
+        },
+        {
+          "record_id": "rec-wcce4be98b514418241f3d2ae",
+          "subject": "clay_seller",
+          "order_key": "s000004",
+          "value_sha256": "a548c809a5b1c3a59033784d430003c54e086a759fb9063d397accaab4899c65"
+        },
+        {
+          "record_id": "rec-w8a67d382496c66f236f94674",
+          "subject": "wren",
+          "order_key": "s000005",
+          "value_sha256": "4b7a36ef6d4425cbbf654dcca184981057753df74e5291b4f70a60e6c9ddf3f3"
+        }
+      ],
+      "transition": {
+        "same_system": true,
+        "rank_steps": 0,
+        "paid_capability_increases": {
+          "duration": 0,
+          "length": 0,
+          "load": 0
+        },
+        "stocks": [
+          {
+            "stock": "point",
+            "before": 0,
+            "after": 0,
+            "rank_grant": 0,
+            "purchase_cost": 0,
+            "balanced_under_seed_model": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "checkpoint-6",
+      "complete": true,
+      "database_sha256": "3954cf020fe9a11fa551957984c05944230380b2e5054a47c930fa6a78eb7ab7",
+      "database_unchanged": true,
+      "world_sha256": "cff7d01fe297423b7a73f45f53cc17fd192f6b68d96781650d8434dc4b41a218",
+      "check_sha256": "9f73579c76c59b921275a6bc08bc60cc83e73ec3dc447b7c4df1fbf7bca112fd",
+      "verify_sha256": "5c69c06c0b4d880e93523d89e52a0e366ab34e21f0b8a1c8c0a9daa6e7df82c2",
+      "check_ok": true,
+      "unplaceable": 0,
+      "attribution_ok": true,
+      "seed_records_retained_in_canon": false,
+      "chapter_hashes": {
+        "Chapter1.txt": "2f1e12a6d926242b9d4e70adc64c082e06cebae4c375ff7485691e58168e5fa4",
+        "Chapter2.txt": "f4faea998738fd2d1bbf3949d3cd6b09247cbab4359555b7a5391f8d9466ad40",
+        "Chapter3.txt": "369567844816bc54de54bc2a704da292159ee657dd3847cb705e3dfa6b13e459",
+        "Chapter4.txt": "6e5f6e537e84b34914e1b106c31cac578acf90e0270ad7a047012d878aeeaf9a",
+        "Chapter5.txt": "53caacd1af6537fd76c9339a07c33ba475dc9975106ebd91ea40f4c09e3f9a24",
+        "Chapter6.txt": "fafcef57bf6dce73eb6e906e150addf654288edd0f24320fc9078e202b097470"
+      },
+      "earlier_chapters_preserved": true,
+      "sheet": {
+        "system": "engine",
+        "system_digest": "sys-85850cfdabc372bfcb6b5a7b",
+        "rank": "rank_2",
+        "default_maximum": 1,
+        "holdings": {
+          "articulated": 0,
+          "duration": 1,
+          "inspection": 2,
+          "length": 0,
+          "load": 1,
+          "loadstitch": 1,
+          "point": 0,
+          "split": 0
+        },
+        "growth_limits": {
+          "articulated": 1,
+          "duration": "open",
+          "inspection": "open",
+          "length": "open",
+          "load": "open",
+          "loadstitch": 1,
+          "point": null,
+          "split": 1
+        }
+      },
+      "new_wants": [
+        {
+          "record_id": "rec-w930fa5a48958ef8285926dc6",
+          "subject": "wren",
+          "order_key": "s000001",
+          "value_sha256": "03b5877384c219721517c55b6bbe12014ed0206f568c855c980ccd8207fc8cd4"
+        },
+        {
+          "record_id": "rec-wb77f31299d1b085f65712c2d",
+          "subject": "watcher",
+          "order_key": "s000002",
+          "value_sha256": "fcd31722e44461abebdbf1d141f7190b62367f27e3fb867014f6e2d6ff8d2394"
+        },
+        {
+          "record_id": "rec-wd834e9c9d6a58677a95236bc",
+          "subject": "wren",
+          "order_key": "s000002",
+          "value_sha256": "64a4bd55d4cf1f01abdadbcb6172a8d58087049ae7aa0d96fc4743040efede36"
+        },
+        {
+          "record_id": "rec-w4aed270a34a9e5095cf40dee",
+          "subject": "sill_test_caster",
+          "order_key": "s000003",
+          "value_sha256": "94da9499db7d3b2cbc0913a6fad7aaac62e29e1abeeb76c8e7240dc23e356d2a"
+        },
+        {
+          "record_id": "rec-w61424e59d024367527e1c007",
+          "subject": "wren",
+          "order_key": "s000003",
+          "value_sha256": "de74686cc0aae5c2d921e5f6536e52be6867a7dd524c0abf30485c661a564ab6"
+        },
+        {
+          "record_id": "rec-w620f120300bba6a01c5a1919",
+          "subject": "watcher",
+          "order_key": "s000003",
+          "value_sha256": "c2e601e8799b0b286ddfea8351f62ba4bd18a8c6927362669470ebffef504c24"
+        },
+        {
+          "record_id": "rec-w6f92640df94bd75847f24f71",
+          "subject": "clay_seller",
+          "order_key": "s000003",
+          "value_sha256": "83cee09ec3b5b8974b45b17dc681cb020157d39d62394645f358b7f562c939b7"
+        },
+        {
+          "record_id": "rec-wb725d870c3cb84f838ebefb0",
+          "subject": "wren",
+          "order_key": "s000004",
+          "value_sha256": "947b990a0275cef433f0662c9d59f9ef75296b8b73f5258b4faaa156378adb34"
+        },
+        {
+          "record_id": "rec-wb85fb39e2f7c80c479716b03",
+          "subject": "watcher",
+          "order_key": "s000004",
+          "value_sha256": "4275fd36555fa97a81079140ac024d8be9339e6a7cf8128102eac56f5c899cca"
+        },
+        {
+          "record_id": "rec-wcce4be98b514418241f3d2ae",
+          "subject": "clay_seller",
+          "order_key": "s000004",
+          "value_sha256": "a548c809a5b1c3a59033784d430003c54e086a759fb9063d397accaab4899c65"
+        },
+        {
+          "record_id": "rec-w8a67d382496c66f236f94674",
+          "subject": "wren",
+          "order_key": "s000005",
+          "value_sha256": "4b7a36ef6d4425cbbf654dcca184981057753df74e5291b4f70a60e6c9ddf3f3"
+        },
+        {
+          "record_id": "rec-w434494c32d348d6ab497078e",
+          "subject": "wren",
+          "order_key": "s000006",
+          "value_sha256": "d793b925feb7cd8d80b01d36690b077f283fa959764d9e074f9cd23ecf6bcf7e"
+        },
+        {
+          "record_id": "rec-wd3f743083d176d59743da2ec",
+          "subject": "watcher",
+          "order_key": "s000006",
+          "value_sha256": "fa2a630c9d42daa4c971263fc8b1463fbfa5b76c34446c9859f68694632935d9"
+        }
+      ],
+      "transition": {
+        "same_system": false,
+        "rank_steps": 1,
+        "paid_capability_increases": {
+          "duration": 1,
+          "length": 0,
+          "load": 0
+        },
+        "stocks": [
+          {
+            "stock": "point",
+            "before": 0,
+            "after": 0,
+            "rank_grant": 1,
+            "purchase_cost": 1,
+            "balanced_under_seed_model": true
+          }
+        ]
+      }
+    }
+  ],
+  "protected_inputs_unchanged": true
+}
