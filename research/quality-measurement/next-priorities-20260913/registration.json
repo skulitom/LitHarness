@@ -1,0 +1,14 @@
+{
+  "manifest_sha256": "a5d367c3daa6bf7a62d890889c41039aaa728407886e32b76b489fe1fab4317f",
+  "baseline_revision": "b774e6ce3c225c70ccad68a4a58ce7a3c9afef8a",
+  "max_calls": 20,
+  "max_tokens": 2000000,
+  "goal_cells": [
+    "current-conditional",
+    "clarified-adopted",
+    "current-adopted",
+    "clarified-conditional"
+  ],
+  "continuation_target": 6,
+  "reader_calls": 0
+}

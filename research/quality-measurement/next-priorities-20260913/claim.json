@@ -1,0 +1,18 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "next-priorities-20260913",
+  "statement": "The fixed tests examine whether a scoped reconciliation clarification preserves adopted goals without promoting a conditional thought, whether the existing Wren plan supports continued numerical investment through Chapter 6, and whether exact-payoff deletion provides mechanically matched and semantically verified reader-test material. Architect retrieval cost is profiled descriptively.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/next-priorities-20260913/RUNBOOK.md",
+      "sha256": "4946e7e1bca54c39df8a965642d6f79fa7a46394bed2b35c4da2a401b095c77d"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/next-priorities-20260913/registration.json",
+      "sha256": "51a459851d6cad86736906975e816ef1c714fcc30bf96c104d8439eb0f1dad9d"
+    }
+  ]
+}
