@@ -1,0 +1,19 @@
+{
+  "manifest_sha256": "2f74bce65e376a3aa5b96ceecea6d074e51014f0855998f852262eaeefe90bb6",
+  "source_revision": "991ff2c7f98ef34fe00f59cf797eb9159b0cea93",
+  "assignments": [
+    "verbatim-conditional",
+    "compact-adopted",
+    "compact-conditional",
+    "verbatim-adopted"
+  ],
+  "formats": {
+    "verbatim-conditional": false,
+    "compact-adopted": true,
+    "compact-conditional": true,
+    "verbatim-adopted": false
+  },
+  "max_calls": 8,
+  "max_tokens": 1200000,
+  "max_seconds": 3600
+}

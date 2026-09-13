@@ -1,0 +1,18 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "compact-json-20260913",
+  "statement": "The registered four-cell comparison measures native token usage and behavior under verbatim and lossless compact JSON replies for byte-identical paired conditional and adopted-goal requests; no savings or semantic result has been observed.",
+  "status": "registered",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/compact-json-20260913/RUNBOOK.md",
+      "sha256": "067a3f13dc2d5cbc10a723036e035ae47b28ff146b4259ee79bf78a33fc94e0f"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/compact-json-20260913/registration.json",
+      "sha256": "6ced376a1de0fcffb6168b3263fd437cb3d7e416ed92b7685ed3083dad491be6"
+    }
+  ]
+}
