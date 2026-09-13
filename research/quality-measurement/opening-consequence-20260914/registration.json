@@ -1,0 +1,28 @@
+{
+  "manifest_sha256": "ca24626978eb374419caa13f254566dd189dbdaa79ec720f15c8e34b8f954f3e",
+  "source_revision": "14fd7fb5d5f2332e2666dcb793ca8b27c53a033a",
+  "concept_sha256": "d03736987bd10cbdb05ecdfff376cf1433c814bb38529b768721fbf73063650e",
+  "chapters": 6,
+  "max_calls": 32,
+  "max_tokens": 2200000,
+  "max_seconds": 5400,
+  "directions": [
+    {
+      "name": "opening",
+      "directive_id": "opening-consequence-opening-01c740c65641a46f0bc8",
+      "logical_id": "constraint-d449bc870b3f2c187381",
+      "body_sha256": "01c740c65641a46f0bc88800e40040cf24196d5ad1a77418fd19c5d8685891cb",
+      "decision_id": "dec-8c4d0f0de47b1f1a4ba27177"
+    },
+    {
+      "name": "consequence",
+      "directive_id": "opening-consequence-consequence-c3f5cd353024165d8137",
+      "logical_id": "constraint-03b6b0447edbfbc714d9",
+      "body_sha256": "c3f5cd353024165d8137fda43cfcb7c9aa938df23e3a1e5b3b076ca013ab6038",
+      "decision_id": "dec-2caf9420a4c0961ccbeb9cd2"
+    }
+  ],
+  "direction_file_sha256": "198f897d114de349278cd9b9e5274c186d88f3a0228a5562216ab5c6316ef372",
+  "source_overrides": {},
+  "contrast": "historical opening versus first output with two delegated story constraints"
+}

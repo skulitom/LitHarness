@@ -1,0 +1,23 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "opening-consequence-20260914",
+  "status": "registered",
+  "statement": "One fixed first-output trial will examine two delegated story constraints: completing the water pursuit in Chapter 1 and retaining a failed bedding attempt before a later Duration purchase. Production source, original concept, seed mechanics and six-chapter layout remain unchanged. This is an authoring experiment, not a quality metric, candidate selection or production feedback qualification.",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/opening-consequence-20260914/RUNBOOK.md",
+      "sha256": "491405c8154077fc13f62642e9c4b9afa932232dc8b9db6e08d127a03dc761b3"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/opening-consequence-20260914/registration.json",
+      "sha256": "d974aa277ad2c2655cfbc255e003b7a6dc751d2eec213807a0423b5ccf1d51c5"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/opening-consequence-20260914/directions.json",
+      "sha256": "198f897d114de349278cd9b9e5274c186d88f3a0228a5562216ab5c6316ef372"
+    }
+  ]
+}
