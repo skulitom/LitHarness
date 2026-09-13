@@ -12,6 +12,12 @@ Two checks keep this page from decaying: every backticked symbol below must exis
 package or the suite, and every backticked `test_` name must be a real test
 (`tests/test_architecture.py`, the same checks that guard the docstrings).
 
+Source-preservation amendment (§251): a system may have held-or-unheld capabilities with
+scale maximum one, while rank gates and ownership prerequisites retain their arithmetic.
+Completion does not ask for invented depth. The configuration scale label is not a printed
+column; column-label checks remain separate. The regression
+`test_a_binary_system_preserves_rank_gates_and_does_not_offer_deepening` exercises this case.
+
 ## How a fact moves through the loop
 
 A world is declared as `StateRecord` rows (`litharness_contracts`), each a subject, a

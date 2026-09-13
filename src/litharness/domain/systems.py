@@ -51,7 +51,7 @@ CONFIGURATION_PREDICATES = frozenset({MAGNITUDE_SCALE, SYSTEM_DIGEST})
 #: proposal about a world and `extraction.REGISTRY_VERSION` marks something read off a page, and
 #: a reader that could not tell a minted system from either would be worth less than one that
 #: says nothing.
-REGISTRY_VERSION = "litharness.gamesystem.v0"
+REGISTRY_VERSION = "litharness.gamesystem.v1"
 #: The status line's column for the rung, and the one column that is not an ability.
 #:
 #: **`CharacterSheet.snapshot` carries the rung's derived *index*, not its name**, and when
@@ -83,10 +83,10 @@ MIN_RANKS = 3
 #: way `MAX_ABILITIES` is arithmetic about the width of a printed line.
 MIN_OPTIONS = 2
 MAX_OPTIONS = 4
-#: A magnitude of 1 is "held", so a maximum of 1 is a system where nothing can deepen and the
-#: number is a decoration — which is the exact word §114.6 used for a magnitude nothing computes
-#: with. The ceiling keeps a column one or two digits wide.
-MIN_SCALE_MAXIMUM = 2
+#: A maximum of one represents held-or-unheld capabilities without inventing deepening.
+#: Rank gates and prerequisite ownership still compute with that representation. The ceiling
+#: keeps a column one or two digits wide; neither bound evaluates the story's quality.
+MIN_SCALE_MAXIMUM = 1
 MAX_SCALE_MAXIMUM = 99
 #: What may not appear inside a printed column label. A digit, because the field pattern reads
 #: `label<space>digits` and a digit inside a label is a parser ambiguity nobody would enjoy
@@ -953,13 +953,14 @@ def check_draw(system: SystemDef, *, drawn: bool = True) -> tuple[str, ...]:
         complaints.append("two forks share an id, so a pick could not say which is meant")
 
     # --- the scale
-    if not _printable_label(system.scale.label):
-        complaints.append(f"the scale's label {system.scale.label!r} is not a printable label")
+    # This configuration label never occupies a status column. Column labels are checked
+    # separately; restricting a system's full name here would force an unrelated rename.
+    if not system.scale.label.strip():
+        complaints.append("the scale needs a non-empty label")
     if not MIN_SCALE_MAXIMUM <= system.scale.maximum <= MAX_SCALE_MAXIMUM:
         complaints.append(
             f"this system's magnitudes run to {system.scale.maximum}; a drawn scale runs to "
-            f"{MIN_SCALE_MAXIMUM}..{MAX_SCALE_MAXIMUM}, below which nothing can deepen and the "
-            "number is a decoration"
+            f"{MIN_SCALE_MAXIMUM}..{MAX_SCALE_MAXIMUM} so held capabilities are representable"
         )
 
     # --- can a book start?

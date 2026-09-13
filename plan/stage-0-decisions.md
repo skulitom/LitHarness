@@ -25991,3 +25991,28 @@ versus legacy width are separately tested. The
 [registered runtime follow-up](../research/quality-measurement/world-runtime-fixes-20260913/RUNBOOK.md)
 repeats the fixed boundary cases without replacing the earlier outputs. These engineering
 contracts do not qualify a reader mechanism or establish literary quality.
+
+## 251. Ownership-only systems must not invent depth to finish (2026-09-13)
+
+The §250 runtime follow-up retained a Wren seed that initially declared ownership
+prerequisites plus rank gates. Its first world check refused completion because no
+capability exceeded depth one; the next batch equated Loadstitch depth with rank and raised
+prerequisite depths. The opposing seed received the same refusal and added Fold-depth
+requirements to its two later grants. These
+captured transitions locate a validator-induced pressure to elaborate the supplied world.
+
+This visibly amends the earlier refusal of maximum-one scales in §160/§165. A binary
+inventory is a valid system representation: ownership prerequisites and rank gates still
+compute, while no deepening move is offered. Completion may mint configuration for this
+inventory without inventing world records or new thresholds. Existing numerical depth
+remains bounded and checked. The configuration scale label is non-empty metadata, never a
+printed column, so it no longer inherits the column's length/digit restrictions. Existing
+column checks, accepted records, system digests and migrations remain unchanged.
+
+The game-system registry is v1; seed v7 asks for numerical prerequisite depths only when
+the source supplies them. `test_a_binary_system_preserves_rank_gates_and_does_not_offer_deepening`
+and `test_a_world_that_declared_no_depth_completes_without_changing_its_graph` exercise
+acquisition, rank gates, refusal of deepening, round trips and configuration-only completion.
+The [registered deterministic replay](../research/quality-measurement/world-depth-fixes-20260913/RUNBOOK.md)
+reconstructs the captured pre-check worlds in both versions, with an explicit-depth control.
+It tests the engineering change without a model reroll or a claim of literary improvement.

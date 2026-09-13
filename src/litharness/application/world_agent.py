@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from litharness.application.concept import Concept
 
 #: Frozen profiles, one per job, so seeding a world and growing one are separable on the rows.
-SEED_PROFILE = "architect.seed.v6"
+SEED_PROFILE = "architect.seed.v7"
 GROW_PROFILE = "architect.grow.v4"
 
 # Explicit subcommands exclude acceptance. A broad world:* allowance would permit it.
@@ -82,9 +82,9 @@ _SYSTEM = (
     "first, or what you have declared is a list rather than a graph; the engine accepts "
     "five to eight grants per system.\n"
     "Let entry-level capabilities be useful without separately acquired perception or "
-    "control grants; fundamental handling can be part of the capability. Put prerequisite "
-    "depth where it opens meaningful later choices, preserving the supplied story's "
-    "acquisition conditions and access to later capabilities.\n"
+    "control grants; fundamental handling can be part of the capability. Use numerical "
+    "prerequisite depths only when the source supplies them; ownership uses one and rank "
+    "requirements refer to rank rungs.\n"
     "Use a system-following status sheet with show_unheld set to false unless the author's "
     "brief explicitly requests a complete skill tree on the page. "
     "Declaring a grant does not "

@@ -60,11 +60,8 @@ def test_the_check_carries_the_completion_s_reason_beside_the_missing_scale(
     gap = genre.system_gap(short)
     assert gap is not None
     assert gap.startswith("this book began a game system and did not finish it")
-    # This fixture's deepest declared magnitude is one, under `MIN_SCALE_MAXIMUM`, so the
-    # completion refuses it for depth and the check now says so where it used to say only
-    # that the scale was missing.
-    assert "Acceptance would not finish it either, and says why: sys_weave declares no depth" in gap
-    assert gap.index("did not finish it") < gap.index("Acceptance would not")
+    # Ownership-only capabilities can be completed without inventing deepening.
+    assert "Acceptance would not finish it" not in gap
 
     def refuse(records: object) -> tuple[tuple[()], tuple[str, ...]]:
         return (), ("sys_weave declares 11 abilities; a drawn system carries 5 to 8",)
@@ -95,7 +92,15 @@ def test_the_check_previews_what_acceptance_would_refuse_over_the_proposals() ->
     ]
     report = world.check(proposed)
     assert report["ok"]
-    assert any("declares no depth" in reason for reason in report["would_not_finish"])
+    assert report["would_not_finish"] == []
+    extra = [*proposed]
+    for index in range(4):
+        extra.extend([
+            worlds.world_record(f"extra_{index}", worlds.ENTITY_ROLE_PREDICATE, value="capability"),
+            worlds.world_record(f"extra_{index}", worlds.GOVERNED_BY, object_ref="sys_weave"),
+            worlds.world_record(f"extra_{index}", "is_a", value=f"Extra {chr(65 + index)}"),
+        ])
+    assert any("abilities" in reason for reason in world.check(extra)["would_not_finish"])
     complete = [_accepted(record) for record in gamesystem.records_for(_system())]
     assert world.check(complete)["would_not_finish"] == []
 

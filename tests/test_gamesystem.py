@@ -160,11 +160,40 @@ def test_a_label_carrying_a_digit_is_refused_because_the_parser_reads_digits() -
     assert any("carries no digit" in complaint for complaint in gs.check_draw(numeric))
 
 
-def test_a_scale_that_cannot_deepen_is_refused_as_a_decoration() -> None:
-    """§114.6's own word for a magnitude nothing computes with. A maximum of 1 means every
-    holding is 1 forever, and the number says nothing that `holds` does not."""
-    flat_scale = _system(scale=gs.Scale("Depth", 1))
-    assert any("decoration" in complaint for complaint in gs.check_draw(flat_scale))
+def test_a_binary_system_preserves_rank_gates_and_does_not_offer_deepening() -> None:
+    system = _system(scale=gs.Scale("Trestle Examination Engine", 1), abilities=tuple(
+        dataclasses.replace(ability, needs=tuple(
+            dataclasses.replace(need, threshold=1) if need.threshold else need
+            for need in ability.needs
+        )) for ability in _system().abilities
+    ))
+    assert gs.check_draw(system) == ()
+    sheet = gs.starting_sheet(system, "silas")
+    assert all(move.kind != gs.AdvanceKind.DEEPEN for move in gs.legal_moves(sheet))
+    with pytest.raises(gs.IllegalAdvance):
+        gs.deepen(sheet, "seamsight", at="s1")
+    sheet = gs.gain(sheet, "stillwater", at="s1").sheet
+    with pytest.raises(gs.IllegalAdvance):
+        gs.gain(sheet, "deepweave", at="s2")
+    sheet = gs.rise(sheet, at="s2").sheet
+    assert gs.gain(sheet, "deepweave", at="s3").sheet.holds("deepweave")
+    restored = gs.systems_of(_seeded(system))[0]
+    assert restored.digest == system.digest
+    assert gs.check_draw(restored) == ()
+
+
+@pytest.mark.parametrize("maximum", [0, -1])
+def test_a_scale_must_still_represent_a_held_capability(maximum: int) -> None:
+    assert any("held capabilities" in complaint for complaint in gs.check_draw(
+        _system(scale=gs.Scale("Depth", maximum)),
+    ))
+
+
+def test_a_scale_label_is_required_but_does_not_use_the_column_label_grammar() -> None:
+    assert gs.check_draw(_system(scale=gs.Scale("Version 2: a long configuration label", 9))) == ()
+    assert any("non-empty label" in complaint for complaint in gs.check_draw(
+        _system(scale=gs.Scale(" ", 9)),
+    ))
 
 
 def test_a_system_nobody_can_start_in_is_refused() -> None:
@@ -763,13 +792,8 @@ def test_the_depth_is_read_off_both_slots_and_never_invented() -> None:
     assert scale.value == {"label": "the Weave", "maximum": 4}
 
 
-def test_a_world_that_declared_no_depth_is_told_why_rather_than_given_a_default() -> None:
-    """The refusal that keeps this from authoring world facts.
-
-    A world whose capabilities are held-or-not never expressed a depth, and `MIN_SCALE_MAXIMUM`'s
-    own reason says a scale of one is a decoration. Minting one would invent the single dimension
-    the world declined to have, so the gap stays open and the reason is named.
-    """
+def test_a_world_that_declared_no_depth_completes_without_changing_its_graph() -> None:
+    """Completion represents existing ownership gates without asking for new world rules."""
     world = _drawn_world(
         _system(
             abilities=(
@@ -781,11 +805,15 @@ def test_a_world_that_declared_no_depth_is_told_why_rather_than_given_a_default(
             )
         )
     )
+    before = tuple(world)
     minted, reasons = gs.completion_records(world)
-    assert minted == ()
-    assert len(reasons) == 1
-    assert "declares no depth" in reasons[0]
-    assert gs.systems_of(world) == ()
+    assert reasons == () and tuple(world) == before
+    assert {record.predicate for record in minted} == set(gs.CONFIGURATION_PREDICATES)
+    [system] = gs.systems_of([*world, *minted])
+    assert system.scale.maximum == 1 and gs.check_draw(system) == ()
+    assert gs.completion_records([*world, *minted]) == ((), ())
+    sheet = gs.starting_sheet(system, "silas")
+    assert all(move.kind != gs.AdvanceKind.DEEPEN for move in gs.legal_moves(sheet))
 
 
 def test_a_system_that_is_already_finished_is_left_alone() -> None:

@@ -858,7 +858,7 @@ def test_inhabited_world_survives_with_pending_discoveries_separate_from_world_p
     assert restored.discovery == source
     assert restored.first_arc.opens == source.opening
     assert restored.author_brief == brief
-    assert seed.profile == "architect.seed.v6"
+    assert seed.profile == "architect.seed.v7"
     assert "world declare-batch --records" in seed.system
     assert source.world in seed.prompt
     assert brief in seed.prompt

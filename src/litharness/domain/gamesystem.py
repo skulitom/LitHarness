@@ -455,12 +455,10 @@ def completion_records(
     person ran the command, the structure being completed is the world's own, and this function
     invents no rung, no capability, no edge and no name.
 
-    **The scale is read off the declared numbers, and a world that declared none gets a reason
-    instead of a default.** `maximum` is the deepest magnitude the world has already put someone
-    at (`can_do`) or asked for (`requires`), because a scale must at least contain the depths its
-    own records assert. A world whose capabilities carry no number never expressed a depth at
-    all — it is a held-or-not inventory — and calling that a scale of `MIN_SCALE_MAXIMUM` would
-    invent the one dimension the world declined to have. The label is the system's own `is_a`
+    `maximum` contains the deepest declared holding or prerequisite. A held-or-unheld inventory
+    uses zero and one, matching `sheet_of` and `_needs_of`; it permits acquisition but no
+    deepening. Requiring a larger scale would pressure world generation to invent thresholds.
+    Rank requirements remain separate ordinal gates. The label is the system's own `is_a`
     name; it is never printed on a status line (`columns` prints the rung label and the ability
     names), so this reaches no page.
 
@@ -500,15 +498,8 @@ def completion_records(
                 "needs exactly one criterion under `governed_by` and a `precedes` chain for it"
             )
             continue
-        maximum = _declared_depth(records, skeleton.ability_ids)
-        if maximum is None or maximum < MIN_SCALE_MAXIMUM:
-            reasons.append(
-                f"{system_id} declares no depth: nothing on its capabilities is held or required "
-                f"past {MIN_SCALE_MAXIMUM - 1}, so this world says who holds what and never how "
-                "far. A scale would be invented rather than read, so none is minted and the "
-                "system gap stays open"
-            )
-            continue
+        declared_depth = _declared_depth(records, skeleton.ability_ids)
+        maximum = MIN_SCALE_MAXIMUM if declared_depth in (None, 0) else declared_depth
         system = _assemble(
             records,
             system_id,

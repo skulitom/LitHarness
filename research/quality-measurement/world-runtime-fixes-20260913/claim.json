@@ -1,8 +1,8 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "world-runtime-fixes-20260913",
-  "statement": "Test bounded Architect declaration retrieval and supplied scene coordinates on the two fixed source-boundary cases, retaining all first outputs.",
-  "status": "registered",
+  "statement": "Both assigned executions used bounded declaration queries and usable reconciliation positions; the retained seed traces also expose completion pressure to add unsupplied capability depth.",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,16 @@
       "kind": "registration",
       "path": "research/quality-measurement/world-runtime-fixes-20260913/registration.json",
       "sha256": "d2f0cb0d9cd0ac41dc3cd19914be9876695aec6691b523bf24bd5e5c3e5a7f48"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/world-runtime-fixes-20260913/evidence.json",
+      "sha256": "cb53ccad1ea0810a6c4e22b536289afe501ee9070d7caa9efda4c42f34be11d2"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/world-runtime-fixes-20260913/REPORT.md",
+      "sha256": "a128e0b0b924adc78bcccc02685f9e0e0e527f4ee03844cae9a6fbb8cf06044d"
     }
   ]
 }

@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
+import re
 from pathlib import Path
 
 from run import HERE, RUN, load, save, sha
@@ -20,12 +22,25 @@ def audit():
     evidence = load(HERE / "evidence.json")
     evidence["capture_audit_sha256"] = evidence["audit_sha256"]
     evidence["audit_sha256"] = sha(Path(__file__))
-    queries, timing = [], []
+    queries, timing, shows, grow_keys = [], [], [], []
     for path in sorted(RUN.glob("book-*/calls/*.json")):
         row = load(path)
+        if row["request"]["profile"].startswith("architect.grow."):
+            grow_keys.append({
+                "call": f"{path.parent.parent.name}/{path.stem}",
+                "supplied_keys": re.findall(
+                    r"This chapter's exact story key: ([^.\s]+)\.", row["request"]["prompt"],
+                ),
+            })
         raw = row.get("result", {}).get("raw", row.get("transport", {}))
         for number, command in enumerate(base.commands(raw), 1):
             args = base.arguments(command)
+            if args[:2] == ["world", "show"]:
+                shows.append({
+                    "call": f"{path.parent.parent.name}/{path.stem}", "bridge_call": number,
+                    "arguments": args, "executed": command.get("argv") is not None,
+                    "returncode": command.get("returncode"), "error": command.get("error"),
+                })
             if args[:2] != ["world", "query"]:
                 continue
             stdout = command.get("stdout", "")
@@ -39,6 +54,7 @@ def audit():
                 "records": len(payload.get("records", [])), "total": payload.get("total"),
                 "next_offset": payload.get("next_offset"),
                 "selection_sha256": payload.get("selection_sha256"),
+                "stdout_sha256": hashlib.sha256(stdout.encode("utf-8")).hexdigest(),
                 "returncode": command.get("returncode"),
             })
     for path in sorted(RUN.glob("book-*/commands/*check.json")):
@@ -51,7 +67,24 @@ def audit():
             "path": path.relative_to(RUN).as_posix(), "sha256": sha(path),
             "ok": checked.get("ok"), "unplaceable": checked.get("unplaceable", []),
         })
-    evidence.update(query_reads=queries, timing_checks=timing)
+    worlds = []
+    for path in sorted(RUN.glob("book-*/final/world.txt")):
+        seeded = load(path.parent.parent / "seeded/world.txt")
+        initial_ids = {record["record_id"] for record in seeded}
+        accepted = [record for record in load(path) if record["canon"]]
+        introduced = [record for record in accepted if record["record_id"] not in initial_ids]
+        unplaceable = [record for record in accepted if record["order_key"] is not None
+                       and re.fullmatch(r"s\d+", record["order_key"]) is None]
+        worlds.append({
+            "book": path.parent.parent.name, "accepted_count": len(accepted),
+            "introduced_canon": [
+                {key: record[key] for key in ("record_id", "subject", "predicate", "order_key")}
+                for record in introduced
+            ],
+            "unplaceable_canon_ids": [record["record_id"] for record in unplaceable],
+        })
+    evidence.update(query_reads=queries, timing_checks=timing, show_attempts=shows,
+                    grow_story_keys=grow_keys, final_worlds=worlds)
     save(HERE / "evidence.json", evidence)
 
 
