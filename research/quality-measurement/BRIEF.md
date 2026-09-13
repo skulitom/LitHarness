@@ -416,3 +416,8 @@ alongside recurring professional/infrastructure patterns within both providers. 
 Nico chapter contrast does not show the current plan displacing that supplied pursuit; the
 padding placebo fails token matching. These are scoped observations about two boundaries,
 not a qualified provider choice, diversity rate or general verdict on planning.
+
+The fixed first pair's [common-writer chapter follow-up](planner-chapter-transfer-20260913/REPORT.md)
+preserves both different pursuits into prose, while also carrying forward an assessment gap
+from one source plan. This is a bounded transfer observation: the writer does not collapse that
+pair into one pursuit, but faithful transfer does not certify source correctness or fresh invention.

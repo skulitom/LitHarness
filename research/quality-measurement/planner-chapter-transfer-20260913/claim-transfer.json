@@ -1,0 +1,38 @@
+{
+  "schema": "litharness.epistemic-claim.v1",
+  "claim_id": "planner-chapter-transfer-fixed-pair-20260913",
+  "statement": "Both first chapters in this registered common-writer comparison preserve their different supplied pursuits: Mara reaches her mother by sluice repair and gains service-linked passage, while Wren reaches water and the false-condemnation mystery without a new family-rescue or return-home dependency. The Opus-derived chapter also retains the known assessment qualification gap. This is an observation on one known pair, not independent invention or quality qualification.",
+  "status": "observed",
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/planner-chapter-transfer-20260913/RUNBOOK.md",
+      "sha256": "c0dbf1440d5074e1af4d0648e09b60e7cae873bbe0f993aebef6c3f766222119"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/planner-chapter-transfer-20260913/registration.json",
+      "sha256": "2aa0d598a6fdf3d6b8f68cac4d2b33b2bd32364209f2db8a0509b03a625e95ec"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/planner-chapter-transfer-20260913/run.py",
+      "sha256": "9310b47b648735c317f504e67dd3d1d507039ebf12b25c8162f4e8673efbfb7f"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/planner-chapter-transfer-20260913/evidence.json",
+      "sha256": "71e34db0d6f1c896c416528719b257661abbfaa70b159aa9a9c240f4fd9cbd35"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/planner-chapter-transfer-20260913/evidence.json",
+      "sha256": "71e34db0d6f1c896c416528719b257661abbfaa70b159aa9a9c240f4fd9cbd35"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/planner-chapter-transfer-20260913/REPORT.md",
+      "sha256": "10a994b77192ea1b637eaa336fbacf7cd8deae9d9217a9e5343da0484901ceec"
+    }
+  ]
+}
