@@ -1,0 +1,169 @@
+{
+  "schema": "litharness.compact-json-description.v1",
+  "analysis_stage": "post-observation",
+  "script_sha256": "83fc303c7556470a35e2e9a034f7c8fe9e1c20f602f56d6fc99af939cc3d281b",
+  "evidence_sha256": "e7cc51fb03638ba205dfedd1066ed826805c8060657a24c7dee6b24bfc9c0a61",
+  "cells": [
+    {
+      "name": "verbatim-conditional",
+      "world_sha256": "4896ce9d79afc86875c0d6289999c13acbf36ffc28a7c4bc13a43fb44234e23e",
+      "initial_world_sha256": "9c50a91383609b00a14339590c8c9bc4d305b800fa58f192bc1e4a08549c1649",
+      "verify_sha256": "c57a1a2c835cf39f3c90464d02eb0d60cb3436075702be8550932fc6490e4d17",
+      "added_record_count": 31,
+      "added_positions": {
+        "s000002": 31
+      },
+      "added_predicates": {
+        "disclosed_to": 8,
+        "manifests_as": 5,
+        "believes": 8,
+        "wants": 2,
+        "claim.content": 8
+      },
+      "growth_declarations": [],
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 7,
+        "world declare-batch": 2,
+        "world check": 1
+      },
+      "command_failures": [],
+      "uncached_input_tokens": 30179
+    },
+    {
+      "name": "compact-adopted",
+      "world_sha256": "4b606958cbf349100ab803ecd78e8c6c4aaa980fac2a47aa5c2682e2b995362f",
+      "initial_world_sha256": "9c50a91383609b00a14339590c8c9bc4d305b800fa58f192bc1e4a08549c1649",
+      "verify_sha256": "c57a1a2c835cf39f3c90464d02eb0d60cb3436075702be8550932fc6490e4d17",
+      "added_record_count": 25,
+      "added_positions": {
+        "s000002": 25
+      },
+      "added_predicates": {
+        "manifests_as": 3,
+        "claim.content": 7,
+        "wants": 1,
+        "believes": 7,
+        "disclosed_to": 7
+      },
+      "growth_declarations": [],
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 6,
+        "world declare-batch": 1,
+        "world check": 1
+      },
+      "command_failures": [],
+      "uncached_input_tokens": 28786
+    },
+    {
+      "name": "compact-conditional",
+      "world_sha256": "eee37a399909756497474be5bbb2cf43b1e2588bffe767d319ae186bddd40479",
+      "initial_world_sha256": "9c50a91383609b00a14339590c8c9bc4d305b800fa58f192bc1e4a08549c1649",
+      "verify_sha256": "c57a1a2c835cf39f3c90464d02eb0d60cb3436075702be8550932fc6490e4d17",
+      "added_record_count": 47,
+      "added_positions": {
+        "s000002": 41,
+        "timeless": 6
+      },
+      "added_predicates": {
+        "claim.content": 12,
+        "believes": 12,
+        "disclosed_to": 12,
+        "manifests_as": 4,
+        "wants": 1,
+        "growth_limit": 6
+      },
+      "growth_declarations": [
+        {
+          "record_id": "rec-w45b2b414b8711cf65ce035f7",
+          "subject": "loadstitch",
+          "value": 1
+        },
+        {
+          "record_id": "rec-w863f28ff43425b11f9a26e0b",
+          "subject": "duration",
+          "value": "open"
+        },
+        {
+          "record_id": "rec-w8b14788a8c0c7223b0b62800",
+          "subject": "articulated",
+          "value": 1
+        },
+        {
+          "record_id": "rec-w935fc53f55ff1f9dd7108408",
+          "subject": "load",
+          "value": "open"
+        },
+        {
+          "record_id": "rec-wba8a38d00ce252b8d4db3009",
+          "subject": "length",
+          "value": "open"
+        },
+        {
+          "record_id": "rec-wdb1d70cd417d8654f777eaec",
+          "subject": "split",
+          "value": 1
+        }
+      ],
+      "commands_by_verb": {
+        "invalid tool request": 2,
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 8,
+        "world declare-batch": 2,
+        "world check": 1
+      },
+      "command_failures": [
+        {
+          "call": 1,
+          "error_kind": "invalid_arguments",
+          "returncode": null
+        },
+        {
+          "call": 2,
+          "error_kind": "invalid_arguments",
+          "returncode": null
+        }
+      ],
+      "uncached_input_tokens": 29478
+    },
+    {
+      "name": "verbatim-adopted",
+      "world_sha256": "4a373b0686a79d93df45f5d220de7f1bf19aa975cc8397db144ab7ee74636c97",
+      "initial_world_sha256": "9c50a91383609b00a14339590c8c9bc4d305b800fa58f192bc1e4a08549c1649",
+      "verify_sha256": "c57a1a2c835cf39f3c90464d02eb0d60cb3436075702be8550932fc6490e4d17",
+      "added_record_count": 40,
+      "added_positions": {
+        "s000002": 39,
+        "timeless": 1
+      },
+      "added_predicates": {
+        "claim.content": 12,
+        "believes": 11,
+        "disclosed_to": 12,
+        "wants": 1,
+        "manifests_as": 3,
+        "growth_limit": 1
+      },
+      "growth_declarations": [
+        {
+          "record_id": "rec-w45b2b414b8711cf65ce035f7",
+          "subject": "loadstitch",
+          "value": 1
+        }
+      ],
+      "commands_by_verb": {
+        "world vocabulary": 1,
+        "world summary": 1,
+        "world query": 5,
+        "world declare-batch": 2,
+        "world check": 1
+      },
+      "command_failures": [],
+      "uncached_input_tokens": 34764
+    }
+  ]
+}

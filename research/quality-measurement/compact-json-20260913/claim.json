@@ -1,8 +1,8 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "compact-json-20260913",
-  "statement": "The registered four-cell comparison measures native token usage and behavior under verbatim and lossless compact JSON replies for byte-identical paired conditional and adopted-goal requests; no savings or semantic result has been observed.",
-  "status": "registered",
+  "statement": "The four fixed grow outputs preserve the tested conditional/adopted goal contrast and every actual tool reply matches its expected format. Compact stdout is smaller, while native token differences have opposite directions across the two pairs; a general cost saving is not established and the default remains verbatim.",
+  "status": "observed",
   "artifacts": [
     {
       "kind": "registration",
@@ -13,6 +13,21 @@
       "kind": "registration",
       "path": "research/quality-measurement/compact-json-20260913/registration.json",
       "sha256": "6ced376a1de0fcffb6168b3263fd437cb3d7e416ed92b7685ed3083dad491be6"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/compact-json-20260913/evidence.json",
+      "sha256": "e7cc51fb03638ba205dfedd1066ed826805c8060657a24c7dee6b24bfc9c0a61"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/compact-json-20260913/trace-summary.json",
+      "sha256": "885494b87d6047612832f4a8c82c6a46f32404042de87d2b171a526a02c903a4"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/compact-json-20260913/REPORT.md",
+      "sha256": "3a1272bc3bddee70b3f32e0df0ca5a16fc40a43a9b4e255d6fd1c95b5d36f8f6"
     }
   ]
 }

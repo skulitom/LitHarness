@@ -1,0 +1,687 @@
+{
+  "schema": "litharness.compact-json-comparison.v1",
+  "status": "completed",
+  "fatal": null,
+  "manifest_sha256": "2f74bce65e376a3aa5b96ceecea6d074e51014f0855998f852262eaeefe90bb6",
+  "progress_sha256": "136d9d66c083a993b84967c2d810533ef1ea69527d453c230a56e47eaa6c3f82",
+  "calls": [
+    {
+      "cell": "verbatim-conditional",
+      "path": "runs/compact-json-20260913/verbatim-conditional/calls/001.json",
+      "sha256": "e4a5bbee75d1aac9291eedecc22a5dd9d9fab4654a4208681db511c7a83d0b3a",
+      "profile": "default",
+      "status": "completed",
+      "native_usage": {
+        "input_tokens": 3759,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5,
+        "reasoning_output_tokens": 0
+      },
+      "native_tokens": 3764,
+      "session_ids": [
+        "01a09bae-44d1-7892-9531-f3df747349cc"
+      ],
+      "elapsed_seconds": 6.327061,
+      "format": null,
+      "format_matches": true,
+      "commands_contained": true,
+      "visible_command_count": 0,
+      "command_count": 0,
+      "raw_stdout_bytes": 0,
+      "model_stdout_bytes": 0,
+      "replies_match": true,
+      "commands": []
+    },
+    {
+      "cell": "verbatim-conditional",
+      "path": "runs/compact-json-20260913/verbatim-conditional/calls/002.json",
+      "sha256": "9a7dfbc99791f064ec431c82d979a373252015296b77b570c80714c36c7a791d",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_usage": {
+        "input_tokens": 173667,
+        "cached_input_tokens": 143488,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1817,
+        "reasoning_output_tokens": 95
+      },
+      "native_tokens": 175484,
+      "session_ids": [
+        "01a09bae-5c2e-7252-bc60-f9b798dd64e4"
+      ],
+      "elapsed_seconds": 79.425139,
+      "format": "verbatim",
+      "format_matches": true,
+      "commands_contained": true,
+      "visible_command_count": 12,
+      "command_count": 12,
+      "raw_stdout_bytes": 56852,
+      "model_stdout_bytes": 56852,
+      "replies_match": true,
+      "commands": [
+        {
+          "call": 1,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 14844,
+          "model_stdout_bytes": 14844,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 2,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 510,
+          "model_stdout_bytes": 510,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 3,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 6707,
+          "model_stdout_bytes": 6707,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 4,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 5524,
+          "model_stdout_bytes": 5524,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 5,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 8308,
+          "model_stdout_bytes": 8308,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 6,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 645,
+          "model_stdout_bytes": 645,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 7,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 981,
+          "model_stdout_bytes": 981,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 8,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 7918,
+          "model_stdout_bytes": 7918,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 9,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 4519,
+          "model_stdout_bytes": 4519,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 10,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 4933,
+          "model_stdout_bytes": 4933,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 11,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 1664,
+          "model_stdout_bytes": 1664,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 12,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 299,
+          "model_stdout_bytes": 299,
+          "visible_matches_expected": true
+        }
+      ]
+    },
+    {
+      "cell": "compact-adopted",
+      "path": "runs/compact-json-20260913/compact-adopted/calls/003.json",
+      "sha256": "f8c2ebce7bb7310f1b175474cfc3d4476fad5e636ebbf6f1c78ed510d29dc654",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_usage": {
+        "input_tokens": 182514,
+        "cached_input_tokens": 153728,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1515,
+        "reasoning_output_tokens": 55
+      },
+      "native_tokens": 184029,
+      "session_ids": [
+        "01a09baf-95dd-7e73-9705-0223f564a1a7"
+      ],
+      "elapsed_seconds": 72.952023,
+      "format": "compact-json-whitespace.v1",
+      "format_matches": true,
+      "commands_contained": true,
+      "visible_command_count": 10,
+      "command_count": 10,
+      "raw_stdout_bytes": 60231,
+      "model_stdout_bytes": 51070,
+      "replies_match": true,
+      "commands": [
+        {
+          "call": 1,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 14844,
+          "model_stdout_bytes": 14236,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 2,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 510,
+          "model_stdout_bytes": 361,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 3,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 6707,
+          "model_stdout_bytes": 4907,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 4,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 5524,
+          "model_stdout_bytes": 3811,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 5,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 2626,
+          "model_stdout_bytes": 2089,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 6,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 9225,
+          "model_stdout_bytes": 7442,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 7,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 13199,
+          "model_stdout_bytes": 11150,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 8,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 1615,
+          "model_stdout_bytes": 1162,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 9,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 5682,
+          "model_stdout_bytes": 5682,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 10,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 299,
+          "model_stdout_bytes": 230,
+          "visible_matches_expected": true
+        }
+      ]
+    },
+    {
+      "cell": "compact-conditional",
+      "path": "runs/compact-json-20260913/compact-conditional/calls/004.json",
+      "sha256": "bacf54e41ade13f3c791957e6db93f8859086e21aa7e6adfbedb9b72670f19df",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_usage": {
+        "input_tokens": 162598,
+        "cached_input_tokens": 133120,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2008,
+        "reasoning_output_tokens": 96
+      },
+      "native_tokens": 164606,
+      "session_ids": [
+        "01a09bb0-b5aa-79c3-9047-a7c69d45107e"
+      ],
+      "elapsed_seconds": 81.760264,
+      "format": "compact-json-whitespace.v1",
+      "format_matches": true,
+      "commands_contained": true,
+      "visible_command_count": 15,
+      "command_count": 15,
+      "raw_stdout_bytes": 55980,
+      "model_stdout_bytes": 47177,
+      "replies_match": true,
+      "commands": [
+        {
+          "call": 1,
+          "returncode": null,
+          "error_kind": "invalid_arguments",
+          "raw_stdout_bytes": 0,
+          "model_stdout_bytes": 0,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 2,
+          "returncode": null,
+          "error_kind": "invalid_arguments",
+          "raw_stdout_bytes": 0,
+          "model_stdout_bytes": 0,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 3,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 14844,
+          "model_stdout_bytes": 14236,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 4,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 510,
+          "model_stdout_bytes": 361,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 5,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 6707,
+          "model_stdout_bytes": 4907,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 6,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 5524,
+          "model_stdout_bytes": 3811,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 7,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 2626,
+          "model_stdout_bytes": 2089,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 8,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 981,
+          "model_stdout_bytes": 696,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 9,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 9767,
+          "model_stdout_bytes": 7900,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 10,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 4519,
+          "model_stdout_bytes": 3226,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 11,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 169,
+          "model_stdout_bytes": 140,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 12,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 2147,
+          "model_stdout_bytes": 1694,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 13,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 4050,
+          "model_stdout_bytes": 4050,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 14,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 3837,
+          "model_stdout_bytes": 3837,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 15,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 299,
+          "model_stdout_bytes": 230,
+          "visible_matches_expected": true
+        }
+      ]
+    },
+    {
+      "cell": "verbatim-adopted",
+      "path": "runs/compact-json-20260913/verbatim-adopted/calls/005.json",
+      "sha256": "bd596c38666c11000b0be7d918f9d35ece0dfd8379c490cd05a891cf2a4c12db",
+      "profile": "architect.grow.v5",
+      "status": "completed",
+      "native_usage": {
+        "input_tokens": 164940,
+        "cached_input_tokens": 130176,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1999,
+        "reasoning_output_tokens": 95
+      },
+      "native_tokens": 166939,
+      "session_ids": [
+        "01a09bb1-f7e3-7ab3-910f-90a2a94a8fa1"
+      ],
+      "elapsed_seconds": 85.803891,
+      "format": "verbatim",
+      "format_matches": true,
+      "commands_contained": true,
+      "visible_command_count": 10,
+      "command_count": 10,
+      "raw_stdout_bytes": 59253,
+      "model_stdout_bytes": 59253,
+      "replies_match": true,
+      "commands": [
+        {
+          "call": 1,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 14844,
+          "model_stdout_bytes": 14844,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 2,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 510,
+          "model_stdout_bytes": 510,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 3,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 8083,
+          "model_stdout_bytes": 8083,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 4,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 6333,
+          "model_stdout_bytes": 6333,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 5,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 9161,
+          "model_stdout_bytes": 9161,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 6,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 645,
+          "model_stdout_bytes": 645,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 7,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 11278,
+          "model_stdout_bytes": 11278,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 8,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 5667,
+          "model_stdout_bytes": 5667,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 9,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 2433,
+          "model_stdout_bytes": 2433,
+          "visible_matches_expected": true
+        },
+        {
+          "call": 10,
+          "returncode": 0,
+          "error_kind": null,
+          "raw_stdout_bytes": 299,
+          "model_stdout_bytes": 299,
+          "visible_matches_expected": true
+        }
+      ]
+    }
+  ],
+  "cells": [
+    {
+      "name": "verbatim-conditional",
+      "completed": true,
+      "request_sha256": "0c412c7b2305cdea6d2299218b3b21457970dbb727701078e1c2c36bcfd252ba",
+      "database_sha256": "cc8b22f72c58fccdd31895233b345007dd8891bae52aac2ee3f4865f10a7af8e",
+      "database_unchanged": true,
+      "wants": [
+        {
+          "subject": "stair_repairer",
+          "record_id": "rec-w3d90e3994fcfe9d61858aac3",
+          "value_sha256": "0d7cb69526d8709a6958905824888c4a98330810e408aa6d35706c7d701f245c"
+        },
+        {
+          "subject": "wren",
+          "record_id": "rec-wfa67ceace59c4ec0bee740a7",
+          "value_sha256": "f6b9c86bd295881f680b9e149578f2df062fe9f240b9a8ba264f317697909cc7"
+        }
+      ],
+      "check": {
+        "ok": true,
+        "complaints": 0,
+        "unplaceable": 0
+      },
+      "check_sha256": "7db0eb74425a165977f34af2c09495211243575830916ecb8dcd8cb84f923d79"
+    },
+    {
+      "name": "compact-adopted",
+      "completed": true,
+      "request_sha256": "fc0e00904c3d618df9d167147948beda977dcc9abeb10bacf6954a6bf039d666",
+      "database_sha256": "28fd75cb3c859366ab453953d3e31e1b2ffe2e4e3d3d6fcfe45559110d32b5aa",
+      "database_unchanged": true,
+      "wants": [
+        {
+          "subject": "wren",
+          "record_id": "rec-w3120c2a53e9839014f7743fb",
+          "value_sha256": "823d139d5cadedb49daa48d0e5dcedd9b3387b8ce8bb942f39d93c2ab5ed39fe"
+        }
+      ],
+      "check": {
+        "ok": true,
+        "complaints": 0,
+        "unplaceable": 0
+      },
+      "check_sha256": "7db0eb74425a165977f34af2c09495211243575830916ecb8dcd8cb84f923d79"
+    },
+    {
+      "name": "compact-conditional",
+      "completed": true,
+      "request_sha256": "0c412c7b2305cdea6d2299218b3b21457970dbb727701078e1c2c36bcfd252ba",
+      "database_sha256": "0ee9535527ba233b4368348f0848c004c1c1c77c96b015990c6c4846ae3035b1",
+      "database_unchanged": true,
+      "wants": [
+        {
+          "subject": "wren",
+          "record_id": "rec-w90a477d86fa943179bed032e",
+          "value_sha256": "4e0f36f8ec97fdcf7f8cacd83eac03ad130bc16f8064a42a74466b455463b88b"
+        }
+      ],
+      "check": {
+        "ok": true,
+        "complaints": 0,
+        "unplaceable": 0
+      },
+      "check_sha256": "7db0eb74425a165977f34af2c09495211243575830916ecb8dcd8cb84f923d79"
+    },
+    {
+      "name": "verbatim-adopted",
+      "completed": true,
+      "request_sha256": "fc0e00904c3d618df9d167147948beda977dcc9abeb10bacf6954a6bf039d666",
+      "database_sha256": "506857b0cd030f2a2fcb96707f8a46f422eb4456caa75b428abcbf0375de01fd",
+      "database_unchanged": true,
+      "wants": [
+        {
+          "subject": "wren",
+          "record_id": "rec-wa1a323b226848035be9b4342",
+          "value_sha256": "8647581d7e98b2222efbb106e2e80e3e1cd07e467e22a58968829245ce0a8c87"
+        }
+      ],
+      "check": {
+        "ok": true,
+        "complaints": 0,
+        "unplaceable": 0
+      },
+      "check_sha256": "7db0eb74425a165977f34af2c09495211243575830916ecb8dcd8cb84f923d79"
+    }
+  ],
+  "pairs": [
+    {
+      "source": "conditional",
+      "verbatim": {
+        "native_tokens": 175484,
+        "native_usage": {
+          "input_tokens": 173667,
+          "cached_input_tokens": 143488,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1817,
+          "reasoning_output_tokens": 95
+        },
+        "elapsed_seconds": 79.425139,
+        "command_count": 12,
+        "raw_stdout_bytes": 56852,
+        "model_stdout_bytes": 56852
+      },
+      "compact": {
+        "native_tokens": 164606,
+        "native_usage": {
+          "input_tokens": 162598,
+          "cached_input_tokens": 133120,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2008,
+          "reasoning_output_tokens": 96
+        },
+        "elapsed_seconds": 81.760264,
+        "command_count": 15,
+        "raw_stdout_bytes": 55980,
+        "model_stdout_bytes": 47177
+      },
+      "compact_minus_verbatim_tokens": -10878
+    },
+    {
+      "source": "adopted",
+      "verbatim": {
+        "native_tokens": 166939,
+        "native_usage": {
+          "input_tokens": 164940,
+          "cached_input_tokens": 130176,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1999,
+          "reasoning_output_tokens": 95
+        },
+        "elapsed_seconds": 85.803891,
+        "command_count": 10,
+        "raw_stdout_bytes": 59253,
+        "model_stdout_bytes": 59253
+      },
+      "compact": {
+        "native_tokens": 184029,
+        "native_usage": {
+          "input_tokens": 182514,
+          "cached_input_tokens": 153728,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1515,
+          "reasoning_output_tokens": 55
+        },
+        "elapsed_seconds": 72.952023,
+        "command_count": 10,
+        "raw_stdout_bytes": 60231,
+        "model_stdout_bytes": 51070
+      },
+      "compact_minus_verbatim_tokens": 17090
+    }
+  ],
+  "native_tokens": 694822,
+  "native_session_count": 5,
+  "distinct_native_sessions": 5,
+  "protected_inputs_unchanged": true,
+  "usage_matches_progress": true
+}
