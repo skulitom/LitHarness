@@ -460,7 +460,10 @@ def test_codex_search_permission_only_allows_search():
     assert result.raw["settings"]["features.shell_tool"] is False
 
 
-def test_codex_scoped_bridge_pins_database_without_exposing_it_to_completion(monkeypatch, tmp_path):
+@pytest.mark.parametrize("compact", [False, True])
+def test_codex_scoped_bridge_pins_database_without_exposing_it_to_completion(
+    monkeypatch, tmp_path, compact,
+):
     runner = Runner()
     runner.extra_events = [
         {
@@ -474,13 +477,17 @@ def test_codex_scoped_bridge_pins_database_without_exposing_it_to_completion(mon
     ]
     database = str(tmp_path / "book.db")
     monkeypatch.setenv("LITHARNESS_DATABASE", database)
-    result = CodexCliProvider(runner=runner).complete(
+    result = CodexCliProvider(runner=runner, compact_tool_json=compact).complete(
         CompletionRequest(
             prompt="Build this world.",
             allowed_tools=("Bash(litharness world declare:*)",),
         )
     )
     assert runner.bridge["environment"]["LITHARNESS_DATABASE"] == database
+    assert runner.bridge["compact_json"] is compact
+    assert result.raw["tool_reply_format"] == (
+        "compact-json-whitespace.v1" if compact else "verbatim"
+    )
     assert "LITHARNESS_DATABASE" not in runner.calls[-1][2]
     assert result.raw["commands_jsonl"] == '{"test": "command trace"}\n'
     assert "litharness_command" in result.raw["system"]

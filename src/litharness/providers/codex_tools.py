@@ -84,6 +84,37 @@ def _text(value: str | bytes | None) -> str:
     return value.decode("utf-8", errors="replace") if isinstance(value, bytes) else value or ""
 
 
+def compact_json_stdout(text: str) -> str:
+    """Remove only JSON whitespace outside strings, preserving every other character."""
+    if not text.lstrip().startswith(("{", "[")):
+        return text
+
+    def reject_constant(value: str) -> None:
+        raise ValueError(f"non-JSON constant: {value}")
+
+    try:
+        # Validate without rounding numbers or imposing Python's integer digit limit.
+        # Do not serialize this parsed value: duplicate keys and number text must survive.
+        json.loads(text, parse_int=str, parse_float=str, parse_constant=reject_constant)
+    except (ValueError, RecursionError):
+        return text
+    output: list[str] = []
+    quoted = escaped = False
+    for character in text:
+        if quoted:
+            output.append(character)
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == '"':
+                quoted = False
+        elif character not in " \t\r\n":
+            output.append(character)
+            quoted = character == '"'
+    return "".join(output)
+
+
 class ToolBridge:
     def __init__(self, config: dict[str, Any]) -> None:
         self.allowances = _allowances(tuple(config["allowances"]))
@@ -94,6 +125,7 @@ class ToolBridge:
         }
         self.cwd = str(config["cwd"])
         self.trace = Path(config["trace"])
+        self.compact_json = config.get("compact_json", False) is True
         self.calls = 0
 
     def _record(self, row: dict[str, Any]) -> None:
@@ -128,6 +160,8 @@ class ToolBridge:
                        error="tool timeout", error_kind="timeout")
         except (OSError, ValueError) as error:
             row.update(error=str(error), error_kind=failure_kind)
+        if self.compact_json and not row.get("error") and row["returncode"] == 0:
+            row["model_stdout"] = compact_json_stdout(row["stdout"])
         try:
             self._record({**row, "phase": "result"})
         except OSError as error:
@@ -137,8 +171,11 @@ class ToolBridge:
         # both copies in the audit trace, without repeating them in every tool result.
         # Failures retain the complete receipt used by the transport's exact-match guard.
         visible = row if failed else {
-            key: value for key, value in row.items() if key not in {"arguments", "argv"}
+            key: value for key, value in row.items()
+            if key not in {"arguments", "argv", "model_stdout"}
         }
+        if not failed and "model_stdout" in row:
+            visible["stdout"] = row["model_stdout"]
         return {
             "content": [{"type": "text", "text": json.dumps(visible, ensure_ascii=False)}],
             "isError": failed,

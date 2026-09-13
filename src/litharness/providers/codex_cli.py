@@ -148,6 +148,7 @@ class CodexCliProvider:
     binary: str = "codex.exe" if os.name == "nt" else "codex"
     runner: CodexRunner = subprocess_runner
     trace_directory: Path | None = None
+    compact_tool_json: bool = False
     last_attempt: dict[str, Any] = field(default_factory=dict, init=False, repr=False)
 
     def health(self) -> bool:
@@ -296,6 +297,9 @@ class CodexCliProvider:
                 }
                 bridge_trace = artifacts / "commands.jsonl"
                 if mode == "bridge":
+                    raw["tool_reply_format"] = (
+                        "compact-json-whitespace.v1" if self.compact_tool_json else "verbatim"
+                    )
                     bridge_env = {
                         key: os.environ[key] for key in _BRIDGE_ENV_KEYS if key in os.environ
                     }
@@ -312,6 +316,7 @@ class CodexCliProvider:
                             "environment": env | bridge_env,
                             "cwd": str(working),
                             "trace": str(bridge_trace),
+                            "compact_json": self.compact_tool_json,
                         },
                     )
                     settings.update(

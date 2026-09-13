@@ -24,6 +24,50 @@ def make_bridge(
     })
 
 
+def test_compact_json_preserves_string_escapes_duplicate_keys_and_exact_numbers():
+    text = ' { "x": 1e9999, "x" : -0.000, "s" : " A \\n\\\" Ω \\\\ B " } \n'
+    expected = '{"x":1e9999,"x":-0.000,"s":" A \\n\\\" Ω \\\\ B "}'
+    assert codex_tools.compact_json_stdout(text) == expected
+    huge_integer = "7" * 5000
+    assert codex_tools.compact_json_stdout(f"[ {huge_integer}, true, null ]") == (
+        f"[{huge_integer},true,null]"
+    )
+
+
+@pytest.mark.parametrize("text", [
+    "declared 3 records\n  details\n", '{"partial":', '[NaN, Infinity]',
+    '{"x": 1} trailing', '"text"\n', "[" * 2000,
+])
+def test_compact_json_leaves_non_json_and_unreadable_output_verbatim(text):
+    assert codex_tools.compact_json_stdout(text) == text
+
+
+@pytest.mark.parametrize("compact, returncode", [(False, 0), (True, 0), (True, 1)])
+def test_compaction_changes_only_successful_model_stdout_and_keeps_raw_receipts(
+    monkeypatch, tmp_path, compact, returncode,
+):
+    stdout, stderr = '{\n  "records": [], "next_offset": null\n}\n', "diagnostic\n"
+    monkeypatch.setattr(codex_tools.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(
+        a[0], returncode, stdout.encode(), stderr.encode(),
+    ))
+    bridge = make_bridge(tmp_path)
+    bridge.compact_json = compact
+    result = bridge.call(["world", "show"])
+    visible = json.loads(result["content"][0]["text"])
+    retained = json.loads(bridge.trace.read_text(encoding="utf-8").splitlines()[-1])
+    assert retained["stdout"] == stdout and retained["stderr"] == stderr
+    assert visible["stderr"] == stderr and result["isError"] == bool(returncode)
+    if compact and returncode == 0:
+        assert visible["stdout"] == retained["model_stdout"] == (
+            '{"records":[],"next_offset":null}'
+        )
+        assert "model_stdout" not in visible
+    else:
+        assert visible["stdout"] == stdout and "model_stdout" not in retained
+    if returncode:
+        assert {key: value for key, value in retained.items() if key != "phase"} == visible
+
+
 @pytest.mark.parametrize("allowance", [
     "Bash(litharness world accept:*)", "Bash(litharness:*)", "Bash(python:*)",
     "Bash(litharness roster show:*)", "Bash(litharness roster vocabulary:*)",
