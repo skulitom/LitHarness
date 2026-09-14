@@ -1,0 +1,13 @@
+{
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/experience-first-20260914/registration.json",
+      "sha256": "9b1fc0087602a8d84acfb13fa1280da7432d5486b5f26c0a56389fd77fa70c3c"
+    }
+  ],
+  "claim_id": "experience-first-feasibility-20260914",
+  "schema": "litharness.epistemic-claim.v1",
+  "statement": "A prospective scene before discovery may change how an intended experience survives into a plan and chapter, beyond extra planning.",
+  "status": "registered"
+}
