@@ -1,8 +1,8 @@
 {
   "schema": "litharness.epistemic-claim.v1",
   "claim_id": "opening-consequence-20260914",
-  "status": "registered",
-  "statement": "One fixed first-output trial will examine two delegated story constraints: completing the water pursuit in Chapter 1 and retaining a failed bedding attempt before a later Duration purchase. Production source, original concept, seed mechanics and six-chapter layout remain unchanged. This is an authoring experiment, not a quality metric, candidate selection or production feedback qualification.",
+  "status": "observed",
+  "statement": "The first six-chapter output and located reading are retained: water is reached in Chapter 1, failure in Chapter 4 persists through Chapter 5, and Duration is acquired in Chapter 6. Exact directions reach planner and writers; seed authority and earlier prose survive. The inherited receipt locator required a disclosed post-observation correction. Physical allowance values enter typed magnitudes and the registered Point-balance check fails. This result does not establish clean numerical progression, causal literary improvement or editorial qualification.",
   "artifacts": [
     {
       "kind": "registration",
@@ -18,6 +18,26 @@
       "kind": "registration",
       "path": "research/quality-measurement/opening-consequence-20260914/directions.json",
       "sha256": "198f897d114de349278cd9b9e5274c186d88f3a0228a5562216ab5c6316ef372"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/opening-consequence-20260914/evidence.json",
+      "sha256": "953a7df9de130a0e222a3cdb4561dd24517c4850234eb6b30ea652556081f712"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/opening-consequence-20260914/readout.json",
+      "sha256": "038cf3cdc76ba7ad38c5562171f52603ba5413fe2b36418d32120e98e39388ba"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/opening-consequence-20260914/REPORT.md",
+      "sha256": "a47e0748d14472c271116ec2ab1a5f1c58b65726791c793dbbfb5b1bd31e0167"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/opening-consequence-20260914/audit_correction.py",
+      "sha256": "545b8be6edec5a536dbcf5760801ce2b25478a8a16d2f9c695c115d13e3fabc9"
     }
   ]
 }
