@@ -4,7 +4,7 @@
 
 # LitHarness
 
-[![CI](https://github.com/skulitom/LitHarness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/skulitom/LitHarness/actions/workflows/ci.yml)
+[![CI](https://github.com/skulitom/LitHarness/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/skulitom/LitHarness/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
