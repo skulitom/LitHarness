@@ -43,6 +43,7 @@ from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
 from litharness.application import bookaudit, covers, recruiter, revoice, titles, world_agent
+from litharness.application import chapter_layout as chapter_layout_mod
 from litharness.application import concept as concept_mod
 from litharness.application import discovery as discovery_mod
 from litharness.application import dossier as dossier_mod
@@ -2209,6 +2210,10 @@ def cmd_concept(args: argparse.Namespace) -> int:
     """
     stamp = _stamp(_now())
     brief = _read_text(args.brief_file) if args.brief_file else (args.brief or "")
+    layout = chapter_layout_mod.WritingLayout.opening(
+        args.scenes, SerialShape(args.chapter_scenes, args.arc_chapters),
+        _draft_policy(args).target_words,
+    )
     prior_concepts = [
         prior.render_for_world()
         for path in (getattr(args, "distinct_from", None) or [])
@@ -2253,6 +2258,7 @@ def cmd_concept(args: argparse.Namespace) -> int:
         discovery_request = discovery_mod.render_request(
             brief, writer, person=getattr(args, "person", None), distinct_from=prior_concepts,
             seed=seed,
+            layout=layout,
         )
         discovery_result, refusal = _completion_call(discovery_request, calls=calls, spend=spend)
         if discovery_result is None:
@@ -2274,6 +2280,7 @@ def cmd_concept(args: argparse.Namespace) -> int:
             person=getattr(args, "person", None),
             blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
             discovery=discovery,
+            layout=layout,
         )
         # **One rail, the listing's, and a bounded loop.** A concept that names its system
         # with one of this house's machinery words is redrawn, because everything downstream
@@ -3099,6 +3106,10 @@ def cmd_prompts(args: argparse.Namespace) -> int:
     )
     measurement = litrpg_pack.pool(readers_mod.MEASUREMENT)[0]
     steering = litrpg_pack.pool(readers_mod.STEERING)[0]
+    specimen_shape = SerialShape(args.chapter_scenes, args.arc_chapters)
+    specimen_layout = chapter_layout_mod.WritingLayout.opening(
+        specimen_shape.scenes_per_arc, specimen_shape, _draft_policy(args).target_words,
+    )
     roles: dict[str, CompletionRequest] = {
         "listing": overview_mod.render_overview_request(
             premise,
@@ -3108,7 +3119,8 @@ def cmd_prompts(args: argparse.Namespace) -> int:
         "concept": concept_mod.render_concept_request(
             premise,
             writer,
-            scenes=SerialShape().scenes_per_arc,
+            scenes=specimen_shape.scenes_per_arc,
+            layout=specimen_layout,
             blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
             discovery=discovery_mod.Discovery(
                 world="An unfamiliar place shaped by magic.",
@@ -3117,7 +3129,7 @@ def cmd_prompts(args: argparse.Namespace) -> int:
             ),
         ),
         "discovery": discovery_mod.render_request(
-            premise, writer, seed=invention_mod.make_seed("prompt-budget")
+            premise, writer, seed=invention_mod.make_seed("prompt-budget"), layout=specimen_layout,
         ),
         "concept-precision": precision_mod.render_request({"opening": "An encounter."}),
         "title": overview_mod.render_title_request("A debtor takes the road below.", writer),
@@ -5694,8 +5706,8 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=4,
         help="how many scenes make one chapter, and the position each scene is told "
-        "it holds when it is drafted (default: 4). This same shape drives planning, reader "
-        "context, and release packaging, so those roles do not silently mean different "
+        "it holds when it is drafted (default: 4). This same shape drives invention, planning, "
+        "reader context, and release packaging, so those roles do not silently mean different "
         "chapters",
     )
     parser.add_argument(

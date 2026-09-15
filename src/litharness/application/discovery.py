@@ -12,13 +12,13 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
-from litharness.application import precision
+from litharness.application import chapter_layout, precision
 from litharness.domain import house, schema_words
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v12"
+PROFILE = "writer.discovery.v13"
 VERSION = "magical-discovery.v6"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
@@ -216,12 +216,15 @@ def render_request(
     brief: str, writer: Writer | None = None, *, person: str | None = None,
     distinct_from: Sequence[str] = (),
     seed: InventionSeed | None = None,
+    layout: chapter_layout.WritingLayout | None = None,
 ) -> CompletionRequest:
     prompt = (
         f"Author's brief:\n{brief.strip() or 'Invent a new story within the intended experience.'}"
     )
     if person in ("first", "third"):
         prompt += f"\nNarrative person: {person}."
+    if layout is not None:
+        prompt += "\n\n" + layout.render()
     if seed is not None and seed.mode != "base64-prefix":
         prompt += (
             "\n\nCreative starting points for unspecified choices:\n"
@@ -241,6 +244,8 @@ def render_request(
             + "\n\n" + prompt
         )
     system = f"{writer.render()}\n\n{_TASK}" if writer else _TASK
+    if layout is not None:
+        system += "\n" + chapter_layout.INVENTION_RULE
     if seed is not None and seed.mode == "base64-prefix":
         system = seed.brief + "\n\n" + system
     return CompletionRequest(

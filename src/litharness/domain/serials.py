@@ -30,6 +30,7 @@ that **nothing here is O(serial)** at the point a scene is drafted (see :func:`w
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 from litharness.domain.beats import (
@@ -114,10 +115,14 @@ def chapters_of(revision: Revision, shape: SerialShape) -> tuple[Chapter, ...]:
 
     The last chapter may be short; that is the one being written.
     """
-    scenes = scene_nodes(revision)
+    return chapters_for(tuple(scene_nodes(revision)), shape)
+
+
+def chapters_for(scene_ids: Sequence[str], shape: SerialShape) -> tuple[Chapter, ...]:
+    """Group an ordered scene list, including the sheet used before a book exists."""
     out: list[Chapter] = []
-    for position in range(0, len(scenes), shape.scenes_per_chapter):
-        block = tuple(scenes[position : position + shape.scenes_per_chapter])
+    for position in range(0, len(scene_ids), shape.scenes_per_chapter):
+        block = tuple(scene_ids[position : position + shape.scenes_per_chapter])
         index = len(out) + 1
         out.append(
             Chapter(
@@ -348,6 +353,7 @@ __all__ = [
     "beats_for_arc",
     "beats_for_serial",
     "chapter_positions",
+    "chapters_for",
     "chapters_of",
     "next_chapter",
     "window_for",

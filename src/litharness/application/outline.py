@@ -55,6 +55,7 @@ from typing import Any
 
 import litharness_contracts as lc
 
+from litharness.application import chapter_coverage, chapter_layout
 from litharness.application import concept as concept_mod
 from litharness.application.conductor import JobHandler
 from litharness.application.model_context import StoryStateView, at_scene, planning_records
@@ -112,7 +113,7 @@ BOOK_OUTLINE = "book_outline"
 
 #: Frozen generation profile, recorded in provenance like every other model call here.
 PROFILE = "planner.outline.v1"
-CONCEPT_PROFILE = "planner.outline.v4"
+CONCEPT_PROFILE = "planner.outline.v5"
 
 #: Ranks above scene drafting (0) and below director direction (500+). A scene drafted before
 #: its statement exists would be drafted against the empty plan this module exists to fill, so
@@ -266,6 +267,29 @@ CONCEPT_OUTLINE_SCHEMA: dict[str, Any] = {
     },
 }
 
+CHAPTER_OUTLINE_SCHEMA: dict[str, Any] = {
+    **CONCEPT_OUTLINE_SCHEMA,
+    "required": ["chapters" if field == "scenes" else field
+                 for field in CONCEPT_OUTLINE_SCHEMA["required"]],
+    "properties": {
+        **{key: value for key, value in CONCEPT_OUTLINE_SCHEMA["properties"].items()
+           if key != "scenes"},
+        "chapters": chapter_coverage.CHAPTERS_SCHEMA,
+    },
+}
+
+
+def _writing_layout(
+    concept: concept_mod.Concept | None, beats: Sequence[Beat],
+    chapter_by_scene: Mapping[str, int] | None, target_scene_words: int | None,
+) -> chapter_layout.WritingLayout | None:
+    if (concept is None or concept.discovery is None
+            or not concept.discovery.experience_brief or not chapter_by_scene):
+        return None
+    return chapter_layout.WritingLayout.mapped(
+        [(beat.logical_id, beat.ordinal) for beat in beats], chapter_by_scene, target_scene_words,
+    )
+
 SCENE_HANDOFF_RULES = (
     "Return a brief for each scene: situation establishes the place, relevant relationships "
     "and the viewpoint character's understanding and concerns on entering it; pursuit is "
@@ -413,6 +437,7 @@ def render_outline_request(
     the outline statement's length. Direct callers may omit it to retain their existing input.
     """
     ordinals = _ordinal_of(beats)
+    layout = _writing_layout(concept, beats, chapter_by_scene, target_scene_words)
     scene_ids = {beat.logical_id for beat in beats}
     author_locks = [
         item for item in base.items
@@ -439,6 +464,7 @@ def render_outline_request(
         {
             "premise": premise,
             "base_plan_revision_id": base.plan_revision_id,
+            **({"writing_layout": layout.to_jsonable()} if layout is not None else {}),
             **(
                 {"author_locks": [lc.to_jsonable(item) for item in author_locks]}
                 if author_locks else {}
@@ -629,6 +655,7 @@ def render_outline_request(
                 if concept is not None and concept.discovery is not None
                 and concept.discovery.experience_brief else []
             )
+            + ([chapter_layout.PLANNING_RULE] if layout is not None else [])
             + ([CONTINUATION_RULE] if continuation_scope is not None else []),
         },
         ensure_ascii=False,
@@ -653,7 +680,8 @@ def render_outline_request(
             f"{role}\n{house.QUANTITY_DETAIL}"
             if concept is not None else house.with_house_rules(role)
         ),
-        schema=CONCEPT_OUTLINE_SCHEMA if concept is not None else OUTLINE_SCHEMA,
+        schema=(CHAPTER_OUTLINE_SCHEMA if layout is not None else
+                CONCEPT_OUTLINE_SCHEMA if concept is not None else OUTLINE_SCHEMA),
         max_output_tokens=8192,
         timeout_seconds=CONCEPT_TIMEOUT_SECONDS if concept is not None else 300.0,
         profile=CONCEPT_PROFILE if concept is not None else PROFILE,
@@ -1107,6 +1135,7 @@ def outline_proposal(
     counts: Sequence[str] = (),
     arc_index: int | None = None,
     original_beats: Sequence[Beat] | None = None,
+    chapter_by_scene: Mapping[str, int] | None = None,
 ) -> PlanProposal:
     """The model's outline as plan edits, one `SCENE_PLAN` item per beat.
 
@@ -1131,7 +1160,13 @@ def outline_proposal(
     refuses to touch a locked item — so a wrong outline would be unfixable by the same
     machinery that produced it.
     """
-    concept_backed = concept_mod.concept_of(base.items) is not None
+    concept = concept_mod.concept_of(base.items)
+    concept_backed = concept is not None
+    layout = _writing_layout(concept, beats, chapter_by_scene, None)
+    coverage: tuple[chapter_coverage.ChapterCoverage, ...] = ()
+    if layout is not None:
+        scenes, coverage = chapter_coverage.reconcile(payload, layout)
+        payload = {**payload, "scenes": scenes}
     statements = _statements(payload, len(beats), structured=concept_backed)
     positions = {beat.logical_id: beat for beat in original_beats or beats}
     # **CREATE where the statement is absent, UPDATE where it is already there.** A
@@ -1184,6 +1219,22 @@ def outline_proposal(
         )
         for beat, statement in zip(beats, statements, strict=True)
     )
+    scene_ids = {beat.ordinal: beat.logical_id for beat in beats}
+    existing_ids = {item.logical_id for item in base.items}
+    for chapter in coverage:
+        # Derived serial chapters need not be nodes in the manuscript tree. Record the
+        # exact scene scope inside this intended item rather than inventing an ancestor.
+        logical_id = f"chapter-coverage-{scene_ids[chapter.ordinals[0]]}"
+        edits += (PlanEdit(
+            action=PlanEditAction.UPDATE if logical_id in existing_ids else PlanEditAction.CREATE,
+            logical_id=logical_id,
+            item=lc.PlanItem(
+                logical_id=logical_id, kind=lc.PlanKind.CHAPTER_PLAN,
+                text=chapter.to_text(scene_ids), authority=lc.PlanAuthority.INTENDED,
+                locked=False,
+            ),
+            reason=f"reconciled coverage for chapter {chapter.chapter}",
+        ),)
     return PlanProposal(
         base_plan_revision_id=base.plan_revision_id,
         summary=str(payload.get("summary") or f"outline for {len(beats)} scenes"),
@@ -1192,7 +1243,7 @@ def outline_proposal(
         edits=edits,
         provider=result.provider,
         model=result.model,
-        profile=PROFILE,
+        profile=CONCEPT_PROFILE if concept_backed else PROFILE,
     )
 
 
@@ -1211,7 +1262,7 @@ def _policy_digest(*, target_scene_words: int | None = None) -> str:
                 if target_scene_words is not None else {}
             ),
             "schema": OUTLINE_SCHEMA,
-            "concept_planning_version": 12,
+            "concept_planning_version": 13,
             "continuation_scope": {
                 "version": 1,
                 "rule": CONTINUATION_RULE,
@@ -1219,6 +1270,8 @@ def _policy_digest(*, target_scene_words: int | None = None) -> str:
                 "history_scenes": CONTINUATION_HISTORY_SCENES,
             },
             "concept_schema": CONCEPT_OUTLINE_SCHEMA,
+            "chapter_schema": CHAPTER_OUTLINE_SCHEMA,
+            "chapter_coverage_rule": chapter_layout.PLANNING_RULE,
             "scene_handoff_rules": SCENE_HANDOFF_RULES,
             "author_lock_rule": AUTHOR_LOCK_RULE,
             "concept_outline_rules": {
@@ -1700,6 +1753,7 @@ def make_outline_handler(
                 # arcs are not each handed a fresh opening.
                 arc_index=arc_index,
                 original_beats=original_beats,
+                chapter_by_scene=chapter_by_scene,
             )
             # Validate numeric integrity with the outline. Discovery-backed plans need not
             # manufacture numerical movement to pass this structural check.

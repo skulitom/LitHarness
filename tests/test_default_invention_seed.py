@@ -8,6 +8,7 @@ import pytest
 
 from litharness import cli
 from litharness.application import concept, discovery, world_agent
+from litharness.application.chapter_layout import WritingLayout
 from litharness.domain.invention import (
     COMBINATIONS,
     LEGACY_VERSION,
@@ -17,6 +18,7 @@ from litharness.domain.invention import (
     InventionSeed,
     make_seed,
 )
+from litharness.domain.serials import SerialShape
 from tests.test_concept import _discovery, _example, _scripted
 
 
@@ -233,7 +235,10 @@ def test_no_seed_is_an_explicit_control_and_clears_a_stale_receipt(tmp_path, mon
         )
         == cli.EXIT_OK
     )
-    assert call.seen[0] == discovery.render_request("")
+    layout = WritingLayout.opening(
+        SerialShape().scenes_per_arc, SerialShape(), cli.DraftPolicy().target_words,
+    )
+    assert call.seen[0] == discovery.render_request("", layout=layout)
     assert json.loads((out / "invention-seed.json").read_text()) is None
     assert concept.Concept.from_text((out / "concept.json").read_text()).invention_seed is None
 

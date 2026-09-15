@@ -15,7 +15,7 @@ from typing import Any
 
 import litharness_contracts as lc
 
-from litharness.application import precision
+from litharness.application import chapter_layout, precision
 from litharness.application.discovery import Discovery
 from litharness.application.overview import FIRST_PERSON_ASK
 from litharness.domain import house, schema_words
@@ -24,7 +24,7 @@ from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
 CONCEPT_PROFILE = "writer.concept.v1"
-DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v7"
+DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v8"
 
 #: The plan item id the concept is persisted under; one per book, like `plan-premise`.
 CONCEPT_PLAN_ID = "plan-concept"
@@ -768,6 +768,7 @@ def render_concept_request(
     person: str | None = None,
     blurbs: str | None = None,
     discovery: Discovery | None = None,
+    layout: chapter_layout.WritingLayout | None = None,
 ) -> CompletionRequest:
     """One concept, from a brief that may be empty.
 
@@ -779,6 +780,10 @@ def render_concept_request(
     if person == "first":
         ask = f"{ask}\n{FIRST_PERSON_ASK}"
     prompt = f"What this book is to be about:\n{ask}\nThe first arc is {scenes} scenes."
+    if layout is not None:
+        if layout.scene_count != scenes:
+            raise ValueError("concept scene count disagrees with writing layout")
+        prompt += "\n\n" + layout.render()
     if blurbs:
         prompt = f"{blurbs}\n\n{prompt}"
     if discovery is not None:
@@ -823,6 +828,8 @@ def render_concept_request(
                 "proposals, including their timing."
             )
         system = task
+    if layout is not None:
+        system += "\n" + chapter_layout.DEVELOPMENT_RULE
     return CompletionRequest(
         prompt=prompt,
         system=system,

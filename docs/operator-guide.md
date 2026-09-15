@@ -117,6 +117,22 @@ reaches the outline planner. The planner carries the relevant events and setup i
 scene's brief. Generated proposals remain revisable; your instructions, author locks and
 established events constrain their realization.
 
+Supply the same `--chapter-scenes`, `--arc-chapters` and `--target-words` global options
+when inventing the concept and running its book. Discovery and concept development use
+that actual chapter layout and prose budget. For example, six chapters with one roughly
+1,400-word scene each:
+
+```bash
+uv run litharness --database book.db --chapter-scenes 1 --arc-chapters 6 --target-words 1400 concept --scenes 6 --out runs/pilots/my-book
+```
+
+For concepts with an experience brief and a known chapter map, the outline plans chapter
+coverage before the scenes inside it. It records any adaptation to the proposed coverage
+in unlocked `chapter_plan` items visible through `plans --json`. Exact chapter membership
+is checked before accepting the plan. This checks coordinates; it does not certify that
+the prose delivers an experience or that readers enjoy it. Later and partially planned
+chapters retain their actual book coordinates. Existing concepts and plans remain readable.
+
 This uses the existing discovery call and ordinary concept/outline workflow. Stored concepts
 without an experience brief remain readable. This is an authoring method; its effect on
 reader enjoyment and popularity has not been established.
