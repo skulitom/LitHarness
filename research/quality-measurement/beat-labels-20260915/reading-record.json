@@ -1,0 +1,72 @@
+{
+  "chapters_read": 4,
+  "files": {
+    "research/quality-measurement/beat-labels-20260915/RESULTS.md": "7a0a44993f3cc784cfd427561732cd64ffdc1f77c596e9801ad13139d26e5cb0",
+    "research/quality-measurement/beat-labels-20260915/evidence.json": "b6e2b725dce9f1ab9baa33875d0592e7e6b0ebac4895e5bc1a135d9194bb133b",
+    "research/quality-measurement/beat-labels-20260915/handoff-evidence.json": "4de391c1eebe6275bf180e7498658419198d8f8382cde34a6c3d1c346b214a4a",
+    "runs/beat-labels-20260915/READING-NOTES.md": "b9d85d4fbcd9da5f374ecc728943893c0840c4bffae6879a08a8995f12f9d02b",
+    "runs/beat-labels-20260915/REPORT.md": "cabe3832f53e5a002b5c53ccc44ee450cb6711b22d0fcb5ac3a967b8ee657d6c",
+    "runs/beat-labels-20260915/books/A2/chapter-1.md": "ee0c0de6f195c4ee848d458af25bd199b629ba8bf279f399cf5693fda9b64aed",
+    "runs/beat-labels-20260915/books/A2/outline.json": "d9a01ab5bf0633bf2d9bb56e4fe7fabe4e9ac74917612fc016c2f48dbdc9d3a6",
+    "runs/beat-labels-20260915/books/A2/writer-prompt.txt": "08452e9f6544cc93bf9afb5db41419b9827ab82b29deb7e7b35f9f6d7fb2580f",
+    "runs/beat-labels-20260915/books/A2/writer-raw.md": "37e19cc6e706b49af5145cc2f34442462babadaad47e03d8d602dec5a674d35c",
+    "runs/beat-labels-20260915/books/A4/chapter-1.md": "35975ae2198bee2958c57183150d6b33d830ae75486792b58003e8c89bcea07b",
+    "runs/beat-labels-20260915/books/A4/outline.json": "833df048e2082bd500ca688b32eb5b93fe759de3e2457a2380fa52cf13e4106d",
+    "runs/beat-labels-20260915/books/A4/writer-prompt.txt": "7261e0e815d5456a9a71a5f35e9658a2d33c238bcf3d22d42960a88e5b0f2943",
+    "runs/beat-labels-20260915/books/A4/writer-raw.md": "091b07daa9c95931d5e070e69a8b2044e84724880c059d6996caf44073da68be",
+    "runs/beat-labels-20260915/books/B2/chapter-1.md": "2cdeca64d0aba3dece052512c046da62fc1bdb0e3ed25ed890ff4abc58997674",
+    "runs/beat-labels-20260915/books/B2/outline.json": "294620d5071c9d5f680e6fcc9a46bbfb5aa00a2a482b71bc3281edd1cbec37c9",
+    "runs/beat-labels-20260915/books/B2/writer-prompt.txt": "307c7934565fd6d1638902d0965fd4ae745ce938855d417c9434408c96ce8fd6",
+    "runs/beat-labels-20260915/books/B2/writer-raw.md": "7c9dfcd1df3a96082ed29307b5b8532a93be0bff511cca41207dd18fbeea55c4",
+    "runs/beat-labels-20260915/books/B4/chapter-1.md": "60b48d32108fd3213a14333e0f566275685777396600d7e18d69c7afa9205964",
+    "runs/beat-labels-20260915/books/B4/outline.json": "045ad2567f8a17036a09b77647b9e43bd778fa26f4ec9800649ae9f8777e2292",
+    "runs/beat-labels-20260915/books/B4/writer-prompt.txt": "78a9ab0f3f2c01e68eadea70180b26f872fbe906cd78caa7035be9b02d94f6d0",
+    "runs/beat-labels-20260915/books/B4/writer-raw.md": "4b9df617dd65134c43bda326ddd13ed0fbb5fa14473e707722aa8e116aaa41d3",
+    "runs/beat-labels-implementation-handoff.log": "9328eee011ed44672bee4d497cad8c80863cea26db5f9c67ab6e2e569ed254dd",
+    "runs/beat-labels-registration-handoff.log": "a1914457c833538e9dbe640a305933ea386ca20c620ac41d33c00468a0a79001",
+    "runs/beat-labels-results-handoff.log": "46a6e993a8e4a3d1bfe4b91e1755d8a5480a53d82c3567e7cbb716571d51741b"
+  },
+  "independent_story_units": 2,
+  "interpretation_kind": "located_editorial_reading_not_validated_reader_measurement",
+  "outline_calls": {
+    "A2": [
+      2
+    ],
+    "A4": [
+      14
+    ],
+    "B2": [
+      6
+    ],
+    "B4": [
+      10
+    ]
+  },
+  "raw_differences_inspected": true,
+  "read_after_generation": true,
+  "recorded_at": "2026-09-15T22:53:23.247557+00:00",
+  "schema": "litharness.located-reading-record.v1",
+  "status": "complete",
+  "verification": {
+    "coverage_percent": 89.97,
+    "final_log": "runs/beat-labels-results-handoff.log",
+    "mode": "handoff",
+    "passed": true,
+    "tests_passed": 5237,
+    "tests_skipped": 20
+  },
+  "writer_calls": {
+    "A2": [
+      4
+    ],
+    "A4": [
+      16
+    ],
+    "B2": [
+      8
+    ],
+    "B4": [
+      12
+    ]
+  }
+}
