@@ -1,0 +1,54 @@
+{
+  "1": {
+    "premise": "An original combat LitRPG about Sera, a caravan shield guard who wants to lead a route under her own name.",
+    "experience": {
+      "personal_desire": "Sera wants to stop being assigned the luggage while other guards fight. She wants to choose and win a fight herself.",
+      "starting_state": "Sera can block with her shield. She has never successfully used Return Force, a skill that stores one blocked impact for ten seconds and releases it through the next shield strike. No stored impact survives its use or the ten seconds.",
+      "concrete_use": "At a narrow road cutting, Sera deliberately catches one charging glassjaw beast's impact and releases it into a second beast, defeating both instead of merely surviving behind her shield.",
+      "experienced_consequence": "The road opens. Sera walks out from behind cover to collect the pair's route tags herself; her senior guard hands her the lead rope and follows her choice of route. Show her choosing the exposed position that she previously avoided.",
+      "next_desire": "She wants to lead the next crossing, where knowing when to hold an impact could matter more than having a larger shield.",
+      "chapter_1": "Complete the two-beast fight and the immediate transfer of route leadership in this chapter. The skill's first successful use occurs on page, not before the story starts.",
+      "chapter_2": "On the next crossing, reuse Return Force to free a jammed wagon using an impact from a falling timber. She must arrange a new impact and release it within ten seconds; the earlier charge was spent. She leads the crossing without receiving a new ability.",
+      "unresolved": "Ownership of a caravan and the source of the glassjaw migration remain beyond this episode. Winning these local encounters does not remove those problems."
+    }
+  },
+  "2": {
+    "premise": "An original tactical LitRPG about Iven, a low-ranked dungeon runner who wants access to a sealed garden above the competitive trial course.",
+    "experience": {
+      "personal_desire": "Iven wants to see and reach the roof garden himself. He also wants the rival who dismissed his support skills to see why he kept them.",
+      "starting_state": "Iven already owns Chalk Gate, which transfers one nonliving object between two marks he has touched, and Feather Burden, which reduces one carried object's weight for five breaths. He has not combined them. Chalk Gate's weight limit uses current weight; the object returns to normal weight when Feather Burden ends. Neither skill moves a person.",
+      "concrete_use": "In the trial, Iven reduces a heavy counterweight's weight and sends it through his two chalk marks. Its restored weight operates a platform that neither skill could move alone, carrying him past the rival to the garden entrance.",
+      "experienced_consequence": "Iven actually enters the garden, tastes a fruit grown there, and looks down on the course he bypassed. The rival has to ask him how he reached it. Let Iven decide how much to explain.",
+      "next_desire": "He wants to explore where else this combination could take someone without pretending it can teleport people.",
+      "chapter_1": "Complete the combination, the entry, and the fruit tasting here. A skill notification or a promise to enter later is not this specified event.",
+      "chapter_2": "A damaged exit leaves the rival stranded. Iven uses the same weight-and-transfer combination with a different available object to lower a safe crossing. The rival crosses, and Iven chooses whether to take them exploring. No new skill is needed.",
+      "unresolved": "The garden's builders and the runner rankings remain open. Local cooperation does not require immediate friendship or erasing the rivalry."
+    }
+  },
+  "3": {
+    "premise": "An original time-loop progression story about Olan, an apprentice who wants to hear a hidden conservatory performance before his afternoon resets.",
+    "experience": {
+      "personal_desire": "Olan wants to get beyond a corridor that repeatedly humiliates him and hear the instrument being played inside, rather than only hearing it through the wall.",
+      "starting_state": "At the third bell the afternoon resets. Olan keeps practiced timing and memories, but objects return to their starting places. He has already failed the corridor once and knows its first obstacle. The conservatory locks are mechanisms, not sentient judges.",
+      "concrete_use": "During this chapter he learns the remaining timing from a failed attempt and uses it after a reset to cross the corridor without that failure. He reaches the room in time to hear the end of the performance beside the player.",
+      "experienced_consequence": "A motion that required hesitation now comes easily. Olan chooses to sit and listen rather than immediately searching for the next puzzle; he can finally hear a quiet part that was inaudible through the wall.",
+      "next_desire": "He wants to return early enough to hear the beginning and ask the player about the unfamiliar instrument.",
+      "chapter_1": "Include the informative failure, reset, successful crossing, and actual listening. The local success belongs here, although escaping the loop does not.",
+      "chapter_2": "After another reset, show the learned corridor becoming a brief fluent passage. Olan arrives for the beginning and asks his question. An object he brought back cannot solve the route because objects reset; memory and practice can.",
+      "unresolved": "The loop's cause, escape, and a locked upper gallery remain unresolved. Listening need not award a new power."
+    }
+  },
+  "4": {
+    "premise": "An original comic adventure LitRPG about Fen and Daro, mismatched friends who want to ride a floating market's runaway festival drum together.",
+    "experience": {
+      "personal_desire": "Fen wants to join Daro's ridiculous festival ride instead of watching from shore and pretending it is beneath her dignity.",
+      "starting_state": "Fen owns Grip Share, which links two willing people's hold on one object for eight breaths. They must both maintain contact, and one person's release ends the link. Daro can balance moving things but cannot maintain the link for Fen. They have never ridden this drum together.",
+      "concrete_use": "They link their grip on the floating drum and ride it round a market bend. Fen's attempted dignified posture makes steering worse; they coordinate through shouted, increasingly silly corrections and finish together.",
+      "experienced_consequence": "They get splashed, disagree about whose steering caused it, and deliberately choose another circuit together after they could step ashore. Their amusement is enacted through the ride and their interaction.",
+      "next_desire": "Fen wants to try the narrower lantern channel with Daro and has her own absurd steering suggestion.",
+      "chapter_1": "Complete the first circuit and enact the voluntary beginning of another. Do not postpone all riding until after training or skill acquisition.",
+      "chapter_2": "Use Grip Share again in the lantern channel, renewing it only after the prior link has ended. Fen and Daro exchange who calls the turns; a comic mistake costs a paper hat, but they finish the channel together. No new power resolves the coordination.",
+      "unresolved": "The festival race and Fen's reasons for hiding her enthusiasm remain larger story material. The hat stays lost; companionship need not undo that small loss."
+    }
+  }
+}

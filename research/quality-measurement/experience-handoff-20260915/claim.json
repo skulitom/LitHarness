@@ -1,0 +1,13 @@
+{
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/experience-handoff-20260915/registration.json",
+      "sha256": "7277ab815bd3ef3579c805decbfd877ebcde77d6c2951e4bd913281a044fbb71"
+    }
+  ],
+  "claim_id": "experience-handoff-feasibility-20260915",
+  "schema": "litharness.epistemic-claim.v1",
+  "statement": "Carrying an original episode specification into the outline may change its transmission into a two-chapter episode from shared discovery and concept parents.",
+  "status": "registered"
+}
