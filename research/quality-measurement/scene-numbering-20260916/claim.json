@@ -1,0 +1,18 @@
+{
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/scene-numbering-20260916/RUNBOOK.md",
+      "sha256": "60982bb97dcd479515d772ee955f8800e83eb040e9d611a2d17ba23f44791c6b"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/scene-numbering-20260916/registration.json",
+      "sha256": "ac92575585defd93a40b6ef20e896b79b97e89721f21471a5597850f924f84ea"
+    }
+  ],
+  "claim_id": "generated-scene-coordinates-20260916",
+  "schema": "litharness.epistemic-claim.v1",
+  "statement": "The fixed-story comparison records outlines and opening chapters with generated arc scene references and generated debt scene coordinates removed from the treatment outline request; no quality effect is licensed.",
+  "status": "registered"
+}
