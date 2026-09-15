@@ -104,6 +104,44 @@ def test_direct_callers_can_omit_layout_but_cannot_supply_a_conflicting_count():
         WritingLayout.mapped([("s1", 1), ("s2", 2)], {"s1": 1}, 900)
 
 
+@pytest.mark.parametrize("kind", ["discovery", "legacy", "no_concept"])
+def test_concept_planning_is_independent_of_template_labels_and_keeps_author_timing(
+    tmp_path, kind,
+):
+    supplied = (source() if kind == "discovery" else
+                concept.Concept.from_payload(_example()) if kind == "legacy" else None)
+    if supplied is not None:
+        supplied = replace(
+            supplied, author_brief="Chapter one must set up a rescue; pay it in three.",
+        )
+    with SqliteStore.open(tmp_path / "labels.db") as store:
+        revision = a_book(store, scenes=6)
+        beats = beats_for(revision, arc_template(6))
+        options = {
+            "base": store.plan_revision(BOOK_ID, BRANCH_ID), "concept": supplied,
+            "chapter_by_scene": {f"scene-{i}": i for i in range(1, 7)}, "target_scene_words": 1400,
+        }
+        request = outline.render_outline_request("A garden", beats, **options)
+        changed = outline.render_outline_request(
+            "A garden", tuple(replace(b, function="ARBITRARY_TEMPLATE_LABEL") for b in beats),
+            **options,
+        )
+        payload = json.loads(request.prompt)
+        rule = "Respect the dramatic function given for each scene."
+        if supplied is None:
+            assert request.prompt != changed.prompt
+            functions = [s["dramatic_function"] for s in payload["scenes"]]
+            assert functions == [b.function for b in beats]
+            assert rule in payload["rules"]
+        else:
+            assert request == changed
+            assert all("dramatic_function" not in s for s in payload["scenes"])
+            assert rule not in payload["rules"]
+            assert payload["book_concept"]["author_brief"] == supplied.author_brief
+            assert [s["chapter"] for s in payload["scenes"]] == list(range(1, 7))
+        assert tuple(beats) == tuple(beats_for(revision, arc_template(6)))
+
+
 def test_grouped_outline_is_persisted_with_revised_intent_and_exact_scene_handoff(
     tmp_path, monkeypatch,
 ):

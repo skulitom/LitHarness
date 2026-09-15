@@ -113,7 +113,7 @@ BOOK_OUTLINE = "book_outline"
 
 #: Frozen generation profile, recorded in provenance like every other model call here.
 PROFILE = "planner.outline.v1"
-CONCEPT_PROFILE = "planner.outline.v5"
+CONCEPT_PROFILE = "planner.outline.v6"
 
 #: Ranks above scene drafting (0) and below director direction (500+). A scene drafted before
 #: its statement exists would be drafted against the empty plan this module exists to fill, so
@@ -521,7 +521,7 @@ def render_outline_request(
                 {
                     "ordinal": beat.ordinal,
                     "of_total": beat.of_total,
-                    "dramatic_function": beat.function,
+                    **({"dramatic_function": beat.function} if concept is None else {}),
                     **(
                         {
                             "logical_id": beat.logical_id,
@@ -559,7 +559,8 @@ def render_outline_request(
                 "Every statement must be different from every other. Two scenes that could "
                 "be swapped without the book noticing are one scene written twice.",
                 "Write planning facts rather than finished scene narration or dialogue.",
-                "Respect the dramatic function given for each scene.",
+                *(["Respect the dramatic function given for each scene."]
+                  if concept is None else []),
                 "Later scenes must build on earlier ones rather than repeat them: nothing may "
                 "be obtained, revealed, or resolved twice.",
             ]
@@ -1262,7 +1263,7 @@ def _policy_digest(*, target_scene_words: int | None = None) -> str:
                 if target_scene_words is not None else {}
             ),
             "schema": OUTLINE_SCHEMA,
-            "concept_planning_version": 13,
+            "concept_planning_version": 14,
             "continuation_scope": {
                 "version": 1,
                 "rule": CONTINUATION_RULE,

@@ -133,6 +133,10 @@ is checked before accepting the plan. This checks coordinates; it does not certi
 the prose delivers an experience or that readers enjoy it. Later and partially planned
 chapters retain their actual book coordinates. Existing concepts and plans remain readable.
 
+Concept-backed outlines choose events without preassigned generic scene-role labels such
+as `setup` or `rising`. Chapter boundaries, author instructions and established facts still
+constrain the plan; the internal chronological template remains in use.
+
 This uses the existing discovery call and ordinary concept/outline workflow. Stored concepts
 without an experience brief remain readable. This is an authoring method; its effect on
 reader enjoyment and popularity has not been established.
