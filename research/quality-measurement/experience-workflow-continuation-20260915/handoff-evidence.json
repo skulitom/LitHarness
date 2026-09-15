@@ -1,0 +1,899 @@
+{
+  "schema": "experience-workflow.handoff-inspection.v1",
+  "interpretation": "Recorded coordinates and string containment only; not model causation or a quality verdict.",
+  "concepts": [
+    {
+      "book": "A1",
+      "call": 3,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0003-A1.json",
+      "receipt_sha256": "3129bc7ed4f689488e6c172036217c967479934e8693b26e400288c51858b5d5",
+      "prompt_sha256": "6b26eaafdaa03539f6fc816dc43b311bdb2f8fb1b0886c8eb05fa60aaab9d93d",
+      "ends_with_arc_scene_count": true
+    },
+    {
+      "book": "B1",
+      "call": 7,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0007-B1.json",
+      "receipt_sha256": "0576afa75d75b318256a6cafc38d2043c396ff77ec497ce7f780d73d8b556bfe",
+      "prompt_sha256": "576e25269c30300c7117119ddfd2d2d1cad53c1e756762c24c99d93e5c04d043",
+      "ends_with_arc_scene_count": true
+    },
+    {
+      "book": "B2",
+      "call": 11,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0011-B2.json",
+      "receipt_sha256": "beef7a9e55ddf3b5f0028f311cda1d30360f7177e07825783c6fa104d3c6d04c",
+      "prompt_sha256": "f9adee84796e64756df174261ade70afff2a434fb8f97b51b0459dbc53b53daa",
+      "ends_with_arc_scene_count": true
+    },
+    {
+      "book": "A2",
+      "call": 15,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0015-A2.json",
+      "receipt_sha256": "bdfe708efd4afaa113878c0a3f07671783f8e649688178288b170160083bb296",
+      "prompt_sha256": "270a22b0df6891f6be7ff272a700ef7103fb9d83df47a6dbcbe169a7da818e36",
+      "ends_with_arc_scene_count": true
+    },
+    {
+      "book": "A3",
+      "call": 19,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0019-A3.json",
+      "receipt_sha256": "8be51ff4c3b192be865c09b510ca49bd92bde889d518994fe9b4e17a2461e62d",
+      "prompt_sha256": "cf15934ed7bebe68bb1d4773d59ca25c3de8f5bc54d37998c781d96bf01b511d",
+      "ends_with_arc_scene_count": true
+    },
+    {
+      "book": "B3",
+      "call": 23,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0023-B3.json",
+      "receipt_sha256": "56dc7c8181e13d8752a295ff127433d24ef94f7db3d22dc6c42f4d78fb301fe0",
+      "prompt_sha256": "37a39a4a9d056809d061ff49d4f753e324dc805145b1efbd223736b2f6464df6",
+      "ends_with_arc_scene_count": true
+    },
+    {
+      "book": "B4",
+      "call": 27,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0027-B4.json",
+      "receipt_sha256": "5d6ebac04d72974898189a85dcc97127eef22f8744a70080e7712ef58425f77b",
+      "prompt_sha256": "2947e8052ae99f849b956cf4d8be11ce0f90ed50fa383a2a8f1dfb27a4dc6583",
+      "ends_with_arc_scene_count": true
+    },
+    {
+      "book": "A4",
+      "call": 31,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0031-A4.json",
+      "receipt_sha256": "64af8cbb58673f51a8507b65d321175d55aa8e317842166f565fa6c19145a298",
+      "prompt_sha256": "c5b30b84ae66174bcea66a8c9328c93e12a0e2c75966dd568736c7b8e3e007d0",
+      "ends_with_arc_scene_count": true
+    }
+  ],
+  "outlines": [
+    {
+      "book": "A1",
+      "call": 50,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0050-A1.json",
+      "receipt_sha256": "e849792fc56c23c1033f446b9c75d1d0c6bcd003c98f9136dd84b171a327bb38",
+      "prompt_sha256": "949976361317765e05f60a9346c538616f2787c8c98595cb5e9a435788010865",
+      "scenes": [
+        {
+          "chapter": 1,
+          "dramatic_function": "setup",
+          "of_total": 6,
+          "ordinal": 1
+        },
+        {
+          "chapter": 2,
+          "dramatic_function": "inciting",
+          "of_total": 6,
+          "ordinal": 2
+        },
+        {
+          "chapter": 3,
+          "dramatic_function": "rising",
+          "of_total": 6,
+          "ordinal": 3
+        },
+        {
+          "chapter": 4,
+          "dramatic_function": "turn",
+          "of_total": 6,
+          "ordinal": 4
+        },
+        {
+          "chapter": 5,
+          "dramatic_function": "crisis",
+          "of_total": 6,
+          "ordinal": 5
+        },
+        {
+          "chapter": 6,
+          "dramatic_function": "resolution",
+          "of_total": 6,
+          "ordinal": 6
+        }
+      ],
+      "target_scene_words": 1400,
+      "projected_first_arc_fields": [
+        "closes",
+        "middle"
+      ],
+      "projected_debt_due_scenes": [
+        1,
+        3,
+        4,
+        6
+      ]
+    },
+    {
+      "book": "B1",
+      "call": 54,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0054-B1.json",
+      "receipt_sha256": "99e081bf80bb7557aa20a075961aaba8ec66adda6e19c249ef76e82f5107ee68",
+      "prompt_sha256": "dcd5a599fadfd5a3362127f3bbef56a7e02850a53c7593d0c220b6853cfbe9af",
+      "scenes": [
+        {
+          "chapter": 1,
+          "dramatic_function": "setup",
+          "of_total": 6,
+          "ordinal": 1
+        },
+        {
+          "chapter": 2,
+          "dramatic_function": "inciting",
+          "of_total": 6,
+          "ordinal": 2
+        },
+        {
+          "chapter": 3,
+          "dramatic_function": "rising",
+          "of_total": 6,
+          "ordinal": 3
+        },
+        {
+          "chapter": 4,
+          "dramatic_function": "turn",
+          "of_total": 6,
+          "ordinal": 4
+        },
+        {
+          "chapter": 5,
+          "dramatic_function": "crisis",
+          "of_total": 6,
+          "ordinal": 5
+        },
+        {
+          "chapter": 6,
+          "dramatic_function": "resolution",
+          "of_total": 6,
+          "ordinal": 6
+        }
+      ],
+      "target_scene_words": 1400,
+      "projected_first_arc_fields": [
+        "closes",
+        "middle"
+      ],
+      "projected_debt_due_scenes": [
+        2,
+        3,
+        4,
+        6
+      ]
+    },
+    {
+      "book": "B2",
+      "call": 58,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0058-B2.json",
+      "receipt_sha256": "9bfb7c38cad61b13ed0f15b70714fd6d31af041f142675a2f59d45e9b9e45a5a",
+      "prompt_sha256": "2e965f3b14f40f21689aa071e1a9550f4b67530b75fd8d47028a39bfdcd34814",
+      "scenes": [
+        {
+          "chapter": 1,
+          "dramatic_function": "setup",
+          "of_total": 6,
+          "ordinal": 1
+        },
+        {
+          "chapter": 2,
+          "dramatic_function": "inciting",
+          "of_total": 6,
+          "ordinal": 2
+        },
+        {
+          "chapter": 3,
+          "dramatic_function": "rising",
+          "of_total": 6,
+          "ordinal": 3
+        },
+        {
+          "chapter": 4,
+          "dramatic_function": "turn",
+          "of_total": 6,
+          "ordinal": 4
+        },
+        {
+          "chapter": 5,
+          "dramatic_function": "crisis",
+          "of_total": 6,
+          "ordinal": 5
+        },
+        {
+          "chapter": 6,
+          "dramatic_function": "resolution",
+          "of_total": 6,
+          "ordinal": 6
+        }
+      ],
+      "target_scene_words": 1400,
+      "projected_first_arc_fields": [
+        "closes",
+        "middle"
+      ],
+      "projected_debt_due_scenes": [
+        3,
+        5,
+        6,
+        6
+      ]
+    },
+    {
+      "book": "A2",
+      "call": 62,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0062-A2.json",
+      "receipt_sha256": "7a6ab74ca7b572da28fe3a614ee4524252258d40c4d945c30e88e863fb70dbde",
+      "prompt_sha256": "275641e106932a1805c50e83276d6a29fd3d0cf8be2f40125fa9ea838a6be344",
+      "scenes": [
+        {
+          "chapter": 1,
+          "dramatic_function": "setup",
+          "of_total": 6,
+          "ordinal": 1
+        },
+        {
+          "chapter": 2,
+          "dramatic_function": "inciting",
+          "of_total": 6,
+          "ordinal": 2
+        },
+        {
+          "chapter": 3,
+          "dramatic_function": "rising",
+          "of_total": 6,
+          "ordinal": 3
+        },
+        {
+          "chapter": 4,
+          "dramatic_function": "turn",
+          "of_total": 6,
+          "ordinal": 4
+        },
+        {
+          "chapter": 5,
+          "dramatic_function": "crisis",
+          "of_total": 6,
+          "ordinal": 5
+        },
+        {
+          "chapter": 6,
+          "dramatic_function": "resolution",
+          "of_total": 6,
+          "ordinal": 6
+        }
+      ],
+      "target_scene_words": 1400,
+      "projected_first_arc_fields": [
+        "closes",
+        "middle"
+      ],
+      "projected_debt_due_scenes": [
+        1,
+        3,
+        5,
+        6
+      ]
+    },
+    {
+      "book": "A3",
+      "call": 66,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0066-A3.json",
+      "receipt_sha256": "543285f730a08c7d99e016592ca06ee3f6be45aa4e88c91c4171bd993fd839e2",
+      "prompt_sha256": "9ae21f3255bf2d6073e5a543fae5fda743b86abcfe3c895b9ca475ba9b63c040",
+      "scenes": [
+        {
+          "chapter": 1,
+          "dramatic_function": "setup",
+          "of_total": 6,
+          "ordinal": 1
+        },
+        {
+          "chapter": 2,
+          "dramatic_function": "inciting",
+          "of_total": 6,
+          "ordinal": 2
+        },
+        {
+          "chapter": 3,
+          "dramatic_function": "rising",
+          "of_total": 6,
+          "ordinal": 3
+        },
+        {
+          "chapter": 4,
+          "dramatic_function": "turn",
+          "of_total": 6,
+          "ordinal": 4
+        },
+        {
+          "chapter": 5,
+          "dramatic_function": "crisis",
+          "of_total": 6,
+          "ordinal": 5
+        },
+        {
+          "chapter": 6,
+          "dramatic_function": "resolution",
+          "of_total": 6,
+          "ordinal": 6
+        }
+      ],
+      "target_scene_words": 1400,
+      "projected_first_arc_fields": [
+        "closes",
+        "middle"
+      ],
+      "projected_debt_due_scenes": [
+        1,
+        2,
+        4,
+        6
+      ]
+    },
+    {
+      "book": "B3",
+      "call": 70,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0070-B3.json",
+      "receipt_sha256": "796099d3adef74a9b3dfa9cc9f305e6534418d20cd7c6eb790831acce297aadb",
+      "prompt_sha256": "2fec60ab354e65c43afd86d5153c1d1a99a77965ce10012931190dd43c34c682",
+      "scenes": [
+        {
+          "chapter": 1,
+          "dramatic_function": "setup",
+          "of_total": 6,
+          "ordinal": 1
+        },
+        {
+          "chapter": 2,
+          "dramatic_function": "inciting",
+          "of_total": 6,
+          "ordinal": 2
+        },
+        {
+          "chapter": 3,
+          "dramatic_function": "rising",
+          "of_total": 6,
+          "ordinal": 3
+        },
+        {
+          "chapter": 4,
+          "dramatic_function": "turn",
+          "of_total": 6,
+          "ordinal": 4
+        },
+        {
+          "chapter": 5,
+          "dramatic_function": "crisis",
+          "of_total": 6,
+          "ordinal": 5
+        },
+        {
+          "chapter": 6,
+          "dramatic_function": "resolution",
+          "of_total": 6,
+          "ordinal": 6
+        }
+      ],
+      "target_scene_words": 1400,
+      "projected_first_arc_fields": [
+        "closes",
+        "middle"
+      ],
+      "projected_debt_due_scenes": [
+        2,
+        3,
+        5,
+        6
+      ]
+    },
+    {
+      "book": "B4",
+      "call": 74,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0074-B4.json",
+      "receipt_sha256": "ab5afd6dd1084fec8204724e6daeb3fa7668f428d8160a8f3b51d365d4b2a436",
+      "prompt_sha256": "03db125e0a711c1cb803e618d1c26f7b6f07c9d69020952a20c2ea920ddc9742",
+      "scenes": [
+        {
+          "chapter": 1,
+          "dramatic_function": "setup",
+          "of_total": 6,
+          "ordinal": 1
+        },
+        {
+          "chapter": 2,
+          "dramatic_function": "inciting",
+          "of_total": 6,
+          "ordinal": 2
+        },
+        {
+          "chapter": 3,
+          "dramatic_function": "rising",
+          "of_total": 6,
+          "ordinal": 3
+        },
+        {
+          "chapter": 4,
+          "dramatic_function": "turn",
+          "of_total": 6,
+          "ordinal": 4
+        },
+        {
+          "chapter": 5,
+          "dramatic_function": "crisis",
+          "of_total": 6,
+          "ordinal": 5
+        },
+        {
+          "chapter": 6,
+          "dramatic_function": "resolution",
+          "of_total": 6,
+          "ordinal": 6
+        }
+      ],
+      "target_scene_words": 1400,
+      "projected_first_arc_fields": [
+        "closes",
+        "middle"
+      ],
+      "projected_debt_due_scenes": [
+        3,
+        4,
+        6,
+        6
+      ]
+    },
+    {
+      "book": "A4",
+      "call": 78,
+      "receipt_path": "runs/experience-workflow-20260915/calls/0078-A4.json",
+      "receipt_sha256": "cd97f6a3b5088bd0c6abacc1a720ce40307ebb2bcf966d4cd54be0ba14b5387f",
+      "prompt_sha256": "d40d9794e5704ed489a54654c2b51a98004454b05d873f594e7c5b8ae3e1c636",
+      "scenes": [
+        {
+          "chapter": 1,
+          "dramatic_function": "setup",
+          "of_total": 6,
+          "ordinal": 1
+        },
+        {
+          "chapter": 2,
+          "dramatic_function": "inciting",
+          "of_total": 6,
+          "ordinal": 2
+        },
+        {
+          "chapter": 3,
+          "dramatic_function": "rising",
+          "of_total": 6,
+          "ordinal": 3
+        },
+        {
+          "chapter": 4,
+          "dramatic_function": "turn",
+          "of_total": 6,
+          "ordinal": 4
+        },
+        {
+          "chapter": 5,
+          "dramatic_function": "crisis",
+          "of_total": 6,
+          "ordinal": 5
+        },
+        {
+          "chapter": 6,
+          "dramatic_function": "resolution",
+          "of_total": 6,
+          "ordinal": 6
+        }
+      ],
+      "target_scene_words": 1400,
+      "projected_first_arc_fields": [
+        "closes",
+        "middle"
+      ],
+      "projected_debt_due_scenes": [
+        2,
+        4,
+        5,
+        6
+      ]
+    }
+  ],
+  "drafts": [
+    {
+      "book": "A1",
+      "chapter": 1,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/A1/views/chapter1.json",
+      "dossier_sha256": "07eba06a2bca51bfbdfcd58a0907cd929d12f2044b8c0e717d4a0263281e198f",
+      "prompt_sha256": "22618bb33d89be76c22552d359e4d1fc6c6e9d862f6fa33c568ff12e20b388cd",
+      "job_id": "beat-374e7e732bb777398c7bbbc5",
+      "job_plan_revision_id": "ec6706f92c38ce51ea275ee1e997557e3077670bfcbe0b817a0188dece5baa2e",
+      "accepted_content_sha256": "546b7674a0dcf2f99dd2aab79ab09cf59e8324d7238ebcb4112ac74b966bdfb7",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 10,
+      "planned_strings": 10,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "A1",
+      "chapter": 2,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/A1/views/chapter2.json",
+      "dossier_sha256": "ed61c73776a6213711bf8fece9f985dbca81643c3199ddd9ab30c017f04fdf02",
+      "prompt_sha256": "be98a68230340737b11fcdc63ffb757c4a27dc8c2a692a9bcbc3e6b6eb3176cf",
+      "job_id": "beat-816eac701cf136f4d1dac2cc",
+      "job_plan_revision_id": "ec6706f92c38ce51ea275ee1e997557e3077670bfcbe0b817a0188dece5baa2e",
+      "accepted_content_sha256": "b69bd2fee2b64a824ceab74a68218334e089e825103ef744e6fec89e340bb879",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 9,
+      "planned_strings": 9,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "A2",
+      "chapter": 1,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/A2/views/chapter1.json",
+      "dossier_sha256": "3a355e37738f8c50bf1ae85751a7906975b225f07936b0808ed091dd284b8287",
+      "prompt_sha256": "96b0e88a568d72556b51ab1a24153d12de87400c1432d64f8ccf9063e6d1d547",
+      "job_id": "beat-8f3a75c3d88d9943ef7aef35",
+      "job_plan_revision_id": "ac3607c434930b26e780db72580eefb5bc740259a521268f658162c47fab9748",
+      "accepted_content_sha256": "88c1ba3f7156d8ebe091e7953d368a456f0a431f972f949c97577cb87eb3e9ed",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 9,
+      "planned_strings": 9,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "A2",
+      "chapter": 2,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/A2/views/chapter2.json",
+      "dossier_sha256": "26ce6412fddc99908e3a5eac249e14fa4db3701c5c6cc4b7c6c2ac26f439fa5f",
+      "prompt_sha256": "7d606f0c41d7a65e55f24255b6f2d87c09e14dcf71010e2617c60b43c4f9f728",
+      "job_id": "beat-dcc3711da394edbeae810261",
+      "job_plan_revision_id": "ac3607c434930b26e780db72580eefb5bc740259a521268f658162c47fab9748",
+      "accepted_content_sha256": "5233fc2dd6cd8519fe6d020895980039c07d6dd0d666d6ce79cebedc9c2cd1f3",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 9,
+      "planned_strings": 9,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "A3",
+      "chapter": 1,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/A3/views/chapter1.json",
+      "dossier_sha256": "9dfb2a1f804c81989592be0cc385934a2842342751fb14e4549c56650b2a9e01",
+      "prompt_sha256": "7af635c7d165e3bee9da3087532c9915858ae2aace34b22b48e259a33474e817",
+      "job_id": "beat-fc30cf55deca049b9449ccc5",
+      "job_plan_revision_id": "ccb8d994d3ca553e6aba5c555a7dda1b90b345624ed1f7a0b6039562e270b2ad",
+      "accepted_content_sha256": "8edca38e7f033901e9c5c8bad0eb3750a42dd9e301b66ba82594ed2faadcf2ea",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 11,
+      "planned_strings": 11,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "A3",
+      "chapter": 2,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/A3/views/chapter2.json",
+      "dossier_sha256": "2353b61eeffd1a8606d8a5d60efef71517fd6616e2371412bcffdb5106f7b72e",
+      "prompt_sha256": "7dabf499a31a5da0e7ea882cab32ce90f08c642b9f73069c2b9e7f6743b77f4d",
+      "job_id": "beat-117902c0090d67e98e2837b5",
+      "job_plan_revision_id": "ccb8d994d3ca553e6aba5c555a7dda1b90b345624ed1f7a0b6039562e270b2ad",
+      "accepted_content_sha256": "101cb908bc288f812a049a6dd0834ff423220fcd8a7f28077a5e068c6319da54",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 11,
+      "planned_strings": 11,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "A4",
+      "chapter": 1,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/A4/views/chapter1.json",
+      "dossier_sha256": "dca2add331d9cb00d0c9aa1feb80f92e54220bc06b9c6b92a6a02b619c514d5b",
+      "prompt_sha256": "e1ecfb675f7592fd0b9e919177e53e3c434f7dcac4d9ef89f230c14a7cf282ba",
+      "job_id": "beat-008edf585c880c1e4c843c4d",
+      "job_plan_revision_id": "c9919e24293b96aa40d234e4b3fc64b33dd0c690a895e05b10d9a2e34808a164",
+      "accepted_content_sha256": "e4a95224fdd624142c7c9d8670c829f94e51fd5f5b61b5b66c5efb9da1f0844d",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 9,
+      "planned_strings": 9,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "A4",
+      "chapter": 2,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/A4/views/chapter2.json",
+      "dossier_sha256": "fc29069f9b79ea4b142dc0cd5c6fea27a14ca8dcaf397f63cd37287015be9864",
+      "prompt_sha256": "837c1ec8bd8a743e2a7c81cf0bd7b4ffdd15f3be373657879a52b8b065370f8c",
+      "job_id": "beat-5bf4fa501a6f578a9225b829",
+      "job_plan_revision_id": "c9919e24293b96aa40d234e4b3fc64b33dd0c690a895e05b10d9a2e34808a164",
+      "accepted_content_sha256": "c11afbb7f7f27cfdf8f3087e174464b5a539fd3fedc7ce0a20919612555e11d1",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 10,
+      "planned_strings": 10,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "B1",
+      "chapter": 1,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/B1/views/chapter1.json",
+      "dossier_sha256": "3639dc4a2ab821e0a49323a14d64ef76f170d20cac66730c676d01be66e0c2b5",
+      "prompt_sha256": "37a6f9690ff14e361f6558ab51ccfba82c74774d5523a0c04e31c8c0f520a574",
+      "job_id": "beat-b4c4cc207c4628fa903408d1",
+      "job_plan_revision_id": "3859656b14597d555d7d961e84bb8d10bf3de11a293ff57c2034a7ade91c4f58",
+      "accepted_content_sha256": "bfa9f73302c13b2553f07d3f883a8d24c25e7393e149751eed452d3e640a8ce2",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 10,
+      "planned_strings": 10,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "B1",
+      "chapter": 2,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/B1/views/chapter2.json",
+      "dossier_sha256": "f2cd185e1785533b024d44a9fd90c8c8d38ef6474dea1ba7faf0a3d254005708",
+      "prompt_sha256": "6f9c3dfaa1d861b67813df8f6ed2a0bdfecdebb42929dd8c93682541e5601e03",
+      "job_id": "beat-f90936b1c676f3fe61a081b2",
+      "job_plan_revision_id": "3859656b14597d555d7d961e84bb8d10bf3de11a293ff57c2034a7ade91c4f58",
+      "accepted_content_sha256": "58be1e15a6e3cace735c950c3698fe108e44ae4c27ab22fe39d96e5e68c944cb",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 11,
+      "planned_strings": 11,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "B2",
+      "chapter": 1,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/B2/views/chapter1.json",
+      "dossier_sha256": "d4d17629a19ce079d78a29d3a6f3cdc90bd9754215a328c027458835d7a23d3f",
+      "prompt_sha256": "42a295b8ab040e6c711758c9e053fd6246c8a62d45be34e19dc9013a0475892f",
+      "job_id": "beat-5c093a2f12b07ab695f60faa",
+      "job_plan_revision_id": "e5f5ab767559eae543e9caf540b6ebc76ee22e3a4145cb9e01450007d2860207",
+      "accepted_content_sha256": "a7a9e0f1b94b0df0e08dda81218ffb28b6c2487e9083f4fdb3e62cbbf35597d4",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 9,
+      "planned_strings": 9,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "B2",
+      "chapter": 2,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/B2/views/chapter2.json",
+      "dossier_sha256": "32ea397faa78eeea65e786c530b02863b09493e18171914117a9300a6e3c45f1",
+      "prompt_sha256": "22cb2d0b6efdff6c2f0443f73c14910efaca24b6ae11311c1ea62a6b955531ca",
+      "job_id": "beat-e86044c0b0ecabaaeb6aa679",
+      "job_plan_revision_id": "e5f5ab767559eae543e9caf540b6ebc76ee22e3a4145cb9e01450007d2860207",
+      "accepted_content_sha256": "f62eb95c0c172106dcf3d11f873dca36de69ab28f298bdc9fef1947ca53000af",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 10,
+      "planned_strings": 10,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "B3",
+      "chapter": 1,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/B3/views/chapter1.json",
+      "dossier_sha256": "5c882f9dba4ddacea56cd8cd377f0f97dc1c55ac7619874f4618d37ce2432fdf",
+      "prompt_sha256": "e0e960c6570aa3f5d4b762f821b8d3c3e2c36abe0fc404bef972eae69b636023",
+      "job_id": "beat-2b5096b2ea926e1ff4d08145",
+      "job_plan_revision_id": "11603520f28a55bd9ae143a2b72b7efaa05c40dbf60e01dded651d61bbd1aac8",
+      "accepted_content_sha256": "08742ef7a85c979ffecab40e90a8417f8cb452f220ec938714ba608f9661770f",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 9,
+      "planned_strings": 9,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "B3",
+      "chapter": 2,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/B3/views/chapter2.json",
+      "dossier_sha256": "8fc6128cc02105130fc6b403bb00282c88a541f4772c2d500180160e6b6133d8",
+      "prompt_sha256": "a8b999d9347f1e96e229ba6beff3bd310ac3cfeced917f94fb22975d51694b10",
+      "job_id": "beat-76d789e5d942f19f7221c8fd",
+      "job_plan_revision_id": "11603520f28a55bd9ae143a2b72b7efaa05c40dbf60e01dded651d61bbd1aac8",
+      "accepted_content_sha256": "e054fce19a57dbf03cc50a4ab8047b17d0a284166bfd1a4544d7513ee4e944e8",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 10,
+      "planned_strings": 10,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "B4",
+      "chapter": 1,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/B4/views/chapter1.json",
+      "dossier_sha256": "17fcd89cccdb012d1a903356840c344994288d2469e73b9b925d9b611c004416",
+      "prompt_sha256": "613a5dd287d99f95c0b2d1295837257bb4410a7c82121831e949b295849cd804",
+      "job_id": "beat-67068f6acd28be6aaa452687",
+      "job_plan_revision_id": "cd7f47c564ad11e6b458619bfe7e39ec55a8cb9101d21e157bb576a6eefbaf4b",
+      "accepted_content_sha256": "25a955e9fb70ef250a2b731e1d1e0e53e1b38a4b4f62ca7fdff2d5fbf26e4a3f",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 9,
+      "planned_strings": 9,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    },
+    {
+      "book": "B4",
+      "chapter": 2,
+      "dossier_path": "runs/experience-workflow-continuation-20260915/books/B4/views/chapter2.json",
+      "dossier_sha256": "6250cf60a42e5d7bce2ae9f41cb294a1215a529436df7c7b8e5a8ca4d3c17616",
+      "prompt_sha256": "b104c623c5ea85584dfaf61b31e03298c5747fafaefbf36368e63f6620dc2b46",
+      "job_id": "beat-0a457ed6b616648c20116000",
+      "job_plan_revision_id": "cd7f47c564ad11e6b458619bfe7e39ec55a8cb9101d21e157bb576a6eefbaf4b",
+      "accepted_content_sha256": "c025562bd6cc6068c2a4b1d1068deb02d744183001f3d8cb74d2161dd9fb1019",
+      "job_plan_available": true,
+      "current_plan_equals_job_plan": true,
+      "original_outline_brief_equals_job_brief": true,
+      "planned_strings_in_frozen_prompt": 11,
+      "planned_strings": 11,
+      "plan_locked": false,
+      "chapter_scene_count": 1,
+      "chapter_scene_index": 1,
+      "accepted_attempt": 1,
+      "blocking_gate_failures": 0,
+      "advisory_gate_failures": 0,
+      "context_omissions": 0,
+      "has_retained_pre_revision_draft": false
+    }
+  ],
+  "rebuild_command": "uv run python -X utf8 runs/experience-workflow-continuation-20260915/inspect-handoffs.py",
+  "analysis_script": {
+    "path": "runs/experience-workflow-continuation-20260915/inspect-handoffs.py",
+    "sha256": "b6d7be48fadf4c3519848fcec11f063c4ad97239a4b9afa6310b8cee64de4123"
+  },
+  "rebuilt_output": {
+    "path": "runs/experience-workflow-continuation-20260915/handoff-checks.json",
+    "sha256": "7bdae84ed119af8a041e9cebacafc726555aa3fe087723df5e665afc827feeda"
+  }
+}

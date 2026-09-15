@@ -1,0 +1,167 @@
+{
+  "schema": "experience-workflow.reading-record.v1",
+  "generation_complete_before_reading": true,
+  "reading_scope": "All raw discoveries, concepts, precision responses, outlines, complete drafts, accepted differences and scene dossiers; relevant frozen requests.",
+  "reading_role": "Unblinded descriptive agent reading, not a quality label or candidate selection.",
+  "unit": "book",
+  "books": 8,
+  "accepted_chapters": 16,
+  "accepted_words": 25035,
+  "files": [
+    {
+      "book": "A1",
+      "kind": "sources",
+      "path": "runs/experience-workflow-continuation-20260915/reading/A1-sources.md",
+      "words": 4442,
+      "chars": 31431,
+      "sha256": "7cb6721511822057f3b1f112e43200e42af19f98b24b93fd40df1c06d65f25a6"
+    },
+    {
+      "book": "A1",
+      "kind": "drafts",
+      "path": "runs/experience-workflow-continuation-20260915/reading/A1-drafts.md",
+      "words": 3205,
+      "chars": 18401,
+      "sha256": "3f35044d00822c8e0b29a8a45ff8c15c283346ab498bb69202d5c4c23824dc7a"
+    },
+    {
+      "book": "B1",
+      "kind": "sources",
+      "path": "runs/experience-workflow-continuation-20260915/reading/B1-sources.md",
+      "words": 5230,
+      "chars": 36351,
+      "sha256": "1a59b4f20e9099819015ff53b3ee7c76107ebef6e2ffedfbc92a95447ef23766"
+    },
+    {
+      "book": "B1",
+      "kind": "drafts",
+      "path": "runs/experience-workflow-continuation-20260915/reading/B1-drafts.md",
+      "words": 3110,
+      "chars": 17650,
+      "sha256": "454c8a9b22af580628894b2a743c6e5b024285538fda2862be02cefd67d78e19"
+    },
+    {
+      "book": "A2",
+      "kind": "sources",
+      "path": "runs/experience-workflow-continuation-20260915/reading/A2-sources.md",
+      "words": 4336,
+      "chars": 30779,
+      "sha256": "6b0f8c93f12210fd32619fa99cdefc5b797c7e1525116fef8864601fbdc284ab"
+    },
+    {
+      "book": "A2",
+      "kind": "drafts",
+      "path": "runs/experience-workflow-continuation-20260915/reading/A2-drafts.md",
+      "words": 3265,
+      "chars": 18998,
+      "sha256": "205f5fca9ac4f7b95a09cac45220c5983845756b3a3004a8da33561caa463598"
+    },
+    {
+      "book": "B2",
+      "kind": "sources",
+      "path": "runs/experience-workflow-continuation-20260915/reading/B2-sources.md",
+      "words": 5002,
+      "chars": 34599,
+      "sha256": "8beb4cff01fd71243f28403dec33b48e31160083d8ee1b8313b54522102502eb"
+    },
+    {
+      "book": "B2",
+      "kind": "drafts",
+      "path": "runs/experience-workflow-continuation-20260915/reading/B2-drafts.md",
+      "words": 3254,
+      "chars": 18590,
+      "sha256": "c6a0dfebb0027bebafa448ebc257c8fa4ecd932c24f492b759b2f358bacc69ee"
+    },
+    {
+      "book": "A3",
+      "kind": "sources",
+      "path": "runs/experience-workflow-continuation-20260915/reading/A3-sources.md",
+      "words": 4836,
+      "chars": 34165,
+      "sha256": "38367b22e0d11bd9788a8b13faf0212f102a91cc2b9adf434d67c63a0902a74d"
+    },
+    {
+      "book": "A3",
+      "kind": "drafts",
+      "path": "runs/experience-workflow-continuation-20260915/reading/A3-drafts.md",
+      "words": 3361,
+      "chars": 20062,
+      "sha256": "becd5ac7f2280552c9cc790f731fb12a64f694f8cd379733fcc5b88539644e1b"
+    },
+    {
+      "book": "B3",
+      "kind": "sources",
+      "path": "runs/experience-workflow-continuation-20260915/reading/B3-sources.md",
+      "words": 5237,
+      "chars": 37127,
+      "sha256": "b9728c503947ebff00ca87b5a2471b99a679a9a3583eba192f3f39106d63bf91"
+    },
+    {
+      "book": "B3",
+      "kind": "drafts",
+      "path": "runs/experience-workflow-continuation-20260915/reading/B3-drafts.md",
+      "words": 3419,
+      "chars": 20105,
+      "sha256": "145bdabe984318ce17e04ecf2718b0f795c6f5466c44a3083f52b098ec6d33a9"
+    },
+    {
+      "book": "A4",
+      "kind": "sources",
+      "path": "runs/experience-workflow-continuation-20260915/reading/A4-sources.md",
+      "words": 4930,
+      "chars": 34858,
+      "sha256": "3e720ef03b35028cef4a7ec8006c34bcbdcd322ff99f99584d57326e473cf5fd"
+    },
+    {
+      "book": "A4",
+      "kind": "drafts",
+      "path": "runs/experience-workflow-continuation-20260915/reading/A4-drafts.md",
+      "words": 3090,
+      "chars": 17799,
+      "sha256": "e6faa5efdeebd44f4204251c5e3b67c48f022024f7a4b13b0b80133b8613d3da"
+    },
+    {
+      "book": "B4",
+      "kind": "sources",
+      "path": "runs/experience-workflow-continuation-20260915/reading/B4-sources.md",
+      "words": 5489,
+      "chars": 39425,
+      "sha256": "e18cd251101bb992a61a8f9233b02cb3545b0a61425db423d9c71c897052172f"
+    },
+    {
+      "book": "B4",
+      "kind": "drafts",
+      "path": "runs/experience-workflow-continuation-20260915/reading/B4-drafts.md",
+      "words": 3060,
+      "chars": 18099,
+      "sha256": "70a6bf9ba589c528d40ac3dcccb7b9b9973acce3ef78a942abe51e8e971f3d3d"
+    },
+    {
+      "kind": "interpretation",
+      "path": "runs/experience-workflow-continuation-20260915/READING-NOTES.md",
+      "sha256": "126675dc232ec96ecb4412b185545ebceeb0afadb1a7c8b232b0d318255d630f"
+    },
+    {
+      "kind": "interpretation",
+      "path": "runs/experience-workflow-continuation-20260915/REPORT.md",
+      "sha256": "273c2703a0ccf1e6c3f9337c9a443a2285795f3ab754f235e5f8a6250c7e0061"
+    },
+    {
+      "kind": "analysis_script",
+      "path": "runs/experience-workflow-continuation-20260915/inspect-handoffs.py",
+      "sha256": "b6d7be48fadf4c3519848fcec11f063c4ad97239a4b9afa6310b8cee64de4123"
+    }
+  ],
+  "validation": {
+    "command": "uv run python tools/check.py handoff",
+    "exit_code": 0,
+    "tests_passed": 5178,
+    "tests_skipped": 20,
+    "coverage_percent": 89.93,
+    "log": {
+      "path": "runs/experience-workflow-continuation-20260915/final-handoff.log",
+      "sha256": "d7071646d65bfad0bde8bc70b9f229313f28b29606932a72588216d7653716b3"
+    },
+    "scope": "Current checkout, including unrelated dirty changes; experiment arms use their frozen production versions."
+  }
+}

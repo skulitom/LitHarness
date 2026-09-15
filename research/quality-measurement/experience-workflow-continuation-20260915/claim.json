@@ -9,10 +9,20 @@
       "kind": "registration",
       "path": "research/quality-measurement/experience-workflow-continuation-20260915/registration.json",
       "sha256": "946eb1b696e8f967b0c71aedbd7fc04d843bfd468b8d354d50c5b9385a6d0fd8"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/experience-workflow-continuation-20260915/parent-controls.json",
+      "sha256": "61555f0c79d51842ca36c70f80ec4bf24cdb565c365dc3ea26e019b6097efe87"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/experience-workflow-continuation-20260915/evidence.json",
+      "sha256": "b0d1a45843512f9b7e730f7e20f444e42392e2dba2414bca6239c7b681808f39"
     }
   ],
   "claim_id": "experience-workflow-identifier-continuation-20260915",
   "schema": "litharness.epistemic-claim.v1",
   "statement": "The explicitly registered continuation corrects only a runner scene identifier, retaining all initial outputs and the original aggregate resource ceilings.",
-  "status": "registered"
+  "status": "observed"
 }
