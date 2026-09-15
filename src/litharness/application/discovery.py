@@ -18,7 +18,7 @@ from litharness.domain.generation import CompletionRequest
 from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v11"
+PROFILE = "writer.discovery.v12"
 VERSION = "magical-discovery.v6"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
@@ -90,15 +90,33 @@ DIRECTIONS = {
 SCHEMA: dict[str, Any] = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["world", "opening", "growth"],
-    "properties": {key: {"type": "string"} for key in ("world", "opening", "growth")},
+    "required": ["experience_brief", "world", "opening", "growth"],
+    "properties": {
+        key: {"type": "string"}
+        for key in ("experience_brief", "world", "opening", "growth")
+    },
 }
+
+EXPERIENCE_TASK = (
+    "experience_brief: first invent a concise experience specification in plain planning "
+    "language, using Desire, Use, Consequence, Next desire and Coverage as labels. "
+    "Name what this person wants to do, discover or share; the concrete action that makes "
+    "it possible; what they actually do or experience as a result; and what they choose "
+    "to pursue afterward, if anything. Coverage distinguishes what happens on page in "
+    "the opening chapter, what happens later and what remains unresolved. Keep essential "
+    "starting mechanics explicit and distinguish indispensable events from props and "
+    "choreography that can change. The author's supplied brief takes priority; fill its "
+    "gaps without replacing its choices. Your additions are revisable story proposals, "
+    "not author instructions or established events. Keep this brief to a short paragraph "
+    "or a few labelled lines, then develop it in world, opening and growth.\n"
+)
 
 _TASK = (
     "Invent one working story proposal in plain planning language about situations, "
     "actions and consequences.\n"
     f"{DIRECTION}\n"
     f"{house.QUANTITY_DETAIL}\n"
+    f"{EXPERIENCE_TASK}"
     "world: describe the setting's discoverable material, keeping proposed scene actions "
     "in opening. Distinguish observable traces, underlying explanations, fallible beliefs "
     "and what remains unknown.\n"
@@ -109,7 +127,7 @@ _TASK = (
     "growth: describe capabilities they can work toward, how using them changes their "
     "choices, and what remains theirs through setbacks. Ground the next possibility in "
     "something the opening encounters.\n"
-    "Return concrete story material in the three fields, without ratings or advice to a writer."
+    "Return concrete story material in the four fields, without ratings or advice to a writer."
 )
 
 
@@ -119,6 +137,7 @@ class Discovery:
     opening: str
     growth: str
     version: str = VERSION
+    experience_brief: str = ""
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> Discovery:
@@ -131,6 +150,12 @@ class Discovery:
             if not isinstance(value, str) or not value.strip():
                 raise ValueError(f"discovery.{key} must be non-empty story material")
             values[key] = value.strip()
+        # Older stored treatments have no specification; never invent one during a read.
+        if "experience_brief" in payload:
+            value = payload["experience_brief"]
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError("discovery.experience_brief must be non-empty story material")
+            values["experience_brief"] = value.strip()
         return cls(**values, version=version)
 
     @classmethod
@@ -142,7 +167,7 @@ class Discovery:
         """
         treatment = cls.from_payload(payload)
         if names := schema_words.named_in(
-            "\n".join((treatment.world, treatment.opening, treatment.growth))
+            "\n".join(treatment._material().values())
         ):
             raise ValueError(
                 f"discovery uses reserved names: {', '.join(names)}; "
@@ -153,14 +178,21 @@ class Discovery:
     def to_jsonable(self) -> dict[str, str]:
         return {
             "version": self.version,
+            **({"experience_brief": self.experience_brief} if self.experience_brief else {}),
             "world": self.world,
             "opening": self.opening,
             "growth": self.growth,
         }
 
     def render(self) -> str:
+        experience = (
+            "Proposed experience brief (the author's supplied brief takes priority):\n"
+            f"{self.experience_brief}\n"
+            if self.experience_brief else ""
+        )
         return (
             f"Intended fantasy experience ({self.version}): {DIRECTIONS[self.version]}\n"
+            f"{experience}"
             f"The world to discover: {self.world}\n"
             f"The opening's action: {self.opening}\n"
             f"What growing capability makes possible: {self.growth}\n"
@@ -170,14 +202,13 @@ class Discovery:
         )
 
     def has_quantities(self) -> bool:
-        return precision.has_quantities(
-            {key: getattr(self, key) for key in ("world", "opening", "growth")}
-        )
+        return precision.has_quantities(self._material())
+
+    def _material(self) -> dict[str, str]:
+        return {key: value for key, value in self.to_jsonable().items() if key != "version"}
 
     def with_precision_edits(self, payload: Mapping[str, Any]) -> Discovery:
-        fields = precision.apply_edits(
-            {key: getattr(self, key) for key in ("world", "opening", "growth")}, payload
-        )
+        fields = precision.apply_edits(self._material(), payload)
         return Discovery.from_payload({**fields, "version": self.version})
 
 

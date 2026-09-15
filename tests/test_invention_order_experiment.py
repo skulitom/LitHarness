@@ -6,6 +6,8 @@ import dataclasses
 import importlib.util
 from pathlib import Path
 
+import pytest
+
 from litharness.application import discovery
 from litharness.domain.invention import make_seed
 from litharness.providers.codex_cli import CodexCliProvider
@@ -23,7 +25,29 @@ def module():
     return loaded
 
 
-def test_order_comparison_changes_only_field_instruction_and_schema_order():
+@pytest.fixture
+def three_field_discovery(monkeypatch):
+    """The registered order delta is defined over the former three-field contract."""
+    render = discovery.render_request
+
+    def original_request(*args, **kwargs):
+        request = render(*args, **kwargs)
+        system = request.system.replace(discovery.EXPERIENCE_TASK, "").replace(
+            "in the four fields", "in the three fields",
+        )
+        fields = ["world", "opening", "growth"]
+        schema = {
+            "type": "object", "additionalProperties": False, "required": fields,
+            "properties": {key: {"type": "string"} for key in fields},
+        }
+        return dataclasses.replace(
+            request, system=system, schema=schema, profile="writer.discovery.v11",
+        )
+
+    monkeypatch.setattr(discovery, "render_request", original_request)
+
+
+def test_order_comparison_changes_only_field_instruction_and_schema_order(three_field_discovery):
     experiment = module()
     seed = make_seed("98765432109876543210")
     baseline = experiment.request_for(seed, "control")
@@ -39,7 +63,9 @@ def test_order_comparison_changes_only_field_instruction_and_schema_order():
     assert opening.system.index("opening: ") < opening.system.index("world: ")
 
 
-def test_pursuit_delta_keeps_genre_seed_settings_and_all_original_field_content():
+def test_pursuit_delta_keeps_genre_seed_settings_and_all_original_field_content(
+    three_field_discovery,
+):
     experiment = module()
     seed = make_seed("98765432109876543210")
     opening = experiment.request_for(seed, "opening")

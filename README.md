@@ -55,6 +55,9 @@ uv run litharness --database book.db --writer halloran listing --concept runs/pi
 
 Add `--brief "..."` to `concept` to supply a premise or constraints. Without a brief,
 new books default to portal fantasy, isekai, or system apocalypse, including combinations.
+Discovery automatically develops an [experience brief](docs/operator-guide.md#automatic-experience-brief)
+covering desire, action, experienced consequence and chapter coverage. Your supplied brief
+takes priority; the generated proposal remains available to planning.
 
 Before drafting, have the Architect propose the opening world, check it, and accept it
 into canon:

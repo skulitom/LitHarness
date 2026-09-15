@@ -24,7 +24,7 @@ from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
 CONCEPT_PROFILE = "writer.concept.v1"
-DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v6"
+DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v7"
 
 #: The plan item id the concept is persisted under; one per book, like `plan-premise`.
 CONCEPT_PLAN_ID = "plan-concept"
@@ -591,7 +591,8 @@ class Concept:
     def for_outline(self) -> dict[str, Any]:
         """Story foundations without the generated opening's scene choreography.
 
-        Keep world possibilities, pursuits, later commitments and carry-over conditions.
+        Keep the concise experience brief, world possibilities, pursuits, later commitments
+        and carry-over conditions. The generated brief remains a revisable proposal.
         The full concept remains stored; author locks reach planning separately, unchanged.
         """
         material = self.to_jsonable()
@@ -691,6 +692,17 @@ DISCOVERY_ARC_RULE = (
     "and something worth pursuing beyond them. Costs and setbacks can complicate that pursuit; "
     "a changed statistic or a new permission alone does not fulfill it. Vary the chapter's "
     "activity and pace; do not repeat one discovery-and-reward sequence in every scene."
+)
+
+EXPERIENCE_ARC_RULE = (
+    "book_concept.discovery.experience_brief proposes a desire, concrete use, experienced "
+    "consequence, next desire and chapter coverage. Plan the activity and its consequence "
+    "in the proposed chapter, with necessary setup and enough prose space; an offer of "
+    "access or a recollection does not enact a proposed present experience. Adapt flexible "
+    "details to connected character choices. The author's original brief and locks take "
+    "priority over these generated proposals, which create no author deadlines. In later "
+    "arcs, continue from established events and remaining possibilities instead of replaying "
+    "the opening's coverage."
 )
 
 
@@ -802,6 +814,14 @@ def render_concept_request(
         )
         # Discovery already made the creative choices. Mechanical development receives
         # that treatment and the author brief, without reopening the dossier's preferences.
+        if discovery.experience_brief:
+            task += (
+                "\nDevelop the proposed experience brief's desire, concrete use and "
+                "experienced consequence within its chapter coverage. Retain the starting "
+                "mechanics and leave its unresolved material open; flexible staging may "
+                "change. The author's supplied brief takes priority over generated "
+                "proposals, including their timing."
+            )
         system = task
     return CompletionRequest(
         prompt=prompt,

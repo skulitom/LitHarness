@@ -91,6 +91,36 @@ Use `--brief` for your premise or constraints. The
 [generation details](#generation-details) explain discovery, precision editing, context
 handoffs, seed replay, and the optional exemplar shelf.
 
+### Automatic experience brief
+
+The discovery call now invents a concise experience brief from your premise, or from the
+default direction when the premise is empty. It names:
+
+- **Desire:** what the character wants to do, discover or share.
+- **Use:** the concrete action that makes it possible.
+- **Consequence:** what they actually do or experience as a result.
+- **Next desire:** what they choose to pursue afterward, when appropriate.
+- **Coverage:** what happens in the opening chapter, what happens later and what stays open.
+
+The brief also identifies essential starting mechanics and details that can change. Your
+supplied brief takes priority. You can supply any of these choices yourself with `--brief`
+or `--brief-file`; the system develops the unspecified parts. For a longer brief:
+
+```bash
+uv run litharness --database book.db --writer halloran concept --brief-file my-brief.txt --out runs/pilots/my-book
+```
+
+Inspect `discovery.experience_brief` in the saved `concept.json`, or its labelled section
+in `concept.txt`. The raw discovery response remains in `discovery-trace.json`. The generated
+brief stays separate from your original `author_brief`, survives concept development and
+reaches the outline planner. The planner carries the relevant events and setup into each
+scene's brief. Generated proposals remain revisable; your instructions, author locks and
+established events constrain their realization.
+
+This uses the existing discovery call and ordinary concept/outline workflow. Stored concepts
+without an experience brief remain readable. This is an authoring method; its effect on
+reader enjoyment and popularity has not been established.
+
 ### Create the listing and book
 
 The listing loop is then the entry point for the book. It writes the listing a reader sees

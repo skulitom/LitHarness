@@ -128,6 +128,12 @@ def _roles() -> dict[str, str]:
             discovery=discovery.Discovery("Place.", "Action.", "Growth."),
         ).system
         or "",
+        "concept development, experience": concept.render_concept_request(
+            "", WRITER, scenes=6,
+            discovery=discovery.Discovery(
+                "Place.", "Action.", "Growth.", experience_brief="Proposed experience.",
+            ),
+        ).system or "",
         # **The tells rewriter, one sentence at a time** (§199): reader-facing, since its answer
         # replaces a sentence on the page; three lines and one family's line, the largest of
         # the five shown.
@@ -284,8 +290,12 @@ BUDGET: dict[str, int] = {
     # prevent this route from accumulating another unbounded craft essay.
     # §244: the shared two-sentence precision policy now reaches invention as well as
     # drafting. The house rule is replaced in place; only these floor-free calls grow.
-    "discovery writer": 18,
+    # Automatic experience specification adds seven clauses for its content, coverage,
+    # brevity and authority. These run once at invention, not on every drafted scene.
+    "discovery writer": 25,
     "concept development": 18,
+    # Developing a supplied generated brief adds three clauses; keep its branch counted.
+    "concept development, experience": 21,
     "concept precision": 12,
     # The largest new seed variant includes both a second system and the three
     # instructions that make its representation serve the retained discovery treatment.

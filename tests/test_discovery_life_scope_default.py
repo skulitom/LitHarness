@@ -8,10 +8,14 @@ from tests.test_discovery_life_scope_experiment import experiment
 
 def test_production_discovery_uses_exactly_the_registered_scoped_system():
     request = discovery.render_request("EXACT_SOURCE", person="third")
-    assert request.profile == "writer.discovery.v11"
+    assert request.profile == "writer.discovery.v12"
     assert request.system.count(experiment.SCOPED) == 1
     assert experiment.ORIGINAL not in request.system
-    full_system = request.system.replace(experiment.SCOPED, experiment.ORIGINAL)
+    # v12 adds a prospective experience brief; the previous world direction stays exact.
+    prior_system = request.system.replace(discovery.EXPERIENCE_TASK, "").replace(
+        "in the four fields", "in the three fields"
+    )
+    full_system = prior_system.replace(experiment.SCOPED, experiment.ORIGINAL)
     # Unseeded v10 system captured by every full control in evidence.json.
     assert hashlib.sha256(full_system.encode("utf-8")).hexdigest() == (
         "3042e2246e59e00298dab7b4177320d05cc2d2ecf56cbd80d313379c096ebc18"

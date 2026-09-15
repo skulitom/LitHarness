@@ -101,7 +101,8 @@ def test_duplicate_or_missing_outline_scene_refuses_draft(pilot):
 
 
 def test_concept_and_outline_keep_the_discovery_lineage_without_reopening_prototype(pilot):
-    treatment = {"world": "WORLD-MARKER", "opening": "FUTURE-OPENING-MARKER",
+    treatment = {"experience_brief": "PROPOSED-EXPERIENCE", "world": "WORLD-MARKER",
+                 "opening": "FUTURE-OPENING-MARKER",
                  "growth": "LATER-GROWTH-MARKER"}
     receipt(pilot, "discovery-C-1", treatment)
     receipt(pilot, "pre-C-1", {"artifact": "UNHANDED-PROTOTYPE-MARKER"})

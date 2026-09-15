@@ -36,7 +36,8 @@ def receipt(pilot, name, payload):
 
 def parents(pilot, index="1"):
     receipt(pilot, f"discovery-S-{index}", {
-        "world": "COMMON-WORLD", "opening": "OMITTED-OPENING", "growth": "COMMON-GROWTH"})
+        "experience_brief": "COMMON-EXPERIENCE", "world": "COMMON-WORLD",
+        "opening": "OMITTED-OPENING", "growth": "COMMON-GROWTH"})
     receipt(pilot, f"concept-S-{index}", {
         "person_before": "A learner.", "exception": "An affinity.", "first_use": "OMITTED-USE",
         "want": "COMMON-WANT", "system": {"name": "Affinity", "manner": "Silent",

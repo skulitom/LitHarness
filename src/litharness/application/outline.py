@@ -112,7 +112,7 @@ BOOK_OUTLINE = "book_outline"
 
 #: Frozen generation profile, recorded in provenance like every other model call here.
 PROFILE = "planner.outline.v1"
-CONCEPT_PROFILE = "planner.outline.v3"
+CONCEPT_PROFILE = "planner.outline.v4"
 
 #: Ranks above scene drafting (0) and below director direction (500+). A scene drafted before
 #: its statement exists would be drafted against the empty plan this module exists to fill, so
@@ -623,6 +623,11 @@ def render_outline_request(
                 )
                 if concept is not None
                 else []
+            )
+            + (
+                [concept_mod.EXPERIENCE_ARC_RULE]
+                if concept is not None and concept.discovery is not None
+                and concept.discovery.experience_brief else []
             )
             + ([CONTINUATION_RULE] if continuation_scope is not None else []),
         },
