@@ -1,0 +1,18 @@
+{
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/experience-workflow-20260915/RUNBOOK.md",
+      "sha256": "1628fa7d37e95b7db721764b19212f15dd6565da943b3dbde5d537bc00443c8f"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/experience-workflow-20260915/registration.json",
+      "sha256": "006279ece6da6f8554ecfa751e942725074a74596ec13dfec3e4452251effd33"
+    }
+  ],
+  "claim_id": "experience-production-workflow-20260915",
+  "schema": "litharness.epistemic-claim.v1",
+  "statement": "The frozen whole-workflow comparison records generated intent, planning and reached chapter outputs under its production controls; no quality effect is licensed.",
+  "status": "registered"
+}
