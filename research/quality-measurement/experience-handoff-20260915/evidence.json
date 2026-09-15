@@ -1,0 +1,1793 @@
+{
+  "all_controls_pass": true,
+  "controls": {
+    "accounting": {
+      "attempts": true,
+      "known_tokens": true
+    },
+    "chapter1-A-1": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter1-A-2": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter1-A-3": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter1-A-4": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter1-B-1": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter1-B-2": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter1-B-3": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter1-B-4": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter2-A-1": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter2-A-2": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter2-A-3": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter2-A-4": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter2-B-1": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter2-B-2": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter2-B-3": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "chapter2-B-4": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "concept-S-1": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "concept-S-2": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "concept-S-3": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "concept-S-4": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "discovery-S-1": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "discovery-S-2": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "discovery-S-3": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "discovery-S-4": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "outline-A-1": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "outline-A-2": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "outline-A-3": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "outline-A-4": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "outline-B-1": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "outline-B-2": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "outline-B-3": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "outline-B-4": {
+      "captured_prompt": true,
+      "captured_system": true,
+      "completion_mode": true,
+      "config_off": true,
+      "docs_off": true,
+      "effort": true,
+      "ephemeral": true,
+      "lineage": true,
+      "memory_off": true,
+      "native_schema": true,
+      "native_schema_argument": true,
+      "native_schema_reason": true,
+      "no_tool_events": true,
+      "no_tools_allowed": true,
+      "original_schema": true,
+      "renderer": true,
+      "request_hash": true,
+      "requested_model": true,
+      "returncode": true,
+      "rules_off": true,
+      "schema_variant": true
+    },
+    "pair-1": {
+      "one_added_field": true,
+      "original_specification": true,
+      "same_nonprompt_request": true,
+      "shared_parents": true
+    },
+    "pair-2": {
+      "one_added_field": true,
+      "original_specification": true,
+      "same_nonprompt_request": true,
+      "shared_parents": true
+    },
+    "pair-3": {
+      "one_added_field": true,
+      "original_specification": true,
+      "same_nonprompt_request": true,
+      "shared_parents": true
+    },
+    "pair-4": {
+      "one_added_field": true,
+      "original_specification": true,
+      "same_nonprompt_request": true,
+      "shared_parents": true
+    },
+    "seeds": {
+      "distinct": true
+    },
+    "sessions": {
+      "distinct_completed": true
+    }
+  },
+  "outputs": [
+    {
+      "finished_at": "2026-09-15T09:24:55.882162+00:00",
+      "lineage": [],
+      "name": "discovery-S-1",
+      "receipt_sha256": "ff72e31b753b13eff271be533510df4ab2318959e8ab5c60016fb671954abdea",
+      "rendered_words": 778,
+      "session_ids": [
+        "01a0a461-72c2-79e0-8790-69149e8fa14a"
+      ],
+      "started_at": "2026-09-15T09:24:04.551540+00:00",
+      "status": "completed",
+      "text_sha256": "acd9d1922e379a01fe13fe11b536d6af0754ff4baded72f192632fcdaf42ae09",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 4798,
+        "output_tokens": 935,
+        "reasoning_tokens": 309
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:26:06.294315+00:00",
+      "lineage": [],
+      "name": "discovery-S-2",
+      "receipt_sha256": "576a790ac6b34af2be13e85b781b144c896ed29fb0e04cbc656300f88c519bae",
+      "rendered_words": 946,
+      "session_ids": [
+        "01a0a462-3c22-7120-afca-941992eac7ff"
+      ],
+      "started_at": "2026-09-15T09:24:56.114674+00:00",
+      "status": "completed",
+      "text_sha256": "78c5ae791393b727f2b8bc69f65d8de0e73a417fa7c05ee012d5190af08681af",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 4824,
+        "output_tokens": 1197,
+        "reasoning_tokens": 344
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:26:56.758217+00:00",
+      "lineage": [],
+      "name": "discovery-S-3",
+      "receipt_sha256": "311d4542632c225c2b0f1049e6c7a88191d0b2514041110a9dd13615b73cf39b",
+      "rendered_words": 813,
+      "session_ids": [
+        "01a0a463-4f14-7731-aea9-1954d39862c8"
+      ],
+      "started_at": "2026-09-15T09:26:06.537620+00:00",
+      "status": "completed",
+      "text_sha256": "49eb180170b9a4dddf6f717943ce9f2e05a3a2ed2be28d76c77ee0be7d26e731",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 4800,
+        "output_tokens": 1005,
+        "reasoning_tokens": 516
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:27:45.794200+00:00",
+      "lineage": [],
+      "name": "discovery-S-4",
+      "receipt_sha256": "570ea58b3a3f168fa2da0e7eb77afaa5750143e2ab312a57e07a63aa3972a14c",
+      "rendered_words": 823,
+      "session_ids": [
+        "01a0a464-1457-71e1-8227-d36182c21853"
+      ],
+      "started_at": "2026-09-15T09:26:56.991419+00:00",
+      "status": "completed",
+      "text_sha256": "535c189bc98f124bd19514517daf65dee5a6ddd9252253522d8803c6e3072c2e",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 4791,
+        "output_tokens": 1047,
+        "reasoning_tokens": 206
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:28:30.924421+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "ff72e31b753b13eff271be533510df4ab2318959e8ab5c60016fb671954abdea",
+          "slot": "discovery-S-1"
+        }
+      ],
+      "name": "concept-S-1",
+      "receipt_sha256": "ead2a2a9c5b960c3eb662e6865470dd9ad732ff8b30e8035765c2a2a42a1fc71",
+      "rendered_words": 943,
+      "session_ids": [
+        "01a0a464-d46a-7631-8a26-6d5f68a7af3d"
+      ],
+      "started_at": "2026-09-15T09:27:46.156785+00:00",
+      "status": "completed",
+      "text_sha256": "bbe2fecd55cba418e97e0849644c75dda5004f81009976fb0beb3d049b3a7f3d",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 5936,
+        "output_tokens": 1281,
+        "reasoning_tokens": 65
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:29:22.511774+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "576a790ac6b34af2be13e85b781b144c896ed29fb0e04cbc656300f88c519bae",
+          "slot": "discovery-S-2"
+        }
+      ],
+      "name": "concept-S-2",
+      "receipt_sha256": "853faf988ba86ba51186f366bae36d37ff01129f8d79c5fcd8129a5f5eeef9a8",
+      "rendered_words": 993,
+      "session_ids": [
+        "01a0a465-8436-7b21-b088-cd19fe5728fa"
+      ],
+      "started_at": "2026-09-15T09:28:31.180857+00:00",
+      "status": "completed",
+      "text_sha256": "47aca75b7d68380bfcaa1ffb77dbf3716f563ddd4e71dec664db4eadb7f48157",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 6189,
+        "output_tokens": 1361,
+        "reasoning_tokens": 83
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:30:14.301227+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "311d4542632c225c2b0f1049e6c7a88191d0b2514041110a9dd13615b73cf39b",
+          "slot": "discovery-S-3"
+        }
+      ],
+      "name": "concept-S-3",
+      "receipt_sha256": "a08203f390cd1d8a04af0bc2550d6d0e4e38fd27d3c575316a162e5fb4b71be8",
+      "rendered_words": 978,
+      "session_ids": [
+        "01a0a466-4da9-7182-8207-6317bd33fb9d"
+      ],
+      "started_at": "2026-09-15T09:29:22.763955+00:00",
+      "status": "completed",
+      "text_sha256": "8a177e1c64b4b01bb7ecd4e7041b50517f8f151898acd0b7cd578d199cd23612",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 6010,
+        "output_tokens": 1312,
+        "reasoning_tokens": 141
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:31:05.177602+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "570ea58b3a3f168fa2da0e7eb77afaa5750143e2ab312a57e07a63aa3972a14c",
+          "slot": "discovery-S-4"
+        }
+      ],
+      "name": "concept-S-4",
+      "receipt_sha256": "f741f00976eb3dd938047a8860b1129fe3d9d0b8fe27470025e1b1562894efd7",
+      "rendered_words": 890,
+      "session_ids": [
+        "01a0a467-17e2-7ed2-871a-600bec2446d6"
+      ],
+      "started_at": "2026-09-15T09:30:14.548023+00:00",
+      "status": "completed",
+      "text_sha256": "72d6d763b92334a0ab9fc5010b2d2790688f6ddd18922462d4174d56519741ba",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 6046,
+        "output_tokens": 1229,
+        "reasoning_tokens": 217
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:32:15.570693+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "ff72e31b753b13eff271be533510df4ab2318959e8ab5c60016fb671954abdea",
+          "slot": "discovery-S-1"
+        },
+        {
+          "receipt_sha256": "ead2a2a9c5b960c3eb662e6865470dd9ad732ff8b30e8035765c2a2a42a1fc71",
+          "slot": "concept-S-1"
+        }
+      ],
+      "name": "outline-A-1",
+      "receipt_sha256": "8906f069d3c92596d61f8aead2c490ab84218cd8bfd7797250d0fbf52dce9a4c",
+      "rendered_words": 1527,
+      "session_ids": [
+        "01a0a467-deb2-7591-80fe-4f6004da5040"
+      ],
+      "started_at": "2026-09-15T09:31:05.435211+00:00",
+      "status": "completed",
+      "text_sha256": "c78c7bd25bbdde15e2917448b8b6e5fb778cfd1467fe8bdbf6eeec780728fcf2",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7262,
+        "output_tokens": 2036,
+        "reasoning_tokens": 133
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:33:31.975947+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "ff72e31b753b13eff271be533510df4ab2318959e8ab5c60016fb671954abdea",
+          "slot": "discovery-S-1"
+        },
+        {
+          "receipt_sha256": "ead2a2a9c5b960c3eb662e6865470dd9ad732ff8b30e8035765c2a2a42a1fc71",
+          "slot": "concept-S-1"
+        }
+      ],
+      "name": "outline-B-1",
+      "receipt_sha256": "5155180f8197d9dd41fa7d95fbcaec818363213150ba86fc40c34549b8ea3364",
+      "rendered_words": 1634,
+      "session_ids": [
+        "01a0a468-f1e6-7fc3-88d1-1dc58f239bb6"
+      ],
+      "started_at": "2026-09-15T09:32:15.825575+00:00",
+      "status": "completed",
+      "text_sha256": "8604fe09b3b064e46f1948c0bd15ac6dc217a5e6a1ddd1646d82010b4c5e0f26",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7653,
+        "output_tokens": 2151,
+        "reasoning_tokens": 154
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:34:52.033228+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "576a790ac6b34af2be13e85b781b144c896ed29fb0e04cbc656300f88c519bae",
+          "slot": "discovery-S-2"
+        },
+        {
+          "receipt_sha256": "853faf988ba86ba51186f366bae36d37ff01129f8d79c5fcd8129a5f5eeef9a8",
+          "slot": "concept-S-2"
+        }
+      ],
+      "name": "outline-B-2",
+      "receipt_sha256": "2dfb8ba7a2cb5dddfd0a3d55ed1f115831d3e86ff359d3d690ff3fa825c8b739",
+      "rendered_words": 1525,
+      "session_ids": [
+        "01a0a46a-1c63-7bd2-b6b5-58eab2642558"
+      ],
+      "started_at": "2026-09-15T09:33:32.238446+00:00",
+      "status": "completed",
+      "text_sha256": "cc1e8a8c9beef5392126c1f290d47065b431be6f1173c55e13ed138abfe622bc",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7884,
+        "output_tokens": 2060,
+        "reasoning_tokens": 185
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:36:06.743319+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "576a790ac6b34af2be13e85b781b144c896ed29fb0e04cbc656300f88c519bae",
+          "slot": "discovery-S-2"
+        },
+        {
+          "receipt_sha256": "853faf988ba86ba51186f366bae36d37ff01129f8d79c5fcd8129a5f5eeef9a8",
+          "slot": "concept-S-2"
+        }
+      ],
+      "name": "outline-A-2",
+      "receipt_sha256": "b8e0628bfe533e43fac48de4095789f1c91fd00b9260224b372e2c355a31eef5",
+      "rendered_words": 1438,
+      "session_ids": [
+        "01a0a46b-5518-7472-bbe8-acdadc4f2ad2"
+      ],
+      "started_at": "2026-09-15T09:34:52.285774+00:00",
+      "status": "completed",
+      "text_sha256": "9667640d8c45e199888edbf61a58d18dc937c5e4b1ec1619040ecd4af6aaa976",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7474,
+        "output_tokens": 1938,
+        "reasoning_tokens": 214
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:37:19.011980+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "311d4542632c225c2b0f1049e6c7a88191d0b2514041110a9dd13615b73cf39b",
+          "slot": "discovery-S-3"
+        },
+        {
+          "receipt_sha256": "a08203f390cd1d8a04af0bc2550d6d0e4e38fd27d3c575316a162e5fb4b71be8",
+          "slot": "concept-S-3"
+        }
+      ],
+      "name": "outline-A-3",
+      "receipt_sha256": "5305e70736fb28e71c179d90ae768af83771ac6fa760033770db63f78ef4cb7a",
+      "rendered_words": 1356,
+      "session_ids": [
+        "01a0a46c-78d9-7f83-9fdb-43f332ce83bb"
+      ],
+      "started_at": "2026-09-15T09:36:07.000137+00:00",
+      "status": "completed",
+      "text_sha256": "f37277b38eae57f7eef04d6e3615337153cdd6be04dc360a2de162417bf0c71c",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7364,
+        "output_tokens": 1837,
+        "reasoning_tokens": 196
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:38:41.339710+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "311d4542632c225c2b0f1049e6c7a88191d0b2514041110a9dd13615b73cf39b",
+          "slot": "discovery-S-3"
+        },
+        {
+          "receipt_sha256": "a08203f390cd1d8a04af0bc2550d6d0e4e38fd27d3c575316a162e5fb4b71be8",
+          "slot": "concept-S-3"
+        }
+      ],
+      "name": "outline-B-3",
+      "receipt_sha256": "a012649bc48f4a1dd46d19aaed503d4d8226cf532306a6fcc621747441c82dbd",
+      "rendered_words": 1547,
+      "session_ids": [
+        "01a0a46d-9324-7963-9542-663cb6e09da2"
+      ],
+      "started_at": "2026-09-15T09:37:19.268255+00:00",
+      "status": "completed",
+      "text_sha256": "9c8f863bf7d09048a0c26b5f7887588d9a2128edefa5cc2ff840b36fa24baa59",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7746,
+        "output_tokens": 2062,
+        "reasoning_tokens": 137
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:39:55.028105+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "570ea58b3a3f168fa2da0e7eb77afaa5750143e2ab312a57e07a63aa3972a14c",
+          "slot": "discovery-S-4"
+        },
+        {
+          "receipt_sha256": "f741f00976eb3dd938047a8860b1129fe3d9d0b8fe27470025e1b1562894efd7",
+          "slot": "concept-S-4"
+        }
+      ],
+      "name": "outline-B-4",
+      "receipt_sha256": "3a6505b0f94f2078a47676e2cfce0f5f7d2e4678f7f57e94400368fa2d42d397",
+      "rendered_words": 1639,
+      "session_ids": [
+        "01a0a46e-d48f-7282-8e90-df878daf3cad"
+      ],
+      "started_at": "2026-09-15T09:38:41.599847+00:00",
+      "status": "completed",
+      "text_sha256": "2eab793cd2dd5827771e917fa9577aa64dc2593ecfccfba9c5b766d6762ea7b6",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7713,
+        "output_tokens": 2177,
+        "reasoning_tokens": 82
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:41:18.026966+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "570ea58b3a3f168fa2da0e7eb77afaa5750143e2ab312a57e07a63aa3972a14c",
+          "slot": "discovery-S-4"
+        },
+        {
+          "receipt_sha256": "f741f00976eb3dd938047a8860b1129fe3d9d0b8fe27470025e1b1562894efd7",
+          "slot": "concept-S-4"
+        }
+      ],
+      "name": "outline-A-4",
+      "receipt_sha256": "0fe13e1951dcb6ee449bc3fbdb4ca9cd7e0a32e53cdd63b8c5b7c63bd57a6b18",
+      "rendered_words": 1693,
+      "session_ids": [
+        "01a0a46f-f4a2-7702-86e8-152bb7a1d280"
+      ],
+      "started_at": "2026-09-15T09:39:55.322926+00:00",
+      "status": "completed",
+      "text_sha256": "134cd16e28141d555f18327d477fb00c834560814a2f5f3a1e578519be27d582",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7334,
+        "output_tokens": 2238,
+        "reasoning_tokens": 139
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:42:49.632615+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "5155180f8197d9dd41fa7d95fbcaec818363213150ba86fc40c34549b8ea3364",
+          "slot": "outline-B-1"
+        }
+      ],
+      "name": "chapter1-B-1",
+      "receipt_sha256": "a39626e135506a1fa52deeb2eac7b0c336e658b337c7e9c14adb6e4db85c223f",
+      "rendered_words": 1482,
+      "session_ids": [
+        "01a0a471-38db-7ee1-8919-bc5797d06a31"
+      ],
+      "started_at": "2026-09-15T09:41:18.297376+00:00",
+      "status": "completed",
+      "text_sha256": "b9d879b0f7d1c05404411e7b983566023864db1003cd87c41a592fcdb4a7933a",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 5036,
+        "output_tokens": 2087,
+        "reasoning_tokens": 57
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:44:15.644398+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "8906f069d3c92596d61f8aead2c490ab84218cd8bfd7797250d0fbf52dce9a4c",
+          "slot": "outline-A-1"
+        }
+      ],
+      "name": "chapter1-A-1",
+      "receipt_sha256": "46ee79b9c9b2a6bfdf2b4f03437c96647ea59b5acd9c445cd7e59c1ee9f39c38",
+      "rendered_words": 1503,
+      "session_ids": [
+        "01a0a472-9e81-7911-aa83-f567b3f31367"
+      ],
+      "started_at": "2026-09-15T09:42:49.892411+00:00",
+      "status": "completed",
+      "text_sha256": "a2b5eab1b32648d90e6bd60a5b814882e789b5d3c25e2fdbaf0d3f803e01793c",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 4960,
+        "output_tokens": 2053,
+        "reasoning_tokens": 60
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:45:46.536823+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "b8e0628bfe533e43fac48de4095789f1c91fd00b9260224b372e2c355a31eef5",
+          "slot": "outline-A-2"
+        }
+      ],
+      "name": "chapter1-A-2",
+      "receipt_sha256": "43b3436cb997a7bbdbd9f89fa5a1f1c63dc8423da2cee75e432fb8f85e53c3ec",
+      "rendered_words": 1467,
+      "session_ids": [
+        "01a0a473-ee7c-7423-b7f5-779ded617e19"
+      ],
+      "started_at": "2026-09-15T09:44:15.907839+00:00",
+      "status": "completed",
+      "text_sha256": "97f756f107c849e5405522b9c8312b6066047ac93ea942c83f725ffe3d5da02d",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 4948,
+        "output_tokens": 1984,
+        "reasoning_tokens": 218
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:47:28.109898+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "2dfb8ba7a2cb5dddfd0a3d55ed1f115831d3e86ff359d3d690ff3fa825c8b739",
+          "slot": "outline-B-2"
+        }
+      ],
+      "name": "chapter1-B-2",
+      "receipt_sha256": "23ebab09ce31d134deb91672de4418806b962a68225515de86cb33a1e6680de6",
+      "rendered_words": 1522,
+      "session_ids": [
+        "01a0a475-519a-7710-ac4d-72cc9579f591"
+      ],
+      "started_at": "2026-09-15T09:45:46.795147+00:00",
+      "status": "completed",
+      "text_sha256": "4fecb7a564d7aba8e64399c0dff0dce82882025f60e56f48e8a3089ac9cdee52",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 4977,
+        "output_tokens": 2052,
+        "reasoning_tokens": 263
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:48:53.539013+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "a012649bc48f4a1dd46d19aaed503d4d8226cf532306a6fcc621747441c82dbd",
+          "slot": "outline-B-3"
+        }
+      ],
+      "name": "chapter1-B-3",
+      "receipt_sha256": "cf868bfa704b973efec80a3c4f9786c3d4f977f6b3a98298ecd298193e1153cf",
+      "rendered_words": 1510,
+      "session_ids": [
+        "01a0a476-de52-7c61-a4bd-054b39efc6a4"
+      ],
+      "started_at": "2026-09-15T09:47:28.368540+00:00",
+      "status": "completed",
+      "text_sha256": "c7acc28f1abbecf2b7e06bdcfeb08bf8f75076633892aa96abb0968b462e89b7",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 5020,
+        "output_tokens": 2037,
+        "reasoning_tokens": 112
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:50:08.429925+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "5305e70736fb28e71c179d90ae768af83771ac6fa760033770db63f78ef4cb7a",
+          "slot": "outline-A-3"
+        }
+      ],
+      "name": "chapter1-A-3",
+      "receipt_sha256": "4bd83cc22710dcd7580ae67fe5ab6665894aabd9bcf875d39583b2894456f848",
+      "rendered_words": 1487,
+      "session_ids": [
+        "01a0a478-2c16-7161-bbf9-f8d2096317ac"
+      ],
+      "started_at": "2026-09-15T09:48:53.791930+00:00",
+      "status": "completed",
+      "text_sha256": "72866b0626b4141f70d9978f4462518bb43eb9e99fe35af8998f8f85d1795e87",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 4895,
+        "output_tokens": 1966,
+        "reasoning_tokens": 165
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:51:38.112546+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "0fe13e1951dcb6ee449bc3fbdb4ca9cd7e0a32e53cdd63b8c5b7c63bd57a6b18",
+          "slot": "outline-A-4"
+        }
+      ],
+      "name": "chapter1-A-4",
+      "receipt_sha256": "04bc31178333f5d4cd57536facf34d895cf0c7f86ba56aeb219103f1b2388a2e",
+      "rendered_words": 1406,
+      "session_ids": [
+        "01a0a479-5081-7691-9afc-c4eccf078746"
+      ],
+      "started_at": "2026-09-15T09:50:08.681580+00:00",
+      "status": "completed",
+      "text_sha256": "2c9050b1e1b0d6180c487f9d7f1f3d54218653d4569346b2896e9064847b77b4",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 5084,
+        "output_tokens": 2142,
+        "reasoning_tokens": 70
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:53:04.797280+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "3a6505b0f94f2078a47676e2cfce0f5f7d2e4678f7f57e94400368fa2d42d397",
+          "slot": "outline-B-4"
+        }
+      ],
+      "name": "chapter1-B-4",
+      "receipt_sha256": "6948f2d3afb3e45dfd36891c8983ff14c58d1a20a340fc49a3df138796cb053a",
+      "rendered_words": 1432,
+      "session_ids": [
+        "01a0a47a-aef0-7e20-88bd-d0b0a56e0af8"
+      ],
+      "started_at": "2026-09-15T09:51:38.385755+00:00",
+      "status": "completed",
+      "text_sha256": "ebc211e2ca5c17cb77c22891d5f2bd2144f902e5397603155172d3e7b00b04bf",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 5011,
+        "output_tokens": 2147,
+        "reasoning_tokens": 71
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:54:23.100807+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "8906f069d3c92596d61f8aead2c490ab84218cd8bfd7797250d0fbf52dce9a4c",
+          "slot": "outline-A-1"
+        },
+        {
+          "receipt_sha256": "46ee79b9c9b2a6bfdf2b4f03437c96647ea59b5acd9c445cd7e59c1ee9f39c38",
+          "slot": "chapter1-A-1"
+        }
+      ],
+      "name": "chapter2-A-1",
+      "receipt_sha256": "79799d6a80337b223b5456a1b3432f00fedce2b3fcbd58de77a96c7f5f57e883",
+      "rendered_words": 1497,
+      "session_ids": [
+        "01a0a47c-0198-7733-8a27-478d79f4829a"
+      ],
+      "started_at": "2026-09-15T09:53:05.058920+00:00",
+      "status": "completed",
+      "text_sha256": "246d9bffe55076a9bde7dd2743387404e66698708c87ae1560d3950ca1416a58",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7101,
+        "output_tokens": 2111,
+        "reasoning_tokens": 36
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:55:53.662302+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "5155180f8197d9dd41fa7d95fbcaec818363213150ba86fc40c34549b8ea3364",
+          "slot": "outline-B-1"
+        },
+        {
+          "receipt_sha256": "a39626e135506a1fa52deeb2eac7b0c336e658b337c7e9c14adb6e4db85c223f",
+          "slot": "chapter1-B-1"
+        }
+      ],
+      "name": "chapter2-B-1",
+      "receipt_sha256": "3f15404ffbb779ece04a8223dcced6fed0639396b7d997cf61e5d90e60fed26b",
+      "rendered_words": 1480,
+      "session_ids": [
+        "01a0a47d-3361-7620-8933-06a698f6fa42"
+      ],
+      "started_at": "2026-09-15T09:54:23.357305+00:00",
+      "status": "completed",
+      "text_sha256": "70ed8a7783e8332bba02df2eaf22c56b7645724cee567b9f4e44010d6e3b8cbd",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7182,
+        "output_tokens": 2109,
+        "reasoning_tokens": 43
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:57:18.609348+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "2dfb8ba7a2cb5dddfd0a3d55ed1f115831d3e86ff359d3d690ff3fa825c8b739",
+          "slot": "outline-B-2"
+        },
+        {
+          "receipt_sha256": "23ebab09ce31d134deb91672de4418806b962a68225515de86cb33a1e6680de6",
+          "slot": "chapter1-B-2"
+        }
+      ],
+      "name": "chapter2-B-2",
+      "receipt_sha256": "3016de399e76fa66edfccaa652eac52fbc4c88a7f4220a7c7a10b8ec647fac39",
+      "rendered_words": 1479,
+      "session_ids": [
+        "01a0a47e-953d-73c1-83b3-0780752670aa"
+      ],
+      "started_at": "2026-09-15T09:55:53.919214+00:00",
+      "status": "completed",
+      "text_sha256": "5905e1672e9b500a3aab3425564d032f688f21853f05e3f13cc3d2fb413babd2",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7123,
+        "output_tokens": 2081,
+        "reasoning_tokens": 59
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T09:58:52.006496+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "b8e0628bfe533e43fac48de4095789f1c91fd00b9260224b372e2c355a31eef5",
+          "slot": "outline-A-2"
+        },
+        {
+          "receipt_sha256": "43b3436cb997a7bbdbd9f89fa5a1f1c63dc8423da2cee75e432fb8f85e53c3ec",
+          "slot": "chapter1-A-2"
+        }
+      ],
+      "name": "chapter2-A-2",
+      "receipt_sha256": "e0d9fbd2be323e1c17cb7eab4a91a2d935a57c2a078adcd02868ffa40e75f920",
+      "rendered_words": 1534,
+      "session_ids": [
+        "01a0a47f-e0f4-7542-85e5-81e2dd96e610"
+      ],
+      "started_at": "2026-09-15T09:57:18.869244+00:00",
+      "status": "completed",
+      "text_sha256": "f5f39621655b9ef3953da2538846fa635c9ab554ca3f2752c0cd1f2ba14304f2",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7006,
+        "output_tokens": 2136,
+        "reasoning_tokens": 96
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T10:00:18.159962+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "5305e70736fb28e71c179d90ae768af83771ac6fa760033770db63f78ef4cb7a",
+          "slot": "outline-A-3"
+        },
+        {
+          "receipt_sha256": "4bd83cc22710dcd7580ae67fe5ab6665894aabd9bcf875d39583b2894456f848",
+          "slot": "chapter1-A-3"
+        }
+      ],
+      "name": "chapter2-A-3",
+      "receipt_sha256": "612b85c8e7c1154852789c6c393e58bec4d6c9d44db50f9d3809dcbef4fe7004",
+      "rendered_words": 1460,
+      "session_ids": [
+        "01a0a481-4e08-7472-98d5-ad75893cdd33"
+      ],
+      "started_at": "2026-09-15T09:58:52.263384+00:00",
+      "status": "completed",
+      "text_sha256": "93a2df88e7a9ff3270a5270b92fa53f023cb0be7403e4e4a9ca2df97b26690c0",
+      "usage": {
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "input_tokens": 4415,
+        "output_tokens": 2051,
+        "reasoning_tokens": 47
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T10:01:35.966881+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "a012649bc48f4a1dd46d19aaed503d4d8226cf532306a6fcc621747441c82dbd",
+          "slot": "outline-B-3"
+        },
+        {
+          "receipt_sha256": "cf868bfa704b973efec80a3c4f9786c3d4f977f6b3a98298ecd298193e1153cf",
+          "slot": "chapter1-B-3"
+        }
+      ],
+      "name": "chapter2-B-3",
+      "receipt_sha256": "97e36663f393a97b1fe9bcce21b9b8279b670fd392c4a5692416d970c34a23c7",
+      "rendered_words": 1503,
+      "session_ids": [
+        "01a0a482-9e67-7801-861e-b21ca4b22c19"
+      ],
+      "started_at": "2026-09-15T10:00:18.424529+00:00",
+      "status": "completed",
+      "text_sha256": "51315cc30c9fce2a2cb24a0f7e79e47d6dd8555a3618d4c66de472de6f3483ab",
+      "usage": {
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "input_tokens": 4516,
+        "output_tokens": 2124,
+        "reasoning_tokens": 58
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T10:03:01.278596+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "3a6505b0f94f2078a47676e2cfce0f5f7d2e4678f7f57e94400368fa2d42d397",
+          "slot": "outline-B-4"
+        },
+        {
+          "receipt_sha256": "6948f2d3afb3e45dfd36891c8983ff14c58d1a20a340fc49a3df138796cb053a",
+          "slot": "chapter1-B-4"
+        }
+      ],
+      "name": "chapter2-B-4",
+      "receipt_sha256": "f97ee53456e93afa7f526232c4a1a164eabb51eef0d34d22c0209ffe4f8cfb58",
+      "rendered_words": 1353,
+      "session_ids": [
+        "01a0a483-ce4b-7793-93ae-d7bbe38a8940"
+      ],
+      "started_at": "2026-09-15T10:01:36.234138+00:00",
+      "status": "completed",
+      "text_sha256": "236bfce51254a857c36f6de50ec6a8ad08e67ec93a0ccaba33aee833690d72e6",
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "input_tokens": 7255,
+        "output_tokens": 2089,
+        "reasoning_tokens": 58
+      },
+      "valid": true
+    },
+    {
+      "finished_at": "2026-09-15T10:04:17.083665+00:00",
+      "lineage": [
+        {
+          "receipt_sha256": "0fe13e1951dcb6ee449bc3fbdb4ca9cd7e0a32e53cdd63b8c5b7c63bd57a6b18",
+          "slot": "outline-A-4"
+        },
+        {
+          "receipt_sha256": "04bc31178333f5d4cd57536facf34d895cf0c7f86ba56aeb219103f1b2388a2e",
+          "slot": "chapter1-A-4"
+        }
+      ],
+      "name": "chapter2-A-4",
+      "receipt_sha256": "4247e205203d54b847365e43adc2b267c89abee3605a38d6148e0df90e7ec888",
+      "rendered_words": 1344,
+      "session_ids": [
+        "01a0a485-1bc8-7333-b9b6-6ca8d3fc4bee"
+      ],
+      "started_at": "2026-09-15T10:03:01.546819+00:00",
+      "status": "completed",
+      "text_sha256": "fd9779751942048d12bb6ca2eb97ff83f9294e3ab2f4a6f2d25a551687c1c0e0",
+      "usage": {
+        "cache_read_tokens": 2560,
+        "cache_write_tokens": 0,
+        "input_tokens": 4701,
+        "output_tokens": 2030,
+        "reasoning_tokens": 162
+      },
+      "valid": true
+    }
+  ],
+  "progress": {
+    "active": "chapter2-A-4",
+    "attempts": 32,
+    "elapsed_seconds": 2412.92,
+    "finished_at": "2026-09-15T10:04:17.090144+00:00",
+    "slots": [
+      {
+        "name": "discovery-S-1",
+        "status": "completed"
+      },
+      {
+        "name": "discovery-S-2",
+        "status": "completed"
+      },
+      {
+        "name": "discovery-S-3",
+        "status": "completed"
+      },
+      {
+        "name": "discovery-S-4",
+        "status": "completed"
+      },
+      {
+        "name": "concept-S-1",
+        "status": "completed"
+      },
+      {
+        "name": "concept-S-2",
+        "status": "completed"
+      },
+      {
+        "name": "concept-S-3",
+        "status": "completed"
+      },
+      {
+        "name": "concept-S-4",
+        "status": "completed"
+      },
+      {
+        "name": "outline-A-1",
+        "status": "completed"
+      },
+      {
+        "name": "outline-B-1",
+        "status": "completed"
+      },
+      {
+        "name": "outline-B-2",
+        "status": "completed"
+      },
+      {
+        "name": "outline-A-2",
+        "status": "completed"
+      },
+      {
+        "name": "outline-A-3",
+        "status": "completed"
+      },
+      {
+        "name": "outline-B-3",
+        "status": "completed"
+      },
+      {
+        "name": "outline-B-4",
+        "status": "completed"
+      },
+      {
+        "name": "outline-A-4",
+        "status": "completed"
+      },
+      {
+        "name": "chapter1-B-1",
+        "status": "completed"
+      },
+      {
+        "name": "chapter1-A-1",
+        "status": "completed"
+      },
+      {
+        "name": "chapter1-A-2",
+        "status": "completed"
+      },
+      {
+        "name": "chapter1-B-2",
+        "status": "completed"
+      },
+      {
+        "name": "chapter1-B-3",
+        "status": "completed"
+      },
+      {
+        "name": "chapter1-A-3",
+        "status": "completed"
+      },
+      {
+        "name": "chapter1-A-4",
+        "status": "completed"
+      },
+      {
+        "name": "chapter1-B-4",
+        "status": "completed"
+      },
+      {
+        "name": "chapter2-A-1",
+        "status": "completed"
+      },
+      {
+        "name": "chapter2-B-1",
+        "status": "completed"
+      },
+      {
+        "name": "chapter2-B-2",
+        "status": "completed"
+      },
+      {
+        "name": "chapter2-A-2",
+        "status": "completed"
+      },
+      {
+        "name": "chapter2-A-3",
+        "status": "completed"
+      },
+      {
+        "name": "chapter2-B-3",
+        "status": "completed"
+      },
+      {
+        "name": "chapter2-B-4",
+        "status": "completed"
+      },
+      {
+        "name": "chapter2-A-4",
+        "status": "completed"
+      }
+    ],
+    "started_at": "2026-09-15T09:24:04.164715+00:00",
+    "status": "complete",
+    "tokens": 264495
+  },
+  "registration_sha256": "7277ab815bd3ef3579c805decbfd877ebcde77d6c2951e4bd913281a044fbb71"
+}

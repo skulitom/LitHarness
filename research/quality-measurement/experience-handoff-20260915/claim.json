@@ -4,10 +4,20 @@
       "kind": "registration",
       "path": "research/quality-measurement/experience-handoff-20260915/registration.json",
       "sha256": "7277ab815bd3ef3579c805decbfd877ebcde77d6c2951e4bd913281a044fbb71"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/experience-handoff-20260915/evidence.json",
+      "sha256": "4415a84d9901e844652acc2da81224048b97443e536ea9901d820a75eb3f7a5b"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/experience-handoff-20260915/RESULTS.md",
+      "sha256": "d7a24a9c6190a8e9d75221df7c887758e924e5fbc7ce88821204dda34d3b0c20"
     }
   ],
   "claim_id": "experience-handoff-feasibility-20260915",
   "schema": "litharness.epistemic-claim.v1",
-  "statement": "Carrying an original episode specification into the outline may change its transmission into a two-chapter episode from shared discovery and concept parents.",
-  "status": "registered"
+  "statement": "The registered shared-parent handoff comparison produced auditable two-chapter episodes; located content descriptions remain unqualified observations, not enjoyment evidence.",
+  "status": "observed"
 }
