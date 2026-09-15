@@ -4,10 +4,20 @@
       "kind": "registration",
       "path": "research/quality-measurement/experience-first-recovery-20260915/registration.json",
       "sha256": "8f042fc02975bcfcdf8033305ab2040f07bf00bacbeae3a3b4a8e68c42af6867"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/experience-first-recovery-20260915/evidence.json",
+      "sha256": "7993ffc3f42fc2b8cd6807418d72822ac0fed5b3c39dbc0bfc357dc84f52b5dc"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/experience-first-recovery-20260915/RESULTS.md",
+      "sha256": "ccbcfbf43103c5e2894624fb1662fe8ffb4ad561d2e0dae77e592f010a7351ea"
     }
   ],
   "claim_id": "experience-first-shutdown-continuation-20260915",
   "schema": "litharness.epistemic-claim.v1",
-  "statement": "The registered experience-first feasibility comparison continues with 56 inherited responses and one documented interrupted-request retry.",
-  "status": "registered"
+  "statement": "The registered experience-first feasibility comparison completed all 84 output slots with verified transport, lineage and format controls after preserving 56 inherited responses and documenting one interrupted-request retry; no enjoyment or popularity effect or editorial intervention is qualified.",
+  "status": "observed"
 }
