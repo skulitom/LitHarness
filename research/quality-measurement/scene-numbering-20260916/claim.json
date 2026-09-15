@@ -9,10 +9,20 @@
       "kind": "registration",
       "path": "research/quality-measurement/scene-numbering-20260916/registration.json",
       "sha256": "ac92575585defd93a40b6ef20e896b79b97e89721f21471a5597850f924f84ea"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/scene-numbering-20260916/evidence.json",
+      "sha256": "98ed47f2628aff7a0cfd35a54e3ce2fff6da999009fc00f8097b0e08453b1244"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/scene-numbering-20260916/handoff-evidence.json",
+      "sha256": "eda7dacdeef0e27e9b0a418619285528764272c3113c4424ab65b976bd6f36fe"
     }
   ],
   "claim_id": "generated-scene-coordinates-20260916",
   "schema": "litharness.epistemic-claim.v1",
   "statement": "The fixed-story comparison records outlines and opening chapters with generated arc scene references and generated debt scene coordinates removed from the treatment outline request; no quality effect is licensed.",
-  "status": "registered"
+  "status": "observed"
 }

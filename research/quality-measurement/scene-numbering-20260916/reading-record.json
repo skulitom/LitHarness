@@ -1,0 +1,72 @@
+{
+  "chapters_read": 4,
+  "files": {
+    "research/quality-measurement/scene-numbering-20260916/RESULTS.md": "e00dc7e6e8ad4453c09adbeed228f50224ffb74e384611ed3e7bf35412ee1ebc",
+    "research/quality-measurement/scene-numbering-20260916/evidence.json": "98ed47f2628aff7a0cfd35a54e3ce2fff6da999009fc00f8097b0e08453b1244",
+    "research/quality-measurement/scene-numbering-20260916/handoff-evidence.json": "eda7dacdeef0e27e9b0a418619285528764272c3113c4424ab65b976bd6f36fe",
+    "runs/scene-numbering-20260916/READING-NOTES.md": "d46be2bcaa776850a5aae38328c17e787f673b36b4af88015afc7c065ae43107",
+    "runs/scene-numbering-20260916/REPORT.md": "3fbab86d6795ae4dd53267df107403ff23f67cc57ac88029f75597844cd16a29",
+    "runs/scene-numbering-20260916/books/A2/chapter-1.md": "8bb36e47b9cbda9487a8123e57e5e64bfabbeacaabf025f5aa13f14b1dc9b237",
+    "runs/scene-numbering-20260916/books/A2/outline.json": "b241d245237b55a8c1aa026485ff78142b14e7249c68224f5318ee3355ce32a1",
+    "runs/scene-numbering-20260916/books/A2/writer-prompt.txt": "b8aecde6fc91c14a811aa8bc9f88649cfdd5218307b2df73a6bd166895d7e4ac",
+    "runs/scene-numbering-20260916/books/A2/writer-raw.md": "7ce18afdf03ad5a13a9e67fefd5a0dc5e94e6addacfd5c93806668b273950b8b",
+    "runs/scene-numbering-20260916/books/A4/chapter-1.md": "5c30b4861ac6e26dff38a932b5bdb8b8c0ce221b35146e3c72bfee49ba6e8809",
+    "runs/scene-numbering-20260916/books/A4/outline.json": "788e3fd6dc6c39b35cafc9aee54acd97b84edeb88779384efbd8ae9aefbe2e81",
+    "runs/scene-numbering-20260916/books/A4/writer-prompt.txt": "3a74089287be17250bfacaaccb0ab421765a935f8797382be78dfbb16e764333",
+    "runs/scene-numbering-20260916/books/A4/writer-raw.md": "46a98c485baa257e18b4d049c5b5920b400095506ca2bca7ec9e5dc8f42ee2fa",
+    "runs/scene-numbering-20260916/books/B2/chapter-1.md": "8ce575ebbde008a344be0282e46b0c588504fd9714d6ae50685134545d4b2c51",
+    "runs/scene-numbering-20260916/books/B2/outline.json": "f4ccf6e35f8a15263d8d9196ea7cfc51cdb44e333c7af0107160370fb57010bb",
+    "runs/scene-numbering-20260916/books/B2/writer-prompt.txt": "16d499946efb6638e5c5ce719f1fa935a62fa40c3413a1117ae72db2ffe89916",
+    "runs/scene-numbering-20260916/books/B2/writer-raw.md": "44a0e6195ebd9454b8c71d3f8d9faabae582dbea41af51b31f4093818bfcd750",
+    "runs/scene-numbering-20260916/books/B4/chapter-1.md": "6fc108d3224f1bb4b6df909ef22d16b6d91f937503b48e299682afb8d21cd9ca",
+    "runs/scene-numbering-20260916/books/B4/outline.json": "a15b159c7c55a98e2f5b8f6d995dce2aa4d7960fa29771a9fd3d59b5454ce327",
+    "runs/scene-numbering-20260916/books/B4/writer-prompt.txt": "0a54f399a33910f0d1bb916750a9ba6c40b5540727e7d48fd2776f7c16a41909",
+    "runs/scene-numbering-20260916/books/B4/writer-raw.md": "b616531ac10f11c0ad042744c8e6face410f5f2be01823a4d2e6dcb9ceb1fdf5",
+    "runs/scene-numbering-recipe-20260916.json": "b1f155af2381a9a1a166bdfd7dc6374d715ab7914da2bcaea064ce8bb5aa3cce",
+    "runs/scene-numbering-registration-handoff.log": "0cdb9ff50899d6500da662ebb47f493a39985091c966b879ebc621073da9ecdd",
+    "runs/scene-numbering-results-handoff.log": "6d152dbf1882a570778cc468a0156f4931530f51f56efcc944b09b45487f7ef9"
+  },
+  "independent_story_units": 2,
+  "interpretation_kind": "located_editorial_reading_not_validated_reader_measurement",
+  "outline_calls": {
+    "A2": [
+      2
+    ],
+    "A4": [
+      14
+    ],
+    "B2": [
+      6
+    ],
+    "B4": [
+      10
+    ]
+  },
+  "raw_differences_inspected": true,
+  "read_after_generation": true,
+  "recorded_at": "2026-09-15T23:30:43.942155+00:00",
+  "schema": "litharness.located-reading-record.v1",
+  "status": "complete",
+  "verification": {
+    "coverage_percent": 89.97,
+    "final_log": "runs/scene-numbering-results-handoff.log",
+    "mode": "handoff",
+    "passed": true,
+    "tests_passed": 5256,
+    "tests_skipped": 20
+  },
+  "writer_calls": {
+    "A2": [
+      4
+    ],
+    "A4": [
+      16
+    ],
+    "B2": [
+      8
+    ],
+    "B4": [
+      12
+    ]
+  }
+}

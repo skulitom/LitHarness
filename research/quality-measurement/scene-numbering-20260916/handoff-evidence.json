@@ -1,0 +1,192 @@
+{
+  "books": [
+    {
+      "book": "A2",
+      "first_live_request_equals_preflight": true,
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 2,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true,
+          "valid_chapter_membership": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            2
+          ],
+          "matching_writer_calls": [
+            4
+          ],
+          "ordinal": 1,
+          "plan_sha256": "32912ee8c89e7e715ba65f17e9bf583336a504bae2459a07ff4e71aa1c7a7060",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            4
+          ],
+          "writer_calls_equal_to_accepted_text_after_strip": []
+        }
+      ]
+    },
+    {
+      "book": "A4",
+      "first_live_request_equals_preflight": true,
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 14,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true,
+          "valid_chapter_membership": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            14
+          ],
+          "matching_writer_calls": [
+            16
+          ],
+          "ordinal": 1,
+          "plan_sha256": "4eb6e0a344c4326516701113c6ba87785d0a63e43ed4409875f1dc197815276b",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            16
+          ],
+          "writer_calls_equal_to_accepted_text_after_strip": [
+            16
+          ]
+        }
+      ]
+    },
+    {
+      "book": "B2",
+      "first_live_request_equals_preflight": true,
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 6,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true,
+          "valid_chapter_membership": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            6
+          ],
+          "matching_writer_calls": [
+            8
+          ],
+          "ordinal": 1,
+          "plan_sha256": "38c8c2c9c2126f22686622b389be631df91096b4e213cdcf4ffc63ebb929e069",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            8
+          ],
+          "writer_calls_equal_to_accepted_text_after_strip": [
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "book": "B4",
+      "first_live_request_equals_preflight": true,
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 10,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true,
+          "valid_chapter_membership": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            10
+          ],
+          "matching_writer_calls": [
+            12
+          ],
+          "ordinal": 1,
+          "plan_sha256": "5b6ea23603f65f66aa3bd1336fd4f4415651b1fb2ecefaf3ddd360d461b7bbb3",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            12
+          ],
+          "writer_calls_equal_to_accepted_text_after_strip": []
+        }
+      ]
+    }
+  ],
+  "source_hashes": {
+    "research/quality-measurement/beat-labels-20260915/run.py": "cc29df7070f89361a887853cfca6a28ea8e7a002f2b973553c6268ffa43f44a2",
+    "research/quality-measurement/chapter-coverage-20260915/inspect_handoff.py": "7798a5a42bedce2983a4a0cd480d98d72b845e7359e7de4f3e65e4403966f144",
+    "research/quality-measurement/scene-numbering-20260916/evidence.json": "98ed47f2628aff7a0cfd35a54e3ce2fff6da999009fc00f8097b0e08453b1244",
+    "research/quality-measurement/scene-numbering-20260916/run.py": "4a330d9c06b642ed0493bc0358efbf8cd3a4b6b6590c01d26bff4cb06b149aee",
+    "runs/scene-numbering-20260916/books/A2/book.db": "7548d43ac855f516375b03acbee163441e5c3d87e829005ff7dd09bf098a5507",
+    "runs/scene-numbering-20260916/books/A2/chapter-1.md": "8bb36e47b9cbda9487a8123e57e5e64bfabbeacaabf025f5aa13f14b1dc9b237",
+    "runs/scene-numbering-20260916/books/A2/views/chapter1.json": "daa97f9e0a4934f1cfcebe392fab66072e79b9aaae627ea99cb678e360bce445",
+    "runs/scene-numbering-20260916/books/A4/book.db": "87d9c26d1f250036a692e6e8831463134a49e643dbd18ae1efafb0e89ef727eb",
+    "runs/scene-numbering-20260916/books/A4/chapter-1.md": "5c30b4861ac6e26dff38a932b5bdb8b8c0ce221b35146e3c72bfee49ba6e8809",
+    "runs/scene-numbering-20260916/books/A4/views/chapter1.json": "644a812f5ef5e8174bc2bd10dd11cf51e0e36ddb3610e5276f3ea8fc39b9248f",
+    "runs/scene-numbering-20260916/books/B2/book.db": "4bd8b6e2cf4a16cb1e32b2914ee452e71dd82a3ea781bce97538ddfddae1a4ed",
+    "runs/scene-numbering-20260916/books/B2/chapter-1.md": "8ce575ebbde008a344be0282e46b0c588504fd9714d6ae50685134545d4b2c51",
+    "runs/scene-numbering-20260916/books/B2/views/chapter1.json": "45fab7249890a3e8b985d1b12895d5fe2f8908ce08847143e72556346d2bf9da",
+    "runs/scene-numbering-20260916/books/B4/book.db": "a386b5fcd51b2e26d105fb0e9692cc11d0135a7bf79f1577cbcbeb2d6d7c4ed3",
+    "runs/scene-numbering-20260916/books/B4/chapter-1.md": "6fc108d3224f1bb4b6df909ef22d16b6d91f937503b48e299682afb8d21cd9ca",
+    "runs/scene-numbering-20260916/books/B4/views/chapter1.json": "8c5d4453a016e46ef3f7327767db89be4535535d329707fd233e09712a8a1d2f",
+    "runs/scene-numbering-20260916/calls/0001-A2.json": "b1173706c53d7a7a16f792241940d20be87091f9c02838f8c0b998b737305601",
+    "runs/scene-numbering-20260916/calls/0002-A2.json": "61404c6995f1e522645530d5ffe891c466f6205cf7d88758a2f2b9defcd633f9",
+    "runs/scene-numbering-20260916/calls/0003-A2.json": "1ea42e5d7e743e7d8331f3da065015c75b056d4bdfd4dbe346f64de1920f1c7e",
+    "runs/scene-numbering-20260916/calls/0004-A2.json": "679e64848de03405a3ad05d3cbff54f948b2fceed0298257378bcf4859ac381c",
+    "runs/scene-numbering-20260916/calls/0005-B2.json": "5c898ce26ef64bfe8e09847fecd80722bb0fc37e3eacc9045a0c7f274f71b026",
+    "runs/scene-numbering-20260916/calls/0006-B2.json": "16d9610f0c33bb4fee3edfc7faa1d2b6cac68c72bcdba2938dc5c449d448b2a0",
+    "runs/scene-numbering-20260916/calls/0007-B2.json": "c39d457138964830b5bf814604f3f410f152b21bf33d265b684d6caca2e36288",
+    "runs/scene-numbering-20260916/calls/0008-B2.json": "4bb91731fa5ba88da2b571a7e94482069c9b45a98baf159a1c1eb7fdb156ae52",
+    "runs/scene-numbering-20260916/calls/0009-B4.json": "47c2cfcd6bafa7ddb0be947b20a2863fe34f3104767f673952d025b1831e7678",
+    "runs/scene-numbering-20260916/calls/0010-B4.json": "99f51f166b9ca281d177ad3d5811a5704d0e7324352683a4d0243f68fa055061",
+    "runs/scene-numbering-20260916/calls/0011-B4.json": "506945483b4fa6066ee221a4eb25c2d331d2fd8449083617f386e5904e6ec264",
+    "runs/scene-numbering-20260916/calls/0012-B4.json": "4cec91a01b8737c556de30cf4aa1d04ebc40c9c424d58de826beef422148dbe3",
+    "runs/scene-numbering-20260916/calls/0013-A4.json": "daa4de2f79bf5ae9596353a2dee77743224dd463857213731c2e08f2146a687d",
+    "runs/scene-numbering-20260916/calls/0014-A4.json": "2816d4fc674943a1a82c01aa8903c81fb7904030154575027f7f2f5ebbbc3382",
+    "runs/scene-numbering-20260916/calls/0015-A4.json": "1e4d64e6e7316ac6c40d3c04096faa028ba3baab7e89c736d428e54904d9926e",
+    "runs/scene-numbering-20260916/calls/0016-A4.json": "ab0530c7eb91357b38a0c19ba9c5ff19f28ede47e8b28debb0caa85531d05a2e",
+    "runs/scene-numbering-20260916/calls/0017-B2.json": "bf69b6f118c33ea5e5609e846d0bff7a120cece0d9bad41c3817ff52602214a8",
+    "runs/scene-numbering-20260916/calls/0018-B2.json": "65305832e2d82852e0cc21923b15c96c587b9f0a0187b5bf6b28b1075fc01303",
+    "runs/scene-numbering-20260916/calls/0019-A2.json": "f6f5a5eeb4b8b16fee44927420f324e045b752b4e3ded5ce21bc4049148db1ed",
+    "runs/scene-numbering-20260916/calls/0020-A2.json": "de3f6afd284f85b9fb383dcce22dde81e6d22fe1164bbf225d0de168f635c5f2",
+    "runs/scene-numbering-20260916/calls/0021-A4.json": "54e89a0f1074d190be24fa50ca91c53671eed702bb97eb356539b42f000494e0",
+    "runs/scene-numbering-20260916/calls/0022-A4.json": "24d0e9fdccec27b12605bd72988180ec52cfbd9898e2326a46a6f4146733abeb",
+    "runs/scene-numbering-20260916/calls/0023-B4.json": "148eb336f672e78152af40eab6bf1b0c13c00140f8b1f6c79c8ed91bf75bc4b4",
+    "runs/scene-numbering-20260916/calls/0024-B4.json": "5108a87de0b4620b0a1efacc8fc7025eadd8f5d35255ef894eb773f7b40d77a0",
+    "runs/scene-numbering-20260916/preflight/A2-request.json": "557d3627c500773d5b673b155b30a6622b0157d08b87fe33ac964d5abe8fb373",
+    "runs/scene-numbering-20260916/preflight/A4-request.json": "8b7dc70049f1c933f965e5ee28e0cf375ec9e3ae8fbd9c4e60291a4ea436f673",
+    "runs/scene-numbering-20260916/preflight/B2-request.json": "3ec1098715737a944a52a92d7093e87a7fea1464e9f1043667f10d25c7bf0675",
+    "runs/scene-numbering-20260916/preflight/B4-request.json": "ebca7dac7229d4d657dd19e8d2f23cff07f8167fb9bc4c268151be1bc25e9190",
+    "runs/scene-numbering-20260916/progress.json": "152c8bb21e09d643b90037ba2bbdde2e7a0bdd6a784e9d0409cd0f675ba61f3f",
+    "runs/scene-numbering-recipe-20260916.json": "b1f155af2381a9a1a166bdfd7dc6374d715ab7914da2bcaea064ce8bb5aa3cce",
+    "src/litharness/application/chapter_coverage.py": "57f16164fd226833360a1125502c25c2e5a8309dc1fb6a91182f73e26f787605",
+    "src/litharness/application/chapter_layout.py": "6cd5828fe8620c1a7d6838c8ffd6677384c058fd1c21ea47c0b396f8d69e5cd6",
+    "src/litharness/domain/draft.py": "1fa58dc4c40e96094e0739f650a99d943da2787a03d81c11a93bc725f1c8c1b9",
+    "src/litharness/domain/scene_brief.py": "6af683de02c561d1809fc7f1af2b2c0a983f44285e4c3c5d0edf1974deca42cf"
+  }
+}
