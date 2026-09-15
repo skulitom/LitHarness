@@ -1,0 +1,289 @@
+{
+  "books": [
+    {
+      "book": "A2",
+      "first_live_request_equals_preflight": true,
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 2,
+          "chapter_groups": 0,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            2
+          ],
+          "matching_writer_calls": [
+            4
+          ],
+          "ordinal": 1,
+          "plan_sha256": "285a1a31abb8083ce27009cc038c7b4ce17a40901aee829dbd0a932cdc455fbb",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            4
+          ],
+          "writer_calls_equal_to_accepted_text_after_strip": []
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            2
+          ],
+          "matching_writer_calls": [
+            34
+          ],
+          "ordinal": 2,
+          "plan_sha256": "93e07b1389f6c1b33c54177c51e172515465aa564e9afae781bca44fef700527",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            34
+          ],
+          "writer_calls_equal_to_accepted_text_after_strip": []
+        }
+      ]
+    },
+    {
+      "book": "A4",
+      "first_live_request_equals_preflight": true,
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 14,
+          "chapter_groups": 0,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            14
+          ],
+          "matching_writer_calls": [
+            16
+          ],
+          "ordinal": 1,
+          "plan_sha256": "b1a2e3151ee5e06d4f6cc58fc9fda35957c53be1d8d43edbbdd81fc1b2eadc08",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            16
+          ],
+          "writer_calls_equal_to_accepted_text_after_strip": []
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            14
+          ],
+          "matching_writer_calls": [
+            40
+          ],
+          "ordinal": 2,
+          "plan_sha256": "01d2f3635373b923a3ab317c565dbe15a6c56e774c2e0c7e301507520d8a525c",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            40
+          ],
+          "writer_calls_equal_to_accepted_text_after_strip": [
+            40
+          ]
+        }
+      ]
+    },
+    {
+      "book": "B2",
+      "first_live_request_equals_preflight": true,
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 6,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true,
+          "valid_chapter_membership": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            6
+          ],
+          "matching_writer_calls": [
+            8
+          ],
+          "ordinal": 1,
+          "plan_sha256": "d3324f023fa00eb6635de4e747c6de9cb44e10361a9e39c2a7f8cd1b678406d8",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            8
+          ],
+          "writer_calls_equal_to_accepted_text_after_strip": [
+            8
+          ]
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            6
+          ],
+          "matching_writer_calls": [
+            36
+          ],
+          "ordinal": 2,
+          "plan_sha256": "ab9322655b4ec9a6fffaa2c86734012074869138d74451983a3157e5786ee4a9",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            36
+          ],
+          "writer_calls_equal_to_accepted_text_after_strip": []
+        }
+      ]
+    },
+    {
+      "book": "B4",
+      "first_live_request_equals_preflight": true,
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 10,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true,
+          "valid_chapter_membership": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            10
+          ],
+          "matching_writer_calls": [
+            12
+          ],
+          "ordinal": 1,
+          "plan_sha256": "c951d164d070070b256d8e6a7cdb5e51877a27dd49a9f570d45aa5d0aa26c54f",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            12
+          ],
+          "writer_calls_equal_to_accepted_text_after_strip": [
+            12
+          ]
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            10
+          ],
+          "matching_writer_calls": [
+            38
+          ],
+          "ordinal": 2,
+          "plan_sha256": "12848a04c5fd32fdb2a9cb7924354abe33148591c914722e16d27a3028ef1fe7",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            38
+          ],
+          "writer_calls_equal_to_accepted_text_after_strip": [
+            38
+          ]
+        }
+      ]
+    }
+  ],
+  "source_hashes": {
+    "research/quality-measurement/chapter-coverage-20260915/evidence.json": "178b71e71a1dead6fb2c43f922260a36cbb905b71c2bbfcdc27185d044dc6f1c",
+    "research/quality-measurement/chapter-coverage-20260915/inspect_handoff.py": "7798a5a42bedce2983a4a0cd480d98d72b845e7359e7de4f3e65e4403966f144",
+    "runs/chapter-coverage-20260915/books/A2/book.db": "a920648fcadab67fc5aadcce2624b2342319c3f7759a61347c55f3322c6e8e2d",
+    "runs/chapter-coverage-20260915/books/A2/chapter-1.md": "c187114db6e7c78062064d64dc11bada2009f4a116cdc315db4d89ae40fd03e3",
+    "runs/chapter-coverage-20260915/books/A2/chapter-2.md": "06d6fe31e6dedf98cfcae27d6a9fdfea7f9127b180ed06806d45f32456215b78",
+    "runs/chapter-coverage-20260915/books/A2/views/chapter1.json": "1cad30ae905a13cf2a322c96c3b0071b695762f26918c5cdafed38081f61579f",
+    "runs/chapter-coverage-20260915/books/A2/views/chapter2.json": "8481b4b7f610e795b226610233314562ec41633c625d4ddac141d97c38d0a207",
+    "runs/chapter-coverage-20260915/books/A4/book.db": "c7fe4aa82355fd5b28b7680ba8d3a63df2e26b39db4845aaa546bac4585a102a",
+    "runs/chapter-coverage-20260915/books/A4/chapter-1.md": "4df985e74cb722945664029e91bc8ba1970751a3175b6e10150dde5f09c93be9",
+    "runs/chapter-coverage-20260915/books/A4/chapter-2.md": "ac2a75bc6ee0832bce3768b923b8f1ded4c48e37d8a806b9129a0e540c52bc18",
+    "runs/chapter-coverage-20260915/books/A4/views/chapter1.json": "28b92d5e75620d2caba34c6f06868b264c1f574c1c067479668e93174753e2e7",
+    "runs/chapter-coverage-20260915/books/A4/views/chapter2.json": "64469debb7eaa796bb23bf9325716c8c20f6bbabf174aa71287d106d9cae72cd",
+    "runs/chapter-coverage-20260915/books/B2/book.db": "af7bfafd0b8638975a9757966691456928ac1c77055ace7df9e4516a66c30aa0",
+    "runs/chapter-coverage-20260915/books/B2/chapter-1.md": "9f5b5351894c7a364a3beae3475742eb793c8dcf82746ce5ac3164919a312f8a",
+    "runs/chapter-coverage-20260915/books/B2/chapter-2.md": "cfb7a8c9b6d6d491aac732aa5ce97fa3c821b2e00edf7edab6ec85f731b447bf",
+    "runs/chapter-coverage-20260915/books/B2/views/chapter1.json": "1d59ebf39ae646b0540c797d059995315930d95dc6871e4c084c8a129cc159e3",
+    "runs/chapter-coverage-20260915/books/B2/views/chapter2.json": "b3b61389e42ef2f4b681cbccfd007dd6b218f418e667eaa6ea6237ed34657fc6",
+    "runs/chapter-coverage-20260915/books/B4/book.db": "ffe45ed8d9d8b2fca18e4b356cb5786f82e67052a77e451611bf2fae4dd184b1",
+    "runs/chapter-coverage-20260915/books/B4/chapter-1.md": "11a263b6921ed1d226e27cc1460595079334b9eefa9bea1df858d202072ce8a4",
+    "runs/chapter-coverage-20260915/books/B4/chapter-2.md": "eb5ff73340ac99a5b754d219d0d6a77445c1008e7fd215880fbf1e9d026f43f5",
+    "runs/chapter-coverage-20260915/books/B4/views/chapter1.json": "ec2d3a4ef7da0c18138c7189ab139d7a4056a05bdd1f7cb7cffbb1b05ce2fad9",
+    "runs/chapter-coverage-20260915/books/B4/views/chapter2.json": "c90fc08ff5bb7f8f2d6a9e29e611f782af3398749d495b77146f0c4c61b09e8a",
+    "runs/chapter-coverage-20260915/calls/0001-A2.json": "011ba5b208d605b6f5de8f6cf1dd5563374d61b9286735893ed5344b8b68b567",
+    "runs/chapter-coverage-20260915/calls/0002-A2.json": "2bcd576aedd2b3950e9e1048eb33aea75fa35641371badcc366a2439f2048bc4",
+    "runs/chapter-coverage-20260915/calls/0003-A2.json": "6d7ebcd8f38e43c3e56fad992a4c36e8ec0b855419feee360391942daedbbbc0",
+    "runs/chapter-coverage-20260915/calls/0004-A2.json": "64edaef18eb1ad7166595a85b557fb18889bb161eacc7a0a5d0a52dd3c1703fe",
+    "runs/chapter-coverage-20260915/calls/0005-B2.json": "d7c7f18531436030acc9175e7002072b8ca0bff389e18979cd1215aae9372e85",
+    "runs/chapter-coverage-20260915/calls/0006-B2.json": "1ecbe602467951d01853b370716ff69498915e6c4575145bf21cfee282193731",
+    "runs/chapter-coverage-20260915/calls/0007-B2.json": "e5117e74eac81a841218221a91054bdfcfe5084d220ab5117deebdbf5eb82438",
+    "runs/chapter-coverage-20260915/calls/0008-B2.json": "d0df309bcb87611f752e7eee84f80664280646b14270301c2ce89b23c6c82309",
+    "runs/chapter-coverage-20260915/calls/0009-B4.json": "bd8be5cae626fb070cada6e5242272739b2d94ac8ae8e624caa290932a225192",
+    "runs/chapter-coverage-20260915/calls/0010-B4.json": "28b1422ef862a1bfa53f619c70573acf2718e94ac6f749e13eb4305f9d1e433d",
+    "runs/chapter-coverage-20260915/calls/0011-B4.json": "9c78421a34175a5bce61d106118ba747a6d66a853b8595c608ab9484dcc32a8e",
+    "runs/chapter-coverage-20260915/calls/0012-B4.json": "992462fe20568a5ffbeb73417112dedac88d68e15ab6a1822ebc744943eaf55b",
+    "runs/chapter-coverage-20260915/calls/0013-A4.json": "42d58d5d32dac1354dc04a03c58cc0c1cfeea2a50a8900196b55eea9c793f2e8",
+    "runs/chapter-coverage-20260915/calls/0014-A4.json": "802566ec7e3b88ded3e0bf2857cf51e13980444a4857f9ebb4c7fc619171113e",
+    "runs/chapter-coverage-20260915/calls/0015-A4.json": "bf73e24396619fef95f683bbb37b26fb0b8d1234cdc38357ad78e9161a31dcc4",
+    "runs/chapter-coverage-20260915/calls/0016-A4.json": "de42912d672db0584fc9dea7cebc7cbcf188a7e4c1afb9046edc0b22de00b765",
+    "runs/chapter-coverage-20260915/calls/0017-B2.json": "92b9f6ddee0027f3a399a224e22314701a96a2e26a6efc6c94bb729fbc2edd7e",
+    "runs/chapter-coverage-20260915/calls/0018-B2.json": "44bf41ef4208f2abcfcf1dd1e0877fb322bc4c208797b3d014262380975e71cd",
+    "runs/chapter-coverage-20260915/calls/0019-A2.json": "40652c68f25a86b2bf370ce95dd0140d45f87e8dec114c562d6a536e82132484",
+    "runs/chapter-coverage-20260915/calls/0020-A2.json": "3d29bfeb05ec0003ab1b4bcd3983b5a426d51f77d74029fc89074bb7af457524",
+    "runs/chapter-coverage-20260915/calls/0021-A4.json": "b3761815c45176a91953fc0554c134d3cbf70a81589cd791e8e6a2695edc847b",
+    "runs/chapter-coverage-20260915/calls/0022-A4.json": "2328fadefa14479bb5416587a2d3052e03a7acc1ff8a6f4d0fdf82a5cce15540",
+    "runs/chapter-coverage-20260915/calls/0023-B4.json": "aefe0a5dbdf7c2f2506b2bcb614be0329909db0b64bfd5224da1998e9328bee7",
+    "runs/chapter-coverage-20260915/calls/0024-B4.json": "5d536a8be7ece001b2dfd026a86f4cde2d2d377910e57a1f9d7ff91b35a5cd1a",
+    "runs/chapter-coverage-20260915/calls/0025-A2.json": "4a9f63c06824ca65ef389f5197a1fa7777e28d540a993a909abc7d723532e79a",
+    "runs/chapter-coverage-20260915/calls/0026-A2.json": "031cf5152c80967a08e117cedf6a2ec3848fdc4f98b2b4c13f82c75710d8cd31",
+    "runs/chapter-coverage-20260915/calls/0027-B2.json": "1c8923a5c0d94f230b10c1fbc525fce73c3deebf77b78337f36affc542fd20f1",
+    "runs/chapter-coverage-20260915/calls/0028-B2.json": "69222e24d08e16efeb68eb9add8d1d0dc491f831a8d6d413063e281012f1f8dd",
+    "runs/chapter-coverage-20260915/calls/0029-B4.json": "6628427917390245e39866c87b0669cc26ef0a14a88ab4dd0d95065ba3158791",
+    "runs/chapter-coverage-20260915/calls/0030-B4.json": "462da1106eabaac3e65abbe9470347d4773a9593508745052145fb4e02251475",
+    "runs/chapter-coverage-20260915/calls/0031-A4.json": "e0102e4f14c733e2ba211cb5173c0b853077f43be670d4bde534e74dd885ea39",
+    "runs/chapter-coverage-20260915/calls/0032-A4.json": "0db24b8deb3859b8863062a754eacf9cfb456b8112113147c9a31f68d95a42b5",
+    "runs/chapter-coverage-20260915/calls/0033-A2.json": "92521989e49cc35077f1c86558bbdcb1b0340dd7a6f003895ef4537c663d7092",
+    "runs/chapter-coverage-20260915/calls/0034-A2.json": "e301da4185ba0d4d117c8f674adde07f0c7319a4470243167e51259e4fb057fb",
+    "runs/chapter-coverage-20260915/calls/0035-B2.json": "b5e182406e3e46cc6d02a6cabd706acac542faf277ce178437836d12e7118374",
+    "runs/chapter-coverage-20260915/calls/0036-B2.json": "042ecbf2dde954a9ae5d8bd58525f4d885eea5f3f792fad9f67a8f174ec5048e",
+    "runs/chapter-coverage-20260915/calls/0037-B4.json": "66276c2074793e6047c04ad78a5d102b564b91a8f6a7661126a5eb0cd784b245",
+    "runs/chapter-coverage-20260915/calls/0038-B4.json": "1e8eb457b51ae1a92b11fe1ecfea4a180b5d7060206b32e7efbfc3650f522a7b",
+    "runs/chapter-coverage-20260915/calls/0039-A4.json": "7eb172a2794b856a58689cfafb96ad4103067947d720b90227762754622348ea",
+    "runs/chapter-coverage-20260915/calls/0040-A4.json": "0f4c3350987c12adea0aa1ef71224d66249dca3c93beb33ea916055323517a36",
+    "runs/chapter-coverage-20260915/calls/0041-B2.json": "2513eb540e91be6b30bffa785263f702eb457531619366841b8d5cec21b994b8",
+    "runs/chapter-coverage-20260915/calls/0042-B2.json": "d7d3ffc24505e5c4ba5116f04c932479b6d56670e062a6c1780b0f3b0145fb40",
+    "runs/chapter-coverage-20260915/calls/0043-A2.json": "21bf77194ded7ab445d6b22730c746defa269f8eb142b332da84d9b12c0dccd2",
+    "runs/chapter-coverage-20260915/calls/0044-A2.json": "b5fa33676b3ba85e76c45d02754d949cca5f73ccb9c45017f87b227d0f40c3de",
+    "runs/chapter-coverage-20260915/calls/0045-A4.json": "0810b5cbd60e7a6a226c01345bc23903af2927da38aae43b921e0fe469c3bb76",
+    "runs/chapter-coverage-20260915/calls/0046-A4.json": "fc0d3c59c65705986cecdffb6c870375abb138ac6440e914ded40601853e2211",
+    "runs/chapter-coverage-20260915/calls/0047-B4.json": "26e4afc3b0983d8f756e97de3ae2419a1fa4e0936d0a175f13746267e5442543",
+    "runs/chapter-coverage-20260915/calls/0048-B4.json": "cb19dbf7612453cba61b5840f5ceb02d97263824035aadbab3fb88b92f0e999f",
+    "runs/chapter-coverage-20260915/preflight/A2-request.json": "72c3625a58164b2d7f5d21a83875b8d282bb105bec27062f6cd3544c2feabecd",
+    "runs/chapter-coverage-20260915/preflight/A4-request.json": "5b98de73a09a1327caba3d39bd2fcd0239f6c48f6362126f1b7a1a2f8a73afbd",
+    "runs/chapter-coverage-20260915/preflight/B2-request.json": "d5a29e9bddcd3d6f86bb24d318b9b248f16a6850b1837298a64d0a5251cb3d5b",
+    "runs/chapter-coverage-20260915/preflight/B4-request.json": "f9609553b335a4ca37de7d47be5f9ffc88147fe00a1c2f91e7c5f6092cad5222",
+    "runs/chapter-coverage-20260915/progress.json": "02873657411b2f741f9367d761af5ffa3e099ee2d3cf45aaeed91a3b0315d9bb",
+    "src/litharness/application/chapter_coverage.py": "57f16164fd226833360a1125502c25c2e5a8309dc1fb6a91182f73e26f787605",
+    "src/litharness/application/chapter_layout.py": "6cd5828fe8620c1a7d6838c8ffd6677384c058fd1c21ea47c0b396f8d69e5cd6",
+    "src/litharness/domain/draft.py": "1fa58dc4c40e96094e0739f650a99d943da2787a03d81c11a93bc725f1c8c1b9",
+    "src/litharness/domain/scene_brief.py": "6af683de02c561d1809fc7f1af2b2c0a983f44285e4c3c5d0edf1974deca42cf"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "chapters_read": 8,
+  "files": {
+    "research/quality-measurement/chapter-coverage-20260915/evidence.json": "178b71e71a1dead6fb2c43f922260a36cbb905b71c2bbfcdc27185d044dc6f1c",
+    "research/quality-measurement/chapter-coverage-20260915/handoff-evidence.json": "3bdcc7f649afa184f3616412bb7c1409d94617a576972a953d47f1e9dd351c9a",
+    "runs/chapter-coverage-20260915/READING-NOTES.md": "5f7912037f4744187d05a5057240265a40f2e029974ce10a895aa9c1ae94492a",
+    "runs/chapter-coverage-20260915/REPORT.md": "e68dc1c228a1bb0728a7e8d35759dd2ec451de4aab74a09da04f4528a37ba3db",
+    "runs/chapter-coverage-delivery-handoff.log": "83641958ec7f96b5ca52e0157833c9bd562b9ead24f6a9d6d5fe555c9258d949",
+    "runs/chapter-coverage-final-handoff.log": "49498feb83efedfbe7ee7d6990de8e784121715f38f8944b7a18882dbce56f13"
+  },
+  "independent_story_units": 2,
+  "interpretation_kind": "located_editorial_reading_not_validated_reader_measurement",
+  "outline_calls": {
+    "A2": [
+      2
+    ],
+    "A4": [
+      14
+    ],
+    "B2": [
+      6
+    ],
+    "B4": [
+      10
+    ]
+  },
+  "raw_differences_inspected": true,
+  "read_after_generation": true,
+  "recorded_at": "2026-09-15T16:32:14.758314+00:00",
+  "schema": "litharness.located-reading-record.v1",
+  "status": "complete",
+  "verification": {
+    "coverage_percent": 89.97,
+    "final_log": "runs/chapter-coverage-delivery-handoff.log",
+    "mode": "handoff",
+    "passed": true,
+    "tests_passed": 5212,
+    "tests_skipped": 20
+  },
+  "writer_calls": {
+    "A2": [
+      4,
+      34
+    ],
+    "A4": [
+      16,
+      40
+    ],
+    "B2": [
+      8,
+      36
+    ],
+    "B4": [
+      12,
+      38
+    ]
+  }
+}
