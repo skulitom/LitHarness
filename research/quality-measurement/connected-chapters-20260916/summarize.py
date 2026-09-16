@@ -113,6 +113,11 @@ def summarize():
             "additional_calls": len(state["calls"]) - prefix,
             "additional_tokens": sum(c["tokens"] for c in state["calls"][prefix:]),
             "original_call_metadata_preserved": state["calls"][:prefix] == stopped["calls"],
+            "earlier_chapter_hashes_preserved": all(
+                state["books"][book]["scene_hashes"].get(scene) == expected
+                for book, item in stopped["books"].items()
+                for scene, expected in item["scene_hashes"].items()
+            ),
             "frozen_continuation_inputs_match": all(
                 sha(Path(p)) == expected for p, expected in amendment["files"].items()
             ),

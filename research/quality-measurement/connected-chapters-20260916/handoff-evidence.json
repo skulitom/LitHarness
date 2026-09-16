@@ -1,0 +1,414 @@
+{
+  "books": [
+    {
+      "book": "A1",
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 25,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            25
+          ],
+          "matching_writer_calls": [
+            27
+          ],
+          "ordinal": 1,
+          "plan_sha256": "1e56620b305d5f6f5ed8a42fb2b3d307273e4afd0ff3c7ae734ebeb9b4e67071",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            27
+          ],
+          "writer_calls_equal_to_accepted_text": []
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            25
+          ],
+          "matching_writer_calls": [
+            57
+          ],
+          "ordinal": 2,
+          "plan_sha256": "4d56f3fee8eb164c3f59d5b60ae70e2063adeabd5f9ff83264ab793c92fd09a4",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            57
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            57
+          ]
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            25
+          ],
+          "matching_writer_calls": [
+            81
+          ],
+          "ordinal": 3,
+          "plan_sha256": "d25099077c9ee98b0229aa9b8c7b2fcde3c307f52f275c16158b0967db3080f9",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            81
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            81
+          ]
+        }
+      ]
+    },
+    {
+      "book": "A2",
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 37,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            37
+          ],
+          "matching_writer_calls": [
+            39
+          ],
+          "ordinal": 1,
+          "plan_sha256": "aef9cd98c4bc22b4fac7a872b71873569dd6208214cdc09748e0399b71f0babf",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            39
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            39
+          ]
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            37
+          ],
+          "matching_writer_calls": [
+            63
+          ],
+          "ordinal": 2,
+          "plan_sha256": "583e24a14592537864ffe867d1180a918cc56989005745454989e7c87e1a41e8",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            63
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            63
+          ]
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            37
+          ],
+          "matching_writer_calls": [
+            87
+          ],
+          "ordinal": 3,
+          "plan_sha256": "ee35ac0f24fecb614f606646e6d3044b6f98a4e755fac9907e815d2a6462bd0c",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            87
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            87
+          ]
+        }
+      ]
+    },
+    {
+      "book": "B1",
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 29,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            29
+          ],
+          "matching_writer_calls": [
+            31
+          ],
+          "ordinal": 1,
+          "plan_sha256": "1368e2423efd09fb195bb1f173569b383f77a9a6d4669123e2a348ccf4d2c7e2",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            31
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            31
+          ]
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            29
+          ],
+          "matching_writer_calls": [
+            59
+          ],
+          "ordinal": 2,
+          "plan_sha256": "d15a400f62fa752b5363a44817384d96e42d068fd9b442b6dea7c3c2d5a23023",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            59
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            59
+          ]
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            29
+          ],
+          "matching_writer_calls": [
+            83
+          ],
+          "ordinal": 3,
+          "plan_sha256": "896da6cf24002eaf1cc79be772291583dba3cc19d0fa9c6cf03f13ff65d398b9",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            83
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            83
+          ]
+        }
+      ]
+    },
+    {
+      "book": "B2",
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 33,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            33
+          ],
+          "matching_writer_calls": [
+            35
+          ],
+          "ordinal": 1,
+          "plan_sha256": "f6d40afc9a9f13ac5cbeecea2d17fed5d22eedf66fd3d27f12d3032074536116",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            35
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            35
+          ]
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            33
+          ],
+          "matching_writer_calls": [
+            61
+          ],
+          "ordinal": 2,
+          "plan_sha256": "710ed1a34c742b05164af4575e6b81040c542d9dc64f707d38e4269bcb29736b",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            61
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            61
+          ]
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            33
+          ],
+          "matching_writer_calls": [
+            85
+          ],
+          "ordinal": 3,
+          "plan_sha256": "923b7aa9edd01d1711378a555fe4b6952660b7695e0e766e7cc02652424208e4",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            85
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            85
+          ]
+        }
+      ]
+    }
+  ],
+  "source_hashes": {
+    "research/quality-measurement/connected-chapters-20260916/evidence.json": "e346a4d61bc1a422ce21c98a8d2c9977827d7fca016c91ff94d7584060dac9a6",
+    "research/quality-measurement/planning-material-20260916/inspect_handoff.py": "b36d0f72f605beb15fa40c394fe781feba7b6037f6b477dbcaae0b1f55e72ce6",
+    "runs/connected-chapters-20260916/books/A1/book.db": "91aa77cb97603a667879dfcb4ffa384acb8be4e445c4b13453227f15294bcf83",
+    "runs/connected-chapters-20260916/books/A1/chapter-1.md": "4c6ff2393e093911920774bd6ed52234e8b54ba8887d0359a2606acc9d73b6bc",
+    "runs/connected-chapters-20260916/books/A1/chapter-2.md": "5cc526d32cf1176e1c54e3bff36c7e3ac5cddfe75e582aa14b1f6d47fbbaae85",
+    "runs/connected-chapters-20260916/books/A1/chapter-3.md": "92e53eb074a7173e4d2e7249d63ab7a632aef1fbfeac73e70ec97038a4ea8126",
+    "runs/connected-chapters-20260916/books/A1/views/chapter1.json": "26755765e6eca6628bd1a946e1019348c224f2c367d1f982c3c64c28b25e1876",
+    "runs/connected-chapters-20260916/books/A1/views/chapter2.json": "3a1d7d54826795d1e3033afd6bae00cb6b6cc26d3f60d581f3921a662251981c",
+    "runs/connected-chapters-20260916/books/A1/views/chapter3.json": "2fa2cf0c39014aa46f2e228b3261ea775a836a02910267173af3b9f5a3769a6e",
+    "runs/connected-chapters-20260916/books/A2/book.db": "0d4519ecd1102c57c4a0c98dbce1a0c9c3dd8b546433e999ed2dcea84cb5527a",
+    "runs/connected-chapters-20260916/books/A2/chapter-1.md": "86560e92e8465997d9a4387771ffcdd7729ea0bd460ba4f15ec6f59f323da9bb",
+    "runs/connected-chapters-20260916/books/A2/chapter-2.md": "96e4f7163083b579ac555d902447028bd51c67b59d5c37ec311c002facb664e6",
+    "runs/connected-chapters-20260916/books/A2/chapter-3.md": "06c09df670ba27653c7485b331d6f382d33bf4060709a2e24c062a9fc0a3188c",
+    "runs/connected-chapters-20260916/books/A2/views/chapter1.json": "386df731fd8d8fd071e38a4c7532d6fda136eceb5c3596ea8659437e3cfaa2ae",
+    "runs/connected-chapters-20260916/books/A2/views/chapter2.json": "d9bcd3bf4ec44a10030d7eb24d6aa464e486420749a22840bacb8425dc08afd4",
+    "runs/connected-chapters-20260916/books/A2/views/chapter3.json": "6dee70c420ba06a0eba5b8f87bbee348a287916f46af7698b195d22de2731b5a",
+    "runs/connected-chapters-20260916/books/B1/book.db": "ff90b47034f3643b4e17d60279b1e8af5576f277040c1b2cce3dea33a728ff2b",
+    "runs/connected-chapters-20260916/books/B1/chapter-1.md": "c7df3c19132908e8643cbcfac8c895dba06ed6c6ed36aa8aab7dc5fa7399cb79",
+    "runs/connected-chapters-20260916/books/B1/chapter-2.md": "3b817b670c69d83a5c45e39cce3f78eef28a557ba53555334e19e89fd37d2c84",
+    "runs/connected-chapters-20260916/books/B1/chapter-3.md": "520870bf81702600f7d9d3ea08fbddb06878b3ab2403299fa5a22d6a41e7d9b2",
+    "runs/connected-chapters-20260916/books/B1/views/chapter1.json": "c7c6c592b2c4b73f25bc74a504cdcc8e2df9f128398068bf0d968a70e0564687",
+    "runs/connected-chapters-20260916/books/B1/views/chapter2.json": "b4cdebd8a234c8788b01e3ad421d225d82f01c107fcc87d78be492fcbd233bfc",
+    "runs/connected-chapters-20260916/books/B1/views/chapter3.json": "2c98c2a50abcc0a4c2bd8ad12add5e1d8dfb29d681beb2f9b30bd33432517b34",
+    "runs/connected-chapters-20260916/books/B2/book.db": "56c83dcffae116423d1075b5db1e552e9233218508f027dde296934d605673ce",
+    "runs/connected-chapters-20260916/books/B2/chapter-1.md": "06a1b336923ddd7d7badcdeef5f392a609099d5e04582caf257254d23fa29ad5",
+    "runs/connected-chapters-20260916/books/B2/chapter-2.md": "d0d627a6aeb5c8fcdb06626749a4d5df3308053ab404ade1e052deda75980482",
+    "runs/connected-chapters-20260916/books/B2/chapter-3.md": "dd8f6ba7c15d25bf48841e3d5c8c80e40e3204cdb6e161b894e6636b889db3ac",
+    "runs/connected-chapters-20260916/books/B2/views/chapter1.json": "70432a3024611bedf197acac82e619e1a2582368a3f9d6af507c4c0da36bc3f2",
+    "runs/connected-chapters-20260916/books/B2/views/chapter2.json": "1c5b1cee297e648d04b5073e177cc46ec27e4cee0b61857e17569da414a3ad9d",
+    "runs/connected-chapters-20260916/books/B2/views/chapter3.json": "a5bba502f9c5d9776d34f624e2fd9b41edb3e053f52c0a3a5b6a766dfc580d92",
+    "runs/connected-chapters-20260916/calls/0001-A1.json": "50f0d24774cb3ee2d96027e925aed8349e1acb8b4e7a7201382c657310dd24e9",
+    "runs/connected-chapters-20260916/calls/0002-A1.json": "3354b8d5a1124d1dbd84818e678f2b28ca5346a117681f7b0d086f93ae5becc0",
+    "runs/connected-chapters-20260916/calls/0003-A1.json": "dc003536754943f5b1d9d3ba3071da62019f59d831d9c04b51ddac645d07c633",
+    "runs/connected-chapters-20260916/calls/0004-A1.json": "4d536ebc24d556786539b9e4973bb8c0e8630bb86763be10308f233b71698e2d",
+    "runs/connected-chapters-20260916/calls/0005-B1.json": "7e186677017a9b77b0e3d310069433f26e13d90d60f2e749acc007be05c81b82",
+    "runs/connected-chapters-20260916/calls/0006-B1.json": "05f66d06fcd385d6201693947ab55cd65b9b76249351e1175d48fb564cdce080",
+    "runs/connected-chapters-20260916/calls/0007-B1.json": "dfed1f3098736fe2a216c6fb7ae289d994377e3f29a9a21853533ec2029c9734",
+    "runs/connected-chapters-20260916/calls/0008-B2.json": "0d29fdfd7373541df9bbcf6062e57d945959a50aa8e5f75b3fbf6808e9355d3f",
+    "runs/connected-chapters-20260916/calls/0009-B2.json": "d0444515c43c730775158b3e5ad1cfd44b6ee3e540be9eb8bfc6e4e635f8663a",
+    "runs/connected-chapters-20260916/calls/0010-B2.json": "621baf51496444fe3a665703872ece1e9d42a4442fbab21099b89cf1f78cf64a",
+    "runs/connected-chapters-20260916/calls/0011-B2.json": "23b9f0a4d1aa5aa237d2e64b856e80e192fa99c873e83cfdd07de506e60622dc",
+    "runs/connected-chapters-20260916/calls/0012-A2.json": "c07001cbb261ba7ea71e1ad4e8bfc39c513c9aa1f6c6c2f8967b7b621ca8b3d8",
+    "runs/connected-chapters-20260916/calls/0013-A2.json": "99fd8b3c28093dae478039ac9c29d60d86a3d5234e9dc87dfe989a847d403219",
+    "runs/connected-chapters-20260916/calls/0014-A2.json": "7d4c1762e1ab9198e3ef5fff90733aa1365a8d3eada0e355a2da797deafc75d1",
+    "runs/connected-chapters-20260916/calls/0015-A2.json": "8b2739ada97239a2f92753e313b9b3304080fd3675a23d2e7b216e91560ef08b",
+    "runs/connected-chapters-20260916/calls/0016-A1.json": "0a035f745d5a006950c1ec65e8c57cfcc0388da177308275d828e376965d6c96",
+    "runs/connected-chapters-20260916/calls/0017-A1.json": "29b5b74883960aec6a7ce8f9ca110be83700a2c6ca7a568bc15cfd5d8a74e293",
+    "runs/connected-chapters-20260916/calls/0018-B1.json": "9532c929fc42f160459b76fc49265737f3fe2e0dd80b5e8203293ef2c04b8fed",
+    "runs/connected-chapters-20260916/calls/0019-B1.json": "de2ef464c88862e0c948eb4737522154fea1213b0f0e63e36d2cb54b1db35465",
+    "runs/connected-chapters-20260916/calls/0020-B2.json": "32b4a1d0c03c7212df0a8467ad7ca3876ba872c737c57370b2a1e19825835a30",
+    "runs/connected-chapters-20260916/calls/0021-B2.json": "879e3c3646e630314a2acd8058610958de9f698efe4c7269eb46fbe284c22bf7",
+    "runs/connected-chapters-20260916/calls/0022-A2.json": "8c19405d71d13069a6e1d08a993baa7ab71d26b319516025bbabb1b4560588e7",
+    "runs/connected-chapters-20260916/calls/0023-A2.json": "bac7bea1faa0cb18ff400849958092ede2c1c0de9fedd98851a34351055319bd",
+    "runs/connected-chapters-20260916/calls/0024-A1.json": "c516ae0d1c488296ec196da57e0c1981c1e546879b2ba7dcd5703989b500cfae",
+    "runs/connected-chapters-20260916/calls/0025-A1.json": "90445975553b72ef1ada0ade473783cd480426f9b75bef70226cb9b597cc718e",
+    "runs/connected-chapters-20260916/calls/0026-A1.json": "3e51eead768b9af0680c4adb76d2be1806300587e6bae33c331d7a97e2898057",
+    "runs/connected-chapters-20260916/calls/0027-A1.json": "33d74b0574ae50a378bd743260a615ed8ab988b93770d4493007badfc45c6c3c",
+    "runs/connected-chapters-20260916/calls/0028-B1.json": "a15b46c4c2d01b1ec4c08b9d74a317d36bef9318e8be05382332dbcf73b4eba1",
+    "runs/connected-chapters-20260916/calls/0029-B1.json": "8cb8f597373aeae72d70fef35173cd1a020472479b94767dc3bf74e3f63ac39d",
+    "runs/connected-chapters-20260916/calls/0030-B1.json": "cbbba242062dd1a198ad175512aad626acd5ccde85cd1d6e1b827246c3a39296",
+    "runs/connected-chapters-20260916/calls/0031-B1.json": "7e5688c036d4914ad8d3b4cc3572d1b879b02d774c997a5c300e64a18a34a14b",
+    "runs/connected-chapters-20260916/calls/0032-B2.json": "da327598094eee4d72181c2395992525c20276e817234fbbaf68b5f5f2d6bf7c",
+    "runs/connected-chapters-20260916/calls/0033-B2.json": "940f7bb0af2bbd53b4192e1e4487c748d9d89b782900940c3b0e53186a36f1c0",
+    "runs/connected-chapters-20260916/calls/0034-B2.json": "265b14fc7fc74bd98f6861b282dd68df6c731163060c15561736e1ef228ded55",
+    "runs/connected-chapters-20260916/calls/0035-B2.json": "4caba7664be0099d545b99776c12adf85d798d5bd4b6b9d746ee77b0048ea3d6",
+    "runs/connected-chapters-20260916/calls/0036-A2.json": "10bef0c2232481ef5ad45191441f01eaff1e7c8db23ea177cbeede07c96c5f9a",
+    "runs/connected-chapters-20260916/calls/0037-A2.json": "f18c4e2dfe0a68f1ccf31531364e459e13fb1b57fc3a0a7170b947f70792d263",
+    "runs/connected-chapters-20260916/calls/0038-A2.json": "6fe8a069ee79fdbd77db6fd8c2639d0cc0aa926aaceffc487da90066546d1c4f",
+    "runs/connected-chapters-20260916/calls/0039-A2.json": "a27ecc4d4bd64531407b739880518823396088a5038b00074bbd6c357ea2a6b5",
+    "runs/connected-chapters-20260916/calls/0040-B1.json": "448f6d4d8f963a10cc9b6fb323ceae054df494945db81a7f4a77b7a0d1dd0352",
+    "runs/connected-chapters-20260916/calls/0041-B1.json": "f506e533d19f44e6595afa24c1e83b071dfbfeac4e9620f3d0d5e3da21d879ec",
+    "runs/connected-chapters-20260916/calls/0042-A1.json": "641a47bfc2a5e62fc6b05b0af5106b9f504c1bb79412ac14a8a6cf3e07adccde",
+    "runs/connected-chapters-20260916/calls/0043-A1.json": "1814647eb3342ec9b21d3b05471400bef198de664e702b241a69fb255cc1b84b",
+    "runs/connected-chapters-20260916/calls/0044-A2.json": "1a54e96d28cd877dea5cffa1526ec8f57cf281fe7e6d297e0e5d2e3e42673fc8",
+    "runs/connected-chapters-20260916/calls/0045-A2.json": "76e91c0bb5b4b07784411048d6c456fadfa92a450441f587ac5b26f06c58704f",
+    "runs/connected-chapters-20260916/calls/0046-B2.json": "9c6271cc401168c3a4a001ebac4fbdc85dc9a9f86170439ec13d52bc8f9b64c6",
+    "runs/connected-chapters-20260916/calls/0047-B2.json": "ad549c0d3fa35e4fca4817cfa11abda6a9298db5632763a4f5aec9d9001054ab",
+    "runs/connected-chapters-20260916/calls/0048-A1.json": "ff26de160627a3c4c3bf044efc1e5fb9723331e3eda2c010f663d87c2508facd",
+    "runs/connected-chapters-20260916/calls/0049-A1.json": "c4bad53e8855cb36a6e987ab5ddb344c26873959b833f4ff47be471a30978c09",
+    "runs/connected-chapters-20260916/calls/0050-B1.json": "a6b03e1a9260e8f08d319bbdf35fc95e9f535834f35e0a88cf1c307ef847210c",
+    "runs/connected-chapters-20260916/calls/0051-B1.json": "50a5558c957805e8001fdcc4035d59dac69ba7c84e02e9eec37635751db8f872",
+    "runs/connected-chapters-20260916/calls/0052-B2.json": "6bad05132db64a00b01139af9bb55fe8259f6bf5431d456a5aea84a9f46519a2",
+    "runs/connected-chapters-20260916/calls/0053-B2.json": "1fe951eda834b6a41182a3fcb3eed79fed921d09f16817aa636a89ebf228f339",
+    "runs/connected-chapters-20260916/calls/0054-A2.json": "2e6d25e82a8af12979a7927c118d202696ee14ef2d18b632896bbdb6bc3cc030",
+    "runs/connected-chapters-20260916/calls/0055-A2.json": "6843dc25879c0c42bd972c835ea79e19e18cd373df5be5a58d5a7acd7e7e8eb0",
+    "runs/connected-chapters-20260916/calls/0056-A1.json": "a8f06fb412cad82893c72a6c3db2790902560bbe3869f41a579e565c6123f9c2",
+    "runs/connected-chapters-20260916/calls/0057-A1.json": "e6fb85257028172671923c8d8c068035ed80e1a290a1b304e44be03b0f743847",
+    "runs/connected-chapters-20260916/calls/0058-B1.json": "ae8ed421ae9426d79f1a45d9a2712de64b1d1ec64a43009dd140347202a2a95a",
+    "runs/connected-chapters-20260916/calls/0059-B1.json": "8929c37793e4c8be9e82ebc95f26e9ac10429cb9ead1a355773a62e788352dc4",
+    "runs/connected-chapters-20260916/calls/0060-B2.json": "bf7dfa0811559fcec2d5c1af6bcfaf7a9c3d77cb1140e4e2da171c4c2d8dac33",
+    "runs/connected-chapters-20260916/calls/0061-B2.json": "2dd19d7c30843937de73405daffb10a18183bae0824ad7fe8da7989ce01585e6",
+    "runs/connected-chapters-20260916/calls/0062-A2.json": "d11f628b4fb08de88523c8ee50a140bf48f0fc70eef2fc17c5124d22c9bd0c5f",
+    "runs/connected-chapters-20260916/calls/0063-A2.json": "5a92827e99d259509c440368a6aa71705d7d4d9b4d35793c3965e6c4bcf3a790",
+    "runs/connected-chapters-20260916/calls/0064-B1.json": "9f008f1e30a1420274f948cc10986ec7074d5ce3d1f0fcd24738340a12bb4e2f",
+    "runs/connected-chapters-20260916/calls/0065-B1.json": "9f1c33cd8a4bfab97628b4de6f636347a226a0a92fc55ac3deb59ac09118aea5",
+    "runs/connected-chapters-20260916/calls/0066-A1.json": "80cb9f62fa82673ccda916775d8aedcd402a86f2f7f9716e1519ef195508fe3a",
+    "runs/connected-chapters-20260916/calls/0067-A1.json": "764d27686039e1fa9501469b2bded2631c2b07065fbc505cfd41e2b9419c407a",
+    "runs/connected-chapters-20260916/calls/0068-A2.json": "bcc8248387620dd62b7d2a5e66da56391ab333dd4b5c11c774546ff6d7f94d54",
+    "runs/connected-chapters-20260916/calls/0069-A2.json": "abdad8075cd3a7afb83cb850fea453ce8266e99fa6f834f5eb2764cbb8547691",
+    "runs/connected-chapters-20260916/calls/0070-B2.json": "46f3377a2a8d2cd28cd144f968f424fb33f9618981093c4ae4410d2d6aa98b87",
+    "runs/connected-chapters-20260916/calls/0071-B2.json": "5e94fd92d015294d38c07a0f8420a2be8047d60231025a657b7743bb712e5aac",
+    "runs/connected-chapters-20260916/calls/0072-A1.json": "381ea27d0e0d44ba8ffa0c37f5b8fb50ee85ff2400d6bd8db443f9c759ec6583",
+    "runs/connected-chapters-20260916/calls/0073-A1.json": "49428789b1fde92f48819983eabd65d49d8aac61e701eb260f9bdee3eb0bc210",
+    "runs/connected-chapters-20260916/calls/0074-B1.json": "be3f321c083b123ac4a6f5330466056e61c39a91ced5bc7ed1bcbee318b9fb56",
+    "runs/connected-chapters-20260916/calls/0075-B1.json": "5f095a8d73c1d2d937f5abae6ebfe3dad3c39342e0b0fa0b45e16a62e3efc014",
+    "runs/connected-chapters-20260916/calls/0076-B2.json": "61d7384d21254dac470de29177871c3d5a54ad8dad8d9cb613dd96c816b3c4ae",
+    "runs/connected-chapters-20260916/calls/0077-B2.json": "8837be4be78fbd1c88622c1df2818e901521e89406adbec549b4a21f1b6a7a90",
+    "runs/connected-chapters-20260916/calls/0078-A2.json": "c991456e3e5377bba79c847ec474fc7ae8528f90c9ace76650aace9d846ac576",
+    "runs/connected-chapters-20260916/calls/0079-A2.json": "18aeebb0e14930df49e87d0f9ad5f05630f913e550b10a1c6d37d5b61000d879",
+    "runs/connected-chapters-20260916/calls/0080-A1.json": "62fe93b9644003444c50998e2f51cba85252c65b7c67c1d4d946fa9db6d0f0bc",
+    "runs/connected-chapters-20260916/calls/0081-A1.json": "89cb71539c468deaed2a7cc11d51080bb80a0efed269d073b66ffa06bfb90059",
+    "runs/connected-chapters-20260916/calls/0082-B1.json": "c19c52a6f0393550fadf5a2e39bfb7cb8d6e0a62e0b6d54cbe8765ea41d46c3d",
+    "runs/connected-chapters-20260916/calls/0083-B1.json": "c1bf7eeb3a2a0940d8b70019e9323765fd1174f1babcbcef33b5a1793bcad201",
+    "runs/connected-chapters-20260916/calls/0084-B2.json": "a6ffc826526f6fd4dea067df39cf18556f59712fc2969d468a010ada48777cdb",
+    "runs/connected-chapters-20260916/calls/0085-B2.json": "44b401745d959dcd76b234dbe4dd8a9bfd07ef0021767c110d2b6b7d6eb4b2a7",
+    "runs/connected-chapters-20260916/calls/0086-A2.json": "430c2b00384fbc14b76eb3eacc54ead51583644b8c6c1c37ffc3ff468dcbcc68",
+    "runs/connected-chapters-20260916/calls/0087-A2.json": "dc174cb8b51a7e72a2d8c3e917e51a43edb1758afa4ce883f6f70cb5acb7a31e",
+    "runs/connected-chapters-20260916/calls/0088-B1.json": "93907526be22abdf987e4bd71bb14d84010230f96c9e8958792ffb9c2236ffc9",
+    "runs/connected-chapters-20260916/calls/0089-B1.json": "4661ff77f9849813dff9b9ccd9fda003f20df6aa879a898b72c5ca8b68494afd",
+    "runs/connected-chapters-20260916/calls/0090-A1.json": "078423a37674106ae3e72fee463a11b3d0990ca1dec945f4a9b98225cfd64eda",
+    "runs/connected-chapters-20260916/calls/0091-A1.json": "151bf5da7cc5feb6a228b3f21e24071a9f6a5ad1f02f0f10798cf6bf832cce3c",
+    "runs/connected-chapters-20260916/calls/0092-A2.json": "217488a383f810bf3ba8397daf9312c4cfb22cb9c4dafd9cdc6a44795e00990e",
+    "runs/connected-chapters-20260916/calls/0093-A2.json": "c5ec404eea0df09fbdac8f9ef289a90dbdfecfc8c41b780f2a21de15a5305e3c",
+    "runs/connected-chapters-20260916/calls/0094-B2.json": "21d09039e3df79ff5d9e5984c27e873a844e12d93dc48d761905488b48b74184",
+    "runs/connected-chapters-20260916/calls/0095-B2.json": "2b6aff9937dbfcc498b03b57578e716bd41a56a5d7d68bd4b196f45c55208413",
+    "runs/connected-chapters-20260916/progress.json": "2d83944e88de66c48fd27767b280b24c0fbc6ecccfece47c18ff765d2a6090e3"
+  }
+}

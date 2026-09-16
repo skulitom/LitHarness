@@ -9,10 +9,35 @@
       "kind": "registration",
       "path": "research/quality-measurement/connected-chapters-20260916/registration.json",
       "sha256": "c430e463989d91cb142d77543929a3b8c519095fafaca91fd3046796912325ef"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/connected-chapters-20260916/evidence.json",
+      "sha256": "e346a4d61bc1a422ce21c98a8d2c9977827d7fca016c91ff94d7584060dac9a6"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/connected-chapters-20260916/handoff-evidence.json",
+      "sha256": "4464d399a69ea9ec5da410432c9b495bf370b8a7c6fe89ee71811a596e3f90c9"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/connected-chapters-20260916/CONTINUATION.md",
+      "sha256": "e36bf89fc2178996e0e7384fb1963f0b0bf53c3841dfa15b2c5861c39ad68a7f"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/connected-chapters-20260916/continuation.json",
+      "sha256": "266650516d5acc939541fee735bc340839a14f4dc0a1bbaa8c70701ba4ddb129"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/connected-chapters-20260916/readout-controls.json",
+      "sha256": "c387081b7ac63f11e6bb3f1fae152d3837f6dfd7cec9321738ed1d16ea0fae05"
     }
   ],
   "claim_id": "connected-chapters-20260916",
   "schema": "litharness.epistemic-claim.v1",
   "statement": "The registered first-draw workflow comparison records intended and enacted activity across reached consecutive chapters, with located continuation observations and production controls. It licenses no literary-quality effect.",
-  "status": "registered"
+  "status": "observed"
 }

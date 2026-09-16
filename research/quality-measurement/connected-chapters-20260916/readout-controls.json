@@ -1,0 +1,111 @@
+{
+  "calls": 95,
+  "chapters": 12,
+  "continuation": {
+    "additional_calls": 18,
+    "additional_tokens": 271535,
+    "earlier_chapter_hashes_preserved": true,
+    "frozen_continuation_inputs_match": true,
+    "original_call_metadata_preserved": true,
+    "original_calls": 77,
+    "original_status": "partial",
+    "original_stop": "global token ceiling",
+    "original_tokens": 2536927,
+    "preparation_gap_seconds": 510.319832
+  },
+  "elapsed_seconds": 4492.813967,
+  "integrity": {
+    "accepted_equal_raw_or_surface_cleanup": true,
+    "briefs_match_recorded_outlines": true,
+    "frozen_files": 367,
+    "frozen_files_match": true,
+    "full_briefs_in_writer_requests": true,
+    "handoff_source_files": 126,
+    "handoff_source_files_match": true,
+    "job_bound_plans": true,
+    "step_controls": true,
+    "transport_controls": true
+  },
+  "known_tokens": 2808462,
+  "phases": {
+    "chapter1": {
+      "calls": 16,
+      "known_tokens": 158252
+    },
+    "chapter2": {
+      "calls": 8,
+      "known_tokens": 74525
+    },
+    "chapter3": {
+      "calls": 8,
+      "known_tokens": 90133
+    },
+    "concept": {
+      "calls": 15,
+      "known_tokens": 105443
+    },
+    "drain1": {
+      "calls": 8,
+      "known_tokens": 42054
+    },
+    "drain2": {
+      "calls": 8,
+      "known_tokens": 42484
+    },
+    "drain3": {
+      "calls": 8,
+      "known_tokens": 43129
+    },
+    "grow1": {
+      "calls": 8,
+      "known_tokens": 688082
+    },
+    "grow2": {
+      "calls": 8,
+      "known_tokens": 684245
+    },
+    "seed": {
+      "calls": 8,
+      "known_tokens": 880115
+    }
+  },
+  "scenes_equal_after_cleanup": 12,
+  "scenes_equal_to_raw": 11,
+  "scenes_with_writer_receipts": 12,
+  "source_boundary": [
+    {
+      "book": "A1",
+      "first_invention_request_matches_preflight": true,
+      "invention_attempts": 1
+    },
+    {
+      "book": "A2",
+      "first_invention_request_matches_preflight": true,
+      "invention_attempts": 1
+    },
+    {
+      "book": "B1",
+      "first_invention_request_matches_preflight": true,
+      "invention_attempts": 1
+    },
+    {
+      "book": "B2",
+      "first_invention_request_matches_preflight": true,
+      "invention_attempts": 2
+    }
+  ],
+  "source_hashes": {
+    "research/quality-measurement/connected-chapters-20260916/CONTINUATION.md": "e36bf89fc2178996e0e7384fb1963f0b0bf53c3841dfa15b2c5861c39ad68a7f",
+    "research/quality-measurement/connected-chapters-20260916/continuation.json": "266650516d5acc939541fee735bc340839a14f4dc0a1bbaa8c70701ba4ddb129",
+    "research/quality-measurement/connected-chapters-20260916/evidence.json": "e346a4d61bc1a422ce21c98a8d2c9977827d7fca016c91ff94d7584060dac9a6",
+    "research/quality-measurement/connected-chapters-20260916/handoff-evidence.json": "4464d399a69ea9ec5da410432c9b495bf370b8a7c6fe89ee71811a596e3f90c9",
+    "research/quality-measurement/connected-chapters-20260916/summarize.py": "8e03c0d085bf91bbf8574772e88cfe8daab1370419620d916283835c546edbc9",
+    "runs/connected-chapters-20260916/budget-stop/progress.json": "dfadaf543e936e6ff760f4f0a6b373501c43e62bfe09732f1a613f1069882ec5",
+    "runs/connected-chapters-20260916/manifest.json": "71e55c59afed148ab733d0163c596a454b9fc54632cf8ebcb7bee9512431145a",
+    "runs/connected-chapters-20260916/progress.json": "2d83944e88de66c48fd27767b280b24c0fbc6ecccfece47c18ff765d2a6090e3"
+  },
+  "status": "complete",
+  "stop": null,
+  "unknown_usage_calls": 0,
+  "words": 18672
+}

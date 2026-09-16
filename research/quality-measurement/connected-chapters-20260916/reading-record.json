@@ -1,0 +1,317 @@
+{
+  "claim_id": "connected-chapters-20260916",
+  "excluded_inferences": [
+    "enjoyment_rating",
+    "candidate_ranking",
+    "causal_quality_effect",
+    "format_only_effect",
+    "popularity",
+    "production_qualification"
+  ],
+  "handoff_validation": {
+    "path": "runs/connected-chapters-20260916-results-handoff.log",
+    "sha256": "9a0ac386eaa252d852d3ab555b301a36dcf5f6ca3c8bc47a8dc037924a5134fd"
+  },
+  "local_reading_artifacts": [
+    {
+      "path": "runs/connected-chapters-20260916/REPORT.md",
+      "sha256": "8af8aa5f1f961a8906733c3b50e9345fc1901f16ced382977b5314e33de5e8d5"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/READING-NOTES.md",
+      "sha256": "d19e863ecbd0e3e293f416fc8e9bebfe561dca4c0f3b936f76a6149ae5b55ff4"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/READING.md",
+      "sha256": "03fe3d1256efdc2a8f8850da3c5c36d7cce3dee3bde6234c684a8a4598b5ffed"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/reading-A1.md",
+      "sha256": "c03d8e4a572dbd275524f3266a00c2835f2750d4684cf06dad565034b4359682"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/reading-A2.md",
+      "sha256": "1e50c624b7a7eb13ca7fbee424cfb94bb092bbac0b9e6f352fc9f0942dc1bc4c"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/reading-B1.md",
+      "sha256": "40261e9f6a6f30d50aaefe30248a38c9c27a68d5728760af6ed067492497d007"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/reading-B2.md",
+      "sha256": "1f018ec5b401e574df577b7ece8e022e1dc0c8b9d1ebe2129aa92b1aa5c71720"
+    }
+  ],
+  "located_diagnostic_sources": [
+    {
+      "path": "runs/connected-chapters-20260916/calls/0033-B2.json",
+      "sha256": "940f7bb0af2bbd53b4192e1e4487c748d9d89b782900940c3b0e53186a36f1c0"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/steps/concept-B2-1.json",
+      "sha256": "235d5ad82c9a8c53e8fc6988522ea3321903b879d72b92ff96e563cbd877f309"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/books/B2/writer-prompt-1.txt",
+      "sha256": "28caf5397519ddb468354a511bbaa809df02d6f0392ecd7cc0dd8409eea6f211"
+    }
+  ],
+  "mechanical_controls": [
+    {
+      "path": "research/quality-measurement/connected-chapters-20260916/evidence.json",
+      "sha256": "e346a4d61bc1a422ce21c98a8d2c9977827d7fca016c91ff94d7584060dac9a6"
+    },
+    {
+      "path": "research/quality-measurement/connected-chapters-20260916/handoff-evidence.json",
+      "sha256": "4464d399a69ea9ec5da410432c9b495bf370b8a7c6fe89ee71811a596e3f90c9"
+    },
+    {
+      "path": "research/quality-measurement/connected-chapters-20260916/readout-controls.json",
+      "sha256": "c387081b7ac63f11e6bb3f1fae152d3837f6dfd7cec9321738ed1d16ea0fae05"
+    }
+  ],
+  "raw_chapter_comparison_sources": [
+    {
+      "path": "runs/connected-chapters-20260916/books/A1/writer-raw-1-27.md",
+      "sha256": "ab284a0279d3a4e802eb138803d314ea4cf0946395ae0a48c1975d85fd4c5603"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/books/A1/writer-raw-2-57.md",
+      "sha256": "bd8ee9a50d83c3ecaff6bef348a3ae1a4551ad9f0a1aa4cb5eb9c84813c70c34"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/books/A1/writer-raw-3-81.md",
+      "sha256": "d50151136cdf6c7c4703c542d0351508eb21730f4af94456715e13cf1212dede"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/books/A2/writer-raw-1-39.md",
+      "sha256": "d9ab955ee4d78c881bbf3dc38a50e0023c508641dc0fee72205a4868773d8766"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/books/A2/writer-raw-2-63.md",
+      "sha256": "2821d55f9a3dfadc5365d18fa2ac98f7634e9255c2e9fa9d2b0ab5c6b4d89a2e"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/books/A2/writer-raw-3-87.md",
+      "sha256": "4a600969a2b3dd8f4078b002c180a5a6e5307876a9698deff425cdb206710cd2"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/books/B1/writer-raw-1-31.md",
+      "sha256": "69c70696c27b44f5ad4700d61705238e46a0faad0dfdd227768692d780fbd31e"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/books/B1/writer-raw-2-59.md",
+      "sha256": "2808c5da78cff1417c688e86d21f29b221376c49cdc474ad07af9e5e56dbb967"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/books/B1/writer-raw-3-83.md",
+      "sha256": "f8490a31773ef678dff1137df010792bac90777aafa2a8de5c836923ce907841"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/books/B2/writer-raw-1-35.md",
+      "sha256": "4342383cfd356b9040340b964f32684771e22fa13faff1e37f3514928d112e6d"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/books/B2/writer-raw-2-61.md",
+      "sha256": "7fae00d5d8ae12c640ceac89d15f69196c11d68be08e49d3c1cdb419001a9784"
+    },
+    {
+      "path": "runs/connected-chapters-20260916/books/B2/writer-raw-3-85.md",
+      "sha256": "c0209df9fd18b7a76d66e522160ab277229984eed5542a84dc09b44c95c7231b"
+    }
+  ],
+  "raw_invention_content_reviewed": [
+    {
+      "book": "A1",
+      "content_scope": "result.text",
+      "path": "runs/connected-chapters-20260916/calls/0002-A1.json",
+      "profile": "writer.discovery.v13",
+      "review_method": "full saved content plus complete raw difference",
+      "sha256": "3354b8d5a1124d1dbd84818e678f2b28ca5346a117681f7b0d086f93ae5becc0"
+    },
+    {
+      "book": "A1",
+      "content_scope": "result.text",
+      "path": "runs/connected-chapters-20260916/calls/0003-A1.json",
+      "profile": "writer.concept.discovery.v8",
+      "review_method": "full saved content plus complete raw difference",
+      "sha256": "dc003536754943f5b1d9d3ba3071da62019f59d831d9c04b51ddac645d07c633"
+    },
+    {
+      "book": "A1",
+      "content_scope": "result.text",
+      "path": "runs/connected-chapters-20260916/calls/0004-A1.json",
+      "profile": "writer.concept.precision.v1",
+      "review_method": "full precision response",
+      "sha256": "4d536ebc24d556786539b9e4973bb8c0e8630bb86763be10308f233b71698e2d"
+    },
+    {
+      "book": "B1",
+      "content_scope": "result.text",
+      "path": "runs/connected-chapters-20260916/calls/0006-B1.json",
+      "profile": "writer.concept.material.v1",
+      "review_method": "full saved content plus complete raw difference",
+      "sha256": "05f66d06fcd385d6201693947ab55cd65b9b76249351e1175d48fb564cdce080"
+    },
+    {
+      "book": "B1",
+      "content_scope": "result.text",
+      "path": "runs/connected-chapters-20260916/calls/0007-B1.json",
+      "profile": "writer.concept.precision.v1",
+      "review_method": "full precision response",
+      "sha256": "dfed1f3098736fe2a216c6fb7ae289d994377e3f29a9a21853533ec2029c9734"
+    },
+    {
+      "book": "B2",
+      "content_scope": "result.text",
+      "path": "runs/connected-chapters-20260916/calls/0009-B2.json",
+      "profile": "writer.concept.material.v1",
+      "review_method": "full unique rejected concept",
+      "sha256": "d0444515c43c730775158b3e5ad1cfd44b6ee3e540be9eb8bfc6e4e635f8663a"
+    },
+    {
+      "book": "B2",
+      "content_scope": "result.text",
+      "path": "runs/connected-chapters-20260916/calls/0010-B2.json",
+      "profile": "writer.concept.material.v1",
+      "review_method": "full saved content plus complete raw difference",
+      "sha256": "621baf51496444fe3a665703872ece1e9d42a4442fbab21099b89cf1f78cf64a"
+    },
+    {
+      "book": "B2",
+      "content_scope": "result.text",
+      "path": "runs/connected-chapters-20260916/calls/0011-B2.json",
+      "profile": "writer.concept.precision.v1",
+      "review_method": "full precision response",
+      "sha256": "23b9f0a4d1aa5aa237d2e64b856e80e192fa99c873e83cfdd07de506e60622dc"
+    },
+    {
+      "book": "A2",
+      "content_scope": "result.text",
+      "path": "runs/connected-chapters-20260916/calls/0013-A2.json",
+      "profile": "writer.discovery.v13",
+      "review_method": "full saved content plus complete raw difference",
+      "sha256": "99fd8b3c28093dae478039ac9c29d60d86a3d5234e9dc87dfe989a847d403219"
+    },
+    {
+      "book": "A2",
+      "content_scope": "result.text",
+      "path": "runs/connected-chapters-20260916/calls/0014-A2.json",
+      "profile": "writer.concept.discovery.v8",
+      "review_method": "full saved content plus complete raw difference",
+      "sha256": "7d4c1762e1ab9198e3ef5fff90733aa1365a8d3eada0e355a2da797deafc75d1"
+    },
+    {
+      "book": "A2",
+      "content_scope": "result.text",
+      "path": "runs/connected-chapters-20260916/calls/0015-A2.json",
+      "profile": "writer.concept.precision.v1",
+      "review_method": "full precision response",
+      "sha256": "8b2739ada97239a2f92753e313b9b3304080fd3675a23d2e7b216e91560ef08b"
+    }
+  ],
+  "read_in_full": {
+    "accepted_chapters": [
+      {
+        "path": "runs/connected-chapters-20260916/books/A1/chapter-1.md",
+        "sha256": "4c6ff2393e093911920774bd6ed52234e8b54ba8887d0359a2606acc9d73b6bc"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/A1/chapter-2.md",
+        "sha256": "5cc526d32cf1176e1c54e3bff36c7e3ac5cddfe75e582aa14b1f6d47fbbaae85"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/A1/chapter-3.md",
+        "sha256": "92e53eb074a7173e4d2e7249d63ab7a632aef1fbfeac73e70ec97038a4ea8126"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/A2/chapter-1.md",
+        "sha256": "86560e92e8465997d9a4387771ffcdd7729ea0bd460ba4f15ec6f59f323da9bb"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/A2/chapter-2.md",
+        "sha256": "96e4f7163083b579ac555d902447028bd51c67b59d5c37ec311c002facb664e6"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/A2/chapter-3.md",
+        "sha256": "06c09df670ba27653c7485b331d6f382d33bf4060709a2e24c062a9fc0a3188c"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/B1/chapter-1.md",
+        "sha256": "c7df3c19132908e8643cbcfac8c895dba06ed6c6ed36aa8aab7dc5fa7399cb79"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/B1/chapter-2.md",
+        "sha256": "3b817b670c69d83a5c45e39cce3f78eef28a557ba53555334e19e89fd37d2c84"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/B1/chapter-3.md",
+        "sha256": "520870bf81702600f7d9d3ea08fbddb06878b3ab2403299fa5a22d6a41e7d9b2"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/B2/chapter-1.md",
+        "sha256": "06a1b336923ddd7d7badcdeef5f392a609099d5e04582caf257254d23fa29ad5"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/B2/chapter-2.md",
+        "sha256": "d0d627a6aeb5c8fcdb06626749a4d5df3308053ab404ade1e052deda75980482"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/B2/chapter-3.md",
+        "sha256": "dd8f6ba7c15d25bf48841e3d5c8c80e40e3204cdb6e161b894e6636b889db3ac"
+      }
+    ],
+    "complete_outlines": [
+      {
+        "path": "runs/connected-chapters-20260916/books/A1/outline-25.json",
+        "sha256": "aadab06663582b3bdb210e7b020904de2b593dfbe391f9cd20c432e17934b3fc"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/A2/outline-37.json",
+        "sha256": "b107ccc5e3089f3d2020dd15b4a58b8d08c7dd7b895956a323da37b44c6604a8"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/B1/outline-29.json",
+        "sha256": "70975e43096b7a1843431b6212afdb938c1900f9c505c70957a7f4da2bafc193"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/B2/outline-33.json",
+        "sha256": "07325f00e3ad09c444b8221d9b8c6526c0e410270c875feae9ba2513530a5965"
+      }
+    ],
+    "differences": [
+      {
+        "path": "runs/connected-chapters-20260916/invention-differences.txt",
+        "sha256": "204b288357ee695450cc53c2d150f2163dc46e840bf8822a1c2069f3834d836f"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/writer-differences.diff",
+        "sha256": "650b7678ee5f1437ae8f3a8c4682f50a6a0381a7c15c2a25848b8061928b9652"
+      }
+    ],
+    "saved_concepts_with_discovery": [
+      {
+        "path": "runs/connected-chapters-20260916/books/A1/concept/concept.json",
+        "sha256": "e557abcbc9c9a87720afacc9a2ba968ce8b4427540c1c1fc36f9bb20b976781e"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/A2/concept/concept.json",
+        "sha256": "2e8274245512884a6baa0b0f4e1d04f0236a22923b0bd94bef95383b8c9dd0e0"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/B1/concept/concept.json",
+        "sha256": "0e4c13e900da5389d133f159958ca9ef7e52219e52710e1b766a9a21f2605591"
+      },
+      {
+        "path": "runs/connected-chapters-20260916/books/B2/concept/concept.json",
+        "sha256": "76931eaa34a09a69d177b8aadaa822d0d860d9ae79e80cbe1b3705097665cb6b"
+      }
+    ]
+  },
+  "reading_scope": "Post-generation full saved concepts including embedded discovery, complete outlines, all accepted chapters, rejected raw B2 concept, and all unique raw-to-saved invention and raw-to-accepted prose differences. Hashes identify artifacts, not a validated literary judgment.",
+  "result_record": {
+    "path": "research/quality-measurement/connected-chapters-20260916/RESULTS.md",
+    "sha256": "c3706c38ef3dd2dbf071518b133d1b64ce11f248e9a31d222e01a5444f0ac656"
+  },
+  "status": "observed"
+}
