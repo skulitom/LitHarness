@@ -339,8 +339,8 @@ def test_outline_uses_same_references_with_history_locks_and_actual_promise_date
         target_scene_words=1400,
     )
     body = json.loads(request.prompt)
-    assert request.profile == "planner.outline.structured.v1"
-    assert request.schema == outline.CHAPTER_OUTLINE_SCHEMA
+    assert request.profile == "planner.outline.structured.v2"
+    assert request.schema == outline.STRUCTURED_CHAPTER_OUTLINE_SCHEMA
     assert len(body["writing_layout"]["chapters"]) == 6
     assert body["book_concept"]["story_material"] == source.story_material.for_planning()
     assert body["book_concept"]["author_brief"] == AUTHOR

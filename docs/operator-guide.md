@@ -165,6 +165,24 @@ actual open promises. Continuation uses those same development references; a pre
 not evidence that its events happened. Only accepted prose and state supply that history.
 Explicit author locks still pass through unchanged, including a whole concept if you lock it.
 
+New structured outlines account for every development as planned in named scenes, already
+established in supplied setup/history, or deferred with a reason. Dependencies do not allocate
+chapters: related prerequisites can share a chapter, and consequences can span chapters. The
+planner is asked to choose what the requested sequence reaches within its prose budget before
+assigning scenes. This accounting is stored as an unlocked plan item with the source identity
+and stable scene ids; it is not a statement that the manuscript has fulfilled the plan.
+
+These outlines also select `reader_facts` in each scene brief: facts the reader needs to learn
+there to understand the pursuit, personal stakes or choice. The writer receives these separately
+from background and later disclosure constraints. An empty selection is valid. Saved version-1
+briefs remain readable without conversion; new structured briefs use version 2. There is no
+automatic prose-compliance judge, rewrite loop or quality gate attached to these fields.
+
+Outlining selects the declared protagonist's status snapshot at the scene-entry boundary.
+If that character has no snapshot, it supplies no starting numbers. Older worlds without a
+declared protagonist use a snapshot only when ownership is unambiguous; another character's
+sheet cannot silently become the protagonist's starting state or milestone schedule.
+
 The ordinary trace, budget, name checks, precision preparation and policy record still apply.
 Inspect `concept-trace-1.json` for the invention request/receipt and `concept-precision-trace.json`
 when an edit call was needed. There is no separate discovery or conversion call in this mode.

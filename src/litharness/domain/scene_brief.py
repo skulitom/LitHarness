@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from typing import Any
 
 PREFIX = "litharness.scene-brief.v1\n"
+READER_PREFIX = "litharness.scene-brief.v2\n"
 TREATMENT = (
     "Give space to the moments that change a choice, expectation or relationship; necessary "
     "routine activity can pass in summary or omission while its causal facts remain clear. "
@@ -30,6 +31,14 @@ SCHEMA: dict[str, Any] = {
         },
     },
 }
+READER_SCHEMA: dict[str, Any] = {
+    **SCHEMA,
+    "required": [*SCHEMA["required"], "reader_facts"],
+    "properties": {
+        **SCHEMA["properties"],
+        "reader_facts": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    },
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,12 +47,14 @@ class SceneBrief:
     pursuit: str
     changes: tuple[str, ...]
     future_dependencies: tuple[str, ...] = ()
+    # None retains the exact v1 storage contract; () is an explicit v2 empty selection.
+    reader_facts: tuple[str, ...] | None = None
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> SceneBrief:
-        if set(payload) != set(SCHEMA["required"]):
-            raise ValueError("scene brief must carry only situation, pursuit, changes, "
-                             "and future_dependencies")
+        schema = READER_SCHEMA if "reader_facts" in payload else SCHEMA
+        if set(payload) != set(schema["required"]):
+            raise ValueError("scene brief must carry exactly " + ", ".join(schema["required"]))
 
         def text(value: Any, field: str) -> str:
             if not isinstance(value, str) or not value.strip():
@@ -62,6 +73,7 @@ class SceneBrief:
             pursuit=text(payload["pursuit"], "pursuit"),
             changes=texts("changes", required=True),
             future_dependencies=texts("future_dependencies"),
+            reader_facts=texts("reader_facts") if "reader_facts" in payload else None,
         )
 
     @classmethod
@@ -70,19 +82,24 @@ class SceneBrief:
         value = value.strip()
         if not value.startswith("litharness.scene-brief."):
             return None
-        if not value.startswith(PREFIX):
+        prefix = next((p for p in (PREFIX, READER_PREFIX) if value.startswith(p)), None)
+        if prefix is None:
             raise ValueError("unsupported scene brief version")
-        payload = json.loads(value[len(PREFIX):])
+        payload = json.loads(value[len(prefix):])
         if not isinstance(payload, Mapping):
             raise ValueError("scene brief must be an object")
+        if ("reader_facts" in payload) != (prefix == READER_PREFIX):
+            raise ValueError("scene brief fields do not match its version")
         return cls.from_payload(payload)
 
     def to_text(self) -> str:
-        return PREFIX + json.dumps({
+        prefix = READER_PREFIX if self.reader_facts is not None else PREFIX
+        return prefix + json.dumps({
             "situation": self.situation,
             "pursuit": self.pursuit,
             "changes": list(self.changes),
             "future_dependencies": list(self.future_dependencies),
+            **({"reader_facts": list(self.reader_facts)} if self.reader_facts is not None else {}),
         }, ensure_ascii=False, sort_keys=True)
 
     def render(self) -> str:
@@ -92,6 +109,16 @@ class SceneBrief:
             TREATMENT,
             f"Starting situation: {self.situation}",
             f"Immediate pursuit: {self.pursuit}",
+        ]
+        if self.reader_facts:
+            lines += [
+                "Facts to establish for the reader in this scene:",
+                "Make these facts understandable in the action, thought or narration available "
+                "to this viewpoint. They need not be disclosed to other characters. Keep their "
+                "meaning when compressing routine action; do not copy the planning wording.",
+                *(f"- {fact}" for fact in self.reader_facts),
+            ]
+        lines += [
             "Intended changes, in causal order:",
             *(f"- {change}" for change in self.changes),
         ]

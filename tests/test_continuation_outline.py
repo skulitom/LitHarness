@@ -10,7 +10,7 @@ import pytest
 
 from litharness import cli
 from litharness.adapters.sqlite_store import SqliteStore
-from litharness.application import concept, outline, planner
+from litharness.application import concept, development_coverage, outline, planner
 from litharness.application.conductor import Conductor, TickOutcome
 from litharness.application.handlers import make_scene_draft_handler
 from litharness.application.plan_refinement import accept_plan_proposal
@@ -123,6 +123,19 @@ def test_accepted_chapter_flows_through_suffix_outline_into_chapters_two_and_thr
         response = outlined_payload(5)
         planned_scenes = response["scenes"]
         if structured:
+            for entry in planned_scenes:
+                entry["brief"]["reader_facts"] = []
+            material = structured_concept().story_material
+            response["development_coverage"] = {
+                "source_id": material.for_planning()["source_id"],
+                "entries": [
+                    {"development_id": d.id,
+                     "disposition": "planned" if d.horizon == "first_arc" else "deferred",
+                     "scene_ordinals": [1] if d.horizon == "first_arc" else [],
+                     "reason": "Plan unreached consequences; retain later scope."}
+                    for d in material.developments
+                ],
+            }
             del response["scenes"]
             response["chapters"] = [
                 {"chapter": i + 1, "scenes": [planned_scenes[i - 1]],
@@ -179,6 +192,12 @@ def test_accepted_chapter_flows_through_suffix_outline_into_chapters_two_and_thr
             concept.Concept.from_text(source.text).author_brief
         )
         if structured:
+            allocation = store.plan_revision(BOOK_ID, BRANCH_ID).item(
+                "development-coverage-scene-2"
+            )
+            stored = json.loads(allocation.text.removeprefix(development_coverage.PREFIX))
+            assert stored["requested_scene_ids"] == [f"scene-{i}" for i in range(2, 7)]
+            assert stored["entries"][0]["scene_ids"] == ["scene-2"]
             assert body["book_concept"]["story_material"] == (
                 structured_concept().story_material.for_planning()
             )

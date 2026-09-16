@@ -55,7 +55,12 @@ from typing import Any
 
 import litharness_contracts as lc
 
-from litharness.application import chapter_coverage, chapter_layout, story_material
+from litharness.application import (
+    chapter_coverage,
+    chapter_layout,
+    development_coverage,
+    story_material,
+)
 from litharness.application import concept as concept_mod
 from litharness.application.conductor import JobHandler
 from litharness.application.model_context import StoryStateView, at_scene, planning_records
@@ -114,7 +119,7 @@ BOOK_OUTLINE = "book_outline"
 #: Frozen generation profile, recorded in provenance like every other model call here.
 PROFILE = "planner.outline.v1"
 CONCEPT_PROFILE = "planner.outline.v6"
-STRUCTURED_PROFILE = "planner.outline.structured.v1"
+STRUCTURED_PROFILE = "planner.outline.structured.v2"
 
 #: Ranks above scene drafting (0) and below director direction (500+). A scene drafted before
 #: its statement exists would be drafted against the empty plan this module exists to fill, so
@@ -278,6 +283,8 @@ CHAPTER_OUTLINE_SCHEMA: dict[str, Any] = {
         "chapters": chapter_coverage.CHAPTERS_SCHEMA,
     },
 }
+STRUCTURED_OUTLINE_SCHEMA = development_coverage.outline_schema(CONCEPT_OUTLINE_SCHEMA)
+STRUCTURED_CHAPTER_OUTLINE_SCHEMA = development_coverage.outline_schema(CHAPTER_OUTLINE_SCHEMA)
 
 
 def _writing_layout(
@@ -371,12 +378,26 @@ def _ordinal_of(beats: Sequence[Beat]) -> dict[str, int]:
     }
 
 
+def _starting_snapshot(
+    entry: StoryStateView, protagonist: worlds_mod.Protagonist | None,
+) -> lc.StateRecord | None:
+    """Use the named protagonist's entering sheet; abstain on ambiguous legacy ownership."""
+    snapshots = [record for record in entry.active_records
+                 if record.predicate == "status_snapshot" and isinstance(record.value, Mapping)]
+    if protagonist is not None:
+        snapshots = [record for record in snapshots if record.subject == protagonist.subject]
+    elif len({record.subject for record in snapshots}) != 1:
+        return None
+    return snapshots[-1] if snapshots else None
+
+
 def render_outline_request(
     premise: str,
     beats: Sequence[Beat],
     *,
     base: PlanRevision,
     seed: Mapping[str, Any] | None = None,
+    seed_subject: str | None = None,
     promises: Sequence[Promise] = (),
     world: WorldBrief | None = None,
     protagonist: worlds_mod.Protagonist | None = None,
@@ -441,6 +462,7 @@ def render_outline_request(
     """
     ordinals = _ordinal_of(beats)
     layout = _writing_layout(concept, beats, chapter_by_scene, target_scene_words)
+    material_backed = concept is not None and concept.story_material is not None
     scene_ids = {beat.logical_id for beat in beats}
     author_locks = [
         item for item in base.items
@@ -520,6 +542,7 @@ def render_outline_request(
             # book that does not speak system voice, and then no schedule is asked for — a
             # stat block in a locked-room mystery is not a smaller error than a missing one.
             "starting_state": dict(seed) if seed else None,
+            **({"starting_state_subject": seed_subject} if seed and seed_subject else {}),
             "scenes": [
                 {
                     "ordinal": beat.ordinal,
@@ -661,6 +684,8 @@ def render_outline_request(
                 and concept.discovery.experience_brief else []
             )
             + ([chapter_layout.PLANNING_RULE] if layout is not None else [])
+            + ([development_coverage.RULE, development_coverage.READER_RULE]
+               if material_backed else [])
             + ([CONTINUATION_RULE] if continuation_scope is not None else []),
         },
         ensure_ascii=False,
@@ -685,7 +710,9 @@ def render_outline_request(
             f"{role}\n{house.QUANTITY_DETAIL}"
             if concept is not None else house.with_house_rules(role)
         ),
-        schema=(CHAPTER_OUTLINE_SCHEMA if layout is not None else
+        schema=(STRUCTURED_CHAPTER_OUTLINE_SCHEMA if material_backed and layout is not None else
+                STRUCTURED_OUTLINE_SCHEMA if material_backed else
+                CHAPTER_OUTLINE_SCHEMA if layout is not None else
                 CONCEPT_OUTLINE_SCHEMA if concept is not None else OUTLINE_SCHEMA),
         max_output_tokens=8192,
         timeout_seconds=CONCEPT_TIMEOUT_SECONDS if concept is not None else 300.0,
@@ -696,7 +723,8 @@ def render_outline_request(
 
 
 def _statements(
-    payload: Mapping[str, Any], expected: int, *, structured: bool = False
+    payload: Mapping[str, Any], expected: int, *, structured: bool = False,
+    reader_facts_required: bool = False,
 ) -> list[str]:
     """The model's scenes as an ordinal-ordered list, or a refusal naming what was wrong.
 
@@ -723,6 +751,8 @@ def _statements(
             if not isinstance(brief, Mapping) or set(entry) != {"ordinal", "brief"}:
                 raise OutlineOutputError("concept scenes require an ordinal and a structured brief")
             try:
+                if reader_facts_required and "reader_facts" not in brief:
+                    raise ValueError("structured material scenes require reader_facts")
                 statement = SceneBrief.from_payload(brief).to_text()
             except ValueError as error:
                 raise OutlineOutputError(str(error)) from error
@@ -1168,12 +1198,20 @@ def outline_proposal(
     """
     concept = concept_mod.concept_of(base.items)
     concept_backed = concept is not None
+    material = concept.story_material if concept is not None else None
     layout = _writing_layout(concept, beats, chapter_by_scene, None)
     coverage: tuple[chapter_coverage.ChapterCoverage, ...] = ()
     if layout is not None:
         scenes, coverage = chapter_coverage.reconcile(payload, layout)
         payload = {**payload, "scenes": scenes}
-    statements = _statements(payload, len(beats), structured=concept_backed)
+    statements = _statements(
+        payload, len(beats), structured=concept_backed, reader_facts_required=material is not None,
+    )
+    scene_ids = {beat.ordinal: beat.logical_id for beat in beats}
+    allocation = (
+        development_coverage.to_text(payload.get("development_coverage"), material, scene_ids)
+        if material is not None else None
+    )
     positions = {beat.logical_id: beat for beat in original_beats or beats}
     # **CREATE where the statement is absent, UPDATE where it is already there.** A
     # create-only proposal cannot outline a *partially* outlined book, and partial is a state
@@ -1225,8 +1263,18 @@ def outline_proposal(
         )
         for beat, statement in zip(beats, statements, strict=True)
     )
-    scene_ids = {beat.ordinal: beat.logical_id for beat in beats}
     existing_ids = {item.logical_id for item in base.items}
+    if allocation is not None:
+        logical_id = f"development-coverage-{beats[0].logical_id}"
+        edits += (PlanEdit(
+            action=PlanEditAction.UPDATE if logical_id in existing_ids else PlanEditAction.CREATE,
+            logical_id=logical_id,
+            item=lc.PlanItem(
+                logical_id=logical_id, kind=lc.PlanKind.CHAPTER_PLAN,
+                text=allocation, authority=lc.PlanAuthority.INTENDED, locked=False,
+            ),
+            reason="account for proposed developments within the requested sequence",
+        ),)
     for chapter in coverage:
         # Derived serial chapters need not be nodes in the manuscript tree. Record the
         # exact scene scope inside this intended item rather than inventing an ancestor.
@@ -1249,7 +1297,8 @@ def outline_proposal(
         edits=edits,
         provider=result.provider,
         model=result.model,
-        profile=CONCEPT_PROFILE if concept_backed else PROFILE,
+        profile=STRUCTURED_PROFILE if material is not None else
+                CONCEPT_PROFILE if concept_backed else PROFILE,
     )
 
 
@@ -1268,7 +1317,8 @@ def _policy_digest(*, target_scene_words: int | None = None) -> str:
                 if target_scene_words is not None else {}
             ),
             "schema": OUTLINE_SCHEMA,
-            "concept_planning_version": 15,
+            "concept_planning_version": 16,
+            "starting_state_selection": "protagonist-or-unambiguous-owner.v1",
             "structured_profile": STRUCTURED_PROFILE,
             "continuation_scope": {
                 "version": 1,
@@ -1278,6 +1328,10 @@ def _policy_digest(*, target_scene_words: int | None = None) -> str:
             },
             "concept_schema": CONCEPT_OUTLINE_SCHEMA,
             "chapter_schema": CHAPTER_OUTLINE_SCHEMA,
+            "structured_schema": STRUCTURED_OUTLINE_SCHEMA,
+            "structured_chapter_schema": STRUCTURED_CHAPTER_OUTLINE_SCHEMA,
+            "development_coverage_rule": development_coverage.RULE,
+            "reader_facts_rule": development_coverage.READER_RULE,
             "chapter_coverage_rule": chapter_layout.PLANNING_RULE,
             "scene_handoff_rules": SCENE_HANDOFF_RULES,
             "author_lock_rule": AUTHOR_LOCK_RULE,
@@ -1586,15 +1640,6 @@ def make_outline_handler(
             moment=state_mod.StateMoment.ENTERING,
             story_order_key=beats[0].story_order_key,
         )
-        seed_record = next(
-            (
-                record
-                for record in reversed(entry_state.active_records)
-                if record.predicate == "status_snapshot" and isinstance(record.value, Mapping)
-            ),
-            None,
-        )
-        seed = dict(seed_record.value) if seed_record is not None else {}
         # W2: the debts this book has already opened. Empty at a book's first outline —
         # promises are written by the summary handler after a scene is accepted — so the
         # payoff ask is silent there and this feature costs an un-replanned book nothing.
@@ -1608,6 +1653,8 @@ def make_outline_handler(
         # Read once and used twice — in the request below and by the folded beat's vocabulary
         # in `outline_proposal`. A second lookup would be a second answer to whose book this is.
         protagonist = worlds_mod.protagonist_brief(planning_canon)
+        seed_record = _starting_snapshot(entry_state, protagonist)
+        seed = dict(seed_record.value) if seed_record is not None else {}
         ladder = world.ladder if world is not None else None
         # **The world and its protagonist, off the `canon` already read two statements
         # above.** A second query would be a second answer to the same question, and the
@@ -1673,6 +1720,7 @@ def make_outline_handler(
             beats,
             base=base,
             seed=seed or None,
+            seed_subject=seed_record.subject if seed_record is not None else None,
             promises=open_promises,
             world=world,
             protagonist=protagonist,
