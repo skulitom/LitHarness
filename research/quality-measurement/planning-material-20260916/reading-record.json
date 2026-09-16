@@ -1,0 +1,230 @@
+{
+  "claim_id": "planning-material-20260916",
+  "excluded_inferences": [
+    "enjoyment_rating",
+    "candidate_ranking",
+    "causal_quality_effect",
+    "popularity",
+    "production_qualification"
+  ],
+  "handoff_validation": {
+    "path": "runs/planning-material-results-handoff.log",
+    "sha256": "f53c8f9d4962c21a8376eb3f17697fa56d8a7665d718ad08aab5860e157038c0"
+  },
+  "mechanical_controls": [
+    {
+      "path": "research/quality-measurement/planning-material-20260916/evidence.json",
+      "sha256": "88249bc60b80d90f973740c4b93d447a568844d0d4678e9133c7c7db6a81389d"
+    },
+    {
+      "path": "research/quality-measurement/planning-material-20260916/handoff-evidence.json",
+      "sha256": "669df8967b94f26fd80ccc24b0577f46ac807c33ca5561dba34ac8f9740d2171"
+    },
+    {
+      "path": "research/quality-measurement/planning-material-20260916/readout-controls.json",
+      "sha256": "b39b2b2218898ddd19aed36729a64ccf61165043d19bb7b235785d02e5705977"
+    }
+  ],
+  "raw_comparison_sources": [
+    {
+      "path": "runs/planning-material-20260916/books/A1/writer-raw-1-24.md",
+      "sha256": "706b7e1f7d8a4f14127d6c62d02064c663049a5978b33ed8d8afba2fb33ce482"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/A1/writer-raw-2-76.md",
+      "sha256": "85db7f1e747ec77fae24334aa070b31d6b83eb4b013bf232a50e45a2d8678b57"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/A2/writer-raw-1-28.md",
+      "sha256": "cc7f64b897cb014f577b5c7f28470a368e0fd3f27d55058b7680c06c9fb7dba0"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/A3/writer-raw-1-40.md",
+      "sha256": "4ca3baf36514b3e3f201089aa35aed23e86a1cbcdb30afc671860c2bd6bad1dc"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/A3/writer-raw-2-78.md",
+      "sha256": "8137ebc5c15a65f72ff7ebe2fc48e0797d561f55d7f336955ec19bb3a2d7377a"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/A4/writer-raw-1-44.md",
+      "sha256": "803bbfaa474c83fb3bfb04a85befde4ca7329c492cf3495f51fa57b0b6a6b903"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/B1/writer-raw-1-20.md",
+      "sha256": "3b6b4ea1c2d8e7843c631295fcd6863c3851e1c707513f0822a76ff365a1093f"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/B1/writer-raw-2-74.md",
+      "sha256": "8af11eed5eef5a33be402630215632cd9ea5bd666301cb95e1bdab167439cf62"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/B2/writer-raw-1-32.md",
+      "sha256": "480d35cd69b2680dc89fa0a5759c96ddead97c05eeb543575d7f4a277fcc9328"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/B3/writer-raw-1-36.md",
+      "sha256": "9d4c73e34da87751821e05cc045e9af6ac62fa4bba41f7c85e8301a142fe9e9b"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/B3/writer-raw-2-80.md",
+      "sha256": "5481028a0699bfd32b3d4b6ca6c64c04299d669f6f627e022645b668c01abe35"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/B4/writer-raw-1-48.md",
+      "sha256": "a96241cee6cf8c242f065c72ef8fc07a8e08d341aa8abc84c53c7314d70aa032"
+    }
+  ],
+  "read_in_full": {
+    "accepted_chapters": [
+      {
+        "path": "runs/planning-material-20260916/books/A1/chapter-1.md",
+        "sha256": "13a732fe4a618f885cdfccbf36a3c290220f163488f557ffe4d283836c5bbc65"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/A1/chapter-2.md",
+        "sha256": "bcb578a3f4a06722e49c9294870a3ff7ad0986fb200fa328226081589c41c705"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/A2/chapter-1.md",
+        "sha256": "af35ed5f28a77a78f03b1d978af23280e01e0039a7c1619e3e102fa9156a6cc8"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/A3/chapter-1.md",
+        "sha256": "d23234472eb2db0a95d444b6df693a24031ac1220256b28266ff0d9280247352"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/A3/chapter-2.md",
+        "sha256": "3206f23ebb973afbac911ef6b7d2b002ee23f53dbf14602d1204e1bc31d331de"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/A4/chapter-1.md",
+        "sha256": "fd5806e8a69d3998c63fdd2709a021d31ffc84f083160ec8597f656c3ef403ad"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/B1/chapter-1.md",
+        "sha256": "8fe64c96fc00d6872b5fdb256419a4aeccb5b275bf23c09ff9fcbb29d8a20393"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/B1/chapter-2.md",
+        "sha256": "f53d34940d14bd639910ec23ed2613883bac0303494636b01f4aad4642df211a"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/B2/chapter-1.md",
+        "sha256": "67d025bcaae4e860f7ff9d0e8489f9446c93c5fc944a96766b736d2f00376b3d"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/B3/chapter-1.md",
+        "sha256": "87a458f8b1089f59743754a66d2bb8c76238c73a00755cb67faa62e4e7f9f24d"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/B3/chapter-2.md",
+        "sha256": "000929d33309cad9a23a10bdcb05b75c7cba8281ca27a0dfbb01a498d9bc2055"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/B4/chapter-1.md",
+        "sha256": "c7f2299c83a780270bb2b6d51a761602041fde9ff5d6e36bac2a6dec4a470f9b"
+      }
+    ],
+    "outlines": [
+      {
+        "path": "runs/planning-material-20260916/books/A1/outline-22.json",
+        "sha256": "057b3ce264854cb181840e63715b1aac0001381b81e09d1478f7523796fc7d0a"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/A2/outline-26.json",
+        "sha256": "eaf18de38576a33be3bb8809a1152f41dda1c7b7d23036dee51c41ec2d39c6ab"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/A3/outline-38.json",
+        "sha256": "8fc5e04f46b4f60df34c7181f6db88594ef088c86647fd7fa99520514d3c7b6b"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/A4/outline-42.json",
+        "sha256": "816575903018e46335760c1f7a998a5c003b42c1995ac17fc3b13c9768619622"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/B1/outline-18.json",
+        "sha256": "f3409411d8112d03bd9176f22447dfa2598cfb3408cdc56d893d8629c111d5b4"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/B2/outline-30.json",
+        "sha256": "6ed777b111518ea0da01bc472736f931da252d16da02545a77c23345d1f33858"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/B3/outline-34.json",
+        "sha256": "df515cefd85fae40884072c7b9db57fc6f3898f38744f88261fbb7ec119da40e"
+      },
+      {
+        "path": "runs/planning-material-20260916/books/B4/outline-46.json",
+        "sha256": "baef51c8e6486637db68dc2f765bf243cf25df80d392f23d315fe67dc2f8094f"
+      }
+    ],
+    "raw_accepted_differences": [
+      {
+        "path": "runs/planning-material-20260916/writer-differences.diff",
+        "sha256": "24911a0a9b2467d0a821038836097b2df5e744b34951d0a3eb64abfa39ce4a95"
+      }
+    ],
+    "source_transformations_and_source_units": [
+      {
+        "path": "runs/planning-material-20260916/materials/1.json",
+        "sha256": "28520ceb5169f6fe299b0b2bc25c500f958cf5f9fad772e2df2982cedeeb0bc9"
+      },
+      {
+        "path": "runs/planning-material-20260916/materials/2.json",
+        "sha256": "ac33ce60045a97aa1f84223e6fa49ff993058c644b1b6ce3a50d32f158d2b289"
+      },
+      {
+        "path": "runs/planning-material-20260916/materials/3.json",
+        "sha256": "464af523afd7cf9f7a399709321afc668ed6ba29f9ec63d19a86054237039490"
+      },
+      {
+        "path": "runs/planning-material-20260916/materials/4.json",
+        "sha256": "700dc358dcfb6279333be09a1c9998eda32ace3b15762b950368fae24de3048d"
+      }
+    ]
+  },
+  "reading_notes": {
+    "path": "runs/planning-material-20260916/READING-NOTES.md",
+    "sha256": "ecea46629e9de5cf6017393c3394034091cf1ac51ba4496a01751908fa27a4f6"
+  },
+  "report": {
+    "path": "runs/planning-material-20260916/REPORT.md",
+    "sha256": "1b158e51a95e89d21100885a4a712d2ae7ccfadae0f0152256aa40a15b8c15c3"
+  },
+  "role": "Agent reading attestation and artifact locations; not a quality label or claim promotion.",
+  "schema": "litharness.located-reading.v1",
+  "scope": {
+    "continuation_cases": [
+      1,
+      3
+    ],
+    "full_chapters": 12,
+    "full_outlines": 8,
+    "narrative_repairs": 0,
+    "paired_sources": 4,
+    "raw_drafts": 12,
+    "transformations": 4,
+    "writer_attempts": 12
+  },
+  "source_context_references": [
+    {
+      "path": "runs/planning-material-20260916/books/A1/concept/concept.json",
+      "sha256": "3d51dc1b2d8420beadf3a1803c8b3117507ad3c4aa3e0cb7e1797034aa16fd81"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/A2/concept/concept.json",
+      "sha256": "605afae074396751da2ff02f43f38c5e738a0c2ef78862df189a01b338d35396"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/A3/concept/concept.json",
+      "sha256": "6daf31458ea82c184e3db91497e702a8474be5ea9367c90156a874e46d72375b"
+    },
+    {
+      "path": "runs/planning-material-20260916/books/A4/concept/concept.json",
+      "sha256": "e2327530f950e9ad11fced727ea3ec2394919b7583b5927b7d239163998192cf"
+    }
+  ],
+  "status": "completed_post_run_reading"
+}

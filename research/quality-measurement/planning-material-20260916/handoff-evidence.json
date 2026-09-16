@@ -1,0 +1,455 @@
+{
+  "books": [
+    {
+      "book": "A1",
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 22,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            22
+          ],
+          "matching_writer_calls": [
+            24
+          ],
+          "ordinal": 1,
+          "plan_sha256": "aafaf135832f2931702548f364d10ce44638c50e83bbc30a6de972abfec21b4a",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            24
+          ],
+          "writer_calls_equal_to_accepted_text": []
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            22
+          ],
+          "matching_writer_calls": [
+            76
+          ],
+          "ordinal": 2,
+          "plan_sha256": "b61d813e07bf10e499b4d5a86626d84e3e28a97bcd27c36f10f5b41842086318",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            76
+          ],
+          "writer_calls_equal_to_accepted_text": []
+        }
+      ]
+    },
+    {
+      "book": "A2",
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 26,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            26
+          ],
+          "matching_writer_calls": [
+            28
+          ],
+          "ordinal": 1,
+          "plan_sha256": "e47955e23906c6ee82a9d4c33086378a9e7fca0c4978adccf2e9bbc0a5fa2311",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            28
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            28
+          ]
+        }
+      ]
+    },
+    {
+      "book": "A3",
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 38,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            38
+          ],
+          "matching_writer_calls": [
+            40
+          ],
+          "ordinal": 1,
+          "plan_sha256": "0fda5037b74610ebd9314233afa444d1cf235d0f21afc12ca0a89fe4abd7fca4",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            40
+          ],
+          "writer_calls_equal_to_accepted_text": []
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            38
+          ],
+          "matching_writer_calls": [
+            78
+          ],
+          "ordinal": 2,
+          "plan_sha256": "8f6798afc0c4d10b554ef5a86ab3949af0895e785b239cf4fd99996cb5f6c9ea",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            78
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            78
+          ]
+        }
+      ]
+    },
+    {
+      "book": "A4",
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 42,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            42
+          ],
+          "matching_writer_calls": [
+            44
+          ],
+          "ordinal": 1,
+          "plan_sha256": "403e920c6debe67c7429d1d5337fbd4615e0052c347c098784a5eca82ee8a8b2",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            44
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            44
+          ]
+        }
+      ]
+    },
+    {
+      "book": "B1",
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 18,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            18
+          ],
+          "matching_writer_calls": [
+            20
+          ],
+          "ordinal": 1,
+          "plan_sha256": "e0377bb2c8b9044e9debcc72a6a9dd349b17f51be14a473d13ae4022e39f6349",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            20
+          ],
+          "writer_calls_equal_to_accepted_text": []
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            18
+          ],
+          "matching_writer_calls": [
+            74
+          ],
+          "ordinal": 2,
+          "plan_sha256": "5e80fc83e964c50688824e46b899fa04daf07699aca8c6e4efafcb7eb308fc01",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            74
+          ],
+          "writer_calls_equal_to_accepted_text": []
+        }
+      ]
+    },
+    {
+      "book": "B2",
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 30,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            30
+          ],
+          "matching_writer_calls": [
+            32
+          ],
+          "ordinal": 1,
+          "plan_sha256": "07cf57ebc1a835744dfa620230ee8ba78124b2f15002a8ad8dfcb90f827a780b",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            32
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            32
+          ]
+        }
+      ]
+    },
+    {
+      "book": "B3",
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 34,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            34
+          ],
+          "matching_writer_calls": [
+            36
+          ],
+          "ordinal": 1,
+          "plan_sha256": "f5a752a25920c7b600d1ab90499cc544ebada6597f41f2578965034595e28356",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            36
+          ],
+          "writer_calls_equal_to_accepted_text": []
+        },
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            34
+          ],
+          "matching_writer_calls": [
+            80
+          ],
+          "ordinal": 2,
+          "plan_sha256": "a114ca6451fd6a5f7727ae50e78ac1cb832041c7c741f1c4c05931475d21441c",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            80
+          ],
+          "writer_calls_equal_to_accepted_text": [
+            80
+          ]
+        }
+      ]
+    },
+    {
+      "book": "B4",
+      "outline_calls": 1,
+      "outlines": [
+        {
+          "call": 46,
+          "chapter_groups": 6,
+          "coverage_items_retained": 6,
+          "parse_or_mapping_valid": true
+        }
+      ],
+      "scenes": [
+        {
+          "full_scene_brief_in_writer_prompt": true,
+          "job_bound_plan_available": true,
+          "matching_outline_calls": [
+            46
+          ],
+          "matching_writer_calls": [
+            48
+          ],
+          "ordinal": 1,
+          "plan_sha256": "a6db8a37ea2ef9651ffc19b1550a09250bc7a6899cf15e9c8ca9fcb8faf05b69",
+          "policy_attempts": 1,
+          "writer_calls_equal_after_existing_surface_cleanup": [
+            48
+          ],
+          "writer_calls_equal_to_accepted_text": []
+        }
+      ]
+    }
+  ],
+  "source_hashes": {
+    "research/quality-measurement/planning-material-20260916/evidence.json": "88249bc60b80d90f973740c4b93d447a568844d0d4678e9133c7c7db6a81389d",
+    "research/quality-measurement/planning-material-20260916/inspect_handoff.py": "b36d0f72f605beb15fa40c394fe781feba7b6037f6b477dbcaae0b1f55e72ce6",
+    "runs/planning-material-20260916/books/A1/book.db": "30e0b638181935dadea5871941ea9b9b73a7e16211bc46a6b899249ebc1764bf",
+    "runs/planning-material-20260916/books/A1/chapter-1.md": "13a732fe4a618f885cdfccbf36a3c290220f163488f557ffe4d283836c5bbc65",
+    "runs/planning-material-20260916/books/A1/chapter-2.md": "bcb578a3f4a06722e49c9294870a3ff7ad0986fb200fa328226081589c41c705",
+    "runs/planning-material-20260916/books/A1/views/chapter1.json": "188bc3afa2b9e9b9b429c7621897e1ce29dbfa5750a14adc72a7197bc0038da3",
+    "runs/planning-material-20260916/books/A1/views/chapter2.json": "2f35aeea5b760ae1c12ef502e4bebc3278d29018ec133096b66d5d9694e7b679",
+    "runs/planning-material-20260916/books/A2/book.db": "24a45c03abdd762090a55363cf2a4dd5fe3e64fe7c3e6e91a4d4fe6d17574b6e",
+    "runs/planning-material-20260916/books/A2/chapter-1.md": "af35ed5f28a77a78f03b1d978af23280e01e0039a7c1619e3e102fa9156a6cc8",
+    "runs/planning-material-20260916/books/A2/views/chapter1.json": "581e2b2fb1a077f4fed797f088bdc21d1caf2642fa37d4becea02c8e6d25467c",
+    "runs/planning-material-20260916/books/A3/book.db": "7b0861c6d815e59f468de87b447052a9f769d8ea220e1711980836967d619c5b",
+    "runs/planning-material-20260916/books/A3/chapter-1.md": "d23234472eb2db0a95d444b6df693a24031ac1220256b28266ff0d9280247352",
+    "runs/planning-material-20260916/books/A3/chapter-2.md": "3206f23ebb973afbac911ef6b7d2b002ee23f53dbf14602d1204e1bc31d331de",
+    "runs/planning-material-20260916/books/A3/views/chapter1.json": "1dfb847eda7d7593ece81798fe2defcfef2d03936158c6007ea38049c8a911c3",
+    "runs/planning-material-20260916/books/A3/views/chapter2.json": "0aa2c98b9bf0cff55daf4a13b5d8f7a411ff89100dedc975f25ae39bbfd9489d",
+    "runs/planning-material-20260916/books/A4/book.db": "4185044503520290c3f7de0bd94cf267d813b13878526fa9d0d56a457147706e",
+    "runs/planning-material-20260916/books/A4/chapter-1.md": "fd5806e8a69d3998c63fdd2709a021d31ffc84f083160ec8597f656c3ef403ad",
+    "runs/planning-material-20260916/books/A4/views/chapter1.json": "a31e2791ec2a4880dc9f752cb9727fa56e6233b0a68fc66b63824ebea54444f6",
+    "runs/planning-material-20260916/books/B1/book.db": "1e07de0c815f91db150710cb67f3629a40ab2aba2de1f02fbcdc53b8f421e8e9",
+    "runs/planning-material-20260916/books/B1/chapter-1.md": "8fe64c96fc00d6872b5fdb256419a4aeccb5b275bf23c09ff9fcbb29d8a20393",
+    "runs/planning-material-20260916/books/B1/chapter-2.md": "f53d34940d14bd639910ec23ed2613883bac0303494636b01f4aad4642df211a",
+    "runs/planning-material-20260916/books/B1/views/chapter1.json": "3ad2d305b0409537573f74ba2e35770d714f4892e8959d6eaa4edd3664f65b37",
+    "runs/planning-material-20260916/books/B1/views/chapter2.json": "beb29674f509edbc6ba509614f68145f344925e902d8df72d129ff2d4742077a",
+    "runs/planning-material-20260916/books/B2/book.db": "84b59cdbb42fc3b5ffbcadd0fb88b9f7eb7280dcad60212cf6d4d943a0f9ea02",
+    "runs/planning-material-20260916/books/B2/chapter-1.md": "67d025bcaae4e860f7ff9d0e8489f9446c93c5fc944a96766b736d2f00376b3d",
+    "runs/planning-material-20260916/books/B2/views/chapter1.json": "2fe6a75438efc123315f82b67028f9c08c146506f44d27b962dc8b66591610d0",
+    "runs/planning-material-20260916/books/B3/book.db": "40f42514f30daca9bc43c99da95479427613b07562865908edf186f00b2a7faa",
+    "runs/planning-material-20260916/books/B3/chapter-1.md": "87a458f8b1089f59743754a66d2bb8c76238c73a00755cb67faa62e4e7f9f24d",
+    "runs/planning-material-20260916/books/B3/chapter-2.md": "000929d33309cad9a23a10bdcb05b75c7cba8281ca27a0dfbb01a498d9bc2055",
+    "runs/planning-material-20260916/books/B3/views/chapter1.json": "db88f0e51a8f909c604acdf6d6e586a14eeb33c6b1f2db33bb8a5e49efeff77c",
+    "runs/planning-material-20260916/books/B3/views/chapter2.json": "08aa352930322aa15691bc29a8bcced4db1ad4acb70b7c5ccbcddab48205f3c3",
+    "runs/planning-material-20260916/books/B4/book.db": "cc9fe4ad3253b621217c4afb39df10bbfff96a50c05f0952654c57d82e3e99bf",
+    "runs/planning-material-20260916/books/B4/chapter-1.md": "c7f2299c83a780270bb2b6d51a761602041fde9ff5d6e36bac2a6dec4a470f9b",
+    "runs/planning-material-20260916/books/B4/views/chapter1.json": "e0ce059a6383fb9e9a687977673296642b1e02bd2908393118650e1347b08adf",
+    "runs/planning-material-20260916/calls/0001-A1.json": "10c44ae08e18521206904be2b6f019e2882294835cb8719780a50f249b0fb8ab",
+    "runs/planning-material-20260916/calls/0002-A1.json": "ffa9ca3fccbd93aa2565b5b6274c44d57feb50ccd13d67d2f6611eca136afe5c",
+    "runs/planning-material-20260916/calls/0003-A1.json": "b9034e3de1ad7fd14c236b61b6a508d66cd92a8d363e53cb5461abaac2700724",
+    "runs/planning-material-20260916/calls/0004-A1.json": "bcdf7a0d9491de67e29375fae98c2a133aec23014c3ee1d4098c065e252b1458",
+    "runs/planning-material-20260916/calls/0005-A3.json": "dd33761ff8949384b1dbb0293b73d0879a2788095d627ee3c345c1d5bad79cb8",
+    "runs/planning-material-20260916/calls/0006-A3.json": "377ed4e1935e3a572b9003a139a316ba44a3058c8ab3f12a6997d4c225695af4",
+    "runs/planning-material-20260916/calls/0007-A3.json": "a1b0b6813a545347037cce0af3484fb616c9511ac005e63e78833ddf291560fc",
+    "runs/planning-material-20260916/calls/0008-A3.json": "ea8d22e812f282832d1cd2c981ea8cfd733d6b9d6a61168d3c720ab0a2000264",
+    "runs/planning-material-20260916/calls/0009-A1.json": "e917d231052dbafc200cb2e4beec27c315c6688186a916d16d45a9b61456360c",
+    "runs/planning-material-20260916/calls/0010-A1.json": "698f152fb9abfe15cc8461519bab18d9111f9c145ec94152547c0ad1adf7cb16",
+    "runs/planning-material-20260916/calls/0011-A3.json": "867a01964d2921d45f3e209c3a9ab4c34453d73f7b99ea77818144bdbb21865b",
+    "runs/planning-material-20260916/calls/0012-A3.json": "5649fc4a44db64d3736902115d814b16d99984f540bfea9942d33480a7b55ba8",
+    "runs/planning-material-20260916/calls/0013-B1.json": "73f3f5c6d1489dc913d0ef04652640cfbb51c6e4ef217659ba7a9b33f60e0e48",
+    "runs/planning-material-20260916/calls/0014-B2.json": "9ffd2b764b04ba764992317704f9b4e9c726e04771c45779fb09bd101d6e0430",
+    "runs/planning-material-20260916/calls/0015-B3.json": "3d81dee6328a7c70ddb7ea151f08aa104eb736af2ad596fa42825d62fab160a0",
+    "runs/planning-material-20260916/calls/0016-B4.json": "2227001dc95180933ed7d3e833cc7af11d50078685fd93336c6b129419cb320c",
+    "runs/planning-material-20260916/calls/0017-B1.json": "70ff59bc74bce7c0461f8b0a259a6658caf7d4755a2cbfe80af5d5579c25f834",
+    "runs/planning-material-20260916/calls/0018-B1.json": "5687829c7e6874ea7bb9a990699c2b674318f9d33927d809a9d17e6522845c8a",
+    "runs/planning-material-20260916/calls/0019-B1.json": "b79dc04ea58bb660349ec1131604be17c7252089b7138dc503be8b789f7fca51",
+    "runs/planning-material-20260916/calls/0020-B1.json": "450ecefa43178d613399a5fac2a3ddfef09818db129e7a39625e5363f2e80f8e",
+    "runs/planning-material-20260916/calls/0021-A1.json": "bd821a7c34144ed3f1f4ee42db31c7ae60a910cb3cdb7527ab1b2baa160bbe98",
+    "runs/planning-material-20260916/calls/0022-A1.json": "d243ab009378baea1046e34af804f8615ba8484bfe871170e45c128457d47fe1",
+    "runs/planning-material-20260916/calls/0023-A1.json": "ff4b1d6b7005e0cb865da1f84ab718a0fa87098261219eb6a10d60ccd0ad72cb",
+    "runs/planning-material-20260916/calls/0024-A1.json": "d37d691057f8b0073f3b5d096075c3d95476371a7ba7a4efc9f8ffe60e1247f6",
+    "runs/planning-material-20260916/calls/0025-A2.json": "be3e2ea23a888c2769a21a970e45756f83825d230d2bcb10bfdec05fea79d8ea",
+    "runs/planning-material-20260916/calls/0026-A2.json": "46ab32f056ba7b420ba695f9fa58c23fd129706995c24f011ea124b83aea62bc",
+    "runs/planning-material-20260916/calls/0027-A2.json": "a5cf574c46b735d4f81dd4ba2dd32d2234364189072311f1ba066c0c928b8315",
+    "runs/planning-material-20260916/calls/0028-A2.json": "0b0b8745e8a3ebb7cfa2cc39bffd719dee16b980fe497be918e317c17ba26823",
+    "runs/planning-material-20260916/calls/0029-B2.json": "1b3047e061dd4d0b76ea39bca286d2edfd0c216df8f58454a78d2871c551d31e",
+    "runs/planning-material-20260916/calls/0030-B2.json": "797b2a12b9a7fd1b15c28cc4d86dd7801bafb3b1454481a4d3d3d86859c56463",
+    "runs/planning-material-20260916/calls/0031-B2.json": "0e07ec698fca935ba6813fd80926ed2df382aa56241047d38d766f9f6a04fcb1",
+    "runs/planning-material-20260916/calls/0032-B2.json": "8ccdbca1049d3b10af3d20fb836dc5caaad0e94e1af82d33a21dbb36968d2b1b",
+    "runs/planning-material-20260916/calls/0033-B3.json": "3b760bedf76635abcc78a54f7df70a32e1050fd763b9f82ee6e9e5a6e6a2ffd5",
+    "runs/planning-material-20260916/calls/0034-B3.json": "9d1fd5d8cbe2f4aee77eb6ad61d62fcc58bd9e9bc37006991c96ed90e02dd717",
+    "runs/planning-material-20260916/calls/0035-B3.json": "3ed39493a3f46f2c18d9c324350f8e19baa5423de8a26b208bbc4cbaf724802b",
+    "runs/planning-material-20260916/calls/0036-B3.json": "6ef1537cf0ab9d6ab6f5e41372234b67fdd5f4252d48a5416175872f3889a79f",
+    "runs/planning-material-20260916/calls/0037-A3.json": "871221720fa8d37af5ca6cf02dea223e53926d2acb673fcd32d734abf004b358",
+    "runs/planning-material-20260916/calls/0038-A3.json": "501f1885176f7df872f118010c862937f230d4ab3d06472cb3186f980c8afe2f",
+    "runs/planning-material-20260916/calls/0039-A3.json": "1ec99506b4516811752b16b893d46aba2dd66393f9c8a41369138515d6300c50",
+    "runs/planning-material-20260916/calls/0040-A3.json": "d799fbd962861e8ec5957950f93a0d09cd9963eb356a7b112d4c3b27080d4143",
+    "runs/planning-material-20260916/calls/0041-A4.json": "74d97ceda171903b3c0ae508ddff01e0051e26df26040c481f71df1034930703",
+    "runs/planning-material-20260916/calls/0042-A4.json": "5f577d6f2e1fda5d4b1ddd163aca97170f45c01a54f51a2e535c2f03d218f1f9",
+    "runs/planning-material-20260916/calls/0043-A4.json": "529c7512b67e81cc6975610c9d4706e8a5314e1d1cd2eefb8b06a1c148707b30",
+    "runs/planning-material-20260916/calls/0044-A4.json": "cbfea614d2dee201463d6a97eb030e5a67660340e9998fdf4c54c7674d59a6d4",
+    "runs/planning-material-20260916/calls/0045-B4.json": "d64985320cffde29e055e2422a59658e0b49650c20f888b4657d616ce72cceea",
+    "runs/planning-material-20260916/calls/0046-B4.json": "a944746468f8b03e19542d68da74693e9c01c978e05caee86f0cf96bbf46ea03",
+    "runs/planning-material-20260916/calls/0047-B4.json": "b496a267a63926440b6ca9381e9ac566577e79b891dfbea1fec53afd63ff158c",
+    "runs/planning-material-20260916/calls/0048-B4.json": "9c9d2d6cbfb2d69c8d7b51a1eb9fbe2ac6b1c92af11a8b81a0988892c47da53e",
+    "runs/planning-material-20260916/calls/0049-A1.json": "e543bac15251e74f0c37c886b7b35bd47b95f400c2e68120a467b006476f366b",
+    "runs/planning-material-20260916/calls/0050-A1.json": "234616eb7f2e977325c0d96dfb031fe290508a14e5fd587d7c3dc0b685f48e16",
+    "runs/planning-material-20260916/calls/0051-B1.json": "3f265ea0bdb6144b01da17401c163a777438b29e0e51d5630bcbbc9dba45a469",
+    "runs/planning-material-20260916/calls/0052-B1.json": "3ef3341041ff519666c6cefedcbfa45ee9d6e8fad9fb10b3dcf987aedbdbc2d3",
+    "runs/planning-material-20260916/calls/0053-B2.json": "59d9d5d615b8b886ebf9108ddb54b5777a122e31a34163f42ba0dd281283d015",
+    "runs/planning-material-20260916/calls/0054-B2.json": "2804e3ef1a26985b3b9f28559be635f2ffb7e0e22fced4d4b8be5a331cdeb341",
+    "runs/planning-material-20260916/calls/0055-A2.json": "b879b46f52d18572cf118f6843667a4cb8843f4571fc2f2390575b7a700f7060",
+    "runs/planning-material-20260916/calls/0056-A2.json": "c997465956dcd48463cb4d1746a447838e492ffb5c1f27f80f313f7be5ae6e2f",
+    "runs/planning-material-20260916/calls/0057-A3.json": "794184ba68e37802f9d24151b101af20de94592dff7c28e39e29a975f45285e6",
+    "runs/planning-material-20260916/calls/0058-A3.json": "8b8fa31ce1a634464fe2ae84c3db4be5907f6afbdb9a83087639fb5f9bf2f3fe",
+    "runs/planning-material-20260916/calls/0059-B3.json": "9c96f80f461f6478437d2620089164ecc9a64d2fe23fba4b6e5e25145597fb24",
+    "runs/planning-material-20260916/calls/0060-B3.json": "e3c77a0047b7dc14b3117d0567e05430bf6a258e7499d559ffdfbbdd285a2f3a",
+    "runs/planning-material-20260916/calls/0061-B4.json": "782ea6af288c723728135927f18b5fc1aaea4df2416025d4e28ef40593157ca2",
+    "runs/planning-material-20260916/calls/0062-B4.json": "c3b73b40a64e293cfe83e5de674d5ede12a895b73bae6c5630e6d06917b85eaf",
+    "runs/planning-material-20260916/calls/0063-A4.json": "b05436dd80edc917580e84d026eef473b76b52d3e2fbb768d2d8f3a8f6632873",
+    "runs/planning-material-20260916/calls/0064-A4.json": "da4a10f7a9d8bf9f32ee6a62b84ec366d49eb8e75a30d67dbcd74ac1a692bb39",
+    "runs/planning-material-20260916/calls/0065-B1.json": "b321348d86362f5ca9de466ed817971ed76a935cdf419e4d894ca3fdef9e3be0",
+    "runs/planning-material-20260916/calls/0066-B1.json": "efaa099be2811fdb3e4720f39e23f2ca6087decfb43db1407c074ee79c4fe3a8",
+    "runs/planning-material-20260916/calls/0067-A1.json": "eef690529730697d91a4014ab5efb13f2bf7800cc2a627a1fcc719fe95400368",
+    "runs/planning-material-20260916/calls/0068-A1.json": "33391f587d43409d718234e5b81e62259547d3c31b7e2a8d672ab06960601af7",
+    "runs/planning-material-20260916/calls/0069-A3.json": "f1ab50570d8b13f787f56b299a16841a01f78f87be7ec7def8e6761ffe20493b",
+    "runs/planning-material-20260916/calls/0070-A3.json": "9d259110beb1d7c733e89d33650eeb6839b6e05eb18b529312efd9bf3ea604e4",
+    "runs/planning-material-20260916/calls/0071-B3.json": "df48ccdc25353e5fc91659d2f4230d2c8c452eb718e5785fcbcb2b5593e7fb2a",
+    "runs/planning-material-20260916/calls/0072-B3.json": "b02ea0be1ccfe3b87f8c6788d79ab06c68e5a31b3c95551b847008c30a72c792",
+    "runs/planning-material-20260916/calls/0073-B1.json": "4c581cfdb607775b26d2c37e510d093f7f635b5ed174ec4b3b78151a4b84493a",
+    "runs/planning-material-20260916/calls/0074-B1.json": "da543afb4917f4e7303cd4d715dd230c7089733c8b2cb71c6efaa4e150f32a90",
+    "runs/planning-material-20260916/calls/0075-A1.json": "0c3bdd20ad221fa5e2087fed3e4f014bc2b1385bf1719caafa7f5e04b49819d1",
+    "runs/planning-material-20260916/calls/0076-A1.json": "6f73d7cb8219fd888014f448ad39180284a86bb8b889d3fb4e77aa390f7a0995",
+    "runs/planning-material-20260916/calls/0077-A3.json": "3c3a5f909dda38bc2caf328275f21e41b5a8cf4121fb0a103bdb62470d87be5f",
+    "runs/planning-material-20260916/calls/0078-A3.json": "3434a2a9feea86c3c98765c9e854a1bf35407e4310575afa2714f25e31ef7ada",
+    "runs/planning-material-20260916/calls/0079-B3.json": "40e7a1cfd9719315235bf3b82161fdd89a62e00b4af6c59a2a630d032cfb03ef",
+    "runs/planning-material-20260916/calls/0080-B3.json": "8b745cf6e249605a2003a61013764cd5133e1d739c831bd339111e66cda5831c",
+    "runs/planning-material-20260916/calls/0081-A1.json": "e27aee92d88f6080b1481e42ca17d45c17d1671d75da8bce5411004c3228b3c0",
+    "runs/planning-material-20260916/calls/0082-A1.json": "4b69a7afbe0c78a04ff52c1853d8426177ac81b00d53996fbb542b7a7fdbf1ab",
+    "runs/planning-material-20260916/calls/0083-B1.json": "20247c11338a7b4dce3cad9b6a3d202da6c73f7d982aa429ba5a285b0d4e71d2",
+    "runs/planning-material-20260916/calls/0084-B1.json": "386360fab1868bf5e9647b8c2fd2d6a9699a6cd37a881c792922945ebac1f392",
+    "runs/planning-material-20260916/calls/0085-B3.json": "867d85e0f26cf79033d348b820f4bcfe894ff0affc0c907401e052f6ea036039",
+    "runs/planning-material-20260916/calls/0086-B3.json": "920293b35091494b6e0cc9ecdda0e553d29a7d617e872abe641796fc7978d1bd",
+    "runs/planning-material-20260916/calls/0087-A3.json": "17bcc13a1a5227125bea7d48b73e6c5ec1e1d4b4cdf2552e17ab887141029728",
+    "runs/planning-material-20260916/calls/0088-A3.json": "5fafb8b36e45979da07c87a2b7131843cc1567794653718c1099a9cdf4634a31",
+    "runs/planning-material-20260916/progress.json": "e6244cd1f3a7c75a44f36eedf6150b4c33628b23a761cd093a4f1b898880c086"
+  }
+}

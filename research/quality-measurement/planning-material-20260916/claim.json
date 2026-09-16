@@ -9,10 +9,25 @@
       "kind": "registration",
       "path": "research/quality-measurement/planning-material-20260916/registration.json",
       "sha256": "b48aa1c031690364486f5fa66079e35091131ea7f7b85ecad12f53f9c191f587"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/planning-material-20260916/evidence.json",
+      "sha256": "88249bc60b80d90f973740c4b93d447a568844d0d4678e9133c7c7db6a81389d"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/planning-material-20260916/handoff-evidence.json",
+      "sha256": "669df8967b94f26fd80ccc24b0577f46ac807c33ca5561dba34ac8f9740d2171"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/planning-material-20260916/readout-controls.json",
+      "sha256": "b39b2b2218898ddd19aed36729a64ccf61165043d19bb7b235785d02e5705977"
     }
   ],
   "claim_id": "planning-material-20260916",
   "schema": "litharness.epistemic-claim.v1",
   "statement": "The registered authoring comparison records source transformation, outline handoff and reached chapters with generated developments and tentative placement separated. It licenses no quality effect.",
-  "status": "registered"
+  "status": "observed"
 }

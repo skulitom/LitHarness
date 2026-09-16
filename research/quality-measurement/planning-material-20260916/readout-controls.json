@@ -1,0 +1,292 @@
+{
+  "calls": 88,
+  "chapters": 12,
+  "coverage_items_retained": 48,
+  "drafts": [
+    {
+      "book": "A1",
+      "chapter": 1,
+      "chapter_sha256": "13a732fe4a618f885cdfccbf36a3c290220f163488f557ffe4d283836c5bbc65",
+      "diff_hunks": 2,
+      "identical_after_existing_cleanup": true,
+      "identical_before_cleanup": false,
+      "raw_sha256": "706b7e1f7d8a4f14127d6c62d02064c663049a5978b33ed8d8afba2fb33ce482"
+    },
+    {
+      "book": "A1",
+      "chapter": 2,
+      "chapter_sha256": "bcb578a3f4a06722e49c9294870a3ff7ad0986fb200fa328226081589c41c705",
+      "diff_hunks": 1,
+      "identical_after_existing_cleanup": true,
+      "identical_before_cleanup": false,
+      "raw_sha256": "85db7f1e747ec77fae24334aa070b31d6b83eb4b013bf232a50e45a2d8678b57"
+    },
+    {
+      "book": "A2",
+      "chapter": 1,
+      "chapter_sha256": "af35ed5f28a77a78f03b1d978af23280e01e0039a7c1619e3e102fa9156a6cc8",
+      "diff_hunks": 0,
+      "identical_after_existing_cleanup": true,
+      "identical_before_cleanup": true,
+      "raw_sha256": "cc7f64b897cb014f577b5c7f28470a368e0fd3f27d55058b7680c06c9fb7dba0"
+    },
+    {
+      "book": "A3",
+      "chapter": 1,
+      "chapter_sha256": "d23234472eb2db0a95d444b6df693a24031ac1220256b28266ff0d9280247352",
+      "diff_hunks": 1,
+      "identical_after_existing_cleanup": true,
+      "identical_before_cleanup": false,
+      "raw_sha256": "4ca3baf36514b3e3f201089aa35aed23e86a1cbcdb30afc671860c2bd6bad1dc"
+    },
+    {
+      "book": "A3",
+      "chapter": 2,
+      "chapter_sha256": "3206f23ebb973afbac911ef6b7d2b002ee23f53dbf14602d1204e1bc31d331de",
+      "diff_hunks": 0,
+      "identical_after_existing_cleanup": true,
+      "identical_before_cleanup": true,
+      "raw_sha256": "8137ebc5c15a65f72ff7ebe2fc48e0797d561f55d7f336955ec19bb3a2d7377a"
+    },
+    {
+      "book": "A4",
+      "chapter": 1,
+      "chapter_sha256": "fd5806e8a69d3998c63fdd2709a021d31ffc84f083160ec8597f656c3ef403ad",
+      "diff_hunks": 0,
+      "identical_after_existing_cleanup": true,
+      "identical_before_cleanup": true,
+      "raw_sha256": "803bbfaa474c83fb3bfb04a85befde4ca7329c492cf3495f51fa57b0b6a6b903"
+    },
+    {
+      "book": "B1",
+      "chapter": 1,
+      "chapter_sha256": "8fe64c96fc00d6872b5fdb256419a4aeccb5b275bf23c09ff9fcbb29d8a20393",
+      "diff_hunks": 1,
+      "identical_after_existing_cleanup": true,
+      "identical_before_cleanup": false,
+      "raw_sha256": "3b6b4ea1c2d8e7843c631295fcd6863c3851e1c707513f0822a76ff365a1093f"
+    },
+    {
+      "book": "B1",
+      "chapter": 2,
+      "chapter_sha256": "f53d34940d14bd639910ec23ed2613883bac0303494636b01f4aad4642df211a",
+      "diff_hunks": 2,
+      "identical_after_existing_cleanup": true,
+      "identical_before_cleanup": false,
+      "raw_sha256": "8af11eed5eef5a33be402630215632cd9ea5bd666301cb95e1bdab167439cf62"
+    },
+    {
+      "book": "B2",
+      "chapter": 1,
+      "chapter_sha256": "67d025bcaae4e860f7ff9d0e8489f9446c93c5fc944a96766b736d2f00376b3d",
+      "diff_hunks": 0,
+      "identical_after_existing_cleanup": true,
+      "identical_before_cleanup": true,
+      "raw_sha256": "480d35cd69b2680dc89fa0a5759c96ddead97c05eeb543575d7f4a277fcc9328"
+    },
+    {
+      "book": "B3",
+      "chapter": 1,
+      "chapter_sha256": "87a458f8b1089f59743754a66d2bb8c76238c73a00755cb67faa62e4e7f9f24d",
+      "diff_hunks": 8,
+      "identical_after_existing_cleanup": true,
+      "identical_before_cleanup": false,
+      "raw_sha256": "9d4c73e34da87751821e05cc045e9af6ac62fa4bba41f7c85e8301a142fe9e9b"
+    },
+    {
+      "book": "B3",
+      "chapter": 2,
+      "chapter_sha256": "000929d33309cad9a23a10bdcb05b75c7cba8281ca27a0dfbb01a498d9bc2055",
+      "diff_hunks": 0,
+      "identical_after_existing_cleanup": true,
+      "identical_before_cleanup": true,
+      "raw_sha256": "5481028a0699bfd32b3d4b6ca6c64c04299d669f6f627e022645b668c01abe35"
+    },
+    {
+      "book": "B4",
+      "chapter": 1,
+      "chapter_sha256": "c7f2299c83a780270bb2b6d51a761602041fde9ff5d6e36bac2a6dec4a470f9b",
+      "diff_hunks": 2,
+      "identical_after_existing_cleanup": true,
+      "identical_before_cleanup": false,
+      "raw_sha256": "a96241cee6cf8c242f065c72ef8fc07a8e08d341aa8abc84c53c7314d70aa032"
+    }
+  ],
+  "elapsed_seconds": 3528.696999,
+  "integrity": {
+    "frozen": {
+      "files": 382,
+      "mismatches": []
+    },
+    "handoff": {
+      "files": 123,
+      "mismatches": []
+    },
+    "paired": {
+      "files": 24,
+      "mismatches": []
+    }
+  },
+  "method": "Post-run mechanical checks; field locations are a lexical inventory, not a metric.",
+  "outline_requests": [
+    {
+      "book": "A1",
+      "call": 22,
+      "numbered_concept_field_locations": [
+        "$.book_concept.debts[0].owed",
+        "$.book_concept.debts[1].owed",
+        "$.book_concept.debts[2].owed",
+        "$.book_concept.debts[3].owed",
+        "$.book_concept.discovery.experience_brief",
+        "$.book_concept.discovery.growth",
+        "$.book_concept.first_arc.closes",
+        "$.book_concept.first_arc.middle"
+      ],
+      "numbered_material_field_locations": [],
+      "open_promises_is_null": true
+    },
+    {
+      "book": "A2",
+      "call": 26,
+      "numbered_concept_field_locations": [
+        "$.book_concept.first_arc.closes",
+        "$.book_concept.first_arc.middle"
+      ],
+      "numbered_material_field_locations": [],
+      "open_promises_is_null": true
+    },
+    {
+      "book": "A3",
+      "call": 38,
+      "numbered_concept_field_locations": [
+        "$.book_concept.discovery.experience_brief",
+        "$.book_concept.discovery.growth",
+        "$.book_concept.first_arc.closes",
+        "$.book_concept.first_arc.middle",
+        "$.book_concept.turn.event"
+      ],
+      "numbered_material_field_locations": [],
+      "open_promises_is_null": true
+    },
+    {
+      "book": "A4",
+      "call": 42,
+      "numbered_concept_field_locations": [
+        "$.book_concept.first_arc.closes",
+        "$.book_concept.first_arc.middle"
+      ],
+      "numbered_material_field_locations": [],
+      "open_promises_is_null": true
+    },
+    {
+      "book": "B1",
+      "call": 18,
+      "numbered_concept_field_locations": [
+        "$.book_concept.debts[0].owed",
+        "$.book_concept.debts[1].owed",
+        "$.book_concept.debts[2].owed",
+        "$.book_concept.debts[3].owed",
+        "$.book_concept.discovery.experience_brief",
+        "$.book_concept.discovery.growth"
+      ],
+      "numbered_material_field_locations": [
+        "$.planning_material.placement_suggestions[0].suggestion",
+        "$.planning_material.placement_suggestions[1].suggestion",
+        "$.planning_material.placement_suggestions[2].suggestion",
+        "$.planning_material.placement_suggestions[3].suggestion",
+        "$.planning_material.placement_suggestions[4].suggestion"
+      ],
+      "open_promises_is_null": true
+    },
+    {
+      "book": "B2",
+      "call": 30,
+      "numbered_concept_field_locations": [],
+      "numbered_material_field_locations": [
+        "$.planning_material.placement_suggestions[0].suggestion",
+        "$.planning_material.placement_suggestions[1].suggestion",
+        "$.planning_material.placement_suggestions[2].suggestion"
+      ],
+      "open_promises_is_null": true
+    },
+    {
+      "book": "B3",
+      "call": 34,
+      "numbered_concept_field_locations": [
+        "$.book_concept.discovery.experience_brief",
+        "$.book_concept.discovery.growth",
+        "$.book_concept.turn.event"
+      ],
+      "numbered_material_field_locations": [
+        "$.planning_material.placement_suggestions[0].suggestion",
+        "$.planning_material.placement_suggestions[1].suggestion",
+        "$.planning_material.placement_suggestions[2].suggestion",
+        "$.planning_material.placement_suggestions[3].suggestion"
+      ],
+      "open_promises_is_null": true
+    },
+    {
+      "book": "B4",
+      "call": 46,
+      "numbered_concept_field_locations": [],
+      "numbered_material_field_locations": [
+        "$.planning_material.placement_suggestions[0].suggestion",
+        "$.planning_material.placement_suggestions[1].suggestion",
+        "$.planning_material.placement_suggestions[2].suggestion"
+      ],
+      "open_promises_is_null": true
+    }
+  ],
+  "phase_usage": {
+    "chapter1": {
+      "calls": 32,
+      "recorded_tokens": 316089
+    },
+    "chapter2": {
+      "calls": 8,
+      "recorded_tokens": 71034
+    },
+    "concept": {
+      "calls": 8,
+      "recorded_tokens": 55977
+    },
+    "drain1": {
+      "calls": 16,
+      "recorded_tokens": 84113
+    },
+    "drain2": {
+      "calls": 8,
+      "recorded_tokens": 42867
+    },
+    "grow1": {
+      "calls": 8,
+      "recorded_tokens": 596010
+    },
+    "material": {
+      "calls": 4,
+      "recorded_tokens": 36382
+    },
+    "seed": {
+      "calls": 4,
+      "recorded_tokens": 330872
+    }
+  },
+  "recorded_tokens": 1533344,
+  "source_hashes": {
+    "research/quality-measurement/planning-material-20260916/evidence.json": "88249bc60b80d90f973740c4b93d447a568844d0d4678e9133c7c7db6a81389d",
+    "research/quality-measurement/planning-material-20260916/handoff-evidence.json": "669df8967b94f26fd80ccc24b0577f46ac807c33ca5561dba34ac8f9740d2171",
+    "research/quality-measurement/planning-material-20260916/summarize.py": "f7e9abaf336519479ffddca5c0a7f55b78939ba94ba3971cbb44281f68bcbc66",
+    "runs/planning-material-20260916/calls/0018-B1.json": "5687829c7e6874ea7bb9a990699c2b674318f9d33927d809a9d17e6522845c8a",
+    "runs/planning-material-20260916/calls/0022-A1.json": "d243ab009378baea1046e34af804f8615ba8484bfe871170e45c128457d47fe1",
+    "runs/planning-material-20260916/calls/0026-A2.json": "46ab32f056ba7b420ba695f9fa58c23fd129706995c24f011ea124b83aea62bc",
+    "runs/planning-material-20260916/calls/0030-B2.json": "797b2a12b9a7fd1b15c28cc4d86dd7801bafb3b1454481a4d3d3d86859c56463",
+    "runs/planning-material-20260916/calls/0034-B3.json": "9d1fd5d8cbe2f4aee77eb6ad61d62fcc58bd9e9bc37006991c96ed90e02dd717",
+    "runs/planning-material-20260916/calls/0038-A3.json": "501f1885176f7df872f118010c862937f230d4ab3d06472cb3186f980c8afe2f",
+    "runs/planning-material-20260916/calls/0042-A4.json": "5f577d6f2e1fda5d4b1ddd163aca97170f45c01a54f51a2e535c2f03d218f1f9",
+    "runs/planning-material-20260916/calls/0046-B4.json": "a944746468f8b03e19542d68da74693e9c01c978e05caee86f0cf96bbf46ea03",
+    "runs/planning-material-20260916/manifest.json": "660be73a9ab043827408121402d0deb526deda1ad72c4add850387bc8af726de",
+    "runs/planning-material-20260916/paired-sources.json": "c514e131799a06db1cc7107125486afcf6bf2e31a22eba247d28e064c1542e1e",
+    "runs/planning-material-20260916/writer-differences.diff": "24911a0a9b2467d0a821038836097b2df5e744b34951d0a3eb64abfa39ce4a95"
+  },
+  "words": 18602
+}
