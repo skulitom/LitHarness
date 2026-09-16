@@ -1,0 +1,28 @@
+{
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/connected-chapters-20260916/RUNBOOK.md",
+      "sha256": "31c2b66401eead718547deb2477b5674e25547ff3df998324918b52dd8292bd8"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/connected-chapters-20260916/registration.json",
+      "sha256": "c430e463989d91cb142d77543929a3b8c519095fafaca91fd3046796912325ef"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/connected-chapters-20260916/CONTINUATION.md",
+      "sha256": "e36bf89fc2178996e0e7384fb1963f0b0bf53c3841dfa15b2c5861c39ad68a7f"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/connected-chapters-20260916/continuation.json",
+      "sha256": "266650516d5acc939541fee735bc340839a14f4dc0a1bbaa8c70701ba4ddb129"
+    }
+  ],
+  "claim_id": "connected-chapters-budget-continuation-20260916",
+  "schema": "litharness.epistemic-claim.v1",
+  "statement": "The explicit budget-only continuation preserves the stopped first-draw sequences and records their remaining third chapters under amended aggregate admission.",
+  "status": "registered"
+}
