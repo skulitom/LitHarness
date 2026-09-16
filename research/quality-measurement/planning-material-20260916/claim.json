@@ -1,0 +1,18 @@
+{
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/planning-material-20260916/RUNBOOK.md",
+      "sha256": "4cd2fe2a1d71e8799046f3e548603827f09e3ec63f2bd8e9c225e75142191140"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/planning-material-20260916/registration.json",
+      "sha256": "b48aa1c031690364486f5fa66079e35091131ea7f7b85ecad12f53f9c191f587"
+    }
+  ],
+  "claim_id": "planning-material-20260916",
+  "schema": "litharness.epistemic-claim.v1",
+  "statement": "The registered authoring comparison records source transformation, outline handoff and reached chapters with generated developments and tentative placement separated. It licenses no quality effect.",
+  "status": "registered"
+}
