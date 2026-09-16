@@ -59,6 +59,9 @@ Discovery automatically develops an [experience brief](docs/operator-guide.md#au
 covering desire, action, experienced consequence and chapter coverage. Your supplied brief
 takes priority; the generated proposal remains available to planning.
 
+For an experimental alternative, `concept --planning-material` invents referenced developments
+once and stores optional placement separately. See [structured planning material](docs/operator-guide.md#structured-planning-material-experimental).
+
 Before drafting, have the Architect propose the opening world, check it, and accept it
 into canon:
 

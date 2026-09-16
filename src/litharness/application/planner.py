@@ -841,7 +841,7 @@ def packet_for(
             for item in plan_items
         ):
             # A locked source remains authoritative even without a scene handoff.
-            intentions[concept_mod.CONCEPT_PLAN_ID] = concept.render()
+            intentions[concept_mod.CONCEPT_PLAN_ID] = concept.render(include_placements=True)
         elif concept.author_brief:
             # Drafting retains the operator's original words. The generated concept
             # treatment belongs to planning, whether or not this scene has an outline.

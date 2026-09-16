@@ -2202,12 +2202,18 @@ def _write_concept_trace(
 
 
 def cmd_concept(args: argparse.Namespace) -> int:
-    """Invent discovery, develop its concept, then prepare incidental quantities.
+    """Invent a concept in the selected format, then prepare incidental quantities.
 
     The stages share the ordinary quota checks and spend record. No reader, ranking or
-    quality verdict participates. Mechanical-format retries preserve the original treatment;
-    a final scoped edit prepares all invented prose before persistence.
+    quality verdict participates. The default develops discovery in a second call; structured
+    invention owns developments directly. A scoped edit prepares prose before persistence.
     """
+    structured = getattr(args, "planning_material", False)
+    if structured and getattr(args, "exemplars", ""):
+        print(
+            "litharness: --planning-material cannot be combined with --exemplars", file=sys.stderr
+        )
+        return EXIT_FAULT
     stamp = _stamp(_now())
     brief = _read_text(args.brief_file) if args.brief_file else (args.brief or "")
     layout = chapter_layout_mod.WritingLayout.opening(
@@ -2255,33 +2261,44 @@ def cmd_concept(args: argparse.Namespace) -> int:
                 json.dumps(seed.to_jsonable() if seed else None, ensure_ascii=False, indent=2)
                 + "\n", encoding="utf-8",
             )
-        discovery_request = discovery_mod.render_request(
-            brief, writer, person=getattr(args, "person", None), distinct_from=prior_concepts,
-            seed=seed,
-            layout=layout,
-        )
-        discovery_result, refusal = _completion_call(discovery_request, calls=calls, spend=spend)
-        if discovery_result is None:
-            print(f"litharness: {refusal}", file=sys.stderr)
-            return EXIT_FAULT
-        # This stage sees no exemplar shelf, so its trace has an independent boundary.
-        _write_concept_trace(args.out, "discovery-trace.json", discovery_request, discovery_result)
-        try:
-            if not isinstance(discovery_result.parsed, Mapping):
-                raise ValueError("expected the discovery story material as JSON")
-            discovery = discovery_mod.Discovery.from_invention(discovery_result.parsed)
-        except ValueError as error:
-            print(f"litharness: discovery is unusable: {error}", file=sys.stderr)
-            return EXIT_FAULT
-        request = concept_mod.render_concept_request(
-            brief,
-            writer,
-            scenes=args.scenes,
-            person=getattr(args, "person", None),
-            blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
-            discovery=discovery,
-            layout=layout,
-        )
+        discovery = None
+        if structured:
+            request = concept_mod.render_material_request(
+                brief, writer, layout=layout, person=getattr(args, "person", None),
+                seed=seed, distinct_from=prior_concepts,
+            )
+        else:
+            discovery_request = discovery_mod.render_request(
+                brief, writer, person=getattr(args, "person", None), distinct_from=prior_concepts,
+                seed=seed,
+                layout=layout,
+            )
+            discovery_result, refusal = _completion_call(
+                discovery_request, calls=calls, spend=spend
+            )
+            if discovery_result is None:
+                print(f"litharness: {refusal}", file=sys.stderr)
+                return EXIT_FAULT
+            # This stage sees no exemplar shelf, so its trace has an independent boundary.
+            _write_concept_trace(
+                args.out, "discovery-trace.json", discovery_request, discovery_result
+            )
+            try:
+                if not isinstance(discovery_result.parsed, Mapping):
+                    raise ValueError("expected the discovery story material as JSON")
+                discovery = discovery_mod.Discovery.from_invention(discovery_result.parsed)
+            except ValueError as error:
+                print(f"litharness: discovery is unusable: {error}", file=sys.stderr)
+                return EXIT_FAULT
+            request = concept_mod.render_concept_request(
+                brief,
+                writer,
+                scenes=args.scenes,
+                person=getattr(args, "person", None),
+                blurbs=exemplars_mod.render_blurbs(shelf) if shelf is not None else None,
+                discovery=discovery,
+                layout=layout,
+            )
         # **One rail, the listing's, and a bounded loop.** A concept that names its system
         # with one of this house's machinery words is redrawn, because everything downstream
         # carries the name faithfully: the listing loop cannot escape it and `world accept`
@@ -2295,7 +2312,7 @@ def cmd_concept(args: argparse.Namespace) -> int:
                 return EXIT_FAULT
             _write_concept_trace(
                 args.out, f"concept-trace-{_attempt + 1}.json", request, result,
-                has_exemplars=shelf is not None,
+                has_exemplars=shelf is not None and not structured,
             )
             if not isinstance(result.parsed, Mapping):
                 # **An unparsed answer spends an attempt, and says what came back.** Two of the
@@ -2314,11 +2331,22 @@ def cmd_concept(args: argparse.Namespace) -> int:
                 continue
             try:
                 # Downstream generation cannot silently rewrite or drop the treatment.
-                drawn.append(
-                    concept_mod.Concept.from_development(
-                        result.parsed, discovery, author_brief=brief, invention_seed=seed
+                if structured:
+                    if "story_material" not in result.parsed:
+                        raise concept_mod.MalformedConcept(
+                            "structured invention needs story_material"
+                        )
+                    drawn.append(concept_mod.Concept.from_payload({
+                        **result.parsed, "author_brief": brief,
+                        "invention_seed": seed.to_jsonable() if seed else None,
+                    }))
+                else:
+                    assert discovery is not None
+                    drawn.append(
+                        concept_mod.Concept.from_development(
+                            result.parsed, discovery, author_brief=brief, invention_seed=seed
+                        )
                     )
-                )
             except concept_mod.MalformedConcept as error:
                 print(f"litharness: the concept is unusable: {error}", file=sys.stderr)
                 return EXIT_FAULT
@@ -2368,7 +2396,11 @@ def cmd_concept(args: argparse.Namespace) -> int:
             passed=True,
             blocking=False,
             detail=(
-                f"{len(concept.debts)} debt(s); the turn {concept.turn.when}; "
+                f"{concept.question_count} question(s); "
+                + (
+                    f"the turn {concept.turn.when}; " if concept.turn
+                    else "referenced developments; "
+                )
                 + ("two systems" if concept.second_system is not None else "one system")
                 + f"; {len(drawn)} draw(s)"
                 + (f"; names {', '.join(kept_names)}" if kept_names else "")
@@ -2386,6 +2418,8 @@ def cmd_concept(args: argparse.Namespace) -> int:
                 total_tokens=spend.total_tokens,
                 cost_usd=spend.cost_usd,
                 reason=(
+                    "one structured concept invented and locally edited; no quality selection"
+                    if structured else
                     "one discovery treatment developed and locally edited; no quality selection"
                 ),
             ),
@@ -4750,7 +4784,7 @@ def cmd_new(args: argparse.Namespace) -> int:
     print(f"  {len(records)} seed state record(s)")
     if concept is not None:
         print(
-            f"  concept seeded as {concept_mod.CONCEPT_PLAN_ID}; {len(concept.debts)} "
+            f"  concept seeded as {concept_mod.CONCEPT_PLAN_ID}; {concept.question_count} "
             "proposed debt(s) retained for planning"
         )
     if promise_rows:
@@ -6487,6 +6521,11 @@ def build_parser() -> argparse.ArgumentParser:
         "cares about; never a shelf label (§136). Empty is legitimate",
     )
     concept.add_argument("--brief-file", help="the brief as a file, or - for stdin")
+    concept.add_argument(
+        "--planning-material", action="store_true",
+        help="experimental: invent referenced story developments once, with optional "
+        "placement stored separately and withheld from active planning",
+    )
     concept_seed = concept.add_mutually_exclusive_group()
     concept_seed.add_argument(
         "--seed", help="replay invention input from a number or label; default: fresh entropy",
@@ -6516,8 +6555,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--scenes",
         type=int,
         default=SerialShape().scenes_per_arc,
-        help="how many scenes the first arc has, so the debts are due by scene numbers the "
-        "outline can schedule (default: one arc)",
+        help="how many scenes the first arc's writing layout contains (default: one arc)",
     )
     concept.add_argument(
         "--person",
@@ -6526,7 +6564,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="which grammatical person the book is told in; `first` asks for it as a position",
     )
     concept.add_argument(
-        "--out", type=Path, help="write concept.json, concept.txt and discovery-trace.json here"
+        "--out", type=Path, help="write concept.json, concept.txt and generation traces here"
     )
     concept.add_argument("--json", action="store_true")
     concept.set_defaults(func=cmd_concept)

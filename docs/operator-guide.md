@@ -141,6 +141,44 @@ This uses the existing discovery call and ordinary concept/outline workflow. Sto
 without an experience brief remain readable. This is an authoring method; its effect on
 reader enjoyment and popularity has not been established.
 
+### Structured planning material (experimental)
+
+Use `concept --planning-material` to invent mechanics and referenced story developments in
+one call. This opt-in path replaces discovery followed by arc development for the new concept:
+
+```bash
+uv run litharness --database book.db --writer halloran --chapter-scenes 1 --arc-chapters 6 --target-words 1400 concept --planning-material --brief-file my-brief.txt --scenes 6 --out runs/pilots/my-book
+```
+
+The saved `concept.json` has a `story_material` source containing an automatic experience
+brief, world properties, developments with ids and causal dependencies, scope horizons,
+questions referencing those developments, optional staging, and optional placement suggestions.
+The early use and turn also reference developments. It contains no parallel discovery,
+first-arc narrative or generated debt deadlines. Your `author_brief` is retained exactly and
+takes priority; it is excluded from generated quantity edits.
+
+Optional generated chapter/scene coordinates live only in `placement_suggestions`. They are
+retained in the JSON for inspection and omitted from active planning, listing, world-building
+and fallback concept views. The planner receives the developments and a content-derived source
+identity, together with the actual chapter map, applicable author locks, accepted history and
+actual open promises. Continuation uses those same development references; a previous plan is
+not evidence that its events happened. Only accepted prose and state supply that history.
+Explicit author locks still pass through unchanged, including a whole concept if you lock it.
+
+The ordinary trace, budget, name checks, precision preparation and policy record still apply.
+Inspect `concept-trace-1.json` for the invention request/receipt and `concept-precision-trace.json`
+when an edit call was needed. There is no separate discovery or conversion call in this mode.
+Create the listing and book with the resulting file using the commands below.
+This invention mode does not accept `--exemplars` (including `LITHARNESS_EXEMPLARS`); that
+combination is refused before generation rather than silently ignoring the configured shelf.
+
+Validation rejects mixed formats, missing or duplicate references, cyclic dependencies and
+malformed placement coordinates. Precision edits cannot change ids, dependencies, horizons,
+placement coordinates or author wording. These are structural guarantees: they do not prove
+that generated prose obeys the instruction to avoid embedded calendars or that the story is
+faithful, enjoyable or popular. This mode has offline contract tests; a live comparison requires
+a separate registered experiment. Existing concepts remain readable and the default is unchanged.
+
 ### Create the listing and book
 
 The listing loop is then the entry point for the book. It writes the listing a reader sees

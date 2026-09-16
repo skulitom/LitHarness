@@ -28,6 +28,7 @@ from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
 from tests.test_concept import _discovery, _example
 from tests.test_outline import START, StubPlanner, _job, a_book, payload_for
 from tests.test_scene_brief import outlined_payload
+from tests.test_story_material import intended as structured_concept
 
 STAMP = "2026-09-09T00:00:00Z"
 OPENING = (
@@ -67,9 +68,11 @@ def _source():
     }).plan_item()
 
 
+@pytest.mark.parametrize("structured", [False, True])
 def test_accepted_chapter_flows_through_suffix_outline_into_chapters_two_and_three(
-    tmp_path, monkeypatch,
+    tmp_path, monkeypatch, structured,
 ):
+    source = structured_concept().plan_item() if structured else _source()
     lock = lc.PlanItem(
         logical_id="third-chapter-lock", kind=lc.PlanKind.CONSTRAINT,
         text="Keep the tower door open in Chapter 3.", authority=lc.PlanAuthority.INTENDED,
@@ -92,7 +95,7 @@ def test_accepted_chapter_flows_through_suffix_outline_into_chapters_two_and_thr
     writer = ProviderRegistry(FakeProvider(responses=[OPENING, json.dumps(summary), SECOND]))
     monkeypatch.setattr(cli, "build_default_registry", lambda: writer)
     with SqliteStore.open(tmp_path / "roundtrip.db") as store:
-        a_book(store, scenes=6, extra_plan_items=(_source(), lock))
+        a_book(store, scenes=6, extra_plan_items=(source, lock))
         draft = make_scene_draft_handler(writer, store, PROJECT_ID,
                                         policy=cli._draft_policy(_args()), schedule_summary=True)
         first = Conductor(
@@ -118,6 +121,15 @@ def test_accepted_chapter_flows_through_suffix_outline_into_chapters_two_and_thr
             opened_by_revision=fixed.revision_id,
         ))
         response = outlined_payload(5)
+        planned_scenes = response["scenes"]
+        if structured:
+            del response["scenes"]
+            response["chapters"] = [
+                {"chapter": i + 1, "scenes": [planned_scenes[i - 1]],
+                 "intent": planned_scenes[i - 1]["brief"]["changes"][0],
+                 "adaptation": "Preserve the accepted opening."}
+                for i in range(1, 6)
+            ]
         response["payoff_windows"] = [
             {"subject": "mira", "first_scene": 5, "last_scene": 5},
             {"subject": "follow_companion", "first_scene": 1, "last_scene": 1},
@@ -164,8 +176,13 @@ def test_accepted_chapter_flows_through_suffix_outline_into_chapters_two_and_thr
         assert "third-chapter-lock" in body["scenes"][1]["author_lock_ids"]
         assert "third-chapter-lock" not in body["scenes"][0].get("author_lock_ids", [])
         assert body["book_concept"]["author_brief"] == (
-            concept.Concept.from_text(_source().text).author_brief
+            concept.Concept.from_text(source.text).author_brief
         )
+        if structured:
+            assert body["book_concept"]["story_material"] == (
+                structured_concept().story_material.for_planning()
+            )
+            assert "987654" not in model.requests[0].prompt
         assert body["story_state_at_arc_entry"]["boundary"]["scene"] == "scene-2"
         state = json.dumps(body["story_state_at_arc_entry"])
         assert "reach the tower" in state and "leave the valley" not in state
@@ -182,13 +199,16 @@ def test_accepted_chapter_flows_through_suffix_outline_into_chapters_two_and_thr
         assert second_job.job_kind == planner.SCENE_DRAFT
         assert second_job.payload["logical_id"] == "scene-2"
         assert fixed_text in second_job.payload["prompt"]
-        assert response["scenes"][0]["brief"]["changes"][0] in second_job.payload["prompt"]
+        assert planned_scenes[0]["brief"]["changes"][0] in second_job.payload["prompt"]
+        if structured:
+            assert "OPENING_EVENT" not in second_job.payload["prompt"]
+            assert "987654" not in second_job.payload["prompt"]
         assert store.latest_decision_for(second.job_id).accepted
         third = select(store, "third", START + 4, 60)
         assert third.job_kind == planner.SCENE_DRAFT and third.payload["logical_id"] == "scene-3"
         assert SECOND in third.payload["prompt"]
         assert lock.text in third.payload["system"]
-        assert response["scenes"][1]["brief"]["changes"][0] in third.payload["prompt"]
+        assert planned_scenes[1]["brief"]["changes"][0] in third.payload["prompt"]
         assert store.head(BOOK_ID, BRANCH_ID).node("scene-1").content == fixed_text
         assert len(model.requests) == 1
 

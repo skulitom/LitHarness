@@ -160,7 +160,13 @@ def render_seed_request(
     )
     seed = _SEED
     if concept is not None:
-        opening = concept.discovery.opening if concept.discovery else concept.first_arc.opens
+        if concept.story_material is not None:
+            opening = concept.story_material.render_intentions()
+        elif concept.discovery is not None:
+            opening = concept.discovery.opening
+        else:
+            assert concept.first_arc is not None
+            opening = concept.first_arc.opens
         prompt += f"\n\n{concept.render_for_world()}"
         prompt += (
             "\n\nPending story intentions (constraints, not facts to declare):\n"
@@ -168,7 +174,9 @@ def render_seed_request(
             "there; its acquisitions, completed tests, meetings and discoveries have not "
             "happened. Support the later possibilities without declaring their occurrence "
             "or adding access restrictions.\n"
-            f"Opening:\n{opening}"
+            + ("Referenced developments and their horizons:\n" if concept.story_material
+               else "Opening:\n")
+            + opening
         )
         if concept.discovery is not None:
             prompt += f"\nLater possibilities:\n{concept.discovery.growth}"
@@ -179,7 +187,9 @@ def render_seed_request(
         prompt=prompt,
         # The treatment owns story choices once supplied. The dossier remains part of
         # invention and prose writing, not another instruction to choose a different world.
-        system=system_for(seed, None if concept is not None and concept.discovery else writer),
+        system=system_for(
+            seed, None if concept is not None and concept.experience_backed else writer
+        ),
         max_output_tokens=MAX_OUTPUT_TOKENS,
         profile=SEED_PROFILE,
         call_class="generation",
@@ -206,7 +216,9 @@ def render_grow_request(
     prompt += _author_constraints(concept)
     return CompletionRequest(
         prompt=prompt,
-        system=system_for(_GROW, None if concept is not None and concept.discovery else writer),
+        system=system_for(
+            _GROW, None if concept is not None and concept.experience_backed else writer
+        ),
         max_output_tokens=MAX_OUTPUT_TOKENS,
         profile=GROW_PROFILE,
         call_class="generation",

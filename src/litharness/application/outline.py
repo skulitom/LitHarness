@@ -55,7 +55,7 @@ from typing import Any
 
 import litharness_contracts as lc
 
-from litharness.application import chapter_coverage, chapter_layout
+from litharness.application import chapter_coverage, chapter_layout, story_material
 from litharness.application import concept as concept_mod
 from litharness.application.conductor import JobHandler
 from litharness.application.model_context import StoryStateView, at_scene, planning_records
@@ -114,6 +114,7 @@ BOOK_OUTLINE = "book_outline"
 #: Frozen generation profile, recorded in provenance like every other model call here.
 PROFILE = "planner.outline.v1"
 CONCEPT_PROFILE = "planner.outline.v6"
+STRUCTURED_PROFILE = "planner.outline.structured.v1"
 
 #: Ranks above scene drafting (0) and below director direction (500+). A scene drafted before
 #: its statement exists would be drafted against the empty plan this module exists to fill, so
@@ -283,8 +284,10 @@ def _writing_layout(
     concept: concept_mod.Concept | None, beats: Sequence[Beat],
     chapter_by_scene: Mapping[str, int] | None, target_scene_words: int | None,
 ) -> chapter_layout.WritingLayout | None:
-    if (concept is None or concept.discovery is None
-            or not concept.discovery.experience_brief or not chapter_by_scene):
+    if (concept is None or not chapter_by_scene or not (
+        concept.story_material is not None
+        or (concept.discovery is not None and concept.discovery.experience_brief)
+    )):
         return None
     return chapter_layout.WritingLayout.mapped(
         [(beat.logical_id, beat.ordinal) for beat in beats], chapter_by_scene, target_scene_words,
@@ -582,7 +585,7 @@ def render_outline_request(
                     (
                         "Derive numeric changes from the planned actions. Return an empty "
                         "milestones list when this arc has no changes to these fields."
-                        if concept is not None and concept.discovery is not None
+                        if concept is not None and concept.experience_backed
                         else "The numbers must actually move. A schedule where every milestone "
                         "repeats the starting values plans a book in which nothing changes."
                     ),
@@ -596,7 +599,7 @@ def render_outline_request(
                     (
                         "Record costs and gains accurately; numerical movement is bookkeeping, "
                         "not evidence that the intended growth has happened."
-                        if concept is not None and concept.discovery is not None
+                        if concept is not None and concept.experience_backed
                         else "Costs as well as gains: spending and losing are progression too."
                     ),
                 ]
@@ -646,7 +649,8 @@ def render_outline_request(
             )
             + (
                 concept_mod.outline_rules(
-                    serial_arc_index, discovery_backed=concept.discovery is not None
+                    serial_arc_index, discovery_backed=concept.discovery is not None,
+                    material_backed=concept.story_material is not None,
                 )
                 if concept is not None
                 else []
@@ -685,7 +689,8 @@ def render_outline_request(
                 CONCEPT_OUTLINE_SCHEMA if concept is not None else OUTLINE_SCHEMA),
         max_output_tokens=8192,
         timeout_seconds=CONCEPT_TIMEOUT_SECONDS if concept is not None else 300.0,
-        profile=CONCEPT_PROFILE if concept is not None else PROFILE,
+        profile=(STRUCTURED_PROFILE if concept is not None and concept.story_material
+                 else CONCEPT_PROFILE if concept is not None else PROFILE),
         call_class="generation",
     )
 
@@ -1263,7 +1268,8 @@ def _policy_digest(*, target_scene_words: int | None = None) -> str:
                 if target_scene_words is not None else {}
             ),
             "schema": OUTLINE_SCHEMA,
-            "concept_planning_version": 14,
+            "concept_planning_version": 15,
+            "structured_profile": STRUCTURED_PROFILE,
             "continuation_scope": {
                 "version": 1,
                 "rule": CONTINUATION_RULE,
@@ -1282,6 +1288,7 @@ def _policy_digest(*, target_scene_words: int | None = None) -> str:
                 "turn": concept_mod.TURN_RULE,
                 "threat": concept_mod.THREAT_RULE,
                 "discovery": concept_mod.DISCOVERY_ARC_RULE,
+                "story_material": story_material.PLANNING_RULE,
             },
             "quantity_detail": house.QUANTITY_DETAIL,
             "concept_timeout_seconds": CONCEPT_TIMEOUT_SECONDS,
@@ -1763,7 +1770,7 @@ def make_outline_handler(
                     result.parsed,
                     beats,
                     seed,
-                    require_movement=concept is None or concept.discovery is None,
+                    require_movement=concept is None or not concept.experience_backed,
                 )
                 if seed
                 else []
