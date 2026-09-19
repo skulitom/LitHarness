@@ -237,7 +237,7 @@ def test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon
         assert decision is not None
         assert decision.policy_config_digest == outline._policy_digest(target_scene_words=1300)
         assert decision.policy_config_digest != outline._policy_digest()
-        assert request.schema == outline.CONCEPT_OUTLINE_SCHEMA
+        assert request.schema["properties"]["scenes"]["items"]["required"] == ["ordinal", "brief"]
         assert house.CLARITY not in request.system
         source = json.loads(request.prompt)["book_concept"]
         assert source == drawn.for_outline()

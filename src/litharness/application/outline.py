@@ -48,6 +48,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping, Sequence
+from copy import deepcopy
 from dataclasses import replace
 from datetime import UTC, datetime
 from itertools import pairwise
@@ -117,9 +118,9 @@ from litharness.domain.world_brief import WorldBrief
 BOOK_OUTLINE = "book_outline"
 
 #: Frozen generation profile, recorded in provenance like every other model call here.
-PROFILE = "planner.outline.v1"
-CONCEPT_PROFILE = "planner.outline.v6"
-STRUCTURED_PROFILE = "planner.outline.structured.v2"
+PROFILE = "planner.outline.v2"
+CONCEPT_PROFILE = "planner.outline.v7"
+STRUCTURED_PROFILE = "planner.outline.structured.v3"
 
 #: Ranks above scene drafting (0) and below director direction (500+). A scene drafted before
 #: its statement exists would be drafted against the empty plan this module exists to fill, so
@@ -139,6 +140,13 @@ TARGET_WORDS = 25
 CONCEPT_TIMEOUT_SECONDS = 1800.0
 CONTINUATION_HISTORY_TOKENS = 8192
 CONTINUATION_HISTORY_SCENES = 8
+COORDINATE_RULE = (
+    "Response scene ordinals are local to this request, as listed in scenes.ordinal. "
+    "Use these ordinals wherever the response asks for a scene number. "
+    "Chapter numbers are book-wide coordinates; "
+    "use them only in chapter fields. A story_order_key identifies a position in the book, "
+    "not a response ordinal."
+)
 CONTINUATION_RULE = (
     "continuation_scope identifies only unwritten scenes after accepted prose. Continue from "
     "its accepted history and the state entering the first requested scene; do not replan "
@@ -391,6 +399,27 @@ def _starting_snapshot(
     return snapshots[-1] if snapshots else None
 
 
+def _response_schema(schema: dict[str, Any], beats: Sequence[Beat]) -> dict[str, Any]:
+    """Constrain response coordinates without changing shared schema templates."""
+    result = deepcopy(schema)
+    if not beats:
+        return result
+    ordinals = [beat.ordinal for beat in beats]
+    properties = result["properties"]
+    scenes = (properties["chapters"]["items"]["properties"]["scenes"]
+              if "chapters" in properties else properties["scenes"])
+    for entries in (scenes, properties["milestones"], properties["standing_milestones"]):
+        entries["items"]["properties"]["ordinal"]["enum"] = ordinals
+    positioned = [beat.ordinal for beat in beats if beat.story_order_key is not None]
+    if positioned:
+        for name in ("first_scene", "last_scene"):
+            properties["payoff_windows"]["items"]["properties"][name]["enum"] = positioned
+    if "development_coverage" in properties:
+        entries = properties["development_coverage"]["properties"]["entries"]
+        entries["items"]["properties"]["scene_ordinals"]["items"]["enum"] = ordinals
+    return result
+
+
 def render_outline_request(
     premise: str,
     beats: Sequence[Beat],
@@ -482,6 +511,12 @@ def render_outline_request(
                 if promise.due_key is not None
                 else None
             ),
+            "schedulable_scene_ordinals": [
+                beat.ordinal for beat in beats
+                if beat.story_order_key is not None
+                and window_fault(promise, beat.story_order_key, beat.story_order_key,
+                                 keys=tuple(ordinals)) is None
+            ],
         }
         for promise in promises
     ]
@@ -546,6 +581,7 @@ def render_outline_request(
             "scenes": [
                 {
                     "ordinal": beat.ordinal,
+                    "story_order_key": beat.story_order_key,
                     "of_total": beat.of_total,
                     **({"dramatic_function": beat.function} if concept is None else {}),
                     **(
@@ -572,6 +608,7 @@ def render_outline_request(
             ],
             "rules": [
                 f"Return exactly {len(beats)} scenes, ordinals 1 to {len(beats)}, each once.",
+                COORDINATE_RULE,
                 (
                     "Plan the scenes within each chapter together. Choose a connected "
                     "movement that leaves room to experience the place, respond to what "
@@ -631,8 +668,12 @@ def render_outline_request(
             )
             + (
                 [
-                    "Also return payoff_windows: for each open promise, the scene range in "
-                    "which the book should pay it off.",
+                    "Also return payoff_windows for open promises with non-empty "
+                    "schedulable_scene_ordinals. Choose both endpoints from that promise's "
+                    "listed response ordinals. An empty list means this request contains "
+                    "no valid on-time window: omit that promise from payoff_windows. "
+                    "It remains an open story obligation; omission does not pay it, erase "
+                    "it or extend its deadline. Return [] when none can be scheduled.",
                     "Use the subject names given in open_promises. Do not invent promises.",
                     "A window may not open before the scene that opened the promise, and may "
                     "not close after the scene it is due by.",
@@ -710,10 +751,11 @@ def render_outline_request(
             f"{role}\n{house.QUANTITY_DETAIL}"
             if concept is not None else house.with_house_rules(role)
         ),
-        schema=(STRUCTURED_CHAPTER_OUTLINE_SCHEMA if material_backed and layout is not None else
+        schema=_response_schema(
+                STRUCTURED_CHAPTER_OUTLINE_SCHEMA if material_backed and layout is not None else
                 STRUCTURED_OUTLINE_SCHEMA if material_backed else
                 CHAPTER_OUTLINE_SCHEMA if layout is not None else
-                CONCEPT_OUTLINE_SCHEMA if concept is not None else OUTLINE_SCHEMA),
+                CONCEPT_OUTLINE_SCHEMA if concept is not None else OUTLINE_SCHEMA, beats),
         max_output_tokens=8192,
         timeout_seconds=CONCEPT_TIMEOUT_SECONDS if concept is not None else 300.0,
         profile=(STRUCTURED_PROFILE if concept is not None and concept.story_material

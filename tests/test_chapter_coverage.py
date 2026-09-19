@@ -165,7 +165,8 @@ def test_grouped_outline_is_persisted_with_revised_intent_and_exact_scene_handof
         assert payload["writing_layout"] == layout.to_jsonable()
         assert payload["book_concept"]["author_brief"] == source().author_brief
         assert payload["book_concept"]["discovery"]["experience_brief"] == EXPERIENCE
-        assert request.schema == outline.CHAPTER_OUTLINE_SCHEMA
+        assert "chapters" in request.schema["properties"]
+        assert "scenes" not in request.schema["properties"]
         assert parse_schema_payload(json.dumps(response), request.schema) == response
         assert parse_schema_payload(json.dumps(outlined_payload()), request.schema) is None
         items = store.plan_items(BOOK_ID, BRANCH_ID)
