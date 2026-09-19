@@ -29,10 +29,20 @@
       "kind": "registration",
       "path": "research/quality-measurement/full-book-trial-20260919/recovery.json",
       "sha256": "eb16d830846164ead7bb7ff930c800b4480d6fc75ab849eb3d1ec09ebdc5e09a"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/full-book-trial-20260919/evidence.json",
+      "sha256": "2cb55fae2c761b5b38f9e96090913a250220d927c013b862df56466153180772"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/full-book-trial-20260919/readout.json",
+      "sha256": "34f191f092ec425a8bc8ce1800f7c0480573b69d2c8d7bc35606d3d273333084"
     }
   ],
   "claim_id": "full-book-trial-20260919",
   "schema": "litharness.epistemic-claim.v1",
   "statement": "The frozen single-book trial records reached chapters, arc transitions, operational controls and located story-delivery observations. No quality benefit, reader qualification or release approval is licensed.",
-  "status": "registered"
+  "status": "observed"
 }
