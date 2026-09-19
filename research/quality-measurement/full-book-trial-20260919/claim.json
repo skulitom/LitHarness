@@ -19,6 +19,16 @@
       "kind": "registration",
       "path": "research/quality-measurement/full-book-trial-20260919/continuation.json",
       "sha256": "afb93cec2770bc8e78d3078a608e62353dab31c014c863479f335da7c51df622"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/full-book-trial-20260919/RECOVERY.md",
+      "sha256": "d3bad4dcb3a0cce82dae341c86bfd30a9edce9ae0b20af32c818f1d9af02ab6b"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/full-book-trial-20260919/recovery.json",
+      "sha256": "50201ba4b5c4357834dab1ba68b71d0561d28c0a3db866c95f16050e47cce71e"
     }
   ],
   "claim_id": "full-book-trial-20260919",

@@ -110,6 +110,8 @@ def claim(status):
     if (HERE / "continuation.json").exists():
         files += [("registration", HERE / name)
                   for name in ("CONTINUATION.md", "continuation.json")]
+    if (HERE / "recovery.json").exists():
+        files += [("registration", HERE / name) for name in ("RECOVERY.md", "recovery.json")]
     if status == "observed":
         files.append(("derived_result", HERE / "evidence.json"))
     base.write(HERE / "claim.json", {
@@ -196,8 +198,8 @@ def transition_error(phase, before, after):
     return None
 
 
-def execute(book, phase):
-    for iteration in range(1, LIMITS["ticks_per_phase"] + 1):
+def execute(book, phase, *, start_iteration=1):
+    for iteration in range(start_iteration, LIMITS["ticks_per_phase"] + 1):
         state = base.read(LOCAL / "progress.json")
         if state.get("stop") or state["books"][book]["status"] != "running":
             return

@@ -110,6 +110,11 @@ def audit(run):
         "registration_sha256": base.sha(here / "registration.json"),
         "original_stop": state.get("original_stop"),
         "continuation_started_at": state.get("continuation_started_at"),
+        "recovery_started_at": state.get("recovery_started_at"),
+        "recovery": (base.read(here / "recovery.json")
+                     if (here / "recovery.json").exists() else None),
+        "recovery_operations": (base.read(local / "recovery-operations.json")
+                                if (local / "recovery-operations.json").exists() else None),
         "continuation": (base.read(here / "continuation.json")
                          if (here / "continuation.json").exists() else None),
         "limitations": ["One first-draw book; no independent replication or quality estimate.",

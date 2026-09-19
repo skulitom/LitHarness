@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.util
 from copy import deepcopy
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -146,3 +147,60 @@ def test_metadata_reads_real_new_and_extended_stores(trial):
     assert extended["total"] == 12 and extended["accepted"] == 0
     assert extended["scene_ids"][:6] == initial["scene_ids"]
     assert len(set(extended["scene_ids"])) == 12
+
+
+def test_registered_recovery_keeps_old_steps_and_remaining_phase_ceiling(trial, monkeypatch):
+    current, dispatched = meta(6, 12), []
+    trial.base.write(trial.LOCAL / "progress.json", state(trial))
+    original = {"preserved": "three refused outlines"}
+    for iteration in range(1, 4):
+        trial.base.write(trial.LOCAL / "steps" / f"chapter7-A1-{iteration}.json", original)
+    monkeypatch.setattr(trial, "metadata", lambda book: deepcopy(current))
+
+    def dispatch(argv, **kwargs):
+        book, phase, iteration = argv[-3:]
+        dispatched.append(int(iteration))
+        trial.base.write(trial.LOCAL / "steps" / f"{phase}-{book}-{iteration}.json",
+                         {"returncode": 0, "stdout": "", "before": current, "after": current})
+
+    monkeypatch.setattr(trial.subprocess, "run", dispatch)
+    trial.execute("A1", "chapter7", start_iteration=4)
+    assert dispatched == list(range(4, trial.LIMITS["ticks_per_phase"] + 1))
+    assert trial.base.read(trial.LOCAL / "progress.json")["books"]["A1"]["reason"].endswith(
+        "phase ceiling")
+    for iteration in range(1, 4):
+        assert trial.base.read(trial.LOCAL / "steps" / f"chapter7-A1-{iteration}.json") == original
+
+
+@pytest.mark.parametrize("fault", [None, "missing", "attempts", "epoch"])
+def test_recovery_retires_only_registered_poison_after_epoch_advances(trial, monkeypatch, fault):
+    from litharness.adapters.sqlite_store import SqliteStore
+
+    recovery = trial.module("tested_recovery", PATH.with_name("recover.py"))
+    monkeypatch.setattr(recovery, "LOCAL", trial.LOCAL)
+    monkeypatch.setattr(recovery.base, "LOCAL", trial.LOCAL)
+    monkeypatch.setattr(recovery, "original_metadata", lambda book: {"terminal": 2})
+    recovery.base.write(trial.LOCAL / "progress.json", {"recovery_ready": True})
+
+    class Store:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return None
+
+        def jobs_by_status(self, status, **kwargs):
+            return [SimpleNamespace(job_id="other" if fault == "missing" else recovery.JOB,
+                                    attempts=2 if fault == "attempts" else 3,
+                                    payload={"plan_epoch": 0})]
+
+        def plan_epoch(self, *args):
+            return 0 if fault == "epoch" else 1
+
+    monkeypatch.setattr(SqliteStore, "open_read_only", lambda path: Store())
+    if fault:
+        with pytest.raises(RuntimeError, match="Historical failure"):
+            recovery.metadata("A1")
+    else:
+        assert recovery.metadata("A1") == {"terminal": 1,
+                                           "historical_terminal_ids": [recovery.JOB]}
