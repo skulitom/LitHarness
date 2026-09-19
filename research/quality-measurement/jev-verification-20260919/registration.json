@@ -31,11 +31,11 @@
   "runtime_limit_seconds": 2700,
   "seed": 20260919,
   "source_hashes": {
-    "research/quality-measurement/jev-verification-20260919/RUNBOOK.md": "3f53bf9ceb60284c8a49d933d7bcdac05ff5b9489850480f32f04c472906185c",
-    "research/quality-measurement/jev-verification-20260919/benchmark.py": "9c9258fb643799232946c449cdd15364e2c7f0c0d7c3295a194aa43bffecb7e0",
+    "research/quality-measurement/jev-verification-20260919/RUNBOOK.md": "b0155e81ab287fc7afc364bd93aee3f68c3d72597a4a2c14f536b81cd8419b3c",
+    "research/quality-measurement/jev-verification-20260919/benchmark.py": "f8d3e42f9f4b4f7f9a6e469aa909e624c9f116d481d269629ee648b117548ca9",
     "research/quality-measurement/jev-verification-20260919/jev_fixtures.py": "9b351f6791eb76e1f785d99ae520deb1c0cf75da9f09b97762fb6fc398b0820e",
-    "research/quality-measurement/jev-verification-20260919/manifest.json": "4874830815ed9a5b4bbace850291d9e4e6e29d73b9cf7b9eaf667b3c2815da97",
-    "tests/test_jev_verification.py": "ed245bae3e0034df4b47daabd87cc601ed26ac0b3a2a9783c0ce884851643b68"
+    "research/quality-measurement/jev-verification-20260919/manifest.json": "28b93734df3832d99a657c2bbe124a0449f7287ad963195bff87c3759bb4cd66",
+    "tests/test_jev_verification.py": "38da4596e0faa989749379909490cd7cf6772f22d148cc45fd72b92e8a955110"
   },
   "temperature_hold_c": 72,
   "temperature_resume_below_c": 66,

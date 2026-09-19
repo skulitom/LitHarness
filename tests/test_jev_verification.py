@@ -68,6 +68,13 @@ def test_metadata_is_never_part_of_model_input(bench):
     assert bench.format_input(case) == bench.format_input(changed)
 
 
+def test_artifact_hashes_survive_git_line_ending_normalisation(bench, tmp_path):
+    output = tmp_path / "data.json"
+    bench.write_json(output, {"key": "value"})
+    assert b"\r" not in output.read_bytes()
+    assert output.read_bytes().endswith(b"\n")
+
+
 @pytest.mark.parametrize("lengths", [[], [0], [4097], [12, 5000]])
 def test_no_silent_truncation(bench, lengths):
     with pytest.raises(ValueError, match="never silently truncate"):

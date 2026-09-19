@@ -3,12 +3,12 @@
     {
       "kind": "registration",
       "path": "research/quality-measurement/jev-verification-20260919/RUNBOOK.md",
-      "sha256": "3f53bf9ceb60284c8a49d933d7bcdac05ff5b9489850480f32f04c472906185c"
+      "sha256": "b0155e81ab287fc7afc364bd93aee3f68c3d72597a4a2c14f536b81cd8419b3c"
     },
     {
       "kind": "registration",
       "path": "research/quality-measurement/jev-verification-20260919/benchmark.py",
-      "sha256": "9c9258fb643799232946c449cdd15364e2c7f0c0d7c3295a194aa43bffecb7e0"
+      "sha256": "f8d3e42f9f4b4f7f9a6e469aa909e624c9f116d481d269629ee648b117548ca9"
     },
     {
       "kind": "registration",
@@ -18,17 +18,17 @@
     {
       "kind": "registration",
       "path": "research/quality-measurement/jev-verification-20260919/manifest.json",
-      "sha256": "4874830815ed9a5b4bbace850291d9e4e6e29d73b9cf7b9eaf667b3c2815da97"
+      "sha256": "28b93734df3832d99a657c2bbe124a0449f7287ad963195bff87c3759bb4cd66"
     },
     {
       "kind": "registration",
       "path": "tests/test_jev_verification.py",
-      "sha256": "ed245bae3e0034df4b47daabd87cc601ed26ac0b3a2a9783c0ce884851643b68"
+      "sha256": "38da4596e0faa989749379909490cd7cf6772f22d148cc45fd72b92e8a955110"
     },
     {
       "kind": "registration",
       "path": "research/quality-measurement/jev-verification-20260919/registration.json",
-      "sha256": "ffb895a49a695b3df5116b1f465a47bd8e8ac976f39b7125a79da2b5d7491410"
+      "sha256": "be36c2a6a92a49d41be2ce58fb0bed79d223d87ba099ea52fc89eec68a6f78dc"
     }
   ],
   "claim_id": "jev-verification-20260919",

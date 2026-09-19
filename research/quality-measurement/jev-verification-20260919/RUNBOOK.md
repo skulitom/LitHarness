@@ -4,6 +4,10 @@ Registered before inference, 2026-09-19. The user authorized this isolated trial
 discussing Jev for LitHarness. It tests supplied passage/claim pairs, not claim extraction,
 literary quality, manuscript readiness, or editorial interventions.
 
+Preflight correction after `d97f5cd`, before any inference: JSON writers now force LF so
+Windows artifact hashes match Git's committed bytes. Fixtures and analysis are unchanged;
+the registration and claim hashes were regenerated before the first model run.
+
 ## Target and boundary
 
 Can this exact OpenJev checkpoint discriminate entailed, contradicted and unspecified facts
