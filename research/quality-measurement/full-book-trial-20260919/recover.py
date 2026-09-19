@@ -149,8 +149,10 @@ def run():
             ["git", "show", f"HEAD:{path.relative_to(trial.ROOT).as_posix()}"], cwd=trial.ROOT)
         if committed != path.read_bytes():
             raise RuntimeError(f"Uncommitted recovery input: {path}")
-    if base.admission(state, "A1", base.now()):
-        raise RuntimeError("Original budget exhausted before recovery")
+    # stopped() has authorized this exact transition; admission still checks all ceilings.
+    state["books"]["A1"]["status"] = "running"
+    if reason := base.admission(state, "A1", base.now()):
+        raise RuntimeError(f"Recovery not admitted: {reason}")
     state.update(recovery_started_at=base.now(), status="running")
     base.write(LOCAL / "progress.json", state)
     try:

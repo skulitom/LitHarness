@@ -27,6 +27,12 @@ model and transport controls. Do not rerequest the first six chapters, rerun wor
 extend an incomplete arc or raise any ceiling. No implicit second recovery. Verify frozen
 files and unchanged stopped state before operations; record every recovery operation.
 
+The first recovery preflight refused before any book operation or provider call because
+the generic admission check also rejects stopped books. Its error incorrectly said budget
+exhaustion. Preserve that attempt under recovery-preflight. After stopped() validates the
+exact registered state, mark the in-memory candidate running before checking admission;
+persist nothing until all original ceilings pass. Freeze this correction before dispatch.
+
 This is a mixed-revision continuation after a failed run, never an uninterrupted completion
 or a controlled quality comparison. The original run's failed step controls remain visible.
 Final audit and located narrative readout follow the original RUNBOOK. No diagnostic
