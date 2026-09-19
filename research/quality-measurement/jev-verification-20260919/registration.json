@@ -1,0 +1,44 @@
+{
+  "attention": "eager",
+  "batch_size": 1,
+  "checkpoint_subfolder": "qwen3.5-4b-nli-v2",
+  "confidence_cutoff": 0.9,
+  "dtype": "bfloat16",
+  "experiment_id": "jev-verification-20260919",
+  "hosted_jev_included": false,
+  "input_limit_tokens": 4096,
+  "model_hashes": {
+    "chat_template.jinja": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+    "config.json": "477bed7614828c875db38b952835af9ca2fb5fa024af56cda8a708181db76a07",
+    "model.safetensors": "f625c42c6bac1fbc03935f584d0126d096b6681bdc62d11f4a7c7f3b94bc35b3",
+    "tokenizer.json": "06b9509352d2af50381ab2247e083b80d32d5c0aba91c272ca9ff729b6a0e523",
+    "tokenizer_config.json": "9cf04fffe3d8c3b85e439fb35c7acad0761ab51c422a8c4256d9f887c3a0be7d",
+    "train_result.json": "3cac1cf94a4d2c04ecba26f297fa0875c88c34a9301b6300037d79c1271f6826"
+  },
+  "model_id": "AlexWortega/openjev",
+  "model_revision": "4b5f9a67fa2ebe77466bce0656ce350effc3148c",
+  "packages": {
+    "huggingface_hub": "1.27.0",
+    "numpy": "2.5.2",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "torch": "2.13.0+cu130",
+    "transformers": "5.15.0"
+  },
+  "pairs": 360,
+  "production_authority": false,
+  "rest_ratio": 1.0,
+  "runtime_limit_seconds": 2700,
+  "seed": 20260919,
+  "source_hashes": {
+    "research/quality-measurement/jev-verification-20260919/RUNBOOK.md": "3f53bf9ceb60284c8a49d933d7bcdac05ff5b9489850480f32f04c472906185c",
+    "research/quality-measurement/jev-verification-20260919/benchmark.py": "9c9258fb643799232946c449cdd15364e2c7f0c0d7c3295a194aa43bffecb7e0",
+    "research/quality-measurement/jev-verification-20260919/jev_fixtures.py": "9b351f6791eb76e1f785d99ae520deb1c0cf75da9f09b97762fb6fc398b0820e",
+    "research/quality-measurement/jev-verification-20260919/manifest.json": "4874830815ed9a5b4bbace850291d9e4e6e29d73b9cf7b9eaf667b3c2815da97",
+    "tests/test_jev_verification.py": "ed245bae3e0034df4b47daabd87cc601ed26ac0b3a2a9783c0ce884851643b68"
+  },
+  "temperature_hold_c": 72,
+  "temperature_resume_below_c": 66,
+  "weight_bytes": 9078635984,
+  "weight_checksum_source": "Hugging Face model_info at pinned revision, LFS metadata"
+}

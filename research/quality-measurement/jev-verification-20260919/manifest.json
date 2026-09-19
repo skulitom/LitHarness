@@ -1,0 +1,3248 @@
+{
+  "cases": [
+    {
+      "expected": "contradiction",
+      "family": "negation",
+      "id": "negation.0.contradiction.base",
+      "input_sha256": "6f2e0f2e83aae77f42af17c0f3bf843ba9c15b829cd110df9119350cc0459894",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "negation",
+      "id": "negation.0.contradiction.rename",
+      "input_sha256": "63b36115147e58b18b791a4d72b7921358a1e07fc73f8566c700543d7b89db0d",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "negation",
+      "id": "negation.0.contradiction.reflow",
+      "input_sha256": "58399ad68cb4282ecbaf76040a468648dafacd45294c8e6124676d8c473c7ae0",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "negation",
+      "id": "negation.0.contradiction.distractor",
+      "input_sha256": "74a184e4bf1048fdc2cdf7a3b731eaf2458cda88088b98ab6725d77a34d87931",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.0.contradiction.remove_evidence",
+      "input_sha256": "af12cc6ddea0d65493522f9b8ad44a29ee5f43e5520d08ee5c725dfed851dab6",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "negation",
+      "id": "negation.0.entailment.base",
+      "input_sha256": "7ccc328344257a6fc73a6e03bfa0e73773210ba071e98b1d4384df65413717fe",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "negation",
+      "id": "negation.0.entailment.rename",
+      "input_sha256": "5ddab98ca1e21c7750ba86a40f5d8d9701e8159e6f66af2d8dbb40f0086d6881",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "negation",
+      "id": "negation.0.entailment.reflow",
+      "input_sha256": "4a0a755e9b0ddf1776a7bd89d3673809c3683b7b322d397c423bfc2739211987",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "negation",
+      "id": "negation.0.entailment.distractor",
+      "input_sha256": "3e9e806598b544c9e53f1d75dba83156261b5a5173b61081c6314f0da179091e",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.0.entailment.remove_evidence",
+      "input_sha256": "af12cc6ddea0d65493522f9b8ad44a29ee5f43e5520d08ee5c725dfed851dab6",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.0.neutral.base",
+      "input_sha256": "af12cc6ddea0d65493522f9b8ad44a29ee5f43e5520d08ee5c725dfed851dab6",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.0.neutral.rename",
+      "input_sha256": "f77bb3ceb86325c9acb370eea12aa8cee216a549d74e5c6701274c0da8c95d46",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.0.neutral.reflow",
+      "input_sha256": "64750305b0eebcc6e751d31d5581d08899edd8a470ae03d9b04594051c8b0583",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.0.neutral.distractor",
+      "input_sha256": "7c6932292b17d2edc274125024351083c8e84dc142bd2e64482b5f1f04cc4ac4",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.0.neutral.remove_evidence",
+      "input_sha256": "af12cc6ddea0d65493522f9b8ad44a29ee5f43e5520d08ee5c725dfed851dab6",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "negation",
+      "id": "negation.1.contradiction.base",
+      "input_sha256": "02516b8350786af8195a30a719d11570a5d7663eb106a33eef5d33d4a54db7e4",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "negation",
+      "id": "negation.1.contradiction.rename",
+      "input_sha256": "69b01970e2aee9f36a1ccbd08fb451716f576c122c56f4996c72ed89e77963d6",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "negation",
+      "id": "negation.1.contradiction.reflow",
+      "input_sha256": "5bb7d2f7d7c5d40d5825534363a382307489d09fd322f303f65d86ae654ea5ed",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "negation",
+      "id": "negation.1.contradiction.distractor",
+      "input_sha256": "d8f429eaff508bff2d15349ec9b7d3acd34c9bf57b6a889869ced68ca81d4c18",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.1.contradiction.remove_evidence",
+      "input_sha256": "f77bb3ceb86325c9acb370eea12aa8cee216a549d74e5c6701274c0da8c95d46",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "negation",
+      "id": "negation.1.entailment.base",
+      "input_sha256": "b0d48a2bd0668bd92d1f3903765659ef510f90a2145ea5dc4b826828499aae10",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "negation",
+      "id": "negation.1.entailment.rename",
+      "input_sha256": "b4e29d6ffc30984bbf3a88857bd0c23de31f3650975257e391945d5f66ee210d",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "negation",
+      "id": "negation.1.entailment.reflow",
+      "input_sha256": "ab5c637996d8295fdcb1236ec9089a9f45c82fbab86d3cf3fdb800f347c80cc8",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "negation",
+      "id": "negation.1.entailment.distractor",
+      "input_sha256": "1669ac801c4d1ba690e2d7437b4b7c5b21de65090897397e1d617901244a548a",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.1.entailment.remove_evidence",
+      "input_sha256": "f77bb3ceb86325c9acb370eea12aa8cee216a549d74e5c6701274c0da8c95d46",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.1.neutral.base",
+      "input_sha256": "f77bb3ceb86325c9acb370eea12aa8cee216a549d74e5c6701274c0da8c95d46",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.1.neutral.rename",
+      "input_sha256": "4d523e228bd878b1da455c3e5a146f7275c09b2a02d71218623017960a1bbf81",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.1.neutral.reflow",
+      "input_sha256": "aca673a6f54ac61651cb4f34e4d9b20fd34c1db20dd3bb1a38418b66729f7dee",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.1.neutral.distractor",
+      "input_sha256": "1375c935d0fe65d3422c75e91c6bd1b7b2b3d51de733ac779e717cf93aef2835",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "negation",
+      "id": "negation.1.neutral.remove_evidence",
+      "input_sha256": "f77bb3ceb86325c9acb370eea12aa8cee216a549d74e5c6701274c0da8c95d46",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.contradiction.base",
+      "input_sha256": "cbd53baa580c487e673d5afae523c492e5a07b11627b03ab9a9647a3c647ad22",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.contradiction.rename",
+      "input_sha256": "428461fc5e84e8d3408fc4bc12278a2e4cdf359323dd32524573628b711cccd1",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.contradiction.reflow",
+      "input_sha256": "ed5406d0fa01933e8bcd7bf9ba278692ebe8c7cd521b93da99ae875826f623d2",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.contradiction.distractor",
+      "input_sha256": "533b29b4310ce69f7fb74f704e9a6d4caac445a44526118e5c4d449c229ccffa",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.contradiction.remove_evidence",
+      "input_sha256": "97fb31803c632d6d212286ea07543426a79f1f62950ebf03560f8ff9fade34e2",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.entailment.base",
+      "input_sha256": "56cfe03c3b25d5fd5667e8c497e1ead7f75e1c7b0896b966ef37f694c3698429",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.entailment.rename",
+      "input_sha256": "59537ea288b79f507e344b638d258b718fe1a695d523811138828b183edc6e61",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.entailment.reflow",
+      "input_sha256": "57652e0c16542436960367443bad8bcc214b800f7369b2649a6c8c726e153355",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.entailment.distractor",
+      "input_sha256": "e83309ca003c4280ef4a0d52fa46e95f12aa2580b1353856386a788f644bbbf8",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.entailment.remove_evidence",
+      "input_sha256": "97fb31803c632d6d212286ea07543426a79f1f62950ebf03560f8ff9fade34e2",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.neutral.base",
+      "input_sha256": "97fb31803c632d6d212286ea07543426a79f1f62950ebf03560f8ff9fade34e2",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.neutral.rename",
+      "input_sha256": "e1fa60aa2626f1e5ef9a885dcf6c81e4c9a003c3f077a6d1c7418e356cb522d7",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.neutral.reflow",
+      "input_sha256": "0e9d1330507df08386c71c5f6f3a4bc22a231c8bd694d52bf80c39d7d262f75a",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.neutral.distractor",
+      "input_sha256": "e948c3667e7feac8437d72ea462dd8961416a428e79333f01ef7ba57da99aabe",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.0.neutral.remove_evidence",
+      "input_sha256": "97fb31803c632d6d212286ea07543426a79f1f62950ebf03560f8ff9fade34e2",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.contradiction.base",
+      "input_sha256": "bb46ba86d3c819b10c79ce4a5bfb0b5ebb28d618c5ed290f449bd80e63edae51",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.contradiction.rename",
+      "input_sha256": "d30ded1da7d8e9fe8e42dd41a9a3621007ddebdadda25de0112e32630c238b53",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.contradiction.reflow",
+      "input_sha256": "11c91f5f93c89450a16d5d96f76d2791d255d6929f646a3f287fa84e1d12a9ec",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.contradiction.distractor",
+      "input_sha256": "20c6e9a1165adc9049a8a3b39722808e2b50b15939181ae2d80acf07bf4fc0d6",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.contradiction.remove_evidence",
+      "input_sha256": "e1fa60aa2626f1e5ef9a885dcf6c81e4c9a003c3f077a6d1c7418e356cb522d7",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.entailment.base",
+      "input_sha256": "a77d7ddca3ca6a995941189a90c0292bca4c213c2f12a4729e9d8cf0adbf5706",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.entailment.rename",
+      "input_sha256": "a92b224d0cb0497b878c27d0fc98d6d64e7e06ef7ec726f9bcc23f8da51e51e2",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.entailment.reflow",
+      "input_sha256": "3bd238e5456c0a0ee95398108d4a0a5abe3dd4485f7fb46805f73db1e8bdb274",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.entailment.distractor",
+      "input_sha256": "66a41a6789acd5d254710a97467296c9be76a973c94cacbb34d16992de720b75",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.entailment.remove_evidence",
+      "input_sha256": "e1fa60aa2626f1e5ef9a885dcf6c81e4c9a003c3f077a6d1c7418e356cb522d7",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.neutral.base",
+      "input_sha256": "e1fa60aa2626f1e5ef9a885dcf6c81e4c9a003c3f077a6d1c7418e356cb522d7",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.neutral.rename",
+      "input_sha256": "a5bb05118c671e9f0be617136481dc6a03dc04c40b9bdde0a1505a458bfcd3a1",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.neutral.reflow",
+      "input_sha256": "e4245e025522ff6da48da1c278dbbb01e5d24c25abe69fb214cb9d2c9f21de1f",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.neutral.distractor",
+      "input_sha256": "55c3ab1966e51e5edf581dcbd2e5b6f0442d2807c8648fe77359c68556816813",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "wrong_actor",
+      "id": "wrong_actor.1.neutral.remove_evidence",
+      "input_sha256": "e1fa60aa2626f1e5ef9a885dcf6c81e4c9a003c3f077a6d1c7418e356cb522d7",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.contradiction.base",
+      "input_sha256": "7104fd54747383782512fab4d2a90ee281e2b5fbc96fc8c8d4c7af5a96ae5052",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.contradiction.rename",
+      "input_sha256": "387c7f84fd9a7791bfaeb0561da6b5ec97e92f44eec65c9889456a9cb608dbb0",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.contradiction.reflow",
+      "input_sha256": "30b5617c3ceb8e92b2ef964253f4ef4f3f7af1025ddd4f047a83d488236ee1cc",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.contradiction.distractor",
+      "input_sha256": "9c4d40fd16072d143a071d0d17a9636ab5eafa5674c3851d08e3663a0f1fcd49",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.contradiction.remove_evidence",
+      "input_sha256": "e38c163135cdac369cfcc0972d899e7c4849eaca758640c85e34180fcbaa28a2",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.entailment.base",
+      "input_sha256": "4d2ebbf65b6184d5aa5050204047c5bc95269c3a8998cf4b7b52c6c8bf8be4b1",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.entailment.rename",
+      "input_sha256": "819be4c09141174236d0d9ee287ab5b90ee466cbcc29b468e2fc7be889a76f28",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.entailment.reflow",
+      "input_sha256": "e480ceac63c1d906e407479f8fa7e276d91173b2bd3e7b11dadbb3fc63d9a382",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.entailment.distractor",
+      "input_sha256": "13137f24dcf5fa68bed5b8808bd59a4bb4badb53a618082817a5bb02108a1893",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.entailment.remove_evidence",
+      "input_sha256": "e38c163135cdac369cfcc0972d899e7c4849eaca758640c85e34180fcbaa28a2",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.neutral.base",
+      "input_sha256": "e38c163135cdac369cfcc0972d899e7c4849eaca758640c85e34180fcbaa28a2",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.neutral.rename",
+      "input_sha256": "1f059c8c81b5cd174eec913e03ee33edf6c82370fcde70be29ef0c87254c0bee",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.neutral.reflow",
+      "input_sha256": "719a22a020899f17ee169cc2e87c58de66e2599684992c65258f1c1f7e7d0e75",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.neutral.distractor",
+      "input_sha256": "c3186bb16a1b3d9522b2ec8da6b63dc5bddaa3f3e33cd02e47013775e5926652",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.0.neutral.remove_evidence",
+      "input_sha256": "e38c163135cdac369cfcc0972d899e7c4849eaca758640c85e34180fcbaa28a2",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.contradiction.base",
+      "input_sha256": "0c5488ab0e5b3086b4859fa8e60b331216e7d7fa9e3b0b63807b4effc0b6e152",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.contradiction.rename",
+      "input_sha256": "f5271dffb9adb87f8f6cf2ed77d6d3f284cf27f35f621bcb5aacab550c9b84c8",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.contradiction.reflow",
+      "input_sha256": "e68029491d759c759bd81959d1398312c2a094e984eeed97e7bcd2c9b24087bd",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.contradiction.distractor",
+      "input_sha256": "678ee893aeab4a846f4e583ad4d13b5c08bf56f8cda3c9849da77948516cde7e",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.contradiction.remove_evidence",
+      "input_sha256": "1f059c8c81b5cd174eec913e03ee33edf6c82370fcde70be29ef0c87254c0bee",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.entailment.base",
+      "input_sha256": "01f8d44d6f110776664a5435bef53281b7665163d9d81291776c5cab19f28879",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.entailment.rename",
+      "input_sha256": "81f7dc2d9759a4c5cc04aa026dceeb64b4400b8e7521369338958ae7e432d967",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.entailment.reflow",
+      "input_sha256": "cce73a37efba361090fd86ad39fcc653ea2d32e525b29ad9c47235dbb923b8ea",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.entailment.distractor",
+      "input_sha256": "d1ee7c04bcdd9964724a77a3ec58ef40e83690b854bc43748a087630ef83328a",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.entailment.remove_evidence",
+      "input_sha256": "1f059c8c81b5cd174eec913e03ee33edf6c82370fcde70be29ef0c87254c0bee",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.neutral.base",
+      "input_sha256": "1f059c8c81b5cd174eec913e03ee33edf6c82370fcde70be29ef0c87254c0bee",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.neutral.rename",
+      "input_sha256": "ead0738bfc31a281b2d719411068d0157d7a06ed4f0c49185859fff542e62ab4",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.neutral.reflow",
+      "input_sha256": "03cb995ccacf4b8bf7eb4625f54192e4ee44b57992e8229caca3cff7fdb6cb36",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.neutral.distractor",
+      "input_sha256": "b05d511a15974e5f60fa76eef666dbc0ebd5330ef77190d3a38b48a973a23dc4",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "possession_transfer",
+      "id": "possession_transfer.1.neutral.remove_evidence",
+      "input_sha256": "1f059c8c81b5cd174eec913e03ee33edf6c82370fcde70be29ef0c87254c0bee",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "location_change",
+      "id": "location_change.0.contradiction.base",
+      "input_sha256": "4c9d6f62f78becd4acb61212b2e4d35e46eafc7bc871c7ccfc292cefeef933da",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "location_change",
+      "id": "location_change.0.contradiction.rename",
+      "input_sha256": "1d1ea9c6d145d01b48fb9407c5dca6e38807268e86853ae37d14bf02ef2a30b5",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "location_change",
+      "id": "location_change.0.contradiction.reflow",
+      "input_sha256": "2a5ebe4ef968fbbe21db684783b112ce44bc35db0af13c0179d58e0ab7054bfa",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "location_change",
+      "id": "location_change.0.contradiction.distractor",
+      "input_sha256": "a0a0ce6abddf97e7d15843955b9e9c27c89dfa18791872acd379f3b7618116eb",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.0.contradiction.remove_evidence",
+      "input_sha256": "e6479ed50ecd469eea2f857724c4e2a8d1da5a2f2620e52b1de6b98700fe00ed",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "location_change",
+      "id": "location_change.0.entailment.base",
+      "input_sha256": "074c11d1dddc58b9ac886db0f9a4432127d93f8aeed61a312bfafc98a2ce7b9f",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "location_change",
+      "id": "location_change.0.entailment.rename",
+      "input_sha256": "befb1348a1a81469cde7c17771760e45bfd5a2b1095ad4d5a4a3c61b9cb06924",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "location_change",
+      "id": "location_change.0.entailment.reflow",
+      "input_sha256": "514b2a1778581f80623f09188aa4a948e87ec4a91bf05fac39ebcbb76a629978",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "location_change",
+      "id": "location_change.0.entailment.distractor",
+      "input_sha256": "fbde70845b8ae67b0971073f3dc15fa32c30da1905ca478c0b9b907b7112374f",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.0.entailment.remove_evidence",
+      "input_sha256": "e6479ed50ecd469eea2f857724c4e2a8d1da5a2f2620e52b1de6b98700fe00ed",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.0.neutral.base",
+      "input_sha256": "e6479ed50ecd469eea2f857724c4e2a8d1da5a2f2620e52b1de6b98700fe00ed",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.0.neutral.rename",
+      "input_sha256": "7e1e05bd36ccc703080daf969b97f9accf8560c1b76fa0a11194bd15dc5265b8",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.0.neutral.reflow",
+      "input_sha256": "f5399bd79d8fcc71bf50dda7350f8b5969892ca595535a3e4f2e8a0fd299f12e",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.0.neutral.distractor",
+      "input_sha256": "495dbeb612c96642fec657d0ce0b84381f0d90f413667629903311c1e3e3a11a",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.0.neutral.remove_evidence",
+      "input_sha256": "e6479ed50ecd469eea2f857724c4e2a8d1da5a2f2620e52b1de6b98700fe00ed",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "location_change",
+      "id": "location_change.1.contradiction.base",
+      "input_sha256": "60c24e5d326a1405f4c663a55f55348a3962d5e1ca907f6811fe1e6b86baa1d7",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "location_change",
+      "id": "location_change.1.contradiction.rename",
+      "input_sha256": "e924c67cfd54afbdbcb75d96b169131a1ac8f7b1b13d4a280fbfdf04974ad9b0",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "location_change",
+      "id": "location_change.1.contradiction.reflow",
+      "input_sha256": "120b8af8c560cf76d847f82ea3fa9d32092cc1254b5d2c44636d37a931e44d9d",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "location_change",
+      "id": "location_change.1.contradiction.distractor",
+      "input_sha256": "aebe02f6dc566dfebab2ee7a5e82f0dd9188dd8b37925db206001cad27a51153",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.1.contradiction.remove_evidence",
+      "input_sha256": "7e1e05bd36ccc703080daf969b97f9accf8560c1b76fa0a11194bd15dc5265b8",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "location_change",
+      "id": "location_change.1.entailment.base",
+      "input_sha256": "f39af8f0ea3cd5c1ca3482b49148b22ae549c2306ff6b6f5982b4eccbd5685a6",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "location_change",
+      "id": "location_change.1.entailment.rename",
+      "input_sha256": "54cece62b2d83e3a73cf7f3e9ad8ce3dd6bbc8115c5450aa4d145c656d7a9722",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "location_change",
+      "id": "location_change.1.entailment.reflow",
+      "input_sha256": "5a31867b088d5c5652c97a28b0a6d8824404d0bd68bc51654a98ec4baec79fca",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "location_change",
+      "id": "location_change.1.entailment.distractor",
+      "input_sha256": "d69b0d86f4822e466f17f63b9ebf31feea678907c7a619ae6445f45fa42a7852",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.1.entailment.remove_evidence",
+      "input_sha256": "7e1e05bd36ccc703080daf969b97f9accf8560c1b76fa0a11194bd15dc5265b8",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.1.neutral.base",
+      "input_sha256": "7e1e05bd36ccc703080daf969b97f9accf8560c1b76fa0a11194bd15dc5265b8",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.1.neutral.rename",
+      "input_sha256": "14cd7ae2b154ee4063576278f4bb8214d784c56ab0b3e4c36cbf2841464c8a8e",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.1.neutral.reflow",
+      "input_sha256": "a15b4c469ae50096ed8c2cd34f6f073c0a062a09154eebd6c5f71e761184d674",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.1.neutral.distractor",
+      "input_sha256": "883128568b8dc50572858d2a09b7051bdcfd344f58a965e549cae0c3fa56a279",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "location_change",
+      "id": "location_change.1.neutral.remove_evidence",
+      "input_sha256": "7e1e05bd36ccc703080daf969b97f9accf8560c1b76fa0a11194bd15dc5265b8",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "reported_speech",
+      "id": "reported_speech.0.contradiction.base",
+      "input_sha256": "a7606e52e91d6dadc5f9ac744ce78763b85d03c5e3bec74f8e40155ab473211a",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "reported_speech",
+      "id": "reported_speech.0.contradiction.rename",
+      "input_sha256": "e594f67437195552a3246ebf373cb241daf8f119d1ff605c8417b0bf39906b07",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "reported_speech",
+      "id": "reported_speech.0.contradiction.reflow",
+      "input_sha256": "69a830fdaa614f18e4c6895dbc7a0d621aa51c437d948bcac6fcae816b3fa802",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "reported_speech",
+      "id": "reported_speech.0.contradiction.distractor",
+      "input_sha256": "6eb35bd1c6624e551c2c0bbddda0b5d4a401d45a77d128a198ca1ef154dfd167",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.0.contradiction.remove_evidence",
+      "input_sha256": "98e440b11df91b45f8c6ffdaef89f2e768ddd76189efc293f1fc073d492f188e",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "reported_speech",
+      "id": "reported_speech.0.entailment.base",
+      "input_sha256": "c43cddbd743c6de9515b49a48a3aedfa7812ea13bb59eab14a14a7cf1c6c6cd2",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "reported_speech",
+      "id": "reported_speech.0.entailment.rename",
+      "input_sha256": "d4bdfdd7a9ed1db57028057f55e4348bee5d302791101180ee1b66b0ae24d4c6",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "reported_speech",
+      "id": "reported_speech.0.entailment.reflow",
+      "input_sha256": "ac10728773870e4ac0a23184c9517a17774500023727dab2898abfcbc084b1e0",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "reported_speech",
+      "id": "reported_speech.0.entailment.distractor",
+      "input_sha256": "aa8d707c1e79e9c036893b29395fa5ddb8b6682f0da499f6b7a9362e7e50d105",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.0.entailment.remove_evidence",
+      "input_sha256": "98e440b11df91b45f8c6ffdaef89f2e768ddd76189efc293f1fc073d492f188e",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.0.neutral.base",
+      "input_sha256": "98e440b11df91b45f8c6ffdaef89f2e768ddd76189efc293f1fc073d492f188e",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.0.neutral.rename",
+      "input_sha256": "3ca1f4a32139698656e448cecc7728b081cd29fd3e929adca21eb7f3ab617bb2",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.0.neutral.reflow",
+      "input_sha256": "6113c93c89097494d10779b88faeffbebaf39f3a5c7a805756e72fe73deba333",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.0.neutral.distractor",
+      "input_sha256": "be5fec62611e0c6953ba9ac45561dd310993ef4077e420087196c9a9c196739c",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.0.neutral.remove_evidence",
+      "input_sha256": "98e440b11df91b45f8c6ffdaef89f2e768ddd76189efc293f1fc073d492f188e",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "reported_speech",
+      "id": "reported_speech.1.contradiction.base",
+      "input_sha256": "ac1024a0d2260e96db24738aa81b183309da1806383564dd067c9763cfe8b1a2",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "reported_speech",
+      "id": "reported_speech.1.contradiction.rename",
+      "input_sha256": "9dad29727e9167d01bb6629e7747b04fb6393d92ef052c230e091d136e4f071d",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "reported_speech",
+      "id": "reported_speech.1.contradiction.reflow",
+      "input_sha256": "044a8fec002f1525f1a0175f0ccdd9df07b31629ecd4a530c1d61015f1fb6a7d",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "reported_speech",
+      "id": "reported_speech.1.contradiction.distractor",
+      "input_sha256": "f4944caa4fad2873d00f54c62be85d8912cf2613087d713612d6596063830cef",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.1.contradiction.remove_evidence",
+      "input_sha256": "3ca1f4a32139698656e448cecc7728b081cd29fd3e929adca21eb7f3ab617bb2",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "reported_speech",
+      "id": "reported_speech.1.entailment.base",
+      "input_sha256": "1aeb7f16982ef8c73616b428cf1d46fdabfd6e91d6e0e1c475d8627a859cfa79",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "reported_speech",
+      "id": "reported_speech.1.entailment.rename",
+      "input_sha256": "5629265501aa5c66038e37859dc7d6cfc467be079312186a7238661911a6760c",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "reported_speech",
+      "id": "reported_speech.1.entailment.reflow",
+      "input_sha256": "63f47bbf3736577e5da969d433e0cbe7caddddc4e284fc180f68fe266125d5dd",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "reported_speech",
+      "id": "reported_speech.1.entailment.distractor",
+      "input_sha256": "f6c6b51a5c598b56fffaf81ffd6971da4598ee9dfe216e9cc6320ca89682de4c",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.1.entailment.remove_evidence",
+      "input_sha256": "3ca1f4a32139698656e448cecc7728b081cd29fd3e929adca21eb7f3ab617bb2",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.1.neutral.base",
+      "input_sha256": "3ca1f4a32139698656e448cecc7728b081cd29fd3e929adca21eb7f3ab617bb2",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.1.neutral.rename",
+      "input_sha256": "1ef3a9d1ad5b3d753c7ce6640126aefff08180254e60b49987df3e7331ffb51b",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.1.neutral.reflow",
+      "input_sha256": "a3040b455366934b71419241d3ae62e6b503f283043b1497d8c76efe84e8770e",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.1.neutral.distractor",
+      "input_sha256": "b94e01aff27dd99531c80ac2de15a4fe156f3faf18e5b3eb90dc7eda11b017e5",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "reported_speech",
+      "id": "reported_speech.1.neutral.remove_evidence",
+      "input_sha256": "3ca1f4a32139698656e448cecc7728b081cd29fd3e929adca21eb7f3ab617bb2",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.contradiction.base",
+      "input_sha256": "f03ccc4b23a6a32997ad5b2c852a60a7cbf651761a9514dfdc33f72c06d4db65",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.contradiction.rename",
+      "input_sha256": "e24e1c2ed5f4dc39259423d4d69e1d9aab1f37e7e57f48bef1194462844da274",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.contradiction.reflow",
+      "input_sha256": "18c49661567d655dd142d175bc3c9e1ad49a9a2db95e263c0bd68824f45a43fd",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.contradiction.distractor",
+      "input_sha256": "5f931d304e862f6135729fc0cdef00db13094b42d1cc488d374fac439edd562f",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.contradiction.remove_evidence",
+      "input_sha256": "e17d0f6fc789b097d75c2c631f1e3e8f0ccc963e5aaf0982f2e9752794fcf6ca",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.entailment.base",
+      "input_sha256": "104bcf05562863927ef1b794a69b1ece274ca3e4af4b63a9d42efb0d6fdc6777",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.entailment.rename",
+      "input_sha256": "7ff5c101788a44f9fab62e25d94e174c4a0344224018f5b3b0428536fc0b1856",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.entailment.reflow",
+      "input_sha256": "fb3ca0b474eaa15c829177f13c2e25e13111ce5ec5666c68e3fe5fd7dcb141b5",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.entailment.distractor",
+      "input_sha256": "feb0d4e67863ced2b8b52d0ffda3134d3596a1a81029d19fcb594ccd0164b08f",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.entailment.remove_evidence",
+      "input_sha256": "e17d0f6fc789b097d75c2c631f1e3e8f0ccc963e5aaf0982f2e9752794fcf6ca",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.neutral.base",
+      "input_sha256": "e17d0f6fc789b097d75c2c631f1e3e8f0ccc963e5aaf0982f2e9752794fcf6ca",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.neutral.rename",
+      "input_sha256": "507e1e41ae97a8e37bc9d948934ea1440f7ca89d21676c7f0c2fcbff39201bd4",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.neutral.reflow",
+      "input_sha256": "eea61ad4dd938061013e7bb1fec35c98acc912a35f7eaf5555b3c0fcb3f93774",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.neutral.distractor",
+      "input_sha256": "eab0abee711cabc910c7f8882caafe600ace7e74d43a052454223a4536bedc7d",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.0.neutral.remove_evidence",
+      "input_sha256": "e17d0f6fc789b097d75c2c631f1e3e8f0ccc963e5aaf0982f2e9752794fcf6ca",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.contradiction.base",
+      "input_sha256": "62ba14c1bb833395f88d758471cd219bcf9d22bad8f70e6c4c46c7c37a3565e0",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.contradiction.rename",
+      "input_sha256": "2f3ef2607654565262d0c527cd14ee4db866ff8864cb1834c84cb0309ea5f78f",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.contradiction.reflow",
+      "input_sha256": "08e972d8c2ce08bf3feba5a51bbc82ead9e998e713004905f51fb36ec8dff850",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.contradiction.distractor",
+      "input_sha256": "82bc992cf65dc9acd97268b826429f209a1ade81a8ba961306b43b6ca95f69cc",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.contradiction.remove_evidence",
+      "input_sha256": "507e1e41ae97a8e37bc9d948934ea1440f7ca89d21676c7f0c2fcbff39201bd4",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.entailment.base",
+      "input_sha256": "dcdd63e00ccd7ac5cfa6def2da02db918052a291a0a438c73fb9b8f78938e9f9",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.entailment.rename",
+      "input_sha256": "7e2a18007d3f2fdb24725a824e6fc47002ef3c236c19c49ef67fb11328930d6a",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.entailment.reflow",
+      "input_sha256": "9269445a11d9725012cbf2f3d7ac8c676f329fba88eab522774abee0efd596c8",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.entailment.distractor",
+      "input_sha256": "090df25a35aaaf31453482c56316352230d08485a656d940822890935c8192f5",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.entailment.remove_evidence",
+      "input_sha256": "507e1e41ae97a8e37bc9d948934ea1440f7ca89d21676c7f0c2fcbff39201bd4",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.neutral.base",
+      "input_sha256": "507e1e41ae97a8e37bc9d948934ea1440f7ca89d21676c7f0c2fcbff39201bd4",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.neutral.rename",
+      "input_sha256": "e1ada18481a8e7269c10b41fcc53b5f90642998a34aab2f90766bba2c26afd9a",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.neutral.reflow",
+      "input_sha256": "965fdfc4714c072f741c46c1efe03638e8b3b05a4647b5c9d774df3a553a10ac",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.neutral.distractor",
+      "input_sha256": "0860d75aa590bb0b11f952ef7f74bff69fb226f8ed8b8d3afefe59aeaee0e902",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "belief_vs_fact",
+      "id": "belief_vs_fact.1.neutral.remove_evidence",
+      "input_sha256": "507e1e41ae97a8e37bc9d948934ea1440f7ca89d21676c7f0c2fcbff39201bd4",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "conditional",
+      "id": "conditional.0.contradiction.base",
+      "input_sha256": "9c1038b8a774249a01b8eec800319a54baeca21d49b9a04319794a5dc51b2e8b",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "conditional",
+      "id": "conditional.0.contradiction.rename",
+      "input_sha256": "3e6371313efcd39442f7b1d50a496258574d9a0488c838e1e2cef6a56ade5462",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "conditional",
+      "id": "conditional.0.contradiction.reflow",
+      "input_sha256": "e83d07bed3923502be71c432dfec8a929f2d8ff53c33d3cf621b080334f10e87",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "conditional",
+      "id": "conditional.0.contradiction.distractor",
+      "input_sha256": "3b8282c9b710cb5617e9458f8fced9ef4a06491d0b935bcc8c3f68b34e01dd52",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.0.contradiction.remove_evidence",
+      "input_sha256": "21799457e667b12e86061fbe159862c62e33d2af82c196795915ffbc7a5b84c3",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "conditional",
+      "id": "conditional.0.entailment.base",
+      "input_sha256": "1313072e8390652b251692352ded93d68d9e138209f7be0a8ca5948f59d1d1b1",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "conditional",
+      "id": "conditional.0.entailment.rename",
+      "input_sha256": "dd4ade5028699bb081c838d06d4a6adcc9df21d76e0c1cfa1c277006450807c3",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "conditional",
+      "id": "conditional.0.entailment.reflow",
+      "input_sha256": "4a96bb89406614d4a3af2fc993678bac5526a757285ad4fdecba5f8916e80d5d",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "conditional",
+      "id": "conditional.0.entailment.distractor",
+      "input_sha256": "55ecec517768cb1da8ed4660024b2f4653e1b0243810891ec6c002276f71f4df",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.0.entailment.remove_evidence",
+      "input_sha256": "21799457e667b12e86061fbe159862c62e33d2af82c196795915ffbc7a5b84c3",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.0.neutral.base",
+      "input_sha256": "21799457e667b12e86061fbe159862c62e33d2af82c196795915ffbc7a5b84c3",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.0.neutral.rename",
+      "input_sha256": "e4808a7385d587d407da31c9fb33397d4b5848767c6ce613eb351c8169bcb905",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.0.neutral.reflow",
+      "input_sha256": "907fe4ff947b2058be19b6e073af3e9c79001ffbf4a24023388f12e3858d5631",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.0.neutral.distractor",
+      "input_sha256": "b0b7e6c4ccb8b29d961782ec1a83d29a54ae7c0c4e79f7c83b9b562ec419c041",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.0.neutral.remove_evidence",
+      "input_sha256": "21799457e667b12e86061fbe159862c62e33d2af82c196795915ffbc7a5b84c3",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "conditional",
+      "id": "conditional.1.contradiction.base",
+      "input_sha256": "0085929c8b49f9b31c398fd8601315b03906aeda20db10922739f087527320a5",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "conditional",
+      "id": "conditional.1.contradiction.rename",
+      "input_sha256": "9464c706125fd6d30fa0a13d147116f528f45c90cac4a1085f5aa1d4c0c90f5b",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "conditional",
+      "id": "conditional.1.contradiction.reflow",
+      "input_sha256": "6e05b261d5ab389567fbfe77d6fe13643d02982487392f728306ad3b5dc20554",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "conditional",
+      "id": "conditional.1.contradiction.distractor",
+      "input_sha256": "c1fb0db06b645b4adc7e00cc37ab63ab3d41b46da89d87ca384f7ed2639a1c4b",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.1.contradiction.remove_evidence",
+      "input_sha256": "e4808a7385d587d407da31c9fb33397d4b5848767c6ce613eb351c8169bcb905",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "conditional",
+      "id": "conditional.1.entailment.base",
+      "input_sha256": "c51ac2eb82ff96f23215cea3f101c50afd815ddc5af6bec3693eadd490113cb8",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "conditional",
+      "id": "conditional.1.entailment.rename",
+      "input_sha256": "5a4eeba1b16e23909f7ec4ecc62912a2fb9d52b0f6f402a5c0d04a0b205a12cb",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "conditional",
+      "id": "conditional.1.entailment.reflow",
+      "input_sha256": "90ba945dfb8020a4de2808208016582d7493f27b52a95d4cd49f9993b376f9d8",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "conditional",
+      "id": "conditional.1.entailment.distractor",
+      "input_sha256": "c1bfa281106d3315410014f4ce4a01404638acd02aa30583f86d744cdb079bd4",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.1.entailment.remove_evidence",
+      "input_sha256": "e4808a7385d587d407da31c9fb33397d4b5848767c6ce613eb351c8169bcb905",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.1.neutral.base",
+      "input_sha256": "e4808a7385d587d407da31c9fb33397d4b5848767c6ce613eb351c8169bcb905",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.1.neutral.rename",
+      "input_sha256": "0f53f1bfa7d033ede110c23781fb4ab50085c0e88a8a740cc987217914c556f0",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.1.neutral.reflow",
+      "input_sha256": "8d35044b8de846bf0e33f4bbb4a0dbba09de25db69d503c4746ad96dfa6a9de2",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.1.neutral.distractor",
+      "input_sha256": "6478ef5e19f2a12bc324c7b1dcae4d1de2e04757c2e3f4574d77c536f9a2670d",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "conditional",
+      "id": "conditional.1.neutral.remove_evidence",
+      "input_sha256": "e4808a7385d587d407da31c9fb33397d4b5848767c6ce613eb351c8169bcb905",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "intention",
+      "id": "intention.0.contradiction.base",
+      "input_sha256": "8c00b9c400f1fd74464916e85a49761dd98879203574aa88499982740851c4f0",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "intention",
+      "id": "intention.0.contradiction.rename",
+      "input_sha256": "78428ea22dd3d7df604afa910cb43c0b3beaf5be48e4587f241f5a221a0d95b0",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "intention",
+      "id": "intention.0.contradiction.reflow",
+      "input_sha256": "77c93bb71373747b40ad1d9c5ee7ecb1da2d1531d09a8122fe11b4e26ec92d6b",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "intention",
+      "id": "intention.0.contradiction.distractor",
+      "input_sha256": "f525a053f67505eb8deb11f8c89c5370f01423fa980b7043f26280271642d240",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.0.contradiction.remove_evidence",
+      "input_sha256": "0f90441d6448dfcfbb56f9c23d7dabac29a838e87507e5d99167711552dbc322",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "intention",
+      "id": "intention.0.entailment.base",
+      "input_sha256": "e2ed2eba0c2a86d4fcf40fa25279c9f0c641e404cc9857c84cc40c355b69c42c",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "intention",
+      "id": "intention.0.entailment.rename",
+      "input_sha256": "5dc16a37c46d8d912b6b143cc6a933f39efbcf54d3a58bb10ab87066ff174a07",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "intention",
+      "id": "intention.0.entailment.reflow",
+      "input_sha256": "47edc49b7a6c8820530a6fcb4c2b00817685e0e34e70e06da89fc1ae128e3cf5",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "intention",
+      "id": "intention.0.entailment.distractor",
+      "input_sha256": "37cdbc98006f454fdd64a60a72a4144bff58e7018b6087aabdfa2f18ab89cd11",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.0.entailment.remove_evidence",
+      "input_sha256": "0f90441d6448dfcfbb56f9c23d7dabac29a838e87507e5d99167711552dbc322",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.0.neutral.base",
+      "input_sha256": "0f90441d6448dfcfbb56f9c23d7dabac29a838e87507e5d99167711552dbc322",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.0.neutral.rename",
+      "input_sha256": "3e8c5ba0cebd126dbc2568f94ae0637af832b832cbae0d4a8313f573213e98b7",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.0.neutral.reflow",
+      "input_sha256": "e3ccf8044e7a54af42016112ce63e9fd80c084e9410409171fdf524a2e0e3599",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.0.neutral.distractor",
+      "input_sha256": "21a250a67dc92ca5613e4e1853e30e6a9ff280c080bc9be7cb78ccd670e2b347",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.0.neutral.remove_evidence",
+      "input_sha256": "0f90441d6448dfcfbb56f9c23d7dabac29a838e87507e5d99167711552dbc322",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "intention",
+      "id": "intention.1.contradiction.base",
+      "input_sha256": "2cade1dc1b105c72509597de67f1bf252ff920ce3b5ad59103c4692a580e7cdf",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "intention",
+      "id": "intention.1.contradiction.rename",
+      "input_sha256": "6066638e7a91804a9452c74ab0c96671a0b2e0fc407e0c2a1110e150f5e1cd96",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "intention",
+      "id": "intention.1.contradiction.reflow",
+      "input_sha256": "4648fc96d3cefc81252d0fc82c6c6280ca2ac33f2c1010ac8a4272ea352c4427",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "intention",
+      "id": "intention.1.contradiction.distractor",
+      "input_sha256": "c33d64538b85e9172364d65700f09c73938b2133c72c91da29ec442c90b7c451",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.1.contradiction.remove_evidence",
+      "input_sha256": "3e8c5ba0cebd126dbc2568f94ae0637af832b832cbae0d4a8313f573213e98b7",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "intention",
+      "id": "intention.1.entailment.base",
+      "input_sha256": "b875a83b9eee7a7ebeb0f11edbd111c9a2160f8e1030b8a905a60fee202328fb",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "intention",
+      "id": "intention.1.entailment.rename",
+      "input_sha256": "2218156c9d89f4c1dd3fc0292d759d3d5786275a6d241b69bedd8cd1ce7563d0",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "intention",
+      "id": "intention.1.entailment.reflow",
+      "input_sha256": "3bd7fb48b9f53e12c66eaa263876f186185b70d66f15c2e180f56ef80a529670",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "intention",
+      "id": "intention.1.entailment.distractor",
+      "input_sha256": "f0d4796096c1b68c0cc3c018fdac7d64da5fd970121fb6b2c0b57d873121f353",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.1.entailment.remove_evidence",
+      "input_sha256": "3e8c5ba0cebd126dbc2568f94ae0637af832b832cbae0d4a8313f573213e98b7",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.1.neutral.base",
+      "input_sha256": "3e8c5ba0cebd126dbc2568f94ae0637af832b832cbae0d4a8313f573213e98b7",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.1.neutral.rename",
+      "input_sha256": "b50913745effcb52cd209175063eb20d7571cba68aeb0e92536e96673c8deb37",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.1.neutral.reflow",
+      "input_sha256": "f62af86850c4c011e3e921ab600ff61b8858b82a0cb205ab8686f1fdad3fb82e",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.1.neutral.distractor",
+      "input_sha256": "c79f8f4aa3255cfd8ce6947c74f499024957b0ca51db88293e6b5c1d94ff4aa9",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "intention",
+      "id": "intention.1.neutral.remove_evidence",
+      "input_sha256": "3e8c5ba0cebd126dbc2568f94ae0637af832b832cbae0d4a8313f573213e98b7",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.contradiction.base",
+      "input_sha256": "25039bad7c2d10748fa2361b77fc1978f7b9b4949e5f3dff73308cff62e4db9e",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.contradiction.rename",
+      "input_sha256": "f26eaee703a44a13414b198d945a2a122a3c161e8756d740ccee41173d34a6dc",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.contradiction.reflow",
+      "input_sha256": "b42808c9f21c3ee90a6508a59944de009c19dd5b7e6756c057cf78fcb951f6d7",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.contradiction.distractor",
+      "input_sha256": "37b0a9635731ed47f01c9e00bc321f2c136288189a1ce8b5805583505d221d70",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.contradiction.remove_evidence",
+      "input_sha256": "10e0d58a50b60c070729c5941892d1d043b6eae3ae708bde4042d6a0ae2c7796",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.entailment.base",
+      "input_sha256": "42fcd365fce18c970fefd0ae20615aea6da5c48a4497e08770ed40adccee5bff",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.entailment.rename",
+      "input_sha256": "483bfc3cb5e8da83058b1574161c3f6640fae2286e64421a95fdbff8cc60be4c",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.entailment.reflow",
+      "input_sha256": "07ba623a53f992c66059688bdacb5fafc376940915d0b25d918eab46443df254",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.entailment.distractor",
+      "input_sha256": "fee717c8926622e6c7e7cb6575868bca276f6a5f8a74bfe4a3ab28406d2bc5ff",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.entailment.remove_evidence",
+      "input_sha256": "10e0d58a50b60c070729c5941892d1d043b6eae3ae708bde4042d6a0ae2c7796",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.neutral.base",
+      "input_sha256": "10e0d58a50b60c070729c5941892d1d043b6eae3ae708bde4042d6a0ae2c7796",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.neutral.rename",
+      "input_sha256": "ab47dc0f7b19344780bda4d9e1545292534a1496476f5e68f495a52ed01071fa",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.neutral.reflow",
+      "input_sha256": "481f46d7d34fe143d2edf0e85168483a5a44e87293f055c694a146b0db4122e0",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.neutral.distractor",
+      "input_sha256": "66786d08852fa6c2b7d521148c9afe007bec2aeae01b5605fdf3f1c0c3f51ada",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.0.neutral.remove_evidence",
+      "input_sha256": "10e0d58a50b60c070729c5941892d1d043b6eae3ae708bde4042d6a0ae2c7796",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.contradiction.base",
+      "input_sha256": "998e181b0a58b7e6fd747483aed43eb38a2dfc9ceac7b555e06dca06a7feb141",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.contradiction.rename",
+      "input_sha256": "c7a3f1bb313b353339df24583193a8b48ca75b142190069ac63f994ebcf7d0a3",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.contradiction.reflow",
+      "input_sha256": "554bbf7bd7978d91e1bd5b450bce4942836da5f0b29e34c79d43ef3366a64481",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.contradiction.distractor",
+      "input_sha256": "dbf3e041a34f91c8e398638eb66fc351144665aa762fad139fde492c28724604",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.contradiction.remove_evidence",
+      "input_sha256": "ab47dc0f7b19344780bda4d9e1545292534a1496476f5e68f495a52ed01071fa",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.entailment.base",
+      "input_sha256": "281a9edf466f3f46b4c662a83a4b029be2582dae29d416d4b4b88e91715e6939",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.entailment.rename",
+      "input_sha256": "7dc3699f7de78717750db8012ab8332c7b9bf1c4c2ec2f2b9c05f44cc83ee8b4",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.entailment.reflow",
+      "input_sha256": "9b2ff0b9df171e5ec25350f91a143032b1af6934079d5665cd89e1ba59a3fc06",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.entailment.distractor",
+      "input_sha256": "a856df52a4c453830db2a34f111547d350d8a31a2242bdb4e798de9662159f33",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.entailment.remove_evidence",
+      "input_sha256": "ab47dc0f7b19344780bda4d9e1545292534a1496476f5e68f495a52ed01071fa",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.neutral.base",
+      "input_sha256": "ab47dc0f7b19344780bda4d9e1545292534a1496476f5e68f495a52ed01071fa",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.neutral.rename",
+      "input_sha256": "9a7fff627abc0815007e73630fa8c1bee3e4d20264767de8babada33d397f395",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.neutral.reflow",
+      "input_sha256": "bae7400276e3163d813aebfe13cac2ba7b13d0892cc476899788a1424235ce7b",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.neutral.distractor",
+      "input_sha256": "173ad267f0b80caa651b9f95169aba29dae4af4864241ae49c1a9850e071a640",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "partial_obligation",
+      "id": "partial_obligation.1.neutral.remove_evidence",
+      "input_sha256": "ab47dc0f7b19344780bda4d9e1545292534a1496476f5e68f495a52ed01071fa",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.contradiction.base",
+      "input_sha256": "2dde4c0847e1b0e922059d28724fcb2b57ac2d79e3260b31d3cb52818c82355b",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.contradiction.rename",
+      "input_sha256": "34d78de2a4e6a24d07172beb27a7e8acf9972f985864cb3fe68d068f0553b57b",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.contradiction.reflow",
+      "input_sha256": "c5d50db440e89949a7b1555429e7d5e22e98b80443eda34bffe857fd3380afbe",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.contradiction.distractor",
+      "input_sha256": "f812edaf128ec79f698f0771c35a44d0ff51d456de6f04cbf994404f1a44d367",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.contradiction.remove_evidence",
+      "input_sha256": "30d4d67b108481aab182f71c499be027fd7128179c37ea9a52011ae0fcbe77fd",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.entailment.base",
+      "input_sha256": "dab70a05f0a0a0a70916f9fff25e514acc0339d31ca09149bf8ef680d5ccb21b",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.entailment.rename",
+      "input_sha256": "e52ae280457251463d96bf4ccf485186fe4a72af5d6477c58b87e63c0ab68e40",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.entailment.reflow",
+      "input_sha256": "5ec3ef447045554be55ef740a07dd377bcf4b209b51b27951fcb2a6cc1aaf2e5",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.entailment.distractor",
+      "input_sha256": "06e2dc6183b8afc43dd133820f7f4e7cf537ed4dc8867025d83e19c62a500dc7",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.entailment.remove_evidence",
+      "input_sha256": "30d4d67b108481aab182f71c499be027fd7128179c37ea9a52011ae0fcbe77fd",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.neutral.base",
+      "input_sha256": "30d4d67b108481aab182f71c499be027fd7128179c37ea9a52011ae0fcbe77fd",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.neutral.rename",
+      "input_sha256": "46411efa32992f517bece9a6af1398a533f3633eebe6d008db2cac95d8a15592",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.neutral.reflow",
+      "input_sha256": "b9561513e46d33ec85e0c262ab77499723a80e4aa9c4b938ea3860a7b3ee086a",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.neutral.distractor",
+      "input_sha256": "ea46bf6bec9e02ec0660f04dc31e9b69d623b424085725328417c52df39eabb9",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.0.neutral.remove_evidence",
+      "input_sha256": "30d4d67b108481aab182f71c499be027fd7128179c37ea9a52011ae0fcbe77fd",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.contradiction.base",
+      "input_sha256": "9c375677dc812ec3e0d479fb50d4ad2c43757c892bcc54b60ac6e5667591c703",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.contradiction.rename",
+      "input_sha256": "e69cf5887a0ec82a39f89d23c275d95b202c2b380539908eee2f8d8baac574da",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.contradiction.reflow",
+      "input_sha256": "8db9f3a333a4d8fd21f0c4b70ae1d730decb453e301f939ee8e93876f6eb8f3c",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.contradiction.distractor",
+      "input_sha256": "ba37d1f7b92c1b3349003fd14e9fae44dbb3654139ae432eb908795b24b2a2a2",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.contradiction.remove_evidence",
+      "input_sha256": "46411efa32992f517bece9a6af1398a533f3633eebe6d008db2cac95d8a15592",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.entailment.base",
+      "input_sha256": "4c8250bd8ca741ab7065dc4530b126e3ecfe3e4ee961610bbec4537744f6a528",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.entailment.rename",
+      "input_sha256": "5e1e85b969b325cc68b69517f53fc6b05c58a668d135c5da99a2290f67a0dde3",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.entailment.reflow",
+      "input_sha256": "74ad30622e96035b7a18aa009ec734c4829d50507a58c2ef400c8d85055bb931",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.entailment.distractor",
+      "input_sha256": "008eaea330c1167b1d5112e0f80fd51f9f2d32af36533960ca26a49fd095c55c",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.entailment.remove_evidence",
+      "input_sha256": "46411efa32992f517bece9a6af1398a533f3633eebe6d008db2cac95d8a15592",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.neutral.base",
+      "input_sha256": "46411efa32992f517bece9a6af1398a533f3633eebe6d008db2cac95d8a15592",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.neutral.rename",
+      "input_sha256": "418faea343a41665ed433b6101b575e9536a9a5b9795864877368a0dca55df0f",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.neutral.reflow",
+      "input_sha256": "01ca995fb874637cef4b2e026382de94cf24801b769a64cb043d70d79f84648a",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.neutral.distractor",
+      "input_sha256": "aa2ccbf1d1e92d88ce07292f7541568bdfb56b72a935fdbde6bc60b7430be245",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "temporal_scope",
+      "id": "temporal_scope.1.neutral.remove_evidence",
+      "input_sha256": "46411efa32992f517bece9a6af1398a533f3633eebe6d008db2cac95d8a15592",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.contradiction.base",
+      "input_sha256": "b29718b7246d7740ab66463e74bb050eef1bcc9558de7b80389995c0727f5122",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.contradiction.rename",
+      "input_sha256": "d3389df621e4dda919c18379683376c851d0f00504d32ac2f5b2be417a5b11ea",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.contradiction.reflow",
+      "input_sha256": "0f85aef4ee37f9ed63a129dc81bc5341498106c57ad508714f3209e1a84e0519",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.contradiction.distractor",
+      "input_sha256": "f17c01f2a7ea80d727d46bf64a07220855afe95f7d412d2dc004ab2d13ce1905",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.contradiction.remove_evidence",
+      "input_sha256": "bee7ee27f5852e9cae227671f98a43e9838b87fbc0659bb55dcb3b1f72e426c7",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.entailment.base",
+      "input_sha256": "ce71e6fd48e74252781c38112b14aa17a2ebd9a8c46ada3b8ee0c88c949ddc71",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.entailment.rename",
+      "input_sha256": "ac429e7796c0f8d9aab25c31623e98faa1602285a6cbc47ac044971a965e04ba",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.entailment.reflow",
+      "input_sha256": "59e60ca9627ba8683b64daeafae08badeb9067353348494698290636f9d0e77f",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.entailment.distractor",
+      "input_sha256": "012e419a10dc5156120df9c2c3366b14947cc4b7b21799fb8e242f81155a6a11",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.entailment.remove_evidence",
+      "input_sha256": "bee7ee27f5852e9cae227671f98a43e9838b87fbc0659bb55dcb3b1f72e426c7",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.neutral.base",
+      "input_sha256": "bee7ee27f5852e9cae227671f98a43e9838b87fbc0659bb55dcb3b1f72e426c7",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.neutral.rename",
+      "input_sha256": "bdb0d63ff1bb0321e9baa8fbc08974a5ab2d950a9a110f815d034069c10cde8c",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.neutral.reflow",
+      "input_sha256": "482d031db1276a09f1209cde9cba97c22bbab81a920d0f06ca14540fe4f24819",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.neutral.distractor",
+      "input_sha256": "9ba60f0832daccc02dac4257c5cc72e4efcb63012834debaaf5714861a5f2a74",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.0.neutral.remove_evidence",
+      "input_sha256": "bee7ee27f5852e9cae227671f98a43e9838b87fbc0659bb55dcb3b1f72e426c7",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.contradiction.base",
+      "input_sha256": "9471d0d06e01b58767704bcce8906d820bf41ee36adfbe5d8804eb5942f9cd24",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.contradiction.rename",
+      "input_sha256": "fc364deebf7498c2c1c46eb3c69a6047b2f22e78abee75a0ab90b4cf2a53c39b",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.contradiction.reflow",
+      "input_sha256": "a51d1ab6f12f7cc69f8445b64174ef924eaf58b68551d2864431cfea531bc9c9",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.contradiction.distractor",
+      "input_sha256": "8f8030be4a088559b86cf180d0be6639ee92bdf392f2edebc159bcd32d411bed",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.contradiction.remove_evidence",
+      "input_sha256": "bdb0d63ff1bb0321e9baa8fbc08974a5ab2d950a9a110f815d034069c10cde8c",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.entailment.base",
+      "input_sha256": "ef3df41897593e25b2f924f5eda39cced4d192bba1fe16c404b3d9504e96efe6",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.entailment.rename",
+      "input_sha256": "c64ea89e1a4477c33e8f009276d55bdcc46b4495859ecc9d9c460c0f240f7a68",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.entailment.reflow",
+      "input_sha256": "c741a82e33e3659556431939464a188d9bbf6a0d509a6ea93033d63744f1d3bb",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.entailment.distractor",
+      "input_sha256": "8fe33f9b02396a37bfc52b6226c8432b1c48b003c733f9f6516cbe714bad5611",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.entailment.remove_evidence",
+      "input_sha256": "bdb0d63ff1bb0321e9baa8fbc08974a5ab2d950a9a110f815d034069c10cde8c",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.neutral.base",
+      "input_sha256": "bdb0d63ff1bb0321e9baa8fbc08974a5ab2d950a9a110f815d034069c10cde8c",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.neutral.rename",
+      "input_sha256": "8183a574bf05249c6e7abe471040ff477829c153539b8f0320775e1108bbb5c4",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.neutral.reflow",
+      "input_sha256": "cfb5285e27dc3b90c6bb3096a4cd731b9cac450a734341097ab2f1bf3d275227",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.neutral.distractor",
+      "input_sha256": "860040fb49e313a1f6f8ed3632ac10a853a98cd75cbb7cb9540cc03674b8c718",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "speaker_attribution",
+      "id": "speaker_attribution.1.neutral.remove_evidence",
+      "input_sha256": "bdb0d63ff1bb0321e9baa8fbc08974a5ab2d950a9a110f815d034069c10cde8c",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "counterfactual",
+      "id": "counterfactual.0.contradiction.base",
+      "input_sha256": "d0c95f3cb7d62c148a52d6ad3056cfe0a4bacc017dccf422ef2932cb7a6b54c1",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "counterfactual",
+      "id": "counterfactual.0.contradiction.rename",
+      "input_sha256": "31d2f875ae923d6e4204da423885e8cc867c5473911f3ce934c20c0ff71e759c",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "counterfactual",
+      "id": "counterfactual.0.contradiction.reflow",
+      "input_sha256": "0dc98c32ca942f572b1d839c6c9faf191541de04667e95657f4caef3dee075f3",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "counterfactual",
+      "id": "counterfactual.0.contradiction.distractor",
+      "input_sha256": "6457711cd32b4acdddb712c647ed8a63db082235cdcfc85c96475686723c9ca1",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.0.contradiction.remove_evidence",
+      "input_sha256": "09985f9d7ec6e2e6b8b7a8eede145448257c5d32d8a7f2b4d12e411c9d78489a",
+      "original_label": "contradiction",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "counterfactual",
+      "id": "counterfactual.0.entailment.base",
+      "input_sha256": "10c280e674df3701b152164b9915e58b554d8c4f873b7783fb38b2e074bdbb98",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "counterfactual",
+      "id": "counterfactual.0.entailment.rename",
+      "input_sha256": "aca2474b6d518ce095c3b0acbe6a05ea2f3effd8ab94e56708aca35ce08f6978",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "counterfactual",
+      "id": "counterfactual.0.entailment.reflow",
+      "input_sha256": "ffc9b210f8d975abfd3299b780f2cb77b1a06c442087c2563e1c5b032065a51c",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "counterfactual",
+      "id": "counterfactual.0.entailment.distractor",
+      "input_sha256": "18127718413b89a98398db1ababf9a7ea12b87392ac735724182a82fed6d24ae",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.0.entailment.remove_evidence",
+      "input_sha256": "09985f9d7ec6e2e6b8b7a8eede145448257c5d32d8a7f2b4d12e411c9d78489a",
+      "original_label": "entailment",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.0.neutral.base",
+      "input_sha256": "09985f9d7ec6e2e6b8b7a8eede145448257c5d32d8a7f2b4d12e411c9d78489a",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.0.neutral.rename",
+      "input_sha256": "9507420dbed388849553feaa9645eb4fb976abf8ba6ccef67c5240f2be60706b",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.0.neutral.reflow",
+      "input_sha256": "edf870b34e37533aa2621570c94809e7422c8d0eade01d8bdf75ee05ed9757d8",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.0.neutral.distractor",
+      "input_sha256": "860e614af6cb4d673787398988d2dab07fabcb735c2ab49d078202ec7b8fce6b",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.0.neutral.remove_evidence",
+      "input_sha256": "09985f9d7ec6e2e6b8b7a8eede145448257c5d32d8a7f2b4d12e411c9d78489a",
+      "original_label": "neutral",
+      "surface": 0,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "contradiction",
+      "family": "counterfactual",
+      "id": "counterfactual.1.contradiction.base",
+      "input_sha256": "12a359a2f46f8d1f6011552ab67e8b2199ac976090fbfbb183bdd2818206f236",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "contradiction",
+      "family": "counterfactual",
+      "id": "counterfactual.1.contradiction.rename",
+      "input_sha256": "499af6ca1b8a777a73768a9449761ac4208825f2d9ad047560d09d9a28cc8a01",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "contradiction",
+      "family": "counterfactual",
+      "id": "counterfactual.1.contradiction.reflow",
+      "input_sha256": "6f19d60256b07bf2618f514ee408c2840897ff99a87c17f92d809604c72853f5",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "contradiction",
+      "family": "counterfactual",
+      "id": "counterfactual.1.contradiction.distractor",
+      "input_sha256": "55e26036e58864e8df09a1fadbbc0e48b2444fe8d9cc8055023535f400652070",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.1.contradiction.remove_evidence",
+      "input_sha256": "9507420dbed388849553feaa9645eb4fb976abf8ba6ccef67c5240f2be60706b",
+      "original_label": "contradiction",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "entailment",
+      "family": "counterfactual",
+      "id": "counterfactual.1.entailment.base",
+      "input_sha256": "ea172e3ac1833a7f9a15647426302d7b9161c79116692c5a326716ad14ddeff1",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "entailment",
+      "family": "counterfactual",
+      "id": "counterfactual.1.entailment.rename",
+      "input_sha256": "bd20836eb0688d080e6076877e4952ec21b1257c8b6c49985f68aa0225cf5b97",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "entailment",
+      "family": "counterfactual",
+      "id": "counterfactual.1.entailment.reflow",
+      "input_sha256": "442554601259311a845b860689c2c9bcef13d883077b0253d7b0cabbcebbfaf2",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "entailment",
+      "family": "counterfactual",
+      "id": "counterfactual.1.entailment.distractor",
+      "input_sha256": "f62958f5e97ceb80fececdf34fbf4a7b0b660ead4cb308dccc4bf0c5d6ac683c",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.1.entailment.remove_evidence",
+      "input_sha256": "9507420dbed388849553feaa9645eb4fb976abf8ba6ccef67c5240f2be60706b",
+      "original_label": "entailment",
+      "surface": 1,
+      "variant": "remove_evidence"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.1.neutral.base",
+      "input_sha256": "9507420dbed388849553feaa9645eb4fb976abf8ba6ccef67c5240f2be60706b",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "base"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.1.neutral.rename",
+      "input_sha256": "6f924d466856a97b4b562b8f01a96d43cacadacc29b619afcfff15a2504d081c",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "rename"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.1.neutral.reflow",
+      "input_sha256": "1281f3b6fc880a175a4e0af127110d05d7822b6637b930198a70706f3340f86d",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "reflow"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.1.neutral.distractor",
+      "input_sha256": "4781a29259cecf4d69b3e1e9f3694952c9b85fa4d354b7ee05d7fc65b53447fd",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "distractor"
+    },
+    {
+      "expected": "neutral",
+      "family": "counterfactual",
+      "id": "counterfactual.1.neutral.remove_evidence",
+      "input_sha256": "9507420dbed388849553feaa9645eb4fb976abf8ba6ccef67c5240f2be60706b",
+      "original_label": "neutral",
+      "surface": 1,
+      "variant": "remove_evidence"
+    }
+  ],
+  "dataset_sha256": "25a2ebab1b6154a98a86a9d63392ec182b840dd249db2970991ac47bb1ab28bf",
+  "n_families": 12,
+  "n_pairs": 360,
+  "unique_inputs": 276
+}
