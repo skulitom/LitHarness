@@ -29,10 +29,30 @@
       "kind": "registration",
       "path": "research/quality-measurement/jev-verification-20260919/registration.json",
       "sha256": "be36c2a6a92a49d41be2ce58fb0bed79d223d87ba099ea52fc89eec68a6f78dc"
+    },
+    {
+      "kind": "raw_result",
+      "path": "research/quality-measurement/jev-verification-20260919/raw.jsonl",
+      "sha256": "b2b5b09418cc8a7fda08428e64c324cd3c1d1419d05904b889f852e5254820dd"
+    },
+    {
+      "kind": "raw_result",
+      "path": "research/quality-measurement/jev-verification-20260919/runtime.json",
+      "sha256": "1f64c71f6f6f537a7bbbfb752e490811e5ed8c50f1a0d7a31359197e9695019a"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/jev-verification-20260919/results.json",
+      "sha256": "dfadb238e58aa5c5fcfe1af7a8fa2bcff7f22fe318829a7d246e47f35aa5b9e6"
+    },
+    {
+      "kind": "control_result",
+      "path": "research/quality-measurement/jev-verification-20260919/results.json",
+      "sha256": "dfadb238e58aa5c5fcfe1af7a8fa2bcff7f22fe318829a7d246e47f35aa5b9e6"
     }
   ],
   "claim_id": "jev-verification-20260919",
   "schema": "litharness.epistemic-claim.v1",
   "statement": "The frozen OpenJev checkpoint is screened for three-way factual inference and control sensitivity on authored synthetic fixtures. No book quality, transfer or production qualification is claimed.",
-  "status": "registered"
+  "status": "observed"
 }

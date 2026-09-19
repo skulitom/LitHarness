@@ -1,0 +1,15 @@
+{
+  "api_calls": 0,
+  "attention": "eager",
+  "batch_size": 1,
+  "collection_wall_seconds": 226.70821760000035,
+  "device": "NVIDIA GeForce RTX 4090",
+  "dtype": "bfloat16",
+  "git_head": "8045c104cb86b99f433c417bd84135a7462f13c9",
+  "hosted_jev_measured": false,
+  "including_load_seconds": 231.35307140000077,
+  "model_revision": "4b5f9a67fa2ebe77466bce0656ce350effc3148c",
+  "pairs": 360,
+  "peak_allocated_bytes": 9395270144,
+  "registration_sha256": "30288c0041d67becb97f7b84bc1dc2e5d0eafa7fab06610675fbe75d04dfe767"
+}

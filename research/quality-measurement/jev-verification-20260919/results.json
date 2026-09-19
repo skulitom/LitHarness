@@ -1,0 +1,784 @@
+{
+  "all": {
+    "accuracy": 0.8861111111111111,
+    "confident_errors": [
+      "location_change.0.contradiction.distractor"
+    ],
+    "confident_false_entailments": [],
+    "confident_n": 219,
+    "confusion_gold_then_prediction": {
+      "contradiction": {
+        "contradiction": 88,
+        "entailment": 0,
+        "neutral": 8
+      },
+      "entailment": {
+        "contradiction": 0,
+        "entailment": 94,
+        "neutral": 2
+      },
+      "neutral": {
+        "contradiction": 18,
+        "entailment": 13,
+        "neutral": 137
+      }
+    },
+    "correct": 319,
+    "false_entailments": [
+      "possession_transfer.0.neutral.remove_evidence",
+      "possession_transfer.0.neutral.reflow",
+      "possession_transfer.0.neutral.base",
+      "possession_transfer.1.neutral.base",
+      "possession_transfer.0.neutral.distractor",
+      "possession_transfer.0.entailment.remove_evidence",
+      "possession_transfer.1.neutral.remove_evidence",
+      "possession_transfer.1.neutral.distractor",
+      "possession_transfer.1.neutral.rename",
+      "possession_transfer.1.contradiction.remove_evidence",
+      "possession_transfer.0.contradiction.remove_evidence",
+      "possession_transfer.1.entailment.remove_evidence",
+      "possession_transfer.0.neutral.rename"
+    ],
+    "mistakes": [
+      "intention.1.neutral.rename",
+      "intention.1.neutral.base",
+      "possession_transfer.0.neutral.remove_evidence",
+      "intention.1.neutral.distractor",
+      "intention.1.contradiction.remove_evidence",
+      "possession_transfer.0.neutral.reflow",
+      "intention.0.neutral.base",
+      "possession_transfer.0.neutral.base",
+      "possession_transfer.1.neutral.base",
+      "location_change.0.contradiction.base",
+      "intention.1.neutral.reflow",
+      "possession_transfer.0.neutral.distractor",
+      "intention.0.contradiction.remove_evidence",
+      "intention.0.neutral.reflow",
+      "possession_transfer.0.entailment.remove_evidence",
+      "reported_speech.0.contradiction.rename",
+      "intention.1.entailment.remove_evidence",
+      "intention.0.neutral.rename",
+      "location_change.0.contradiction.rename",
+      "possession_transfer.1.neutral.remove_evidence",
+      "reported_speech.1.contradiction.reflow",
+      "conditional.1.entailment.base",
+      "intention.1.neutral.remove_evidence",
+      "possession_transfer.1.neutral.distractor",
+      "wrong_actor.0.neutral.remove_evidence",
+      "wrong_actor.0.entailment.remove_evidence",
+      "intention.0.neutral.distractor",
+      "possession_transfer.1.neutral.rename",
+      "reported_speech.1.contradiction.distractor",
+      "reported_speech.1.contradiction.base",
+      "conditional.1.entailment.rename",
+      "wrong_actor.0.neutral.base",
+      "intention.0.neutral.remove_evidence",
+      "location_change.0.contradiction.distractor",
+      "wrong_actor.0.contradiction.remove_evidence",
+      "possession_transfer.1.contradiction.remove_evidence",
+      "possession_transfer.0.contradiction.remove_evidence",
+      "possession_transfer.1.entailment.remove_evidence",
+      "reported_speech.1.contradiction.rename",
+      "intention.0.entailment.remove_evidence",
+      "possession_transfer.0.neutral.rename"
+    ],
+    "multiclass_brier_sum": 0.16743053376002748,
+    "n": 360,
+    "neutral_baseline_accuracy": 0.4666666666666667
+  },
+  "base_by_family": {
+    "belief_vs_fact": {
+      "accuracy": 1.0,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 6,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 2,
+          "entailment": 0,
+          "neutral": 0
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 2,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 0,
+          "entailment": 0,
+          "neutral": 2
+        }
+      },
+      "correct": 6,
+      "false_entailments": [],
+      "mistakes": [],
+      "multiclass_brier_sum": 0.0020435307922654074,
+      "n": 6,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "conditional": {
+      "accuracy": 0.8333333333333334,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 5,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 2,
+          "entailment": 0,
+          "neutral": 0
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 1,
+          "neutral": 1
+        },
+        "neutral": {
+          "contradiction": 0,
+          "entailment": 0,
+          "neutral": 2
+        }
+      },
+      "correct": 5,
+      "false_entailments": [],
+      "mistakes": [
+        "conditional.1.entailment.base"
+      ],
+      "multiclass_brier_sum": 0.20146879192922362,
+      "n": 6,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "counterfactual": {
+      "accuracy": 1.0,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 4,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 2,
+          "entailment": 0,
+          "neutral": 0
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 2,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 0,
+          "entailment": 0,
+          "neutral": 2
+        }
+      },
+      "correct": 6,
+      "false_entailments": [],
+      "mistakes": [],
+      "multiclass_brier_sum": 0.03386051940879164,
+      "n": 6,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "intention": {
+      "accuracy": 0.6666666666666666,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 3,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 2,
+          "entailment": 0,
+          "neutral": 0
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 2,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 2,
+          "entailment": 0,
+          "neutral": 0
+        }
+      },
+      "correct": 4,
+      "false_entailments": [],
+      "mistakes": [
+        "intention.1.neutral.base",
+        "intention.0.neutral.base"
+      ],
+      "multiclass_brier_sum": 0.40396249073013596,
+      "n": 6,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "location_change": {
+      "accuracy": 0.8333333333333334,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 2,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 1,
+          "entailment": 0,
+          "neutral": 1
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 2,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 0,
+          "entailment": 0,
+          "neutral": 2
+        }
+      },
+      "correct": 5,
+      "false_entailments": [],
+      "mistakes": [
+        "location_change.0.contradiction.base"
+      ],
+      "multiclass_brier_sum": 0.36550205810280406,
+      "n": 6,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "negation": {
+      "accuracy": 1.0,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 6,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 2,
+          "entailment": 0,
+          "neutral": 0
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 2,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 0,
+          "entailment": 0,
+          "neutral": 2
+        }
+      },
+      "correct": 6,
+      "false_entailments": [],
+      "mistakes": [],
+      "multiclass_brier_sum": 0.00024340090452069674,
+      "n": 6,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "partial_obligation": {
+      "accuracy": 1.0,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 4,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 2,
+          "entailment": 0,
+          "neutral": 0
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 2,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 0,
+          "entailment": 0,
+          "neutral": 2
+        }
+      },
+      "correct": 6,
+      "false_entailments": [],
+      "mistakes": [],
+      "multiclass_brier_sum": 0.14573225333809256,
+      "n": 6,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "possession_transfer": {
+      "accuracy": 0.6666666666666666,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 4,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 2,
+          "entailment": 0,
+          "neutral": 0
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 2,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 0,
+          "entailment": 2,
+          "neutral": 0
+        }
+      },
+      "correct": 4,
+      "false_entailments": [
+        "possession_transfer.0.neutral.base",
+        "possession_transfer.1.neutral.base"
+      ],
+      "mistakes": [
+        "possession_transfer.0.neutral.base",
+        "possession_transfer.1.neutral.base"
+      ],
+      "multiclass_brier_sum": 0.2335598531541249,
+      "n": 6,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "reported_speech": {
+      "accuracy": 0.8333333333333334,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 1,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 1,
+          "entailment": 0,
+          "neutral": 1
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 2,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 0,
+          "entailment": 0,
+          "neutral": 2
+        }
+      },
+      "correct": 5,
+      "false_entailments": [],
+      "mistakes": [
+        "reported_speech.1.contradiction.base"
+      ],
+      "multiclass_brier_sum": 0.298420462293125,
+      "n": 6,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "speaker_attribution": {
+      "accuracy": 1.0,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 6,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 2,
+          "entailment": 0,
+          "neutral": 0
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 2,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 0,
+          "entailment": 0,
+          "neutral": 2
+        }
+      },
+      "correct": 6,
+      "false_entailments": [],
+      "mistakes": [],
+      "multiclass_brier_sum": 0.00025175699075132306,
+      "n": 6,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "temporal_scope": {
+      "accuracy": 1.0,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 3,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 2,
+          "entailment": 0,
+          "neutral": 0
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 2,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 0,
+          "entailment": 0,
+          "neutral": 2
+        }
+      },
+      "correct": 6,
+      "false_entailments": [],
+      "mistakes": [],
+      "multiclass_brier_sum": 0.0503908918620104,
+      "n": 6,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "wrong_actor": {
+      "accuracy": 0.8333333333333334,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 4,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 2,
+          "entailment": 0,
+          "neutral": 0
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 2,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 1,
+          "entailment": 0,
+          "neutral": 1
+        }
+      },
+      "correct": 5,
+      "false_entailments": [],
+      "mistakes": [
+        "wrong_actor.0.neutral.base"
+      ],
+      "multiclass_brier_sum": 0.14596143441451567,
+      "n": 6,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    }
+  },
+  "base_by_surface": {
+    "0": {
+      "accuracy": 0.8888888888888888,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 25,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 11,
+          "entailment": 0,
+          "neutral": 1
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 12,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 2,
+          "entailment": 1,
+          "neutral": 9
+        }
+      },
+      "correct": 32,
+      "false_entailments": [
+        "possession_transfer.0.neutral.base"
+      ],
+      "mistakes": [
+        "intention.0.neutral.base",
+        "possession_transfer.0.neutral.base",
+        "location_change.0.contradiction.base",
+        "wrong_actor.0.neutral.base"
+      ],
+      "multiclass_brier_sum": 0.1492469323033763,
+      "n": 36,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "1": {
+      "accuracy": 0.8888888888888888,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 23,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 11,
+          "entailment": 0,
+          "neutral": 1
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 11,
+          "neutral": 1
+        },
+        "neutral": {
+          "contradiction": 1,
+          "entailment": 1,
+          "neutral": 10
+        }
+      },
+      "correct": 32,
+      "false_entailments": [
+        "possession_transfer.1.neutral.base"
+      ],
+      "mistakes": [
+        "intention.1.neutral.base",
+        "possession_transfer.1.neutral.base",
+        "conditional.1.entailment.base",
+        "reported_speech.1.contradiction.base"
+      ],
+      "multiclass_brier_sum": 0.16431930835001726,
+      "n": 36,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    }
+  },
+  "by_variant": {
+    "base": {
+      "accuracy": 0.8888888888888888,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 48,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 22,
+          "entailment": 0,
+          "neutral": 2
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 23,
+          "neutral": 1
+        },
+        "neutral": {
+          "contradiction": 3,
+          "entailment": 2,
+          "neutral": 19
+        }
+      },
+      "correct": 64,
+      "false_entailments": [
+        "possession_transfer.0.neutral.base",
+        "possession_transfer.1.neutral.base"
+      ],
+      "mistakes": [
+        "intention.1.neutral.base",
+        "intention.0.neutral.base",
+        "possession_transfer.0.neutral.base",
+        "possession_transfer.1.neutral.base",
+        "location_change.0.contradiction.base",
+        "conditional.1.entailment.base",
+        "reported_speech.1.contradiction.base",
+        "wrong_actor.0.neutral.base"
+      ],
+      "multiclass_brier_sum": 0.15678312032669678,
+      "n": 72,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "distractor": {
+      "accuracy": 0.9166666666666666,
+      "confident_errors": [
+        "location_change.0.contradiction.distractor"
+      ],
+      "confident_false_entailments": [],
+      "confident_n": 51,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 22,
+          "entailment": 0,
+          "neutral": 2
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 24,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 2,
+          "entailment": 2,
+          "neutral": 20
+        }
+      },
+      "correct": 66,
+      "false_entailments": [
+        "possession_transfer.0.neutral.distractor",
+        "possession_transfer.1.neutral.distractor"
+      ],
+      "mistakes": [
+        "intention.1.neutral.distractor",
+        "possession_transfer.0.neutral.distractor",
+        "possession_transfer.1.neutral.distractor",
+        "intention.0.neutral.distractor",
+        "reported_speech.1.contradiction.distractor",
+        "location_change.0.contradiction.distractor"
+      ],
+      "multiclass_brier_sum": 0.14225477672490025,
+      "n": 72,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "reflow": {
+      "accuracy": 0.9444444444444444,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 48,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 23,
+          "entailment": 0,
+          "neutral": 1
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 24,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 2,
+          "entailment": 1,
+          "neutral": 21
+        }
+      },
+      "correct": 68,
+      "false_entailments": [
+        "possession_transfer.0.neutral.reflow"
+      ],
+      "mistakes": [
+        "possession_transfer.0.neutral.reflow",
+        "intention.1.neutral.reflow",
+        "intention.0.neutral.reflow",
+        "reported_speech.1.contradiction.reflow"
+      ],
+      "multiclass_brier_sum": 0.10509734629305464,
+      "n": 72,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    },
+    "remove_evidence": {
+      "accuracy": 0.7916666666666666,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 24,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 0,
+          "entailment": 0,
+          "neutral": 0
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 0,
+          "neutral": 0
+        },
+        "neutral": {
+          "contradiction": 9,
+          "entailment": 6,
+          "neutral": 57
+        }
+      },
+      "correct": 57,
+      "false_entailments": [
+        "possession_transfer.0.neutral.remove_evidence",
+        "possession_transfer.0.entailment.remove_evidence",
+        "possession_transfer.1.neutral.remove_evidence",
+        "possession_transfer.1.contradiction.remove_evidence",
+        "possession_transfer.0.contradiction.remove_evidence",
+        "possession_transfer.1.entailment.remove_evidence"
+      ],
+      "mistakes": [
+        "possession_transfer.0.neutral.remove_evidence",
+        "intention.1.contradiction.remove_evidence",
+        "intention.0.contradiction.remove_evidence",
+        "possession_transfer.0.entailment.remove_evidence",
+        "intention.1.entailment.remove_evidence",
+        "possession_transfer.1.neutral.remove_evidence",
+        "intention.1.neutral.remove_evidence",
+        "wrong_actor.0.neutral.remove_evidence",
+        "wrong_actor.0.entailment.remove_evidence",
+        "intention.0.neutral.remove_evidence",
+        "wrong_actor.0.contradiction.remove_evidence",
+        "possession_transfer.1.contradiction.remove_evidence",
+        "possession_transfer.0.contradiction.remove_evidence",
+        "possession_transfer.1.entailment.remove_evidence",
+        "intention.0.entailment.remove_evidence"
+      ],
+      "multiclass_brier_sum": 0.2727200339322082,
+      "n": 72,
+      "neutral_baseline_accuracy": 1.0
+    },
+    "rename": {
+      "accuracy": 0.8888888888888888,
+      "confident_errors": [],
+      "confident_false_entailments": [],
+      "confident_n": 48,
+      "confusion_gold_then_prediction": {
+        "contradiction": {
+          "contradiction": 21,
+          "entailment": 0,
+          "neutral": 3
+        },
+        "entailment": {
+          "contradiction": 0,
+          "entailment": 23,
+          "neutral": 1
+        },
+        "neutral": {
+          "contradiction": 2,
+          "entailment": 2,
+          "neutral": 20
+        }
+      },
+      "correct": 64,
+      "false_entailments": [
+        "possession_transfer.1.neutral.rename",
+        "possession_transfer.0.neutral.rename"
+      ],
+      "mistakes": [
+        "intention.1.neutral.rename",
+        "reported_speech.0.contradiction.rename",
+        "intention.0.neutral.rename",
+        "location_change.0.contradiction.rename",
+        "possession_transfer.1.neutral.rename",
+        "conditional.1.entailment.rename",
+        "reported_speech.1.contradiction.rename",
+        "possession_transfer.0.neutral.rename"
+      ],
+      "multiclass_brier_sum": 0.16029739152327757,
+      "n": 72,
+      "neutral_baseline_accuracy": 0.3333333333333333
+    }
+  },
+  "confidence_cutoff": 0.9,
+  "dataset_sha256": "25a2ebab1b6154a98a86a9d63392ec182b840dd249db2970991ac47bb1ab28bf",
+  "descriptive_only": true,
+  "independent_books": 0,
+  "inference_seconds": 85.98127949999616,
+  "invariance": {
+    "distractor": {
+      "mean_max_probability_shift": 0.06859280065166079,
+      "n_pairs": 72,
+      "prediction_flips": [
+        "wrong_actor.0.neutral.distractor",
+        "conditional.1.entailment.distractor"
+      ]
+    },
+    "reflow": {
+      "mean_max_probability_shift": 0.061944142947646066,
+      "n_pairs": 72,
+      "prediction_flips": [
+        "possession_transfer.1.neutral.reflow",
+        "conditional.1.entailment.reflow",
+        "location_change.0.contradiction.reflow",
+        "wrong_actor.0.neutral.reflow"
+      ]
+    },
+    "rename": {
+      "mean_max_probability_shift": 0.02094832567511023,
+      "n_pairs": 72,
+      "prediction_flips": [
+        "reported_speech.0.contradiction.rename",
+        "wrong_actor.0.neutral.rename"
+      ]
+    }
+  },
+  "label_order": [
+    "contradiction",
+    "entailment",
+    "neutral"
+  ],
+  "max_observed_temperature_c": 55,
+  "max_tokens": 903,
+  "raw_sha256": "b2b5b09418cc8a7fda08428e64c324cd3c1d1419d05904b889f852e5254820dd"
+}
