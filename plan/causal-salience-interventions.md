@@ -20,6 +20,16 @@ relation and edited prose spans are independently present in structured, accepte
 state family currently has a deterministic sibling generator; the other four have strict
 admission contracts and remain unavailable to a model until their transformations are frozen.
 
+**2026-09-19 construction addition:** the isolated
+[`promise_payoff_builder.py`](../research/quality-measurement/promise_payoff_builder.py) now builds
+registered-payment evidence-withdrawal cases from real manuscript windows, with a matched
+other-paragraph deletion and a whitespace placebo. Its [runbook](../research/quality-measurement/promise-payoff-builder-20260919/RUNBOOK.md)
+separates construction readiness from semantic admission: removing a ledger quotation does not
+prove nonpayment, and the matched other-paragraph deletion is not certified semantically harmless.
+The existing ecological model-admission flag is unchanged; these research packets do not enter
+the production reader loop. The [construction report](../research/quality-measurement/promise-payoff-builder-20260919/RESULTS.md)
+records both completed cases and refusals without treating either as a reader result.
+
 ## What the stored records can certify
 
 | Requested family | Existing substrate | Admission now |

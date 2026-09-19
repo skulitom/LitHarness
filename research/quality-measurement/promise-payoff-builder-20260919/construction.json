@@ -1,0 +1,334 @@
+{
+  "artifact_sha256": {
+    "keys.private.json": "e8243f4e7d045215786c66d1b6e88037cdfef8b41bf42aa2c9fc46d0d9a4fabc",
+    "packets.public.json": "998291e7265a6845a00d73825b9528e11fb4c932ffc2ef6c3c13250205268a9f"
+  },
+  "book_id": "experience-A1",
+  "branch_id": "main",
+  "certified_scope": "presence or withdrawal of the ledger's registered payment quotation",
+  "constructed_items": 3,
+  "construction_ready": true,
+  "context_rungs": {
+    "adjacent_scene_or_chapter": 1,
+    "half_volume": 1,
+    "local_arc": 1
+  },
+  "dispositions": [
+    {
+      "promise_id": "prm-02597525d9a296a797bfed2d",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-1932faef5b68a796b8480895",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-1e24247e1d8dbb12fa18c3ee",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-25f5e8e114f2a85374238407",
+      "reason": "not_paid"
+    },
+    {
+      "promise_id": "prm-292817c4f1ad4872378ab0e3",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-2e573f3e7bcb47cf7040cbf2",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-31a17a70e4c87794a278f29f",
+      "reason": "constructed"
+    },
+    {
+      "promise_id": "prm-3423066118196b3e2169eff7",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-43add21baf1afcdfbf36882f",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-4754f081fabe9912a971c5f4",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-483090c1bcead8920de0f1fc",
+      "reason": "not_paid"
+    },
+    {
+      "promise_id": "prm-49c1000605b22f6412977a39",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-579eda02fbe545ae93985698",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-5c8c16afa1125fe2b9db7702",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-633c812578ccce0d0f33d900",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-7073ca96302bd489e18e58bf",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-78618bfd6da2d1858cc568fa",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-78bc9b1f9690bb7a9fcb39fe",
+      "reason": "target_overlaps_other_evidence"
+    },
+    {
+      "promise_id": "prm-82daa0ec012fdcc79722327a",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-84096fc672ac2ac12f01a013",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-8655d6da5fce841c485fb378",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-9352124e3e3258d2458eea3e",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-9563d827d55511a61e79577d",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-96f2a77d25a561ea332e81d9",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-9b117250da9a8a7944ea80ad",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-9d7f2f35f7ecd6df00474d43",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-9ee96881d3f6ca0d29ffd49e",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-a09957ee1d0dfdacd0217b41",
+      "reason": "constructed"
+    },
+    {
+      "promise_id": "prm-a4ea138ef716d107ab4ed90c",
+      "reason": "not_paid"
+    },
+    {
+      "promise_id": "prm-abc7c0a6ca112921dd093c41",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-af37dd10daac8ead29488078",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-b630eb8419aef5aaf30ea32a",
+      "reason": "target_overlaps_other_evidence"
+    },
+    {
+      "promise_id": "prm-bb903251b37ec655dd09ce84",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-bc1f3cd344515321e8dd1031",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-c05176542ff4e7261fe58760",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-c11f7d005e3ad479d0c30083",
+      "reason": "target_overlaps_other_evidence"
+    },
+    {
+      "promise_id": "prm-c78eb7c2861e4dfddbe2d4fe",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-c95bd4e50444fc5278e059cd",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-cf1b99112a51ad3afc8c2266",
+      "reason": "constructed"
+    },
+    {
+      "promise_id": "prm-d1d4b205820746875d7ef399",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-d29605b97d3af1ab60e9be29",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-d66922c7f3df14a430cee2fe",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-eeaa6fd789821b1f1ac58cc6",
+      "reason": "target_overlaps_other_evidence"
+    },
+    {
+      "promise_id": "prm-efbb04e851a3642f2a444844",
+      "reason": "not_paid"
+    },
+    {
+      "promise_id": "prm-f1832f2a9bf5666fb1e50be1",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-f5049acd29eb7c97f4a03522",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-f7540b9ee2032e5d821d0954",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-fbd35789bb6e4e9498a2ab24",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-fd9a2b67d02599b532675862",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-fea1d9343932573f884d7258",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-fed45d9558504922c97343d6",
+      "reason": "no_matched_unprotected_paragraph"
+    },
+    {
+      "promise_id": "prm-ff4bcecb7f20f3e075fcfd99",
+      "reason": "target_overlaps_other_evidence"
+    }
+  ],
+  "eligible_for_model_run": false,
+  "input_digest": "3fdccd989cb873caaef30f9e66bf0b28f8d9a620cc430b581e368cd93a000f30",
+  "items": [
+    {
+      "character_deltas": {
+        "other_paragraph_withheld": -82,
+        "payment_evidence_withheld": -100
+      },
+      "context_chars": 93690,
+      "context_rung": "local_arc",
+      "item_id": "pp-efee3d4c7fa3903ed60435cf",
+      "matched_fingerprint": {
+        "anchor_distance_scenes": 6,
+        "position_decile": 9,
+        "punctuation_delta": -1,
+        "sentence_delta": -1,
+        "token_delta": -15,
+        "whitespace_delta": -14
+      },
+      "packet_ids": [
+        "packet-abfaea93cae5de6fdfb88094",
+        "packet-a4f3e9981132473624cc731d",
+        "packet-ef180ff9a1b18774b4f5567b",
+        "packet-359da4b9d3dfb9df624d8c9b"
+      ],
+      "promise_id": "prm-31a17a70e4c87794a278f29f",
+      "scene_count": 7
+    },
+    {
+      "character_deltas": {
+        "other_paragraph_withheld": -183,
+        "payment_evidence_withheld": -172
+      },
+      "context_chars": 26069,
+      "context_rung": "adjacent_scene_or_chapter",
+      "item_id": "pp-cb90677f8b99bef55c97f0df",
+      "matched_fingerprint": {
+        "anchor_distance_scenes": 1,
+        "position_decile": 8,
+        "punctuation_delta": -5,
+        "sentence_delta": -3,
+        "token_delta": -31,
+        "whitespace_delta": -30
+      },
+      "packet_ids": [
+        "packet-ae5cb3bcb78c4d340599872d",
+        "packet-9d9d54706c2bfded4c8f71c8",
+        "packet-f1c373c88a7df1b5b8a6ff85",
+        "packet-28fdcb88126db8f45e7e22f2"
+      ],
+      "promise_id": "prm-a09957ee1d0dfdacd0217b41",
+      "scene_count": 2
+    },
+    {
+      "character_deltas": {
+        "other_paragraph_withheld": -35,
+        "payment_evidence_withheld": -29
+      },
+      "context_chars": 253260,
+      "context_rung": "half_volume",
+      "item_id": "pp-959968151914847be23e93e2",
+      "matched_fingerprint": {
+        "anchor_distance_scenes": 18,
+        "position_decile": 9,
+        "punctuation_delta": -1,
+        "sentence_delta": -1,
+        "token_delta": -6,
+        "whitespace_delta": -5
+      },
+      "packet_ids": [
+        "packet-c35ee53f733bf82ddf9d1578",
+        "packet-ef1b63f0e1197be591857a49",
+        "packet-d4db1aaa4e00ea680244bf7d",
+        "packet-8eed900d5af74cf591282a6b"
+      ],
+      "promise_id": "prm-cf1b99112a51ad3afc8c2266",
+      "scene_count": 19
+    }
+  ],
+  "max_context_chars": 400000,
+  "model_calls": 0,
+  "packets": 12,
+  "private_digest": "9560f69b8194fe900f28e7bf334657c1dccda85d853ed2f55297009748a69c9f",
+  "production_authority": false,
+  "promises_seen": 52,
+  "provenance": {
+    "builder_sha256": "7bf4eb9ac3a88cfa1324f07b0383e4882f427e9fa981ce94bd58f8514057af90",
+    "salience_sha256": "1589d262d7e2e2da3c9bb15e0f1043d3cf62ecc0547fa7ded0609e7007f6c430",
+    "snapshot_sha256": "4321aab14a2caa25fe6e32858d86d891db059c04719d8da82e35d69dcf6de82c",
+    "source_access": "SQLite mode=ro; consistent backup; no migration"
+  },
+  "public_digest": "bbbc8c937e4e4f97a14e88d05542bf59cba6d4a5e3ed2bcd82cdaa5624cf125e",
+  "reason_counts": {
+    "constructed": 3,
+    "no_matched_unprotected_paragraph": 40,
+    "not_paid": 4,
+    "target_overlaps_other_evidence": 5
+  },
+  "revision_id": "0c1b306d3d401eda38cec60067d131ec6ab4a313367fdcf95c719baf303892a8",
+  "source_group_digest": "59bf4fe020851758d7711c2c0a3c73fd15f4d3a7383c2e4986ac8baac7ffec67",
+  "unresolved_controls": [
+    "independent semantic validity of the ledger relation",
+    "alternative payoff evidence and semantic effects of both paragraph deletions",
+    "lexical and character-length shortcuts beyond the six matched edit fields",
+    "held-out whole books/worlds and transformation implementations",
+    "registered task, scoring rule and model-context token budgets"
+  ],
+  "version": "promise-payment-evidence-withdrawal.v1"
+}
