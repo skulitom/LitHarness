@@ -1,0 +1,131 @@
+"""A book trial must cross arcs, stop at its boundary and preserve every earlier chapter."""
+
+from __future__ import annotations
+
+import importlib.util
+from copy import deepcopy
+from pathlib import Path
+
+import pytest
+
+PATH = Path(__file__).resolve().parents[1] / (
+    "research/quality-measurement/full-book-trial-20260919/run.py"
+)
+
+
+@pytest.fixture
+def trial(tmp_path, monkeypatch):
+    spec = importlib.util.spec_from_file_location("full_book_test", PATH)
+    run = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(run)
+    run.configure()
+    monkeypatch.setattr(run, "LOCAL", tmp_path / "trial")
+    monkeypatch.setattr(run.base, "LOCAL", run.LOCAL)
+    monkeypatch.setattr(run.base, "lock", lambda: None)
+    monkeypatch.setattr(run.base, "verify_frozen", dict)
+    root = run.base.book_root("A1")
+    root.mkdir(parents=True)
+    (root / "brief.txt").write_text(run.base.INPUTS["1"]["premise"], encoding="utf-8")
+    run.base.write(root / "seed.json", {"label": "123456789012345678901234567890"})
+    return run
+
+
+def meta(accepted=0, total=0, pending=0):
+    return {"accepted": accepted, "total": total, "pending": pending, "terminal": 0,
+            "exceptions": 0, "scene_ids": [f"actual-id-{i}" for i in range(1, total + 1)],
+            "scene_hashes": {f"actual-id-{i}": f"hash-{i}" for i in range(1, accepted + 1)}}
+
+
+def state(run):
+    return {"started_at": run.base.now(), "status": "running", "calls": [],
+            "books": {"A1": {"status": "running", "accepted": 0}}}
+
+
+def test_real_cli_invention_retains_author_volume_boundary_without_spending(trial):
+    trial.preflight("A1")
+    row = trial.base.read(trial.LOCAL / "preflight.json")
+    assert row["provider_calls"] == 0
+    assert trial.base.INPUTS["1"]["premise"] in row["request"]["prompt"]
+    assert row["request"]["profile"] == "writer.concept.material.v1"
+
+
+def test_cli_growth_uses_actual_ids_even_after_first_arc(trial, monkeypatch):
+    from litharness import cli
+
+    monkeypatch.setattr(trial, "metadata", lambda book: meta(21, 24))
+    for number in (3, 6, 9, 12, 15, 18, 21):
+        args = cli.build_parser().parse_args(
+            trial.base_args("A1") + trial.command("A1", f"grow{number}"),
+        )
+        assert args.scene == f"actual-id-{number}"
+    for phase in ("grow24", "chapter25", "extend24"):
+        with pytest.raises(ValueError, match="Unregistered"):
+            trial.command("A1", phase)
+
+
+def test_scheduler_crosses_three_arcs_drains_and_never_drafts_chapter_25(trial, monkeypatch):
+    current, dispatched = meta(), []
+    base = trial.base
+    base.write(trial.LOCAL / "progress.json", state(trial))
+    monkeypatch.setattr(trial, "metadata", lambda book: deepcopy(current))
+
+    def dispatch(argv, **kwargs):
+        book, phase, iteration = argv[-3:]
+        before = deepcopy(current)
+        dispatched.append(phase)
+        if phase == "new":
+            current.update(meta(0, 6))
+        elif phase.startswith("chapter"):
+            current.update(meta(current["accepted"] + 1, current["total"], 2))
+        elif phase.startswith("drain"):
+            current["pending"] -= 1
+        elif phase.startswith("extend"):
+            current.update(meta(current["accepted"], current["total"] + 6))
+        base.write(trial.LOCAL / "steps" / f"{phase}-{book}-{iteration}.json",
+                   {"returncode": 0, "stdout": "", "before": before, "after": deepcopy(current)})
+
+    monkeypatch.setattr(trial.subprocess, "run", dispatch)
+    for phase in trial.PHASES:
+        trial.execute("A1", phase)
+    trial.execute("A1", "drain24")
+    final = base.read(trial.LOCAL / "progress.json")
+    assert not final.get("stop")
+    assert final["books"]["A1"]["status"] == "running"
+    assert current == meta(24, 24)
+    assert [p for p in dispatched if p.startswith("extend")] == ["extend6", "extend12", "extend18"]
+    assert len([p for p in dispatched if p.startswith("chapter")]) == 24
+    assert dispatched[-2:] == ["drain24", "drain24"]
+
+
+@pytest.mark.parametrize("fault", ["partial", "undrained", "budget"])
+def test_refuses_extension_before_dispatch_when_not_admissible(trial, monkeypatch, fault):
+    before = meta(5 if fault == "partial" else 6, 6, int(fault == "undrained"))
+    record = state(trial)
+    if fault == "budget":
+        record["calls"] = [{"book": "A1", "status": "completed", "tokens": trial.LIMITS["tokens"]}]
+    trial.base.write(trial.LOCAL / "progress.json", record)
+    monkeypatch.setattr(trial, "metadata", lambda book: before)
+    monkeypatch.setattr(trial.subprocess, "run", lambda *a, **k: pytest.fail("dispatched"))
+    trial.execute("A1", "extend6")
+    assert trial.base.read(trial.LOCAL / "progress.json")["stop"]
+
+
+@pytest.mark.parametrize("fault", ["changed", "lost", "overshot", "terminal", "exception"])
+def test_transition_refuses_corruption_or_unfinished_work(trial, fault):
+    before, after = meta(6, 12), meta(7, 12)
+    if fault == "changed":
+        after["scene_hashes"]["actual-id-1"] = "different"
+    elif fault == "lost":
+        del after["scene_hashes"]["actual-id-1"]
+    elif fault == "overshot":
+        after = meta(8, 12)
+    elif fault == "terminal":
+        after["terminal"] = 1
+    else:
+        after["exceptions"] = 1
+    assert trial.transition_error("chapter7", before, after)
+
+
+def test_test_mode_and_existing_progress_cannot_launch(trial):
+    with pytest.raises(RuntimeError, match="test-mode"):
+        trial.run()
