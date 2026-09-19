@@ -108,6 +108,10 @@ def audit(run):
         "extension_boundaries": sorted(int(s["phase"].removeprefix("extend")) for s in steps
                                        if s["phase"].startswith("extend") and not s["returncode"]),
         "registration_sha256": base.sha(here / "registration.json"),
+        "original_stop": state.get("original_stop"),
+        "continuation_started_at": state.get("continuation_started_at"),
+        "continuation": (base.read(here / "continuation.json")
+                         if (here / "continuation.json").exists() else None),
         "limitations": ["One first-draw book; no independent replication or quality estimate.",
                         "Structural completion does not establish story closure or fulfillment.",
                         "No qualified reader mechanism or release approval."],

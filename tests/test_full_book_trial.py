@@ -129,3 +129,20 @@ def test_transition_refuses_corruption_or_unfinished_work(trial, fault):
 def test_test_mode_and_existing_progress_cannot_launch(trial):
     with pytest.raises(RuntimeError, match="test-mode"):
         trial.run()
+
+
+def test_metadata_reads_real_new_and_extended_stores(trial):
+    from litharness import cli
+
+    arguments = trial.base_args("A1")
+    assert cli.main([*arguments, "new", "Metadata probe", "--premise", "A journey.",
+                     "--scenes", "6"]) == 0
+    initial = trial.metadata("A1")
+    assert initial["total"] == 6 and initial["accepted"] == 0
+    assert len(set(initial["scene_ids"])) == 6
+    assert all(isinstance(identity, str) for identity in initial["scene_ids"])
+    assert cli.main([*arguments, "extend", "--arcs", "1"]) == 0
+    extended = trial.metadata("A1")
+    assert extended["total"] == 12 and extended["accepted"] == 0
+    assert extended["scene_ids"][:6] == initial["scene_ids"]
+    assert len(set(extended["scene_ids"])) == 12

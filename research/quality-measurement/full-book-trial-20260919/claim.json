@@ -9,6 +9,16 @@
       "kind": "registration",
       "path": "research/quality-measurement/full-book-trial-20260919/registration.json",
       "sha256": "a0b65e77be30a4c5530a8145421880d73dbccb8f141b8cd5aa229066bd080107"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/full-book-trial-20260919/CONTINUATION.md",
+      "sha256": "5a409285d7cade3ac84f4edaee824121f4af732da6bd775c2126193599a6d2f4"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/full-book-trial-20260919/continuation.json",
+      "sha256": "afb93cec2770bc8e78d3078a608e62353dab31c014c863479f335da7c51df622"
     }
   ],
   "claim_id": "full-book-trial-20260919",

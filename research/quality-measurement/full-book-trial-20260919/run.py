@@ -84,7 +84,7 @@ def metadata(book):
             branches = store.branches()
             head = store.head(*branches[0][:2]) if branches else None
             scenes = scene_nodes(head) if head else ()
-            result.update(total=len(scenes), scene_ids=[n.logical_id for n in scenes],
+            result.update(total=len(scenes), scene_ids=list(scenes),
                           exceptions=len(store.open_exceptions()))
     return result
 
@@ -107,6 +107,9 @@ def command(book, phase):
 
 def claim(status):
     files = [("registration", HERE / name) for name in ("RUNBOOK.md", "registration.json")]
+    if (HERE / "continuation.json").exists():
+        files += [("registration", HERE / name)
+                  for name in ("CONTINUATION.md", "continuation.json")]
     if status == "observed":
         files.append(("derived_result", HERE / "evidence.json"))
     base.write(HERE / "claim.json", {
@@ -270,7 +273,13 @@ def run():
     finally:
         state = base.read(LOCAL / "progress.json")
         state.pop("active", None)
-        current = metadata("A1")
+        try:
+            current = metadata("A1")
+        except Exception as error:
+            state.update(status="partial", finished_at=base.now(),
+                         finalization_error=repr(error))
+            base.write(LOCAL / "progress.json", state)
+            raise
         book = state["books"]["A1"]
         complete = (not state.get("stop") and book["status"] == "running"
                     and current["accepted"] == current["total"] == CHAPTERS
