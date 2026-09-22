@@ -34,8 +34,10 @@ _MEASURED_UNIT = (
     r"millimetre|millimeter|second|minute|hour|day|week|month|year|decade|century|"
     r"gram|kilogram|ounce|pound|litre|liter|gallon|dozen)"
 )
+# A plural decade (`1890s`, `the 20s`) is a digit quantity too: the marsh draw of 2026-09-08
+# was refused whole because the syntax saw no quantity in "1890s brickwork".
 _QUANTITY = re.compile(
-    rf"(?<!\w)[+-]?\d+(?:[.,:/]\d+)*(?:st|nd|rd|th)?(?!\w)"
+    rf"(?<!\w)[+-]?\d+(?:[.,:/]\d+)*(?:st|nd|rd|th|s)?(?!\w)"
     rf"|\b(?:{_NUMBER_WORD}[- ](?:and )?)*{_ORDINAL_WORD}\b"
     rf"|\b{_NUMBER_WORD}(?:[- ](?:and )?{_NUMBER_WORD})*\b"
     rf"|\b(?:a|an) {_MEASURED_UNIT}(?![\w-])",

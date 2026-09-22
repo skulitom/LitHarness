@@ -130,6 +130,24 @@ def test_a_replacement_may_keep_a_quantity_the_phrase_already_carried():
             )
 
 
+@pytest.mark.parametrize("decade", ["1890s", "20s", "1000s"])
+def test_a_plural_decade_is_a_digit_quantity(decade):
+    """The marsh draw of 2026-09-08: "1890s brickwork" to "old brickwork" removes a date."""
+    source = discovery.Discovery(
+        f"Shuttered foundries and {decade} brickwork.", "An encounter.", "A pursuit."
+    )
+    assert source.has_quantities()
+    prepared = source.with_precision_edits(
+        {"edits": [{"field": "world", "before": f"{decade} brickwork", "after": "old brickwork"}]}
+    )
+    assert prepared.world == "Shuttered foundries and old brickwork."
+    assert not prepared.has_quantities()
+    with pytest.raises(ValueError, match="complete quantity"):
+        source.with_precision_edits(
+            {"edits": [{"field": "world", "before": decade[:-1], "after": "old"}]}
+        )
+
+
 @pytest.mark.parametrize("ordinal", ["third", "twenty-third", "one hundred and third", "23rd"])
 def test_ordinal_quantities_can_be_replaced_only_as_complete_spans(ordinal):
     source = discovery.Discovery("A valley.", f"She learned on the {ordinal} day.", "A pursuit.")
