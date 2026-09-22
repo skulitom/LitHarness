@@ -489,7 +489,7 @@ def test_sections_are_labelled_so_a_constraint_is_not_mistaken_for_prose() -> No
     rendered = packet.render()
     assert "Premise:" in rendered
     assert "Locked constraints and promises" in rendered
-    assert "Open threads the book still owes" in rendered
+    assert "Open threads the book has not yet resolved" in rendered
     assert "Established facts (POV: mara) — world truth" in rendered
     assert "The story so far" in rendered
 

@@ -19,6 +19,12 @@ def experiment(tmp_path, monkeypatch):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     module.configure()
+    from litharness.application import concept, discovery
+
+    # run.py:167 checks the labels this arm registered; stage-0 §255 relabels both requests.
+    # The boundary under test is stage order, no tools and no spend.
+    monkeypatch.setattr(concept, "MATERIAL_CONCEPT_PROFILE", "writer.concept.material.v1")
+    monkeypatch.setattr(discovery, "PROFILE", "writer.discovery.v13")
     monkeypatch.setattr(module, "LOCAL", tmp_path / "run")
     monkeypatch.setattr(module.base, "LOCAL", module.LOCAL)
     monkeypatch.setattr(module.base, "lock", lambda: None)

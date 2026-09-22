@@ -184,11 +184,16 @@ def test_no_outline_writer_keeps_author_brief_and_author_locked_sources(
 
 @pytest.mark.parametrize("author_brief", ["", "Keep the companion alive.\nUse third person."])
 @pytest.mark.parametrize("locked_concept", [False, True])
+# A treatment from before magical-discovery.v7 keeps first_use out of planning (stage-0 §255).
+@pytest.mark.parametrize("treatment_version", [None, "magical-discovery.v6"])
 def test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon(
-    tmp_path, author_brief, locked_concept, monkeypatch
+    tmp_path, author_brief, locked_concept, treatment_version, monkeypatch
 ):
+    treatment = {
+        **_discovery(), **({"version": treatment_version} if treatment_version else {}),
+    }
     drawn = concept.Concept.from_payload({
-        **_example(), "discovery": _discovery(), "author_brief": author_brief,
+        **_example(), "discovery": treatment, "author_brief": author_brief,
     })
     lock = lc.PlanItem(
         logical_id="author-limit", kind=lc.PlanKind.CONSTRAINT,
@@ -228,6 +233,8 @@ def test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon
         assert chapters == list(range(1, 7))
         planning_rules = json.loads(request.prompt)["rules"]
         assert all(rule in planning_rules for rule in outline.SCENE_HANDOFF_RULES)
+        assert (concept.FIRST_USE_RULE in planning_rules) is (treatment_version is None)
+        assert concept.EARLY_MAGIC_RULE in planning_rules
         routed_locks = json.loads(request.prompt)["author_locks"]
         expected_locks = (lock, timing, source_item) if locked_concept else (lock, timing)
         assert {item["logical_id"]: item for item in routed_locks} == {
@@ -245,7 +252,10 @@ def test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon
             "version": drawn.discovery.to_jsonable()["version"],
             "world": drawn.discovery.world, "growth": drawn.discovery.growth,
         }
-        assert "first_use" not in source
+        if treatment_version is None:
+            assert source["first_use"] == drawn.first_use
+        else:
+            assert "first_use" not in source
         assert "first_reach" not in source["threat"]
         assert "opens" not in source["first_arc"]
         assert source["person_before"] == drawn.person_before
@@ -279,6 +289,9 @@ def test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon
         assert drawn.discovery.opening not in prompt
         assert drawn.first_arc.closes not in prompt
         assert drawn.system.strongest_known not in prompt
+        # The first use and its placement reach planning only, never the writer's prompt.
+        assert drawn.first_use not in prompt
+        assert concept.FIRST_USE_RULE not in system + prompt
         if author_brief:
             assert author_brief in prompt
 

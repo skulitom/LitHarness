@@ -16,7 +16,7 @@ from typing import Any
 import litharness_contracts as lc
 
 from litharness.application import chapter_layout, precision, story_material
-from litharness.application.discovery import DIRECTION, Discovery
+from litharness.application.discovery import DIRECTION, WORLD_DIRECTION, Discovery
 from litharness.application.overview import FIRST_PERSON_ASK
 from litharness.domain import house, schema_words
 from litharness.domain.generation import CompletionRequest
@@ -24,8 +24,8 @@ from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
 CONCEPT_PROFILE = "writer.concept.v1"
-DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v8"
-MATERIAL_CONCEPT_PROFILE = "writer.concept.material.v1"
+DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v9"
+MATERIAL_CONCEPT_PROFILE = "writer.concept.material.v2"
 
 #: The plan item id the concept is persisted under; one per book, like `plan-premise`.
 CONCEPT_PLAN_ID = "plan-concept"
@@ -147,6 +147,22 @@ CONCEPT_SCHEMA: dict[str, Any] = {
     },
 }
 
+#: New concepts also say where the protagonist starts on the counted ranks (stage-0 §255).
+#: CONCEPT_SCHEMA and the legacy request stay unchanged, and stored concepts without it read.
+COUNTED_SYSTEM_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [*CONCEPT_SCHEMA["properties"]["system"]["required"], "start_rank"],
+    "properties": {
+        **CONCEPT_SCHEMA["properties"]["system"]["properties"],
+        "start_rank": {"type": "integer"},
+    },
+}
+DISCOVERY_CONCEPT_SCHEMA: dict[str, Any] = {
+    **CONCEPT_SCHEMA,
+    "properties": {**CONCEPT_SCHEMA["properties"], "system": COUNTED_SYSTEM_SCHEMA},
+}
+
 
 @dataclass(frozen=True, slots=True)
 class SystemConcept:
@@ -165,6 +181,10 @@ class SystemConcept:
     #: What a step up buys a person, in the words they used before it came (read 18 §2.1: a
     #: ladder with nothing attached reaches the page as a number going up for no reason).
     pays: str
+    #: The counted rank the protagonist holds when the book opens, below `steps`; 0 when they
+    #: start unranked (stage-0 §255). `None` on concepts drawn before it, which read and render
+    #: unchanged.
+    start_rank: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -220,7 +240,8 @@ class Concept:
 
     person_before: str
     exception: str
-    #: A proposed early use of the magical advantage; the planner chooses its placement.
+    #: The occasion the magical advantage first works for them; the outline places that use
+    #: inside chapter one (`FIRST_USE_RULE`, stage-0 §198, restored in §255).
     first_use: str
     want: str
     system: SystemConcept
@@ -284,14 +305,24 @@ class Concept:
             except ValueError as error:
                 raise MalformedConcept(str(error)) from error
         system = _mapping(payload, "system")
-        if material is not None and set(system) != set(
-            CONCEPT_SCHEMA["properties"]["system"]["properties"]
-        ):
+        # Structured concepts stored before start_rank (the 2026-09-19 full-book trial's) still
+        # read; any other extra key is still refused.
+        legacy_keys = set(CONCEPT_SCHEMA["properties"]["system"]["properties"])
+        if material is not None and set(system) not in (legacy_keys, legacy_keys | {"start_rank"}):
             raise MalformedConcept("unexpected structured system fields")
         steps = system.get("steps")
         if isinstance(steps, bool) or not isinstance(steps, int) or steps < MIN_STEPS:
             raise MalformedConcept(
                 f"system.steps must be a count of at least {MIN_STEPS}, not {steps!r}"
+            )
+        start_rank = system.get("start_rank")
+        if start_rank is not None and (
+            isinstance(start_rank, bool) or not isinstance(start_rank, int)
+            or not 0 <= start_rank < steps
+        ):
+            raise MalformedConcept(
+                f"system.start_rank must be a rank from 0 (unranked) to {steps - 1}, below "
+                f"system.steps, not {start_rank!r}"
             )
         parsed_turn = None
         if material is None:
@@ -366,6 +397,7 @@ class Concept:
                 steps=steps,
                 strongest_known=_text(system, "strongest_known", "system.strongest_known"),
                 pays=_text(system, "pays", "system.pays"),
+                start_rank=start_rank,
             ),
             threat=Threat(
                 what=_text(threat, "what", "threat.what"),
@@ -463,6 +495,10 @@ class Concept:
                 "steps": self.system.steps,
                 "strongest_known": self.system.strongest_known,
                 "pays": self.system.pays,
+                **(
+                    {"start_rank": self.system.start_rank}
+                    if self.system.start_rank is not None else {}
+                ),
             },
             "threat": {
                 "what": self.threat.what,
@@ -547,6 +583,10 @@ class Concept:
                 f"{self.system.steps} steps. Where the strongest person "
                 f"anyone has heard of stands: {self.system.strongest_known}"
             ),
+            *(
+                [f"They start {self._start_rank_text()}"]
+                if self.system.start_rank is not None else []
+            ),
             f"What a step up buys: {self.system.pays}",
             f"{threat_label}: {self.threat.what}",
             f"Where it first reaches them: {self.threat.first_reach}",
@@ -562,7 +602,7 @@ class Concept:
             lines.append(f"The first arc opens: {self.first_arc.opens}")
         lines.append(f"Its middle: {self.first_arc.middle}")
         lines.append(f"It closes: {self.first_arc.closes}")
-        lines.append("What the book owes, and the scene each is due by:")
+        lines.append("Open questions the book raises, and the scene each is answered by:")
         for debt in self.debts:
             due = f" (by scene {debt.due_scene})" if debt.due_scene is not None else ""
             lines.append(f"- {debt.subject}: {debt.owed}{due}")
@@ -644,6 +684,10 @@ class Concept:
                 f"Its appearance: {self.system.look}",
                 f"Its advancement span: {self.system.steps} steps. "
                 f"Strongest known: {self.system.strongest_known}",
+                *(
+                    (f"The protagonist starts {self._start_rank_text()}",)
+                    if self.system.start_rank is not None else ()
+                ),
                 f"What advancement enables: {self.system.pays}",
                 f"The world's danger: {self.threat.what}",
             )
@@ -660,19 +704,32 @@ class Concept:
             )
         return "\n".join(lines)
 
-    def for_outline(self) -> dict[str, Any]:
-        """Story foundations without the generated opening's scene choreography.
+    def for_outline(self, *, opening: bool = True) -> dict[str, Any]:
+        """Story foundations and the proposed first use, without the opening's choreography.
 
         Keep the concise experience brief, world possibilities, pursuits, later commitments
-        and carry-over conditions. The generated brief remains a revisable proposal.
-        The full concept remains stored; author locks reach planning separately, unchanged.
+        and carry-over conditions, and `first_use`: the occasion the advantage first works,
+        which `FIRST_USE_RULE` places inside chapter one (stage-0 §198, restored in §255).
+        The generated opening (`discovery.opening`, its duplicate `first_arc.opens`) and
+        `threat.first_reach` stay out: they supplied the repeated training episodes of the
+        2026-09-09 comparison (`plan/scene-brief-handoff.md`). A concept developed from a
+        treatment before magical-discovery.v7 keeps `first_use` out too (`places_first_use`),
+        and so does a request that no longer plans chapter one (`opening` False: a later arc,
+        or a continuation past it), which would otherwise see a first use that has already
+        happened without the rule that places it.
+        The generated brief remains a revisable proposal. The full concept remains stored;
+        author locks reach planning separately, unchanged.
         """
         material = self.to_jsonable()
         material.pop("invention_seed", None)
+        if self.system.start_rank is not None:
+            # The planner reads the start as words, so 0 cannot be taken for a first rank.
+            material["system"]["start_rank"] = self._start_rank_label()
         if self.story_material is not None:
             material["story_material"] = self.story_material.for_planning()
             return material
-        del material["first_use"]
+        if not (opening and self.places_first_use):
+            del material["first_use"]
         del material["first_arc"]["opens"]
         del material["threat"]["first_reach"]
         if self.discovery is not None:
@@ -681,10 +738,44 @@ class Concept:
             **material,
             "horizon": {
                 "steps": self.system.steps,
+                **(
+                    {"start_rank": self._start_rank_label()}
+                    if self.system.start_rank is not None else {}
+                ),
                 "strongest_known": self.system.strongest_known,
                 "pays": self.system.pays,
             },
         }
+
+    @property
+    def places_first_use(self) -> bool:
+        """Whether the outline receives a first use it can place inside chapter one.
+
+        A structured concept does when `first_use_id` names setup or first-arc movement; a
+        later or unresolved development is never ordered into chapter one. Any other concept
+        does unless it was developed from a treatment older than magical-discovery.v7: those
+        first uses were often a whole chapter-one lesson sequence (the Luke concept behind
+        838c5b2 and 8a6e047), so books developed from such a treatment keep the omission they
+        were planned under, even when developed again under the current request. Nothing
+        records which request produced a structured concept or one without a treatment, so a
+        stored one of either gets the placement on its next fresh first-arc plan (§255).
+        """
+        if self.story_material is not None:
+            return any(
+                development.id == self.story_material.first_use_id
+                and development.horizon in _OPENING_HORIZONS
+                for development in self.story_material.developments
+            )
+        return self.discovery is None or _discovery_generation(self.discovery.version) >= 7
+
+    def _start_rank_label(self) -> str:
+        """`start_rank` in words: "unranked" for 0, else "rank 3 of 12", ranks counted from one."""
+        rank = self.system.start_rank
+        return "unranked" if rank == 0 else f"rank {rank} of {self.system.steps}"
+
+    def _start_rank_text(self) -> str:
+        label = self._start_rank_label()
+        return label if self.system.start_rank == 0 else f"at {label}"
 
     @property
     def question_count(self) -> int:
@@ -749,18 +840,47 @@ LATER_ARC_RULE = (
 )
 TURN_RULE = (
     "book_concept.turn lands where its when says and no earlier: a turn due after this arc is "
-    "prepared inside it and not paid."
+    "prepared inside it and does not happen in it."
 )
 
 
-#: Early magic should matter, while a generated opportunity leaves room for planning.
+#: Stage-0 §198 (operator read 18), restored in §255: the advantage works on the page inside
+#: chapter one. Only a request that can still place it there carries it (`outline_rules`'s
+#: `places_first_use`), and only that working use is placed: 838c5b2 relaxed the §198 rule
+#: after a long chapter-one-labelled first use packed a whole lesson sequence into one scene.
 FIRST_USE_RULE = (
+    "book_concept.first_use names the occasion the protagonist's magical advantage first "
+    "works for them. Plan that working use inside chapter one, enacted in a scene rather than "
+    "reported afterwards, where it changes something in their present pursuit. Only that use "
+    "is placed there: other steps, props and later results in its wording may be compressed, "
+    "summarized or moved later, and intermediate practice is not staged as separate episodes. "
+    "This placement is a fixed direction for this book, not a generated timing proposal, so "
+    "generated chapter coverage does not move it; an author lock that times the first use "
+    "differently prevails."
+)
+#: The 2026-09-09 present-pursuit rule (runs/luke-story-developments-20260909, arm J), wording
+#: unchanged; every first-arc request carries it, continuations included.
+EARLY_MAGIC_RULE = (
     "Plan early magic within the protagonist's present pursuit: its discovery, use or failure "
     "should change an obstacle, a decision or the situation they are trying to change. "
     "If they suspend an established urgent pursuit, establish what they believe justifies "
     "that choice and its consequence. Possible future usefulness alone does not connect "
     "otherwise separate training episodes to that pursuit. Preserve established capabilities "
     "and author decisions, and allow enough prose space for the chosen developments."
+)
+#: The same placement for a structured concept, whose first use is a development id. It rides
+#: only when that development is setup or first-arc movement (`Concept.places_first_use`), and
+#: generated coordinates stay withheld.
+MATERIAL_FIRST_USE_RULE = (
+    "The development named by book_concept.story_material.first_use_id is the occasion the "
+    "protagonist's magical advantage first works for them. Plan that working use inside "
+    "chapter one, enacted in a scene rather than reported afterwards, where it changes "
+    "something in their present pursuit; its development_coverage entry is planned and lists "
+    "a chapter-one scene, unless supplied setup or accepted history already establishes it. "
+    "Other steps, props and later results in its statement may be compressed, summarized or "
+    "moved later, and intermediate practice is not staged as separate episodes. This "
+    "placement is a fixed direction for this book, not a generated coordinate; an author "
+    "lock that times the first use differently prevails."
 )
 THREAT_RULE = (
     "Develop encounters with book_concept.threat.what from the protagonist's situation and "
@@ -791,14 +911,23 @@ EXPERIENCE_ARC_RULE = (
 
 def outline_rules(
     arc_index: int | None, *, discovery_backed: bool = False, material_backed: bool = False,
+    places_first_use: bool = True,
 ) -> list[str]:
-    """The concept's rules for one outline call, by which arc it plans."""
+    """The concept's rules for one outline call, by which arc it plans.
+
+    `places_first_use` is False when this request cannot place the first use inside chapter
+    one: a continuation whose unwritten scenes start after it (`outline._plans_opening`), or
+    a concept whose planning projection carries no first use to place
+    (`Concept.places_first_use`). The placement is then never asked for.
+    """
+    opening = places_first_use and (arc_index is None or arc_index <= 1)
     if material_backed:
-        return [story_material.PLANNING_RULE]
+        return [story_material.PLANNING_RULE, *([MATERIAL_FIRST_USE_RULE] if opening else [])]
     if arc_index is None or arc_index <= 1:
-        rules = [FIRST_ARC_RULE, FIRST_USE_RULE, TURN_RULE]
+        rules = [FIRST_ARC_RULE, *([FIRST_USE_RULE] if opening else []), EARLY_MAGIC_RULE]
         if not discovery_backed:
-            rules.insert(2, THREAT_RULE)
+            rules.append(THREAT_RULE)
+        rules.append(TURN_RULE)
     else:
         rules = [LATER_ARC_RULE, TURN_RULE]
     if discovery_backed:
@@ -815,8 +944,10 @@ MATERIAL_CONCEPT_SCHEMA: dict[str, Any] = {
     ],
     "properties": {
         **{key: CONCEPT_SCHEMA["properties"][key] for key in (
-            "person_before", "exception", "want", "system", "second_system",
+            "person_before", "exception", "want",
         )},
+        "system": COUNTED_SYSTEM_SCHEMA,
+        "second_system": CONCEPT_SCHEMA["properties"]["second_system"],
         "threat": {
             "type": "object", "additionalProperties": False, "required": ["what"],
             "properties": {"what": {"type": "string"}},
@@ -827,12 +958,17 @@ MATERIAL_CONCEPT_SCHEMA: dict[str, Any] = {
 
 MATERIAL_TASK = (
     "Invent one working concept directly in the requested representation. "
-    f"{DIRECTION}\n{house.QUANTITY_DETAIL}\n"
+    f"{DIRECTION}\n{house.QUANTITY_DETAIL}\n{WORLD_DIRECTION}\n"
     "The author's supplied brief takes priority. Fill unspecified choices without rewriting "
     "their instructions. Do not return an author brief; it is retained unchanged by the host. "
-    "person_before and want describe background and pursuit; exception describes a magical "
-    "possibility, which need not be unique in the universe. system describes mechanics, "
-    "appearance, the known advancement span and what capability makes possible. threat.what "
+    "person_before and want describe background and pursuit; exception is the one power "
+    "this person has that nobody else in the world has, even where the system itself is "
+    "shared, and how it lets them pull ahead of everyone. system describes mechanics, "
+    "appearance and what capability makes possible; look is what a reader sees when it "
+    "appears: colour, place, light, type. steps counts its ranks from the lowest, numbered "
+    "one; start_rank is the rank the protagonist holds when the book opens, below steps, or "
+    "0 when they start unranked; strongest_known says at which counted rank the strongest "
+    "person anyone has heard of stands. threat.what "
     "describes an obstacle. second_system is null unless another system is needed, in which "
     "case describe retained capabilities. These fields are properties, not event calendars.\n"
     "story_material.world holds discoverable setting properties, observable traces, fallible "
@@ -844,8 +980,10 @@ MATERIAL_TASK = (
     "capability limits, costs, response and next choice as applicable. depends_on names "
     "necessary causal predecessors, not arbitrary paragraph order. horizon marks "
     "before_opening setup, first_arc movement, later possibilities or unresolved futures. "
-    "first_use_id and turn_id reference the early effective use and the event that changes "
-    "the pursuit. Questions have distinct subjects and reference their developments; invent "
+    "first_use_id references the first time the exception works for them, a first_arc "
+    "development the experience brief covers in the opening chapter; turn_id references the "
+    "event that changes the pursuit. Questions have distinct subjects and reference their "
+    "developments; invent "
     "two to four. Do not restate those events in questions, mechanics or background.\n"
     "Optional props and physical arrangements belong in staging_options, with unique S ids "
     "and development references. A consequence, cost, participant interest or capability "
@@ -970,24 +1108,30 @@ def render_concept_request(
             "Develop its supplied encounter and growth without adding a different motive "
             "or new restrictions on its promised capabilities.\n"
             f"{house.QUANTITY_DETAIL}\n"
+            f"{WORLD_DIRECTION}\n"
             "Extract person_before and want from the treatment's background and pursuits; "
-            "use exception for their distinctive "
-            "magical advantage, which need not be exclusive in the universe; first_use for "
-            "a proposed early effective use, with chapter placement left to planning unless "
-            "the author specifies it.\n"
+            "use exception for the one power this person has that nobody else in the world "
+            "has, even where the system itself is shared, and how it lets them pull ahead of "
+            "everyone, unless the author's brief says otherwise; first_use for the first time "
+            "it works for them, in the opening chapter, leaving the rest of its development "
+            "to planning unless the author specifies it.\n"
             "system describes the game system that tracks actual personal capability, "
-            "independently of institutional approval. Its appearance and feedback go in "
-            "manner and look; it need not speak. steps is the known span of advancement, "
-            "not a final ceiling; strongest_known shows what greater capability can do. pays names "
-            "a useful change in what this character can do, including beyond their initial "
-            "advantage.\n"
+            "independently of institutional approval. Its feedback goes in manner and it need "
+            "not speak; look is what a reader sees when it appears: colour, place, light, type. "
+            "steps counts its ranks from the lowest, numbered one, and need not be a final "
+            "ceiling; start_rank is the rank the protagonist holds when the book opens, below "
+            "steps, or 0 when they start unranked; strongest_known says at which counted rank "
+            "the strongest person anyone has heard of stands and what that rank lets them do. "
+            "pays names a useful change in what this character can do, including beyond their "
+            "initial advantage.\n"
             "threat is the story's obstacle or danger and first_reach its encounter; a "
             "mass killing or world invasion is not required. The turn develops the pursuit; "
             "use second_system only if the treatment calls for it, preserving earned "
             "capabilities across any transition.\n"
             "first_arc develops the supplied opening into a middle and close; the opening "
-            "has not happened yet and its developments may span chapters. debts names two to "
-            "four questions with due_scene within the requested arc. Return only the "
+            "has not happened yet and its developments may span chapters. debts holds two to "
+            "four open questions the book raises for the reader, each with a due_scene within "
+            "the requested arc; owed states the question. Return only the "
             "schema fields; the original discovery treatment is retained separately."
         )
         # Discovery already made the creative choices. Mechanical development receives
@@ -1006,7 +1150,7 @@ def render_concept_request(
     return CompletionRequest(
         prompt=prompt,
         system=system,
-        schema=CONCEPT_SCHEMA,
+        schema=DISCOVERY_CONCEPT_SCHEMA if discovery is not None else CONCEPT_SCHEMA,
         max_output_tokens=MAX_OUTPUT_TOKENS,
         profile=DISCOVERY_CONCEPT_PROFILE if discovery else CONCEPT_PROFILE,
         call_class="generation",
@@ -1036,17 +1180,30 @@ def _sentence(line: str) -> str:
     return line if line.endswith((".", ":", "!", "?", ")")) else f"{line}."
 
 
+#: Development horizons chapter one can hold: setup and first-arc movement.
+_OPENING_HORIZONS = ("before_opening", "first_arc")
+
+
+def _discovery_generation(version: str) -> int:
+    """The number of a stored treatment's direction, `magical-discovery.v7` -> 7."""
+    return int(version.rsplit(".v", 1)[1])
+
+
 __all__ = [
     "AFTER_FIRST_ARC",
     "BEFORE_CHAPTER_ONE",
     "CONCEPT_PLAN_ID",
     "CONCEPT_PROFILE",
     "CONCEPT_SCHEMA",
+    "COUNTED_SYSTEM_SCHEMA",
     "DISCOVERY_CONCEPT_PROFILE",
+    "DISCOVERY_CONCEPT_SCHEMA",
+    "EARLY_MAGIC_RULE",
     "FIRST_ARC_RULE",
     "FIRST_USE_RULE",
     "INSIDE_FIRST_ARC",
     "LATER_ARC_RULE",
+    "MATERIAL_FIRST_USE_RULE",
     "THREAT_RULE",
     "TURN_RULE",
     "TURN_WHEN",

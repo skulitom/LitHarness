@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import json
 
-from litharness.application import outline, world_agent
+from litharness.application import concept, discovery, outline, world_agent
 from litharness.domain import house, world_brief
 from litharness.domain.beats import arc_template, beats_for
 from litharness.domain.promises import Promise
@@ -92,6 +92,11 @@ def test_no_generation_instruction_tells_a_model_to_withhold_explanation() -> No
         *world_brief.LADDER_RULES,
         *outline.PROTAGONIST_RULES,
         *_outline_rules(),
+        # The first-use placement rules and the restored world direction (stage-0 §255).
+        concept.FIRST_USE_RULE,
+        concept.EARLY_MAGIC_RULE,
+        concept.MATERIAL_FIRST_USE_RULE,
+        discovery.WORLD_DIRECTION,
         house.HOUSE_RULES,
     ]
     assert len(strings) > 15, "the collection shrank; something stopped being collected"

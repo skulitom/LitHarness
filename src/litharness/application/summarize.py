@@ -216,9 +216,10 @@ def render_summary_prompt(
     **Its own block, never folded into the thread block, because the two are different
     classes of claim.** Open threads are canon-backed state records; promises are
     model-reported or legacy-seeded debts, which is exactly why `domain/context.py` renders
-    them through `describe_owed` as a debt rather than as a fact. One list under one heading
-    would launder the second into the register of the first — the packet's own rule, applied
-    to the prompt that settles the ledger rather than to the one that draws on it.
+    them through `describe_owed` as open and not yet established rather than as a fact. One
+    list under one heading would launder the second into the register of the first — the
+    packet's own rule, applied to the prompt that settles the ledger rather than to the one
+    that draws on it.
 
     **Information, and nothing else.** No line added here says which debt is due, which to
     pay, or that anything is owed *now*: the rows are shown exactly as the ledger stores
@@ -242,45 +243,49 @@ def render_summary_prompt(
         "SETTING: where and when.\n"
         "CHARACTERS: who was present, by the names the prose uses.\n"
         "EVENTS: what changed. Concrete actions and outcomes, not atmosphere.\n"
-        "OPEN: what the scene left unresolved — promises made, questions raised, debts "
-        "owed. Say so plainly if it left nothing open.\n"
+        "OPEN: what the scene left unresolved — promises made, questions raised, goals not "
+        "yet reached. Say so plainly if it left nothing open.\n"
         "DELTA: state the one thing that changed for a character in this scene — who it "
         "changed for, what changed, what it was before, what it is now — or say none by "
         "answering null. A dramatic shift counts even when no number moves.\n"
-        "PROMISES_OPENED: new threads this scene opens that the book must later pay off. "
-        "For each: a short subject name, what is now owed, which kind of debt it is "
+        "PROMISES_OPENED: new threads this scene opens that the book must later deliver on. "
+        "For each: a short subject name, what is still to come, which kind of thread it is "
         f"({', '.join(PROMISE_KINDS)}), and the scene number it is due by when the scene "
-        "implies one. Also copy one short exact quote from this scene that opens the debt; "
+        "implies one. Also copy one short exact quote from this scene that opens the thread; "
         "use an empty evidence_quote when no unique quote supports it.\n"
-        # **Conditional, and that is what keeps the empty-ledger prompt byte-identical.** A
-        # line naming a list the prompt does not carry would be asking a model to copy from
-        # nowhere, and a control that is not byte-for-byte the old prompt is not a control.
+        # **Conditional, and that is what keeps the empty-ledger prompt byte-identical to the
+        # prompt without the ledger.** A line naming a list the prompt does not carry would be
+        # asking a model to copy from nowhere, and a control that is not byte-for-byte the old
+        # prompt is not a control. Stage-0 §255 reworded both branches, so the comparison holds
+        # within one version: neither branch matches the text summaries used before §255.
         + (
-            "PROMISES_PAID: for each previously open thread this scene pays off, return its "
-            "subject and one short exact payoff quote from this scene."
+            "PROMISES_PAID: for each previously open thread this scene delivers on, return its "
+            "subject and one short exact quote from this scene that delivers it."
             if not open_promises
-            else "PROMISES_PAID: for each open debt this scene pays off, return its subject "
-            "copied exactly as the ledger writes it and one short exact payoff quote from "
-            "this scene. Empty if this scene pays none."
+            else "PROMISES_PAID: for each listed open promise this scene delivers on, return its "
+            "subject copied exactly as the list writes it and one short exact quote from this "
+            "scene that delivers it. Empty if this scene delivers none."
         )
     )
     owed = ""
     if open_threads:
-        owed = "\n\nThe book records these as still owed; note any this scene touches:\n" + (
-            "\n".join(f"- {thread}" for thread in open_threads)
-        )
+        owed = (
+            "\n\nThe book records these threads as still open; note any this scene touches:\n"
+        ) + "\n".join(f"- {thread}" for thread in open_threads)
     ledger = ""
     if open_promises:
-        # The subject verbatim, then the ledger's own debt line. The subject is what
+        # The subject verbatim, a colon, then `describe_owed`'s line. The subject is what
         # `pay_promise` keys on and it is stored already normalised, so the rendered name
         # round-trips through `normalise_subject` unchanged — a render that title-cased or
-        # re-spaced it would silently break the one key this block exists to supply.
+        # re-spaced it would silently break the one key this block exists to supply. The
+        # colon is the delimiter "owes:" used to be: `PROMISE_LINE_PREFIX` opens with an
+        # adjective that could read as part of the name (stage-0 §255).
         ledger = (
-            "\n\nThe book's ledger of debts still unpaid, as it stores them. These are the "
-            "book's own record of what it owes rather than established fact; each line is "
-            "the name a debt is filed under, then what is owed:\n"
+            "\n\nThe book's open promises, as it stores them. These are the book's own "
+            "reported record rather than established fact; each line is the name a promise "
+            "is filed under, then what it promised:\n"
         ) + "\n".join(
-            f"- {promise.subject} {describe_owed(promise)}" for promise in open_promises
+            f"- {promise.subject}: {describe_owed(promise)}" for promise in open_promises
         )
     return system, f"The scene:\n\n{text}{owed}{ledger}"
 

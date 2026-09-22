@@ -25,7 +25,13 @@ from litharness.domain.context import SUMMARIES
 from litharness.domain.extraction import normalise_subject
 from litharness.domain.generation import CompletionResult, Resolution, Usage
 from litharness.domain.nodes import Node, NodeKind
-from litharness.domain.promises import Promise, describe_owed, promise_id_for
+from litharness.domain.promises import (
+    PROMISE_KINDS,
+    PROMISE_LINE_PREFIX,
+    Promise,
+    describe_owed,
+    promise_id_for,
+)
 from litharness.domain.revision import build_revision
 from litharness.domain.text import content_hash
 from tests.conftest import BOOK_ID, BRANCH_ID, PROJECT_ID
@@ -296,7 +302,7 @@ def test_the_prompt_shows_the_book_its_own_open_threads() -> None:
     assert "no interpretation" in system, "state what is on the page and nothing else"
 
     _, bare = render_summary_prompt(SCENE)
-    assert "still owed" not in bare
+    assert "The book records these threads as still open" not in bare
 
 
 def test_the_prompt_shows_the_settling_call_the_ledger_it_settles() -> None:
@@ -327,8 +333,8 @@ def test_the_ledger_is_its_own_block_and_never_folded_into_the_threads() -> None
     _, prompt = render_summary_prompt(
         SCENE, open_threads=["Rook owes five gold"], open_promises=(A_DEBT,)
     )
-    threads_at = prompt.index("The book records these as still owed")
-    ledger_at = prompt.index("The book's ledger of debts still unpaid")
+    threads_at = prompt.index("The book records these threads as still open")
+    ledger_at = prompt.index("The book's open promises")
     assert threads_at < ledger_at, "two blocks, in this order"
     between = prompt[threads_at:ledger_at]
     assert "Rook owes five gold" in between and "gate_ledger" not in between, (
@@ -350,7 +356,7 @@ def test_an_empty_ledger_leaves_the_prompt_byte_identical() -> None:
         SCENE, open_threads=["Rook owes five gold"], open_promises=()
     ) == with_threads
     assert render_summary_prompt(SCENE, open_promises=()) == render_summary_prompt(SCENE)
-    assert "ledger of debts" not in with_threads[1]
+    assert "The book's open promises" not in with_threads[1]
     assert "copied exactly" not in with_threads[0]
 
 
@@ -364,7 +370,7 @@ def test_a_rendered_subject_round_trips_through_normalise_subject() -> None:
     """
     _, prompt = render_summary_prompt(SCENE, open_promises=(A_DEBT,))
     [line] = [row for row in prompt.splitlines() if row.startswith("- gate_ledger")]
-    copied = line[2:].split(" owes:")[0]
+    copied = line[2:].split(f": {PROMISE_LINE_PREFIX}")[0]
     assert copied == A_DEBT.subject
     assert normalise_subject(copied) == A_DEBT.subject
     assert promise_id_for(BOOK_ID, normalise_subject(copied)) == A_DEBT.promise_id
@@ -380,16 +386,66 @@ def test_the_ledger_block_tells_the_model_nothing_about_what_to_pay() -> None:
     if it left nothing open".
 
     `describe_owed`'s own text is exempt and named as exempt: `(due by …)` and, on a promise
-    an outline call has scheduled, `pay within …` are the ledger's stored wording, rendered
+    an outline call has scheduled, `planned within …` are the ledger's stored wording, rendered
     identically into the writer's packet already. What this checks is that nothing was added.
     """
     system, prompt = render_summary_prompt(SCENE, open_promises=(A_DEBT,))
-    header = prompt[prompt.index("The book's ledger") : prompt.index("\n- gate_ledger")]
+    header = prompt[prompt.index("The book's open promises") : prompt.index("\n- gate_ledger")]
     for phrase in ("pay ", "due", "resolve", "should", "must", "now", "settle"):
         assert phrase not in header.lower(), f"the header instructs: {phrase!r}"
     added = system.rsplit("PROMISES_PAID:", 1)[1]
     for phrase in ("due", "now", "should", "must", "overdue", "resolve"):
         assert phrase not in added.lower(), f"the ask instructs: {phrase!r}"
+
+
+def test_the_summary_asks_for_promises_in_the_book_s_own_words_not_a_debt_s() -> None:
+    """Stage-0 §255, pinned as the exact positive wording rather than as a scan for absent
+    words. The promise asks change what the ledger extracts, so they are an instrument change
+    for the promise ledger, recorded there; the kind enumeration that
+    `research/quality-measurement/promise_kinds.py` substitutes on survives exactly once."""
+    bare, _ = render_summary_prompt(SCENE)
+    assert (
+        "OPEN: what the scene left unresolved — promises made, questions raised, goals not "
+        "yet reached. Say so plainly if it left nothing open.\n"
+    ) in bare
+    assert (
+        "PROMISES_OPENED: new threads this scene opens that the book must later deliver on. "
+        "For each: a short subject name, what is still to come, which kind of thread it is "
+        f"({', '.join(PROMISE_KINDS)}), and the scene number it is due by when the scene "
+        "implies one."
+    ) in bare
+    assert bare.count(f"({', '.join(PROMISE_KINDS)})") == 1
+    assert bare.endswith(
+        "PROMISES_PAID: for each previously open thread this scene delivers on, return its "
+        "subject and one short exact quote from this scene that delivers it."
+    )
+    listed, _ = render_summary_prompt(SCENE, open_promises=(A_DEBT,))
+    assert listed.endswith(
+        "PROMISES_PAID: for each listed open promise this scene delivers on, return its "
+        "subject copied exactly as the list writes it and one short exact quote from this "
+        "scene that delivers it. Empty if this scene delivers none."
+    )
+
+
+def test_every_listed_promise_row_starts_with_its_subject_then_the_open_prefix() -> None:
+    """The key round-trip across more than one row: each line is the stored subject, a colon,
+    then `describe_owed`'s line, so splitting on the colon and the prefix gives back the
+    subject a payment keys on. The colon keeps the prefix's opening adjective from reading as
+    part of the name."""
+    second = Promise(
+        promise_id=promise_id_for(BOOK_ID, "hound_master"),
+        subject="hound_master",
+        description="who set the hounds on the road",
+        opened_at_key="s03",
+        due_key=None,
+        opened_by_revision="rev-1",
+        model="stub-v1",
+    )
+    _, prompt = render_summary_prompt(SCENE, open_promises=(A_DEBT, second))
+    for promise in (A_DEBT, second):
+        [row] = [line for line in prompt.splitlines() if line.startswith(f"- {promise.subject}:")]
+        assert row.startswith(f"- {promise.subject}: {PROMISE_LINE_PREFIX} ")
+        assert row[2:].split(f": {PROMISE_LINE_PREFIX}")[0] == promise.subject
 
 
 def test_a_summary_flattens_to_the_line_the_packet_will_render() -> None:

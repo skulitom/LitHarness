@@ -461,7 +461,9 @@ class ContextPacket:
             blocks.append(rules)
         threads = self.sections.get(THREADS, ())
         if threads:
-            blocks.append(_render_items(THREADS, threads, "Open threads the book still owes:\n"))
+            blocks.append(
+                _render_items(THREADS, threads, "Open threads the book has not yet resolved:\n")
+            )
         people = self.sections.get(CAST, ())
         if people:
             blocks.append(
@@ -779,12 +781,12 @@ def assemble(
         else:
             omitted.append(Omission(record.record_id, record.record_id, "budget: thread"))
 
-    # Open promises from the ledger (§61 Add 2), rendered as owed lines beside the canon
-    # threads — the same "what the book still owes" question answered from the model-sourced
-    # side. `DERIVED`, never canon: the analogous exclusion already keeps PROPOSED
-    # milestones out of this packet (`is_canon` above), and a promise reaching FACTS as an
-    # established record would launder a model's claim into canon by section label. The
-    # caller supplies open rows only; a paid promise is not owed.
+    # Open promises from the ledger (§61 Add 2), rendered as open, not-yet-established lines
+    # beside the canon threads — the same "what the book has not yet resolved" question
+    # answered from the model-sourced side. `DERIVED`, never canon: the analogous exclusion
+    # already keeps PROPOSED milestones out of this packet (`is_canon` above), and a promise
+    # reaching FACTS as an established record would launder a model's claim into canon by
+    # section label. The caller supplies open rows only; a paid promise is not owed.
     for promise in promises:
         text = promises_mod.describe_owed(promise)
         item = PackedItem(

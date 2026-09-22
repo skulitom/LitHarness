@@ -182,7 +182,7 @@ from litharness.domain.policy import (
     PolicyDecision,
     decision_id_for,
 )
-from litharness.domain.promises import Promise, normalise_kind, promise_id_for
+from litharness.domain.promises import PROMISE_LINE_PREFIX, Promise, normalise_kind, promise_id_for
 from litharness.domain.revision import append_scenes, import_manuscript, new_book
 from litharness.domain.salience import (
     build_state_continuity_items,
@@ -3053,7 +3053,8 @@ def cmd_prompts(args: argparse.Namespace) -> int:
                     lc.ContextItemKind.THREAD,
                     "promise-waiting",
                     lc.ResourceKind.THREAD,
-                    "owes: identify who knew Rook would cross and why they were waiting",
+                    f"{PROMISE_LINE_PREFIX} identify who knew Rook would cross and why they "
+                    "were waiting",
                 ),
             ),
             CAST: (

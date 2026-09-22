@@ -58,7 +58,7 @@ BLOCKS = {
         "and entity identities across actions and scenes. These constrain what happens; "
         "they are not a checklist of explanations to put in the prose:\n- rules body"
     ),
-    ctx.THREADS: "Open threads the book still owes:\n- threads body",
+    ctx.THREADS: "Open threads the book has not yet resolved:\n- threads body",
     ctx.CAST: "Who is in this story:\ncast body",
     ctx.FACTS: (
         "Established facts (POV: observer) — world truth, not automatically character "

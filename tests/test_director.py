@@ -334,6 +334,10 @@ def test_the_director_sees_ordered_fresh_structure_and_an_open_serial_boundary()
     )
     assert "CURRENT STORY STATE" in request.prompt
     assert "first debt" in request.prompt and "second debt" in request.prompt
+    assert "STILL OPEN:\n- first debt\n- second debt" in request.prompt, (
+        "stage-0 §255: open promises are headed as open, not as owed"
+    )
+    assert request.profile == "director.v1"
     assert "open-ended serial" in request.prompt
     assert "never treat the current plan boundary as the series ending" in request.prompt
 
@@ -384,6 +388,10 @@ def test_direction_is_bounded_by_accepted_scenes_rather_than_plan_churn() -> Non
     first = direct_job_id(BOOK_ID, BRANCH_ID, 0)
     assert first == direct_job_id(BOOK_ID, BRANCH_ID, 0), "replay converges"
     assert first != direct_job_id(BOOK_ID, BRANCH_ID, 1)
+    assert first == "direct-a0d5f313c5fdb37d8c0418db", (
+        "the job lane is not the prompt profile: PROFILE moved to director.v1 (stage-0 §255) "
+        "without re-keying the direction a book has already been given"
+    )
 
 
 def test_a_director_never_outranks_a_person() -> None:

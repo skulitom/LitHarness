@@ -47,6 +47,7 @@ from litharness.domain.integrity import (
 from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.policy import Outcome, decide
 from litharness.domain.promises import (
+    PROMISE_LINE_PREFIX,
     PROMISE_OPEN,
     PROMISE_PAID,
     Promise,
@@ -386,7 +387,7 @@ def test_the_whole_ledger_reaches_the_prompt_in_the_stores_order(store: SqliteSt
     summarise_scene(store, revision, "sc5", generator)
     [request] = generator.requests
     rendered = [
-        line.split(" owes:")[0][2:]
+        line.split(f": {PROMISE_LINE_PREFIX}")[0][2:]
         for line in request.prompt.splitlines()  # type: ignore[attr-defined]
         if line.startswith("- debt_")
     ]
@@ -547,7 +548,7 @@ def test_a_paid_debt_leaves_the_prompt_as_it_leaves_the_packet(store: SqliteStor
     later = ExtendedStub()
     summarise_scene(store, revision, "sc6", later)
     assert "gate_ledger" not in later.requests[0].prompt  # type: ignore[attr-defined]
-    assert "ledger of debts" not in later.requests[0].prompt  # type: ignore[attr-defined]
+    assert "The book's open promises" not in later.requests[0].prompt  # type: ignore[attr-defined]
 
 
 def test_the_prompt_moves_with_the_ledger_and_the_stored_summary_does_not(
@@ -827,9 +828,9 @@ def test_open_promises_render_in_the_packets_threads_section(store: SqliteStore)
     packet = packet_for(store, revision, beat)
     [item] = packet.sections[THREADS]
     assert item.text == describe_owed(a_promise())
-    assert "owes:" in item.text and "(due by s05)" in item.text
+    assert PROMISE_LINE_PREFIX in item.text and "(due by s05)" in item.text
     assert item.authority.value == "derived", "a model's claim never enters as canon"
-    assert "Open threads the book still owes" in packet.render()
+    assert "Open threads the book has not yet resolved" in packet.render()
 
 
 def test_a_paid_promise_leaves_the_packet(store: SqliteStore) -> None:
@@ -849,7 +850,7 @@ def test_a_paid_promise_leaves_the_packet(store: SqliteStore) -> None:
         promises=tuple(store.promises(BOOK_ID, BRANCH_ID, open_only=True)),
     )
     assert packet.sections[THREADS] == ()
-    assert "owes:" not in packet.render()
+    assert PROMISE_LINE_PREFIX not in packet.render()
 
 
 def test_a_packet_with_no_promises_is_byte_identical_to_before(store: SqliteStore) -> None:

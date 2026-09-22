@@ -206,7 +206,7 @@ def test_accepted_same_subject_observation_reaches_outline_and_writer_then_is_pa
         store.save_job(replace(outline_job, status=JobStatus.SUCCEEDED))
         request = json.loads(source.requests[0].prompt)
         assert request["book_concept"]["debts"] == intended.for_outline()["debts"]
-        assert [(row["subject"], row["owed"]) for row in request["open_promises"]] == [
+        assert [(row["subject"], row["still_open"]) for row in request["open_promises"]] == [
             (SUBJECT, opened.description),
         ]
         second = select(store, "writer", START + 4, 60)

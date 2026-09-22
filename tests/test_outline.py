@@ -347,17 +347,87 @@ def test_the_rules_arrive_only_with_the_thing_they_are_about() -> None:
     assert any("what silas does in that scene" in rule for rule in named["rules"])
 
 
+def test_plans_opening_follows_the_unwritten_chapter_one_scenes() -> None:
+    """The first-use placement rides only a request that still plans chapter one (§255)."""
+    from litharness.application.outline import _plans_opening
+
+    revision = new_book(BOOK_ID, BRANCH_ID, title="Book", scenes=6)
+    beats = beats_for(revision, arc_template(6))
+    unwritten = beats[1:3]
+    assert _plans_opening(beats, None, None)
+    assert _plans_opening(beats, {}, None)
+    ids = [beat.logical_id for beat in unwritten]
+    assert _plans_opening(unwritten, {ids[0]: 1, ids[1]: 2}, {})
+    assert not _plans_opening(unwritten, {ids[0]: 2, ids[1]: 3}, {})
+    assert not _plans_opening(unwritten, {}, {})
+    assert not _plans_opening(unwritten, None, {})
+
+
+def test_an_experience_backed_schedule_says_a_number_moves_with_its_event() -> None:
+    """Stage-0 §255 took "numerical movement is bookkeeping" out of the default lane: a moved
+    number accompanies the planned event and never stands in for it, and no ledger word
+    devalues the number that goes up. The plain lane keeps its own wording."""
+    from litharness.application import concept, discovery
+    from tests.test_concept import _discovery, _example
+
+    developed = concept.Concept.from_development(
+        _example(), discovery.Discovery.from_payload(_discovery())
+    )
+    assert developed.experience_backed
+    beats = _eight_beats()
+    rules = json.loads(
+        render_outline_request(
+            PREMISE, beats, base=_bare_base(), seed=SEED, concept=developed
+        ).prompt
+    )["rules"]
+    assert (
+        "Record costs and gains accurately; a number that moves accompanies the planned event "
+        "that moves it and never stands in for that event."
+    ) in rules
+    assert not any("bookkeeping" in rule for rule in rules)
+    plain = json.loads(
+        render_outline_request(PREMISE, beats, base=_bare_base(), seed=SEED).prompt
+    )["rules"]
+    assert "Costs as well as gains: spending and losing are progression too." in plain
+
+
+def test_the_outline_profiles_record_the_restored_directions() -> None:
+    from litharness.application import outline
+
+    assert outline.PROFILE == "planner.outline.v3", "the payoff lane rides plain outlines too"
+    assert outline.CONCEPT_PROFILE == "planner.outline.v8"
+    assert outline.STRUCTURED_PROFILE == "planner.outline.structured.v4"
+
+
+@pytest.mark.parametrize("name", ["FIRST_USE_RULE", "EARLY_MAGIC_RULE", "MATERIAL_FIRST_USE_RULE"])
+def test_policy_digest_covers_every_first_use_rule(
+    name: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from litharness.application import concept
+    from litharness.application.outline import _policy_digest
+
+    before = _policy_digest()
+    monkeypatch.setattr(concept, name, "A different rule.")
+    assert _policy_digest() != before
+
+
 def test_the_protagonist_rules_name_a_person_and_never_an_outcome() -> None:
     """**The §112 protagonist boundary, asserted rather than trusted.**
 
     A protagonist is a declared fact of the world and a position — the same class as "scene 3
-    of 8" and the chapter cue. No default instruction about how to *handle* one may enter any
-    prompt this system renders: open on the hero, make them likeable, show them winning,
+    of 8" and the chapter cue. No default instruction about how to *handle* one may enter these
+    rules or the house floor: open on the hero, make them likeable, show them winning,
     have them progress faster than anyone. That direction is the operator's, and the operator's
     own words for the hook use exactly those verbs — which is why the rules that came out of
-    them must not. Written in the shape of
-    `test_the_chapter_cue_carries_no_verb_and_no_adjective`.
+    them must not. Since stage-0 §255 the operator's standing hook direction is said where the
+    operator put it, in the invention prompts and the outline's first-use placement, not here.
+    Written in the shape of `test_the_chapter_cue_carries_no_verb_and_no_adjective`.
+
+    The full list is asserted over these rules. The house floor gets the narrower list the hook
+    direction's own words would need, because the floor legitimately says "first" elsewhere.
     """
+    from litharness.domain import house
+
     rendered = " ".join(
         rule.format(subject="silas") for rule in PROTAGONIST_RULES
     ).lower()
@@ -367,6 +437,9 @@ def test_the_protagonist_rules_name_a_person_and_never_an_outcome() -> None:
         "compelling", "unique", "special", "open on", "first",
     ):
         assert forbidden not in rendered, forbidden
+    floor = house.HOUSE_RULES.lower()
+    for forbidden in ("hero", "faster", "fastest", "strongest", "unique", "nobody else"):
+        assert forbidden not in floor, forbidden
 
 
 def test_the_handler_reads_the_protagonist_off_the_canon_it_already_read(

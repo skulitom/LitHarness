@@ -523,6 +523,7 @@ def test_codex_resource_builtins_remain_outside_bridge_allowance(monkeypatch, tm
 @pytest.mark.parametrize("profile", [
     "architect.seed.v1", "architect.seed.v2", "architect.seed.v3", "architect.seed.v4",
     "architect.seed.v5", "architect.seed.v6", "architect.seed.v7", "architect.seed.v8",
+    "architect.seed.v9",
     "architect.grow.v1", "architect.grow.v2", "architect.grow.v3", "architect.grow.v4",
     "architect.grow.v5",
 ])

@@ -11189,6 +11189,14 @@ hooks more, or which of K worlds to pick. No bar. And no instruction anywhere ab
 a protagonist — the three added strings (the forge rule, the two outline rules, the beat-line
 fragment) are each checked by a test for the vocabulary such an instruction would need.
 
+**2026-09-22 amendment (§255).** "Anywhere" no longer holds. The operator's own standing hook
+direction (one person's power, working in chapter one, counted ranks climbed faster than anyone)
+is now said in the invention prompts (discovery, development, structured material) and in the
+outline's first-use placement. `outline.PROTAGONIST_RULES` and `house.HOUSE_RULES` still carry
+no such instruction. `test_the_protagonist_rules_name_a_person_and_never_an_outcome` asserts
+its full list over the protagonist rules and a narrower list over the house floor (hero, faster,
+fastest, strongest, unique, nobody else), because the floor says "first" for other reasons.
+
 ### 112.1 The exception is the other object, and that is why scope could stay a role
 
 `in_scope`'s docstring gives the reason a shape's scope is an `entity_role` and never a subject id:
@@ -22103,6 +22111,12 @@ concept's one rendering; the concept task grows by three sentences (`concept wri
 `tests/test_prompt_budget.py`, set at what is there) and speaks none of this house's machinery
 words. The operator's example premise still round-trips.
 
+**2026-09-22 amendment (§255).** 838c5b2 (2026-09-09) relaxed this placement to a proposal
+after a long chapter-one-labelled `first_use` packed a whole lesson sequence into one scene
+(`runs/luke-chapter-orientation-20260909/RUNBOOK.md`, local), and 8a6e047 then removed
+`first_use` from the outline projection. §255 restores both for new concepts, scoped to the one
+working use.
+
 **Refused, and why.** (a) A clause about power, awe or reaction on the house floor or the scene
 prompt: §187 measured that path. (b) Handing the power at the top as a listing's hook: §136's
 measurement (a keep-power in seven of eight listings under the accumulation clause) was of a
@@ -25505,6 +25519,15 @@ tracked quantities; unknown fields, invalid values and impossible states still r
 The house clarity rule now allows objects their literal magical capabilities instead of
 banning speech and action even when canon declares them.
 
+**2026-09-22 amendment (§255).** Dropping the one-person exception and the counted horizon was
+a side effect of this entry, not the operator's direction it implemented; with the operator's
+approval both are instructions again. Compulsory lethal arrival, a speaking system and a final
+numerical ceiling stay dropped, and discovery still precedes mechanical development. The
+empty-schedule relaxation above is unchanged. The same switch also dropped, without listing it
+above, the legacy task's readership sentence (whoever it happens to is somebody the shelf's
+reader has been, one plain clause of who they were the day before; the operator's 2026-08-23
+direction). §255 does not restore it (see its residuals).
+
 **Evidence boundary.** This implements author direction and inspectable data flow. Nonempty
 fields do not establish wonder, semantic consistency or reader interest. There is no quality
 score, candidate ranking, automatic reader steering or claim that every output will succeed.
@@ -26023,6 +26046,12 @@ was taken before ability definitions and remains incomplete, so the full registe
 criterion is not met. The [result record](../research/quality-measurement/world-depth-fixes-20260913/REPORT.md)
 preserves that limit; this is not fresh model-compliance evidence for seed v7.
 
+**2026-09-22 amendment (§255).** An ownership-only inventory stays valid when a world declares
+one, and nothing above changes. What changed is the default ask upstream of it: new concepts
+count their ranks from the lowest and record where the protagonist starts, and the seed is asked
+to put the protagonist on that rank. The default route therefore asks for a counted ladder, and
+this entry governs a world that declares otherwise.
+
 ## 252. Separate declared repeatable growth from ownership and preserve adopted wants (2026-09-13)
 
 The [registered next-priorities study](../research/quality-measurement/next-priorities-20260913/REPORT.md)
@@ -26268,3 +26297,283 @@ so `Rank 2 | Point 2` then `Length 1 | Duration 120 | Point 0` bound Duration at
 beside the bought Length: three from two Points, the imbalance this entry exists to remove. It
 also claimed, in its commit message, no digest change, and read as though only
 allowance-printing books moved; the undeclared opening count above moved too.
+
+## 255. The operator's standing directions return at invention, and the book's promises stop reading as debts (2026-09-22)
+
+**Located motivation.** The coordinator's gate read of the full-book trial's A1 (*The Last
+Anchorage*: 24 chapters, the structured `--planning-material` route, `gpt-6-astra` through Codex
+per §253) is local under `book-library/the-last-anchorage/GATE.md`. It failed the book on the
+operator's enumerated items. The exception belonged to nobody in particular (its concept: "offers
+no superior class or hidden authority"), the System's look was "a compact status ledger", and the
+chapters read after the fourth ran on debt labour, tenancy claims, inspections and settlements.
+The read located the cause in our own text rather than in the model: §243's "need not be
+exclusive/unique in the universe"; §116's cost rule, deleted with the Forge in 5483161;
+discovery v6's "reveal limitations through use"; and §251's acceptance of ownership-only
+systems. The design's mapping pass, not the read, found the rest: §116's world sentence beside
+that cost rule, whose prohibition tail 530f40e had cut in a size pass before 5483161 deleted the
+remainder; the first-use placement, relaxed by 838c5b2 and then removed from planning by
+8a6e047; and the book's 52 promise rows, written as tasks and events ("Explain how Mara arrived
+from her familiar world", "Resolve the fate of Mara's inaccessible belongings"), which is what
+"what is now owed" asks for. This is a located reading of one book, not a quality label or
+reader evidence, and none of it enters a prompt.
+
+**The direction restored.** The hook is an exception that belongs to one person, works for them
+early and lets them progress faster than anyone (operator, 2026-08-22). Ranks are the number that
+goes up (§113). A world is not organised around a debt or a ledger (§116, 2026-08-23). The
+operator approved restoring each of these where our own changes had dropped it as a side effect.
+
+**What shipped: invention.**
+
+- Discovery is `magical-discovery.v7` under profile `writer.discovery.v14`. Only the direction's
+  last sentence changed: the protagonist has one power nobody else in the world has, which works
+  for them in the opening chapter, advances a personal pursuit and lets them climb counted ranks
+  faster than anyone around them. The v6 text is kept verbatim as `_V6_DIRECTION`, so every
+  stored v1-v6 treatment renders its own direction. A payload with no `version` reads as the
+  current direction, v7. Production stores always write the version; the registered
+  experience-handoff runner rebuilds treatments from version-less receipts, so its test fixture
+  patches `discovery.VERSION` back to `magical-discovery.v6`
+  (`test_outline_pair_has_same_parents_and_exactly_one_added_input_field`).
+- Development (`writer.concept.discovery.v9`) and structured invention
+  (`writer.concept.material.v2`) ask for the exception as the one power this person has that
+  nobody else in the world has, even where the system itself is shared; the author's brief still
+  takes priority. `first_use` is the first time it works for them, in the opening chapter, with
+  the rest of its development left to planning, so 838c5b2's release of the full-sequence
+  deadline stands. `look` is colour, place, light and type again. `steps` counts ranks from the
+  lowest, numbered one, and `strongest_known` names a counted rank.
+- `system.start_rank` records the rank the protagonist holds when the book opens; 0 means they
+  start unranked and renders as "starts unranked". New discovery-backed and structured requests
+  require it (`concept.DISCOVERY_CONCEPT_SCHEMA`, `concept.COUNTED_SYSTEM_SCHEMA`). The
+  requirement is the request schema's: both production transports receive the schema natively,
+  but the host's parse accepts a missing value, as it must for stored concepts and for the
+  seven research runners that rebuild concepts through `from_development`, so a transport that
+  did not enforce nested `required` fields would store a concept with no counted start and no
+  warning. Reads refuse a value outside 0 to `steps` - 1. It appears in the concept's render,
+  its world projection and the outline's horizon only when present, and the outline projection
+  writes it in words ("unranked", "rank 3 of 12") so a planner cannot take 0 for a first rank;
+  the stored field stays a number. Stored concepts without it,
+  A1's included, still read. `CONCEPT_SCHEMA`, `writer.concept.v1` and the legacy concept task
+  are unchanged. The legacy request is byte-identical when no layout is supplied
+  (`chapter_layout.DEVELOPMENT_RULE`, reworded below, rides any concept request given one), and
+  the CLI never sends it.
+- `discovery.LIVED_WORLD` and `discovery.PERSONAL_COST`, joined as `WORLD_DIRECTION`, ride
+  discovery, development and structured invention. The Architect seed (`architect.seed.v9`)
+  takes `LIVED_WORLD` alone, because its system text already says what a grant costs (§210).
+- The seed gains one sentence: where the concept says the protagonist starts at a rank, declare
+  them `stands_at` that rank, counted from the lowest; where it says they start unranked, declare
+  no `stands_at` for them. The outline's rank schedule runs only on a declared place, so for a
+  start at rank 1 or more, without this sentence the concept's start would have reached
+  planning as advisory text only. An unranked start declares no place and still reaches
+  planning only as the concept's words (residuals).
+
+**Amended from §116's words, and why.** `PERSONAL_COST` reads *"Where a choice costs the protagonist
+something, they pay in time, in risk, or in somebody now against them."* §116's "a body" and
+"something the person can no longer do" are dropped, and power is deliberately not its scope. A
+bodily or lost-ability price for power contradicts `house.ACCUMULATION` and the rung rule of 426974e
+that 5483161 deleted (a rung bought with a cut on your body is a rung nobody wants to stand on).
+`LIVED_WORLD` is positive direction: by default the world is a place people live in, not an
+administration, and the pressure comes from rivals, teachers, danger, distance, hunger and each
+other. No prohibition noun list, prohibition tail, scan or gate returns, as the
+[institution-cue pilot](../research/quality-measurement/discovery-institution-cue/RESULTS.md)
+advised; `LIVED_WORLD` does enumerate six sources of pressure, a positive list that carries the same
+recitation risk as the price clause below. The money prize is §118's rule (*the fortune is a prize
+and the paperwork is the chore*), and the legacy task's "pay or safety or power or respect" is kept.
+Known risk: §138 measured an enumerated price clause recited in five listings of eight. These two
+stay out of the house floor, the listing and scene drafting, but concept fields reach the listing as
+material, so either could return there as a formula: a recited cost, or rivals and hunger named as
+the pressure in listing after listing.
+
+**What shipped: first use in planning.** `Concept.for_outline` passes `first_use` again when the
+concept has no treatment or was developed from `magical-discovery.v7` or later
+(`Concept.places_first_use`), and only to a request that still plans chapter one: a later arc,
+or a continuation whose unwritten scenes start after chapter one, receives neither the first use
+nor its placement (`for_outline(opening=False)`), because a first use shown without the rule
+would read as one still to stage. An audit comparing such a request with the projection must
+pass the same argument. A concept developed from an older treatment keeps the omission it
+was planned under, which preserves 8a6e047's fix for the Luke concept whose chapter-one sequence
+packed one scene. `first_arc.opens`, `threat.first_reach` and `discovery.opening` stay out.
+`concept.FIRST_USE_RULE` returns to §198's meaning, scoped to the working use. That use is enacted
+inside chapter one and changes something in the present pursuit. Other steps, props and later
+results in its wording may be compressed, summarised or moved later, and practice is not staged
+as separate episodes. An author lock that times it differently prevails. The 2026-09-09
+present-pursuit text still rides every first-arc request, unchanged, as `EARLY_MAGIC_RULE`. A
+structured concept gets `MATERIAL_FIRST_USE_RULE` only when `first_use_id` names setup or
+first-arc movement, and its generated coordinates stay withheld. Its coverage entry is planned
+with a chapter-one scene unless supplied setup or accepted history already establishes the use,
+which is the development-coverage rule's own `established`. Either placement rides only a
+request that still plans chapter one (`outline._plans_opening`). The outline profiles are
+`planner.outline.v8` and `planner.outline.structured.v4`, and `concept_planning_version` is 17,
+with digest keys `first_use_scope`, `early_magic` and `material_first_use`. The new rules speak
+none of `house.MACHINERY_WORDS` ("a fixed direction for this book", never "standing").
+
+**What shipped: promise wording.** The debt register reached the model through our own prompts,
+and every stored and parsed name stays as it was: `debts`/`owed`/`due_scene`, `system.pays`, the
+promises table, `promises_opened`/`promises_paid`/`evidence_quote`, `payoff_windows` and the
+function name `describe_owed`.
+
+- `describe_owed` lines start with `promises.PROMISE_LINE_PREFIX`, `open, not yet established:`.
+  It keeps the non-canon marking the function exists for by denying the packet's own canon word.
+  A scheduled window reads "planned within". In the summary prompt's list each row is the
+  subject, a colon, then that line (`- gate_ledger: open, not yet established: …`). The old
+  row's "owes:" did that separating, and without the colon the prefix's opening adjective could
+  read as part of the name a payment is keyed on. The writer packet's THREADS heading reads "Open
+  threads the book has not yet resolved:".
+- The summary prompt's OPEN field lists goals not yet reached. PROMISES_OPENED asks for threads
+  the book must later deliver on and for "what is still to come", the minimal wording rather than
+  a reader-first reframe. PROMISES_PAID asks what the scene delivers on, with the subject "copied
+  exactly as the list writes it". The canon-thread block says "still open", and the promise
+  block is "The book's open promises", the book's own reported record rather than established
+  fact. The kind enumeration and "copied exactly" are kept.
+- In the outline, the payoff lane says "Spread the payoffs out" and calls an unscheduled promise
+  "an open story thread; omission does not deliver it". The open-promise rows' request key `owed`
+  is now `still_open`; it is model-facing only, since responses name promises by subject.
+  `CONTINUATION_RULE` says "its due_scene values". §243's experience-backed milestone sentence
+  "numerical movement is bookkeeping, not evidence that the intended growth has happened" now
+  reads "a number that moves accompanies the planned event that moves it and never stands in for
+  that event". `planner.outline.v3` moves too, because the payoff lane rides plain outlines.
+- `chapter_layout.DEVELOPMENT_RULE` and `PLANNING_RULE` drop the debt noun. The development task
+  defines `debts` as "two to four open questions the book raises for the reader", with `owed`
+  stating the question. `concept.TURN_RULE` says a later turn "does not happen in" this arc
+  instead of "not paid", and `Concept.render` labels the questions "Open questions the book
+  raises, and the scene each is answered by:".
+- The Director heads open promises "STILL OPEN:" under `director.v1`. `direct_job_id` keeps the
+  lane literal "director.v0", so a book already directed mints no duplicate direction. The
+  built-in "chandler" example brief ("debts, favours, contracts", "a creditor before it is a
+  game") now asks for rivals, allies and loyalties tested in a fight. Its content-derived id
+  changes; a store that registered it keeps the stored brief.
+- The `litharness prompts` specimen's thread line uses the prefix, so the inspector stays
+  truthful.
+
+**An instrument change, named.** The summarizer is the promise ledger's instrument (§61 Add 2,
+§94, §110). Its promise asks changed, so promise descriptions, and possibly their counts and
+kinds, extracted after this entry do not compare with earlier ones, and W4 payoff grading keys on
+the ledger's own wording. The summary prompt has no profile constant, so this entry is the
+record. Research callers of `render_summary_prompt` that cache by digest will miss
+(`promise_kinds.py`, `summary_reliability.py`); the enumeration `promise_kinds.open_system`
+substitutes on survives exactly once.
+
+**Digests.** Scene-draft input digests, and with them sampling seeds, change for every book with
+an open thread or promise; queued jobs keep their frozen payloads. The outline's
+`policy_config_digest` changes on every outline decision, including books without a concept.
+Request digests change for new discovery, development, structured, seed and Director requests;
+no production cache keys on prompt text. The connected-chapters audit's
+`all_outline_source_projections_match` still holds for all four books: two were developed from v6
+treatments and two are structured, so their projections are unchanged. That was checked by
+reading the retained requests; `audit.py` was not re-run. The registered runners froze the day's
+labels, so their two preflight tests patch in `writer.concept.material.v1` and
+`writer.discovery.v13` in their fixtures (`test_real_cli_invention_retains_author_volume_boundary_without_spending`,
+`test_real_concept_cli_reaches_the_registered_invention_boundary`), and the experience-handoff
+fixture patches the v6 label as above; no `run.py` is edited.
+
+**A writer path, stated exactly.** The v7 direction can reach a scene writer: a locked concept with
+no scene plan hands the writer `concept.render(include_placements=True)`, which starts with the
+treatment's render. That path already carried the v6 direction. It now carries the v7 power
+sentence in its place ("one power nobody else in the world has: it works for them in the opening
+chapter", with counted ranks climbed faster than anyone), one added line (the start rank) and
+the relabelled questions. A sentence about power reaching the scene prompt is the shape §198(a)
+refused on §187's measurement, so this path is a named tension. It is taken only when the
+operator locks the concept and no scene plan exists; rendering treatments on it without the
+direction sentence is left to the operator. `WORLD_DIRECTION` sits outside the direction and does
+not take that path. Every other writer-facing change is a reworded line: the THREADS heading and
+the promise lines.
+
+**Amendments, visible in place.** §243: the one-person exception and the counted horizon are
+instructions again. §251: an ownership-only inventory stays valid when declared, and the default
+now asks for a counted ladder. §198: the first-use placement is restored, scoped to the working
+use. §112, and the outline code's citation of §95 and §97.1: the operator's standing hook
+direction now enters discovery, development, structured invention and the outline's first-use
+placement. `outline.PROTAGONIST_RULES` and `house.HOUSE_RULES` stay clean:
+`test_the_protagonist_rules_name_a_person_and_never_an_outcome` asserts its full list over the
+protagonist rules and a narrower one over the house floor, and its docstring and the `outline.py`
+comment name that scope. §97.1's rule that operator input never trains, calibrates or selects an
+instrument is untouched: this is generation direction, not measurement.
+
+**Budgets.** In `tests/test_prompt_budget.py`, the discovery writer row rises 25 to 27: the v7
+sentence replaces a v6 sentence at no cost, and the world direction adds two. The architect seed
+row rises 49 to 51 and its second-system row 51 to 53, for the world sentence and the counted
+start. Concept development stands at 16 of 18, or 19 of 21 with an experience brief.
+`MATERIAL_TASK` is now 36 demands and has no budget row.
+
+**Evidence boundary.** These are delivery and round-trip contracts:
+`test_new_invention_restores_the_one_person_exception_and_counted_ranks`,
+`test_development_asks_for_one_person_s_exception_first_working_and_counted_ranks`,
+`test_material_invention_asks_for_one_person_s_exception_and_counted_ranks`,
+`test_stored_v6_discovery_keeps_its_direction_when_developed_again`,
+`test_new_development_schema_requires_a_start_rank_and_the_legacy_schema_does_not`,
+`test_a_counted_start_rank_round_trips`,
+`test_a_start_rank_outside_the_count_is_refused_with_the_field_named`,
+`test_stored_material_concepts_without_a_start_rank_still_read`,
+`test_the_seed_puts_the_protagonist_at_the_concept_s_counted_start`, the `test_world_direction`
+module, `test_outline_projection_keeps_first_use_but_not_opening_choreography`,
+`test_a_concept_from_an_older_treatment_keeps_first_use_out_of_planning`,
+`test_first_use_placement_rides_only_requests_that_plan_chapter_one`,
+`test_a_first_use_outside_the_opening_horizons_is_never_placed_in_chapter_one`,
+`test_plans_opening_follows_the_unwritten_chapter_one_scenes`,
+`test_policy_digest_covers_every_first_use_rule`,
+`test_a_scheduled_promise_renders_as_one_exact_open_line`,
+`test_the_summary_asks_for_promises_in_the_book_s_own_words_not_a_debt_s`,
+`test_every_listed_promise_row_starts_with_its_subject_then_the_open_prefix`,
+`test_the_concept_s_questions_are_asked_and_shown_as_questions_not_debts` and
+`test_an_experience_backed_schedule_says_a_number_moves_with_its_event`. No live generation was
+run on either route or provider, and delivering an instruction is not evidence that a model
+follows it. Any claim needs a registered one-concept smoke on both routes: the empty brief on the
+default route and A1's brief on `--planning-material`, stating the transport. Its treatment,
+concept and listing would be read for the one-person exception, the chapter-one working, counted
+ranks, administrative framing and a recited cost formula as located observations, with no gate
+and no chapters. That is operator spend.
+
+**Residuals.**
+
+- The experience-backed outline still accepts an empty numeric schedule (§243's relaxation,
+  unchanged), so this entry does not claim the numbers now go up on the page.
+- `house.SCENE_MAGICAL_OFFER`'s "a limit that changes a choice" is unchanged: it is
+  operator-requested 09-13 work (12d99b8, 9e0f599).
+- `MATERIAL_TASK`'s and `story_material.PLANNING_RULE`'s "capability limits" stay, as preservation
+  clauses for limits already present in developments.
+- The precision pass (`writer.concept.precision.v1`) does not list rank counts among the amounts
+  it keeps, so it can blur "the seventh rank" in `strongest_known`.
+- The seed's `stands_at` sentence is an ask; nothing checks that the seed put the protagonist at
+  the concept's start.
+- A book developed from a pre-v7 treatment keeps `first_use` out of planning, including when it
+  is re-planned, and so does a stored v6 treatment developed again now: its development request
+  (`writer.concept.discovery.v9`) asks for a chapter-one first use and a start rank, and planning
+  still withholds the first use, because the gate keys on the treatment's version, not on the
+  request that developed it.
+- Stored structured concepts and concepts with no treatment get the chapter-one placement on
+  their next fresh first-arc plan, since nothing records which request produced them: A1
+  (`first_use_id` D2) and the connected-chapters B1 and B2 (D2, D3) all name first-arc
+  developments, and so would be asked for it if replanned.
+- A continuation that still has an unwritten chapter-one scene receives the first use and its
+  placement even when an accepted chapter-one scene already enacted it; `outline._plans_opening`
+  reads the chapter map, not the prose.
+- An unranked start (`start_rank` 0) declares no `stands_at`, so `world_brief.ladder_for` finds
+  no place and that book's opening outlines get no rank schedule and no check that a milestone
+  climbs, until a place is read back from the page. This entry restores the counted schedule only
+  for a start at rank 1 or more; scheduling the rise from unranked to rank 1 needs its own
+  decision, for example a declared lowest unranked place.
+- The gate's premise-freshness, attention and tone items are not addressed here. The prior-life
+  item is: the operator's 2026-08-23 readership direction (a life the shelf's reader has lived:
+  a degree, a job or an obsession rather than a career), which §243's switch dropped with the
+  exception (amended in place there), returns as `discovery.READER_LIFE`, one declarative
+  sentence inside `WORLD_DIRECTION`, so discovery, development and structured invention all
+  carry it; the discovery writer's budget goes 27 -> 28 for it. It says who the person was and
+  their age, never how a reader should feel about them (§112's declarative half, pinned by
+  `test_the_protagonist_is_described_by_who_they_were_never_by_how_to_feel`). A1's gate rated
+  the item PARTIAL ("housing-association repair coordinator: a career").
+- Administrative framing invented after invention is outside this change. Later-arc and
+  continuation outlines, `architect grow` (its request carries neither sentence, by test) and the
+  Director plan or declare new material without `WORLD_DIRECTION`, and the gate found A1's
+  procedural register in the chapters after the fourth.
+- The debt noun still reaches development and every concept outline by key name: the
+  development schema requires `debts[].owed`, and the outline's `book_concept` carries `debts`
+  with `owed`. Only the open-promise rows' model-facing key was renamed; renaming inside the
+  projection would move every stored concept's outline projection, which the registered audits
+  compare.
+- The restored wording is the pre-§243 legacy one, "one power nobody else in the world has". It
+  covers the operator's second and third hook templates directly (an ability or class nobody
+  else awakens; a person who broke the system); the first, knowledge carried from our world,
+  depends on the model framing that knowledge as a power. Rewording it is the operator's call.
+- No live summary has run since the promise wording changed. The colon after each listed
+  subject removes the reading of `gate_ledger open` as a name, but whether subjects are still
+  copied cleanly (paid-matched against paid-unmatched) is unmeasured.
+- Recruited writers' dossiers in the installation roster were not surveyed for ledger or debt
+  trades.

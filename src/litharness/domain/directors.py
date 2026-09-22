@@ -246,11 +246,11 @@ BUILTIN: Mapping[str, Director] = {
         ),
         build(
             "chandler",
-            "You care about obligation between people. Push the book toward debts, favours, "
-            "contracts and the awkwardness of owing someone. The System is a creditor before "
-            "it is a game. Keep the cast small and let the same faces come back changed by "
-            "what passed between them.",
-            note="example: social-first, obligation-first",
+            "You care about what passes between people. Push the book toward rivals, allies, "
+            "loyalties tested in a fight and the awkwardness of being saved by someone you "
+            "dislike. Keep the cast small and let the same faces come back changed by what "
+            "passed between them.",
+            note="example: social-first, relationship-first",
         ),
         build(
             "cartwright",

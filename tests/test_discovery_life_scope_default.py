@@ -8,12 +8,18 @@ from tests.test_discovery_life_scope_experiment import experiment
 
 def test_production_discovery_uses_exactly_the_registered_scoped_system():
     request = discovery.render_request("EXACT_SOURCE", person="third")
-    assert request.profile == "writer.discovery.v13"
+    assert request.profile == "writer.discovery.v14"
     assert request.system.count(experiment.SCOPED) == 1
     assert experiment.ORIGINAL not in request.system
-    # v12 adds a prospective experience brief; the previous world direction stays exact.
-    prior_system = request.system.replace(discovery.EXPERIENCE_TASK, "").replace(
-        "in the four fields", "in the three fields"
+    assert request.system.count(discovery.WORLD_DIRECTION) == 1
+    # v12 adds a prospective experience brief, and v14 the restored world direction and
+    # magical-discovery.v7's hook sentence (stage-0 §255); the previous world direction stays
+    # exact.
+    prior_system = (
+        request.system.replace(discovery.WORLD_DIRECTION + "\n", "")
+        .replace(discovery.EXPERIENCE_TASK, "")
+        .replace("in the four fields", "in the three fields")
+        .replace(discovery.DIRECTION, discovery.DIRECTIONS["magical-discovery.v6"])
     )
     full_system = prior_system.replace(experiment.SCOPED, experiment.ORIGINAL)
     # Unseeded v10 system captured by every full control in evidence.json.
@@ -22,4 +28,4 @@ def test_production_discovery_uses_exactly_the_registered_scoped_system():
     )
     assert discovery.DIRECTIONS["magical-discovery.v5"].replace(
         experiment.ORIGINAL, experiment.SCOPED
-    ) == discovery.DIRECTION
+    ) == discovery.DIRECTIONS["magical-discovery.v6"]

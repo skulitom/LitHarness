@@ -20,6 +20,13 @@ def trial(tmp_path, monkeypatch):
     run = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(run)
     run.configure()
+    from litharness.application import concept
+
+    # The runner registered at 6c3bda4 checks the invention label it registered (run.py:152);
+    # stage-0 §255 relabels the current material request. Recreate that label, as
+    # tests/test_invention_order_experiment.py's three_field_discovery does for its contract.
+    # The boundary under test is stage order, no tools and no spend.
+    monkeypatch.setattr(concept, "MATERIAL_CONCEPT_PROFILE", "writer.concept.material.v1")
     monkeypatch.setattr(run, "LOCAL", tmp_path / "trial")
     monkeypatch.setattr(run.base, "LOCAL", run.LOCAL)
     monkeypatch.setattr(run.base, "lock", lambda: None)

@@ -292,7 +292,12 @@ BUDGET: dict[str, int] = {
     # drafting. The house rule is replaced in place; only these floor-free calls grow.
     # Automatic experience specification adds seven clauses for its content, coverage,
     # brevity and authority. These run once at invention, not on every drafted scene.
-    "discovery writer": 25,
+    # **Raised 25 -> 27 on 2026-09-22 for §255**: magical-discovery.v7's hook sentence replaces
+    # v6's last sentence at no extra demand, and the §116 world and cost direction, deleted
+    # with the Forge (5483161), returns at the stage that now invents the world: two sentences.
+    # **27 -> 28, same day**: the operator's target-readership direction (2026-08-23), dropped
+    # with the legacy task at §243, returns beside it as one declarative sentence.
+    "discovery writer": 28,
     "concept development": 18,
     # Developing a supplied generated brief adds three clauses; keep its branch counted.
     "concept development, experience": 21,
@@ -317,7 +322,10 @@ BUDGET: dict[str, int] = {
     # out something to be spent on its grants, as a grant of its own.
     # §252: three clauses expose declared growth, refuse inference from price and leave
     # unspecified growth open to future declaration. These are mechanics, not craft advice.
-    "architect seed, second system": 51,
+    # **Raised 51 -> 53 on 2026-09-22 for §255**: one sentence, the §116 world direction (the
+    # cost sentence stays out of the seed, because the system text already says what a grant
+    # costs), and one saying the concept's counted start becomes the protagonist's stands_at.
+    "architect seed, second system": 53,
     "title lookup": 6,
     # **Raised 24 -> 25 on 2026-08-29, deliberately and for one named sentence.** The house
     # genre had been living nowhere (`plan/house-genre-constraint.md`; pilot 13 §8.2), carried
@@ -458,7 +466,9 @@ BUDGET: dict[str, int] = {
     # out something to be spent on its grants, as a grant of its own, so a spend is a
     # declared fall and not a fight with the engine.
     # §252: the same three growth-declaration clauses as the second-system seed.
-    "architect seed": 49,
+    # **Raised 49 -> 51 on 2026-09-22 for §255**: the same two sentences as the second-system
+    # row, the §116 world direction and the counted start.
+    "architect seed": 51,
     # **42 -> 43 on 2026-08-30, the §176 clause.** §163's note above says this row "stays
     # on 42", which was true of §163's seed-only raise and is not a rule: this row stands on the
     # whole house floor, so a floor clause lands here as surely as it lands on the scene writer.

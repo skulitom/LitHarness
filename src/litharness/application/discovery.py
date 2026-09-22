@@ -18,8 +18,8 @@ from litharness.domain.generation import CompletionRequest
 from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v13"
-VERSION = "magical-discovery.v6"
+PROFILE = "writer.discovery.v14"
+VERSION = "magical-discovery.v7"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
 _V1_DIRECTION = (
@@ -67,7 +67,7 @@ _V5_DIRECTION = (
     "exploration, choices or practice. Let an early gain advance a personal pursuit, reveal "
     "limitations through use and make further capabilities desirable."
 )
-DIRECTION = (
+_V6_DIRECTION = (
     "Create a LitRPG fantasy experience in portal fantasy, isekai, or system apocalypse, or "
     "a combination, unless the author's brief calls for something else: an unfamiliar world "
     "worth exploring and powers the character wants to acquire and use. If the author's "
@@ -78,14 +78,53 @@ DIRECTION = (
     "gain advance a personal pursuit, reveal limitations through use and make further "
     "capabilities desirable."
 )
+# The operator's hook direction, restored (stage-0 §255): the exception is one person's, it
+# works for them in the opening chapter, and ranks are the number that goes up.
+DIRECTION = (
+    "Create a LitRPG fantasy experience in portal fantasy, isekai, or system apocalypse, or "
+    "a combination, unless the author's brief calls for something else: an unfamiliar world "
+    "worth exploring and powers the character wants to acquire and use. If the author's "
+    "brief introduces unfamiliar life or intelligence, develop its own pursuits, "
+    "relationships and history, with tangible traces inviting contact and investigation. "
+    "Let the chosen magic system determine how advancement is earned through the story's "
+    "events, including discovery, conflict, exploration, choices or practice. The "
+    "protagonist has one power nobody else in the world has: it works for them in the "
+    "opening chapter, advances a personal pursuit and lets them climb counted ranks faster "
+    "than anyone around them, toward capabilities they want next."
+)
 DIRECTIONS = {
     "magical-discovery.v1": _V1_DIRECTION,
     "magical-discovery.v2": _V2_DIRECTION,
     "magical-discovery.v3": _V3_DIRECTION,
     "magical-discovery.v4": _V4_DIRECTION,
     "magical-discovery.v5": _V5_DIRECTION,
+    "magical-discovery.v6": _V6_DIRECTION,
     VERSION: DIRECTION,
 }
+
+# Operator direction (stage-0 §116, restored in §255): a world people live in, and costs that
+# fall on a person. Invention and the Architect seed share these bytes; the seed takes only
+# LIVED_WORLD, because its system text already says what a grant costs. The house floor, the
+# listing and scene drafting carry neither (§138 measured an enumerated price clause recited
+# in listings). Kept out of DIRECTION, so no stored treatment's render and no scene writer
+# receives them.
+LIVED_WORLD = (
+    "By default the world is a place people live in, not an administration: the pressure "
+    "on people comes from rivals, teachers, danger, distance, hunger and each other."
+)
+PERSONAL_COST = (
+    "Where a choice costs the protagonist something, they pay in time, in risk, or in "
+    "somebody now against them."
+)
+# Operator direction (2026-08-23, restored in §255): the shelf's reader is in their twenties,
+# so the person they wear is too. Declarative only (§112): who the person was, never how a
+# reader should feel about them. Dropped with the rest of the legacy task at §243.
+READER_LIFE = (
+    "By default the protagonist is near the reader's own age, in their twenties, and the day "
+    "before they had a life that reader has lived: a degree, a job that covers rent, or "
+    "something they know far too much about, not decades at a trade."
+)
+WORLD_DIRECTION = f"{LIVED_WORLD} {READER_LIFE} {PERSONAL_COST}"
 
 SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -116,6 +155,7 @@ _TASK = (
     "actions and consequences.\n"
     f"{DIRECTION}\n"
     f"{house.QUANTITY_DETAIL}\n"
+    f"{WORLD_DIRECTION}\n"
     f"{EXPERIENCE_TASK}"
     "world: describe the setting's discoverable material, keeping proposed scene actions "
     "in opening. Distinguish observable traces, underlying explanations, fallible beliefs "

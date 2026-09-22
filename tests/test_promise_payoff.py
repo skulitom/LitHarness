@@ -26,6 +26,8 @@ break something already measured:
 
 from __future__ import annotations
 
+import json
+
 import litharness_contracts as lc
 import pytest
 
@@ -49,6 +51,7 @@ from litharness.domain.jobs import Job
 from litharness.domain.nodes import Node, NodeKind
 from litharness.domain.promises import (
     PROMISE_KINDS,
+    PROMISE_LINE_PREFIX,
     PROMISE_PAID,
     Promise,
     acts_for,
@@ -265,8 +268,8 @@ def test_the_summary_handler_writes_the_kind_it_was_told(store: SqliteStore) -> 
 # -- W2: the payoff window ----------------------------------------------------------------
 
 
-def test_open_promises_reach_the_outline_ask_as_debts_and_nothing_else() -> None:
-    """Shown as owed, never as fact — `describe_owed`'s register rule, one call over.
+def test_open_promises_reach_the_outline_ask_as_open_promises_and_nothing_else() -> None:
+    """Shown as still open, never as fact — `describe_owed`'s register rule, one call over.
 
     A model-reported promise rendered in the indicative would be laundered into premise by
     register alone, which is the same laundering `describe_owed` exists to prevent in the
@@ -290,7 +293,15 @@ def test_open_promises_reach_the_outline_ask_as_debts_and_nothing_else() -> None
     assert "open_promises" in with_debt.prompt
     assert "sealed_crate" in with_debt.prompt
     assert "may not close after the scene it is due by" in with_debt.prompt
-    assert "Spread the payments out" in with_debt.prompt
+    rules = json.loads(with_debt.prompt)["rules"]
+    assert (
+        "Spread the payoffs out. A schedule that delivers every promise in the last third of "
+        "the book, or every promise in one place, is the thing a reader feels as nothing "
+        "happening and then everything happening."
+    ) in rules, "stage-0 §255: the schedule is of payoffs, not of payments on a debt"
+    (row,) = json.loads(with_debt.prompt)["open_promises"]
+    assert row["still_open"] == a_promise().description
+    assert "owed" not in row
 
 
 @pytest.mark.parametrize(
@@ -418,13 +429,13 @@ def test_an_absent_schedule_is_not_a_refusal() -> None:
     assert _payoff_windows({"payoff_windows": []}, beats, [a_promise()]) == []
 
 
-def test_the_window_rides_the_debt_line_and_reads_as_owed() -> None:
+def test_the_window_rides_the_promise_line_and_reads_as_not_yet_established() -> None:
     """One line, one register. A schedule with a packet heading of its own would give a
     PROPOSED-grade model answer a section beside canon."""
     plain = a_promise()
-    assert describe_owed(plain).startswith("owes:")
-    assert "pay within" not in describe_owed(plain), (
-        "an unscheduled promise renders exactly as it did before this existed"
+    assert describe_owed(plain).startswith(PROMISE_LINE_PREFIX)
+    assert "planned within" not in describe_owed(plain), (
+        "an unscheduled promise renders without the window clause"
     )
     scheduled = Promise(
         promise_id=plain.promise_id,
@@ -437,8 +448,28 @@ def test_the_window_rides_the_debt_line_and_reads_as_owed() -> None:
         window_end_key="s09",
     )
     rendered = describe_owed(scheduled)
-    assert rendered.startswith("owes:") and "pay within s07-s09" in rendered
+    assert rendered.startswith(PROMISE_LINE_PREFIX) and "planned within s07-s09" in rendered
     assert "due by s12" in rendered
+
+
+def test_a_scheduled_promise_renders_as_one_exact_open_line() -> None:
+    """Stage-0 §255 pinned as the exact positive form, not as a scan for absent words: the
+    line says what is open, by when, and where it is planned, and never reads as canon."""
+    plain = a_promise()
+    scheduled = Promise(
+        promise_id=plain.promise_id,
+        subject=plain.subject,
+        description=plain.description,
+        opened_at_key=plain.opened_at_key,
+        due_key="s12",
+        opened_by_revision=plain.opened_by_revision,
+        window_start_key="s07",
+        window_end_key="s09",
+    )
+    assert PROMISE_LINE_PREFIX == "open, not yet established:"
+    assert describe_owed(scheduled) == (
+        f"{PROMISE_LINE_PREFIX} {plain.description} (due by s12); planned within s07-s09"
+    )
 
 
 def test_a_window_mints_no_finding(store: SqliteStore) -> None:

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from litharness.application.discovery import LIVED_WORLD
 from litharness.domain.beats import TemplateMismatch, beats_for, template_for
 from litharness.domain.generation import CompletionRequest
 from litharness.domain.revision import Revision
@@ -20,7 +21,7 @@ if TYPE_CHECKING:
     from litharness.application.concept import Concept
 
 #: Frozen profiles, one per job, so seeding a world and growing one are separable on the rows.
-SEED_PROFILE = "architect.seed.v8"
+SEED_PROFILE = "architect.seed.v9"
 GROW_PROFILE = "architect.grow.v5"
 
 # Explicit subcommands exclude acceptance. A broad world:* allowance would permit it.
@@ -110,12 +111,18 @@ _SYSTEM = (
 _SEED = (
     "Build the supplied world, including its history, inhabitants' own pursuits, magical "
     "effects and usable capabilities, using only the detail needed to support it. "
+    f"{LIVED_WORLD} "
     "Supplied motives and mechanics take precedence over defaults; leave unspecified "
     "advancement quotas and additional cast open. Declare observable forms, activity and "
     "historical traces through manifests_as, separately from undisclosed explanations in "
     "claim.content.\n\n"
     f"{_TOOLS}\n\n"
-    f"{_SYSTEM}\n\n"
+    f"{_SYSTEM}\n"
+    # The concept's counted start (stage-0 §255) reaches the outline's rank schedule only
+    # through the protagonist's declared place on the system.
+    "Where the concept says the protagonist starts at a rank, declare them stands_at that "
+    "rank, counted from the lowest; where it says they start unranked, declare no stands_at "
+    "for them.\n\n"
     "Establish which people the viewpoint character can understand and be understood by, "
     "including any translation mechanism or language barrier the supplied story relies on. "
     "Briefly report what you built and left open."

@@ -4,7 +4,11 @@ from copy import deepcopy
 
 import pytest
 
-from litharness.application.concept import CONCEPT_SCHEMA
+from litharness.application.concept import (
+    CONCEPT_SCHEMA,
+    DISCOVERY_CONCEPT_SCHEMA,
+    MATERIAL_CONCEPT_SCHEMA,
+)
 from litharness.application.outline import CONCEPT_OUTLINE_SCHEMA, OUTLINE_SCHEMA
 from litharness.domain.scene_brief import SCHEMA as SCENE_BRIEF_SCHEMA
 from litharness.providers.codex_schema import (
@@ -75,11 +79,18 @@ def test_nullable_type_union_preserves_null_but_enum_can_disallow_it() -> None:
 
 
 def test_real_concept_and_scene_brief_shapes_translate() -> None:
-    for schema in (CONCEPT_SCHEMA, SCENE_BRIEF_SCHEMA):
+    for schema in (
+        CONCEPT_SCHEMA, DISCOVERY_CONCEPT_SCHEMA, MATERIAL_CONCEPT_SCHEMA, SCENE_BRIEF_SCHEMA,
+    ):
         before = deepcopy(schema)
         transport = prepare_codex_schema(schema)
         assert transport["required"] == list(schema["properties"])
         assert schema == before
+    # The counted start the new concept requests ask for (stage-0 §255) survives the transport.
+    for schema in (DISCOVERY_CONCEPT_SCHEMA, MATERIAL_CONCEPT_SCHEMA):
+        system = prepare_codex_schema(schema)["properties"]["system"]
+        assert "start_rank" in system["required"]
+        assert system["required"] == list(system["properties"])
     transport = prepare_codex_schema(SCENE_BRIEF_SCHEMA)
     assert "minLength" not in transport["properties"]["situation"]
     assert "minItems" not in transport["properties"]["changes"]

@@ -401,7 +401,12 @@ def test_original_concept_debt_coordinates_translate_to_local_response_positions
         decision = store.latest_decision_for(job.job_id)
         assert decision.accepted, decision.reason
         body = json.loads(model.requests[0].prompt)
-        assert body["book_concept"] == source.for_outline()
+        # Chapter one is written, so neither the first use nor its placement is shown to the
+        # later scenes: a first use without the rule would read as one still to stage.
+        assert body["book_concept"] == source.for_outline(opening=False)
+        assert "first_use" in source.for_outline() and "first_use" not in body["book_concept"]
+        assert concept.FIRST_USE_RULE not in body["rules"]
+        assert concept.EARLY_MAGIC_RULE in body["rules"]
         assert [item["due_by_scene"] for item in body["open_promises"]] == [5, 23]
         mapping = body["continuation_scope"]["requested_scenes"]
         assert [(mapping[i-2]["ordinal"], mapping[i-2]["original_ordinal"])

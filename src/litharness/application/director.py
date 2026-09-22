@@ -66,7 +66,7 @@ DIRECT_PRIORITY = 400
 #: giving, and the honest way to find out is an arm rather than a constant somebody liked.
 DIRECTIVE_EVERY = 6
 
-PROFILE = "director.v0"
+PROFILE = "director.v1"
 
 #: What the Director is allowed to answer with. `kind` is constrained to the interpretive set at
 #: the schema, so a director that tried to issue a veto fails to conform rather than being
@@ -98,6 +98,8 @@ def direct_job_id(book_id: str, branch_id: str, block: int) -> str:
     book has got rather than about how much its plan has churned — and a replayed tick converges
     onto the same job instead of minting a second piece of direction.
     """
+    # The lane names the job family, not the prompt profile: it stayed "director.v0" when
+    # PROFILE moved to v1 (stage-0 §255), so existing books do not mint duplicate direction.
     material = payload_digest(
         {"book_id": book_id, "branch_id": branch_id, "block": block, "lane": "director.v0"}
     )
@@ -148,7 +150,7 @@ def render_request(
     if current_state:
         lines.append("CURRENT STORY STATE:\n" + "\n".join(f"- {item}" for item in current_state))
     if open_promises:
-        lines.append("STILL OWED:\n" + "\n".join(f"- {item}" for item in open_promises))
+        lines.append("STILL OPEN:\n" + "\n".join(f"- {item}" for item in open_promises))
     if open_ended:
         lines.append(
             f"PROGRESS: {drafted} accepted scenes; {of_total} scene nodes are currently "

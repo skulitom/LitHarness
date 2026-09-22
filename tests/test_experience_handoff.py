@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 
+from litharness.application import discovery as discovery_mod
 from litharness.application.outline import CONCEPT_OUTLINE_SCHEMA
 from litharness.domain.invention import make_seed
 from litharness.providers.codex_schema import prepare_codex_schema
@@ -23,6 +24,10 @@ def pilot(tmp_path, monkeypatch):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     monkeypatch.setattr(module, "LOCAL", tmp_path)
+    # The runner rebuilds treatments from receipts that carry no version, and a version-less
+    # payload reads as the current direction; the registered arm ran under v6, whose outline
+    # projection omits first_use (stage-0 §255), so the fixture reproduces that label.
+    monkeypatch.setattr(discovery_mod, "VERSION", "magical-discovery.v6")
     for index in module.BRIEFS:
         module.write(tmp_path / f"seeds/{index}.json", make_seed(index).to_jsonable())
     return module

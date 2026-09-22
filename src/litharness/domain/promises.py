@@ -390,31 +390,40 @@ def overdue_promises(
     )
 
 
+#: The register marker every packed promise line starts with. A promise is a model's report, so
+#: its line must never read as an established event; "established" is the packet's own word for
+#: canon (the FACTS heading), which is exactly what this prefix denies. It replaced "owes:" in
+#: stage-0 §255, which took the debt register out of the book's own promise wording.
+PROMISE_LINE_PREFIX = "open, not yet established:"
+
+
 def describe_owed(promise: Promise) -> str:
-    """The packed-item line for one open promise: what is owed, by when, and where to pay it.
+    """The packed-item line for one open promise: what is open, by when, and where it is planned.
 
-    Deliberately prefixed "owes:" and phrased as a debt rather than as a fact — this line
-    rides in the packet's THREADS section beside canon-backed open threads, and a rendering
-    that read as an established event would launder a model's proposal into canon by
-    register alone.
+    Deliberately prefixed `PROMISE_LINE_PREFIX` and phrased as open and not established rather
+    than as a fact — this line rides in the packet's THREADS section beside canon-backed open
+    threads, and a rendering that read as an established event would launder a model's
+    proposal into canon by register alone.
 
-    **The scheduled window rides the same line and inherits the same register** (W2). "pay
-    within s07-s09" is an instruction about a debt, which is what the whole line already is;
-    splitting the schedule into its own packet section would have given a PROPOSED-grade
-    model answer a heading of its own beside canon. A promise nobody has scheduled renders
-    exactly as it did before this existed, which is what keeps the packet stable for every
-    book that is never replanned.
+    **The scheduled window rides the same line and inherits the same register** (W2). "planned
+    within s07-s09" is plan-grade, like the INTENTIONS section, which is what the whole line
+    already is; splitting the schedule into its own packet section would have given a
+    PROPOSED-grade model answer a heading of its own beside canon. A promise nobody has
+    scheduled renders without the window clause, so scheduling alone never moves the packet
+    of a book that is never replanned. The prefix itself changed in stage-0 §255, which moved
+    every packed promise line once.
     """
-    owed = f"owes: {promise.description}"
+    owed = f"{PROMISE_LINE_PREFIX} {promise.description}"
     if promise.due_key is not None:
         owed += f" (due by {promise.due_key})"
     if promise.scheduled:
-        owed += f"; pay within {promise.window_start_key}-{promise.window_end_key}"
+        owed += f"; planned within {promise.window_start_key}-{promise.window_end_key}"
     return owed
 
 
 __all__ = [
     "PROMISE_KINDS",
+    "PROMISE_LINE_PREFIX",
     "PROMISE_OPEN",
     "PROMISE_PAID",
     "UNTYPED",

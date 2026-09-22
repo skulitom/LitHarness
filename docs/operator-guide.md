@@ -153,7 +153,10 @@ uv run litharness --database book.db --writer halloran --chapter-scenes 1 --arc-
 The saved `concept.json` has a `story_material` source containing an automatic experience
 brief, world properties, developments with ids and causal dependencies, scope horizons,
 questions referencing those developments, optional staging, and optional placement suggestions.
-The early use and turn also reference developments. It contains no parallel discovery,
+The early use and turn also reference developments. When the early use names setup or
+first-arc movement, the first-arc outline is asked to enact that working use inside chapter
+one; its other steps may move later. New concepts also record the protagonist's starting rank
+(`system.start_rank`, 0 meaning unranked). It contains no parallel discovery,
 first-arc narrative or generated debt deadlines. Your `author_brief` is retained exactly and
 takes priority; it is excluded from generated quantity edits.
 
@@ -571,10 +574,12 @@ in its opening field.
 World seeding is instructed to keep observable traces separate from undisclosed explanations
 and characters' fallible beliefs. These are authoring directions, not a guarantee of reader appeal.
 
-New discovery requests develop an early gain's use toward a personal pursuit and the appeal
-of further capabilities. Advancement follows the chosen magic system through discovery,
-conflict, exploration, choices or practice. Earlier saved discoveries keep their original
-direction.
+New discovery requests give the protagonist one power nobody else in the world has, working
+for them in the opening chapter and letting them climb counted ranks faster than anyone
+around them. Advancement follows the chosen magic system through discovery, conflict,
+exploration, choices or practice. New concepts record the protagonist's starting rank beside
+the count of ranks, with 0 meaning they start unranked. Earlier saved discoveries and concepts
+keep their original direction and fields.
 
 ### Precision editing
 
@@ -595,9 +600,13 @@ arithmetic stay exact. This does not round stored facts; accepted manuscript is 
 ### Discovery context and traces
 
 The prepared discovery treatment is retained inside `concept.json`. The listing can use it;
-arc planning receives a projection that omits its generated opening choreography, proposed
-first use and first threat encounter. The character, pursuit, world and growth possibilities,
-later arc shape, turns, carry-over conditions and debts remain available. World creation uses
+arc planning receives a projection that omits its generated opening choreography and first
+threat encounter. For concepts from `magical-discovery.v7` on, and concepts with no treatment,
+a plan that still covers chapter one also receives the proposed first use and is asked to
+enact only its working use there; later arcs and continuations past chapter one do not receive
+it. Concepts developed from older treatments keep it out. The character, pursuit, world and
+growth possibilities, later arc shape, turns, carry-over conditions and open questions remain
+available. World creation uses
 a separate projection of setting, background and mechanics without future story events.
 The supplied listing and original author brief still constrain the world. Chapter reconciliation
 reads the drafted chapter, author brief and stored world without replaying the original

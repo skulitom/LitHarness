@@ -18,10 +18,11 @@ INVENTION_RULE = (
     "The author's supplied brief takes priority over generated proposals."
 )
 DEVELOPMENT_RULE = (
-    "Use writing_layout's actual chapter and scene coordinates for first_arc and debts. "
-    "Preserve the proposed experience within that layout; adapt flexible staging to the "
-    "available prose space instead of inventing a different chapter grouping. Generated "
-    "scene placements remain proposals for the planner, not author deadlines."
+    "Use writing_layout's actual chapter and scene coordinates for first_arc and for each "
+    "question's due_scene. Preserve the proposed experience within that layout; adapt "
+    "flexible staging to the available prose space instead of inventing a different chapter "
+    "grouping. Generated scene placements remain proposals for the planner, not author "
+    "deadlines."
 )
 PLANNING_RULE = (
     "First plan the chapter coverage, then its scenes. Return exactly the chapters in "
@@ -31,7 +32,7 @@ PLANNING_RULE = (
     "how you reconciled proposed coverage with available prose space, author instructions, "
     "locks and established history; state explicitly when no adaptation was needed. "
     "The actual map takes precedence over chapter groupings suggested in generated "
-    "first_arc text or debt due_scene values. Preserve the proposed experience where "
+    "first_arc text or due_scene values. Preserve the proposed experience where "
     "feasible, simplify flexible staging before deferring its consequence, and record "
     "any changed coverage. Put the resulting events in these scenes' briefs. These "
     "records describe intended coverage, not a judgment of quality."

@@ -118,9 +118,9 @@ from litharness.domain.world_brief import WorldBrief
 BOOK_OUTLINE = "book_outline"
 
 #: Frozen generation profile, recorded in provenance like every other model call here.
-PROFILE = "planner.outline.v2"
-CONCEPT_PROFILE = "planner.outline.v7"
-STRUCTURED_PROFILE = "planner.outline.structured.v3"
+PROFILE = "planner.outline.v3"
+CONCEPT_PROFILE = "planner.outline.v8"
+STRUCTURED_PROFILE = "planner.outline.structured.v4"
 
 #: Ranks above scene drafting (0) and below director direction (500+). A scene drafted before
 #: its statement exists would be drafted against the empty plan this module exists to fill, so
@@ -154,7 +154,7 @@ CONTINUATION_RULE = (
     "retains original chapter and story coordinates. Earlier output requests in the original "
     "author brief keep their original scope. Ongoing story directions and applicable author "
     "locks remain binding. Generated first-arc suggestions do not replace established events. "
-    "Scene references in the unchanged book_concept, including debt due_scene values, use "
+    "Scene references in the unchanged book_concept, including its due_scene values, use "
     "the original arc ordinals in this mapping, not response ordinals. Express response "
     "milestones and payoff windows using response ordinals."
 )
@@ -164,7 +164,10 @@ CONTINUATION_RULE = (
 #: win, and whether they progress faster than anyone are the operator's to say and are said
 #: through a directive, never from here (stage-0 §95, §97.1). The strings below are checked for
 #: the vocabulary such an instruction would have to use by
-#: `test_the_protagonist_rules_name_a_person_and_never_an_outcome`.
+#: `test_the_protagonist_rules_name_a_person_and_never_an_outcome`. The boundary is these rules
+#: and the house floor: since §255 the operator's own standing direction (one person's power,
+#: working in chapter one, counted ranks climbed faster) is said in the invention prompts and
+#: in the outline's first-use placement (`concept.FIRST_USE_RULE`), as §198 first did.
 PROTAGONIST_RULES: tuple[str, ...] = (
     "The protagonist is {subject}. This is {subject}'s book, so each statement says what "
     "{subject} does in that scene, or what is done to {subject}.",
@@ -307,6 +310,23 @@ def _writing_layout(
     return chapter_layout.WritingLayout.mapped(
         [(beat.logical_id, beat.ordinal) for beat in beats], chapter_by_scene, target_scene_words,
     )
+
+
+def _plans_opening(
+    beats: Sequence[Beat], chapter_by_scene: Mapping[str, int] | None,
+    continuation_scope: Mapping[str, Any] | None,
+) -> bool:
+    """Whether this request still plans chapter one, where the first use is placed.
+
+    A fresh request does. A continuation does only when one of its unwritten scenes is mapped
+    to chapter one; without a chapter map, the accepted prefix has already opened the book.
+    """
+    if continuation_scope is None:
+        return True
+    if not chapter_by_scene:
+        return False
+    return any(chapter_by_scene.get(beat.logical_id) == 1 for beat in beats)
+
 
 SCENE_HANDOFF_RULES = (
     "Return a brief for each scene: situation establishes the place, relevant relationships "
@@ -467,10 +487,11 @@ def render_outline_request(
     it: it groups facts by kind, and "which of these people is the one the book is about" is
     not a fact about a kind.
 
-    **Open promises go in as debts, and the register is `describe_owed`'s** (W2). They are
-    shown so the schedule can be about the book's actual debts rather than about debts the
-    model invents while answering, and they are shown as *owed* rather than as established
-    fact for the same reason the packet shows them that way — a model-reported promise
+    **Open promises go in as still open, and the register is `describe_owed`'s** (W2). They
+    are shown so the schedule can be about the book's actual promises rather than about ones
+    the model invents while answering, and each row's `still_open` names what is not yet
+    established rather than stating it as fact, for the same reason the packet renders them
+    that way (the key was `owed` until stage-0 §255) — a model-reported promise
     rendered in the indicative would be laundered into premise by register alone. A book with
     no open promises is asked for no windows at all, exactly as a book with no starting sheet
     is asked for no milestones: an empty ask produces an empty answer to validate, which is
@@ -504,7 +525,7 @@ def render_outline_request(
     owed = [
         {
             "subject": promise.subject,
-            "owed": promise.description,
+            "still_open": promise.description,
             "opened_at_scene": ordinals.get(promise.opened_at_key, promise.opened_at_key),
             "due_by_scene": (
                 ordinals.get(promise.due_key, promise.due_key)
@@ -520,6 +541,11 @@ def render_outline_request(
         }
         for promise in promises
     ]
+    # Whether this request still plans chapter one: the first use and its placement ride
+    # together, so a later arc or a continuation past chapter one sees neither (stage-0 §255).
+    plans_opening = (serial_arc_index is None or serial_arc_index <= 1) and _plans_opening(
+        beats, chapter_by_scene, continuation_scope
+    )
     prompt = json.dumps(
         {
             "premise": premise,
@@ -567,9 +593,12 @@ def render_outline_request(
             # has no key at all — see the docstring.
             **({"world": world.to_jsonable()} if world is not None else {}),
             **({"protagonist": protagonist.to_jsonable()} if protagonist is not None else {}),
-            **({"book_concept": concept.for_outline()} if concept is not None else {}),
-            # The debts this book has already opened, for the payoff schedule. Absent for a
-            # book that owes nothing — which is every book at its first outline, since
+            **(
+                {"book_concept": concept.for_outline(opening=plans_opening)}
+                if concept is not None else {}
+            ),
+            # The promises this book has already opened, for the payoff schedule. Absent for a
+            # book with none open — which is every book at its first outline, since
             # promises are written by the summary handler after a scene is accepted.
             "open_promises": owed or None,
             # The book's own starting numbers, so the schedule is expressed in the game
@@ -657,8 +686,8 @@ def render_outline_request(
                         "where the statement you wrote would plausibly change them."
                     ),
                     (
-                        "Record costs and gains accurately; numerical movement is bookkeeping, "
-                        "not evidence that the intended growth has happened."
+                        "Record costs and gains accurately; a number that moves accompanies the "
+                        "planned event that moves it and never stands in for that event."
                         if concept is not None and concept.experience_backed
                         else "Costs as well as gains: spending and losing are progression too."
                     ),
@@ -672,13 +701,13 @@ def render_outline_request(
                     "schedulable_scene_ordinals. Choose both endpoints from that promise's "
                     "listed response ordinals. An empty list means this request contains "
                     "no valid on-time window: omit that promise from payoff_windows. "
-                    "It remains an open story obligation; omission does not pay it, erase "
+                    "It remains an open story thread; omission does not deliver it, erase "
                     "it or extend its deadline. Return [] when none can be scheduled.",
                     "Use the subject names given in open_promises. Do not invent promises.",
                     "A window may not open before the scene that opened the promise, and may "
                     "not close after the scene it is due by.",
-                    "Spread the payments out. A schedule that pays every debt in the last "
-                    "third of the book, or every debt in one place, is the thing a reader "
+                    "Spread the payoffs out. A schedule that delivers every promise in the last "
+                    "third of the book, or every promise in one place, is the thing a reader "
                     "feels as nothing happening and then everything happening.",
                 ]
                 if owed
@@ -715,6 +744,7 @@ def render_outline_request(
                 concept_mod.outline_rules(
                     serial_arc_index, discovery_backed=concept.discovery is not None,
                     material_backed=concept.story_material is not None,
+                    places_first_use=concept.places_first_use and plans_opening,
                 )
                 if concept is not None
                 else []
@@ -1359,7 +1389,7 @@ def _policy_digest(*, target_scene_words: int | None = None) -> str:
                 if target_scene_words is not None else {}
             ),
             "schema": OUTLINE_SCHEMA,
-            "concept_planning_version": 16,
+            "concept_planning_version": 17,
             "starting_state_selection": "protagonist-or-unambiguous-owner.v1",
             "structured_profile": STRUCTURED_PROFILE,
             "continuation_scope": {
@@ -1379,6 +1409,11 @@ def _policy_digest(*, target_scene_words: int | None = None) -> str:
             "author_lock_rule": AUTHOR_LOCK_RULE,
             "concept_outline_rules": {
                 "first_use": concept_mod.FIRST_USE_RULE,
+                # Which requests carry the placement: those still planning chapter one, for a
+                # concept whose projection holds a placeable first use (stage-0 §255).
+                "first_use_scope": "chapter-one-when-planned.v1",
+                "early_magic": concept_mod.EARLY_MAGIC_RULE,
+                "material_first_use": concept_mod.MATERIAL_FIRST_USE_RULE,
                 "first_arc": concept_mod.FIRST_ARC_RULE,
                 "later_arc": concept_mod.LATER_ARC_RULE,
                 "turn": concept_mod.TURN_RULE,

@@ -212,7 +212,7 @@ def test_new_invention_defaults_to_the_requested_genres_under_the_author_brief(b
         assert "unless the author's brief calls for something else" in request.system
         if brief:
             assert brief in request.prompt
-    assert discovery.Discovery.from_invention(_discovery()).version == "magical-discovery.v6"
+    assert discovery.Discovery.from_invention(_discovery()).version == "magical-discovery.v7"
 
 
 # --- where it lives ------------------------------------------------------------------------
@@ -401,6 +401,9 @@ def test_the_outline_plans_the_first_arc_against_the_concept_and_the_old_payload
     assert payload["book_concept"]["debts"] == _example()["debts"]
     assert concept.FIRST_ARC_RULE in payload["rules"]
     assert concept.TURN_RULE in payload["rules"]
+    assert payload["book_concept"]["first_use"] == drawn.first_use
+    assert concept.FIRST_USE_RULE in payload["rules"]
+    assert concept.EARLY_MAGIC_RULE in payload["rules"]
     later = json.loads(
         outline.render_outline_request(
             "A premise.",
@@ -413,7 +416,92 @@ def test_the_outline_plans_the_first_arc_against_the_concept_and_the_old_payload
     assert concept.LATER_ARC_RULE in later["rules"]
     assert later["book_concept"]["second_system"] == _example()["second_system"]
     assert concept.FIRST_ARC_RULE not in later["rules"]
+    assert concept.FIRST_USE_RULE not in later["rules"]
+    assert concept.EARLY_MAGIC_RULE not in later["rules"]
+    # A later arc sees no first use either: without its placement it would read as one still
+    # to stage, the repeated episode 8a6e047 removed (stage-0 §255).
+    assert "first_use" not in later["book_concept"]
+    assert later["book_concept"] == drawn.for_outline(opening=False)
     assert "book_concept" not in json.loads(before.prompt)
+
+
+@pytest.mark.parametrize("discovery_version", [None, discovery.VERSION])
+def test_outline_projection_keeps_first_use_but_not_opening_choreography(
+    discovery_version: str | None,
+) -> None:
+    payload = _example()
+    if discovery_version is not None:
+        payload["discovery"] = {**_discovery(), "version": discovery_version}
+    drawn = concept.Concept.from_payload(payload)
+    original = drawn.to_text()
+    planned = drawn.for_outline()
+    assert drawn.places_first_use
+    assert planned["first_use"] == drawn.first_use
+    assert "opens" not in planned["first_arc"]
+    assert "first_reach" not in planned["threat"]
+    assert "opening" not in planned.get("discovery", {})
+    assert drawn.to_text() == original
+
+
+@pytest.mark.parametrize("version", [f"magical-discovery.v{n}" for n in range(1, 7)])
+def test_a_concept_from_an_older_treatment_keeps_first_use_out_of_planning(version: str) -> None:
+    """Stored books planned under 8a6e047's omission keep it (stage-0 §255)."""
+    drawn = concept.Concept.from_payload(
+        {**_example(), "discovery": {**_discovery(), "version": version}}
+    )
+    assert not drawn.places_first_use
+    assert "first_use" not in drawn.for_outline()
+    revision = new_book("book", "main", title="Book", scenes=6)
+
+    class _Base:
+        plan_revision_id = "planrev-1"
+        items: tuple = ()
+
+    rules = json.loads(outline.render_outline_request(
+        "A premise.", beats_for(revision, arc_template(6)),
+        base=_Base(),  # type: ignore[arg-type]
+        concept=drawn,
+    ).prompt)["rules"]
+    assert concept.FIRST_USE_RULE not in rules
+    assert concept.EARLY_MAGIC_RULE in rules
+
+
+def test_first_use_placement_rides_only_requests_that_plan_chapter_one() -> None:
+    from litharness.application import story_material
+
+    for arc in (1, None):
+        for discovery_backed in (False, True):
+            rules = concept.outline_rules(arc, discovery_backed=discovery_backed)
+            assert rules.index(concept.FIRST_USE_RULE) < rules.index(concept.EARLY_MAGIC_RULE)
+            continued = concept.outline_rules(
+                arc, discovery_backed=discovery_backed, places_first_use=False,
+            )
+            assert concept.EARLY_MAGIC_RULE in continued
+            assert concept.FIRST_USE_RULE not in continued
+    for rules in (concept.outline_rules(2), concept.outline_rules(2, discovery_backed=True)):
+        assert concept.FIRST_USE_RULE not in rules
+        assert concept.EARLY_MAGIC_RULE not in rules
+    assert concept.outline_rules(1, material_backed=True) == [
+        story_material.PLANNING_RULE, concept.MATERIAL_FIRST_USE_RULE,
+    ]
+    assert concept.outline_rules(2, material_backed=True) == [story_material.PLANNING_RULE]
+    assert concept.outline_rules(1, material_backed=True, places_first_use=False) == [
+        story_material.PLANNING_RULE,
+    ]
+    assert "chapter one" in concept.FIRST_USE_RULE
+    assert "chapter one" in concept.MATERIAL_FIRST_USE_RULE
+    assert "book_concept.first_use" in concept.FIRST_USE_RULE
+    assert "first_use_id" in concept.MATERIAL_FIRST_USE_RULE
+
+
+def test_the_first_use_rules_speak_none_of_this_system_s_own_vocabulary() -> None:
+    """Outline briefs reach the writer, so the rules that shape them avoid machinery words."""
+    for rule in (
+        concept.FIRST_USE_RULE, concept.EARLY_MAGIC_RULE, concept.MATERIAL_FIRST_USE_RULE,
+        discovery.LIVED_WORLD, discovery.PERSONAL_COST,
+    ):
+        found = sorted(word for word in house.MACHINERY_WORDS if word in rule.lower())
+        assert not found, (rule, found)
 
 
 def test_a_concept_naming_its_system_with_a_machinery_word_is_caught() -> None:
@@ -649,6 +737,165 @@ def test_stored_v5_discovery_keeps_its_direction_when_developed_again() -> None:
     assert discovery.DIRECTION not in request.system + request.prompt
 
 
+def test_stored_v6_discovery_keeps_its_direction_when_developed_again() -> None:
+    payload = {**_discovery(), "version": "magical-discovery.v6"}
+    original_direction = (
+        "Create a LitRPG fantasy experience in portal fantasy, isekai, or system apocalypse, or "
+        "a combination, unless the author's brief calls for something else: an unfamiliar world "
+        "worth exploring and powers the character wants to acquire and use. If the author's "
+        "brief introduces unfamiliar life or intelligence, develop its own pursuits, "
+        "relationships and history, with tangible traces inviting contact and investigation. "
+        "Let the chosen magic system determine how advancement is earned through the story's "
+        "events, including discovery, conflict, exploration, choices or practice. Let an early "
+        "gain advance a personal pursuit, reveal limitations through use and make further "
+        "capabilities desirable."
+    )
+    saved = discovery.Discovery.from_payload(payload)
+    restored = discovery.Discovery.from_payload(saved.to_jsonable())
+    assert restored.to_jsonable() == payload
+    assert restored.render().splitlines()[0] == (
+        f"Intended fantasy experience (magical-discovery.v6): {original_direction}"
+    )
+    request = concept.render_concept_request("Keep this story.", scenes=6, discovery=restored)
+    assert restored.render() in request.prompt
+    assert discovery.DIRECTION not in request.system + request.prompt
+
+
+def test_new_invention_restores_the_one_person_exception_and_counted_ranks() -> None:
+    """Delivery of the operator's hook direction (stage-0 §255), not evidence of compliance."""
+    assert "one power nobody else in the world has" in discovery.DIRECTION
+    assert "works for them in the opening chapter" in discovery.DIRECTION
+    assert "climb counted ranks faster than anyone around them" in discovery.DIRECTION
+    assert "reveal limitations through use" not in discovery.DIRECTION
+    request = discovery.render_request("")
+    assert request.system.count(discovery.DIRECTION) == 1
+    assert request.profile == "writer.discovery.v14"
+
+
+def test_development_asks_for_one_person_s_exception_first_working_and_counted_ranks() -> None:
+    request = concept.render_concept_request(
+        "", scenes=6, discovery=discovery.Discovery.from_invention(_discovery()),
+    )
+    for asked in (
+        "nobody else in the world has",
+        "even where the system itself is shared",
+        "the first time it works for them, in the opening chapter",
+        "counts its ranks from the lowest",
+        "start_rank",
+        "0 when they start unranked",
+        "colour, place, light, type",
+    ):
+        assert asked in request.system, asked
+    assert "need not be exclusive" not in request.system
+    assert request.profile == "writer.concept.discovery.v9"
+
+
+def test_the_concept_s_questions_are_asked_and_shown_as_questions_not_debts() -> None:
+    """Stage-0 §255: the stored `debts`/`owed` keys stay, and the words around them say what
+    they hold, a question the book raises for the reader."""
+    request = concept.render_concept_request(
+        "", scenes=6, discovery=discovery.Discovery.from_invention(_discovery()),
+    )
+    assert (
+        "debts holds two to four open questions the book raises for the reader, each with a "
+        "due_scene within the requested arc; owed states the question."
+    ) in request.system
+    rendered = concept.Concept.from_payload(_example()).render()
+    assert "Open questions the book raises, and the scene each is answered by:" in rendered
+    assert concept.TURN_RULE == (
+        "book_concept.turn lands where its when says and no earlier: a turn due after this arc "
+        "is prepared inside it and does not happen in it."
+    )
+
+
+def _with_start_rank(rank: object) -> dict[str, object]:
+    payload = _example()
+    payload["system"] = {**payload["system"], "start_rank": rank}  # type: ignore[dict-item]
+    return payload
+
+
+def test_new_development_schema_requires_a_start_rank_and_the_legacy_schema_does_not() -> None:
+    from litharness.providers.base import parse_schema_payload
+
+    development = concept.render_concept_request(
+        "", scenes=6, discovery=discovery.Discovery.from_invention(_discovery()),
+    )
+    assert development.schema is concept.DISCOVERY_CONCEPT_SCHEMA
+    system = development.schema["properties"]["system"]
+    assert "start_rank" in system["required"]
+    assert set(system["required"]) == set(system["properties"])
+    assert system["properties"]["start_rank"] == {"type": "integer"}
+    # The rest of the development schema is the legacy one, unchanged.
+    assert {
+        key: value for key, value in development.schema["properties"].items() if key != "system"
+    } == {
+        key: value for key, value in concept.CONCEPT_SCHEMA["properties"].items()
+        if key != "system"
+    }
+    assert parse_schema_payload(
+        json.dumps(_with_start_rank(3)), development.schema
+    ) == _with_start_rank(3)
+    assert concept.render_concept_request("", scenes=6).schema is concept.CONCEPT_SCHEMA
+    assert "start_rank" not in concept.CONCEPT_SCHEMA["properties"]["system"]["properties"]
+
+
+@pytest.mark.parametrize("rank", [0, 3, 11])
+def test_a_counted_start_rank_round_trips(rank: int) -> None:
+    drawn = concept.Concept.from_payload(_with_start_rank(rank))
+    assert drawn.system.start_rank == rank
+    assert concept.Concept.from_text(drawn.to_text()) == drawn
+    assert drawn.to_jsonable()["system"]["start_rank"] == rank
+    fields, protected = drawn.precision_material()
+    assert "system.start_rank" in protected
+    assert "system.start_rank" not in fields
+
+
+@pytest.mark.parametrize("rank", [12, 13, -1, True, "3", 2.0])
+def test_a_start_rank_outside_the_count_is_refused_with_the_field_named(rank: object) -> None:
+    with pytest.raises(concept.MalformedConcept, match=r"system\.start_rank"):
+        concept.Concept.from_payload(_with_start_rank(rank))
+
+
+def test_a_concept_without_a_start_rank_reads_and_serializes_as_before() -> None:
+    legacy = concept.Concept.from_payload(_example())
+    assert legacy.system.start_rank is None
+    assert legacy.to_jsonable() == _example()
+    developed = concept.Concept.from_development(
+        _example(),
+        discovery.Discovery.from_payload({**_discovery(), "version": "magical-discovery.v6"}),
+    )
+    assert "start_rank" not in developed.to_jsonable()["system"]
+    assert concept.Concept.from_text(developed.to_text()) == developed
+
+
+def test_a_start_rank_reaches_render_world_and_planning() -> None:
+    drawn = concept.Concept.from_payload(_with_start_rank(3))
+    assert "They start at rank 3 of 12." in drawn.render()
+    assert "The protagonist starts at rank 3 of 12" in drawn.render_for_world()
+    seed = world_agent.render_seed_request("a listing", concept=drawn)
+    assert "The protagonist starts at rank 3 of 12" in seed.prompt
+    # The planner reads the start in words, so an unranked 0 is never a zero-based first rank.
+    assert drawn.for_outline()["horizon"]["start_rank"] == "rank 3 of 12"
+    assert drawn.for_outline()["system"]["start_rank"] == "rank 3 of 12"
+    assert drawn.to_jsonable()["system"]["start_rank"] == 3
+    unranked = concept.Concept.from_payload(_with_start_rank(0))
+    assert "They start unranked." in unranked.render()
+    assert "The protagonist starts unranked" in unranked.render_for_world()
+    assert unranked.for_outline()["horizon"]["start_rank"] == "unranked"
+    assert unranked.for_outline()["system"]["start_rank"] == "unranked"
+    before = concept.Concept.from_payload(_example())
+    assert "They start" not in before.render()
+    assert "protagonist starts" not in before.render_for_world()
+    assert set(before.for_outline()["horizon"]) == {"steps", "strongest_known", "pays"}
+
+
+def test_the_seed_puts_the_protagonist_at_the_concept_s_counted_start() -> None:
+    seed = world_agent.render_seed_request("a listing").system or ""
+    assert "Where the concept says the protagonist starts at a rank, declare them stands_at" in seed
+    assert "declare no stands_at for them" in seed
+    assert seed.count(discovery.LIVED_WORLD) == 1
+
+
 def test_new_discovery_retains_the_scoped_direction_through_concept_development() -> None:
     source = discovery.Discovery.from_invention(_discovery())
     developed = concept.Concept.from_development(_example(), source, author_brief="Keep this.")
@@ -858,7 +1105,7 @@ def test_inhabited_world_survives_with_pending_discoveries_separate_from_world_p
     assert restored.discovery == source
     assert restored.first_arc.opens == source.opening
     assert restored.author_brief == brief
-    assert seed.profile == "architect.seed.v8"
+    assert seed.profile == "architect.seed.v9"
     assert "world declare-batch --records" in seed.system
     assert source.world in seed.prompt
     assert brief in seed.prompt
@@ -872,16 +1119,20 @@ def test_inhabited_world_survives_with_pending_discoveries_separate_from_world_p
     assert restored.to_text() == developed.to_text()
 
 
-@pytest.mark.parametrize("with_discovery", [False, True])
+# A treatment from before magical-discovery.v7 keeps first_use out of planning (stage-0 §255).
+@pytest.mark.parametrize("discovery_version", [None, "magical-discovery.v6", discovery.VERSION])
 @pytest.mark.parametrize("turn_before_opening", [False, True])
 def test_future_story_fields_cannot_return_as_world_declaration_material(
-    with_discovery: bool, turn_before_opening: bool,
+    discovery_version: str | None, turn_before_opening: bool,
 ) -> None:
+    with_discovery = discovery_version is not None
+    first_use_planned = discovery_version != "magical-discovery.v6"
     drawn = concept.Concept.from_payload(_example())
     drawn = replace(
         drawn,
-        discovery=discovery.Discovery("SETTING_MARKER", "OPENING_MARKER", "GROWTH_MARKER")
-        if with_discovery else None,
+        discovery=discovery.Discovery(
+            "SETTING_MARKER", "OPENING_MARKER", "GROWTH_MARKER", version=discovery_version,
+        ) if discovery_version is not None else None,
         first_use="FIRST_USE_MARKER",
         want="WANT_MARKER",
         threat=replace(drawn.threat, first_reach="FIRST_REACH_MARKER"),
@@ -908,7 +1159,8 @@ def test_future_story_fields_cannot_return_as_world_declaration_material(
         assert marker not in drawn.render_for_world()
         assert marker not in grow.prompt
         assert (marker in json.dumps(drawn.for_outline())) is (
-            marker not in {"FIRST_USE_MARKER", "FIRST_REACH_MARKER", "ARC_START_MARKER"}
+            marker not in {"FIRST_REACH_MARKER", "ARC_START_MARKER"}
+            and (marker != "FIRST_USE_MARKER" or first_use_planned)
         )
     assert "LISTING_MARKER" in seed.prompt
     assert "AUTHOR_BRIEF_MARKER" in seed.prompt

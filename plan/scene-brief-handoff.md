@@ -11,8 +11,12 @@ development cannot replace the author brief, and precision edits cannot change i
 
 The existing outline call receives the concept's story foundations, author direction, accepted
 history and world context. Its projection omits `discovery.opening`, the duplicate
-`first_arc.opens`, `first_use` and `threat.first_reach`. Background, pursuit, world/growth
-possibilities, system conditions, turn, later arc shape and debts remain. The complete stored
+`first_arc.opens` and `threat.first_reach`. Background, pursuit, world/growth possibilities,
+system conditions, turn, later arc shape and debts remain. A request that still plans chapter
+one also receives the proposed `first_use` and places the first working use there; other steps
+in its wording may move (restored 2026-09-22, stage-0 §255). Later arcs and continuations past
+chapter one receive neither. A concept developed from a treatment before
+`magical-discovery.v7` keeps `first_use` out, as it was planned. The complete stored
 concept is unchanged. For a concept-backed book, it returns a structured brief for each scene:
 
 - `situation`: the starting place, relevant relationships, and the viewpoint character's
@@ -48,8 +52,9 @@ digest records it. Planning may move optional developments later to leave room f
 the scene and developing choices. The writer's length instruction makes room for action and
 viewpoint experience without requiring additional events to fill the allowance.
 
-Generated opening and first-use chapter labels are proposals, and their detailed sequences
-are no longer passed to the outline. It constructs events while preserving meaningful early
+Generated opening chapter labels are proposals, and the opening's detailed sequence is no
+longer passed to the outline. The first use is passed to a plan that covers chapter one;
+only its working use is placed there (2026-09-22). It constructs events while preserving meaningful early
 magic, original author instructions, author locks and established world rules. An unchanged
 world condition remains a constraint rather than requiring its own demonstration episode.
 Actual costs, prerequisites and activation conditions still precede dependent gains.
@@ -136,6 +141,8 @@ Registered attempts, first outputs, frozen requests, failures and complete readi
 under `runs/luke-story-developments-20260909/`. The original generated opening was a direct
 source of repeated training episodes. Removing its four choreography fields from planning
 changes that input without mutating the stored concept, accepted world or author locks.
+(2026-09-22: `first_use` returned to planning for new concepts, scoped to its one working use
+in chapter one; the other three fields stay out. Stage-0 §255.)
 World rules now constrain events without requiring demonstrations of unchanged conditions.
 
 The one-unit chapter trial exposed two configuration defects: its 1,800-word answer exceeded

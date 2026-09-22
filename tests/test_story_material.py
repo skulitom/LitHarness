@@ -339,7 +339,7 @@ def test_outline_uses_same_references_with_history_locks_and_actual_promise_date
         target_scene_words=1400,
     )
     body = json.loads(request.prompt)
-    assert request.profile == "planner.outline.structured.v3"
+    assert request.profile == "planner.outline.structured.v4"
     assert "chapters" in request.schema["properties"]
     assert "development_coverage" in request.schema["required"]
     assert len(body["writing_layout"]["chapters"]) == 6
@@ -352,7 +352,85 @@ def test_outline_uses_same_references_with_history_locks_and_actual_promise_date
     assert concept.LATER_ARC_RULE not in body["rules"]
     assert concept.FIRST_ARC_RULE not in body["rules"]
     assert concept.TURN_RULE not in body["rules"]
+    assert (concept.MATERIAL_FIRST_USE_RULE in body["rules"]) is (arc == 1)
+    assert concept.FIRST_USE_RULE not in body["rules"]
     assert "987654" not in request.prompt
+
+
+@pytest.mark.parametrize("horizon", ["later", "unresolved"])
+def test_a_first_use_outside_the_opening_horizons_is_never_placed_in_chapter_one(horizon):
+    """first_use_id is checked only for existence, so its horizon gates the placement."""
+    payload = concept_payload()
+    payload["story_material"]["developments"][0]["horizon"] = horizon
+    source = concept.Concept.from_payload(payload)
+    assert not source.places_first_use
+    revision = new_book("b", "main", title="Reef", scenes=6)
+    beats = beats_for(revision, arc_template(6))
+    premise = lc.PlanItem(
+        logical_id="premise",
+        kind=lc.PlanKind.PREMISE,
+        text="Explore the reef.",
+        authority=lc.PlanAuthority.INTENDED,
+    )
+    base = PlanRevision("b", "main", (premise, source.plan_item()))
+    body = json.loads(
+        outline.render_outline_request(
+            "Reef",
+            beats,
+            base=base,
+            concept=source,
+            serial_arc_index=1,
+        ).prompt
+    )
+    assert story_material.PLANNING_RULE in body["rules"]
+    assert concept.MATERIAL_FIRST_USE_RULE not in body["rules"]
+    assert intended().places_first_use
+
+
+def test_material_invention_asks_for_one_person_s_exception_and_counted_ranks():
+    """Delivery of the restored directions (stage-0 §255), not evidence of compliance."""
+    from litharness.application import discovery
+
+    request = concept.render_material_request(
+        AUTHOR,
+        layout=chapter_layout.WritingLayout.opening(6, SerialShape(1, 6), 1400),
+    )
+    for asked in (
+        "nobody else in the world has",
+        "even where the system itself is shared",
+        "start_rank",
+        "0 when they start unranked",
+        "the first time the exception works for them",
+        "colour, place, light, type",
+    ):
+        assert asked in request.system, asked
+    assert request.system.count(discovery.DIRECTION) == 1
+    assert request.system.count(discovery.WORLD_DIRECTION) == 1
+    assert "need not be unique" not in request.system
+    assert request.profile == "writer.concept.material.v2"
+    system = request.schema["properties"]["system"]
+    assert system is concept.COUNTED_SYSTEM_SCHEMA
+    assert list(request.schema["properties"])[:5] == [
+        "person_before",
+        "exception",
+        "want",
+        "system",
+        "second_system",
+    ]
+
+
+def test_stored_material_concepts_without_a_start_rank_still_read():
+    """The 2026-09-19 trial's concept has the six legacy system keys and must keep reading."""
+    assert "start_rank" not in intended().to_jsonable()["system"]
+    counted = concept_payload()
+    counted["system"]["start_rank"] = 1
+    drawn = concept.Concept.from_payload(counted)
+    assert drawn.system.start_rank == 1
+    assert concept.Concept.from_text(drawn.to_text()) == drawn
+    assert drawn.for_outline()["system"]["start_rank"] == f"rank 1 of {drawn.system.steps}"
+    counted["system"]["due_scene"] = 2
+    with pytest.raises(concept.MalformedConcept, match="unexpected structured system fields"):
+        concept.Concept.from_payload(counted)
 
 
 def test_cli_invents_once_retains_exact_brief_and_reopens_as_one_intended_source(
@@ -387,6 +465,8 @@ def test_cli_invents_once_retains_exact_brief_and_reopens_as_one_intended_source
     assert json.loads(request.prompt)["author_brief"] == AUTHOR
     assert request.allowed_tools == ()
     assert parse_schema_payload(json.dumps(concept_payload()), request.schema) == concept_payload()
+    # New requests ask for the counted start; the stored shape without it still reads below.
+    assert "start_rank" in request.schema["properties"]["system"]["required"]
     assert parse_schema_payload(json.dumps(_example()), request.schema) is None
     assert not (out / "discovery-trace.json").exists()
     assert (out / "concept-trace-1.json").exists()
