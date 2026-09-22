@@ -144,6 +144,33 @@ def _said(records: Sequence[lc.StateRecord], value: int | str) -> int | str:
     return value if isinstance(value, int) else display_name(records, value)
 
 
+def _prints_another_quantity(
+    records: Sequence[lc.StateRecord],
+    target: extraction_mod.Movable,
+    *,
+    character: str | None,
+    at: str,
+    was: int | str,
+) -> bool:
+    """Whether the line prints a priced grant as another number than the edges count (§254).
+
+    Read through the arm `moves.movables` uses (the one system printing the line and this
+    character's sheet in it), so the abstention and the beat vocabulary cannot come apart. A
+    book with no price, an unpriced grant, a rung, and a count the edges agree with all answer
+    `False`, which is every book whose line and edges are one statement.
+    """
+    if character is None or not isinstance(was, int):
+        return False
+    canon = [record for record in records if state_mod.is_canon(record)]
+    system = extraction_mod._printing_system(canon, records)
+    if system is None or target.key not in set(system.ability_ids):
+        return False
+    if not system.ability(target.key).price:
+        return False
+    sheet = gamesystem_mod.sheet_of(canon, character, system=system, at=at)
+    return sheet is not None and sheet.magnitude(target.key) != was
+
+
 def named_target(
     plan: str,
     records: Sequence[lc.StateRecord],
@@ -216,11 +243,16 @@ def moved_example(
       asking that scene to print different ones would mint a second snapshot at one key and be
       refused by the contradiction detector. Both golden fixtures are that book;
     - the named column reads no integer on the line standing there;
-    - the column has no room to move (`extraction.moved_to`'s ceiling).
+    - the column has no room to move (`extraction.moved_to`'s ceiling);
+    - a priced grant whose line prints another number than the edges count (§254): the page's
+      allowance beside the purchases `extraction._holdings_from_line` bound, where the
+      arithmetic's next count rendered into that line would show the allowance falling.
 
     The first four are `gate_progression`'s list read in the same order against the same
     records, and `test_the_prompt_abstains_wherever_the_gate_abstains` holds the pairing on the
-    one that matters. The fifth is this function's alone and is a **named residual**: the gate
+    one that matters. The fifth and sixth are this function's alone. The sixth needs no gate
+    change, because the gate asks only that the column moved and the writer can still move it
+    from the entering line. The fifth is a **named residual**: the gate
     still fires on a beat naming a column at its own ceiling, so such a scene is asked for a
     move, shown the unmoved line, and refused. Closing it means the beat vocabulary declining
     to name a maxed column, which re-rotates `beat_text` for every scheduled scene on the shelf
@@ -239,6 +271,8 @@ def moved_example(
     subject, values = folded
     was = _reading(values.get(target.key))
     if was is None:
+        return None
+    if _prints_another_quantity(records, target, character=character, at=at, was=was):
         return None
     # **Every column the move changes is shown moved** (§210): a rise that hands out a
     # stock and a deepen that is paid in one each leave two numbers different, and the

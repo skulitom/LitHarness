@@ -536,6 +536,20 @@ def holding_record_id_for(subject: str, ability_id: str, order_key: str, magnitu
     return f"rec-h{sha256(material.encode()).hexdigest()[:24]}"
 
 
+#: The note on a holding bound at the number the line prints (§236), unchanged.
+_PRINTED_HOLDING = (
+    "read off the status line: a declared subject holding a declared grant "
+    "at the number the line prints, which is the book stating a fact its "
+    "world already counts"
+)
+#: The note on a holding bound at the purchases the line's own stock paid for (§254).
+_PAID_HOLDING = (
+    "read off the status line: the line prints this grant as a quantity its price could not "
+    "have bought, so the holding is the purchases the line's own stock column paid for, and "
+    "the printed number stays on the snapshot"
+)
+
+
 def _holdings_from_line(
     sheet: Sheet,
     read: Mapping[str, object],
@@ -566,31 +580,46 @@ def _holdings_from_line(
     a grant the world declared, the number is the page's own, and no model returned the record.
     The magnitude rides in the id so two readings at one position are two rows. A column the
     system does not declare mints nothing, which is every book without a system.
+
+    **A priced grant is bound through the stock that pays for it** (§254). The
+    opening-consequence trial printed the interface's physical allowances,
+    `Length 10 | Duration 60 | Load 100`, in columns its system counts as purchases at one Point
+    each, and binding every printed number as a magnitude read Chapter 6's one-Point Duration
+    purchase as sixty purchases. So a priced grant's number binds as printed only when its price
+    could have bought it from the stock held entering the scene plus what the rungs this line
+    climbs hand out. A number its price could not have bought is the page's own quantity and
+    stays verbatim on the snapshot; the holding is then the count the line's own stock column
+    paid for, when exactly one such grant moved on the page and its one stock is printed, and
+    otherwise nothing binds for it, because choosing which grant a Point bought would be this
+    reader inventing the purchase. Unpriced grants, stocks and counts a price could buy bind
+    exactly as before (`_bound_holdings`).
     """
     canon = _canon_of(known)
     minted: list[lc.StateRecord] = []
+    printed_before = _folded_before(known, subject, order_key)
     for system in gamesystem_mod.systems_of(canon):
         abilities = set(system.ability_ids)
         columns = [field_ for field_ in sheet.fields if field_.numeric and field_.name in abilities]
         if not columns:
             continue
         standing = gamesystem_mod.sheet_of(canon, subject, system=system, at=order_key)
+        stated: dict[str, int] = {}
         for field_ in columns:
             value = read.get(field_.name)
-            if isinstance(value, bool) or not isinstance(value, int):
-                continue
-            held = standing.magnitude(field_.name) if standing is not None else 0
-            if value == held:
-                continue
+            if isinstance(value, int) and not isinstance(value, bool):
+                stated[field_.name] = value
+        for ability_id, magnitude, note in _bound_holdings(
+            system, standing, stated, read=read, printed_before=printed_before
+        ):
             start, end = span
             minted.append(
                 lc.StateRecord(
-                    record_id=holding_record_id_for(subject, field_.name, order_key, value),
+                    record_id=holding_record_id_for(subject, ability_id, order_key, magnitude),
                     kind=lc.StateRecordKind.RELATIONSHIP,
                     subject=subject,
                     predicate=worlds_mod.CAN_DO,
-                    object_ref=field_.name,
-                    value=value,
+                    object_ref=ability_id,
+                    value=magnitude,
                     story_position=lc.StoryPosition(order_key=order_key),
                     authority=lc.StateAuthority.ACCEPTED_CANON,
                     pov_visibility=[],
@@ -603,14 +632,72 @@ def _holdings_from_line(
                         )
                     ],
                     predicate_registry_version=GRAPH_REGISTRY_VERSION,
-                    note=(
-                        "read off the status line: a declared subject holding a declared grant "
-                        "at the number the line prints, which is the book stating a fact its "
-                        "world already counts"
-                    ),
+                    note=note,
                 )
             )
     return tuple(minted)
+
+
+def _bound_holdings(
+    system: gamesystem_mod.SystemDef,
+    standing: gamesystem_mod.CharacterSheet | None,
+    stated: Mapping[str, int],
+    *,
+    read: Mapping[str, object],
+    printed_before: Mapping[str, object],
+) -> list[tuple[str, int, str]]:
+    """Each stated column that binds, the magnitude it binds at, and its note (§236, §254).
+
+    `held` is the edges' own count entering the scene (0 before the first rung, as it always
+    was); a stock's `available` is what it holds plus what the rungs this line climbs hand out.
+    """
+    held = {
+        ability_id: standing.magnitude(ability_id) if standing is not None else 0
+        for ability_id in system.ability_ids
+    }
+    entering = system.rank_index(standing.rank_id) if standing is not None else 0
+    printed_rung = read.get(gamesystem_mod.RANK_KEY)
+    reached: object = (
+        system.rank_index(printed_rung)
+        if isinstance(printed_rung, str) and printed_rung in system.rank_ids
+        else printed_rung
+    )
+    climbed = (
+        reached - entering
+        if isinstance(reached, int) and not isinstance(reached, bool) and reached > entering
+        else 0
+    )
+    available = {
+        ability.ability_id: held[ability.ability_id] + climbed * ability.per_rung
+        for ability in system.abilities
+        if ability.is_stock
+    }
+    bound: list[tuple[str, int, str]] = []
+    unbought: list[str] = []
+    for ability_id, value in stated.items():
+        if value == held[ability_id]:
+            continue
+        ability = system.ability(ability_id)
+        steps = value - held[ability_id]
+        if (
+            not ability.price
+            or steps < 0
+            or all(steps * amount <= available.get(stock, 0) for stock, amount in ability.price)
+        ):
+            bound.append((ability_id, value, _PRINTED_HOLDING))
+        elif value != printed_before.get(ability_id):
+            unbought.append(ability_id)
+    if len(unbought) == 1 and len(system.ability(unbought[0]).price) == 1:
+        ability_id = unbought[0]
+        stock, amount = system.ability(ability_id).price[0]
+        after = stated.get(stock)
+        spent = available.get(stock, 0) - after if after is not None else 0
+        if amount > 0 and spent > 0 and spent % amount == 0:
+            count = held[ability_id] + spent // amount
+            limit = system.depth_limit(ability_id)
+            if limit is None or count <= limit:
+                bound.append((ability_id, count, _PAID_HOLDING))
+    return bound
 
 
 def extract_graph_facts(

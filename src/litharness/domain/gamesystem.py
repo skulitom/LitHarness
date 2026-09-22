@@ -88,7 +88,11 @@ pinned to the contract's enum and gains no member.
 reads a status line back out of prose, and a snapshot minted that way could disagree with the
 `can_do` edges this module treats as canonical. `integrity.detect_contradictions` groups by
 `(subject, predicate, order_key)` and will not see it, because the two facts sit under different
-predicates. Reconciling them is a detector, and §160 declares no detector.
+predicates. Reconciling them is a detector, and §160 declares no detector. **Since §254 the two
+differ on purpose for a priced grant the page prints as a quantity its price could not have
+bought** (an allowance such as `Duration 120`): the snapshot keeps the page's number and the
+edge counts the purchases the line's stock paid for (`extraction._holdings_from_line`), so a
+reader comparing the two columns is comparing two units.
 
 **Layout since 2026-09-03 (stage-0 §216).** The definition, a position in it, the draw check and
 how both are written down live in `domain/systems.py`; the arithmetic of advancing a sheet in
