@@ -129,7 +129,8 @@ class ClaudeCodeProvider:
       Settings-source, CLAUDE.md exclusions and disabled auto memory remain explicit. Managed policy
       still applies; `--bare` is not interchangeable because it disables subscription OAuth.
     * Tool-free calls replace the default coding system prompt, including its repository
-      context. Tool-using roles retain the CLI's agent framing and append their role.
+      context. Tool-using roles retain the CLI's agent framing and append their role. Both
+      run in a fresh temporary directory, so neither framing can describe the repository.
     * stdin closed — see `subprocess_runner`.
 
     **This runs against whatever authentication the local `claude` install already has**, and
@@ -232,9 +233,24 @@ class ClaudeCodeProvider:
         started = time.monotonic()
         try:
             if request.allowed_tools:
-                outcome = self.runner(
-                    self._argv(request), timeout=request.timeout_seconds, stdin=request.prompt
-                )
+                # **A tool-using role runs outside the repository too** (2026-09-22). It keeps
+                # the CLI's agent framing, whose per-machine sections describe the working
+                # directory: from the repository root that is the repository's path, branch,
+                # changed and untracked paths and recent commit subjects, and the directory the
+                # CLI's read tools start from. Every shipped allowance is a web search or a
+                # `litharness` command that finds its store through an absolute
+                # `LITHARNESS_DATABASE` (and, for the Recruiter, an absolute
+                # `LITHARNESS_ROSTER_DATABASE`; both set by the CLI verb), so none needs the
+                # caller's directory. Cleanup errors are
+                # ignored: a shell the agent ran may briefly hold the directory on Windows,
+                # and an answered call must not become a failed one.
+                with TemporaryDirectory(
+                    prefix="litharness-agent-", ignore_cleanup_errors=True
+                ) as directory:
+                    outcome = self.runner(
+                        self._argv(request), timeout=request.timeout_seconds,
+                        stdin=request.prompt, cwd=directory,
+                    )
             else:
                 # A prose/schema completion has no workspace task. Give it no repository
                 # from which the CLI could assemble incidental working-directory context.

@@ -26698,3 +26698,84 @@ source ids, not upstream nodes. Summaries, cast and world aggregates and rendere
 map no upstream inputs. The packet takes every open promise regardless of story position, so a
 redraft of an earlier scene can carry a line whose `opened_relation` is `after`. The derivation
 records that without changing it, and how often it occurs in stored books was not measured.
+
+
+## 258. A `claude -p` call run from inside the repository can read its git status and path, and every Claude transport now runs outside it (2026-09-22)
+
+2026-09-22, found by milder-v4's own isolation probe. The costed reader's milder-dose arm
+(`research/quality-measurement/cost-that-bites-milder-20260922/`) bought 70 of 360 sessions in
+its first invocation, whose two isolation probes answered NONE. Its resumed invocation's git
+probe, asked from a scratch repository holding an untracked file `GIT_CONTEXT_LEAKED`, returned
+that exact filename, which its instruction does not contain, and the arm bought nothing.
+
+**The measurement.** Through the pinned CLI (`2.1.280`) with `elicit.py`'s exact argv
+(`--system-prompt` plus `CLI_HARDENING`), from a scratch repository, the model returned the
+untracked filename in 2 of 5 calls with `--exclude-dynamic-system-prompt-sections` and 1 of 5
+without it, and the working-directory path in about 2 of 5 either way (a coordinator script,
+$0.25, twenty Haiku calls; not a registered arm). The CLI's help says that flag moves the
+per-machine sections (working directory, environment, memory paths, git status) into the first
+user message and is ignored with `--system-prompt`; the answers show the sections reaching the
+model regardless. From the repository root those sections carry this repository's path, branch,
+changed and untracked paths (research folder names) and recent commit subjects, which describe
+experiments by name.
+
+**Scope, from a read-only audit.** `elicit.py`'s CLI transport, `force_remote.py` and
+`writer_states.py` ran every call in the process working directory, which every research
+RUNBOOK sets to the repository root; no isolation probe for git status was ever answered before
+milder-v4, and no arm recorded its CLI version before 2026-09-05. Exposed by that transport:
+the 08-17 to 08-19 persona, defect, repair, taste, axiom, elicitation and voice-binding
+batteries; writer-states; the force F1 Haiku arm; the 08-22 comic-beat census; the 08-23/24
+comprehension, pitch and affect arms; the sim-readership backtest pilot, re-pilot and paused
+stage (c); cost-that-bites v1, v2 and v3 (§222, §230); the 09-04 volume screen; the anticipation
+run; opening-parity (22 results committed 2026-09-01, transport `cli`); and possibly
+`summary_reliability` (no tracked result, so unknown). Through the production adapter before
+§248 moved tool-free calls to a temporary directory (2026-09-08), every call ran from the
+repository root with append framing, so the default prompt's per-machine sections were present
+by the CLI's design: reassembly, readers-order-control, reassembly-reads, prose-framing,
+prose-staging and every production draft of that period, volume one included. Tool-using calls
+(the Architect's seed and grow, the Recruiter, the title search) still ran from the caller's
+directory until this entry. Whether older CLI versions put git status in front of a
+`--system-prompt` call is not on record; §245's unexplained research-directory name in a
+production answer (2.1.263) is consistent with it. A count-only scan of 21,117 answer texts in
+the research caches found no repository path, name or git-status wording, which does not bound
+exposure because the answers are short and constrained.
+
+**What this does to the record.** Nothing is withdrawn. Within one arm every condition saw the
+same repository state, so the exposure is not differential by manipulation, and §230's
+shuffle-versus-intact contrast cannot have been produced by it; but every arm listed above ran
+under an isolation it did not have, and a reader told the names of the experiments it was in is
+not the reader its registration described. §230's SUPPORTED claim carries that caveat from here.
+
+**The fix.** `elicit.py` runs every CLI call in a fresh temporary directory outside any work tree
+and strips inherited `GIT_*` variables, without changing a request byte or a cache key, so every
+cached record still replays; each answer bought after the fix carries
+`"cli_workdir": "isolated-2026-09-22"` outside its key, and a CLI call is refused while its cache
+holds unmarked answers, so no resumed arm can pool pre-fix and post-fix reads without an
+amendment (the paused backtest stage (c) now needs one; its FINDINGS.md records this). The
+failure reason now keeps the error envelope's cause instead of the envelope's first 60
+characters, which is why milder-v4's five transport failures at 22:10 have no recorded cause.
+`writer_states.py` and `force_remote.py` get the same working directory and refusal.
+`providers/cli.py` runs tool-using calls in a fresh temporary directory too: every shipped
+allowance is a web search or a `litharness` command that finds its store through an absolute
+`LITHARNESS_DATABASE` (and, for the Recruiter, an absolute `LITHARNESS_ROSTER_DATABASE`, which
+`cmd_recruit` now pins). The opt-in git-status canary in `tests/test_providers.py` now runs the
+adapter from inside a marker repository and checks the directory the adapter chose.
+`CLAUDE.md` states the working-directory rule for every call site.
+
+**milder-v4.** Its 70 sessions and ledger are preserved, marked contaminated and never read.
+[AMENDMENT-1.md](../research/quality-measurement/cost-that-bites-milder-20260922/AMENDMENT-1.md)
+re-buys all 360 sessions as `milder-v4a` through the fixed transport into a fresh cache and
+ledger, with the same design, seeds, texts, sham, binary copy and ceilings, and three git probes
+at start; the combined worst case ($169.77 / 4,948 calls / 8 h 41 min) exceeds the registered
+envelope and stands on the operator's sign-off of 2026-09-22 ("Approve up to $170").
+
+**Also landed with this record.** The plural-decade quantity patch in `application/precision.py`,
+uncommitted since 2026-09-08, was committed at the operator's direction (`1c16fe7`): "1890s" now
+counts as a digit quantity, so a precision edit may replace it only as a complete span.
+
+**Residuals.** `CLAUDE_CODE_*` session variables are still inherited (removing them could change
+how the reader is reached, which cannot be checked without a call). A cwd path is still visible
+to a model, now a meaningless temporary directory. Whether Read, Glob and Grep run without
+approval for tool-using roles under `--permission-mode manual` is not on record. World records
+in the `runs/*.db` stores were not scanned for repository markers. The F1 checkpoint in
+`force_harness` does not refuse a pooled resume; it records the working directory only.

@@ -3822,17 +3822,23 @@ def cmd_recruit(args: argparse.Namespace) -> int:
     database = str(Path(_roster_database(args)).resolve())
     previous = {
         DATABASE_ENV: os.environ.get(DATABASE_ENV),
+        ROSTER_DATABASE_ENV: os.environ.get(ROSTER_DATABASE_ENV),
         RECRUIT_SHELF_ENV: os.environ.get(RECRUIT_SHELF_ENV),
         RECRUIT_SHAPE_ENV: os.environ.get(RECRUIT_SHAPE_ENV),
     }
     os.environ[DATABASE_ENV] = database
+    # **The roster variable is pinned to the same absolute path** (2026-09-22). The child's
+    # roster commands prefer it over `DATABASE_ENV`, and the agent now runs in a temporary
+    # directory (`providers/cli.py`), so an inherited relative value would open a fresh,
+    # empty roster there and the declares would vanish with the directory.
+    os.environ[ROSTER_DATABASE_ENV] = database
     os.environ[RECRUIT_SHELF_ENV] = args.specialization
     os.environ[RECRUIT_SHAPE_ENV] = shape
 
     stamp = _stamp(_now())
     declared: list[dict[str, Any]] = []
     result = None
-    # **The store is opened inside the `try`, so a failure to open it does not leave the three
+    # **The store is opened inside the `try`, so a failure to open it does not leave the four
     # variables set in this process.** Outside it, an unopenable database left
     # `LITHARNESS_RECRUIT_SHELF` behind and the next `roster accept` was refused as though a run
     # were in flight — which matters for the in-process driver the tests use, and for anything

@@ -67,7 +67,18 @@ sys.path.insert(0, str(HERE))
 
 from ablate import _EM, _INTERIOR, _PROTECTED, stake_score  # noqa: E402
 from corpus_io import generated_scenes  # noqa: E402
-from elicit import CLI_HARDENING, PANEL_MODEL, Elicitor, digest, positional_bias  # noqa: E402
+from elicit import (  # noqa: E402
+    CLI_HARDENING,
+    CLI_WORKDIR_FIELD,
+    CLI_WORKDIR_MARK,
+    PANEL_MODEL,
+    Elicitor,
+    _cli_environment,
+    _cli_workdir,
+    _refuse_a_pooled_context,
+    digest,
+    positional_bias,
+)
 from persona_battery import pairwise_interval  # noqa: E402
 
 #: The book's own drafter (providers/cli.py pins it), so the sober retell is the same voice that
@@ -200,6 +211,9 @@ class Generator:
         self._lock = threading.Lock()
         self._cache: dict[str, dict[str, Any]] = {}
         self._handle: Any = None
+        #: Retells loaded without `elicit.CLI_WORKDIR_FIELD`, bought in the caller's working
+        #: directory before 2026-09-22; while non-zero this replays and never buys.
+        self.unmarked_answers = 0
         if cache_path.is_file():
             dropped = 0
             for line in cache_path.read_text(encoding="utf-8").splitlines():
@@ -217,6 +231,9 @@ class Generator:
                     continue
                 if isinstance(record.get("key"), str):
                     self._cache[record["key"]] = record
+            self.unmarked_answers = sum(
+                1 for record in self._cache.values() if CLI_WORKDIR_FIELD not in record
+            )
             if self._cache or dropped:
                 print(f"replaying {len(self._cache)} cached retell(s) from {cache_path.name}"
                       + (f" ({dropped} transport failure(s) dropped for re-elicitation)"
@@ -290,16 +307,25 @@ class Generator:
         # call succeeded in isolation seconds later — a startup-lock herd, not a property of
         # any request. A transport failure that survives three attempts is recorded with its
         # stderr tail, so the next diagnosis starts from evidence instead of from `cli_error`.
+        # **Outside every repository, since 2026-09-22** (`elicit.CLI_WORKDIR_PREFIX`, a
+        # correctness change to a module whose arms are finished). This call ran in the
+        # caller's working directory, the repository root for every arm, and the pinned CLI was
+        # measured passing that directory's git status to a `--system-prompt` call. The request
+        # and its key are unchanged; the record carries the mark, and a cache holding retells
+        # bought before the change is replayed, never extended.
+        _refuse_a_pooled_context(self.cache_path, self.unmarked_answers)
         completed = None
         error_name = ""
         for attempt in range(3):
             if attempt:
                 time.sleep(10.0 * attempt)
             try:
-                completed = subprocess.run(
-                    argv, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                    timeout=GEN_TIMEOUT_SECONDS, input=prompt, check=False,
-                )
+                with _cli_workdir() as workdir:
+                    completed = subprocess.run(
+                        argv, capture_output=True, text=True, encoding="utf-8",
+                        errors="replace", timeout=GEN_TIMEOUT_SECONDS, input=prompt,
+                        check=False, cwd=workdir, env=_cli_environment(),
+                    )
             except (subprocess.TimeoutExpired, OSError) as error:
                 completed, error_name = None, type(error).__name__
                 continue
@@ -308,7 +334,8 @@ class Generator:
         if completed is None:
             record = {**tag, "key": key, "model": self.model,
                       "text": "", "refused": True,
-                      "stop_reason": f"transport_error:{error_name}", "usage": {}}
+                      "stop_reason": f"transport_error:{error_name}", "usage": {},
+                      CLI_WORKDIR_FIELD: CLI_WORKDIR_MARK}
             with self._lock:
                 self._cache[key] = record
                 self.api_calls += 1
@@ -343,7 +370,8 @@ class Generator:
                 tokens["cache_write"] += int(entry.get("cacheCreationInputTokens", 0) or 0)
             usage = {**tokens, "equivalent_usd": float(envelope.get("total_cost_usd") or 0.0)}
         record = {**tag, "key": key, "model": self.model,
-                  "text": text, "refused": not text, "stop_reason": stop_reason, "usage": usage}
+                  "text": text, "refused": not text, "stop_reason": stop_reason, "usage": usage,
+                  CLI_WORKDIR_FIELD: CLI_WORKDIR_MARK}
         with self._lock:
             self._cache[key] = record
             self.api_calls += 1

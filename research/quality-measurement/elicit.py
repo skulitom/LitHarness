@@ -71,17 +71,19 @@ find. Never run from the production loop: this is research code that spends mone
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
 import os
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import urllib.error
 import urllib.request
 from collections import Counter
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -139,10 +141,17 @@ CLI_TIMEOUT_SECONDS = 300.0
 #: The hardening `providers/cli.py` earned, copied rather than imported — research code must not
 #: depend on `src/`, and each flag there carries the reason it is not optional. Two differences,
 #: both deliberate, both about the persona: this uses `--system-prompt` (which *replaces*) where
-#: the production adapter uses `--append-system-prompt`, and it strips the dynamic sections. A
-#: reader persona appended to "You are Claude Code, an interactive CLI tool" is not a reader — it
-#: is an agent wearing a reader's answers, which is the caricature failure arriving through the
-#: transport instead of through the prompt.
+#: the production adapter uses `--append-system-prompt`, and it passes
+#: `--exclude-dynamic-system-prompt-sections`. A reader persona appended to "You are Claude
+#: Code, an interactive CLI tool" is not a reader — it is an agent wearing a reader's answers,
+#: which is the caricature failure arriving through the transport instead of through the prompt.
+#: **That flag does not strip the per-machine sections, as this comment used to say**: the
+#: 2.1.280 help says it moves them into the first user message and is ignored beside
+#: `--system-prompt`, and the repository's git status reached the model with or without it
+#: (2026-09-22). The sections still arrive; what keeps the repository out of them is the working
+#: directory (`CLI_WORKDIR_PREFIX`). The flag stays, because removing it would change the
+#: reader's argv.
+#: The tool definitions are not removed either (there is no `--tools ""`), for the same reason.
 #:
 #: **The last two flags keep the repository's CLAUDE.md out of the judge's context** (stage-0
 #: §109). A `-p` call loads CLAUDE.md from the working directory and its ancestors even under
@@ -160,6 +169,118 @@ CLI_HARDENING = (
     "--setting-sources", "user",
     "--settings", '{"claudeMdExcludes":["**/CLAUDE.md","**/CLAUDE.local.md"]}',
 )
+
+#: **Every `claude -p` call this module makes runs in a fresh, empty temporary directory that
+#: no git work tree contains, and until 2026-09-22 it ran wherever the process stood.** The
+#: flags above keep CLAUDE.md out; they do not keep out the per-machine context the CLI builds
+#: from its working directory (the path, and a git repository's status: branch, changed and
+#: untracked paths, recent commit subjects). Measured on the pinned `claude` 2.1.280 with this
+#: module's exact argv: from a scratch repository holding an untracked `GIT_CONTEXT_LEAKED`, the
+#: model named that file in 2 of 5 calls, and 1 of 5 without
+#: `--exclude-dynamic-system-prompt-sections`, whose help says it is ignored beside
+#: `--system-prompt`; the working-directory path came back in about 2 of 5 either way. Every
+#: research arm runs from the repository root, so each call could carry the repository's status.
+#: The milder-dose arm's git probe caught it (`cost-that-bites-milder-20260922/AMENDMENT-1.md`).
+#: `providers/cli.py` has run its tool-free completions this way since 2026-09-08 (§248), and
+#: this is the same pattern. `writer_states.Generator` calls `_cli_workdir` too, and
+#: `force_remote._call` carries a copy of it (that module runs beside this one, not on it).
+#:
+#: **What is sent does not change; what the reader sees does.** The argv, stdin and cache key
+#: (which never held the working directory) are byte-identical, so a record cached before the
+#: fix still replays, and that is the hazard. An arm bought in part from the repository root
+#: and resumed now would serve answers given in one context and buy answers in another under
+#: the same keys, pooling them silently, which is what `_call`'s transport-in-the-key rule
+#: forbids. So every answer bought from here on carries `CLI_WORKDIR_FIELD` in its record (never
+#: in its key), and a CLI call is refused before any process starts while the cache it would
+#: join holds an answer without it (`_refuse_a_pooled_context`). Replaying such a cache without
+#: buying is still allowed: a finished arm's analysis reads the context it was bought in.
+#:
+#: Two side effects, read from the record and from the binary rather than measured by a call:
+#: the CLI names its project memory folder after the working directory
+#: (`~/.claude/projects/C--DEV-LitHarness/` from the repository root), so a fresh directory
+#: selects no existing memory; and 2.1.280 reads an inherited `PWD` only when it is a symlink to
+#: the working directory.
+CLI_WORKDIR_PREFIX = "elicit-cli-"
+
+#: The record field, and its value, saying a CLI answer was bought outside every repository.
+CLI_WORKDIR_FIELD = "cli_workdir"
+CLI_WORKDIR_MARK = "isolated-2026-09-22"
+
+#: Git's repository-location variables. Any of them in the environment hands a child `git` a
+#: repository whatever its working directory (a git hook, for one, exports `GIT_DIR`), so the
+#: CLI's status gathering would read that repository from the empty directory.
+GIT_LOCATION_VARIABLES = frozenset({
+    "GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_NAMESPACE",
+})
+
+
+def _git_work_tree_at(path: Path) -> Path | None:
+    """The nearest of `path` and its ancestors holding a `.git` entry, or None.
+
+    `.git` is a directory in a repository and a file in a worktree or submodule, so the test is
+    existence. Git's discovery also stops at a filesystem boundary and honours
+    `GIT_CEILING_DIRECTORIES`; ignoring both makes this walk stricter than that discovery, never
+    looser. The walk says nothing about git's location variables, which bypass discovery
+    altogether; `_cli_environment` keeps those from the child instead.
+    """
+    for candidate in (path, *path.parents):
+        if (candidate / ".git").exists():
+            return candidate
+    return None
+
+
+def _cli_environment() -> dict[str, str] | None:
+    """The CLI child's environment: the process's own without git's location variables, or None
+    (inherit it unchanged, as before 2026-09-22) when none of them is set.
+
+    **Everything else is inherited, `CLAUDE_CODE_*` and `CLAUDECODE` included**, which a run
+    launched from inside a Claude Code session carries. Some of those concern authentication
+    and session plumbing, so removing them would change how the reader is reached with no call
+    to say what else it changes. They are disclosed here, not stripped.
+    """
+    present = {name for name in os.environ if name.upper() in GIT_LOCATION_VARIABLES}
+    if not present:
+        return None
+    return {name: value for name, value in os.environ.items() if name not in present}
+
+
+def _refuse_a_pooled_context(cache_path: Path, unmarked: int) -> None:
+    """Refuse a CLI purchase into a cache that holds answers bought before the fix.
+
+    `unmarked` counts the cache's answers whose record has no `CLI_WORKDIR_FIELD`. A record does
+    not say which transport bought it (the transport is inside the key's digest), so a cache
+    shared with the SDK or local transport is refused too, which is the conservative side.
+    """
+    if unmarked:
+        raise RuntimeError(
+            f"{cache_path.name} holds {unmarked} answer(s) without the {CLI_WORKDIR_FIELD!r} "
+            "mark: they were bought while claude -p ran in the caller's working directory "
+            "(before 2026-09-22), and a call bought now runs outside every repository, so "
+            "resuming would pool two reader contexts under one set of keys. Buy into a fresh "
+            "cache under a recorded amendment, or replay this one without buying"
+        )
+
+
+@contextlib.contextmanager
+def _cli_workdir() -> Iterator[str]:
+    """A fresh empty directory for one CLI call, refused if a git work tree contains it.
+
+    The refusal raises instead of returning a transport failure. A temporary root inside a
+    repository is a configuration fault that would fail every call, and the caller should stop
+    before buying anything. Cleanup errors are ignored: a Windows handle that outlives the child
+    leaves an empty folder behind, and it must not turn an answered call into a failed one.
+    """
+    with tempfile.TemporaryDirectory(
+        prefix=CLI_WORKDIR_PREFIX, ignore_cleanup_errors=True
+    ) as directory:
+        inside = _git_work_tree_at(Path(directory).resolve())
+        if inside is not None:
+            raise RuntimeError(
+                f"the claude -p working directory {directory} lies inside the git work tree at "
+                f"{inside}; point TMP/TEMP outside every repository"
+            )
+        yield directory
 
 
 #: The local transport. Ollama on the 4090 — see BRIEF.md §4 for what is in the cache.
@@ -368,9 +489,52 @@ def _is_transport_failure(stop_reason: str) -> bool:
 #: crash, short enough that the reasons Counter stays a small table rather than one key per call.
 _CLI_STDERR_CHARS = 60
 
+#: Characters of stdout, and of stderr, a failed call keeps in its failure detail
+#: (`Elicitor.failure_details`, and `Elicitor.failure_log` when a caller names one). The reason
+#: above stays short because it is a Counter key; the detail is where the cause is kept.
+_CLI_FAILURE_DETAIL_CHARS = 2000
+
+
+def _envelope_cause(envelope: dict[str, Any]) -> str:
+    """The part of a CLI error envelope that says why: its API status, a subtype other than
+    success, its `error` or `errors` text, and its `result` text when the envelope says it is an
+    error. Empty if it carries none of them.
+
+    **The envelope's first line is not its cause.** An error envelope is one line of JSON whose
+    leading keys are the same on every call, so a 60-character first-line snippet read
+    `{"duration_api_ms":0,"stop_reason":"stop_sequence","session_` for all five of milder-v4's
+    failures on 2026-09-22 (`runs-milder-v4.jsonl`), and nothing on record says why they failed.
+
+    **`result` is read only from an error envelope** (`is_error` set, or a subtype other than
+    success, the transport's own test below). A non-zero exit beside a success envelope carries
+    the reader's answer in `result`, and the reason is a Counter key that reaches the ledger
+    and the live log, where no answer may be printed.
+    """
+    parts: list[str] = []
+    status = envelope.get("api_error_status")
+    if status not in (None, ""):
+        parts.append(str(status))
+    subtype = envelope.get("subtype")
+    if subtype and subtype != "success":
+        parts.append(str(subtype))
+    is_error = bool(envelope.get("is_error")) or subtype not in (None, "success")
+    for name in ("result", "error") if is_error else ("error",):
+        value = envelope.get(name)
+        if isinstance(value, str) and value.strip():
+            parts.append(value)
+    errors = envelope.get("errors")
+    if isinstance(errors, list):
+        parts.extend(str(item) for item in errors if str(item).strip())
+    return " ".join(parts)
+
 
 def _cli_failure_reason(completed: subprocess.CompletedProcess[str]) -> str:
-    """`cli_error` with the exit code and a bounded first line of stderr.
+    """`cli_error` with the exit code and a bounded statement of the cause.
+
+    The cause is the first line of stderr. When stderr says nothing, it is the error
+    envelope's own cause (`_envelope_cause`) when stdout parses as one, and otherwise
+    stdout's first line. An envelope that names no cause is reported as such, never by its
+    first line, which is where a success envelope's answer would sit.
 
     **The prefix stays `cli_error` on purpose**: `_is_transport_failure` matches on it with
     `startswith`, so a richer reason is still counted, still uncached and still re-issued by a
@@ -386,11 +550,38 @@ def _cli_failure_reason(completed: subprocess.CompletedProcess[str]) -> str:
     if not first:
         # Some failures say nothing on stderr and put the message in the JSON envelope on
         # stdout; a bounded look there beats reporting a bare exit code.
-        first = next(
-            (line.strip() for line in (completed.stdout or "").splitlines() if line.strip()), ""
-        )
+        try:
+            envelope = json.loads(completed.stdout or "")
+        except json.JSONDecodeError:
+            envelope = None
+        if isinstance(envelope, dict):
+            first = _envelope_cause(envelope) or "an envelope that names no error"
+        else:
+            first = next(
+                (line.strip() for line in (completed.stdout or "").splitlines() if line.strip()),
+                "",
+            )
     snippet = " ".join(first.split())[:_CLI_STDERR_CHARS]
     return f"cli_error:rc={completed.returncode}" + (f":{snippet}" if snippet else "")
+
+
+def _as_text(value: object) -> str:
+    """A captured stream as text: `TimeoutExpired` can carry bytes, str or nothing."""
+    if value is None:
+        return ""
+    if isinstance(value, bytes):
+        return value.decode("utf-8", errors="replace")
+    return str(value)
+
+
+def _stream_detail(stdout: object, stderr: object) -> dict[str, Any]:
+    out, err = _as_text(stdout), _as_text(stderr)
+    return {
+        "stdout": out[:_CLI_FAILURE_DETAIL_CHARS],
+        "stderr": err[:_CLI_FAILURE_DETAIL_CHARS],
+        "stdout_chars": len(out),
+        "stderr_chars": len(err),
+    }
 
 
 def _synthetic_text(key: str, tag: dict[str, Any]) -> str:
@@ -600,6 +791,7 @@ class Elicitor:
         no_think: bool = True,
         rest_ratio: float = OLLAMA_REST_RATIO,
         dry_run: bool = False,
+        failure_log: Path | None = None,
     ) -> None:
         self.cache_path = cache_path
         self.model = model
@@ -632,6 +824,18 @@ class Elicitor:
         #: or rate limits has recorded a symptom instead of a cause. The count is kept even though
         #: the record is not.
         self.failure_reasons: Counter[str] = Counter()
+        #: One entry per CLI call that obtained no answer: its key, tag, reason and the first
+        #: `_CLI_FAILURE_DETAIL_CHARS` of stdout and stderr (or the exception). The reason is
+        #: a bounded Counter key; this is where the cause survives. Never the cache: a failure
+        #: is not an answer (§235), and nothing here is loaded back.
+        self.failure_details: list[dict[str, Any]] = []
+        #: When set, every failure detail is also appended to this JSONL file as it happens, so
+        #: a killed run keeps it. A separate file from the cache, never read by it.
+        self.failure_log = failure_log
+        #: Answers loaded from the cache whose record has no `CLI_WORKDIR_FIELD`: bought before
+        #: 2026-09-22 or by another transport. While it is non-zero the CLI transport replays
+        #: and never buys (`_refuse_a_pooled_context`).
+        self.unmarked_answers = 0
         self._load_cache()
 
     # ------------------------------------------------------------------ cache plumbing
@@ -659,6 +863,9 @@ class Elicitor:
                 continue
             self._cache[key] = record
             kept += 1
+        self.unmarked_answers = sum(
+            1 for record in self._cache.values() if CLI_WORKDIR_FIELD not in record
+        )
         if kept or left:
             print(
                 f"replaying {kept} cached call(s) from {self.cache_path.name}"
@@ -677,6 +884,36 @@ class Elicitor:
         handle = self._open()
         handle.write(json.dumps(record, ensure_ascii=False) + "\n")
         handle.flush()
+
+    def _note_cli_failure(
+        self, *, key: str, model: str, tag: dict[str, Any], stop_reason: str,
+        detail: dict[str, Any],
+    ) -> None:
+        """Count a CLI call that obtained no answer and keep its cause. Caller holds the lock."""
+        self.transport_failures += 1
+        self.failure_reasons[stop_reason] += 1
+        entry = {
+            "at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+            "key": key,
+            "model": model,
+            "tag": tag,
+            "stop_reason": stop_reason,
+            "detail": detail,
+        }
+        self.failure_details.append(entry)
+        if self.failure_log is not None:
+            path = self.failure_log
+            path.parent.mkdir(parents=True, exist_ok=True)
+            # A kill mid-append leaves a torn last line; close it so this entry is not glued
+            # to the fragment and lost with it on read.
+            torn = False
+            if path.is_file() and path.stat().st_size:
+                with path.open("rb") as tail:
+                    tail.seek(-1, os.SEEK_END)
+                    torn = tail.read(1) != b"\n"
+            with path.open("a", encoding="utf-8", newline="\n") as handle:
+                handle.write(("\n" if torn else "")
+                             + json.dumps(entry, ensure_ascii=False, default=str) + "\n")
 
     def close(self) -> None:
         if self._handle is not None:
@@ -1011,19 +1248,32 @@ class Elicitor:
             "--system-prompt", system,
             *CLI_HARDENING,
         ]
+        # Refused before any process starts: a cache holding answers bought in the caller's
+        # working directory is replayed, never extended (`CLI_WORKDIR_PREFIX`).
+        _refuse_a_pooled_context(self.cache_path, self.unmarked_answers)
         try:
-            completed = subprocess.run(
-                argv, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                timeout=CLI_TIMEOUT_SECONDS, input=_flatten_turns(params["messages"]),
-                check=False,
-            )
+            # The change of 2026-09-22 (`CLI_WORKDIR_PREFIX`): a fresh empty directory outside
+            # every git work tree, and no git location variable, so no repository status or
+            # path rides in. The argv and stdin are byte-identical to what they were, and the
+            # key never held the cwd; the record says which context it was bought in.
+            with _cli_workdir() as workdir:
+                completed = subprocess.run(
+                    argv, capture_output=True, text=True, encoding="utf-8", errors="replace",
+                    timeout=CLI_TIMEOUT_SECONDS, input=_flatten_turns(params["messages"]),
+                    check=False, cwd=workdir, env=_cli_environment(),
+                )
         except (subprocess.TimeoutExpired, OSError) as error:
             record = {**tag, "key": key, "model": params["model"], "text": "", "refused": True,
                       "stop_reason": f"transport_error:{type(error).__name__}", "usage": {}}
+            detail = {
+                "error": type(error).__name__,
+                "message": str(error)[:_CLI_FAILURE_DETAIL_CHARS],
+                **_stream_detail(getattr(error, "stdout", None), getattr(error, "stderr", None)),
+            }
             with self._lock:
                 self.api_calls += 1
-                self.transport_failures += 1
-                self.failure_reasons[record["stop_reason"]] += 1
+                self._note_cli_failure(key=key, model=params["model"], tag=tag,
+                                       stop_reason=record["stop_reason"], detail=detail)
             return record
 
         # **A failed call says why, and until 2026-09-04 it did not.** Any non-zero return
@@ -1077,12 +1327,16 @@ class Elicitor:
             "refused": not text,
             "stop_reason": stop_reason,
             "usage": usage,
+            CLI_WORKDIR_FIELD: CLI_WORKDIR_MARK,
         }
         with self._lock:
             self.api_calls += 1
             if _is_transport_failure(stop_reason):
-                self.transport_failures += 1
-                self.failure_reasons[stop_reason] += 1
+                self._note_cli_failure(
+                    key=key, model=params["model"], tag=tag, stop_reason=stop_reason,
+                    detail={"returncode": completed.returncode,
+                            **_stream_detail(completed.stdout, completed.stderr)},
+                )
             else:
                 self._cache[key] = record
                 self._persist(record)

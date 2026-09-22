@@ -21,8 +21,11 @@ transport and shared-machine guidance; it is not a book-writing prompt.
 `research/quality-measurement/elicit.py` and `force_remote.py` pass both
 `--setting-sources user` and the `claudeMdExcludes` setting on `claude -p` calls. Preserve
 both when adding a call site: `--system-prompt` alone does not exclude project context,
-and `--bare` breaks subscription login. The opt-in marker test in `tests/test_providers.py`
-checks isolation; rerun it after a Claude CLI upgrade with authorization for live quota.
+and `--bare` breaks subscription login. **Run every `claude -p` call from a fresh temporary
+directory outside any git work tree** (§258): from inside the repository the CLI can put its
+git status, branch, recent commit subjects and path in front of the model even with
+`--system-prompt`. The opt-in marker and git-status tests in `tests/test_providers.py`
+check isolation; rerun them after a Claude CLI upgrade with authorization for live quota.
 
 ## Production editorial authority
 

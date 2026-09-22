@@ -15,6 +15,8 @@ the writers they admitted. Stage-0 §151 records why export/import was refused.
 from __future__ import annotations
 
 import json
+from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -221,4 +223,34 @@ def test_recruit_hands_its_child_the_installation_roster(
     )
     assert seen["database"] == str(roster.resolve())
     assert roster.exists()
+    assert not book.exists()
+
+
+def test_recruit_pins_a_relative_roster_variable_to_an_absolute_path_for_its_child(
+    tmp_path: Path, book: Path, capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The Recruiter's child runs in a temporary directory (`providers/cli.py`), and its roster
+    commands prefer `LITHARNESS_ROSTER_DATABASE` over `LITHARNESS_DATABASE`. A relative value
+    inherited from the operator's shell would open a fresh roster in that directory, so the
+    child is handed both variables as the one absolute path, and the shell's values return
+    afterwards."""
+    seen: dict[str, str] = {}
+
+    def refused(request: Any, *, calls: Any, spend: Any) -> tuple[None, str]:
+        seen["database"] = cli.os.environ.get(cli.DATABASE_ENV, "")
+        seen["roster"] = cli.os.environ.get(cli.ROSTER_DATABASE_ENV, "")
+        return None, "no transport in this test"
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv(cli.ROSTER_DATABASE_ENV, "relative-roster.db")
+    monkeypatch.setattr(cli, "_completion_call", refused)
+    capsys.readouterr()
+    assert (
+        main(["--database", str(book), "recruit", "--specialization", "cozy-fantasy"])
+        == EXIT_FAULT
+    )
+    expected = str((tmp_path / "relative-roster.db").resolve())
+    assert seen == {"database": expected, "roster": expected}
+    assert cli.os.environ[cli.ROSTER_DATABASE_ENV] == "relative-roster.db"
     assert not book.exists()

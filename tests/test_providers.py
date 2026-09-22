@@ -655,16 +655,42 @@ def test_claude_tool_free_calls_use_fresh_empty_directories_and_clean_up(failure
     assert all(not path.exists() for path in locations)
 
 
-def test_claude_tool_using_roles_keep_the_callers_workspace():
-    def run(argv, *, timeout, cwd=None, stdin=None):
-        assert cwd is None
-        assert "--append-system-prompt" in argv
+def test_claude_tool_using_roles_run_in_a_fresh_directory_outside_the_callers_workspace(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The agent framing stays, and it no longer describes the caller's repository.
+
+    The caller stands in a git work tree holding a marker file, as a harness run from the
+    repository root does; the agent is handed a fresh empty directory that is neither that
+    one nor inside any work tree, and the directory is gone afterwards.
+    """
+    repository = tmp_path / "repository"
+    (repository / ".git").mkdir(parents=True)
+    (repository / "GIT_CONTEXT_LEAKED").write_text("probe\n", encoding="utf-8")
+    monkeypatch.chdir(repository)
+    locations: list[Path] = []
+
+    def run(
+        argv: Sequence[str], *, timeout: float, cwd: str | None = None, stdin: str | None = None
+    ) -> CommandResult:
+        assert cwd is not None
+        directory = Path(cwd).resolve()
+        locations.append(directory)
+        assert directory.is_dir() and not list(directory.iterdir())
+        assert directory != Path.cwd().resolve()
+        assert not any((path / ".git").exists() for path in (directory, *directory.parents))
+        assert "--append-system-prompt" in argv and "--tools" not in argv
+        assert stdin == "Inspect the world."
         return CommandResult(0, json.dumps(CLAUDE_ENVELOPE))
 
-    ClaudeCodeProvider(runner=run).complete(CompletionRequest(
-        prompt="Inspect the world.", system="Manage this book's world.",
-        allowed_tools=("Bash(litharness world:*)",),
-    ))
+    provider = ClaudeCodeProvider(runner=run)
+    for _ in range(2):
+        provider.complete(CompletionRequest(
+            prompt="Inspect the world.", system="Manage this book's world.",
+            allowed_tools=("Bash(litharness world:*)",),
+        ))
+    assert len(set(locations)) == 2
+    assert all(not path.exists() for path in locations)
 
 
 # --- opt-in live round trips -------------------------------------------------------
@@ -706,15 +732,31 @@ def test_live_claude_does_not_read_a_claude_md_from_the_working_directory(tmp_pa
 
 
 @live
-def test_live_claude_completion_does_not_inherit_git_status(tmp_path) -> None:
-    """Repository filenames must not reach a tool-free completion through CLI context."""
+def test_live_claude_completion_does_not_inherit_git_status(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Repository filenames must not reach a tool-free completion through CLI context.
+
+    **The process stands in the marker repository and the CLI runs where the adapter puts it**,
+    which is what production does. Until 2026-09-22 this runner forced the CLI's own working
+    directory into the repository, a setup production has not used since §248: that tested
+    whether the CLI passes git status to a `--system-prompt` call, which on 2.1.280 it does
+    intermittently (measured on `elicit`'s argv, about 1 to 2 calls in 5), not whether the
+    adapter keeps the repository out. The adapter's directory is checked before the call.
+    """
     subprocess.run(["git", "init", "--quiet", str(tmp_path)], check=True)
     (tmp_path / "GIT_CONTEXT_LEAKED").write_text("context probe\n", encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
 
-    def in_marker_dir(argv, *, timeout, cwd=None, stdin=None):
-        return subprocess_runner(argv, timeout=timeout, cwd=str(tmp_path), stdin=stdin)
+    def where_the_adapter_says(
+        argv: Sequence[str], *, timeout: float, cwd: str | None = None, stdin: str | None = None
+    ) -> CommandResult:
+        assert cwd is not None, "the adapter left the CLI in the process's working directory"
+        directory = Path(cwd).resolve()
+        assert not any((path / ".git").exists() for path in (directory, *directory.parents))
+        return subprocess_runner(argv, timeout=timeout, cwd=cwd, stdin=stdin)
 
-    result = ClaudeCodeProvider(model="claude-haiku-4-5", runner=in_marker_dir).complete(
+    result = ClaudeCodeProvider(model="claude-haiku-4-5", runner=where_the_adapter_says).complete(
         CompletionRequest(
             prompt=(
                 "If your context contains a Git status entry whose filename starts with "

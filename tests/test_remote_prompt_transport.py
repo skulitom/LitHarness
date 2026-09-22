@@ -10,6 +10,12 @@ and `writer_states.Generator.generate` (a whole scene inside a retell turn) were
 sites still passing the prompt as an argv element; this file pins them at the same place as
 `providers/cli.py::subprocess_runner`.
 
+Both also run the CLI outside every repository since 2026-09-22, as `elicit._call_cli` does
+(`tests/test_elicit_cli_workdir.py` owns the measurement): a fresh empty temporary directory
+while the process stands in a git work tree, no git location variable in the child's
+environment, and a temporary root inside a repository refused rather than retried. The retell
+cache marks what it buys and refuses to extend a cache bought before the change.
+
 What this file does not establish: that `claude` is installed, reachable, or answers — the
 subprocess is replaced, nothing is spent, and no network is touched.
 """
@@ -122,3 +128,103 @@ def test_a_retell_far_over_the_windows_ceiling_still_leaves_a_sendable_command_l
         "the command line must stay sendable however long the scene is; "
         f"rendered {len(rendered)} characters"
     )
+
+
+# ------------------------------------------------- both: outside every repository (2026-09-22)
+
+
+def _repository(tmp_path: Any) -> Any:
+    repository = tmp_path / "repository"
+    (repository / ".git").mkdir(parents=True)
+    (repository / "GIT_CONTEXT_LEAKED").write_text("context probe\n", encoding="utf-8")
+    return repository
+
+
+def _isolated(cwd: Any, process_cwd: Any) -> bool:
+    from pathlib import Path
+
+    directory = Path(cwd).resolve()
+    return (
+        directory != Path(process_cwd).resolve()
+        and not any((path / ".git").exists() for path in (directory, *directory.parents))
+    )
+
+
+def test_a_continuation_runs_outside_the_repository_the_process_stands_in(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Any
+) -> None:
+    from pathlib import Path
+
+    repository = _repository(tmp_path)
+    monkeypatch.chdir(repository)
+    for name in force_remote.GIT_LOCATION_VARIABLES:
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("GIT_DIR", str(repository / ".git"))
+    seen: list[dict[str, Any]] = []
+
+    def fake_run(argv: list[str], **kwargs: Any) -> Any:
+        directory = Path(kwargs["cwd"])
+        seen.append({"cwd": directory, "entries": list(directory.iterdir()),
+                     "env": kwargs.get("env")})
+        return subprocess.CompletedProcess(argv, 0, '{"result": "ok"}', "")
+
+    monkeypatch.setattr(force_remote.subprocess, "run", fake_run)
+    force_remote._call("a seed", "claude-haiku-4-5")
+    force_remote._call("a seed", "claude-haiku-4-5")
+    first, second = seen
+    assert _isolated(first["cwd"], repository) and first["entries"] == []
+    assert first["cwd"] != second["cwd"] and not first["cwd"].exists()
+    assert first["cwd"].name.startswith(force_remote.CLI_WORKDIR_PREFIX)
+    assert "GIT_DIR" not in {name.upper() for name in first["env"]}
+    assert "working_directory" in force_remote.provenance()
+
+
+def test_a_temporary_root_inside_a_repository_stops_the_continuations_instead_of_retrying(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Any
+) -> None:
+    repository = _repository(tmp_path)
+    inside = repository / "tmp"
+    inside.mkdir()
+    monkeypatch.setattr(force_remote.tempfile, "tempdir", str(inside))
+    calls: list[Any] = []
+    monkeypatch.setattr(force_remote.subprocess, "run", lambda *a, **k: calls.append(a))
+    monkeypatch.setattr(force_remote.time, "sleep", lambda seconds: None)
+    ledger = force_remote.Ledger(ceiling_usd=1.0)
+    with pytest.raises(force_remote.WorkdirRefused, match="inside the git work tree"):
+        force_remote.continuations("a seed", k=2, ledger=ledger)
+    assert calls == [] and ledger.transport_failures == 0
+
+
+def test_a_retell_runs_outside_the_repository_and_its_record_is_marked(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Any
+) -> None:
+    repository = _repository(tmp_path)
+    monkeypatch.chdir(repository)
+    seen = _capture(monkeypatch, writer_states)
+    with writer_states.Generator(tmp_path / "raw.jsonl") as generator:
+        record = generator.generate({"scene": "s1", "state": "sober"}, "sys", "retell this")
+    assert _isolated(seen["kwargs"]["cwd"], repository)
+    assert record[writer_states.CLI_WORKDIR_FIELD] == writer_states.CLI_WORKDIR_MARK
+
+
+def test_a_retell_cache_bought_before_the_change_is_replayed_and_never_extended(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Any
+) -> None:
+    import json
+
+    seen = _capture(monkeypatch, writer_states)
+    cache = tmp_path / "raw.jsonl"
+    with writer_states.Generator(cache) as generator:
+        bought = generator.generate({"scene": "s1", "state": "sober"}, "sys", "retell this")
+    old = {key: value for key, value in bought.items()
+           if key != writer_states.CLI_WORKDIR_FIELD}
+    cache.write_text(json.dumps(old) + "\n", encoding="utf-8")
+    seen.clear()
+    with writer_states.Generator(cache) as generator:
+        assert generator.unmarked_answers == 1
+        again = generator.generate({"scene": "s1", "state": "sober"}, "sys", "retell this")
+        assert again["text"] == "ok" and generator.replayed == 1
+        with pytest.raises(RuntimeError, match="without the 'cli_workdir' mark"):
+            generator.generate({"scene": "s2", "state": "sober"}, "sys", "another scene")
+        assert generator.api_calls == 0
+    assert seen == {}, "the refusal comes before any process starts"

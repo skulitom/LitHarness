@@ -43,12 +43,16 @@ measuring the same weights. Recorded in the provenance block of every result rat
 
 from __future__ import annotations
 
+import contextlib
 import json
+import os
 import re
 import subprocess
 import sys
+import tempfile
 import threading
 import time
+from collections.abc import Iterator
 from contextlib import suppress
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -91,6 +95,52 @@ CLI_HARDENING = (
     "--setting-sources", "user",
     "--settings", '{"claudeMdExcludes":["**/CLAUDE.md","**/CLAUDE.local.md"]}',
 )
+
+#: **Every call runs in a fresh, empty temporary directory outside any git work tree, since
+#: 2026-09-22** (a correctness change to a module whose F1 arm is finished). `elicit.py`'s
+#: `CLI_WORKDIR_PREFIX` has the measurement: run from a git repository, the pinned CLI passed
+#: that repository's status and path to a `--system-prompt` call intermittently, and every arm
+#: here runs from the repository root. Copied, as the hardening is; the argv and stdin are
+#: unchanged. `provenance()` records it, because a continuation bought before the change was
+#: bought in the repository's context and a resumed F1 checkpoint would pool the two.
+CLI_WORKDIR_PREFIX = "force-remote-cli-"
+#: `elicit.GIT_LOCATION_VARIABLES`: any of them hands a child `git` a repository whatever its
+#: working directory, so the child's environment goes without them.
+GIT_LOCATION_VARIABLES = frozenset({
+    "GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_NAMESPACE",
+})
+
+
+class WorkdirRefused(Exception):
+    """The temporary root lies inside a git work tree. Not a `RuntimeError`, which
+    `continuations` retries as a transport failure: this fails every call, so it stops the run."""
+
+
+@contextlib.contextmanager
+def _cli_workdir() -> Iterator[str]:
+    """`elicit._cli_workdir`, copied: a fresh empty directory, refused inside a git work tree."""
+    with tempfile.TemporaryDirectory(
+        prefix=CLI_WORKDIR_PREFIX, ignore_cleanup_errors=True
+    ) as directory:
+        resolved = Path(directory).resolve()
+        for candidate in (resolved, *resolved.parents):
+            if (candidate / ".git").exists():
+                raise WorkdirRefused(
+                    f"the claude -p working directory {directory} lies inside the git work "
+                    f"tree at {candidate}; point TMP/TEMP outside every repository"
+                )
+        yield directory
+
+
+def _cli_environment() -> dict[str, str] | None:
+    """`elicit._cli_environment`, copied: the environment without git's location variables, or
+    None (inherit it unchanged) when none is set."""
+    present = {name for name in os.environ if name.upper() in GIT_LOCATION_VARIABLES}
+    if not present:
+        return None
+    return {name: value for name, value in os.environ.items() if name not in present}
+
 
 #: Operator §7.5, amended 2026-08-20 from $15 to fund F1 on this transport.
 DEFAULT_CEILING_USD = 55.0
@@ -253,10 +303,11 @@ def _call(prompt: str, model: str, *, timeout: int = 300) -> dict[str, Any]:
     # swallowed it and counted the call as a transport failure: seeds whose continuations
     # happened to contain a smart quote quietly lost replicates, which is a *biased* loss and
     # not a random one. `elicit.py:931` had already solved this; this is that line, copied.
-    completed = subprocess.run(
-        argv, capture_output=True, text=True, encoding="utf-8", errors="replace",
-        timeout=timeout, input=prompt, check=False,
-    )
+    with _cli_workdir() as workdir:
+        completed = subprocess.run(
+            argv, capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=timeout, input=prompt, check=False, cwd=workdir, env=_cli_environment(),
+        )
     if completed.returncode != 0 or not completed.stdout.strip():
         raise RuntimeError(f"cli_error rc={completed.returncode}: {completed.stderr[:200]}")
     # `claude --output-format json` always emits one JSON object; json.loads' `Any` is the
@@ -361,6 +412,8 @@ def provenance(model: str = "claude-haiku-4-5") -> dict[str, Any]:
         "base_or_instruct": "instruct — §95's local families are base checkpoints on purpose, "
                             "so this measures a different distribution and is labelled as one",
         "system_prompt_digest": digest(CONTINUATION_SYSTEM),
+        "working_directory": "a fresh empty temporary directory outside any git work tree, "
+                             "since 2026-09-22; before it, the caller's (the repository root)",
     }
 
 

@@ -177,6 +177,19 @@ the pilot's 19/20 decided rate the run as-built lands at ~190 decided and return
 200 decide or the pool exhausts, which PREREG's own attrition sentence anticipates). Not
 fixed in code yet — recorded here so a resume cannot happen without it.
 
+**Added 2026-09-22: a resume now also needs an amendment on the reader's context, and the
+transport refuses it until one exists.** Every `claude -p` call stage (c) bought ran through
+`elicit`'s CLI transport in the process's working directory, the repository root. The pinned
+CLI 2.1.280 was then measured passing a git repository's status and path to that argv
+intermittently (`research/quality-measurement/cost-that-bites-milder-20260922/AMENDMENT-1.md`).
+The fixed transport runs each call in an empty directory outside every repository with a
+byte-identical request and cache key, so a resume would serve the paused cache's pre-fix
+answers and buy the rest in another context under the same keys. It refuses instead: a CLI call into a cache
+holding an answer without the `cli_workdir` mark raises before any process starts
+(`elicit._refuse_a_pooled_context`). Replaying the cache without buying still works. Whether the
+paused records are kept, re-bought or set aside is an amendment for the operator, together with
+the top-up rule above.
+
 ## Re-anchoring, 2026-09-03: the handoff's "calibration pilot" has already run, and nothing was bought here
 
 `plan/handoff-reader-sims.md` (third experiment) asked for "the calibration pilot of the
