@@ -1,6 +1,6 @@
 # LitHarness research overview
 
-<!-- research-overview: ledger through §239; checked 2026-09-05 -->
+<!-- research-overview: ledger through §253; checked 2026-09-22 -->
 
 This page is for someone opening the repository who wants to know what the research has
 established, why each line of work was opened, and what matters now. It is a map of the
@@ -48,10 +48,19 @@ mechanisms, costed readers and representation probes are others.
 families and the qualification boundary.
 
 **Status line.** The production loop is real and drafts books end to end. No simulated reader
-mechanism has earned the right to certify or steer prose. One mechanism, a reader whose
-continuing costs it something, has moved under a story-level manipulation and held under
-replication (§230); it satisfies, arguably, one of the ten evidence fields qualification
-requires. That sentence is the whole of what the research has bought on the central question so far.
+mechanism is qualified, and none has earned the right to certify or steer prose. One
+mechanism, a reader whose continuing costs it something, has moved under a story-level
+manipulation and held under replication (§230); it satisfies, arguably, one of the ten evidence
+fields qualification requires. That is the whole of what the research has bought on the central
+question so far. The milder manipulation the operator approved for it on 2026-09-10 is
+unregistered, because no census of the stores has admitted a test item for it (section 4.4).
+No registered reader arm has run since §230's replication on 2026-09-04; the only simulated
+reads of chapters on record since are a feasibility screen registered that day, whose run date
+its audit could not establish and which may not be read for an effect (section 4.4), and the
+production readership at the end of volume one's first arc on 2026-09-07 (§242). Off the
+central question, on 2026-09-19 the pipeline drafted its first complete volume, twenty-four
+chapters on the opt-in structured planning path, as a mixed-revision recovery from an outline
+failure rather than an uninterrupted run (`OBSERVED`; section 4.7.1).
 
 ## 2. The constraints every experiment runs under
 
@@ -61,7 +70,9 @@ bought by a measurement recorded at its pointer.
 - **No solicited human judgment, ever** (the scope axiom, §95): not hired readers, not the
   operator, not one blinded pair. Measurement is LLM-only. The operator's reads are defect
   harvests, never labels (§97.1, §148). Unpaid solicited judgment had measured out at two
-  verdicts against 104 exported pairs before the axiom closed the channel (§61).
+  verdicts against 104 exported pairs before the axiom closed the channel (§61). The
+  plan-search acceptance experiment that would have spent such judgment is retired and kept as
+  the record of what was refused ([research/plan-search/RUNBOOK.md](research/plan-search/RUNBOOK.md)).
 - **No corpus text crosses to the generation side** (RS1, §97.3), with one operator exception:
   openings placed by hand on a gitignored shelf may be shown to the writer as register, and are
   then out of measurement for any book that saw them (§196).
@@ -84,6 +95,12 @@ bought by a measurement recorded at its pointer.
   their mechanism is qualified (§128, §129).
 - **Agent prose is not evidence.** Plans, summaries and repeated agreement can point at an
   artifact and cannot add to it (EPISTEMIC_GOVERNANCE.md).
+- **Generation since 2026-09-10 has run on the Codex provider in practice.** At the operator's
+  2026-09-08 request ([docs/generation-comparison-20260908.md](docs/generation-comparison-20260908.md)),
+  nearly every dated generation arm since 2026-09-10, the complete volume included, ran on the
+  subscription Codex provider at `gpt-6-astra`, named in the record or through the adapter's
+  default where a record names no model, while the code default is still Claude (§253). Those results are results on that transport; none of the records §253 cites ran its
+  change on the default one.
 
 ## 3. Where the record lives
 
@@ -96,6 +113,8 @@ bought by a measurement recorded at its pointer.
 | [plan/reader-architecture-program.md](plan/reader-architecture-program.md) | the mechanism families, where each stands, the production control boundary and the qualification contract |
 | [plan/reader-architecture-proposal.md](plan/reader-architecture-proposal.md) | what the one moved mechanism would need to qualify, what it would feed, and what would withdraw it |
 | `PREREG.md` and `FINDINGS.md` pairs under `research/` | one registered arm each: the design fixed before spend, and the reading in house form (the claim, the number beside it, the caveat travelling with it); raw records and results beside them |
+| the experiment folders under `research/quality-measurement/` since 2026-09-08, most named with their date | one registered experiment each: `RUNBOOK.md` and `registration.json` fixed before calls, `RESULTS.md` or `REPORT.md` after, and in most a `claim.json` carrying the claim and its state; generated prose and raw responses stay in ignored run folders |
+| [research/quality-measurement/README.md](research/quality-measurement/README.md) | the research navigation: which record a current task reads first |
 | [research/quality-measurement/results/](research/quality-measurement/results/) | committed text-free result artifacts, keyed by registration digest |
 | the `reader-read-*.md` and `serial-pilot-*.md` notes under `plan/` | the operator's reads (defect harvests) and the pilot records they were made on |
 | [PLAN.md](PLAN.md) §1a, §17 and §19 | the objective, the roadmap by gates, and the operator-grade scorecard |
@@ -187,10 +206,13 @@ against a matched control and a placebo, registered before spend.
 | Order recovery does not separate the chapters the operator could not follow from the ones where he only named sentences | `OBSERVED` | §225; [research/quality-measurement/reassembly-reads/FINDINGS.md](research/quality-measurement/reassembly-reads/FINDINGS.md) |
 | The anticipation probe (describe three futures, mark hope or dread) returns the same answer whatever is done to the passage: the arms' mean specificity spans 0.008 against a registered floor of 0.05, and the whitespace placebo moved it further than deleting the stakes did | `REFUTED` | §124, §227; [research/quality-measurement/anticipation-run/FINDINGS.md](research/quality-measurement/anticipation-run/FINDINGS.md); BRIEF.md §2 Pass 7 |
 | The first costed-reader arm came back unreadable, one session below its scorable floor after a contiguous transport stop the instrument could not classify; what it did measure is that the reader's positional lean eats three quarters of the design | `OBSERVED` | §222, §224; [research/quality-measurement/cost-that-bites/FINDINGS.md](research/quality-measurement/cost-that-bites/FINDINGS.md) |
-| A reader whose continuing costs it something reads a book less when that book's paragraph order is destroyed, and further than a whitespace placebo moves it; replicated with the permutation redrawn, inside the band the registration fixed. The first mechanism in this house to move with a story-level manipulation and hold under replication | `SUPPORTED` | §230; [research/quality-measurement/cost-that-bites/FINDINGS-v2.md](research/quality-measurement/cost-that-bites/FINDINGS-v2.md) and [FINDINGS-v3.md](research/quality-measurement/cost-that-bites/FINDINGS-v3.md) |
-| The sim-readership backtest asks whether the readership, blind and stopped part-way, can post-dict which of two real Royal Road books the real readership stayed with. Every free slot is filled (thousands of divergent pairs, a conditional primary with calibrated type-I, a cutoff-clean set that is empty so recognition probes carry the whole memorisation defence); no paid call has been made | `REGISTERED` | §123; [research/sim-readership-backtest/FINDINGS.md](research/sim-readership-backtest/FINDINGS.md) |
+| A reader whose continuing costs it something reads a book less when that book's paragraph order is destroyed, and further than a whitespace placebo moves it; replicated with the permutation redrawn, inside the band the registration fixed. The first mechanism in this house to move with a story-level manipulation and hold under replication | `SUPPORTED` | §230; [research/quality-measurement/cost-that-bites/FINDINGS-v2.md](research/quality-measurement/cost-that-bites/FINDINGS-v2.md) and [FINDINGS-v3.md](research/quality-measurement/cost-that-bites/FINDINGS-v3.md); the claim record is [order-sensitivity-claim.json](research/quality-measurement/causal-reader-admission-20260910/order-sensitivity-claim.json) |
+| The sim-readership backtest asks whether the readership, blind and stopped part-way, can post-dict which of two real Royal Road books the real readership stayed with. Every free slot is filled (thousands of divergent pairs, a conditional primary with calibrated type-I, a cutoff-clean set that is empty so recognition probes carry the whole memorisation defence); ~~no paid call has been made~~ corrected 2026-09-22: the pilot ran twice under the operator's go, on 2026-08-30/31 and again on 2026-08-31 after a transport fix; the second run returned a descriptive number with its sham corner void and `insufficient_n` as the stage's verdict, and the confirmatory stage was started and then paused by the operator on 2026-09-01, with a top-up defect unfixed. The programme's own re-anchoring of 2026-09-03 owns the record | ~~`REGISTERED`~~ `OBSERVED` | §123; [research/sim-readership-backtest/FINDINGS.md](research/sim-readership-backtest/FINDINGS.md) |
 | Correcting the simulated readership against what a real population did (the SYN-DIGITS reading): the distributional half is admissible and gated on a decision not yet taken; individual-level calibration is closed twice | `REGISTERED` | §106; [plan/sim-readership-calibration.md](plan/sim-readership-calibration.md) |
 | Whether the sim predicts the real readership's continuation on a book it has never had readers for is registered against the release queue and waits for a posted chapter | `REGISTERED` | [research/launch-outsample/PREREG.md](research/launch-outsample/PREREG.md); §221 |
+| The volume screen, registered on 2026-09-04 to ask whether a multi-chapter book of ours can carry a costed-reader session and never to be read for an effect: its saved records reconcile with their raw caches and spend their registered budgets, but they cover more books than the registration names, with no amendment, and keep no source digests. They are feasibility records and not a null for a new arm, and no allocation contrast was computed from them | `—` | [registration](research/quality-measurement/cost-that-bites/PREREG-volume-screen.md); [research/quality-measurement/volume-screen-audit-20260910/REPORT.md](research/quality-measurement/volume-screen-audit-20260910/REPORT.md) |
+| Before the costed reader could be tried on a manipulation milder than a whole-book shuffle (approved 2026-09-10), call-free censuses of every available store, repeated after newer books and again after the complete volume, admitted no state-continuity, event-consequence, progression-cost or character-cause item and generated no ecological test item. The promise/payoff candidates they find have no verified damage-and-sham transformation, so the arm stops at its precondition and is unregistered | `OBSERVED` | [research/quality-measurement/causal-reader-admission-20260910/REPORT.md](research/quality-measurement/causal-reader-admission-20260910/REPORT.md) and [its runbook](research/quality-measurement/causal-reader-admission-20260910/RUNBOOK.md); [research/quality-measurement/causal-reader-admission-20260913/REPORT.md](research/quality-measurement/causal-reader-admission-20260913/REPORT.md); the complete volume's [admission readout](research/quality-measurement/full-book-trial-20260919/RESULTS.md) |
+| A promise/payment builder cuts deletion items with matched controls out of the complete volume and gives a reason for every promise it refuses. Construction certifies where a recorded payment quotation sits, not that the payoff is lost, so no item is eligible for a reader. The follow-up challenge, which asks whether a quotation extractor finds fulfilments or dependencies the constructor did not control and which by registration cannot open admission, stopped twice on an expired Claude CLI login before any observation; one further attempt is registered and has not run, and the line closes after it | `OBSERVED` | [builder](research/quality-measurement/promise-payoff-builder-20260919/RESULTS.md) and [its runbook](research/quality-measurement/promise-payoff-builder-20260919/RUNBOOK.md); [challenge](research/quality-measurement/promise-payoff-challenge-20260922/RESULTS.md) and [its runbook](research/quality-measurement/promise-payoff-challenge-20260922/RUNBOOK.md); [first recovery](research/quality-measurement/promise-payoff-challenge-20260922/recovery/RESULTS.md); [second recovery](research/quality-measurement/promise-payoff-challenge-20260922/RECOVERY2.md) and [its registration](research/quality-measurement/promise-payoff-challenge-20260922/recovery2/registration.json) |
 
 **What it means, and what it does not.** Three instruments designed to avoid the verdict channel
 inherited saturation instead: a cooperative reader that can answer for free answers the same way
@@ -201,7 +223,11 @@ and these arms satisfy one; the proposal that says what the rest would take is
 [plan/reader-architecture-proposal.md](plan/reader-architecture-proposal.md), and it asks for
 nothing that spends. The finding that outlasts the track is about substrate: the twenty-book
 shelf caps the costed reader's power, nineteen operator reads cap order recovery, and the
-instrument needs longer members than the pipeline drafts (BRIEF.md §3).
+instrument needs longer members than the pipeline drafts (BRIEF.md §3). Longer books have since
+been drafted, one complete volume among them, and length did not by itself make substrate: no
+admission census has found a defect relation with a verified damage-and-sham transformation in
+any of them (the rows above), so the next reader arm waits on an admitted battery across
+independent books rather than on more chapters.
 
 ### 4.5 Does simulated-reader direction improve the writing? Nothing measurable yet.
 
@@ -261,6 +287,11 @@ method improves prose. No trial below has qualified a literary-quality improveme
 | Activate attention states after source events, carrying the previous state forward in code | Four complete matched drafts follow a temporally accepted trajectory after a documented initial ID-only amendment. Both conditions enact attention locally and repeatedly explain event significance; all four retain the basic register/cohort opening. No treatment effect or dependable prose fix established. One trajectory, no fresh trace-free baseline. | `OBSERVED` | [registration](research/quality-measurement/prose-attention-events/PREREG.md), [amendment](research/quality-measurement/prose-attention-events/AMENDMENT.md), [results](research/quality-measurement/prose-attention-events/RESULTS.md) |
 | Let one source-derived concern recede and return across several events | Four complete drafts retained. Both guided draws add response checks and later recall an earlier responder, then explain failed reach; source-only drafts also contain concern-related returns. The proposed return follows the source answer, and exact writer checkpoint timing is uncertain. No isolated persistence effect or prose gain established. | `OBSERVED` | [registration](research/quality-measurement/prose-persistent-concern/PREREG.md), [results](research/quality-measurement/prose-persistent-concern/RESULTS.md) |
 | Derive anticipations from strictly earlier facts, before the incoming event is visible | Three proposals and four complete drafts retained after removing future hints in earlier source annotations. Both guided drafts use anticipations before incoming observations/action; opening inventory and explanatory restatement remain. Source-only drafts also generate expectations. Planner containment is addressed; no prose gain or isolated timing effect established. | `OBSERVED` | [registration](research/quality-measurement/prose-prospective-attention/PREREG.md), [results](research/quality-measurement/prose-prospective-attention/RESULTS.md) |
+| Develop a short public premise before expanding it, against the ordinary route | The premise-first arm kept its initial pursuit, but discovery added administrative business, counted supplies and a new exclusion that development strengthened and the listing repeated. The runner omitted the production reserved-name check, which would have refused the premise-first discovery, so neither arm is a passing production run. | `OBSERVED` | [registration](research/quality-measurement/premise-before-development/RUNBOOK.md), [results](research/quality-measurement/premise-before-development/RESULTS.md) |
+| Delete discovery's institutional comparison clause | Both deletion draws still invented licensing, permits and permission transactions. The last planned control was refused by the local token governor, so the design is incomplete and supports no frequency comparison. | `OBSERVED` | [registration](research/quality-measurement/discovery-institution-cue/RUNBOOK.md), [results](research/quality-measurement/discovery-institution-cue/RESULTS.md) |
+| Delete discovery's demand to list what survives setbacks | Both modified treatments dropped the retained-through-setbacks inventory and still invented licensing institutions and access conflicts, and their openings began on them. No opening-quality fix; the source-to-draft traces locate separate problems in invention, handed-down wording and drafting. | `OBSERVED` | [registration](research/quality-measurement/discovery-setback-demand/RUNBOOK.md), [results](research/quality-measurement/discovery-setback-demand/RESULTS.md) |
+| Remove the writer dossier, or bypass the production planning loop, for a chapter-one draft | The located defects remained in these single samples, and one clause-ablation response was a tool-call-shaped fragment with no chapter. The trace led to tool-free completions replacing the default coding prompt. | `OBSERVED` | §245; artifacts in ignored run folders |
+| Canary the corrected context isolation, then compare three author-direction variants | The first canary was refused and the protocol stopped with no chapter, leaving the isolation correction unverified live at the time; the opt-in live isolation tests passed on 2026-09-22, as the promise challenge's [second recovery](research/quality-measurement/promise-payoff-challenge-20260922/RECOVERY2.md) records. Separately, a supplied treatment now owns development and world seeding without the writer's dossier being injected again. | `OBSERVED` | §246 |
 
 The [source contract comparison](research/quality-measurement/prose-source-contract/RESULTS.md)
 crossed lossless editorial-span separation with removal of the word target. All eight retained
@@ -336,6 +367,42 @@ delivered manipulation are different outcomes and must remain distinguishable.
 Other proposed but unrun diagnostics are recorded as conjectures in
 [the reasoning/disclosure idea record](research/quality-measurement/prose-reasoning-disclosure/IDEAS.md).
 
+#### 4.5.2 Invention experiment history: why fresh books returned to one story
+
+**Why it was opened.** On 2026-09-10 the continuation baseline's two default-brief books
+shared a protagonist name and their water-repair material (section 4.7), and the operator asked
+why fresh books kept returning to aquatic repair premises. The diagnosis located the repeated
+premise in the first invention response, before any book state, dossier or plan, and found that
+a fresh store or session establishes state separation and not premise variety. Everything after
+it tested inputs to that first call, almost all of it on the Codex provider (section 2).
+Several production changes made during this work have no ledger entry, and the records below
+are where they are described: among them the random Base64 prefix every new `concept` now draws
+before invention, discovery's unfamiliar-life elaboration scoped to the author's brief, and a
+continuity instruction for drafts written after accepted prose.
+
+| Test and hypothesis | Recorded outcome or limit | state | Registration and findings |
+| --- | --- | --- | --- |
+| Locate where the repeated premise enters, and whether the detailed discovery instructions, the requested Codex model or its catalog prose are necessary to it | The premise is already in the first invention response, with no book, dossier or plan. Removing the detailed instructions or the catalog templates, or switching between the two requested Codex models, kept the cluster; Opus broke the repeated name and kept broader motifs of professional expertise. No prompt, theme restriction or model default changed. | `OBSERVED` | [protocol](research/quality-measurement/invention-cause-20260910/RUNBOOK.md), [report](research/quality-measurement/invention-cause-20260910/REPORT.md) |
+| Supply an authored creative seed: ingredients, then an explicit first success, then concrete world conditions | Ingredient briefs changed premises and an explicit first success controlled that action, while an opaque identifier alone did not escape the aquatic repair premise. Richer world seeds changed concrete actions and the plot pattern recurred; seeding became the default and the world-seed version was reverted after reading. | `OBSERVED` | [seeding trial](research/quality-measurement/invention-seeding-20260910/RUNBOOK.md) and [report](research/quality-measurement/invention-seeding-20260910/REPORT.md), with its [action follow-up](research/quality-measurement/invention-seeding-20260910/action-followup/RUNBOOK.md); [automatic seeding](research/quality-measurement/automatic-seeding-20260910/RUNBOOK.md) and [report](research/quality-measurement/automatic-seeding-20260910/REPORT.md); [world seeds](research/quality-measurement/world-seeding-20260911/RUNBOOK.md) and [report](research/quality-measurement/world-seeding-20260911/REPORT.md) |
+| Prefix invention with a long random integer written as Base64, the operator's meaning of seeding, and vary the output format | The prefix is now the production default (`invention-seed.v3`). Both prefix lengths, their exact repeats and the unseeded controls kept the aquatic repair family; dropping native JSON enforcement or the detailed task mostly changed names rather than structure, with one counterexample kept. | `OBSERVED` | [protocol](research/quality-measurement/invention-nonce-20260911/RUNBOOK.md), [report](research/quality-measurement/invention-nonce-20260911/REPORT.md) |
+| Change the invention request's wording or settings: several premises per call with contrast or representative-sample wording, low reasoning effort, prior plot history with explicit contrast, a preservation instruction, verbalized probabilities, all prior plans, and explicit use of the random prefix | Each produced departures that ordinary batches or controls also produced, and the selected expansions brought back familiar rescue, care, repair and institutional material. None established a repetition fix or changed a default; the preservation arm lost two slots to a thermal shutdown and records them. | `OBSERVED` | [contrast](research/quality-measurement/invention-contrast-20260911/REPORT.md), [effort](research/quality-measurement/invention-effort-20260911/REPORT.md), [plot history](research/quality-measurement/invention-memory-20260911/REPORT.md), [preservation](research/quality-measurement/invention-preserve-20260911/REPORT.md), [probabilities](research/quality-measurement/invention-verbalized-20260911/REPORT.md), [prior plans](research/quality-measurement/invention-plan-memory-20260912/REPORT.md), [active prefix](research/quality-measurement/invention-active-seed-20260912/REPORT.md); each folder's `RUNBOOK.md` is its registration |
+| Defer the LitRPG cue until after the premise is invented | Initiating actions changed, and one story kept its pursuit through planning and an opening chapter, but both deferred plans added nonhuman nursery obligations absent from their premises. One early-genre plan was refused for a reserved skill name, leaving the chapter comparison incomplete. | `OBSERVED` | [protocol](research/quality-measurement/invention-genre-deferral-20260912/RUNBOOK.md), [report](research/quality-measurement/invention-genre-deferral-20260912/REPORT.md) |
+| Make discovery's unfamiliar-life elaboration conditional on the author's brief | On two fixed sources every full control added nonhuman family material that later progress depended on, and omission and the conditional form avoided it while keeping the supplied pursuits; the conditional form is now the default. Local support, not a repetition fix. | `SUPPORTED` | [protocol](research/quality-measurement/discovery-life-scope-20260912/RUNBOOK.md), [report](research/quality-measurement/discovery-life-scope-20260912/REPORT.md) |
+| Remove that conditional sentence from fresh empty-brief discovery | The added kinship strand disappeared, supporting the sentence's local contribution, but every output still made water craft or repair the route to power and access, so the repetition-fix claim died on its kill condition. | `SUPPORTED`, `REFUTED` | [protocol](research/quality-measurement/empty-brief-life-20260912/RUNBOOK.md), [report](research/quality-measurement/empty-brief-life-20260912/REPORT.md) |
+| Put the opening before the world in the discovery request, or add a first personal undertaking | Both repetition-fix claims died on their kill conditions: the repair, transport and access engine recurred. One pursuit output is kept as a counterexample to a stronger claim. | `REFUTED` | [protocol](research/quality-measurement/invention-order-20260912/RUNBOOK.md), [report](research/quality-measurement/invention-order-20260912/REPORT.md) |
+| Design the magic separately before the story, with the pursuit withheld or linked | Every staged plan kept its supplied first acquisition exercise, while the direct controls invented service to another inhabitant as the route to the first power. The designs themselves converged on technical material manipulation, and neither consistent-variety rule passed. | `OBSERVED` | [protocol](research/quality-measurement/mechanics-isolation-20260912/RUNBOOK.md), [report](research/quality-measurement/mechanics-isolation-20260912/REPORT.md) |
+| Carry the separate mechanics step into fresh plans and a staged chapter | Exercise-based acquisition transferred to every fresh plan and the chapter, supported by this test; every independent design was a closely related heat-transfer discipline and the plans returned to repair, route information and access, so the repetition claim died. | `SUPPORTED`, `REFUTED` | [protocol](research/quality-measurement/mechanics-fresh-transfer-20260912/RUNBOOK.md), [report](research/quality-measurement/mechanics-fresh-transfer-20260912/REPORT.md) |
+| Cross identical mechanics through two expanding models, and contrast premise, plan and a placebo on one chapter | The same mechanics produced different stories under the two expanders while each kept its own familiar pattern, Astra a return home through repair and access, Opus technical professionals with identical years of experience. The chapter contrast kept its pursuit in every condition, and its placebo missed the matching tolerance. | `OBSERVED` | [protocol](research/quality-measurement/invention-boundaries-20260912/RUNBOOK.md), [report](research/quality-measurement/invention-boundaries-20260912/REPORT.md) |
+| Hand two plans with different pursuits to one common writer | Both first chapters kept their different supplied pursuits; one retained a known assessment gap. One known pair, not independent invention. | `OBSERVED` | [protocol](research/quality-measurement/planner-chapter-transfer-20260913/RUNBOOK.md), [report](research/quality-measurement/planner-chapter-transfer-20260913/REPORT.md) |
+| Tell drafts written after accepted prose not to invent unexplained prior responsibility | On one known continuation the defect recurred in a fresh control and in no treatment repeat, and the instruction is now installed for drafts after accepted prose only. The same record reads a fresh default chapter end to end. Local support, not a continuity claim. | `SUPPORTED` | [protocol](research/quality-measurement/past-action-continuity-20260912/RUNBOOK.md), [report](research/quality-measurement/past-action-continuity-20260912/REPORT.md) |
+
+**What it changed.** The repeated story is made in the first call, and no input tested there
+removed it in its registered test; what moved was the specific material an instruction supplied
+or took away (a first success, a first acquisition, a kinship strand), not the family of stories.
+The provider is part of the finding: both requested Codex models reproduced one exact name
+cluster that Opus did not, so these are results on that transport and not a claim about models
+in general.
+
 ### 4.6 What is our prose like next to the market's? Code-only censuses, no model, no bar.
 
 **Why it was opened.** The operator's reads named defects; each was turned into a counter run
@@ -380,13 +447,58 @@ same way: the store the run wrote is the measurement.
 | Four entries aimed the progression beat and none asked whether it landed: seven scheduled beats existed on the whole shelf, and a scene told a quantity moves could return it unmoved and clear the ladder. The gate now asks for the change and never a direction | `OBSERVED` | §184 |
 | Past chapter one for the first time under the general system, the economy moved on the page across a chapter boundary and the second chapter's second scene would not commit; the drafting loop had never written the page's gains and rises back as canon edges, so the sheet reader only ever saw the seed | `OBSERVED` | §232, §234, §236 |
 | Concept-backed books now require narrative plans, wait for missing predecessor prose, and carry declared operating rules as protected context; each is an implementation control, not a quality claim | `—` | §237, §238, §239 |
+| Tools for exporting and reading a book: the pastable chapter now carries its structure as the markup Royal Road's editor takes, and an outside agent reads stored books through an in-process MCP server that imports no provider and cannot spend, with a separate profile that may only propose world records | `—` | §240; §241 to §241.5 |
+| The first whole-volume draw, read end to end: the arc made sense, and it showed pipeline defects only a long book could; its two story-breaking faults, a currency spent twice and a culled man back on his feet, sat between chapters, where nothing in the repository looked, and `audit` now reads a book across its scenes. The draw stopped at the second arc's outline and was not resumed | `OBSERVED` | §242, §243; [plan/volume-pilot-1.md](plan/volume-pilot-1.md) |
+| Concept development now starts from a discovery treatment the concept keeps; one quantity-edit pass runs over the developed concept; a supplied treatment owns development and world seeding without the writer's dossier injected again; and drafting receives scene-sized handoffs instead of a second copy of the concept. Each smoke validated transport and preservation, not prose | `—` | §243, §244, §246, §248; [plan/scene-brief-handoff.md](plan/scene-brief-handoff.md) |
+| One fresh chapter after those fixes: the quantity pass and the outline each refused a valid result on a validator defect, both corrected; on the page the graph line printed record ids and incidental exact quantities returned, because the concept's quantity pass does not reach drafting | `OBSERVED` | §247 |
+| The fixed-pipeline continuation baseline stopped early: one book reached the daily token ceiling after world seeding and reconciliation took most of its tokens, and another stopped when its native model called tools outside the bridge contract. Its two default-brief books shared a protagonist name and water-repair material, which opened section 4.5.2 | `OBSERVED` | [registration](research/quality-measurement/continuation-baseline-20260910/PREREG.md), [report](research/quality-measurement/continuation-baseline-20260910/REPORT.md) |
+| A fixed story carried through three production chapters kept its earlier bytes and attributions, but concept development and world seeding changed it on the way: an added return-home motive, a familiar cast name, a completed opening event and an exclusive advanced-power fork | `OBSERVED` | [research/quality-measurement/distinctive-continuation-20260913/REPORT.md](research/quality-measurement/distinctive-continuation-20260913/REPORT.md) |
+| The world Architect: once pending intentions were kept apart from initial facts, first outputs preserved the supplied acquisition, access and motive boundaries; the runs then located repeated whole-world reads, reconciliation positions no scene reads, and a completion check that pushed seeds to invent capability depth. Each was fixed and exercised again, and the depth replay kept one incomplete opposing world, so its full criterion is not met | `OBSERVED` | §249, §250, §251; [boundaries](research/quality-measurement/world-boundary-fixes-20260913/REPORT.md), [runtime](research/quality-measurement/world-runtime-fixes-20260913/REPORT.md), [depth replay](research/quality-measurement/world-depth-fixes-20260913/REPORT.md), [fresh continuation](research/quality-measurement/world-fixed-continuation-20260913/REPORT.md); each folder's `RUNBOOK.md` is its registration |
+| Repeatable growth: a funded second investment in one capability was blocked by the shared maximum-one ceiling, so declared repeatable growth now has its own value; fresh Architect outputs kept the repeatable, ownership-only and capped distinctions, and a six-chapter continuation bought two different upgrades while no capability received a second paid investment live. The same study's payoff-deletion construction produced no verified test pair | `OBSERVED` | §252; [next priorities](research/quality-measurement/next-priorities-20260913/REPORT.md), [growth declarations](research/quality-measurement/growth-declarations-20260913/REPORT.md), [growth continuation](research/quality-measurement/growth-continuation-20260913/REPORT.md) |
+| Compacting JSON whitespace in Codex tool replies shrank the replies, but reported tokens fell in one pair and rose in the other; the option stays off, with no operator switch | `OBSERVED` | §253; [research/quality-measurement/compact-json-20260913/REPORT.md](research/quality-measurement/compact-json-20260913/REPORT.md) |
+| Two operator-requested opening fixes against a historical opening, consequential scene choices and then selective scene treatment: each six-chapter output changed the located behaviour (the earlier Load defect absent; more consequential personal responses, with a failed-repair cost softened) while procedural pacing and repeated explanation remained. A follow-up with book-specific directions failed its registered point-balance check | `OBSERVED` | §253; [scene consequence](research/quality-measurement/scene-consequence-20260913/REPORT.md), [scene focus](research/quality-measurement/scene-focus-20260913/REPORT.md), [opening consequence](research/quality-measurement/opening-consequence-20260914/REPORT.md) |
+| An open factual-inference checkpoint screened on authored synthetic fixtures is worth further testing as an optional factual-support checker with abstention, not as an automatic continuity judge, gate or release authority; its registered confident-false-entailment kill did not fire, and among its errors it took an old possession for a current one | `OBSERVED` | [research/quality-measurement/jev-verification-20260919/RESULTS.md](research/quality-measurement/jev-verification-20260919/RESULTS.md) and [its runbook](research/quality-measurement/jev-verification-20260919/RUNBOOK.md) |
 
 **What it changed.** Almost everything under `src/litharness/` that is not plumbing: the
 outline, the world Architect, the promise ledger, the protagonist and its exception, the
 declared ladder, the general system layer (§203 to §213), the progression gate, the concept
 stage. The pattern the ledger records is that the defect was in what a call was shown, not in
 the model, and the measurement that licensed each build was a count taken before a line was
-written.
+written. Since 2026-09-08 the same pattern held at the discovery, world and outline seats
+(§243 to §253), with one change in method: most fixes followed a located failure in a dated
+experiment folder rather than a census count. The ledger recorded the production changes after
+§252 after the fact (§253). Between §248 and §249 (2026-09-08 to 09-12) about 28 production
+commits landed with no entry, among them the Codex adapter and the new-book subgenre default;
+only the invention-line changes of that window have dated folders (section 4.5.2), and the gap
+is an open records item (section 5).
+
+#### 4.7.1 From an intended experience to a complete volume
+
+**Why it was opened.** The operator's direction after volume one was a magical fantasy
+experience with progression (§243), and the question these trials ask is whether an intended
+experience survives from invention through the concept and outline into chapters. Each is one
+draw per arm on a few premises, read by an agent after generation; the readings are located
+descriptions, and no row licenses an enjoyment, popularity or quality effect.
+
+| Test and hypothesis | Recorded outcome or limit | state | Registration and findings |
+| --- | --- | --- | --- |
+| Write a prospective fictional scene, or a planning-language proposal, before discovery, and follow each to an opening chapter | Every registered slot completed after a hardware shutdown and one exact retry. The routes varied content as well as representation, so no format-only effect is identifiable, and one first-scene draft cannot judge an experience scheduled for later. | `OBSERVED` | [registration](research/quality-measurement/experience-first-20260914/RUNBOOK.md); [continuation and results](research/quality-measurement/experience-first-recovery-20260915/RESULTS.md) |
+| Hand the original experience specification to the outline as well as to discovery | The two-chapter episodes are auditable, and the reading describes changed staging and placement beside controls that kept broad payoffs without the field. The production command already carries the original brief to the outline, so no missing production field was found. | `OBSERVED` | [registration](research/quality-measurement/experience-handoff-20260915/RUNBOOK.md), [results](research/quality-measurement/experience-handoff-20260915/RESULTS.md) |
+| Carry the automatic experience brief, now on every new discovery-backed concept, through the whole workflow for two chapters | The first segment stopped on a driver error, an ordinal passed where a scene id was required, and a registered continuation finished it. Briefs survived into the outlines, but raw concepts grouped scenes into an opening chapter that the outline inputs mapped one per chapter. | `OBSERVED` | §253; [registration](research/quality-measurement/experience-workflow-20260915/RUNBOOK.md) and [first segment](research/quality-measurement/experience-workflow-20260915/RESULTS.md); [continuation](research/quality-measurement/experience-workflow-continuation-20260915/RUNBOOK.md) and [results](research/quality-measurement/experience-workflow-continuation-20260915/RESULTS.md) |
+| Give invention and development the book's chapter layout, and have concept outlines plan chapter coverage first | Grouping and transmission were exact, but the reading did not show the intended earlier completion; the upstream layout changes were tested offline only. | `OBSERVED` | §253; [registration](research/quality-measurement/chapter-coverage-20260915/RUNBOOK.md), [results](research/quality-measurement/chapter-coverage-20260915/RESULTS.md) |
+| Remove generic scene-role labels from concept outlines | No earlier full opening completion in either story; writer requests still carried the generic first-scene role, whose influence was not tested. | `OBSERVED` | §253; [registration](research/quality-measurement/beat-labels-20260915/RUNBOOK.md), [results](research/quality-measurement/beat-labels-20260915/RESULTS.md) |
+| Remove generated arc scene references and debt coordinates from the outline request | One treatment completed its local experience earlier and the other kept its completion chapter. The two removals were made together and cannot be separated; no production change. | `OBSERVED` | [registration](research/quality-measurement/scene-numbering-20260916/RUNBOOK.md), [results](research/quality-measurement/scene-numbering-20260916/RESULTS.md) |
+| Invent structured story material, developments with tentative placement, before outlining | The transformations validated and central developments survived on reading, but generated numbered timing remained in untouched fields, so the separation is incomplete. | `OBSERVED` | [registration](research/quality-measurement/planning-material-20260916/RUNBOOK.md), [results](research/quality-measurement/planning-material-20260916/RESULTS.md) |
+| The same material as the opt-in `--planning-material` route, against ordinary invention across three connected chapters | Both workflows contain causal continuations. One source fact reached the writer and was never communicated, and an actor/state mismatch located in a planner request was later fixed; two premises and one invocation per workflow cannot isolate a format effect. | `OBSERVED` | §253; [registration](research/quality-measurement/connected-chapters-20260916/RUNBOOK.md), [continuation](research/quality-measurement/connected-chapters-20260916/CONTINUATION.md), [results](research/quality-measurement/connected-chapters-20260916/RESULTS.md) |
+| One fresh premise on the opt-in structured path, drafted as four six-chapter arcs to a complete volume | Twenty-four chapters and a closed volume pursuit, after the second arc's outline failed repeatedly and was recovered with a production fix: a mixed-revision recovery and one candidate, not evidence of reliable unattended production or release readiness. The reading places every source development and names repeated inspection and permission exchanges through the middle chapters. | `OBSERVED` | §253; [registration](research/quality-measurement/full-book-trial-20260919/RUNBOOK.md), [recovery](research/quality-measurement/full-book-trial-20260919/RECOVERY.md), [continuation](research/quality-measurement/full-book-trial-20260919/CONTINUATION.md), [results](research/quality-measurement/full-book-trial-20260919/RESULTS.md) |
+
+**What it changed.** The production changes that followed these readings are recorded in
+§253: the experience brief on every new discovery-backed concept, shared chapter layouts
+reconciled with outline coverage, concept outlines without generic scene roles, the opt-in
+structured planning material, an entering status snapshot taken from the declared protagonist
+only (with development accounting and reader facts on the structured route), and feasible
+later-arc payoff schedules. None was shown to improve a chapter, and the default concept path
+has no full-book evidence, because the complete volume ran on the opt-in route.
 
 ### 4.8 What can the instruments be calibrated against? Less than it looks.
 
@@ -435,27 +547,55 @@ holds under replication (§230). A base model's predictive distribution reads a 
 (§98, §102). The readership reads market performance off a listing (§141). Our prose is
 separable from the market's by surface counts (§75) and differs from it on named, counted
 defect families (section 4.6). Everything else on the central question is a registered null, a
-refutation, or a decision.
+refutation, or a decision, and nothing on it has been established since 2026-09-04. Off the
+central question, the pipeline has carried one book to a complete volume, once and with a
+recovery (section 4.7.1), and the invention stage's repeated story is located in its first call
+(section 4.5.2); both are observations.
 
-**Registered and unspent.** The sim-readership backtest (§123) and the launch out-of-sample
+**Registered and unspent.** ~~The sim-readership backtest (§123) and the launch out-of-sample
 prediction ([research/launch-outsample/PREREG.md](research/launch-outsample/PREREG.md)) both
-wait on the operator's go; the surprisal field (§99) and the dossier-voice arm (§150.6) are
-registered and unscheduled; the reader-sims brief
-([plan/handoff-reader-sims.md](plan/handoff-reader-sims.md)) lists what the costed reader owes
-next.
+wait on the operator's go~~ Corrected 2026-09-22: the launch out-of-sample prediction waits on
+posted chapters and the operator's go, and the sim-readership backtest (§123) is not unspent,
+since its pilot ran twice and its confirmatory stage is paused
+([research/sim-readership-backtest/FINDINGS.md](research/sim-readership-backtest/FINDINGS.md);
+section 4.4). The surprisal field (§99) and the dossier-voice arm (§150.6) are registered and
+unscheduled, and one more attempt at the promise/payoff challenge is registered and has not run
+(section 4.4). The reader-sims brief that listed what the costed reader owed is deleted, as its
+own rule required once every item had a result at its home: the cost that bites at §222, §224
+and §230; order recovery at §225; the backtest's calibration pilot at its FINDINGS.md
+re-anchoring of 2026-09-03; the anticipation probe's paid run at §227; and the proposal at
+[plan/reader-architecture-proposal.md](plan/reader-architecture-proposal.md). What the costed
+reader owes next is the milder manipulation, which stops at admission (section 4.4).
 
 **Closed, and closed for a reason.** Solicited human judgment at every grain (§95); the verdict
 channel (§89); individual-level sim calibration (§106); the anticipation probe (§227); every
 static proxy in BRIEF.md §2. Representation-level readers are parked, not closed.
 
-**The operator's open decisions** are recorded where they sit: the evaluator boundary's three
-questions ([plan/handoff-evaluator-boundary.md](plan/handoff-evaluator-boundary.md)), the
-status line's unheld columns (§201), and the ability magnitude (§114.6).
+**The operator's open decisions** are recorded where they sit:
+
+- two of the evaluator boundary's three questions, permission from Royal Road to post from an
+  automated queue and the second pack's non-fiction domain
+  ([plan/handoff-evaluator-boundary.md](plan/handoff-evaluator-boundary.md)); its first, how to
+  price the backtest's full stage, was answered on 2026-08-31 by raising the ceiling, as
+  [research/sim-readership-backtest/FINDINGS.md](research/sim-readership-backtest/FINDINGS.md)
+  records;
+- whether to resume the backtest's paused confirmatory stage, which first needs its top-up rule
+  (the same FINDINGS.md);
+- the status line's unheld columns (§201) and the ability magnitude (§114.6);
+- reading through a store whose pending migrations only add tables (§241.5);
+- the production provider: nearly every dated arm since 2026-09-10, the complete volume
+  included, ran on the subscription Codex provider at the operator's 2026-09-08 request, while
+  the code default is Claude and no decision has made Codex the default (§253).
+
+**An open records item.** The ledger has no entry for the production commits of 2026-09-08 to
+09-12 (about 28, between §248 and §249); §253 records only those after §252.
 
 **What would change this page.** A mechanism reaching `QUALIFIED` through the
 `reader-mechanism qualify` command; the costed reader moving under a manipulation quieter than
-a whole-book shuffle; the backtest running; a chapter posted through the release queue and the
-out-of-sample registration answering.
+a whole-book shuffle, which first needs an admitted battery of test items across independent
+books; the backtest's confirmatory stage resuming; the promise/payoff challenge's remaining
+attempt; a chapter posted through the release queue and the out-of-sample registration
+answering.
 
 ## 6. How to update this page
 
@@ -468,8 +608,11 @@ uv run python tools/research_overview.py
 
 It verifies that every `§N` on this page is a heading in the ledger, that every path exists in
 the repository, and that every state is one of the six; then it lists the ledger entries
-numbered above the marker at the top of this file and the `FINDINGS.md` and `PREREG.md` files
-under `research/` this page does not mention. Those two lists are the update queue.
+numbered above the marker at the top of this file and the registrations under `research/` this
+page does not mention: each `FINDINGS.md` and `PREREG.md` file, and each experiment folder that
+registers and reports in `RUNBOOK.md`, `registration.json`, `RESULTS.md` or `REPORT.md` instead,
+listed by the folder (a retry registered in its own folder inside an experiment is listed by
+its own path). Those two lists are the update queue.
 `tests/test_research_overview.py` runs the same pointer checks in the suite, so a stale pointer
 fails the build rather than surviving as a claim with its evidence removed.
 

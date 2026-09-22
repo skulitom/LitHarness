@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import re
 import subprocess
+from pathlib import Path
 
 import pytest
 
@@ -105,6 +106,63 @@ def test_the_queue_lists_entries_past_the_marker_and_unmentioned_registrations()
     assert report.ok
     assert report.untriaged_entries == ("§169 A status line printed a machine id",)
     assert "research/sim-readership-backtest/PREREG.md" in report.unmentioned_registrations
+
+
+@pytest.mark.parametrize("record", ["RUNBOOK.md", "registration.json", "RESULTS.md", "REPORT.md"])
+def test_an_experiment_folder_without_findings_or_prereg_is_a_registration(
+    tmp_path: Path, record: str
+) -> None:
+    """An experiment folder that registers and reports only in these files was invisible to the
+    queue while it read `FINDINGS*.md` and `PREREG*.md` alone. Such a folder is listed once, by
+    its path, until the page mentions the folder or a file in it."""
+    for name in ("unread-20260915", "indexed-20260916", "cited-20260917"):
+        folder = tmp_path / "research" / "quality-measurement" / name
+        folder.mkdir(parents=True)
+        (folder / record).write_text("x", encoding="utf-8")
+    page = (
+        "research/quality-measurement/indexed-20260916/ and "
+        f"research/quality-measurement/cited-20260917/{record}"
+    )
+    report = overview.audit(overview=page, ledger=_LEDGER, governance=_GOVERNANCE, repo=tmp_path)
+    assert report.unmentioned_registrations == ("research/quality-measurement/unread-20260915/",)
+
+
+def test_a_folder_with_a_prereg_is_listed_by_its_files_and_a_nested_run_by_its_own_path(
+    tmp_path: Path,
+) -> None:
+    """A folder holding `PREREG.md` beside `RUNBOOK.md` and `RESULTS.md` stays one entry per
+    `PREREG`/`FINDINGS` file, as before. A retry registered in its own folder inside an
+    experiment is its own registration, so a page citing only the outer folder leaves it queued."""
+    research = tmp_path / "research" / "quality-measurement"
+    both = research / "prose-order"
+    both.mkdir(parents=True)
+    for name in ("PREREG.md", "RUNBOOK.md", "RESULTS.md"):
+        (both / name).write_text("x", encoding="utf-8")
+    nested = research / "challenge-20260922" / "recovery"
+    nested.mkdir(parents=True)
+    for folder in (nested.parent, nested):
+        (folder / "registration.json").write_text("{}", encoding="utf-8")
+    page = "research/quality-measurement/challenge-20260922/"
+    report = overview.audit(overview=page, ledger=_LEDGER, governance=_GOVERNANCE, repo=tmp_path)
+    assert report.unmentioned_registrations == (
+        "research/quality-measurement/challenge-20260922/recovery/",
+        "research/quality-measurement/prose-order/PREREG.md",
+    )
+
+
+def test_a_nested_run_does_not_mention_its_parent_and_the_roots_are_not_experiments(
+    tmp_path: Path,
+) -> None:
+    """Citing only a retry's file inside an experiment mentions the retry, not the experiment
+    around it; and the research roots, which hold the shared runbooks, are never listed."""
+    research = tmp_path / "research" / "quality-measurement"
+    nested = research / "seeding-20260910" / "action-followup"
+    nested.mkdir(parents=True)
+    for folder in (nested.parent, nested, research, research.parent):
+        (folder / "RUNBOOK.md").write_text("x", encoding="utf-8")
+    page = "(research/quality-measurement/seeding-20260910/action-followup/RUNBOOK.md)"
+    report = overview.audit(overview=page, ledger=_LEDGER, governance=_GOVERNANCE, repo=tmp_path)
+    assert report.unmentioned_registrations == ("research/quality-measurement/seeding-20260910/",)
 
 
 def test_a_gitignored_path_under_a_tracked_root_is_local_not_present() -> None:

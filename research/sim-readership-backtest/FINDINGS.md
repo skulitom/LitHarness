@@ -10,6 +10,11 @@ slot filled from free runs, all seven modules are committed with hermetic tests,
 driver's paid stages stand behind an explicit operator gate. **No model has been asked
 anything; no arm below has a behavioural number.**
 
+**Corrected 2026-09-22: the paragraph above predates the paid stages.** The pilot ran on
+2026-08-30/31 and again under the fixed transport on 2026-08-31, and the confirmatory stage (c)
+started on 2026-08-31 and was paused on 2026-09-01; the sections below record each. The
+programme is spent in part, and stage (c) is paused, not unspent.
+
 ## Free findings (each already recorded in PREREG.md where it binds)
 
 - **The corpus carries the design.** 2,014 divergent pairs at the registered floor across the

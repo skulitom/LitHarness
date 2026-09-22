@@ -199,12 +199,45 @@ def _invalid_states(cells: list[str], states: frozenset[str]) -> list[str]:
     return invalid
 
 
+#: The files a folder's registrations and findings are listed by, one entry per file: a folder
+#: may hold several versions (`PREREG-v2.md`, `FINDINGS-v3.md`).
+_REGISTRATION_FILES: Final = ("FINDINGS*.md", "PREREG*.md")
+#: The files an experiment folder registers and reports in when it holds neither of those:
+#: `registration.json` or `RUNBOOK.md` before the run, `RESULTS.md` or `REPORT.md` after. Such
+#: a folder is listed once, by its own path, however many of them it holds.
+_EXPERIMENT_FILES: Final = frozenset({"REPORT.md", "RESULTS.md", "RUNBOOK.md", "registration.json"})
+
+
 def _registrations(research: Path) -> list[Path]:
-    files = [
-        *research.rglob("FINDINGS*.md"),
-        *research.rglob("PREREG*.md"),
-    ]
-    return sorted(path for path in files if "__pycache__" not in path.parts)
+    """Every `FINDINGS*.md` and `PREREG*.md` under `research`, and every other folder there that
+    holds one of `_EXPERIMENT_FILES`, as the folder. A folder holding both kinds is listed by its
+    files alone, because the page mentions either through the same folder path."""
+    files = [path for pattern in _REGISTRATION_FILES for path in research.rglob(pattern)]
+    # The research roots hold the shared runbooks, not an experiment.
+    listed = {path.parent for path in files} | {research, research / "quality-measurement"}
+    folders = {
+        path.parent
+        for path in research.rglob("*")
+        if path.name in _EXPERIMENT_FILES and path.parent not in listed
+    }
+    return sorted(path for path in (*files, *folders) if "__pycache__" not in path.parts)
+
+
+#: What may follow a cited path in the page's text: whitespace or Markdown punctuation.
+_PATH_END: Final = re.compile(r"[\s)\]`'\"#|>,;]")
+
+
+def _cites_directly(overview: str, folder: str) -> bool:
+    """Whether the page cites `folder` itself or a file directly inside it, not only a nested
+    folder's file: citing `run/retry/RUNBOOK.md` mentions `run/retry/`, never `run/`."""
+    start = overview.find(folder)
+    while start != -1:
+        rest = overview[start + len(folder) :]
+        end = _PATH_END.search(rest)
+        if "/" not in (rest[: end.start()] if end else rest):
+            return True
+        start = overview.find(folder, start + 1)
+    return False
 
 
 def audit(
@@ -251,9 +284,13 @@ def audit(
     unmentioned: list[str] = []
     research = repo / RESEARCH.relative_to(REPO)
     for path in _registrations(research):
-        relative = path.relative_to(repo).as_posix()
-        parent = path.parent.relative_to(repo).as_posix() + "/"
-        if relative not in overview and parent not in overview:
+        folder = path.is_dir()
+        parent = (path if folder else path.parent).relative_to(repo).as_posix() + "/"
+        relative = parent if folder else path.relative_to(repo).as_posix()
+        if folder:
+            if not _cites_directly(overview, parent):
+                unmentioned.append(relative)
+        elif relative not in overview and parent not in overview:
             unmentioned.append(relative)
 
     return Report(

@@ -26061,3 +26061,131 @@ retain repeatable, ownership-only and explicitly capped declarations, and the in
 grow prompt retains the fixed conditional/adopted distinction. The result addresses the
 untested-guidance limitation above on these fixtures only. It supplies no fresh serial
 outcome, no general compliance rate and no migration of legacy worlds.
+
+## 253. Production changes from the experience-first and full-book work, recorded after the fact (2026-09-22)
+
+Nine commits changed `src/` on main between §252 and 2026-09-22 without a ledger entry;
+`12d99b8` and `9e0f599` were operator-requested opening fixes, and the others follow findings in
+the dated records. Each paragraph gives the modules, default or opt-in path, the exercising
+record with its stated status, and what that record did not establish.
+
+The scope starts at §252. An earlier gap remains unrecorded here: about 28 `src/` commits landed
+between §248 and §249 (2026-09-08 to 09-12) with no entry, among them `c69e5ad` (the Codex
+adapter), `446638f` (new books default to portal fantasy, isekai or system apocalypse) and
+`635b258` (the Base64 invention seed as default). Only the invention-line changes of that window
+have dated folders.
+
+**`991ff2c` (2026-09-13), opt-in compaction of Codex tool replies.** `providers/codex_tools.py`
+gains `compact_json_stdout`, which removes JSON whitespace outside strings in successful stdout
+and leaves failures, stderr and non-JSON output verbatim. `providers/codex_cli.py` gains
+`CodexCliProvider.compact_tool_json`, default `False`, which `build_default_registry` never
+sets: no operator switch exists. The [four-cell comparison](../research/quality-measurement/compact-json-20260913/REPORT.md)
+is OBSERVED: every native-visible tool result matched its expected receipt, the goal contrast
+survived and stdout shrank, but reported tokens fell in one pair and rose in the other. No cost
+saving is established.
+
+**`12d99b8` (2026-09-13), consequential scene choices.** Concept-backed outlines in
+`application/outline.py` move to `planner.outline.v2`, with rules for consequential choices,
+forgone alternatives and other participants' aims; `domain/house.py` adds an explanation limit
+to named-viewpoint drafting. Both are default: the first for every concept-backed book (other
+outlines kept v1), the second for every named viewpoint. The [scene-consequence trial](../research/quality-measurement/scene-consequence-20260913/REPORT.md)
+(claim status `observed`) calls itself "a partial editorial repair": the Load/Duration defect
+was absent, while procedural pacing and repeated qualification remained. One bundled first
+output against a historical opening cannot establish causal improvement.
+
+**`9e0f599` (2026-09-13), selective scene treatment.** Concept outlines move to
+`planner.outline.v3`; `domain/scene_brief.py` adds a `TREATMENT` instruction to rendered scene
+briefs (legacy plain plans stay verbatim); `domain/house.py` replaces the named-viewpoint clause
+and gives opening scene drafts a scoped magical-possibility offer, which `application/planner.py`
+selects with `scene_draft=True`. Default path. The [scene-focus trial](../research/quality-measurement/scene-focus-20260913/REPORT.md)
+(claim status `observed`) finds more consequential personal responses beside persistent
+procedural pacing and a softened failed-repair cost. The [opening-consequence follow-up](../research/quality-measurement/opening-consequence-20260914/REPORT.md)
+ran unchanged production source with book-specific directions that are not defaults; its
+registered Point-balance check fails. Neither record establishes causal improvement.
+
+**`7b0ebc4` (2026-09-15), automatic experience brief.** After the experience-first
+[feasibility](../research/quality-measurement/experience-first-recovery-20260915/RESULTS.md) and
+[handoff](../research/quality-measurement/experience-handoff-20260915/RESULTS.md) records,
+`application/discovery.py` (`writer.discovery.v12`) requires an `experience_brief` (desire, use,
+consequence, next desire, coverage), which `application/concept.py` develops and projects and
+`application/outline.py` (`planner.outline.v4`) plans from. Every new discovery-backed concept
+carries one (default path); stored concepts without it stay readable. The
+[whole-workflow comparison](../research/quality-measurement/experience-workflow-20260915/RESULTS.md)
+of `294e93e` against `7b0ebc4` stopped at a driver error; its
+[continuation](../research/quality-measurement/experience-workflow-continuation-20260915/RESULTS.md)
+completed it ("The claim remains `observed`"): briefs were retained, but three of four concepts
+grouped scenes into an opening chapter the outline inputs mapped one per chapter. No enjoyment
+effect is established.
+
+**`aa33e6a` (2026-09-15), shared chapter layouts and coverage.** New `application/chapter_layout.py`
+and `application/chapter_coverage.py` give discovery and concept development the book's layout
+and prose budget (the global `--chapter-scenes`, `--arc-chapters`, `--target-words`), and have
+concept outlines (`planner.outline.v5`) plan chapter coverage first, reconciled against exact
+chapter membership and stored as unlocked `chapter_plan` items. It is default whenever the
+concept has an experience brief, since the planner always supplies the chapter map. The
+[fixed-story comparison](../research/quality-measurement/chapter-coverage-20260915/RESULTS.md)
+states "The claim remains **OBSERVED**"; the reading did not establish earlier completion, and
+the upstream layout changes were tested offline only.
+
+**`34c9418` (2026-09-15), no generic scene roles in concept outlines.** `application/outline.py`
+(`planner.outline.v6`) drops `dramatic_function` and the instruction to respect it from
+concept-backed outline requests; non-concept outlines keep both. Default path. The
+[fixed-story comparison](../research/quality-measurement/beat-labels-20260915/RESULTS.md) states
+"The claim is **OBSERVED**": the reading found no earlier full opening completion, and writer
+requests still carried the generic first-scene role, whose influence was not tested.
+
+**`79f4da7` (2026-09-16), opt-in structured planning material.** `concept --planning-material`
+(`cli.py`) invents mechanics and referenced developments in one call (new
+`application/story_material.py`; `application/concept.py`, `writer.concept.material.v1`), keeps
+generated placement out of active planning, routes outlines to `planner.outline.structured.v1`
+and seeds worlds from the developments (`application/world_agent.py`). The default is unchanged;
+the mode refuses `--exemplars`. After a [prototype](../research/quality-measurement/planning-material-20260916/RESULTS.md)
+at `80d37ba`, [connected-chapters](../research/quality-measurement/connected-chapters-20260916/RESULTS.md)
+ran both arms at `79f4da7` ("Status: **OBSERVED** authoring demonstration"); two premises and
+one invocation per workflow cannot isolate a format effect.
+
+**`6c3bda4` (2026-09-16), actor state and structured handoffs.** After the actor/state mismatch
+connected-chapters located in a planner request, `application/outline.py` takes the entering
+status snapshot from the declared protagonist only, and ambiguous legacy ownership supplies
+none (default path). For `--planning-material` concepts only, the new
+`application/development_coverage.py` has structured outlines (`planner.outline.structured.v2`)
+account for each development as planned, established or deferred, and version-2 briefs in
+`domain/scene_brief.py` pass `reader_facts` to the writer. The contracts are
+`tests/test_outline_state_owner.py` and `tests/test_structured_outline_coverage.py`. The
+full-book trial is the only live use: no record isolates this change or checks reader facts.
+
+**`4b35483` (2026-09-19), feasible later-arc payoff schedules.** The
+[full-book trial](../research/quality-measurement/full-book-trial-20260919/RESULTS.md), registered
+at `6c3bda4` on the opt-in structured path, failed three arc-2 outline attempts: a late promise
+window, then book-wide numbers where response-local ordinals were required. The fix in
+`application/outline.py` bumps all three outline profiles (`planner.outline.v2`, `.v7`,
+`.structured.v3`) and is on the default path: each open promise lists only the response
+ordinals the existing domain deadline rule accepts, the response schema constrains ordinals, and
+an omitted window neither pays nor extends the obligation. The recovered arc and both later
+arcs accepted their first outlines and the book reached 24 chapters, but "The claim remains
+**OBSERVED**" and the run is "a mixed-revision recovery, not an uninterrupted run": one
+structured-path candidate, not evidence of reliable unattended production or release readiness.
+`planner.outline.v2`, once `12d99b8`'s concept profile, now names the non-concept outline.
+
+**Provider in practice.** On 2026-09-08 the operator asked for the clean-start and existing
+pipelines on Codex ([comparison record](../docs/generation-comparison-20260908.md)). From
+2026-09-10 nearly every dated generation arm, including every record cited above, ran on the
+subscription Codex provider at `gpt-6-astra` and medium reasoning: named in the record, or
+through the adapter's defaults (`providers/codex_cli.py:146-147`) where a record says only
+"default native model/reasoning". The code default is
+unchanged: `build_default_registry` in `src/litharness/providers/__init__.py` reads
+`LITHARNESS_PROVIDER` with `claude` as its default, and the README and operator guide present
+Codex as the alternative. No decision has made Codex the production default, and none of the
+cited records ran these changes on the default Claude transport.
+
+This entry was written on 2026-09-22 from the commits' diffs and messages and the dated records;
+it adds no evidence and makes no new decision. Those records own the evidence, counts and
+interpretation limits: where this summary and a record differ, the record governs and a
+correction belongs there. Commits adding only research runners or results stay in their folders.
+
+**The reader-sims handoff is deleted.** `plan/handoff-reader-sims.md` (§222) is removed with this
+entry. Its five items have homes: §222 and §230 (the cost that bites), §225 (order recovery),
+[the backtest's re-anchoring](../research/sim-readership-backtest/FINDINGS.md) (its section
+"Re-anchoring, 2026-09-03"), §227 (the anticipation run) and
+[the reader-architecture proposal](reader-architecture-proposal.md). Older records that name the
+path keep it as history.
