@@ -157,7 +157,9 @@ def _prints_another_quantity(
     Read through the arm `moves.movables` uses (the one system printing the line and this
     character's sheet in it), so the abstention and the beat vocabulary cannot come apart. A
     book with no price, an unpriced grant, a rung, and a count the edges agree with all answer
-    `False`, which is every book whose line and edges are one statement.
+    `False`. A count-printing book can still answer `True`: an opening line that prints a priced
+    grant the seed did not declare, with no stock to have bought it, binds nothing, and that
+    column abstains for the rest of the book (§254's residuals).
     """
     if character is None or not isinstance(was, int):
         return False

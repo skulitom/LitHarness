@@ -26206,8 +26206,9 @@ at the opening, Load 200 at Chapter 3 and Duration 120 at Chapter 6.
 A priced grant's printed number now binds as printed only when its price could have bought it
 from the stock held entering the scene plus what the rungs the line climbs hand out. A number its
 price could not have bought stays verbatim on the snapshot; the holding binds at the purchases
-the line's own stock column paid for when exactly one such grant moved on the page and its one
-stock is printed, and otherwise nothing binds for it, because choosing which grant a Point bought
+the line's own stock column paid for, less what the priced grants that line binds as printed
+spent from the same stock, when exactly one such grant moved on the page and its one stock is
+printed, and otherwise nothing binds for it, because choosing which grant a Point bought
 would be the reader inventing the purchase. Unpriced grants, stocks and affordable counts bind
 exactly as before under the §236 note; a paid holding carries its own note.
 `progression.moved_example` abstains for a priced grant whose line prints another number than
@@ -26215,17 +26216,19 @@ the edges count, so a writer is never shown an allowance falling to a count; `ga
 is unchanged. The check is arithmetic over the declared price and the page's own stock column;
 no unit word is read.
 
-No prompt text, profile, registry version or system digest changes, and no stored book is
-rewritten: the retained book stays the failing example, and its report is not edited because its
-claim record hashes it. Scene-draft request digests change only for a continuation of a book whose
-line prints a priced grant at a number its price could not have bought, through the state its
-packet reads (`can do duration at 1` where the old binding gave 120) and the moved-line
-abstention. `tools/replay_books.py` on its four default stores reports 0/8 identical both before
-and after this change, and the two reports are byte-identical (`--baseline` against the
+No prompt text, profile, registry version or system digest changes, and no stored book is rewritten:
+the retained book stays the failing example, and its report is not edited because its claim record
+hashes it. Scene-draft request digests change only for a continuation of a book whose line prints a
+priced grant at a number its price could not have bought, through the state its packet reads
+(`can do duration at 1` where the old binding gave 120) and the moved-line abstention. That is not
+only an allowance-printing book: a count-printing book whose opening line prints a priced grant the
+seed did not declare, with no stock to have bought it, bound it as printed under §236 and now binds
+nothing for it (below). `tools/replay_books.py` on its four default stores reports 0/8 identical
+both before and after this change, and the two reports are byte-identical (`--baseline` against the
 pre-change tree: nothing moved). The differences are the §234 and §236 edges those drafts predate
-(22 `can_do`, 2 `stands_at`) and the `systemvoice.v1` stamp from `96ef4e2` on each snapshot;
-§236 already said the tool shows what a re-read would add. Read through `mode=ro` connections,
-those stores declare no stock, growth limit or price edge, so the new binding cannot reach them.
+(22 `can_do`, 2 `stands_at`) and the `systemvoice.v1` stamp from `96ef4e2` on each snapshot; §236
+already said the tool shows what a re-read would add. Read through `mode=ro` connections, those
+stores declare no stock, growth limit or price edge, so the new binding cannot reach them.
 
 `test_the_one_point_duration_purchase_binds_one_investment_and_balances_the_stock` replays the
 trial's own lines on its declared price model and pins the exact purchase (grant 1, cost 1,
@@ -26233,18 +26236,35 @@ Point 0 to 0); `test_a_printed_allowance_its_price_could_not_buy_binds_no_holdin
 none of the retained failing ids is minted;
 `test_a_purchase_the_line_cannot_attribute_binds_nothing_for_its_priced_columns` and
 `test_the_moved_line_abstains_where_a_priced_column_prints_an_allowance` pin the abstentions;
+`test_a_mixed_line_charges_the_paid_count_only_the_stock_the_bought_counts_left` and
+`test_a_mixed_line_whose_bought_counts_spend_the_whole_stock_pays_for_no_allowance` pin the
+paid count on a line that also buys a count;
+`test_an_opening_count_the_seed_did_not_declare_binds_nothing_and_its_line_abstains` pins the
+residual below as it behaves;
 `test_a_line_that_prints_purchases_as_counts_binds_exactly_as_before` (the sibling trials'
 count-printing lines) and
 `test_a_grant_that_moved_on_the_status_line_records_the_holding_the_line_states` are the
 controls. These are implementation contracts, not evidence about prose, and no live run has used
 the change.
 
-Residuals: an allowance a price could have bought (`Load 2` with two Points in hand) still binds
-as a count, which arithmetic without units cannot tell apart; unpriced repeatable grants are
-unguarded; a purchase line that omits its stock column binds nothing, so the Point stays and the
-purchase may be offered again; the packet's `can do … at N` sentence prints the count beside the
-line's allowance; `moves.change_example` renders counts; a typed sheet still needs a rung, so an
-audit cannot check a purchase made before the first one; and a seed can still declare a priced
-grant's `can_do` at an allowance, since seeds are not checked against affordability. Telling
-writers what a priced column's number means would change every system book's writer request and
-is left to the operator.
+Residuals: an allowance a price could have bought (`Load 2` with two Points in hand) still binds as
+a count, which arithmetic without units cannot tell apart; for the same reason an opening line that
+prints a priced grant the seed did not declare (`Loadstitch 1 | Duration 1`, no Point yet) reads
+exactly like the trial's opening allowances, so `Duration 1` binds nothing, the edges count one
+fewer than the page for the rest of the book, and the moved-line example abstains on that column
+(treating a first printed value as its declaration would re-bind `Length 10`); counts bound as
+printed are each checked against the whole stock, so two that jointly overspend it still bind as the
+page printed them, and only the paid count abstains; unpriced repeatable grants are unguarded; a
+purchase line that omits its stock column binds nothing, so the Point stays and the purchase may be
+offered again; the packet's `can do … at N` sentence prints the count beside the line's allowance;
+`moves.change_example` renders counts; a typed sheet still needs a rung, so an audit cannot check a
+purchase made before the first one; and a seed can still declare a priced grant's `can_do` at an
+allowance, since seeds are not checked against affordability. Telling writers what a priced column's
+number means would change every system book's writer request and is left to the operator.
+
+**Review correction, same day, in place.** The paragraphs above now say what the follow-up
+commit changed and found. The first version charged the whole stock drop to the one allowance,
+so `Rank 2 | Point 2` then `Length 1 | Duration 120 | Point 0` bound Duration at two purchases
+beside the bought Length: three from two Points, the imbalance this entry exists to remove. It
+also claimed, in its commit message, no digest change, and read as though only
+allowance-printing books moved; the undeclared opening count above moved too.

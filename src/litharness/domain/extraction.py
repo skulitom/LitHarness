@@ -650,6 +650,9 @@ def _bound_holdings(
 
     `held` is the edges' own count entering the scene (0 before the first rung, as it always
     was); a stock's `available` is what it holds plus what the rungs this line climbs hand out.
+    A count bound as printed is checked against the whole of `available` on its own, so two
+    that jointly overspend a stock still bind as the page printed them (§254's residual); the
+    paid count takes only the drop they leave, and none when they overspend it.
     """
     held = {
         ability_id: standing.magnitude(ability_id) if standing is not None else 0
@@ -674,6 +677,10 @@ def _bound_holdings(
     }
     bound: list[tuple[str, int, str]] = []
     unbought: list[str] = []
+    # What the priced grants bound as printed spent from each stock, so a paid count takes
+    # only the drop they leave (a line printing `Length 1 | Duration 120 | Point 0` off two
+    # Points bought one Duration, not two).
+    bought: dict[str, int] = {}
     for ability_id, value in stated.items():
         if value == held[ability_id]:
             continue
@@ -685,13 +692,20 @@ def _bound_holdings(
             or all(steps * amount <= available.get(stock, 0) for stock, amount in ability.price)
         ):
             bound.append((ability_id, value, _PRINTED_HOLDING))
+            if steps > 0:
+                for stock, amount in ability.price:
+                    bought[stock] = bought.get(stock, 0) + steps * amount
         elif value != printed_before.get(ability_id):
             unbought.append(ability_id)
     if len(unbought) == 1 and len(system.ability(unbought[0]).price) == 1:
         ability_id = unbought[0]
         stock, amount = system.ability(ability_id).price[0]
         after = stated.get(stock)
-        spent = available.get(stock, 0) - after if after is not None else 0
+        # Grants bound as printed that jointly cost more than the stock held leave a
+        # negative remainder, and the paid count abstains rather than choose.
+        spent = (
+            available.get(stock, 0) - after - bought.get(stock, 0) if after is not None else 0
+        )
         if amount > 0 and spent > 0 and spent % amount == 0:
             count = held[ability_id] + spent // amount
             limit = system.depth_limit(ability_id)

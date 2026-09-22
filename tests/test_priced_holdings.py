@@ -233,3 +233,65 @@ def test_the_moved_line_abstains_where_a_priced_column_prints_an_allowance() -> 
     shown = moved_example(known, Movable("Two", gs.RANK_KEY), character="wren", at="s000004")
     assert shown is not None
     assert "Rank 2" in shown.line and "Duration 60" in shown.line
+
+
+def test_a_mixed_line_charges_the_paid_count_only_the_stock_the_bought_counts_left() -> None:
+    """An affordable purchase and an allowance on one stock: `Length 1` binds as printed and
+    costs one of the two Points, so the allowance binds at the one purchase the rest paid for,
+    and the stock balances."""
+    system = _engine()
+    book = _read(
+        (1, ("[STATUS] Wren — Loadstitch 1",)),
+        (2, (FIRST_RISE,)),
+        (
+            3,
+            (
+                "[STATUS] Wren — Rank 2 | Point 2",
+                "[STATUS] Wren — Length 1 | Duration 120 | Point 0",
+            ),
+        ),
+    )
+    assert _holdings(book, "s000003") == {"length": 1, "duration": 1, "point": 0}
+    canon = [record for record in book if state_mod.is_canon(record)]
+    before = gs.sheet_of(canon, "wren", system=system, at="s000002")
+    after = gs.sheet_of(canon, "wren", system=system, at="s000003")
+    assert before is not None and after is not None
+    grant = (system.rank_index(after.rank_id) - system.rank_index(before.rank_id)) * system.ability(
+        "point"
+    ).per_rung
+    cost = sum(
+        (after.magnitude(ability.ability_id) - before.magnitude(ability.ability_id))
+        * dict(ability.price).get("point", 0)
+        for ability in system.abilities
+        if ability.price
+    )
+    assert (grant, cost) == (1, 2)
+    assert before.magnitude("point") + grant - cost == after.magnitude("point") == 0
+
+
+def test_a_mixed_line_whose_bought_counts_spend_the_whole_stock_pays_for_no_allowance() -> None:
+    """Two bought Lengths spend both Points, so nothing is left for the Duration the line
+    prints as an allowance, and it binds nothing rather than a purchase no Point paid for."""
+    book = _read(
+        (1, ("[STATUS] Wren — Loadstitch 1",)),
+        (
+            3,
+            (
+                "[STATUS] Wren — Rank 2 | Point 2",
+                "[STATUS] Wren — Length 2 | Duration 120 | Point 0",
+            ),
+        ),
+    )
+    assert _holdings(book, "s000003") == {"length": 2}
+
+
+def test_an_opening_count_the_seed_did_not_declare_binds_nothing_and_its_line_abstains() -> None:
+    """A named residual of §254, pinned as it behaves: an opening line printing a priced grant
+    the seed did not declare, with no stock to have bought it, reads the same as the trial's
+    opening allowance, so `Duration 1` binds nothing (it bound as printed before §254), the
+    edges count 0 against the page's 1, and the moved-line example abstains on that column."""
+    known = _read((1, ("[STATUS] Wren — Loadstitch 1 | Duration 1",)), (3, (FIRST_RISE,)))
+    assert _holdings(known, "s000001") == {"loadstitch": 1}
+    duration = Movable("Duration", "duration")
+    assert duration in movables(known, character="wren", at="s000004")
+    assert moved_example(known, duration, character="wren", at="s000004") is None
