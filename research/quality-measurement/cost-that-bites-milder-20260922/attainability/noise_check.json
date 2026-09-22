@@ -1,0 +1,50 @@
+{
+ "intact": {
+  "within_cell_noise_of_mean(w/3)": 0.03325981434240363,
+  "cross_arm_noise_of_mean(var(m2-m3)/2)": 0.01213487588017663,
+  "cross_arm_cov(true between-book var)": 0.032614273779687314,
+  "within_arm_between_book_var_minus_noise": 0.011489335317460311,
+  "session_corr_cross_arm_same_replicate": 0.48724817670663634,
+  "session_corr_cross_arm_other_replicate": 0.19998044565006756,
+  "session_corr_within_arm_between_replicates": 0.10151897702853635
+ },
+ "shuffled": {
+  "within_cell_noise_of_mean(w/3)": 0.02125230300453514,
+  "cross_arm_noise_of_mean(var(m2-m3)/2)": 0.025666099773242634,
+  "cross_arm_cov(true between-book var)": 0.01370642006802721,
+  "within_arm_between_book_var_minus_noise": 0.0181202168367347,
+  "session_corr_cross_arm_same_replicate": 0.23763218921152343,
+  "session_corr_cross_arm_other_replicate": 0.13067454808856246,
+  "session_corr_within_arm_between_replicates": 0.2041033410901425
+ },
+ "sham": {
+  "within_cell_noise_of_mean(w/3)": 0.033264243197278914,
+  "cross_arm_noise_of_mean(var(m2-m3)/2)": 0.028642849683733155,
+  "cross_arm_cov(true between-book var)": 0.010610324173529058,
+  "within_arm_between_book_var_minus_noise": 0.005988930659983294,
+  "session_corr_cross_arm_same_replicate": -0.045217539501156756,
+  "session_corr_cross_arm_other_replicate": 0.16026245556832946,
+  "session_corr_within_arm_between_replicates": 0.038548338726448396
+ },
+ "paired_d": {
+  "var_d_v2": 0.044532741824800104,
+  "var_d_v3": 0.09346981665473207,
+  "cross_arm_noise_var_d(var(d2-d3)/2)": 0.022671261487050964,
+  "cross_arm_cov_d(tau2)": 0.04633001775271513,
+  "within_cell_noise_var_d": 0.05451211734693877
+ },
+ "intact_share_distribution": {
+  "0.0": 6,
+  "0.125": 2,
+  "0.25": 24,
+  "0.286": 2,
+  "0.375": 11,
+  "0.429": 2,
+  "0.5": 9,
+  "0.625": 8,
+  "0.714": 1,
+  "0.75": 8,
+  "0.875": 11,
+  "1.0": 36
+ }
+}

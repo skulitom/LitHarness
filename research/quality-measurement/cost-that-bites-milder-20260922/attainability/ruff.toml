@@ -1,0 +1,5 @@
+# The Python files beside this config are the call-free power record exactly as it ran on
+# 2026-09-22 (line endings normalised to LF, nothing else changed; ../ATTAINABILITY.md records
+# both hashes). A record is not restyled after the fact, so nothing here is linted.
+[lint]
+ignore = ["ALL"]

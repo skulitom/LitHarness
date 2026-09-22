@@ -1,0 +1,427 @@
+f=0.0000 {'parametric_proportional_n20': {'primary': 0.056, 'joint': 0.018, 'sd_d': 0.255}, 'parametric_constant_n20': {'primary': 0.062, 'joint': 0.016, 'sd_d': 0.281}, 'empirical_mixture_n20': {'primary': 0.059, 'joint': 0.018, 'sd_d': 0.218}, 'n_for_0.8_analytic_proportional': inf, 'n_for_0.8_analytic_constant': inf}
+f=0.1225 {'parametric_proportional_n20': {'primary': 0.128, 'joint': 0.046, 'sd_d': 0.252}, 'parametric_constant_n20': {'primary': 0.113, 'joint': 0.047, 'sd_d': 0.28}, 'empirical_mixture_n20': {'primary': 0.146, 'joint': 0.044, 'sd_d': 0.225}, 'n_for_0.8_analytic_proportional': 863.300163016727, 'n_for_0.8_analytic_constant': 1052.0778487103435}
+f=0.3500 {'parametric_proportional_n20': {'primary': 0.314, 'joint': 0.163, 'sd_d': 0.251}, 'parametric_constant_n20': {'primary': 0.284, 'joint': 0.154, 'sd_d': 0.275}, 'empirical_mixture_n20': {'primary': 0.328, 'joint': 0.16, 'sd_d': 0.241}, 'n_for_0.8_analytic_proportional': 103.85162639276996, 'n_for_0.8_analytic_constant': 124.45320010989066}
+f=0.4138 {'parametric_proportional_n20': {'primary': 0.372, 'joint': 0.208, 'sd_d': 0.25}, 'parametric_constant_n20': {'primary': 0.358, 'joint': 0.217, 'sd_d': 0.272}, 'empirical_mixture_n20': {'primary': 0.433, 'joint': 0.27, 'sd_d': 0.247}, 'n_for_0.8_analytic_proportional': 74.22693917458945, 'n_for_0.8_analytic_constant': 88.14703352525233}
+f=0.4225 {'parametric_proportional_n20': {'primary': 0.406, 'joint': 0.226, 'sd_d': 0.25}, 'parametric_constant_n20': {'primary': 0.314, 'joint': 0.189, 'sd_d': 0.274}, 'empirical_mixture_n20': {'primary': 0.37, 'joint': 0.239, 'sd_d': 0.249}, 'n_for_0.8_analytic_proportional': 71.20255466649162, 'n_for_0.8_analytic_constant': 84.43804993846229}
+f=0.4228 {'parametric_proportional_n20': {'primary': 0.42, 'joint': 0.247, 'sd_d': 0.25}, 'parametric_constant_n20': {'primary': 0.368, 'joint': 0.202, 'sd_d': 0.274}, 'empirical_mixture_n20': {'primary': 0.39, 'joint': 0.228, 'sd_d': 0.249}, 'n_for_0.8_analytic_proportional': 71.10162621544933, 'n_for_0.8_analytic_constant': 84.31426559937763}
+f=0.5295 {'parametric_proportional_n20': {'primary': 0.534, 'joint': 0.371, 'sd_d': 0.25}, 'parametric_constant_n20': {'primary': 0.457, 'joint': 0.313, 'sd_d': 0.271}, 'empirical_mixture_n20': {'primary': 0.505, 'joint': 0.362, 'sd_d': 0.259}, 'n_for_0.8_analytic_proportional': 45.46857999034233, 'n_for_0.8_analytic_constant': 52.85045250048725}
+f=0.5734 {'parametric_proportional_n20': {'primary': 0.555, 'joint': 0.389, 'sd_d': 0.25}, 'parametric_constant_n20': {'primary': 0.552, 'joint': 0.385, 'sd_d': 0.267}, 'empirical_mixture_n20': {'primary': 0.534, 'joint': 0.409, 'sd_d': 0.262}, 'n_for_0.8_analytic_proportional': 38.87815492250576, 'n_for_0.8_analytic_constant': 44.74945097813467}
+f=0.5768 {'parametric_proportional_n20': {'primary': 0.552, 'joint': 0.412, 'sd_d': 0.253}, 'parametric_constant_n20': {'primary': 0.507, 'joint': 0.361, 'sd_d': 0.266}, 'empirical_mixture_n20': {'primary': 0.55, 'joint': 0.4, 'sd_d': 0.263}, 'n_for_0.8_analytic_proportional': 38.43061274365605, 'n_for_0.8_analytic_constant': 44.199089234835895}
+f=0.6170 {'parametric_proportional_n20': {'primary': 0.628, 'joint': 0.481, 'sd_d': 0.251}, 'parametric_constant_n20': {'primary': 0.602, 'joint': 0.432, 'sd_d': 0.267}, 'empirical_mixture_n20': {'primary': 0.566, 'joint': 0.442, 'sd_d': 0.267}, 'n_for_0.8_analytic_proportional': 33.696811943588735, 'n_for_0.8_analytic_constant': 38.37554024484991}
+f=0.6500 {'parametric_proportional_n20': {'primary': 0.686, 'joint': 0.531, 'sd_d': 0.252}, 'parametric_constant_n20': {'primary': 0.605, 'joint': 0.462, 'sd_d': 0.265}, 'empirical_mixture_n20': {'primary': 0.6, 'joint': 0.492, 'sd_d': 0.267}, 'n_for_0.8_analytic_proportional': 30.46059554622118, 'n_for_0.8_analytic_constant': 34.39170046882758}
+f=0.7233 {'parametric_proportional_n20': {'primary': 0.744, 'joint': 0.615, 'sd_d': 0.252}, 'parametric_constant_n20': {'primary': 0.719, 'joint': 0.592, 'sd_d': 0.264}, 'empirical_mixture_n20': {'primary': 0.668, 'joint': 0.599, 'sd_d': 0.277}, 'n_for_0.8_analytic_proportional': 24.81904692767072, 'n_for_0.8_analytic_constant': 27.440381631307968}
+f=0.8788 {'parametric_proportional_n20': {'primary': 0.858, 'joint': 0.779, 'sd_d': 0.256}, 'parametric_constant_n20': {'primary': 0.815, 'joint': 0.73, 'sd_d': 0.262}, 'empirical_mixture_n20': {'primary': 0.751, 'joint': 0.706, 'sd_d': 0.295}, 'n_for_0.8_analytic_proportional': 17.260720950455756, 'n_for_0.8_analytic_constant': 18.108714278006545}
+f=1.0000 {'parametric_proportional_n20': {'primary': 0.923, 'joint': 0.857, 'sd_d': 0.261}, 'parametric_constant_n20': {'primary': 0.919, 'joint': 0.853, 'sd_d': 0.261}, 'empirical_mixture_n20': {'primary': 0.783, 'joint': 0.756, 'sd_d': 0.311}, 'n_for_0.8_analytic_proportional': 13.696299288467369, 'n_for_0.8_analytic_constant': 13.696299288467369}
+partial_0.35:A1_linear_in_strength:0.35 {20: 0.32, 30: 0.4025, 40: 0.4675, 50: 0.575, 60: 0.68, 80: 0.73, 100: 0.8025}
+partial_0.35:A2_broken_adjacency_ratio:0.5734 {20: 0.555, 30: 0.675, 40: 0.75, 50: 0.82}
+partial_0.65:A1_linear_in_strength:0.65 {20: 0.63, 30: 0.7525, 40: 0.8225}
+partial_0.65:A2_broken_adjacency_ratio:0.8788 {20: 0.725, 30: 0.855}
+partial_0.65:A4_convex_s_squared:0.4225 {20: 0.36, 30: 0.4725, 40: 0.5875, 50: 0.71, 60: 0.7225, 80: 0.87}
+ablate_0.35:A1_linear_in_strength:0.35 {20: 0.29, 30: 0.47, 40: 0.4875, 50: 0.5975, 60: 0.63, 80: 0.7475, 100: 0.8275}
+ablate_0.35:A2_broken_adjacency_ratio:0.5295 {20: 0.5125, 30: 0.625, 40: 0.715, 50: 0.835}
+ablate_0.65:A1_linear_in_strength:0.65 {20: 0.6425, 30: 0.7575, 40: 0.8275}
+ablate_0.65:A2_broken_adjacency_ratio:0.617 {20: 0.5225, 30: 0.7025, 40: 0.805}
+ablate_0.65:A4_convex_s_squared:0.4225 {20: 0.3925, 30: 0.5375, 40: 0.605, 50: 0.7075, 60: 0.71, 80: 0.84}
+{
+ "variance": {
+  "v2": {
+   "mean_intact_minus_shuffled": 0.16398809523809527,
+   "paired_sd_intact_minus_shuffled": 0.2110278223950579,
+   "se_intact_minus_shuffled": 0.04718725560191019,
+   "books_positive": 16,
+   "books_negative": 4,
+   "paired_sd_intact_minus_sham": 0.2593035196102306,
+   "paired_sd_sham_minus_shuffled": 0.253065552549332,
+   "within_cell_session_sd": {
+    "intact": 0.33886251802530326,
+    "shuffled": 0.24493161616794074,
+    "sham": 0.33360692428661126
+   },
+   "noise_part_of_paired_var_is": 0.058273100907029474,
+   "tau2_effect_heterogeneity_is": -0.01374035908222937,
+   "tau2_null_contrast_ih": -0.008135480069220671,
+   "between_book_sd_intact_mean": 0.21108900739179134,
+   "between_book_sd_intact_true": 0.07926306622571501,
+   "between_book_sd_shuffled_mean": 0.20847448673238542,
+   "between_book_sd_shuffled_true": 0.15318108919005546,
+   "corr_intact_shuffled_book_means": 0.494100512416462,
+   "session_sd_all_intact": 0.3477031336602453
+  },
+  "v3": {
+   "mean_intact_minus_shuffled": 0.1889880952380953,
+   "paired_sd_intact_minus_shuffled": 0.3057283379975302,
+   "se_intact_minus_shuffled": 0.06836293464105093,
+   "books_positive": 14,
+   "books_negative": 6,
+   "paired_sd_intact_minus_sham": 0.23059356250110952,
+   "paired_sd_sham_minus_shuffled": 0.2464647401205448,
+   "within_cell_session_sd": {
+    "intact": 0.29108603527474963,
+    "shuffled": 0.2598505751938437,
+    "sham": 0.2971394946009377
+   },
+   "noise_part_of_paired_var_is": 0.05075113378684807,
+   "tau2_effect_heterogeneity_is": 0.042718682867884,
+   "tau2_null_contrast_ih": -0.0045009286609380625,
+   "between_book_sd_intact_mean": 0.2119899296619444,
+   "between_book_sd_intact_true": 0.12921314548999474,
+   "between_book_sd_shuffled_mean": 0.18783883534617685,
+   "between_book_sd_shuffled_true": 0.11303091430231672,
+   "corr_intact_shuffled_book_means": -0.16633196604315845,
+   "session_sd_all_intact": 0.317586444207815
+  },
+  "cross_arm": {
+   "pearson_d_v2_v3": 0.7181035170210809,
+   "spearman_d_v2_v3": 0.7714285714285714,
+   "cov_d_v2_v3_as_tau2_estimate": 0.04633001775271513,
+   "pearson_intact_v2_v3": 0.7288310461636457,
+   "pearson_shuffled_v2_v3": 0.35001425940095904,
+   "per_book_d": {
+    "00": [
+     0.5417,
+     0.6667
+    ],
+    "01": [
+     0.2381,
+     0.375
+    ],
+    "02": [
+     0.3333,
+     0.375
+    ],
+    "03": [
+     0.0417,
+     -0.2917
+    ],
+    "04": [
+     -0.1964,
+     -0.1369
+    ],
+    "05": [
+     0.4167,
+     0.2381
+    ],
+    "06": [
+     0.1786,
+     0.3333
+    ],
+    "07": [
+     0.2083,
+     0.3333
+    ],
+    "08": [
+     -0.25,
+     0.2083
+    ],
+    "09": [
+     0.2083,
+     -0.0417
+    ],
+    "10": [
+     0.4583,
+     0.5833
+    ],
+    "11": [
+     0.3155,
+     0.381
+    ],
+    "12": [
+     -0.0417,
+     -0.0833
+    ],
+    "13": [
+     0.1667,
+     0.0952
+    ],
+    "14": [
+     0.0833,
+     0.25
+    ],
+    "15": [
+     0.2024,
+     -0.0179
+    ],
+    "16": [
+     0.25,
+     0.4583
+    ],
+    "17": [
+     0.2083,
+     0.5119
+    ],
+    "18": [
+     -0.1667,
+     -0.5417
+    ],
+    "19": [
+     0.0833,
+     0.0833
+    ]
+   }
+  }
+ },
+ "design_inputs": {
+  "delta_full_mean_of_arms": 0.17648809523809528,
+  "delta_full_low_arm": 0.16398809523809527,
+  "paired_sd_full_rms_of_arms": 0.26268094571126793,
+  "within_cell_var": {
+   "intact": 0.09977944302721088,
+   "shuffled": 0.06375690901360542,
+   "sham": 0.09979272959183673
+  },
+  "tau2_effect_heterogeneity": 0.014489161892827316,
+  "tau2_null_contrast": 0.0
+ },
+ "attenuation": {
+  "partial_0.35": {
+   "A1_linear_in_strength": 0.35,
+   "A2_broken_adjacency_ratio": 0.5733621583457327,
+   "A3_kendall_ratio": 0.42276722395021404,
+   "A4_convex_s_squared": 0.12249999999999998,
+   "bracket": [
+    0.12249999999999998,
+    0.5733621583457327
+   ]
+  },
+  "partial_0.65": {
+   "A1_linear_in_strength": 0.65,
+   "A2_broken_adjacency_ratio": 0.8787894971296697,
+   "A3_kendall_ratio": 0.7232909103072183,
+   "A4_convex_s_squared": 0.42250000000000004,
+   "bracket": [
+    0.42250000000000004,
+    0.8787894971296697
+   ]
+  },
+  "ablate_0.35": {
+   "A1_linear_in_strength": 0.35,
+   "A2_broken_adjacency_ratio": 0.5294618129663236,
+   "A3_kendall_ratio": 0.41377111206603595,
+   "A4_convex_s_squared": 0.12249999999999998,
+   "bracket": [
+    0.12249999999999998,
+    0.5294618129663236
+   ]
+  },
+  "ablate_0.65": {
+   "A1_linear_in_strength": 0.65,
+   "A2_broken_adjacency_ratio": 0.6169732546472642,
+   "A3_kendall_ratio": 0.5768466775289819,
+   "A4_convex_s_squared": 0.42250000000000004,
+   "bracket": [
+    0.42250000000000004,
+    0.65
+   ]
+  }
+ }
+}
+{
+ "book_shuffle_full": {
+  "displaced": 0.9932952962354464,
+  "broken_adjacency": 0.9933200827612183,
+  "kendall": 0.49945153890722543,
+  "broken_adjacency_window": 0.9932545985009438,
+  "foreign_in_window": 0.0702660066351987,
+  "n_variants": 200,
+  "chunk_min": 10,
+  "below_floor": [
+   "fitness-08@seed4:10"
+  ]
+ },
+ "partial_0.15": {
+  "displaced": 0.14309228043120858,
+  "broken_adjacency": 0.2652357030775937,
+  "kendall": 0.09430660104945393,
+  "broken_adjacency_window": 0.26262491551799144,
+  "foreign_in_window": 0.012351693835654563,
+  "n_variants": 200,
+  "chunk_min": 11,
+  "below_floor": []
+ },
+ "partial_0.35": {
+  "displaced": 0.34313065126896347,
+  "broken_adjacency": 0.569532146580134,
+  "kendall": 0.21115174060147002,
+  "broken_adjacency_window": 0.5666119972915797,
+  "foreign_in_window": 0.026371580560605914,
+  "n_variants": 200,
+  "chunk_min": 11,
+  "below_floor": []
+ },
+ "partial_0.65": {
+  "displaced": 0.6437006822732344,
+  "broken_adjacency": 0.8729192560185329,
+  "kendall": 0.36124875823054814,
+  "broken_adjacency_window": 0.873825349999193,
+  "foreign_in_window": 0.04674334841592105,
+  "n_variants": 200,
+  "chunk_min": 10,
+  "below_floor": [
+   "fitness-08@seed1:10"
+  ]
+ },
+ "partial_1.0": {
+  "displaced": 0.9931847322380958,
+  "broken_adjacency": 0.9932117300097772,
+  "kendall": 0.5022767652271525,
+  "broken_adjacency_window": 0.9931984616648996,
+  "foreign_in_window": 0.07147471462726658,
+  "n_variants": 200,
+  "chunk_min": 11,
+  "below_floor": []
+ },
+ "ablate_0.15": {
+  "displaced": 0.14995692072324565,
+  "broken_adjacency": 0.2761842783521014,
+  "kendall": 0.11474190609029082,
+  "broken_adjacency_window": 0.2754886554557364,
+  "foreign_in_window": 0.012024835294629502,
+  "n_variants": 20,
+  "chunk_min": 11,
+  "below_floor": []
+ },
+ "ablate_0.35": {
+  "displaced": 0.34978701996231343,
+  "broken_adjacency": 0.5259250518746132,
+  "kendall": 0.20665861867673568,
+  "broken_adjacency_window": 0.5236855590472167,
+  "foreign_in_window": 0.024717964534268257,
+  "n_variants": 20,
+  "chunk_min": 11,
+  "below_floor": []
+ },
+ "ablate_0.65": {
+  "displaced": 0.6502129800376867,
+  "broken_adjacency": 0.6128519243676787,
+  "kendall": 0.28810696080537,
+  "broken_adjacency_window": 0.6156969021481176,
+  "foreign_in_window": 0.05324346316491703,
+  "n_variants": 20,
+  "chunk_min": 11,
+  "below_floor": []
+ },
+ "ablate_1.0": {
+  "displaced": 1.0,
+  "broken_adjacency": 0.006928701570327182,
+  "kendall": 0.38327454475148626,
+  "broken_adjacency_window": 0.007096862319764331,
+  "foreign_in_window": 0.07586920598779187,
+  "n_variants": 20,
+  "chunk_min": 11,
+  "below_floor": []
+ }
+}
+{
+ "full-book-trial-A1 (chapter-N.md)": {
+  "chapters": 24,
+  "words": 53456,
+  "paragraphs": 3829,
+  "chunks_intact": 171,
+  "meets_floor_intact": true,
+  "lexical_chapter_sort_breaks_order": null,
+  "full_shuffle_chunk_min_seeds0_9": 170,
+  "partial_0.65_chunk_min_seeds0_9": 171,
+  "partial_0.35_chunk_min_seeds0_9": 171,
+  "ablate_0.65_chunks": 170,
+  "ablate_0.35_chunks": 171,
+  "foreign_in_window_full_shuffle": 0.9257742782152231,
+  "foreign_in_window_partial_0.65": 0.5947961446219286,
+  "reader_window_words": 3391
+ },
+ "full-book-trial-A1 (library ChapterN.txt)": {
+  "chapters": 24,
+  "words": 53520,
+  "paragraphs": 3829,
+  "chunks_intact": 172,
+  "meets_floor_intact": true,
+  "lexical_chapter_sort_breaks_order": true,
+  "full_shuffle_chunk_min_seeds0_9": 170,
+  "partial_0.65_chunk_min_seeds0_9": 170,
+  "partial_0.35_chunk_min_seeds0_9": 171,
+  "ablate_0.65_chunks": 171,
+  "ablate_0.35_chunks": 171,
+  "foreign_in_window_full_shuffle": 0.9405441552687218,
+  "foreign_in_window_partial_0.65": 0.5862179882532664,
+  "reader_window_words": 3391
+ },
+ "connected-chapters-A1 (chapter-N.md)": {
+  "chapters": 3,
+  "words": 4756,
+  "paragraphs": 318,
+  "chunks_intact": 15,
+  "meets_floor_intact": true,
+  "lexical_chapter_sort_breaks_order": null,
+  "full_shuffle_chunk_min_seeds0_9": 15,
+  "partial_0.65_chunk_min_seeds0_9": 15,
+  "partial_0.35_chunk_min_seeds0_9": 15,
+  "ablate_0.65_chunks": 15,
+  "ablate_0.35_chunks": 15,
+  "foreign_in_window_full_shuffle": 0.28319666460245846,
+  "foreign_in_window_partial_0.65": 0.16699998333416663,
+  "reader_window_words": 3513
+ },
+ "connected-chapters-A2 (chapter-N.md)": {
+  "chapters": 3,
+  "words": 4655,
+  "paragraphs": 324,
+  "chunks_intact": 14,
+  "meets_floor_intact": true,
+  "lexical_chapter_sort_breaks_order": null,
+  "full_shuffle_chunk_min_seeds0_9": 14,
+  "partial_0.65_chunk_min_seeds0_9": 14,
+  "partial_0.35_chunk_min_seeds0_9": 14,
+  "ablate_0.65_chunks": 15,
+  "ablate_0.35_chunks": 15,
+  "foreign_in_window_full_shuffle": 0.2526233384212638,
+  "foreign_in_window_partial_0.65": 0.17484113787376052,
+  "reader_window_words": 3446
+ },
+ "connected-chapters-B1 (chapter-N.md)": {
+  "chapters": 3,
+  "words": 4691,
+  "paragraphs": 338,
+  "chunks_intact": 15,
+  "meets_floor_intact": true,
+  "lexical_chapter_sort_breaks_order": null,
+  "full_shuffle_chunk_min_seeds0_9": 14,
+  "partial_0.65_chunk_min_seeds0_9": 14,
+  "partial_0.35_chunk_min_seeds0_9": 14,
+  "ablate_0.65_chunks": 15,
+  "ablate_0.35_chunks": 15,
+  "foreign_in_window_full_shuffle": 0.294537179892997,
+  "foreign_in_window_partial_0.65": 0.17813818278356675,
+  "reader_window_words": 3391
+ },
+ "connected-chapters-B2 (chapter-N.md)": {
+  "chapters": 3,
+  "words": 4570,
+  "paragraphs": 287,
+  "chunks_intact": 14,
+  "meets_floor_intact": true,
+  "lexical_chapter_sort_breaks_order": null,
+  "full_shuffle_chunk_min_seeds0_9": 14,
+  "partial_0.65_chunk_min_seeds0_9": 14,
+  "partial_0.35_chunk_min_seeds0_9": 14,
+  "ablate_0.65_chunks": 14,
+  "ablate_0.35_chunks": 14,
+  "foreign_in_window_full_shuffle": 0.23918486923132654,
+  "foreign_in_window_partial_0.65": 0.18827187679624066,
+  "reader_window_words": 3453
+ },
+ "loadstitch (ChapterN.txt)": {
+  "chapters": 6,
+  "words": 11819,
+  "paragraphs": 715,
+  "chunks_intact": 38,
+  "meets_floor_intact": true,
+  "lexical_chapter_sort_breaks_order": null,
+  "full_shuffle_chunk_min_seeds0_9": 37,
+  "partial_0.65_chunk_min_seeds0_9": 37,
+  "partial_0.35_chunk_min_seeds0_9": 37,
+  "ablate_0.65_chunks": 37,
+  "ablate_0.35_chunks": 37,
+  "foreign_in_window_full_shuffle": 0.7011443595493577,
+  "foreign_in_window_partial_0.65": 0.4803762929119868,
+  "reader_window_words": 3439
+ }
+}

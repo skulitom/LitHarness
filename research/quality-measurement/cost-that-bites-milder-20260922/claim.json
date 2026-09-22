@@ -1,0 +1,18 @@
+{
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/cost-that-bites-milder-20260922/PREREG.md",
+      "sha256": "475398c7f9dba037dbb315ca90267b0ec12e1eb63d107c03efeb649629ac8b62"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/cost-that-bites-milder-20260922/registration.json",
+      "sha256": "82ce432501c7d24d33a621ce76a4f1ba90a3ee982c5050da57a801ade0f42251"
+    }
+  ],
+  "claim_id": "cost-that-bites.milder-v4.claude",
+  "schema": "litharness.epistemic-claim.v1",
+  "statement": "fcr.v0's costed reader (claude-haiku-4-5 over claude -p) reads a fitness book in slot A less when a seeded partial shuffle reorders 65% of its paragraphs among themselves, beyond a whitespace sham, at twenty books and six sessions per version; not a quality instrument and not a qualification.",
+  "status": "registered"
+}

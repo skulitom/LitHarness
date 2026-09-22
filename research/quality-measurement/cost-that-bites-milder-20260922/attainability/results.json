@@ -1,0 +1,1397 @@
+{
+  "inputs": {
+    "v2": {
+      "file": "research/quality-measurement/cost-that-bites/results-arm-v2.json",
+      "registered_intact_minus_shuffled": {
+        "above_zero": true,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 20,
+        "high": 0.23898809523809525,
+        "low": 0.08809523809523809,
+        "observations": 20,
+        "point": 0.16398809523809524
+      },
+      "registered_sham_minus_shuffled": {
+        "above_zero": true,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 20,
+        "high": 0.33660714285714277,
+        "low": 0.15119047619047618,
+        "observations": 20,
+        "point": 0.24107142857142855
+      }
+    },
+    "v3": {
+      "file": "research/quality-measurement/cost-that-bites/results-arm-v3.json",
+      "registered_intact_minus_shuffled": {
+        "above_zero": true,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 20,
+        "high": 0.2955357142857143,
+        "low": 0.07470238095238094,
+        "observations": 20,
+        "point": 0.18898809523809523
+      },
+      "registered_sham_minus_shuffled": {
+        "above_zero": true,
+        "alpha": 0.1,
+        "below_zero": false,
+        "clusters": 20,
+        "high": 0.24375,
+        "low": 0.06904761904761905,
+        "observations": 20,
+        "point": 0.15714285714285714
+      }
+    }
+  },
+  "notes": [],
+  "v3_sessions_identical_to_v2": {
+    "intact": "7 of 60",
+    "sham": "8 of 60",
+    "shuffled": "2 of 60"
+  },
+  "variance": {
+    "v2": {
+      "mean_intact_minus_shuffled": 0.16398809523809527,
+      "paired_sd_intact_minus_shuffled": 0.2110278223950579,
+      "se_intact_minus_shuffled": 0.04718725560191019,
+      "books_positive": 16,
+      "books_negative": 4,
+      "paired_sd_intact_minus_sham": 0.2593035196102306,
+      "paired_sd_sham_minus_shuffled": 0.253065552549332,
+      "within_cell_session_sd": {
+        "intact": 0.33886251802530326,
+        "shuffled": 0.24493161616794074,
+        "sham": 0.33360692428661126
+      },
+      "noise_part_of_paired_var_is": 0.058273100907029474,
+      "tau2_effect_heterogeneity_is": -0.01374035908222937,
+      "tau2_null_contrast_ih": -0.008135480069220671,
+      "between_book_sd_intact_mean": 0.21108900739179134,
+      "between_book_sd_intact_true": 0.07926306622571501,
+      "between_book_sd_shuffled_mean": 0.20847448673238542,
+      "between_book_sd_shuffled_true": 0.15318108919005546,
+      "corr_intact_shuffled_book_means": 0.494100512416462,
+      "session_sd_all_intact": 0.3477031336602453
+    },
+    "v3": {
+      "mean_intact_minus_shuffled": 0.1889880952380953,
+      "paired_sd_intact_minus_shuffled": 0.3057283379975302,
+      "se_intact_minus_shuffled": 0.06836293464105093,
+      "books_positive": 14,
+      "books_negative": 6,
+      "paired_sd_intact_minus_sham": 0.23059356250110952,
+      "paired_sd_sham_minus_shuffled": 0.2464647401205448,
+      "within_cell_session_sd": {
+        "intact": 0.29108603527474963,
+        "shuffled": 0.2598505751938437,
+        "sham": 0.2971394946009377
+      },
+      "noise_part_of_paired_var_is": 0.05075113378684807,
+      "tau2_effect_heterogeneity_is": 0.042718682867884,
+      "tau2_null_contrast_ih": -0.0045009286609380625,
+      "between_book_sd_intact_mean": 0.2119899296619444,
+      "between_book_sd_intact_true": 0.12921314548999474,
+      "between_book_sd_shuffled_mean": 0.18783883534617685,
+      "between_book_sd_shuffled_true": 0.11303091430231672,
+      "corr_intact_shuffled_book_means": -0.16633196604315845,
+      "session_sd_all_intact": 0.317586444207815
+    },
+    "cross_arm": {
+      "pearson_d_v2_v3": 0.7181035170210809,
+      "spearman_d_v2_v3": 0.7714285714285714,
+      "cov_d_v2_v3_as_tau2_estimate": 0.04633001775271513,
+      "pearson_intact_v2_v3": 0.7288310461636457,
+      "pearson_shuffled_v2_v3": 0.35001425940095904,
+      "per_book_d": {
+        "00": [
+          0.5417,
+          0.6667
+        ],
+        "01": [
+          0.2381,
+          0.375
+        ],
+        "02": [
+          0.3333,
+          0.375
+        ],
+        "03": [
+          0.0417,
+          -0.2917
+        ],
+        "04": [
+          -0.1964,
+          -0.1369
+        ],
+        "05": [
+          0.4167,
+          0.2381
+        ],
+        "06": [
+          0.1786,
+          0.3333
+        ],
+        "07": [
+          0.2083,
+          0.3333
+        ],
+        "08": [
+          -0.25,
+          0.2083
+        ],
+        "09": [
+          0.2083,
+          -0.0417
+        ],
+        "10": [
+          0.4583,
+          0.5833
+        ],
+        "11": [
+          0.3155,
+          0.381
+        ],
+        "12": [
+          -0.0417,
+          -0.0833
+        ],
+        "13": [
+          0.1667,
+          0.0952
+        ],
+        "14": [
+          0.0833,
+          0.25
+        ],
+        "15": [
+          0.2024,
+          -0.0179
+        ],
+        "16": [
+          0.25,
+          0.4583
+        ],
+        "17": [
+          0.2083,
+          0.5119
+        ],
+        "18": [
+          -0.1667,
+          -0.5417
+        ],
+        "19": [
+          0.0833,
+          0.0833
+        ]
+      }
+    }
+  },
+  "design_inputs": {
+    "delta_full_mean_of_arms": 0.17648809523809528,
+    "delta_full_low_arm": 0.16398809523809527,
+    "paired_sd_full_rms_of_arms": 0.26268094571126793,
+    "within_cell_var": {
+      "intact": 0.09977944302721088,
+      "shuffled": 0.06375690901360542,
+      "sham": 0.09979272959183673
+    },
+    "tau2_effect_heterogeneity": 0.014489161892827316,
+    "tau2_null_contrast": 0.0
+  },
+  "shelf": {
+    "intact_chunks": {
+      "fitness-00": 12,
+      "fitness-01": 12,
+      "fitness-02": 12,
+      "fitness-03": 12,
+      "fitness-04": 11,
+      "fitness-05": 11,
+      "fitness-06": 11,
+      "fitness-07": 12,
+      "fitness-08": 11,
+      "fitness-09": 11,
+      "fitness-10": 12,
+      "fitness-11": 11,
+      "fitness-12": 11,
+      "fitness-13": 11,
+      "fitness-14": 12,
+      "fitness-15": 11,
+      "fitness-16": 11,
+      "fitness-17": 12,
+      "fitness-18": 11,
+      "fitness-19": 11
+    },
+    "paragraphs_per_book": [
+      111,
+      147.1,
+      167
+    ],
+    "words_per_book": [
+      3775,
+      3910
+    ],
+    "families": {
+      "book_shuffle_full": {
+        "displaced": 0.9932952962354464,
+        "broken_adjacency": 0.9933200827612183,
+        "kendall": 0.49945153890722543,
+        "broken_adjacency_window": 0.9932545985009438,
+        "foreign_in_window": 0.0702660066351987,
+        "n_variants": 200,
+        "chunk_min": 10,
+        "below_floor": [
+          "fitness-08@seed4:10"
+        ]
+      },
+      "partial_0.15": {
+        "displaced": 0.14309228043120858,
+        "broken_adjacency": 0.2652357030775937,
+        "kendall": 0.09430660104945393,
+        "broken_adjacency_window": 0.26262491551799144,
+        "foreign_in_window": 0.012351693835654563,
+        "n_variants": 200,
+        "chunk_min": 11,
+        "below_floor": []
+      },
+      "partial_0.35": {
+        "displaced": 0.34313065126896347,
+        "broken_adjacency": 0.569532146580134,
+        "kendall": 0.21115174060147002,
+        "broken_adjacency_window": 0.5666119972915797,
+        "foreign_in_window": 0.026371580560605914,
+        "n_variants": 200,
+        "chunk_min": 11,
+        "below_floor": []
+      },
+      "partial_0.65": {
+        "displaced": 0.6437006822732344,
+        "broken_adjacency": 0.8729192560185329,
+        "kendall": 0.36124875823054814,
+        "broken_adjacency_window": 0.873825349999193,
+        "foreign_in_window": 0.04674334841592105,
+        "n_variants": 200,
+        "chunk_min": 10,
+        "below_floor": [
+          "fitness-08@seed1:10"
+        ]
+      },
+      "partial_1.0": {
+        "displaced": 0.9931847322380958,
+        "broken_adjacency": 0.9932117300097772,
+        "kendall": 0.5022767652271525,
+        "broken_adjacency_window": 0.9931984616648996,
+        "foreign_in_window": 0.07147471462726658,
+        "n_variants": 200,
+        "chunk_min": 11,
+        "below_floor": []
+      },
+      "ablate_0.15": {
+        "displaced": 0.14995692072324565,
+        "broken_adjacency": 0.2761842783521014,
+        "kendall": 0.11474190609029082,
+        "broken_adjacency_window": 0.2754886554557364,
+        "foreign_in_window": 0.012024835294629502,
+        "n_variants": 20,
+        "chunk_min": 11,
+        "below_floor": []
+      },
+      "ablate_0.35": {
+        "displaced": 0.34978701996231343,
+        "broken_adjacency": 0.5259250518746132,
+        "kendall": 0.20665861867673568,
+        "broken_adjacency_window": 0.5236855590472167,
+        "foreign_in_window": 0.024717964534268257,
+        "n_variants": 20,
+        "chunk_min": 11,
+        "below_floor": []
+      },
+      "ablate_0.65": {
+        "displaced": 0.6502129800376867,
+        "broken_adjacency": 0.6128519243676787,
+        "kendall": 0.28810696080537,
+        "broken_adjacency_window": 0.6156969021481176,
+        "foreign_in_window": 0.05324346316491703,
+        "n_variants": 20,
+        "chunk_min": 11,
+        "below_floor": []
+      },
+      "ablate_1.0": {
+        "displaced": 1.0,
+        "broken_adjacency": 0.006928701570327182,
+        "kendall": 0.38327454475148626,
+        "broken_adjacency_window": 0.007096862319764331,
+        "foreign_in_window": 0.07586920598779187,
+        "n_variants": 20,
+        "chunk_min": 11,
+        "below_floor": []
+      }
+    },
+    "note": "partial_s seeds 0-9 are a hypothetical seeded partial book_shuffle; ablate_s is the bcr D1 paragraph_shuffle, deterministic per text (one variant, no seed index)."
+  },
+  "attenuation": {
+    "partial_0.35": {
+      "A1_linear_in_strength": 0.35,
+      "A2_broken_adjacency_ratio": 0.5733621583457327,
+      "A3_kendall_ratio": 0.42276722395021404,
+      "A4_convex_s_squared": 0.12249999999999998,
+      "bracket": [
+        0.12249999999999998,
+        0.5733621583457327
+      ]
+    },
+    "partial_0.65": {
+      "A1_linear_in_strength": 0.65,
+      "A2_broken_adjacency_ratio": 0.8787894971296697,
+      "A3_kendall_ratio": 0.7232909103072183,
+      "A4_convex_s_squared": 0.42250000000000004,
+      "bracket": [
+        0.42250000000000004,
+        0.8787894971296697
+      ]
+    },
+    "ablate_0.35": {
+      "A1_linear_in_strength": 0.35,
+      "A2_broken_adjacency_ratio": 0.5294618129663236,
+      "A3_kendall_ratio": 0.41377111206603595,
+      "A4_convex_s_squared": 0.12249999999999998,
+      "bracket": [
+        0.12249999999999998,
+        0.5294618129663236
+      ]
+    },
+    "ablate_0.65": {
+      "A1_linear_in_strength": 0.65,
+      "A2_broken_adjacency_ratio": 0.6169732546472642,
+      "A3_kendall_ratio": 0.5768466775289819,
+      "A4_convex_s_squared": 0.42250000000000004,
+      "bracket": [
+        0.42250000000000004,
+        0.65
+      ]
+    }
+  },
+  "power_grid_by_attenuation": {
+    "0.0": {
+      "parametric_proportional_n20": {
+        "primary": 0.056,
+        "joint": 0.018,
+        "sd_d": 0.2554189111702422
+      },
+      "parametric_constant_n20": {
+        "primary": 0.062,
+        "joint": 0.016,
+        "sd_d": 0.2809196857898358
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.059,
+        "joint": 0.018,
+        "sd_d": 0.21776422328291334
+      },
+      "n_for_0.8_analytic_proportional": Infinity,
+      "n_for_0.8_analytic_constant": Infinity
+    },
+    "0.1225": {
+      "parametric_proportional_n20": {
+        "primary": 0.128,
+        "joint": 0.046,
+        "sd_d": 0.2517333307911036
+      },
+      "parametric_constant_n20": {
+        "primary": 0.113,
+        "joint": 0.047,
+        "sd_d": 0.2804127970288395
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.146,
+        "joint": 0.044,
+        "sd_d": 0.22541982543861228
+      },
+      "n_for_0.8_analytic_proportional": 863.300163016727,
+      "n_for_0.8_analytic_constant": 1052.0778487103435
+    },
+    "0.35": {
+      "parametric_proportional_n20": {
+        "primary": 0.314,
+        "joint": 0.163,
+        "sd_d": 0.25053269167292697
+      },
+      "parametric_constant_n20": {
+        "primary": 0.284,
+        "joint": 0.154,
+        "sd_d": 0.2753439285993233
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.328,
+        "joint": 0.16,
+        "sd_d": 0.24095828167324385
+      },
+      "n_for_0.8_analytic_proportional": 103.85162639276996,
+      "n_for_0.8_analytic_constant": 124.45320010989066
+    },
+    "0.4138": {
+      "parametric_proportional_n20": {
+        "primary": 0.372,
+        "joint": 0.208,
+        "sd_d": 0.24960100087607043
+      },
+      "parametric_constant_n20": {
+        "primary": 0.358,
+        "joint": 0.217,
+        "sd_d": 0.27186015437250544
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.433,
+        "joint": 0.27,
+        "sd_d": 0.24666741079685175
+      },
+      "n_for_0.8_analytic_proportional": 74.22693917458945,
+      "n_for_0.8_analytic_constant": 88.14703352525233
+    },
+    "0.4225": {
+      "parametric_proportional_n20": {
+        "primary": 0.406,
+        "joint": 0.226,
+        "sd_d": 0.2497237582052857
+      },
+      "parametric_constant_n20": {
+        "primary": 0.314,
+        "joint": 0.189,
+        "sd_d": 0.2735965508862441
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.37,
+        "joint": 0.239,
+        "sd_d": 0.2486930301696828
+      },
+      "n_for_0.8_analytic_proportional": 71.20255466649162,
+      "n_for_0.8_analytic_constant": 84.43804993846229
+    },
+    "0.4228": {
+      "parametric_proportional_n20": {
+        "primary": 0.42,
+        "joint": 0.247,
+        "sd_d": 0.25026697020127675
+      },
+      "parametric_constant_n20": {
+        "primary": 0.368,
+        "joint": 0.202,
+        "sd_d": 0.2741565305685218
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.39,
+        "joint": 0.228,
+        "sd_d": 0.24882306116089786
+      },
+      "n_for_0.8_analytic_proportional": 71.10162621544933,
+      "n_for_0.8_analytic_constant": 84.31426559937763
+    },
+    "0.5295": {
+      "parametric_proportional_n20": {
+        "primary": 0.534,
+        "joint": 0.371,
+        "sd_d": 0.24964949048495755
+      },
+      "parametric_constant_n20": {
+        "primary": 0.457,
+        "joint": 0.313,
+        "sd_d": 0.2710610005055015
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.505,
+        "joint": 0.362,
+        "sd_d": 0.25876400756614504
+      },
+      "n_for_0.8_analytic_proportional": 45.46857999034233,
+      "n_for_0.8_analytic_constant": 52.85045250048725
+    },
+    "0.5734": {
+      "parametric_proportional_n20": {
+        "primary": 0.555,
+        "joint": 0.389,
+        "sd_d": 0.24990207836846598
+      },
+      "parametric_constant_n20": {
+        "primary": 0.552,
+        "joint": 0.385,
+        "sd_d": 0.2668933957050525
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.534,
+        "joint": 0.409,
+        "sd_d": 0.2623443173998551
+      },
+      "n_for_0.8_analytic_proportional": 38.87815492250576,
+      "n_for_0.8_analytic_constant": 44.74945097813467
+    },
+    "0.5768": {
+      "parametric_proportional_n20": {
+        "primary": 0.552,
+        "joint": 0.412,
+        "sd_d": 0.25316141984368373
+      },
+      "parametric_constant_n20": {
+        "primary": 0.507,
+        "joint": 0.361,
+        "sd_d": 0.26636022475344073
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.55,
+        "joint": 0.4,
+        "sd_d": 0.26300402221439867
+      },
+      "n_for_0.8_analytic_proportional": 38.43061274365605,
+      "n_for_0.8_analytic_constant": 44.199089234835895
+    },
+    "0.617": {
+      "parametric_proportional_n20": {
+        "primary": 0.628,
+        "joint": 0.481,
+        "sd_d": 0.25146783617274693
+      },
+      "parametric_constant_n20": {
+        "primary": 0.602,
+        "joint": 0.432,
+        "sd_d": 0.2667580711095016
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.566,
+        "joint": 0.442,
+        "sd_d": 0.26716662137131075
+      },
+      "n_for_0.8_analytic_proportional": 33.696811943588735,
+      "n_for_0.8_analytic_constant": 38.37554024484991
+    },
+    "0.65": {
+      "parametric_proportional_n20": {
+        "primary": 0.686,
+        "joint": 0.531,
+        "sd_d": 0.2519127826375946
+      },
+      "parametric_constant_n20": {
+        "primary": 0.605,
+        "joint": 0.462,
+        "sd_d": 0.2648880420504885
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.6,
+        "joint": 0.492,
+        "sd_d": 0.26701008852124086
+      },
+      "n_for_0.8_analytic_proportional": 30.46059554622118,
+      "n_for_0.8_analytic_constant": 34.39170046882758
+    },
+    "0.7233": {
+      "parametric_proportional_n20": {
+        "primary": 0.744,
+        "joint": 0.615,
+        "sd_d": 0.2523140931638124
+      },
+      "parametric_constant_n20": {
+        "primary": 0.719,
+        "joint": 0.592,
+        "sd_d": 0.2639039299783017
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.668,
+        "joint": 0.599,
+        "sd_d": 0.2766314221312931
+      },
+      "n_for_0.8_analytic_proportional": 24.81904692767072,
+      "n_for_0.8_analytic_constant": 27.440381631307968
+    },
+    "0.8788": {
+      "parametric_proportional_n20": {
+        "primary": 0.858,
+        "joint": 0.779,
+        "sd_d": 0.255551201098893
+      },
+      "parametric_constant_n20": {
+        "primary": 0.815,
+        "joint": 0.73,
+        "sd_d": 0.26170253089798934
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.751,
+        "joint": 0.706,
+        "sd_d": 0.2949904566351478
+      },
+      "n_for_0.8_analytic_proportional": 17.260720950455756,
+      "n_for_0.8_analytic_constant": 18.108714278006545
+    },
+    "1.0": {
+      "parametric_proportional_n20": {
+        "primary": 0.923,
+        "joint": 0.857,
+        "sd_d": 0.2610716110556057
+      },
+      "parametric_constant_n20": {
+        "primary": 0.919,
+        "joint": 0.853,
+        "sd_d": 0.261224500712947
+      },
+      "empirical_mixture_n20": {
+        "primary": 0.783,
+        "joint": 0.756,
+        "sd_d": 0.3108310308705233
+      },
+      "n_for_0.8_analytic_proportional": 13.696299288467369,
+      "n_for_0.8_analytic_constant": 13.696299288467369
+    }
+  },
+  "power_table": {
+    "partial_0.35|A1_linear_in_strength": {
+      "f": 0.35,
+      "expected_shift": 0.061770833333333344,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.314,
+        "parametric_within_arm_constant_hetero": 0.284,
+        "empirical_mixture": 0.328,
+        "analytic_cross_arm_split": 0.49835174685258643
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.163,
+        "empirical_mixture": 0.16
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 103.85162639276996,
+        "analytic_cross_arm": 45.9316810338266
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.45118386435406255,
+        "cross_arm": 0.6819409817905713
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 53.36381478062843,
+        "cross_arm": 27.563942147582022
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.26401918810210234,
+        "cross_arm": 0.45210645869013266
+      }
+    },
+    "partial_0.35|A2_broken_adjacency_ratio": {
+      "f": 0.5733621583457327,
+      "expected_shift": 0.10119159520804154,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.555,
+        "parametric_within_arm_constant_hetero": 0.552,
+        "empirical_mixture": 0.534,
+        "analytic_cross_arm_split": 0.7516192759897746
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.389,
+        "empirical_mixture": 0.409
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 38.883181686107825,
+        "analytic_cross_arm": 22.88495126479559
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.7848452700418976,
+        "cross_arm": 0.8710930152916248
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 20.879592427297386,
+        "cross_arm": 16.04057726306652
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.5048224586730409,
+        "cross_arm": 0.696709113356174
+      }
+    },
+    "partial_0.35|A3_kendall_ratio": {
+      "f": 0.42276722395021404,
+      "expected_shift": 0.07461338208407053,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.42,
+        "parametric_within_arm_constant_hetero": 0.368,
+        "empirical_mixture": 0.39,
+        "analytic_cross_arm_split": 0.5993840334799587
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.247,
+        "empirical_mixture": 0.228
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 71.11264240993337,
+        "analytic_cross_arm": 34.37408334781125
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.572738856523854,
+        "cross_arm": 0.7696051184043257
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 36.99432278921016,
+        "cross_arm": 21.785143304574348
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.3373728945188657,
+        "cross_arm": 0.5467364368727569
+      }
+    },
+    "partial_0.35|A4_convex_s_squared": {
+      "f": 0.12249999999999998,
+      "expected_shift": 0.02161979166666667,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.128,
+        "parametric_within_arm_constant_hetero": 0.113,
+        "empirical_mixture": 0.146,
+        "analytic_cross_arm_split": 0.15567659595952643
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.046,
+        "empirical_mixture": 0.044
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 863.3001630167274,
+        "analytic_cross_arm": 309.07765446533074
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.13337827381561795,
+        "cross_arm": 0.22260981313221218
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 433.088083092607,
+        "cross_arm": 159.13692886333408
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.09796354034107779,
+        "cross_arm": 0.14521351660810905
+      }
+    },
+    "partial_0.65|A1_linear_in_strength": {
+      "f": 0.65,
+      "expected_shift": 0.11471726190476193,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.686,
+        "parametric_within_arm_constant_hetero": 0.605,
+        "empirical_mixture": 0.6,
+        "analytic_cross_arm_split": 0.8026558105549784
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.531,
+        "empirical_mixture": 0.492
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 30.46059554622118,
+        "analytic_cross_arm": 19.84731811844969
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.8596595178531634,
+        "cross_arm": 0.898518894906281
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 16.66829935735406,
+        "cross_arm": 14.521760689893565
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.58986945337031,
+        "cross_arm": 0.7499587898505267
+      }
+    },
+    "partial_0.65|A2_broken_adjacency_ratio": {
+      "f": 0.8787894971296697,
+      "expected_shift": 0.155095884463659,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.858,
+        "parametric_within_arm_constant_hetero": 0.815,
+        "empirical_mixture": 0.751,
+        "analytic_cross_arm_split": 0.8895306301217298
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.779,
+        "empirical_mixture": 0.706
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 17.261097205352915,
+        "analytic_cross_arm": 15.02329782027492
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.9685254612366303,
+        "cross_arm": 0.9394986035625308
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 10.06855018691993,
+        "cross_arm": 12.109750540806184
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.8001185964816646,
+        "cross_arm": 0.8463347875957632
+      }
+    },
+    "partial_0.65|A3_kendall_ratio": {
+      "f": 0.7232909103072183,
+      "expected_shift": 0.12765223506314896,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.744,
+        "parametric_within_arm_constant_hetero": 0.719,
+        "empirical_mixture": 0.668,
+        "analytic_cross_arm_split": 0.83913844563296
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.615,
+        "empirical_mixture": 0.599
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 24.819639865044348,
+        "analytic_cross_arm": 17.79813053956555
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.9104159939283617,
+        "cross_arm": 0.9164971126928249
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 13.847821516765647,
+        "cross_arm": 13.497166900451502
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.6660641345866484,
+        "cross_arm": 0.7893700953806819
+      }
+    },
+    "partial_0.65|A4_convex_s_squared": {
+      "f": 0.42250000000000004,
+      "expected_shift": 0.07456622023809527,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.406,
+        "parametric_within_arm_constant_hetero": 0.314,
+        "empirical_mixture": 0.37,
+        "analytic_cross_arm_split": 0.5990445212072356
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.226,
+        "empirical_mixture": 0.239
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 71.2025546664916,
+        "analytic_cross_arm": 34.405942568111975
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.5723034265629371,
+        "cross_arm": 0.7693404351088291
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 37.03927891748927,
+        "cross_arm": 21.80107291472471
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.33709023920321257,
+        "cross_arm": 0.5464130711553372
+      }
+    },
+    "ablate_0.35|A1_linear_in_strength": {
+      "f": 0.35,
+      "expected_shift": 0.061770833333333344,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.314,
+        "parametric_within_arm_constant_hetero": 0.284,
+        "empirical_mixture": 0.328,
+        "analytic_cross_arm_split": 0.49835174685258643
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.163,
+        "empirical_mixture": 0.16
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 103.85162639276996,
+        "analytic_cross_arm": 45.9316810338266
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.45118386435406255,
+        "cross_arm": 0.6819409817905713
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 53.36381478062843,
+        "cross_arm": 27.563942147582022
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.26401918810210234,
+        "cross_arm": 0.45210645869013266
+      }
+    },
+    "ablate_0.35|A2_broken_adjacency_ratio": {
+      "f": 0.5294618129663236,
+      "expected_shift": 0.0934437068717351,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.534,
+        "parametric_within_arm_constant_hetero": 0.457,
+        "empirical_mixture": 0.505,
+        "analytic_cross_arm_split": 0.7150154062996883
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.371,
+        "empirical_mixture": 0.362
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 45.47504879949796,
+        "analytic_cross_arm": 25.24906615459551
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.7312831741388577,
+        "cross_arm": 0.8495719858889779
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 24.175525983992458,
+        "cross_arm": 17.22263470796648
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.4551318538280001,
+        "cross_arm": 0.6595951536751259
+      }
+    },
+    "ablate_0.35|A3_kendall_ratio": {
+      "f": 0.41377111206603595,
+      "expected_shift": 0.07302567543308315,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.372,
+        "parametric_within_arm_constant_hetero": 0.358,
+        "empirical_mixture": 0.433,
+        "analytic_cross_arm_split": 0.5878190582292919
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.208,
+        "empirical_mixture": 0.27
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 74.23730458395856,
+        "analytic_cross_arm": 35.480807847011306
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.5580107511261759,
+        "cross_arm": 0.7604818394279771
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 38.55665387622274,
+        "cross_arm": 22.33850555417437
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.32790463785278934,
+        "cross_arm": 0.5357439766026584
+      }
+    },
+    "ablate_0.35|A4_convex_s_squared": {
+      "f": 0.12249999999999998,
+      "expected_shift": 0.02161979166666667,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.128,
+        "parametric_within_arm_constant_hetero": 0.113,
+        "empirical_mixture": 0.146,
+        "analytic_cross_arm_split": 0.15567659595952643
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.046,
+        "empirical_mixture": 0.044
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 863.3001630167274,
+        "analytic_cross_arm": 309.07765446533074
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.13337827381561795,
+        "cross_arm": 0.22260981313221218
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 433.088083092607,
+        "cross_arm": 159.13692886333408
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.09796354034107779,
+        "cross_arm": 0.14521351660810905
+      }
+    },
+    "ablate_0.65|A1_linear_in_strength": {
+      "f": 0.65,
+      "expected_shift": 0.11471726190476193,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.686,
+        "parametric_within_arm_constant_hetero": 0.605,
+        "empirical_mixture": 0.6,
+        "analytic_cross_arm_split": 0.8026558105549784
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.531,
+        "empirical_mixture": 0.492
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 30.46059554622118,
+        "analytic_cross_arm": 19.84731811844969
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.8596595178531634,
+        "cross_arm": 0.898518894906281
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 16.66829935735406,
+        "cross_arm": 14.521760689893565
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.58986945337031,
+        "cross_arm": 0.7499587898505267
+      }
+    },
+    "ablate_0.65|A2_broken_adjacency_ratio": {
+      "f": 0.6169732546472642,
+      "expected_shift": 0.10888843452554396,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.628,
+        "parametric_within_arm_constant_hetero": 0.602,
+        "empirical_mixture": 0.566,
+        "analytic_cross_arm_split": 0.7824891688479771
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.481,
+        "empirical_mixture": 0.442
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 33.69965158329522,
+        "analytic_cross_arm": 21.018152904023804
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.8303106818510486,
+        "cross_arm": 0.8880189682430315
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 18.287827375891073,
+        "cross_arm": 15.107178082680633
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.5536811961546222,
+        "cross_arm": 0.728683513878249
+      }
+    },
+    "ablate_0.65|A3_kendall_ratio": {
+      "f": 0.5768466775289819,
+      "expected_shift": 0.10180657136151379,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.552,
+        "parametric_within_arm_constant_hetero": 0.507,
+        "empirical_mixture": 0.55,
+        "analytic_cross_arm_split": 0.7542777933317156
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.412,
+        "empirical_mixture": 0.4
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 38.42452459157661,
+        "analytic_cross_arm": 22.720073346017518
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.7887633425046727,
+        "cross_arm": 0.8725932311255976
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 20.650263880031773,
+        "cross_arm": 15.958138303677478
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.5087554615869857,
+        "cross_arm": 0.699436896662063
+      }
+    },
+    "ablate_0.65|A4_convex_s_squared": {
+      "f": 0.42250000000000004,
+      "expected_shift": 0.07456622023809527,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.406,
+        "parametric_within_arm_constant_hetero": 0.314,
+        "empirical_mixture": 0.37,
+        "analytic_cross_arm_split": 0.5990445212072356
+      },
+      "power_n20_joint_moves_with_order": {
+        "parametric_within_arm_proportional": 0.226,
+        "empirical_mixture": 0.239
+      },
+      "books_for_0.8_primary_k3": {
+        "analytic_within_arm": 71.2025546664916,
+        "analytic_cross_arm": 34.405942568111975
+      },
+      "power_n20_k6_analytic": {
+        "within_arm": 0.5723034265629371,
+        "cross_arm": 0.7693404351088291
+      },
+      "books_for_0.8_k6_analytic": {
+        "within_arm": 37.03927891748927,
+        "cross_arm": 21.80107291472471
+      },
+      "power_n20_if_full_effect_is_v2s_0.164": {
+        "within_arm": 0.33709023920321257,
+        "cross_arm": 0.5464130711553372
+      }
+    },
+    "full_shuffle_reference|f=1": {
+      "f": 1.0,
+      "expected_shift": 0.17648809523809528,
+      "power_n20_primary": {
+        "parametric_within_arm_proportional": 0.923,
+        "empirical_mixture": 0.783,
+        "analytic_cross_arm_split": 0.9130541833570196
+      }
+    }
+  },
+  "k6_n20_parametric_within_arm_sim": {
+    "0.1225": {
+      "primary": 0.157,
+      "joint": 0.055,
+      "sd_d": 0.17902127899997708
+    },
+    "0.35": {
+      "primary": 0.463,
+      "joint": 0.309,
+      "sd_d": 0.17910167670909885
+    },
+    "0.4225": {
+      "primary": 0.561,
+      "joint": 0.406,
+      "sd_d": 0.17962486238622674
+    },
+    "0.5295": {
+      "primary": 0.763,
+      "joint": 0.615,
+      "sd_d": 0.18266707812305555
+    },
+    "0.5734": {
+      "primary": 0.793,
+      "joint": 0.673,
+      "sd_d": 0.18266009474588663
+    },
+    "0.617": {
+      "primary": 0.83,
+      "joint": 0.718,
+      "sd_d": 0.18564004541554407
+    },
+    "0.65": {
+      "primary": 0.86,
+      "joint": 0.774,
+      "sd_d": 0.18416089453691034
+    },
+    "0.7233": {
+      "primary": 0.922,
+      "joint": 0.855,
+      "sd_d": 0.1873347435497736
+    },
+    "0.8788": {
+      "primary": 0.974,
+      "joint": 0.948,
+      "sd_d": 0.1948966048800245
+    },
+    "1.0": {
+      "primary": 0.99,
+      "joint": 0.971,
+      "sd_d": 0.2010556082945087
+    }
+  },
+  "variance_splits": {
+    "within_arm": {
+      "tau2": 0.014489161892827316,
+      "noise_var_d_k3": 0.05451211734693877
+    },
+    "cross_arm": {
+      "tau2": 0.04633001775271513,
+      "noise_var_d_k3": 0.022671261487050964
+    },
+    "total_var_d_observed_rms": 0.0690012792397661
+  },
+  "held_out_6_books": {
+    "f=1.0": {
+      "power_within_arm": 0.5003369938149773,
+      "power_cross_arm": 0.5003369938149773,
+      "simulated_empirical_n6": 0.462
+    },
+    "f=0.65": {
+      "power_within_arm": 0.2941357020558938,
+      "power_cross_arm": 0.3905985207636184,
+      "simulated_empirical_n6": 0.378
+    },
+    "f=0.35": {
+      "power_within_arm": 0.14749548075000496,
+      "power_cross_arm": 0.22776904020322275,
+      "simulated_empirical_n6": 0.238
+    }
+  },
+  "empirical_n_search": {
+    "partial_0.35:A1_linear_in_strength:0.35": {
+      "20": 0.32,
+      "30": 0.4025,
+      "40": 0.4675,
+      "50": 0.575,
+      "60": 0.68,
+      "80": 0.73,
+      "100": 0.8025
+    },
+    "partial_0.35:A2_broken_adjacency_ratio:0.5734": {
+      "20": 0.555,
+      "30": 0.675,
+      "40": 0.75,
+      "50": 0.82
+    },
+    "partial_0.65:A1_linear_in_strength:0.65": {
+      "20": 0.63,
+      "30": 0.7525,
+      "40": 0.8225
+    },
+    "partial_0.65:A2_broken_adjacency_ratio:0.8788": {
+      "20": 0.725,
+      "30": 0.855
+    },
+    "partial_0.65:A4_convex_s_squared:0.4225": {
+      "20": 0.36,
+      "30": 0.4725,
+      "40": 0.5875,
+      "50": 0.71,
+      "60": 0.7225,
+      "80": 0.87
+    },
+    "ablate_0.35:A1_linear_in_strength:0.35": {
+      "20": 0.29,
+      "30": 0.47,
+      "40": 0.4875,
+      "50": 0.5975,
+      "60": 0.63,
+      "80": 0.7475,
+      "100": 0.8275
+    },
+    "ablate_0.35:A2_broken_adjacency_ratio:0.5295": {
+      "20": 0.5125,
+      "30": 0.625,
+      "40": 0.715,
+      "50": 0.835
+    },
+    "ablate_0.65:A1_linear_in_strength:0.65": {
+      "20": 0.6425,
+      "30": 0.7575,
+      "40": 0.8275
+    },
+    "ablate_0.65:A2_broken_adjacency_ratio:0.617": {
+      "20": 0.5225,
+      "30": 0.7025,
+      "40": 0.805
+    },
+    "ablate_0.65:A4_convex_s_squared:0.4225": {
+      "20": 0.3925,
+      "30": 0.5375,
+      "40": 0.605,
+      "50": 0.7075,
+      "60": 0.71,
+      "80": 0.84
+    }
+  },
+  "current_pipeline_books": {
+    "full-book-trial-A1 (chapter-N.md)": {
+      "chapters": 24,
+      "words": 53456,
+      "paragraphs": 3829,
+      "chunks_intact": 171,
+      "meets_floor_intact": true,
+      "lexical_chapter_sort_breaks_order": null,
+      "full_shuffle_chunk_min_seeds0_9": 170,
+      "partial_0.65_chunk_min_seeds0_9": 171,
+      "partial_0.35_chunk_min_seeds0_9": 171,
+      "ablate_0.65_chunks": 170,
+      "ablate_0.35_chunks": 171,
+      "foreign_in_window_full_shuffle": 0.9257742782152231,
+      "foreign_in_window_partial_0.65": 0.5947961446219286,
+      "reader_window_words": 3391
+    },
+    "full-book-trial-A1 (library ChapterN.txt)": {
+      "chapters": 24,
+      "words": 53520,
+      "paragraphs": 3829,
+      "chunks_intact": 172,
+      "meets_floor_intact": true,
+      "lexical_chapter_sort_breaks_order": true,
+      "full_shuffle_chunk_min_seeds0_9": 170,
+      "partial_0.65_chunk_min_seeds0_9": 170,
+      "partial_0.35_chunk_min_seeds0_9": 171,
+      "ablate_0.65_chunks": 171,
+      "ablate_0.35_chunks": 171,
+      "foreign_in_window_full_shuffle": 0.9405441552687218,
+      "foreign_in_window_partial_0.65": 0.5862179882532664,
+      "reader_window_words": 3391
+    },
+    "connected-chapters-A1 (chapter-N.md)": {
+      "chapters": 3,
+      "words": 4756,
+      "paragraphs": 318,
+      "chunks_intact": 15,
+      "meets_floor_intact": true,
+      "lexical_chapter_sort_breaks_order": null,
+      "full_shuffle_chunk_min_seeds0_9": 15,
+      "partial_0.65_chunk_min_seeds0_9": 15,
+      "partial_0.35_chunk_min_seeds0_9": 15,
+      "ablate_0.65_chunks": 15,
+      "ablate_0.35_chunks": 15,
+      "foreign_in_window_full_shuffle": 0.28319666460245846,
+      "foreign_in_window_partial_0.65": 0.16699998333416663,
+      "reader_window_words": 3513
+    },
+    "connected-chapters-A2 (chapter-N.md)": {
+      "chapters": 3,
+      "words": 4655,
+      "paragraphs": 324,
+      "chunks_intact": 14,
+      "meets_floor_intact": true,
+      "lexical_chapter_sort_breaks_order": null,
+      "full_shuffle_chunk_min_seeds0_9": 14,
+      "partial_0.65_chunk_min_seeds0_9": 14,
+      "partial_0.35_chunk_min_seeds0_9": 14,
+      "ablate_0.65_chunks": 15,
+      "ablate_0.35_chunks": 15,
+      "foreign_in_window_full_shuffle": 0.2526233384212638,
+      "foreign_in_window_partial_0.65": 0.17484113787376052,
+      "reader_window_words": 3446
+    },
+    "connected-chapters-B1 (chapter-N.md)": {
+      "chapters": 3,
+      "words": 4691,
+      "paragraphs": 338,
+      "chunks_intact": 15,
+      "meets_floor_intact": true,
+      "lexical_chapter_sort_breaks_order": null,
+      "full_shuffle_chunk_min_seeds0_9": 14,
+      "partial_0.65_chunk_min_seeds0_9": 14,
+      "partial_0.35_chunk_min_seeds0_9": 14,
+      "ablate_0.65_chunks": 15,
+      "ablate_0.35_chunks": 15,
+      "foreign_in_window_full_shuffle": 0.294537179892997,
+      "foreign_in_window_partial_0.65": 0.17813818278356675,
+      "reader_window_words": 3391
+    },
+    "connected-chapters-B2 (chapter-N.md)": {
+      "chapters": 3,
+      "words": 4570,
+      "paragraphs": 287,
+      "chunks_intact": 14,
+      "meets_floor_intact": true,
+      "lexical_chapter_sort_breaks_order": null,
+      "full_shuffle_chunk_min_seeds0_9": 14,
+      "partial_0.65_chunk_min_seeds0_9": 14,
+      "partial_0.35_chunk_min_seeds0_9": 14,
+      "ablate_0.65_chunks": 14,
+      "ablate_0.35_chunks": 14,
+      "foreign_in_window_full_shuffle": 0.23918486923132654,
+      "foreign_in_window_partial_0.65": 0.18827187679624066,
+      "reader_window_words": 3453
+    },
+    "loadstitch (ChapterN.txt)": {
+      "chapters": 6,
+      "words": 11819,
+      "paragraphs": 715,
+      "chunks_intact": 38,
+      "meets_floor_intact": true,
+      "lexical_chapter_sort_breaks_order": null,
+      "full_shuffle_chunk_min_seeds0_9": 37,
+      "partial_0.65_chunk_min_seeds0_9": 37,
+      "partial_0.35_chunk_min_seeds0_9": 37,
+      "ablate_0.65_chunks": 37,
+      "ablate_0.35_chunks": 37,
+      "foreign_in_window_full_shuffle": 0.7011443595493577,
+      "foreign_in_window_partial_0.65": 0.4803762929119868,
+      "reader_window_words": 3439
+    }
+  }
+}

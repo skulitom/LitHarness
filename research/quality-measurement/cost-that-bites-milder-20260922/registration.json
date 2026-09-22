@@ -1,0 +1,6431 @@
+{
+  "arm": "milder-v4",
+  "cells": [
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-00-intact-r0",
+      "position": 0,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "7b7b3be50ff02962bfde19919d067294bad2b17135b49d8b921a3262ce444f3d",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.9060402684563759,
+        "displaced": 0.6533333333333333
+      },
+      "feed_id": "ctbm4-00-partial-r0",
+      "position": 1,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "5ef710d385aa8a11636d8a2dd18884e1906857ac8e7101a5b08df8d5b021ed84",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-00-sham-r0",
+      "position": 2,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "bee4b175ff0b7de061ac525d8b8f98a8c061e2ef1a120cd20f5e22dc56963911",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-01-intact-r0",
+      "position": 3,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "d663e41a38d282c62d6971a6da1dd2131dd9892eef7e3366454a7124f4e2a683",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8716216216216216,
+        "displaced": 0.6442953020134228
+      },
+      "feed_id": "ctbm4-01-partial-r0",
+      "position": 4,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "6ec1e68db4c3396cd47cb94d9f667512e1111e88f1339b4bf7e4cce631183c1d",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-01-sham-r0",
+      "position": 5,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "d93e944b0964354f1098e3e24bcc9a5ca06e198a74c6703d3bc5b9abe10beac3",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-02-intact-r0",
+      "position": 6,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "ca219a4264f79ffb97bed7875e24a4521a39862ad2ad3a93242637c617a75e2a",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8606060606060606,
+        "displaced": 0.6445783132530121
+      },
+      "feed_id": "ctbm4-02-partial-r0",
+      "position": 7,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "2340e75355a9c2ac880a8c0456fdb95361c5444db58a32f0a06c71746dbcfb1d",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-02-sham-r0",
+      "position": 8,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "82470c1184af54cf51cec2f2382fc1cec4c05c5f124f1d90a10b53b976c5ed0e",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-03-intact-r0",
+      "position": 9,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "dee4c89a47e90cd472ef9c9dbdd5e06007ccfc19eb40aa2885c4709b92be48b2",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8757763975155279,
+        "displaced": 0.6419753086419753
+      },
+      "feed_id": "ctbm4-03-partial-r0",
+      "position": 10,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "703a2bf4fbbe1bef5ffc488e8693e20fb2abd0dd216cff77e01b15c6426ad60a",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-03-sham-r0",
+      "position": 11,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "7c79f720f7bea54ea7c36287cb2a44bd6cc6c7145e031b1e0f0188f046b911c4",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-04-intact-r0",
+      "position": 12,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "0815969a71fbc352967339c6cf97eb3a2b32789fb6fe3f3cc040c6f76c479284",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8472222222222222,
+        "displaced": 0.6275862068965518
+      },
+      "feed_id": "ctbm4-04-partial-r0",
+      "position": 13,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "d9ecdef0078d33828264228f6bd673377c236fd7d8f8d485e7be59beba7d53d1",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-04-sham-r0",
+      "position": 14,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "36e924d327a607b38accd2e3d0d142aafc8f9fc4b5b666f834e1cc9b76bc8db2",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-05-intact-r0",
+      "position": 15,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "f928f74fc9551c459034446b21d3d06dc500715bfe1ff56fa5e89e42ccd273e0",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8909090909090909,
+        "displaced": 0.6396396396396397
+      },
+      "feed_id": "ctbm4-05-partial-r0",
+      "position": 16,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "951ba575fdc5b8d7239bdb694f087f2f81eb7dcbdd567c9db223c6edca0fa6d7",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-05-sham-r0",
+      "position": 17,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "9766a9875f37e1509884b6738c36cce571b2718275852b5247c9ce770078e12c",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-06-intact-r0",
+      "position": 18,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "ef24c0343f866bd8c8a154bed86f672cf09139f7b398bd1c51e55af4112bd73f",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8834355828220859,
+        "displaced": 0.6524390243902439
+      },
+      "feed_id": "ctbm4-06-partial-r0",
+      "position": 19,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "e533e7526093d6abebb6e32321e6fb1831a34e5f953b742516e3bcfe3cbda99d",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-06-sham-r0",
+      "position": 20,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "05a4b024daa1fa66c4d3f3b51fdb4c61f8f327e97c9533a5d6491aabdbf3d7da",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-07-intact-r0",
+      "position": 21,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "fe02243ff6469cc44255c5442d433738432ba9558eb8e4d1706ff2821381fa34",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8709677419354839,
+        "displaced": 0.64
+      },
+      "feed_id": "ctbm4-07-partial-r0",
+      "position": 22,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "5f8c9aa549bf9acebb8016176ef692ebeff97c64085713e8f3d26e5fc6e67262",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-07-sham-r0",
+      "position": 23,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "ec8661cbc43525dcc4e9a5c3d2a316f2f78cc3d60440f45a1408b1a5094f4c2f",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-08-intact-r0",
+      "position": 24,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "e091b040cda36030f472919a898fb960a7082995d6f90599e78e7093c2df81e6",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8359375,
+        "displaced": 0.627906976744186
+      },
+      "feed_id": "ctbm4-08-partial-r0",
+      "position": 25,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "c50fda60b51894971ce11e5fe880b634bfe1ac1f1e8f0250f5f4d75f78bfddd2",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-08-sham-r0",
+      "position": 26,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "ef5e6ae033c47aef280ee236f19ebb196d22b052f7e14e408d31fee100ff6438",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-09-intact-r0",
+      "position": 27,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "3410c4da90f7a6131a4842334e0d7b85f8698541c4bedd31d9fd2800474278f6",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8571428571428571,
+        "displaced": 0.6481481481481481
+      },
+      "feed_id": "ctbm4-09-partial-r0",
+      "position": 28,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "2bf83bf9894a4fc7a0ecf9c9a0a62a06e5cad9bdf6f2fe187a12ae4300c32c86",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-09-sham-r0",
+      "position": 29,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "a9d9c473fd5aa53490d74547d9ecfb2cdb74f8ff549e8b87eaa3fa12b90aeab6",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-10-intact-r0",
+      "position": 30,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "289f01a49e8d627c7218220182cbc874dd4959f91f28fd8eb86b6286c006b0a8",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8819875776397516,
+        "displaced": 0.6481481481481481
+      },
+      "feed_id": "ctbm4-10-partial-r0",
+      "position": 31,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "697f184ab159f0b6eed3fa9867847ad514a6b8b26ed138b113e7ae43c9696ad1",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-10-sham-r0",
+      "position": 32,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "5a025970971de57e6499b1a5d1388b3d0ae3f6e8820e41ec4bbce743b2bf4f52",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-11-intact-r0",
+      "position": 33,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "79dbf94e8dce3d2a19e6b6db3c52087167f77e9708c86f56c53c8d26171ffe5f",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.891566265060241,
+        "displaced": 0.6467065868263473
+      },
+      "feed_id": "ctbm4-11-partial-r0",
+      "position": 34,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "a894af90c1703af31dd260a065c416687dc3139c208f7a5050058fcd247ae5b1",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-11-sham-r0",
+      "position": 35,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "661d4fd1feb5c82ae5b82e6455c9a821291113da05b45da4afd411753d863dfd",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-12-intact-r0",
+      "position": 36,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "0c4da131a5eda5fbaacbd89bfb7ee92a932add2027fe62f3810b2096d83666ef",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8907563025210085,
+        "displaced": 0.6333333333333333
+      },
+      "feed_id": "ctbm4-12-partial-r0",
+      "position": 37,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "569bea0545b57c9c88a6f8511d5c767b98df1db7eea4d86b125f68943009b8ee",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-12-sham-r0",
+      "position": 38,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "97a1013b7e225efc16246e57f662c7b25e31b9f1e5b46af999ea64fb9ebf4304",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-13-intact-r0",
+      "position": 39,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "d701af7fbc20a5986434372f8999e301ad6d099fc8c7285f53eb5c110bc9849a",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.869281045751634,
+        "displaced": 0.6363636363636364
+      },
+      "feed_id": "ctbm4-13-partial-r0",
+      "position": 40,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "8f12b47e0597e7c301b67fc9cfb6a56a4efb9610b785bf26a3df974e816f34d3",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-13-sham-r0",
+      "position": 41,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "882508323ec2c6733bc6c9d544f9e21b117948e5f57b48c31684efaaee27ee23",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-14-intact-r0",
+      "position": 42,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "c38d74325804c3c89caac341e0eb92eb0357f5039c9a8ea3323a323cc4969d38",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8380281690140845,
+        "displaced": 0.6293706293706294
+      },
+      "feed_id": "ctbm4-14-partial-r0",
+      "position": 43,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "7edd3c18dc74eb21419ca2b76fafbea7262e264438180642f8931bd049910ea1",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-14-sham-r0",
+      "position": 44,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "b29bee344bfd6ba6e8d813d1877faad428c0b5622c2b0b93fb5a294124bbb615",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-15-intact-r0",
+      "position": 45,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "d752228d4e6bcf6c7ef96f3c269514784aed9012d311651782de67cd03e22645",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        12,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8947368421052632,
+        "displaced": 0.6405228758169934
+      },
+      "feed_id": "ctbm4-15-partial-r0",
+      "position": 46,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "072eed898783169fd3d0606049df355cab23dce2a8730e9d78826fa6934d9747",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-15-sham-r0",
+      "position": 47,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "fc3e985abec22744d1d3fd551754e0696590ac3a7ac1c3ecd97993fbcc760b60",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-16-intact-r0",
+      "position": 48,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "9d2dc114c0f2513c238ea714d17a793708d70b92e43d5ccacace33413239490c",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8671328671328671,
+        "displaced": 0.6388888888888888
+      },
+      "feed_id": "ctbm4-16-partial-r0",
+      "position": 49,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "77575d4e9a0c7c5f4b04d57342768c1926d50d822570434a9832d0d6225cf3fb",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-16-sham-r0",
+      "position": 50,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "8c992b3fd9987ac2a8a655cefa23b91086e9713d1ce0ca8abdbfd90e3974c272",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-17-intact-r0",
+      "position": 51,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "4e18546b95d3ceda4f2d88812534f7803c27a085c31d4fcfe7cd93fbd29d546c",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8835616438356164,
+        "displaced": 0.6530612244897959
+      },
+      "feed_id": "ctbm4-17-partial-r0",
+      "position": 52,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "e1690772d1a74d28df86ff59d2f37f177cf900151e50094c7e48f973e3341cf9",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-17-sham-r0",
+      "position": 53,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "af71607658138afa89d6e1f26f5286bb969e3329c415cfabc3060f073e46bae6",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-18-intact-r0",
+      "position": 54,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "36a0390aaf9a19305abe4c8b5c88cdca7501afb06656090827cc3eac9a77b661",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8951048951048951,
+        "displaced": 0.6527777777777778
+      },
+      "feed_id": "ctbm4-18-partial-r0",
+      "position": 55,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "0521e618829fc067b6e88f8f4f1eca40592c8ab537ea0cfdca4aa9ca1a593eba",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-18-sham-r0",
+      "position": 56,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "f2fd668638912876fc34e25383ba1e71c12b2a0fa0f11c503fefd837c04db2e1",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-19-intact-r0",
+      "position": 57,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "73f1ae057e986acd0e129463662beca65c45e60e09c6dbc2315aca24633faf5e",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8680555555555556,
+        "displaced": 0.6413793103448275
+      },
+      "feed_id": "ctbm4-19-partial-r0",
+      "position": 58,
+      "replicate": 0,
+      "seed": 0,
+      "target_sha256": "c3e1cd1ca939b14f245fc165f33c3fea2cda092c11a90e19f90b19d05ee4b3a3",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-19-sham-r0",
+      "position": 59,
+      "replicate": 0,
+      "seed": null,
+      "target_sha256": "3fd6c46c1e5cc550ae328074327160f2dd0429d0fe321ee6b9d430df6aef6d59",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-00-intact-r1",
+      "position": 60,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "7b7b3be50ff02962bfde19919d067294bad2b17135b49d8b921a3262ce444f3d",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8590604026845637,
+        "displaced": 0.6466666666666666
+      },
+      "feed_id": "ctbm4-00-partial-r1",
+      "position": 61,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "1aace6f54158e097ae354837c0afc3c770381593658132a4cad522d39126d8ff",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-00-sham-r1",
+      "position": 62,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "bee4b175ff0b7de061ac525d8b8f98a8c061e2ef1a120cd20f5e22dc56963911",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-01-intact-r1",
+      "position": 63,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "d663e41a38d282c62d6971a6da1dd2131dd9892eef7e3366454a7124f4e2a683",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8716216216216216,
+        "displaced": 0.6375838926174496
+      },
+      "feed_id": "ctbm4-01-partial-r1",
+      "position": 64,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "0eba3eacfe0047ec65ec81e8f44a32d73b15effa9c710c30d7f82766da947f49",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-01-sham-r1",
+      "position": 65,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "d93e944b0964354f1098e3e24bcc9a5ca06e198a74c6703d3bc5b9abe10beac3",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-02-intact-r1",
+      "position": 66,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "ca219a4264f79ffb97bed7875e24a4521a39862ad2ad3a93242637c617a75e2a",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.9030303030303031,
+        "displaced": 0.6385542168674698
+      },
+      "feed_id": "ctbm4-02-partial-r1",
+      "position": 67,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "0a7b0d08868c6882e5c37c23abce4b30abc9a2478ba0e51ac0e430a7e4932048",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-02-sham-r1",
+      "position": 68,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "82470c1184af54cf51cec2f2382fc1cec4c05c5f124f1d90a10b53b976c5ed0e",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-03-intact-r1",
+      "position": 69,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "dee4c89a47e90cd472ef9c9dbdd5e06007ccfc19eb40aa2885c4709b92be48b2",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8819875776397516,
+        "displaced": 0.6419753086419753
+      },
+      "feed_id": "ctbm4-03-partial-r1",
+      "position": 70,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "e53c24906bc6ac29aa2bf566cfb0b27e3503fea9e7baf9470b37f006a837cc65",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-03-sham-r1",
+      "position": 71,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "7c79f720f7bea54ea7c36287cb2a44bd6cc6c7145e031b1e0f0188f046b911c4",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-04-intact-r1",
+      "position": 72,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "0815969a71fbc352967339c6cf97eb3a2b32789fb6fe3f3cc040c6f76c479284",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.875,
+        "displaced": 0.6413793103448275
+      },
+      "feed_id": "ctbm4-04-partial-r1",
+      "position": 73,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "8da107cd58eaa5efb5ad521f9999be8309c16a517e964a708eebf7869ebf7c28",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-04-sham-r1",
+      "position": 74,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "36e924d327a607b38accd2e3d0d142aafc8f9fc4b5b666f834e1cc9b76bc8db2",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-05-intact-r1",
+      "position": 75,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "f928f74fc9551c459034446b21d3d06dc500715bfe1ff56fa5e89e42ccd273e0",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8090909090909091,
+        "displaced": 0.6396396396396397
+      },
+      "feed_id": "ctbm4-05-partial-r1",
+      "position": 76,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "255367a590ad689fbcbffc0330daee81aebb821d4634549afded3d059b6ddf8b",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-05-sham-r1",
+      "position": 77,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "9766a9875f37e1509884b6738c36cce571b2718275852b5247c9ce770078e12c",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-06-intact-r1",
+      "position": 78,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "ef24c0343f866bd8c8a154bed86f672cf09139f7b398bd1c51e55af4112bd73f",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8834355828220859,
+        "displaced": 0.6524390243902439
+      },
+      "feed_id": "ctbm4-06-partial-r1",
+      "position": 79,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "03f41ee44c8ce863b6d4ce1b9c4b13b8ab51de048f2633b2ffcbbe8f6c8c5bc1",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-06-sham-r1",
+      "position": 80,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "05a4b024daa1fa66c4d3f3b51fdb4c61f8f327e97c9533a5d6491aabdbf3d7da",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-07-intact-r1",
+      "position": 81,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "fe02243ff6469cc44255c5442d433738432ba9558eb8e4d1706ff2821381fa34",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8790322580645161,
+        "displaced": 0.648
+      },
+      "feed_id": "ctbm4-07-partial-r1",
+      "position": 82,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "c7661e2dbeaa8bc3c29537860037bd64cfa3fb2d066e531ea66631e4496e9207",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-07-sham-r1",
+      "position": 83,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "ec8661cbc43525dcc4e9a5c3d2a316f2f78cc3d60440f45a1408b1a5094f4c2f",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-08-intact-r1",
+      "position": 84,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "e091b040cda36030f472919a898fb960a7082995d6f90599e78e7093c2df81e6",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.859375,
+        "displaced": 0.6511627906976745
+      },
+      "feed_id": "ctbm4-08-partial-r1",
+      "position": 85,
+      "replicate": 1,
+      "seed": 2,
+      "target_sha256": "bb4ef1a7f38b671424b8344b2971eab2a5677ac848d0a2ced3703b0bb57f1144",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-08-sham-r1",
+      "position": 86,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "ef5e6ae033c47aef280ee236f19ebb196d22b052f7e14e408d31fee100ff6438",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-09-intact-r1",
+      "position": 87,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "3410c4da90f7a6131a4842334e0d7b85f8698541c4bedd31d9fd2800474278f6",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8881987577639752,
+        "displaced": 0.6419753086419753
+      },
+      "feed_id": "ctbm4-09-partial-r1",
+      "position": 88,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "2c40d63b2fb50a1f4671dee957c3f9b800d8bc71274ef50b4bec342e5ac35ee8",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-09-sham-r1",
+      "position": 89,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "a9d9c473fd5aa53490d74547d9ecfb2cdb74f8ff549e8b87eaa3fa12b90aeab6",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-10-intact-r1",
+      "position": 90,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "289f01a49e8d627c7218220182cbc874dd4959f91f28fd8eb86b6286c006b0a8",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8633540372670807,
+        "displaced": 0.6481481481481481
+      },
+      "feed_id": "ctbm4-10-partial-r1",
+      "position": 91,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "01ef804e96e46a72fc29c2ab624e5aecf97ae71a1be991ddc868dc2e29d6a975",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-10-sham-r1",
+      "position": 92,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "5a025970971de57e6499b1a5d1388b3d0ae3f6e8820e41ec4bbce743b2bf4f52",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-11-intact-r1",
+      "position": 93,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "79dbf94e8dce3d2a19e6b6db3c52087167f77e9708c86f56c53c8d26171ffe5f",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.891566265060241,
+        "displaced": 0.6467065868263473
+      },
+      "feed_id": "ctbm4-11-partial-r1",
+      "position": 94,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "2d946d9a4e06b2db271307bce043dc66152e961688c7f17078c302e3e7005b20",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-11-sham-r1",
+      "position": 95,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "661d4fd1feb5c82ae5b82e6455c9a821291113da05b45da4afd411753d863dfd",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-12-intact-r1",
+      "position": 96,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "0c4da131a5eda5fbaacbd89bfb7ee92a932add2027fe62f3810b2096d83666ef",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.865546218487395,
+        "displaced": 0.6416666666666667
+      },
+      "feed_id": "ctbm4-12-partial-r1",
+      "position": 97,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "776f593326b8f108ce164203c0938bd0e4b65e64d1ffc0c4d63369a32ac04782",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-12-sham-r1",
+      "position": 98,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "97a1013b7e225efc16246e57f662c7b25e31b9f1e5b46af999ea64fb9ebf4304",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-13-intact-r1",
+      "position": 99,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "d701af7fbc20a5986434372f8999e301ad6d099fc8c7285f53eb5c110bc9849a",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8888888888888888,
+        "displaced": 0.6428571428571429
+      },
+      "feed_id": "ctbm4-13-partial-r1",
+      "position": 100,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "f060907820f3ae18d96c9db237bf6e3333604f7071debd6b37fbd305a8d21091",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-13-sham-r1",
+      "position": 101,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "882508323ec2c6733bc6c9d544f9e21b117948e5f57b48c31684efaaee27ee23",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-14-intact-r1",
+      "position": 102,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "c38d74325804c3c89caac341e0eb92eb0357f5039c9a8ea3323a323cc4969d38",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8732394366197183,
+        "displaced": 0.6503496503496503
+      },
+      "feed_id": "ctbm4-14-partial-r1",
+      "position": 103,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "3789c365a53d601f818ca611253642e4326ca5a1d51e1aaaaff23720605bff57",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-14-sham-r1",
+      "position": 104,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "b29bee344bfd6ba6e8d813d1877faad428c0b5622c2b0b93fb5a294124bbb615",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-15-intact-r1",
+      "position": 105,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "d752228d4e6bcf6c7ef96f3c269514784aed9012d311651782de67cd03e22645",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        12,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.875,
+        "displaced": 0.6470588235294118
+      },
+      "feed_id": "ctbm4-15-partial-r1",
+      "position": 106,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "62554e76a0b626c8b7f684e59c9768312ad1d00c711fa654ffb5837f99f03960",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-15-sham-r1",
+      "position": 107,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "fc3e985abec22744d1d3fd551754e0696590ac3a7ac1c3ecd97993fbcc760b60",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-16-intact-r1",
+      "position": 108,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "9d2dc114c0f2513c238ea714d17a793708d70b92e43d5ccacace33413239490c",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8671328671328671,
+        "displaced": 0.6527777777777778
+      },
+      "feed_id": "ctbm4-16-partial-r1",
+      "position": 109,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "f49f916f6eba793ccd605b4ffed2eefd6e202d7f0afb1a914babb79df9b9d3cc",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-16-sham-r1",
+      "position": 110,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "8c992b3fd9987ac2a8a655cefa23b91086e9713d1ce0ca8abdbfd90e3974c272",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-17-intact-r1",
+      "position": 111,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "4e18546b95d3ceda4f2d88812534f7803c27a085c31d4fcfe7cd93fbd29d546c",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8904109589041096,
+        "displaced": 0.6394557823129252
+      },
+      "feed_id": "ctbm4-17-partial-r1",
+      "position": 112,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "d854fc5ff85d88a7466036df7676f949156df473b56c2ff60707214263e1a388",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-17-sham-r1",
+      "position": 113,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "af71607658138afa89d6e1f26f5286bb969e3329c415cfabc3060f073e46bae6",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-18-intact-r1",
+      "position": 114,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "36a0390aaf9a19305abe4c8b5c88cdca7501afb06656090827cc3eac9a77b661",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8671328671328671,
+        "displaced": 0.6527777777777778
+      },
+      "feed_id": "ctbm4-18-partial-r1",
+      "position": 115,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "2d73c22952c63da6f646a9a261684a72d59db6aa0e7d83bf77981c219c15204c",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-18-sham-r1",
+      "position": 116,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "f2fd668638912876fc34e25383ba1e71c12b2a0fa0f11c503fefd837c04db2e1",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-19-intact-r1",
+      "position": 117,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "73f1ae057e986acd0e129463662beca65c45e60e09c6dbc2315aca24633faf5e",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8263888888888888,
+        "displaced": 0.6206896551724138
+      },
+      "feed_id": "ctbm4-19-partial-r1",
+      "position": 118,
+      "replicate": 1,
+      "seed": 1,
+      "target_sha256": "b2bb63616d3aff566a97ead77939408ee09589116a769f1891799922046dcba4",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-19-sham-r1",
+      "position": 119,
+      "replicate": 1,
+      "seed": null,
+      "target_sha256": "3fd6c46c1e5cc550ae328074327160f2dd0429d0fe321ee6b9d430df6aef6d59",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-00-intact-r2",
+      "position": 120,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "7b7b3be50ff02962bfde19919d067294bad2b17135b49d8b921a3262ce444f3d",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.9060402684563759,
+        "displaced": 0.6533333333333333
+      },
+      "feed_id": "ctbm4-00-partial-r2",
+      "position": 121,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "3493451087dbeec8356c10263f127703f3085d10f5a4b48c672b245ec8b626d6",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-00-sham-r2",
+      "position": 122,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "bee4b175ff0b7de061ac525d8b8f98a8c061e2ef1a120cd20f5e22dc56963911",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-01-intact-r2",
+      "position": 123,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "d663e41a38d282c62d6971a6da1dd2131dd9892eef7e3366454a7124f4e2a683",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8783783783783784,
+        "displaced": 0.6510067114093959
+      },
+      "feed_id": "ctbm4-01-partial-r2",
+      "position": 124,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "929b2b21a67f34ae8709a35b58e584b96fad6359c813a2d2a27eb94a208a1722",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-01-sham-r2",
+      "position": 125,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "d93e944b0964354f1098e3e24bcc9a5ca06e198a74c6703d3bc5b9abe10beac3",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-02-intact-r2",
+      "position": 126,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "ca219a4264f79ffb97bed7875e24a4521a39862ad2ad3a93242637c617a75e2a",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8848484848484849,
+        "displaced": 0.6506024096385542
+      },
+      "feed_id": "ctbm4-02-partial-r2",
+      "position": 127,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "25f4132a9aa154008d22ce5dc81d70c24e5a5e824718b26923d0300fb8621280",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-02-sham-r2",
+      "position": 128,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "82470c1184af54cf51cec2f2382fc1cec4c05c5f124f1d90a10b53b976c5ed0e",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-03-intact-r2",
+      "position": 129,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "dee4c89a47e90cd472ef9c9dbdd5e06007ccfc19eb40aa2885c4709b92be48b2",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8757763975155279,
+        "displaced": 0.6419753086419753
+      },
+      "feed_id": "ctbm4-03-partial-r2",
+      "position": 130,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "a577be57786b6c37c4afee7d3433b3f915f4320a89b3a42b9dc7b418bc81f9d5",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-03-sham-r2",
+      "position": 131,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "7c79f720f7bea54ea7c36287cb2a44bd6cc6c7145e031b1e0f0188f046b911c4",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-04-intact-r2",
+      "position": 132,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "0815969a71fbc352967339c6cf97eb3a2b32789fb6fe3f3cc040c6f76c479284",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8819444444444444,
+        "displaced": 0.6482758620689655
+      },
+      "feed_id": "ctbm4-04-partial-r2",
+      "position": 133,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "251a1ab37b8e0933f05e0a6586e8666eb3afd37071ca27a04555c69b67ae0626",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-04-sham-r2",
+      "position": 134,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "36e924d327a607b38accd2e3d0d142aafc8f9fc4b5b666f834e1cc9b76bc8db2",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-05-intact-r2",
+      "position": 135,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "f928f74fc9551c459034446b21d3d06dc500715bfe1ff56fa5e89e42ccd273e0",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8636363636363636,
+        "displaced": 0.6396396396396397
+      },
+      "feed_id": "ctbm4-05-partial-r2",
+      "position": 136,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "f78d664e2221d428fe11f38a1430b1cb2f4c22d88f27c6b68409da90a5383cf5",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-05-sham-r2",
+      "position": 137,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "9766a9875f37e1509884b6738c36cce571b2718275852b5247c9ce770078e12c",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-06-intact-r2",
+      "position": 138,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "ef24c0343f866bd8c8a154bed86f672cf09139f7b398bd1c51e55af4112bd73f",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8650306748466258,
+        "displaced": 0.6402439024390244
+      },
+      "feed_id": "ctbm4-06-partial-r2",
+      "position": 139,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "9553d07f4694b65aa2e0c51966da89e2a70ea71bb8e068782396bd604e24add7",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-06-sham-r2",
+      "position": 140,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "05a4b024daa1fa66c4d3f3b51fdb4c61f8f327e97c9533a5d6491aabdbf3d7da",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-07-intact-r2",
+      "position": 141,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "fe02243ff6469cc44255c5442d433738432ba9558eb8e4d1706ff2821381fa34",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8467741935483871,
+        "displaced": 0.624
+      },
+      "feed_id": "ctbm4-07-partial-r2",
+      "position": 142,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "5d6f50bb6225f89dc2328658eb8103ef73927e5d17025bd1a217d4db3722d321",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-07-sham-r2",
+      "position": 143,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "ec8661cbc43525dcc4e9a5c3d2a316f2f78cc3d60440f45a1408b1a5094f4c2f",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-08-intact-r2",
+      "position": 144,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "e091b040cda36030f472919a898fb960a7082995d6f90599e78e7093c2df81e6",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        12,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.875,
+        "displaced": 0.6434108527131783
+      },
+      "feed_id": "ctbm4-08-partial-r2",
+      "position": 145,
+      "replicate": 2,
+      "seed": 3,
+      "target_sha256": "b1a8525c40e0d6e28d017fe46381aeaf527ad953e8b0d60da8b975a931a36535",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-08-sham-r2",
+      "position": 146,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "ef5e6ae033c47aef280ee236f19ebb196d22b052f7e14e408d31fee100ff6438",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-09-intact-r2",
+      "position": 147,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "3410c4da90f7a6131a4842334e0d7b85f8698541c4bedd31d9fd2800474278f6",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8571428571428571,
+        "displaced": 0.6419753086419753
+      },
+      "feed_id": "ctbm4-09-partial-r2",
+      "position": 148,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "914ca9457a7af86357ecb6c1fc281c7a8aa313b1395ae7af9df4d97a7bb9d28e",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-09-sham-r2",
+      "position": 149,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "a9d9c473fd5aa53490d74547d9ecfb2cdb74f8ff549e8b87eaa3fa12b90aeab6",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-10-intact-r2",
+      "position": 150,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "289f01a49e8d627c7218220182cbc874dd4959f91f28fd8eb86b6286c006b0a8",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.906832298136646,
+        "displaced": 0.6419753086419753
+      },
+      "feed_id": "ctbm4-10-partial-r2",
+      "position": 151,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "f6e1fb457addb871e5dac9930877222e56eab9eea3cbc4a3a21f2ec4cbd19e5e",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-10-sham-r2",
+      "position": 152,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "5a025970971de57e6499b1a5d1388b3d0ae3f6e8820e41ec4bbce743b2bf4f52",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-11-intact-r2",
+      "position": 153,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "79dbf94e8dce3d2a19e6b6db3c52087167f77e9708c86f56c53c8d26171ffe5f",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8975903614457831,
+        "displaced": 0.6467065868263473
+      },
+      "feed_id": "ctbm4-11-partial-r2",
+      "position": 154,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "4405263966f1a334a45cb72af9b8fe1279fe3ad6adcf82a392d4320ab96b12a6",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-11-sham-r2",
+      "position": 155,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "661d4fd1feb5c82ae5b82e6455c9a821291113da05b45da4afd411753d863dfd",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-12-intact-r2",
+      "position": 156,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "0c4da131a5eda5fbaacbd89bfb7ee92a932add2027fe62f3810b2096d83666ef",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8487394957983193,
+        "displaced": 0.65
+      },
+      "feed_id": "ctbm4-12-partial-r2",
+      "position": 157,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "a62d28cc5d1992c88971f6bb8c7b509824d308d55d85a59b77a40779f5ddbb92",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-12-sham-r2",
+      "position": 158,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "97a1013b7e225efc16246e57f662c7b25e31b9f1e5b46af999ea64fb9ebf4304",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-13-intact-r2",
+      "position": 159,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "d701af7fbc20a5986434372f8999e301ad6d099fc8c7285f53eb5c110bc9849a",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8562091503267973,
+        "displaced": 0.6428571428571429
+      },
+      "feed_id": "ctbm4-13-partial-r2",
+      "position": 160,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "1951d2955a5ab96accac94ea776cae176ee8c9a4a470cf373cfc461c6a60afe3",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-13-sham-r2",
+      "position": 161,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "882508323ec2c6733bc6c9d544f9e21b117948e5f57b48c31684efaaee27ee23",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-14-intact-r2",
+      "position": 162,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "c38d74325804c3c89caac341e0eb92eb0357f5039c9a8ea3323a323cc4969d38",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.852112676056338,
+        "displaced": 0.6503496503496503
+      },
+      "feed_id": "ctbm4-14-partial-r2",
+      "position": 163,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "4397b50fa3e2bac4ecb6bcc91ce16d720d50584b2f20b80bb18ef85e947ff937",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-14-sham-r2",
+      "position": 164,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "b29bee344bfd6ba6e8d813d1877faad428c0b5622c2b0b93fb5a294124bbb615",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-15-intact-r2",
+      "position": 165,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "d752228d4e6bcf6c7ef96f3c269514784aed9012d311651782de67cd03e22645",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.9013157894736842,
+        "displaced": 0.6470588235294118
+      },
+      "feed_id": "ctbm4-15-partial-r2",
+      "position": 166,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "af6951213b1f704d1ec01536d85343ccbd756cac8ab7ee4a51c0a4917dec8b7f",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-15-sham-r2",
+      "position": 167,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "fc3e985abec22744d1d3fd551754e0696590ac3a7ac1c3ecd97993fbcc760b60",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-16-intact-r2",
+      "position": 168,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "9d2dc114c0f2513c238ea714d17a793708d70b92e43d5ccacace33413239490c",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8601398601398601,
+        "displaced": 0.6527777777777778
+      },
+      "feed_id": "ctbm4-16-partial-r2",
+      "position": 169,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "f072a30b3ee8047bf1db11004468a575245f65f686201fe4c9c1f74000c97267",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-16-sham-r2",
+      "position": 170,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "8c992b3fd9987ac2a8a655cefa23b91086e9713d1ce0ca8abdbfd90e3974c272",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-17-intact-r2",
+      "position": 171,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "4e18546b95d3ceda4f2d88812534f7803c27a085c31d4fcfe7cd93fbd29d546c",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8767123287671232,
+        "displaced": 0.6462585034013606
+      },
+      "feed_id": "ctbm4-17-partial-r2",
+      "position": 172,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "4f2d44e58de5814019676282e0eaaa63d512d5836c9c4ca87e56ec9e9796ed14",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-17-sham-r2",
+      "position": 173,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "af71607658138afa89d6e1f26f5286bb969e3329c415cfabc3060f073e46bae6",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-18-intact-r2",
+      "position": 174,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "36a0390aaf9a19305abe4c8b5c88cdca7501afb06656090827cc3eac9a77b661",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8741258741258742,
+        "displaced": 0.6527777777777778
+      },
+      "feed_id": "ctbm4-18-partial-r2",
+      "position": 175,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "8a7c4269152f35eb1d3c428ed9fa13f708de9b32d4699d110c45de713f8483bc",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-18-sham-r2",
+      "position": 176,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "f2fd668638912876fc34e25383ba1e71c12b2a0fa0f11c503fefd837c04db2e1",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-19-intact-r2",
+      "position": 177,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "73f1ae057e986acd0e129463662beca65c45e60e09c6dbc2315aca24633faf5e",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8958333333333334,
+        "displaced": 0.6482758620689655
+      },
+      "feed_id": "ctbm4-19-partial-r2",
+      "position": 178,
+      "replicate": 2,
+      "seed": 2,
+      "target_sha256": "c3bb37a4bbe7d1c022b90dca7fa158ff5ab00a2f2a396c6b80f931dd682f94ca",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-19-sham-r2",
+      "position": 179,
+      "replicate": 2,
+      "seed": null,
+      "target_sha256": "3fd6c46c1e5cc550ae328074327160f2dd0429d0fe321ee6b9d430df6aef6d59",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-00-intact-r3",
+      "position": 180,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "7b7b3be50ff02962bfde19919d067294bad2b17135b49d8b921a3262ce444f3d",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8993288590604027,
+        "displaced": 0.64
+      },
+      "feed_id": "ctbm4-00-partial-r3",
+      "position": 181,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "83bab00868cc313b5305da70c13f065c242641bba7164cacfbef8ab3f0adde80",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-00-sham-r3",
+      "position": 182,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "bee4b175ff0b7de061ac525d8b8f98a8c061e2ef1a120cd20f5e22dc56963911",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-01-intact-r3",
+      "position": 183,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "d663e41a38d282c62d6971a6da1dd2131dd9892eef7e3366454a7124f4e2a683",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8851351351351351,
+        "displaced": 0.6375838926174496
+      },
+      "feed_id": "ctbm4-01-partial-r3",
+      "position": 184,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "5ae4ff9d7132f4b928e2100dea99dcb2290249a109729c956af47ccb20e3bba6",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-01-sham-r3",
+      "position": 185,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "d93e944b0964354f1098e3e24bcc9a5ca06e198a74c6703d3bc5b9abe10beac3",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-02-intact-r3",
+      "position": 186,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "ca219a4264f79ffb97bed7875e24a4521a39862ad2ad3a93242637c617a75e2a",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.9030303030303031,
+        "displaced": 0.6445783132530121
+      },
+      "feed_id": "ctbm4-02-partial-r3",
+      "position": 187,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "b2efcdf44647af3cbafab7d7e95d3e7eb6a4a39d1bfcb5c80f03017fa2332f46",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-02-sham-r3",
+      "position": 188,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "82470c1184af54cf51cec2f2382fc1cec4c05c5f124f1d90a10b53b976c5ed0e",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-03-intact-r3",
+      "position": 189,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "dee4c89a47e90cd472ef9c9dbdd5e06007ccfc19eb40aa2885c4709b92be48b2",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.9006211180124224,
+        "displaced": 0.6481481481481481
+      },
+      "feed_id": "ctbm4-03-partial-r3",
+      "position": 190,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "c11529c506a53e8bcc90021b6db417716af2ed275cad6f5cf497bb6548031d60",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-03-sham-r3",
+      "position": 191,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "7c79f720f7bea54ea7c36287cb2a44bd6cc6c7145e031b1e0f0188f046b911c4",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-04-intact-r3",
+      "position": 192,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "0815969a71fbc352967339c6cf97eb3a2b32789fb6fe3f3cc040c6f76c479284",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.875,
+        "displaced": 0.6482758620689655
+      },
+      "feed_id": "ctbm4-04-partial-r3",
+      "position": 193,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "a6c44a7823ebc7d0d1b796ecfb42bdf6f75a858a6c2150078b26520f182e021e",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-04-sham-r3",
+      "position": 194,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "36e924d327a607b38accd2e3d0d142aafc8f9fc4b5b666f834e1cc9b76bc8db2",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-05-intact-r3",
+      "position": 195,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "f928f74fc9551c459034446b21d3d06dc500715bfe1ff56fa5e89e42ccd273e0",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8545454545454545,
+        "displaced": 0.6216216216216216
+      },
+      "feed_id": "ctbm4-05-partial-r3",
+      "position": 196,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "b346f645fd4692719a8ac1ee90bb838d2cc64e46ffc7dc5d058b05a1c0de3307",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-05-sham-r3",
+      "position": 197,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "9766a9875f37e1509884b6738c36cce571b2718275852b5247c9ce770078e12c",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-06-intact-r3",
+      "position": 198,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "ef24c0343f866bd8c8a154bed86f672cf09139f7b398bd1c51e55af4112bd73f",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8957055214723927,
+        "displaced": 0.6402439024390244
+      },
+      "feed_id": "ctbm4-06-partial-r3",
+      "position": 199,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "c2d70c3e8d7210faf9f3cfc100e357da621b514e46e61435bb1b90803229be6c",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-06-sham-r3",
+      "position": 200,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "05a4b024daa1fa66c4d3f3b51fdb4c61f8f327e97c9533a5d6491aabdbf3d7da",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-07-intact-r3",
+      "position": 201,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "fe02243ff6469cc44255c5442d433738432ba9558eb8e4d1706ff2821381fa34",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8548387096774194,
+        "displaced": 0.648
+      },
+      "feed_id": "ctbm4-07-partial-r3",
+      "position": 202,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "9d3b55f702b5d9009e31d70c78a5670760e7f3908d4b4c42938e44da3dcff52c",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-07-sham-r3",
+      "position": 203,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "ec8661cbc43525dcc4e9a5c3d2a316f2f78cc3d60440f45a1408b1a5094f4c2f",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-08-intact-r3",
+      "position": 204,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "e091b040cda36030f472919a898fb960a7082995d6f90599e78e7093c2df81e6",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.859375,
+        "displaced": 0.6511627906976745
+      },
+      "feed_id": "ctbm4-08-partial-r3",
+      "position": 205,
+      "replicate": 3,
+      "seed": 4,
+      "target_sha256": "0375cbaecb16d4f98c3a73df72a142be8d3e8b864343b9037b5e74dd24c2b173",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-08-sham-r3",
+      "position": 206,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "ef5e6ae033c47aef280ee236f19ebb196d22b052f7e14e408d31fee100ff6438",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-09-intact-r3",
+      "position": 207,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "3410c4da90f7a6131a4842334e0d7b85f8698541c4bedd31d9fd2800474278f6",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8819875776397516,
+        "displaced": 0.6481481481481481
+      },
+      "feed_id": "ctbm4-09-partial-r3",
+      "position": 208,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "937b0ad494ef8cd117b16e0308f58a7e0e25c7921b3aafd24a744fa1c919f188",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-09-sham-r3",
+      "position": 209,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "a9d9c473fd5aa53490d74547d9ecfb2cdb74f8ff549e8b87eaa3fa12b90aeab6",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-10-intact-r3",
+      "position": 210,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "289f01a49e8d627c7218220182cbc874dd4959f91f28fd8eb86b6286c006b0a8",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8819875776397516,
+        "displaced": 0.6419753086419753
+      },
+      "feed_id": "ctbm4-10-partial-r3",
+      "position": 211,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "c47c1dbd52248b527a71cc194e4091bb159addfb35e6296a6302934bbb27e18f",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-10-sham-r3",
+      "position": 212,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "5a025970971de57e6499b1a5d1388b3d0ae3f6e8820e41ec4bbce743b2bf4f52",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-11-intact-r3",
+      "position": 213,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "79dbf94e8dce3d2a19e6b6db3c52087167f77e9708c86f56c53c8d26171ffe5f",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8373493975903614,
+        "displaced": 0.6407185628742516
+      },
+      "feed_id": "ctbm4-11-partial-r3",
+      "position": 214,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "2971857768590a2a259b650bda4b1bc0c5fbf2429d975efc6dd4e7aa87c58a8e",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-11-sham-r3",
+      "position": 215,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "661d4fd1feb5c82ae5b82e6455c9a821291113da05b45da4afd411753d863dfd",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-12-intact-r3",
+      "position": 216,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "0c4da131a5eda5fbaacbd89bfb7ee92a932add2027fe62f3810b2096d83666ef",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8907563025210085,
+        "displaced": 0.65
+      },
+      "feed_id": "ctbm4-12-partial-r3",
+      "position": 217,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "e60463e1a2d580ee086d112b26524cf5f71d7a97119b736a89281e96b98b7b27",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-12-sham-r3",
+      "position": 218,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "97a1013b7e225efc16246e57f662c7b25e31b9f1e5b46af999ea64fb9ebf4304",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-13-intact-r3",
+      "position": 219,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "d701af7fbc20a5986434372f8999e301ad6d099fc8c7285f53eb5c110bc9849a",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8431372549019608,
+        "displaced": 0.6298701298701299
+      },
+      "feed_id": "ctbm4-13-partial-r3",
+      "position": 220,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "d84dc24172c3cb1eaf9b9178ef3ed8459af58b33f7a6a386b916b9c7d4fcd8b4",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-13-sham-r3",
+      "position": 221,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "882508323ec2c6733bc6c9d544f9e21b117948e5f57b48c31684efaaee27ee23",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-14-intact-r3",
+      "position": 222,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "c38d74325804c3c89caac341e0eb92eb0357f5039c9a8ea3323a323cc4969d38",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.9084507042253521,
+        "displaced": 0.6503496503496503
+      },
+      "feed_id": "ctbm4-14-partial-r3",
+      "position": 223,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "02f70cd66ec5a7dddfb3c9fd593a6395064928b358963bd9f60141bf1557f18a",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-14-sham-r3",
+      "position": 224,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "b29bee344bfd6ba6e8d813d1877faad428c0b5622c2b0b93fb5a294124bbb615",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-15-intact-r3",
+      "position": 225,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "d752228d4e6bcf6c7ef96f3c269514784aed9012d311651782de67cd03e22645",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.868421052631579,
+        "displaced": 0.6470588235294118
+      },
+      "feed_id": "ctbm4-15-partial-r3",
+      "position": 226,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "3dfc96533b10efa132c7b6960a2de3846e928c68a86261a4fd3cdeb4eef70761",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-15-sham-r3",
+      "position": 227,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "fc3e985abec22744d1d3fd551754e0696590ac3a7ac1c3ecd97993fbcc760b60",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-16-intact-r3",
+      "position": 228,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "9d2dc114c0f2513c238ea714d17a793708d70b92e43d5ccacace33413239490c",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8531468531468531,
+        "displaced": 0.6527777777777778
+      },
+      "feed_id": "ctbm4-16-partial-r3",
+      "position": 229,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "129844d41f678150fddce0c234535fe01369a1b6656236345c1edd95146a7afb",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-16-sham-r3",
+      "position": 230,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "8c992b3fd9987ac2a8a655cefa23b91086e9713d1ce0ca8abdbfd90e3974c272",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-17-intact-r3",
+      "position": 231,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "4e18546b95d3ceda4f2d88812534f7803c27a085c31d4fcfe7cd93fbd29d546c",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8561643835616438,
+        "displaced": 0.6394557823129252
+      },
+      "feed_id": "ctbm4-17-partial-r3",
+      "position": 232,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "7589f52431916b7111e49b5c0b9251370f7c28422039e3bc5df3a176472972ca",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-17-sham-r3",
+      "position": 233,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "af71607658138afa89d6e1f26f5286bb969e3329c415cfabc3060f073e46bae6",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-18-intact-r3",
+      "position": 234,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "36a0390aaf9a19305abe4c8b5c88cdca7501afb06656090827cc3eac9a77b661",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8601398601398601,
+        "displaced": 0.6458333333333334
+      },
+      "feed_id": "ctbm4-18-partial-r3",
+      "position": 235,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "89eebcfcfaae96af968236dabbbdd2ed140cab30d26ea167ca28dd555a8ef19d",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-18-sham-r3",
+      "position": 236,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "f2fd668638912876fc34e25383ba1e71c12b2a0fa0f11c503fefd837c04db2e1",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-19-intact-r3",
+      "position": 237,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "73f1ae057e986acd0e129463662beca65c45e60e09c6dbc2315aca24633faf5e",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8680555555555556,
+        "displaced": 0.6413793103448275
+      },
+      "feed_id": "ctbm4-19-partial-r3",
+      "position": 238,
+      "replicate": 3,
+      "seed": 3,
+      "target_sha256": "2fc9f2ef3e80bab237e82277844d94f765d677b4bbb1a0de25f6f6d01fa3de9e",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-19-sham-r3",
+      "position": 239,
+      "replicate": 3,
+      "seed": null,
+      "target_sha256": "3fd6c46c1e5cc550ae328074327160f2dd0429d0fe321ee6b9d430df6aef6d59",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-00-intact-r4",
+      "position": 240,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "7b7b3be50ff02962bfde19919d067294bad2b17135b49d8b921a3262ce444f3d",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8791946308724832,
+        "displaced": 0.6466666666666666
+      },
+      "feed_id": "ctbm4-00-partial-r4",
+      "position": 241,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "7746a1b35b08695b5d39fddca98b0978bc342ccf2abd8b3cf162078c88e5d131",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-00-sham-r4",
+      "position": 242,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "bee4b175ff0b7de061ac525d8b8f98a8c061e2ef1a120cd20f5e22dc56963911",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-01-intact-r4",
+      "position": 243,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "d663e41a38d282c62d6971a6da1dd2131dd9892eef7e3366454a7124f4e2a683",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8851351351351351,
+        "displaced": 0.6442953020134228
+      },
+      "feed_id": "ctbm4-01-partial-r4",
+      "position": 244,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "e09111c7889f19bbcb98de63b263d736a0fa540f587efe2a1194aaa212da99d1",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-01-sham-r4",
+      "position": 245,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "d93e944b0964354f1098e3e24bcc9a5ca06e198a74c6703d3bc5b9abe10beac3",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-02-intact-r4",
+      "position": 246,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "ca219a4264f79ffb97bed7875e24a4521a39862ad2ad3a93242637c617a75e2a",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8666666666666667,
+        "displaced": 0.6445783132530121
+      },
+      "feed_id": "ctbm4-02-partial-r4",
+      "position": 247,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "6efb74acde07cac29b45f77717eb6b579733cbf3da6e09bbb32b372fec3d02d2",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-02-sham-r4",
+      "position": 248,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "82470c1184af54cf51cec2f2382fc1cec4c05c5f124f1d90a10b53b976c5ed0e",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-03-intact-r4",
+      "position": 249,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "dee4c89a47e90cd472ef9c9dbdd5e06007ccfc19eb40aa2885c4709b92be48b2",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8695652173913043,
+        "displaced": 0.6481481481481481
+      },
+      "feed_id": "ctbm4-03-partial-r4",
+      "position": 250,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "ab0acc0e970fb9e09a118fae26d55d101d58d8e3bddfe6c0cba174ac93edb1c4",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-03-sham-r4",
+      "position": 251,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "7c79f720f7bea54ea7c36287cb2a44bd6cc6c7145e031b1e0f0188f046b911c4",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-04-intact-r4",
+      "position": 252,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "0815969a71fbc352967339c6cf97eb3a2b32789fb6fe3f3cc040c6f76c479284",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8680555555555556,
+        "displaced": 0.6413793103448275
+      },
+      "feed_id": "ctbm4-04-partial-r4",
+      "position": 253,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "7db753fb6f7644a61aeb728200cff828e86bcc81ed875a95f7f70dbc6a7ddacd",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-04-sham-r4",
+      "position": 254,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "36e924d327a607b38accd2e3d0d142aafc8f9fc4b5b666f834e1cc9b76bc8db2",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-05-intact-r4",
+      "position": 255,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "f928f74fc9551c459034446b21d3d06dc500715bfe1ff56fa5e89e42ccd273e0",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8727272727272727,
+        "displaced": 0.6396396396396397
+      },
+      "feed_id": "ctbm4-05-partial-r4",
+      "position": 256,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "e63f773d8fa7d85aeff4f2dead3994eb657231a98fedaf006ab8999f00c25d6c",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-05-sham-r4",
+      "position": 257,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "9766a9875f37e1509884b6738c36cce571b2718275852b5247c9ce770078e12c",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-06-intact-r4",
+      "position": 258,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "ef24c0343f866bd8c8a154bed86f672cf09139f7b398bd1c51e55af4112bd73f",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8957055214723927,
+        "displaced": 0.6463414634146342
+      },
+      "feed_id": "ctbm4-06-partial-r4",
+      "position": 259,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "57b4665b9aa65d2da41c4c171b8639d91d6489f8b149513cd43818a1e8c9aca6",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-06-sham-r4",
+      "position": 260,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "05a4b024daa1fa66c4d3f3b51fdb4c61f8f327e97c9533a5d6491aabdbf3d7da",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-07-intact-r4",
+      "position": 261,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "fe02243ff6469cc44255c5442d433738432ba9558eb8e4d1706ff2821381fa34",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8548387096774194,
+        "displaced": 0.648
+      },
+      "feed_id": "ctbm4-07-partial-r4",
+      "position": 262,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "7a5eefbe20d81a02da883ba1faea4bab78a7b5b20c496254a29a0d71ff07029c",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-07-sham-r4",
+      "position": 263,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "ec8661cbc43525dcc4e9a5c3d2a316f2f78cc3d60440f45a1408b1a5094f4c2f",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-08-intact-r4",
+      "position": 264,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "e091b040cda36030f472919a898fb960a7082995d6f90599e78e7093c2df81e6",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.859375,
+        "displaced": 0.6434108527131783
+      },
+      "feed_id": "ctbm4-08-partial-r4",
+      "position": 265,
+      "replicate": 4,
+      "seed": 5,
+      "target_sha256": "2ed7f254f41541dab4ea26a24c8b4e19d89dfaf489d02c387f8e84a2f4daa433",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-08-sham-r4",
+      "position": 266,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "ef5e6ae033c47aef280ee236f19ebb196d22b052f7e14e408d31fee100ff6438",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-09-intact-r4",
+      "position": 267,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "3410c4da90f7a6131a4842334e0d7b85f8698541c4bedd31d9fd2800474278f6",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8819875776397516,
+        "displaced": 0.6481481481481481
+      },
+      "feed_id": "ctbm4-09-partial-r4",
+      "position": 268,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "ccaa1d57e8dcc1d3e8c54a28ee4164fb69d10d7b295964a786304967e757f604",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-09-sham-r4",
+      "position": 269,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "a9d9c473fd5aa53490d74547d9ecfb2cdb74f8ff549e8b87eaa3fa12b90aeab6",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-10-intact-r4",
+      "position": 270,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "289f01a49e8d627c7218220182cbc874dd4959f91f28fd8eb86b6286c006b0a8",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8633540372670807,
+        "displaced": 0.6419753086419753
+      },
+      "feed_id": "ctbm4-10-partial-r4",
+      "position": 271,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "7ca9efb1e1dd7d29a08b3bdc1a816415eaf85261b7d82b580bab502a0b0fee6e",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-10-sham-r4",
+      "position": 272,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "5a025970971de57e6499b1a5d1388b3d0ae3f6e8820e41ec4bbce743b2bf4f52",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-11-intact-r4",
+      "position": 273,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "79dbf94e8dce3d2a19e6b6db3c52087167f77e9708c86f56c53c8d26171ffe5f",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8493975903614458,
+        "displaced": 0.6407185628742516
+      },
+      "feed_id": "ctbm4-11-partial-r4",
+      "position": 274,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "4ffdcf2dc415a8323522fcb8ce0c7e9d3110c9b92cf5faf31b01a1e9e18a492d",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-11-sham-r4",
+      "position": 275,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "661d4fd1feb5c82ae5b82e6455c9a821291113da05b45da4afd411753d863dfd",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-12-intact-r4",
+      "position": 276,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "0c4da131a5eda5fbaacbd89bfb7ee92a932add2027fe62f3810b2096d83666ef",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8487394957983193,
+        "displaced": 0.65
+      },
+      "feed_id": "ctbm4-12-partial-r4",
+      "position": 277,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "7b87cca5f014b1499838237d269d961f18d3b09722ce8214aade1774977eac40",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-12-sham-r4",
+      "position": 278,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "97a1013b7e225efc16246e57f662c7b25e31b9f1e5b46af999ea64fb9ebf4304",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-13-intact-r4",
+      "position": 279,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "d701af7fbc20a5986434372f8999e301ad6d099fc8c7285f53eb5c110bc9849a",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.9019607843137255,
+        "displaced": 0.6493506493506493
+      },
+      "feed_id": "ctbm4-13-partial-r4",
+      "position": 280,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "e36990613df77c1e69accc9e7c0eee212af9445331466977215089a9fc5dcb7b",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-13-sham-r4",
+      "position": 281,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "882508323ec2c6733bc6c9d544f9e21b117948e5f57b48c31684efaaee27ee23",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-14-intact-r4",
+      "position": 282,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "c38d74325804c3c89caac341e0eb92eb0357f5039c9a8ea3323a323cc4969d38",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8802816901408451,
+        "displaced": 0.6433566433566433
+      },
+      "feed_id": "ctbm4-14-partial-r4",
+      "position": 283,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "73b97b7d2e8102f95db4dab9db2dcd773e843903aa6c1b03678835e6f52afeae",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-14-sham-r4",
+      "position": 284,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "b29bee344bfd6ba6e8d813d1877faad428c0b5622c2b0b93fb5a294124bbb615",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-15-intact-r4",
+      "position": 285,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "d752228d4e6bcf6c7ef96f3c269514784aed9012d311651782de67cd03e22645",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        12,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.868421052631579,
+        "displaced": 0.6339869281045751
+      },
+      "feed_id": "ctbm4-15-partial-r4",
+      "position": 286,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "377826019671b1ee24372f2221d14b93696d8e96676e174071593d1186d8a20e",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-15-sham-r4",
+      "position": 287,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "fc3e985abec22744d1d3fd551754e0696590ac3a7ac1c3ecd97993fbcc760b60",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-16-intact-r4",
+      "position": 288,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "9d2dc114c0f2513c238ea714d17a793708d70b92e43d5ccacace33413239490c",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8741258741258742,
+        "displaced": 0.6527777777777778
+      },
+      "feed_id": "ctbm4-16-partial-r4",
+      "position": 289,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "aa2e8a85d96795840dd95af6661b35684ff1c4e770cfa881c257bb8eebbd4d17",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-16-sham-r4",
+      "position": 290,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "8c992b3fd9987ac2a8a655cefa23b91086e9713d1ce0ca8abdbfd90e3974c272",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-17-intact-r4",
+      "position": 291,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "4e18546b95d3ceda4f2d88812534f7803c27a085c31d4fcfe7cd93fbd29d546c",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8972602739726028,
+        "displaced": 0.6530612244897959
+      },
+      "feed_id": "ctbm4-17-partial-r4",
+      "position": 292,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "53c26d37bb01e35769e175e8b9638bddbbccdb28f9b2d93310139ad56780069b",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-17-sham-r4",
+      "position": 293,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "af71607658138afa89d6e1f26f5286bb969e3329c415cfabc3060f073e46bae6",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-18-intact-r4",
+      "position": 294,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "36a0390aaf9a19305abe4c8b5c88cdca7501afb06656090827cc3eac9a77b661",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8811188811188811,
+        "displaced": 0.6527777777777778
+      },
+      "feed_id": "ctbm4-18-partial-r4",
+      "position": 295,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "b8e53e7941dfc02d4cd5536fba1b439dcd6778558192103f4072d357a97c69e4",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-18-sham-r4",
+      "position": 296,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "f2fd668638912876fc34e25383ba1e71c12b2a0fa0f11c503fefd837c04db2e1",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-19-intact-r4",
+      "position": 297,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "73f1ae057e986acd0e129463662beca65c45e60e09c6dbc2315aca24633faf5e",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8541666666666666,
+        "displaced": 0.6482758620689655
+      },
+      "feed_id": "ctbm4-19-partial-r4",
+      "position": 298,
+      "replicate": 4,
+      "seed": 4,
+      "target_sha256": "397f0ecbabb91e037286d5ab843fde7c86e583e7c261b50f747f8db5e4d8db2f",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-19-sham-r4",
+      "position": 299,
+      "replicate": 4,
+      "seed": null,
+      "target_sha256": "3fd6c46c1e5cc550ae328074327160f2dd0429d0fe321ee6b9d430df6aef6d59",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-00-intact-r5",
+      "position": 300,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "7b7b3be50ff02962bfde19919d067294bad2b17135b49d8b921a3262ce444f3d",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8456375838926175,
+        "displaced": 0.6533333333333333
+      },
+      "feed_id": "ctbm4-00-partial-r5",
+      "position": 301,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "a6b652c88e411c19324532886dcd6339c79eb704677ac3bacd132ab5c29df3aa",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-00",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-00-sham-r5",
+      "position": 302,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "bee4b175ff0b7de061ac525d8b8f98a8c061e2ef1a120cd20f5e22dc56963911",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-01-intact-r5",
+      "position": 303,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "d663e41a38d282c62d6971a6da1dd2131dd9892eef7e3366454a7124f4e2a683",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8581081081081081,
+        "displaced": 0.6510067114093959
+      },
+      "feed_id": "ctbm4-01-partial-r5",
+      "position": 304,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "7a93661f0c0c27e3fe5bd8fcfb834552e66ec62a53ff9c715f2b2daff4f7d14b",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-01",
+      "chunk_counts": [
+        12,
+        12,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-01-sham-r5",
+      "position": 305,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "d93e944b0964354f1098e3e24bcc9a5ca06e198a74c6703d3bc5b9abe10beac3",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-02-intact-r5",
+      "position": 306,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "ca219a4264f79ffb97bed7875e24a4521a39862ad2ad3a93242637c617a75e2a",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8484848484848485,
+        "displaced": 0.6385542168674698
+      },
+      "feed_id": "ctbm4-02-partial-r5",
+      "position": 307,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "716ebd38bc8d70b1ada74043edd3eda84c707f5ae69cc5215693c20b22ce4756",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-02",
+      "chunk_counts": [
+        12,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-02-sham-r5",
+      "position": 308,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "82470c1184af54cf51cec2f2382fc1cec4c05c5f124f1d90a10b53b976c5ed0e",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-03-intact-r5",
+      "position": 309,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "dee4c89a47e90cd472ef9c9dbdd5e06007ccfc19eb40aa2885c4709b92be48b2",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8757763975155279,
+        "displaced": 0.6419753086419753
+      },
+      "feed_id": "ctbm4-03-partial-r5",
+      "position": 310,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "b56e6681dc8139774cea934c85e55f85a32b182fdf22f8d2743300fa7de9e3c6",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-03",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-03-sham-r5",
+      "position": 311,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "7c79f720f7bea54ea7c36287cb2a44bd6cc6c7145e031b1e0f0188f046b911c4",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-04-intact-r5",
+      "position": 312,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "0815969a71fbc352967339c6cf97eb3a2b32789fb6fe3f3cc040c6f76c479284",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8611111111111112,
+        "displaced": 0.6482758620689655
+      },
+      "feed_id": "ctbm4-04-partial-r5",
+      "position": 313,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "4d0efb38b83aedc34d2f0b40b055520e963e40caf1ab1c4d72d346cde8781112",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-04",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-04-sham-r5",
+      "position": 314,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "36e924d327a607b38accd2e3d0d142aafc8f9fc4b5b666f834e1cc9b76bc8db2",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-05-intact-r5",
+      "position": 315,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "f928f74fc9551c459034446b21d3d06dc500715bfe1ff56fa5e89e42ccd273e0",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8636363636363636,
+        "displaced": 0.6396396396396397
+      },
+      "feed_id": "ctbm4-05-partial-r5",
+      "position": 316,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "e1387d24be95d5755b8eb44dd9177bf3bc67036a8682e26349141c813b0d44e6",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-05",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-05-sham-r5",
+      "position": 317,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "9766a9875f37e1509884b6738c36cce571b2718275852b5247c9ce770078e12c",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-06-intact-r5",
+      "position": 318,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "ef24c0343f866bd8c8a154bed86f672cf09139f7b398bd1c51e55af4112bd73f",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8895705521472392,
+        "displaced": 0.6463414634146342
+      },
+      "feed_id": "ctbm4-06-partial-r5",
+      "position": 319,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "2ad0f3b3d6e4812b413ac6f0694005454db4901157611815dbe57c21674328b7",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-06",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-06-sham-r5",
+      "position": 320,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "05a4b024daa1fa66c4d3f3b51fdb4c61f8f327e97c9533a5d6491aabdbf3d7da",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-07-intact-r5",
+      "position": 321,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "fe02243ff6469cc44255c5442d433738432ba9558eb8e4d1706ff2821381fa34",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8951612903225806,
+        "displaced": 0.64
+      },
+      "feed_id": "ctbm4-07-partial-r5",
+      "position": 322,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "24e041a8eec7822c62253c03d78b196bf856f976e200c68f80d216639c747e5d",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-07",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-07-sham-r5",
+      "position": 323,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "ec8661cbc43525dcc4e9a5c3d2a316f2f78cc3d60440f45a1408b1a5094f4c2f",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-08-intact-r5",
+      "position": 324,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "e091b040cda36030f472919a898fb960a7082995d6f90599e78e7093c2df81e6",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8984375,
+        "displaced": 0.6511627906976745
+      },
+      "feed_id": "ctbm4-08-partial-r5",
+      "position": 325,
+      "replicate": 5,
+      "seed": 6,
+      "target_sha256": "8929630d8bdaa3dd02df9dd625254e193c0d0ddcfffa80af93b0c5d2f23bed6b",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-08",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-08-sham-r5",
+      "position": 326,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "ef5e6ae033c47aef280ee236f19ebb196d22b052f7e14e408d31fee100ff6438",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-09-intact-r5",
+      "position": 327,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "3410c4da90f7a6131a4842334e0d7b85f8698541c4bedd31d9fd2800474278f6",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8819875776397516,
+        "displaced": 0.6481481481481481
+      },
+      "feed_id": "ctbm4-09-partial-r5",
+      "position": 328,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "a5b3e50e67077559c5e5ba12fb6b740e6e0bb0c745d02d1817a56377e5dcf17e",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-09",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-09-sham-r5",
+      "position": 329,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "a9d9c473fd5aa53490d74547d9ecfb2cdb74f8ff549e8b87eaa3fa12b90aeab6",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-10-intact-r5",
+      "position": 330,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "289f01a49e8d627c7218220182cbc874dd4959f91f28fd8eb86b6286c006b0a8",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8819875776397516,
+        "displaced": 0.6419753086419753
+      },
+      "feed_id": "ctbm4-10-partial-r5",
+      "position": 331,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "ebde63c29b3ba10a4ff1e8deb5d73d8af8fe695782f7014a048beb3c9f783bc5",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-10",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-10-sham-r5",
+      "position": 332,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "5a025970971de57e6499b1a5d1388b3d0ae3f6e8820e41ec4bbce743b2bf4f52",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-11-intact-r5",
+      "position": 333,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "79dbf94e8dce3d2a19e6b6db3c52087167f77e9708c86f56c53c8d26171ffe5f",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8614457831325302,
+        "displaced": 0.6407185628742516
+      },
+      "feed_id": "ctbm4-11-partial-r5",
+      "position": 334,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "2edd91b28a6a713653fbc3a8f2569788f464c30f5668388cd29c4916a76d433e",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-11",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-11-sham-r5",
+      "position": 335,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "661d4fd1feb5c82ae5b82e6455c9a821291113da05b45da4afd411753d863dfd",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-12-intact-r5",
+      "position": 336,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "0c4da131a5eda5fbaacbd89bfb7ee92a932add2027fe62f3810b2096d83666ef",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8739495798319328,
+        "displaced": 0.625
+      },
+      "feed_id": "ctbm4-12-partial-r5",
+      "position": 337,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "126e5c6e8a1655c28cbe27c6b7e9e9c55679bceecb8b10d7f0657c2495d60135",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-12",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-12-sham-r5",
+      "position": 338,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "97a1013b7e225efc16246e57f662c7b25e31b9f1e5b46af999ea64fb9ebf4304",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-13-intact-r5",
+      "position": 339,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "d701af7fbc20a5986434372f8999e301ad6d099fc8c7285f53eb5c110bc9849a",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8758169934640523,
+        "displaced": 0.6298701298701299
+      },
+      "feed_id": "ctbm4-13-partial-r5",
+      "position": 340,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "1c016251acfb87733c7126d63b49318dec7cb2ae4b9bba15736b036988f04fa4",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-13",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-13-sham-r5",
+      "position": 341,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "882508323ec2c6733bc6c9d544f9e21b117948e5f57b48c31684efaaee27ee23",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-14-intact-r5",
+      "position": 342,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "c38d74325804c3c89caac341e0eb92eb0357f5039c9a8ea3323a323cc4969d38",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        11,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8802816901408451,
+        "displaced": 0.6433566433566433
+      },
+      "feed_id": "ctbm4-14-partial-r5",
+      "position": 343,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "6de20bf8297a65b665896e67b4edbf450a9e19ec3e72d06f0ef8ab54a6808f4b",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-14",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-14-sham-r5",
+      "position": 344,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "b29bee344bfd6ba6e8d813d1877faad428c0b5622c2b0b93fb5a294124bbb615",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-15-intact-r5",
+      "position": 345,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "d752228d4e6bcf6c7ef96f3c269514784aed9012d311651782de67cd03e22645",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        12,
+        11,
+        12,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8618421052631579,
+        "displaced": 0.6405228758169934
+      },
+      "feed_id": "ctbm4-15-partial-r5",
+      "position": 346,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "890553cd7d15cd87e1ad698d1af6cfba2a34952c6c44e8c1e4e59d566d1a1f09",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-15",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        11
+      ],
+      "feed_id": "ctbm4-15-sham-r5",
+      "position": 347,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "fc3e985abec22744d1d3fd551754e0696590ac3a7ac1c3ecd97993fbcc760b60",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-16-intact-r5",
+      "position": 348,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "9d2dc114c0f2513c238ea714d17a793708d70b92e43d5ccacace33413239490c",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8391608391608392,
+        "displaced": 0.6388888888888888
+      },
+      "feed_id": "ctbm4-16-partial-r5",
+      "position": 349,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "9ffc36f982cf028eff5d3ffbfc6d6ffa7b7893d7a01568498456339e34a8d64a",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-16",
+      "chunk_counts": [
+        11,
+        12,
+        11,
+        11
+      ],
+      "feed_id": "ctbm4-16-sham-r5",
+      "position": 350,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "8c992b3fd9987ac2a8a655cefa23b91086e9713d1ce0ca8abdbfd90e3974c272",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-17-intact-r5",
+      "position": 351,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "4e18546b95d3ceda4f2d88812534f7803c27a085c31d4fcfe7cd93fbd29d546c",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8493150684931506,
+        "displaced": 0.6394557823129252
+      },
+      "feed_id": "ctbm4-17-partial-r5",
+      "position": 352,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "cb6c14dde9619540d20d2a75efd285088d8b339a268cf6c8967b80ed07eeaeee",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-17",
+      "chunk_counts": [
+        12,
+        11,
+        11,
+        12
+      ],
+      "feed_id": "ctbm4-17-sham-r5",
+      "position": 353,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "af71607658138afa89d6e1f26f5286bb969e3329c415cfabc3060f073e46bae6",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-18-intact-r5",
+      "position": 354,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "36a0390aaf9a19305abe4c8b5c88cdca7501afb06656090827cc3eac9a77b661",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.8811188811188811,
+        "displaced": 0.6527777777777778
+      },
+      "feed_id": "ctbm4-18-partial-r5",
+      "position": 355,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "3380f613215200c2f7f06bbbadc66044847465821426e1a01d381f5734cac0c0",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-18",
+      "chunk_counts": [
+        11,
+        11,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-18-sham-r5",
+      "position": 356,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "f2fd668638912876fc34e25383ba1e71c12b2a0fa0f11c503fefd837c04db2e1",
+      "version": "sham"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-19-intact-r5",
+      "position": 357,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "73f1ae057e986acd0e129463662beca65c45e60e09c6dbc2315aca24633faf5e",
+      "version": "intact"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "dose_metrics": {
+        "broken_adjacency": 0.9027777777777778,
+        "displaced": 0.6482758620689655
+      },
+      "feed_id": "ctbm4-19-partial-r5",
+      "position": 358,
+      "replicate": 5,
+      "seed": 5,
+      "target_sha256": "9da0e652a404b28c9d824af0d554873beba5805c2bf5e8a0441db90b740e6ce8",
+      "version": "partial"
+    },
+    {
+      "book": "fitness-19",
+      "chunk_counts": [
+        11,
+        12,
+        12,
+        12
+      ],
+      "feed_id": "ctbm4-19-sham-r5",
+      "position": 359,
+      "replicate": 5,
+      "seed": null,
+      "target_sha256": "3fd6c46c1e5cc550ae328074327160f2dd0429d0fe321ee6b9d430df6aef6d59",
+      "version": "sham"
+    }
+  ],
+  "inputs": {
+    "books": {
+      "fitness-00": {
+        "chunks": 12,
+        "paragraphs": 150,
+        "text_sha256": "7b7b3be50ff02962bfde19919d067294bad2b17135b49d8b921a3262ce444f3d",
+        "words": 3896
+      },
+      "fitness-01": {
+        "chunks": 12,
+        "paragraphs": 149,
+        "text_sha256": "d663e41a38d282c62d6971a6da1dd2131dd9892eef7e3366454a7124f4e2a683",
+        "words": 3865
+      },
+      "fitness-02": {
+        "chunks": 12,
+        "paragraphs": 166,
+        "text_sha256": "ca219a4264f79ffb97bed7875e24a4521a39862ad2ad3a93242637c617a75e2a",
+        "words": 3814
+      },
+      "fitness-03": {
+        "chunks": 12,
+        "paragraphs": 162,
+        "text_sha256": "dee4c89a47e90cd472ef9c9dbdd5e06007ccfc19eb40aa2885c4709b92be48b2",
+        "words": 3782
+      },
+      "fitness-04": {
+        "chunks": 11,
+        "paragraphs": 145,
+        "text_sha256": "0815969a71fbc352967339c6cf97eb3a2b32789fb6fe3f3cc040c6f76c479284",
+        "words": 3779
+      },
+      "fitness-05": {
+        "chunks": 11,
+        "paragraphs": 111,
+        "text_sha256": "f928f74fc9551c459034446b21d3d06dc500715bfe1ff56fa5e89e42ccd273e0",
+        "words": 3781
+      },
+      "fitness-06": {
+        "chunks": 11,
+        "paragraphs": 164,
+        "text_sha256": "ef24c0343f866bd8c8a154bed86f672cf09139f7b398bd1c51e55af4112bd73f",
+        "words": 3792
+      },
+      "fitness-07": {
+        "chunks": 12,
+        "paragraphs": 125,
+        "text_sha256": "fe02243ff6469cc44255c5442d433738432ba9558eb8e4d1706ff2821381fa34",
+        "words": 3910
+      },
+      "fitness-08": {
+        "chunks": 11,
+        "paragraphs": 129,
+        "text_sha256": "e091b040cda36030f472919a898fb960a7082995d6f90599e78e7093c2df81e6",
+        "words": 3775
+      },
+      "fitness-09": {
+        "chunks": 11,
+        "paragraphs": 162,
+        "text_sha256": "3410c4da90f7a6131a4842334e0d7b85f8698541c4bedd31d9fd2800474278f6",
+        "words": 3780
+      },
+      "fitness-10": {
+        "chunks": 12,
+        "paragraphs": 162,
+        "text_sha256": "289f01a49e8d627c7218220182cbc874dd4959f91f28fd8eb86b6286c006b0a8",
+        "words": 3832
+      },
+      "fitness-11": {
+        "chunks": 11,
+        "paragraphs": 167,
+        "text_sha256": "79dbf94e8dce3d2a19e6b6db3c52087167f77e9708c86f56c53c8d26171ffe5f",
+        "words": 3863
+      },
+      "fitness-12": {
+        "chunks": 11,
+        "paragraphs": 120,
+        "text_sha256": "0c4da131a5eda5fbaacbd89bfb7ee92a932add2027fe62f3810b2096d83666ef",
+        "words": 3793
+      },
+      "fitness-13": {
+        "chunks": 11,
+        "paragraphs": 154,
+        "text_sha256": "d701af7fbc20a5986434372f8999e301ad6d099fc8c7285f53eb5c110bc9849a",
+        "words": 3909
+      },
+      "fitness-14": {
+        "chunks": 12,
+        "paragraphs": 143,
+        "text_sha256": "c38d74325804c3c89caac341e0eb92eb0357f5039c9a8ea3323a323cc4969d38",
+        "words": 3844
+      },
+      "fitness-15": {
+        "chunks": 11,
+        "paragraphs": 153,
+        "text_sha256": "d752228d4e6bcf6c7ef96f3c269514784aed9012d311651782de67cd03e22645",
+        "words": 3797
+      },
+      "fitness-16": {
+        "chunks": 11,
+        "paragraphs": 144,
+        "text_sha256": "9d2dc114c0f2513c238ea714d17a793708d70b92e43d5ccacace33413239490c",
+        "words": 3831
+      },
+      "fitness-17": {
+        "chunks": 12,
+        "paragraphs": 147,
+        "text_sha256": "4e18546b95d3ceda4f2d88812534f7803c27a085c31d4fcfe7cd93fbd29d546c",
+        "words": 3816
+      },
+      "fitness-18": {
+        "chunks": 11,
+        "paragraphs": 144,
+        "text_sha256": "36a0390aaf9a19305abe4c8b5c88cdca7501afb06656090827cc3eac9a77b661",
+        "words": 3795
+      },
+      "fitness-19": {
+        "chunks": 11,
+        "paragraphs": 145,
+        "text_sha256": "73f1ae057e986acd0e129463662beca65c45e60e09c6dbc2315aca24633faf5e",
+        "words": 3808
+      }
+    },
+    "fitness_dir": "research/quality-measurement/corpora/fitness",
+    "stores_sha256": {
+      "fitness-00.db": "fc628afa013eebb8ca45952b5030f5cca348209644ec9ad2bae7f4a069db7e39",
+      "fitness-01.db": "cf70fa55074885581aaeb657d22e75d033258a9d95952638683c0721e74fa41b",
+      "fitness-02.db": "36956c451b1a68ccb6d73df254e2ace99ed9e85fc140d9b6466107a92e20fd78",
+      "fitness-03.db": "672ed16a8ad8db5fc25d3f63e5673a7730887981af619265c6c5fe77edc58676",
+      "fitness-04.db": "04660e870b57f8521ddc6a50483c70305ac008dd498259372bfb68da7c1e9182",
+      "fitness-05.db": "8b428aaa36715790ee8a2835f6d8bc5909d7a5a3298007867d285e9d67e98f59",
+      "fitness-06.db": "6ab94d760aed705ef799f71987afa049bc3e5bee5487f0560c1a0a39be688593",
+      "fitness-07.db": "154359d9c5d4ca86c767803d02a69faa6c41283f916032818c7313a61dee384c",
+      "fitness-08.db": "0ecd5bff585597441a4cc65880b8a490743443c5f4736751cb41a5844a4590a6",
+      "fitness-09.db": "23a4a70987c4de339c4cd9b50c686a7e5f2c1e28c408c139073075cd49e951ff",
+      "fitness-10.db": "2714359b6691054048088193b1a382c9edd65ddcc0e32a5806f1fdb3dcd8f0c6",
+      "fitness-11.db": "e9fec8dfc4c24db4cf1a0c5037df78c2fab384f8bfea3df0cb4f1703629e5857",
+      "fitness-12.db": "3aefbf24169f8b3516a2f464d62890b8bd960026621269e6a594f416c08c623c",
+      "fitness-13.db": "15c8e35cac05e38939a46855cbbd855ffd5536ae27749d94f6bdc61880f0fbef",
+      "fitness-14.db": "5bd285be974382d3502ed17a86f0a20c1071a587a2efb3a47781d3ca5c0028ca",
+      "fitness-15.db": "3a96eb5d712046b8f1459e591c0ac81180d9c3a71ae41ef071d9b51c02d721d6",
+      "fitness-16.db": "613ca252cb7063da104303b1106df2f4e05004f21ebad53cc20a178806af7ec0",
+      "fitness-17.db": "919207c0caa0ea7077f4f46bceacd05c68aa7c4996bb7979255110da237d04cf",
+      "fitness-18.db": "591dcad21e8dbb675a0a190fcee606b2ecee66e6c491cd1fa30d146cb473823b",
+      "fitness-19.db": "5fb1d8737c4a9ea1d2ff40049338c092306197318bf2a1da6fd973527fca127b"
+    },
+    "texts_file": "runs/cost-that-bites-milder-20260922/milder-v4/texts.json",
+    "texts_sha256": "e7e816cb46e6ba33a5d194414b2cd108169129f44d9857d8727ca365a42ec1ba"
+  },
+  "plan": {
+    "books": 20,
+    "dose_metrics_mean": {
+      "broken_adjacency": 0.8729784038448042,
+      "displaced": 0.6439930736562144
+    },
+    "max_calls": 8640,
+    "seed_deviations": {
+      "fitness-08": {
+        "partial": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    },
+    "seeds": {
+      "fitness-00": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-01": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-02": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-03": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-04": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-05": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-06": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-07": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-08": {
+        "partial": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "fitness-09": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-10": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-11": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-12": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-13": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-14": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-15": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-16": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-17": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-18": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fitness-19": {
+        "partial": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    "sessions": 360
+  },
+  "pre_registration": {
+    "alpha": 0.1,
+    "arm": "milder-v4",
+    "binary_pin": "run copies the registered binary once, hash-checked, into the ignored local folder and puts that folder first on PATH",
+    "capacity_floor": 0.4,
+    "cluster": "the book",
+    "decision": {
+      "INVERTED": "the partially disordered book drew more reads: the registered claim is refuted; if this run's reader is the one §230 measured, §230's order reading is put in question (it is not reversed into a preference for disorder); the mechanism class goes to BRIEF.md's ledger",
+      "MOVES_WITH_EDITEDNESS": "intact - partial is above zero and sham - partial is not: the reader moved, but no further than the sham lets an order claim be read at this dose; no extension of §230",
+      "MOVES_WITH_ORDER": "the reader reads a book less when 65% of its paragraphs are reordered among themselves, beyond the whitespace sham, for a book in slot A, on this shelf and this reader. Inside the reader's window the dose breaks 87% of adjacent pairs against the full shuffle's 99% (a ratio of 0.88), so it is a short step from destroyed order and not a book that is merely worse; if this run's reader is the one §230 measured, §230's claim extends that step. Not a quality instrument, not QUALIFIED, no editorial intervention",
+      "NULL": "not detected at the declared 0.115 at s = 0.65, with power 0.69 to 0.90 by heterogeneity model before the resampling optimism; not evidence against a shift of 0.075 or less; if this run's reader is the one §230 measured, the licence narrows and §230's claim stays at destroyed order. No further dose and no further reader is run on this question to find one that moves",
+      "UNREADABLE": "a precondition failed; its measured value is the finding, no interval is read",
+      "UNSEATED": "Codex profile only: the positive control did not move at the full dose, so this reader was not shown to read order at all and no dose reading exists"
+    },
+    "declared_target_shift": 0.115,
+    "dispatch_order": "replicate-major: every book's versions at replicate 0, then 1, ...",
+    "dose": {
+      "operator": "partial_shuffle",
+      "rule": "pick round(s*n) paragraph positions by a seeded sample and give their contents a uniformly random non-identity permutation among themselves",
+      "salt": "cost-that-bites/shuffle/partial/<strength>/<seed index>",
+      "strength": 0.65
+    },
+    "expected_bracket": [
+      0.075,
+      0.155
+    ],
+    "full_effect_sized_from": 0.1765,
+    "instrument": "fcr.v0",
+    "instrument_registration_digest": "4c5f695bd0c16a03",
+    "ledger": "started line, a checkpoint after every session, finished line; prior usage is the larger of the ledger's and the raw cache's totals",
+    "limits": {
+      "calls": 4400,
+      "seconds": 28800,
+      "tokens": 190000000,
+      "usd": 150.0
+    },
+    "min_books": 10,
+    "positive_control": null,
+    "primary": "target_read_share, book mean over scorable sessions: intact - partial",
+    "probe_rule": "an answer passes when it contains NONE and not the probe's leak mark",
+    "probes": [
+      "claude_md",
+      "git_status"
+    ],
+    "profile": "claude",
+    "reader": {
+      "effort": null,
+      "model": "claude-haiku-4-5",
+      "transport": "cli"
+    },
+    "reader_drift": {
+      "decides": "nothing",
+      "reported": "this - v2 per-book intact and sham means over the identity cells, with the interval, and identical action sequences, beside the baseline",
+      "same_reader_baseline": {
+        "identical_sequences": {
+          "intact": "7 of 60",
+          "sham": "8 of 60",
+          "shuffled": "2 of 60"
+        },
+        "intact": {
+          "high": 0.1256,
+          "low": 0.0134,
+          "point": 0.0679
+        },
+        "sham": {
+          "high": 0.0438,
+          "low": -0.125,
+          "point": -0.0411
+        },
+        "source": "v3 - v2, per-book means over replicates 0-2, cost_that_bites.interval_block"
+      }
+    },
+    "reader_fence": "whichever profile buys a cell first holds the question; the other is refused in this folder",
+    "replicates": 6,
+    "request_identity": {
+      "cells": "intact/sham at replicates 0-2",
+      "rule": "at prepare, every such cell replays completely from v2's committed cache, opened replay-only, and reproduces v2's committed book means"
+    },
+    "resamples": 2000,
+    "reserve_per_session": {
+      "calls": 24,
+      "seconds": 1800,
+      "tokens": 1500000,
+      "usd": 1.5
+    },
+    "scorable_floor": 0.75,
+    "scorable_floor_denominator": "dispatched sessions, v2's rule (run_cells returned a row only for a session it ran); never-dispatched sessions are coverage, stamped partial",
+    "seed_rule": "per book, the six lowest seed indices at or above seed_start whose dosed copy chunks to at least feed_core.MIN_CHUNKS_FEED and whose opening differs from the intact copy's",
+    "seed_start": 0,
+    "sham": "ablate.rewhitespace",
+    "sham_reading": "sham - partial, per sham and never pooled",
+    "sham_strength": 1.0,
+    "statistic_lineage": {
+      "design": "cost-that-bites.v2",
+      "registration_digest_v2": "499efb7c9faea9d3"
+    },
+    "target_rotation": 0,
+    "transport_circuit": 3,
+    "underpowered_at": 0.075,
+    "version": "cost-that-bites.milder-v4",
+    "versions": [
+      "intact",
+      "partial",
+      "sham"
+    ],
+    "workers": 3
+  },
+  "profile": "claude",
+  "reader": {
+    "binary": "C:\\Users\\artem\\.local\\bin\\claude.exe",
+    "binary_sha256": "0e4195524b73eb77efbdf3e2b36de5322a29f0ca575dfd2d9b4f946b1d425469",
+    "binary_version": "2.1.280 (Claude Code)",
+    "disclosed_changes": [
+      "Claude CLI 2.1.280 (Claude Code); v2 and v3 recorded no CLI version (nearest records: 2.1.236 measured in §109 before them, 2.1.263 recorded 2026-09-08 after them), so the binary is a disclosed, uncontrolled change; the isolation probes re-check CLAUDE.md exclusion and the git-status path on it, and the run is on a pinned, hash-checked copy",
+      "the transport records the requested alias claude-haiku-4-5, not the served snapshot, exactly as v2 and v3 did"
+    ],
+    "effort": null,
+    "hardening": [
+      "--exclude-dynamic-system-prompt-sections",
+      "--allowed-tools",
+      "",
+      "--strict-mcp-config",
+      "--mcp-config",
+      "{\"mcpServers\":{}}",
+      "--no-session-persistence",
+      "--permission-mode",
+      "manual",
+      "--setting-sources",
+      "user",
+      "--settings",
+      "{\"claudeMdExcludes\":[\"**/CLAUDE.md\",\"**/CLAUDE.local.md\"]}"
+    ],
+    "model": "claude-haiku-4-5",
+    "transport": "cli"
+  },
+  "registration_digest": "f67fe86a2f6baa1e",
+  "request_identity": {
+    "books": 20,
+    "cells": 120,
+    "max_abs_book_mean_diff": 0.0,
+    "missing": [],
+    "passed": true,
+    "replayed_complete": 120,
+    "v2_raw_sha256": "cca316791da84eb1cbdadfece134d48f932f328923d34529cc42b6be445146c6",
+    "v2_results_sha256": "edc2927d38a1ec67481d339cefd7380f43d5a30f8ebc9bd9e128ed3b62664fb6"
+  },
+  "source_hashes": {
+    "research/quality-measurement/ablate.py": "af6784531978ca77d8a8df0dc2c18717b478d86d6acb79db63bdcf9f077c1942",
+    "research/quality-measurement/bcr.py": "f7bc862c97530fb34d75b645b2e995cfd9e52e80c24591118e1c603d4f3d42cb",
+    "research/quality-measurement/corpus_io.py": "2d8329bd8ae3f07035e5be8416c7a928518c6590b31ddadfd698b10564dc118a",
+    "research/quality-measurement/cost-that-bites-milder-20260922/ATTAINABILITY.md": "6cb4340848e4fd51c885f9f777752fefcb3aa81f06a683f3f2f616849187a338",
+    "research/quality-measurement/cost-that-bites-milder-20260922/PREREG.md": "475398c7f9dba037dbb315ca90267b0ec12e1eb63d107c03efeb649629ac8b62",
+    "research/quality-measurement/cost-that-bites-milder-20260922/RUNBOOK.md": "b44aa45c299e8c765cb81ae0a4f048807d907c17ee0299b66b14bd5cf8fe27c5",
+    "research/quality-measurement/cost-that-bites-milder-20260922/attainability/export_texts.py": "c2ee6d1570b9297b66f3bc467bde13c3c8b5509392761999f48c645e1ce9f10b",
+    "research/quality-measurement/cost-that-bites-milder-20260922/attainability/milder_dose_power.py": "fb4c96f265cfd84a49d0ee71205f6d4145c223843da6dba0029cc04ad7aa9f51",
+    "research/quality-measurement/cost-that-bites-milder-20260922/attainability/noise_check.json": "30907208526a7eaa3eb581feac15199aad301cde741da4f0dfdb3ea5305a304f",
+    "research/quality-measurement/cost-that-bites-milder-20260922/attainability/noise_check.py": "1250f3aed5c4990f6d10c2a8c2e8aac361bd6b8c8860cdbaaf84a7455522a848",
+    "research/quality-measurement/cost-that-bites-milder-20260922/attainability/results.json": "21f2e5e5c66661c8e937ee69c99145c0110d94722e36f344715f00d53f38c1c7",
+    "research/quality-measurement/cost-that-bites-milder-20260922/attainability/run.log": "4d4d0171732f89527b28d43dec2457d2141427e16cf4de2de0074a0cf06c437a",
+    "research/quality-measurement/cost-that-bites/raw-v2.jsonl": "cca316791da84eb1cbdadfece134d48f932f328923d34529cc42b6be445146c6",
+    "research/quality-measurement/cost-that-bites/results-arm-v2.json": "edc2927d38a1ec67481d339cefd7380f43d5a30f8ebc9bd9e128ed3b62664fb6",
+    "research/quality-measurement/cost_that_bites.py": "793e861968d9cd675b87a12696cd10efa85fccaee6add45d7737826ade8f4ab7",
+    "research/quality-measurement/cost_that_bites_milder.py": "7bfa39d646677844cdbd020ea98fe643bc804b7853ccafc273d666eae54b9551",
+    "research/quality-measurement/elicit.py": "5d7bd2305ffbc8c8fcb0bdbb3535cf0d22a2a04fc2d71b3bdddf5d646689b5cb",
+    "research/quality-measurement/feed_controls.py": "da940ec05a17a7c376ba967a159f8d345472169cb3b255ce91415e572fe36019",
+    "research/quality-measurement/feed_core.py": "a72be9a3bf40212a61c3c7a59bc30521edc803167517142d317be8bc439b735a",
+    "research/quality-measurement/feed_session.py": "811ac25fb1a5a320e6bf8303d17b7fa1268c7292ad630141995093f602fe2c38",
+    "research/quality-measurement/feed_substrate.py": "ca5ba7e8341b3ac507cb563fb641445cc9e1db65408d46f83751e594ad986e94",
+    "research/quality-measurement/personas.py": "3bc0696eab5ac611572ccf55b580d9679be9decfdbc77d4c2a09eb268a1269e9",
+    "src/litharness/domain/events.py": "fb0f28a6ed56da01898c94f41d503796ec70c7788a9357006ee1023f6771ee97",
+    "tests/test_cost_that_bites_milder.py": "48eb5ecdebeaffe3e1ae74f98266da2ebf4ef813e602fa3f3916b76c5255693e",
+    "uv.lock": "f2b0a31399e19885479d69cc574f743bdc94d2514182c36c1815a0603be37dd5"
+  },
+  "version": "cost-that-bites.milder-v4"
+}
