@@ -21,6 +21,11 @@ unhealthy provider parks the unit rather than degrading the book. What survives 
 4. **There is no fallback to record.** An unhealthy provider raises `ProviderUnavailable`,
    which the conductor's transient/parked branches turn into a requeue or a park. The
    book waits; it never degrades.
+5. **A model per role on the one provider is chosen in advance, not on failure** (§256).
+   `routing` names each role's capability tier and the provider's model for it; prose,
+   planning and reader roles are pinned to the strong tier, and a request that names its own
+   model is never rerouted. It is the operator's cost setting, not a fallback: nothing here
+   changes model because a call failed.
 """
 
 from __future__ import annotations
@@ -30,6 +35,7 @@ from dataclasses import dataclass, field
 
 from litharness.domain.generation import CompletionRequest, CompletionResult, Resolution
 from litharness.providers.base import Provider, ProviderUnavailable
+from litharness.providers.routing import ModelRouting
 
 TEST_ENV_VAR = "LITHARNESS_ENV"
 TEST_ENV_VALUE = "test"
@@ -63,6 +69,9 @@ class ProviderRegistry:
 
     provider: Provider
     environ: dict[str, str] | None = None
+    #: The tier each role gets on this provider; None routes nothing (every request keeps
+    #: its own model or the adapter default).
+    routing: ModelRouting | None = None
     #: None = unprobed; True/False = the cached verdict. Asymmetric lifetime — see
     #: `reset_health`.
     _health: bool | None = field(default=None, repr=False)
@@ -132,6 +141,8 @@ class ProviderRegistry:
         empty — but it stays on the return so decision provenance keeps its schema.
         """
         provider, resolution = self.resolve(request.call_class)
+        if self.routing is not None:
+            request = self.routing.route(request)
         return provider.complete(request), resolution
 
 

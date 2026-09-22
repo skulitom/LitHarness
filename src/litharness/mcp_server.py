@@ -318,6 +318,12 @@ TIERS: dict[tuple[str, ...], Tier] = {
         "prompt is in `why`",
         "litharness prompts --role ROLE",
     ),
+    ("models",): Tier(
+        "excluded",
+        None,
+        "reads the provider environment, which this server never binds; it opens no store",
+        "litharness models",
+    ),
     ("roster", "show"): _read("roster", "litharness roster show"),
     ("roster", "check"): _read("roster", "litharness roster check"),
     ("roster", "vocabulary"): _read("roster", "litharness roster vocabulary", _NO_STORE),

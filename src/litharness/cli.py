@@ -2967,6 +2967,112 @@ def _stored_scene_prompt(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _model_roles() -> tuple[tuple[str, str], ...]:
+    """(role, request profile) for every production role, in pipeline order."""
+    from litharness.application import director as director_mod
+    from litharness.application import outline as outline_mod
+    from litharness.application import reviser as reviser_mod
+
+    return (
+        ("discovery", discovery_mod.PROFILE),
+        ("concept development", concept_mod.DISCOVERY_CONCEPT_PROFILE),
+        ("structured concept", concept_mod.MATERIAL_CONCEPT_PROFILE),
+        ("precision line edit", precision_mod.PROFILE),
+        ("listing overview", overview_mod.CONCEPT_OVERVIEW_PROFILE),
+        ("title", overview_mod.TITLE_PROFILE),
+        ("title check", titles.CHECK_PROFILE),
+        ("world seed", world_agent.SEED_PROFILE),
+        ("world grow", world_agent.GROW_PROFILE),
+        ("outline", outline_mod.CONCEPT_PROFILE),
+        ("structured outline", outline_mod.STRUCTURED_PROFILE),
+        ("plain outline", outline_mod.PROFILE),
+        ("director", director_mod.PROFILE),
+        ("scene drafting", "default"),
+        ("reviser", reviser_mod.REVISION_PROFILE),
+        ("scene summary", "mechanical"),
+        ("listing readers", readers_mod.APPETITE_PROFILE),
+    )
+
+
+def cmd_models(args: argparse.Namespace) -> int:
+    """Which model each role gets on the selected provider, and when the map is due for review.
+
+    Reads the environment and `docs/model-policy.md`; opens no store and calls no model, so it
+    is safe before any run, including on the day one account has hit its limits and the other
+    is about to take over.
+    """
+    from datetime import date
+
+    from litharness.providers import ClaudeCodeProvider, CodexCliProvider, selected_provider
+    from litharness.providers.routing import (
+        PROVIDER_TIERS,
+        TIERS,
+        ModelRouting,
+        codex_efforts,
+        review_status,
+    )
+
+    provider = selected_provider()
+    routing = ModelRouting.from_environ(provider)
+    default_model = ClaudeCodeProvider().model if provider == "claude" else CodexCliProvider().model
+    efforts = codex_efforts() if provider == "codex" else {}
+    default_effort = CodexCliProvider().reasoning_effort if provider == "codex" else None
+
+    def model_of(tier: str) -> str:
+        return routing.models.get(tier) or default_model  # type: ignore[call-overload]
+
+    roles = [
+        {
+            "role": role,
+            "profile": profile,
+            "tier": routing.tier_for(profile),
+            "model": model_of(routing.tier_for(profile)),
+        }
+        for role, profile in _model_roles()
+    ]
+    policy_path = Path(__file__).resolve().parents[2] / "docs" / "model-policy.md"
+    policy = policy_path.read_text(encoding="utf-8") if policy_path.exists() else ""
+    status = review_status(policy) if policy else None
+    today = date.today()
+    report = {
+        "provider": provider,
+        "tiers": {tier: model_of(tier) for tier in TIERS},
+        "other_provider_tiers": {
+            other: {tier: model or "adapter default" for tier, model in tiers.items()}
+            for other, tiers in PROVIDER_TIERS.items()
+            if other != provider
+        },
+        "efforts": {"default": default_effort, **efforts} if provider == "codex" else None,
+        "roles": roles,
+        "review": None
+        if status is None
+        else {
+            "last_reviewed": status.last_reviewed.isoformat(),
+            "due": status.due.isoformat(),
+            "overdue": status.overdue(today),
+        },
+    }
+    if args.json:
+        print(json.dumps(report, indent=2))
+        return 0
+    print(f"provider: {provider} (LITHARNESS_PROVIDER; switch whole, never automatic)")
+    print("tiers: " + ", ".join(f"{tier}={model_of(tier)}" for tier in TIERS))
+    if provider == "codex":
+        print(f"codex effort: {default_effort}" + "".join(f", {m}={e}" for m, e in efforts.items()))
+    width = max(len(row["role"]) for row in roles)
+    for row in roles:
+        print(f"  {row['role']:<{width}}  {row['tier']:<8}  {row['model']}  ({row['profile']})")
+    if status is None:
+        print("model review: docs/model-policy.md not found or has no marker")
+    else:
+        state = "OVERDUE" if status.overdue(today) else f"due {status.due.isoformat()}"
+        print(
+            f"model review: last {status.last_reviewed.isoformat()}, {state} "
+            "(docs/model-policy.md says how)"
+        )
+    return 0
+
+
 def cmd_prompts(args: argparse.Namespace) -> int:
     """Print representative requests, or one exact frozen scene request with ``--scene``.
 
@@ -6210,6 +6316,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     prompts.add_argument("--json", action="store_true")
     prompts.set_defaults(func=cmd_prompts)
+
+    models = sub.add_parser(
+        "models", help="which model each role gets on the selected provider, and review due"
+    )
+    models.add_argument("--json", action="store_true")
+    models.set_defaults(func=cmd_models)
 
     seed = architect_sub.add_parser(
         "seed", help="build enough world to stand the first chapters, under a listing"

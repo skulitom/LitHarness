@@ -44,12 +44,16 @@ for an explicit model-free local run, set `LITHARNESS_FAKE_PAD_CHARS=400`.
 To run this same pipeline through the signed-in Codex subscription instead, set
 `LITHARNESS_PROVIDER=codex` and, if needed, `LITHARNESS_CODEX_BINARY` to the native executable.
 This selects `gpt-6-astra` with medium reasoning for the registry. It does not fall back to
-Claude. Codex ignores user configuration and project documents; world and roster agents use
-a restricted local command bridge with the same command allowances and no shell access.
-Codex reports token usage but no dollar cost, so use token and invocation limits to bound
-these runs. The provider selection changes model transport, not the generation pipeline.
-The [comparison record](generation-comparison-20260908.md) documents the initial
-transport repairs and reading limitations; completed generation does not certify literary quality.
+Claude. Codex ignores user configuration and project documents; world and roster agents use a
+restricted local command bridge with the same command allowances and no shell access. Codex
+reports token usage but no dollar cost, so use token and invocation limits to bound these runs.
+If one account reaches its limits, switch the whole pipeline to the other with this one setting;
+`litharness models` prints which model each role gets on the selected provider, and [the model
+policy](model-policy.md) holds the tier map, the rules for changing it and when it is next due
+for review against new releases and prices. The provider selection changes model transport, not
+the generation pipeline. The [comparison record](generation-comparison-20260908.md) documents
+the initial transport repairs and reading limitations; completed generation does not certify
+literary quality.
 Set `LITHARNESS_CODEX_TRACE_DIR` to a local run directory to retain each submitted request
 and full provider response, including failed tool turns. This is useful for commands such
 as Architect that do not otherwise persist the complete transport exchange.

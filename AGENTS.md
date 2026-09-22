@@ -15,6 +15,9 @@ describes how to work here, not how a production model should write a book.
    entry. Historical paths and component names are evidence, not implementation targets.
 4. Do not create, move, or recommend git worktrees unless the operator explicitly asks. Work
    safely in the checkout you were given.
+5. Check the review marker in [docs/model-policy.md](docs/model-policy.md) (or run
+   `uv run litharness models`). If the model review is due, do it as that page describes before
+   model-dependent work, or tell the operator it is due. No scheduler owns it.
 
 ## Current code map
 

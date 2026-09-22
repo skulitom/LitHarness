@@ -64,3 +64,17 @@ def test_a_changed_test_always_selects_itself() -> None:
 
     assert not selection.use_quick
     assert "tests/test_covers.py" in selection.tests
+
+
+def test_the_model_review_note_appears_only_once_the_review_is_due() -> None:
+    """Informational only: an overdue model review prints a line and never fails the check."""
+    from datetime import date
+
+    from litharness.providers.routing import review_status
+
+    status = review_status((check.REPO / "docs" / "model-policy.md").read_text(encoding="utf-8"))
+    assert status is not None
+    assert check.model_review_note(status.last_reviewed) is None
+    note = check.model_review_note(status.due)
+    assert note is not None and "docs/model-policy.md" in note
+    assert check.model_review_note(date.fromordinal(status.due.toordinal() + 30)) == note

@@ -145,11 +145,18 @@ class CodexCliProvider:
     supports_tool_permissions: bool = True
     model: str = "gpt-6-astra"
     reasoning_effort: str = "medium"
+    #: Reasoning effort for a named model when it differs from `reasoning_effort` (for
+    #: example a basic-tier model its maker recommends at high effort); see
+    #: `providers/routing.py`. Read from `LITHARNESS_CODEX_EFFORTS` by the default registry.
+    model_efforts: dict[str, str] = field(default_factory=dict)
     binary: str = "codex.exe" if os.name == "nt" else "codex"
     runner: CodexRunner = subprocess_runner
     trace_directory: Path | None = None
     compact_tool_json: bool = False
     last_attempt: dict[str, Any] = field(default_factory=dict, init=False, repr=False)
+
+    def effort_for(self, model: str) -> str:
+        return self.model_efforts.get(model, self.reasoning_effort)
 
     def health(self) -> bool:
         try:
@@ -179,6 +186,7 @@ class CodexCliProvider:
         raw: dict[str, Any] = {
             "provider": self.name,
             "requested_model": request.model or self.model,
+            "reasoning_effort": self.effort_for(request.model or self.model),
         }
         self.last_attempt = raw
         trace_path = None
@@ -264,7 +272,7 @@ class CodexCliProvider:
                     "forced_login_method": "chatgpt",
                     "model_provider": "openai",
                     "model_instructions_file": system_path.as_posix(),
-                    "model_reasoning_effort": self.reasoning_effort,
+                    "model_reasoning_effort": self.effort_for(request.model or self.model),
                     "project_doc_max_bytes": 0,
                     "web_search": "live" if mode == "search" else "disabled",
                     "hide_agent_reasoning": True,

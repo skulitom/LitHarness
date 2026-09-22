@@ -7,6 +7,7 @@ import shlex
 import subprocess
 import sys
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from typing import Final
 
@@ -290,10 +291,31 @@ def run_mode(mode: str) -> None:
     raise AssertionError(f"unhandled check mode: {mode}")
 
 
+def model_review_note(today: date | None = None) -> str | None:
+    """A line to print when `docs/model-policy.md` says the model map is due for review.
+
+    Informational only: a check that failed as the calendar moved would turn a green tree red
+    for no change in it. Whoever sees the line does the review the page describes.
+    """
+    from litharness.providers.routing import review_status
+
+    policy = REPO / "docs" / "model-policy.md"
+    status = review_status(policy.read_text(encoding="utf-8")) if policy.exists() else None
+    if status is None or not status.overdue(today or date.today()):
+        return None
+    return (
+        f"note: the model review was due {status.due.isoformat()} "
+        f"(last {status.last_reviewed.isoformat()}); docs/model-policy.md says how"
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("mode", choices=("smoke", "changed", "quick", "full", "handoff"))
     args = parser.parse_args(argv)
+    note = model_review_note()
+    if note:
+        print(note, flush=True)
     run_mode(args.mode)
     return 0
 

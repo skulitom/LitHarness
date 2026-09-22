@@ -26577,3 +26577,55 @@ and no chapters. That is operator spend.
   copied cleanly (paid-matched against paid-unmatched) is unmeasured.
 - Recruited writers' dossiers in the installation roster were not surveyed for ledger or debt
   trades.
+
+## 256. Model tiers per role on the one provider, a one-setting switch between accounts, and a reviewed model policy (2026-09-22)
+
+2026-09-22. Operator direction, in three messages: use the new Codex models `gpt-6-sol` ("extremely
+cheap whilst having comparable performance to larger models") and `gpt-6-luna` for common and
+basic tasks; the pipeline must "easily adapt to claude only version or codex only (incase limits
+are reached on one of the accounts)"; and the choice of models is reviewed about every two weeks
+against new releases, through "a policy in the repo, with last reviewed date" rather than a
+scheduled job, which is "too specific to account and model".
+
+**What changed.** `providers/routing.py` gives each request profile a capability tier (`strong`,
+`standard`, `basic`) and each provider a model per tier: Claude `claude-sonnet-5` and
+`claude-haiku-4-5`, Codex `gpt-6-sol` and `gpt-6-luna`; `strong` is each adapter's own default
+(`claude-opus-5`, `gpt-6-astra`), so a strong request is unchanged. `ProviderRegistry.complete`
+applies the routing before the provider sees the request, and `build_default_registry` builds it
+for whichever provider `LITHARNESS_PROVIDER` selects (`providers.selected_provider`, which also
+refuses an unknown name). `CodexCliProvider.model_efforts` runs a named model at its own
+reasoning effort (`LITHARNESS_CODEX_EFFORTS`, e.g. `gpt-6-luna=high`, which OpenAI recommends for
+it) and records the effort on the attempt. `litharness models` prints the selected provider,
+each role's tier and model, and the policy's review date; it opens no store and calls no model.
+`tools/check.py` prints one informational line when the review is overdue and never fails on it.
+[docs/model-policy.md](../docs/model-policy.md) holds the map, the switch, the rules, the review
+procedure and its log; AGENTS.md's first minute points at it.
+
+**What it does not change.** The shipped default routes every role to `strong`:
+`LITHARNESS_MODEL_TIERS=candidate` opts a run into the roles a comparison is testing (the
+Architect's seed and grow on `standard`; scene summaries and title availability checks on
+`basic`). Scene drafting, discovery and concept invention, titles and listings, precision line
+edits, outlines and planning, the reviser and rewrite passes, the director and every reader
+instrument are pinned to `strong` in code, and no setting lowers them. A request that names its
+own model is never rerouted, so registered research arms keep their pinned models. There is still
+one provider per run and no fallback: this amends §1a's rationale in `providers/registry.py` only
+by adding a model chosen per role in advance, recorded on every result, and never a reaction to a
+failed call. Summaries feed later drafting context and title availability is a check, so both
+move only after a comparison.
+
+**The review.** A baseline review on 2026-09-22 (local `runs/model-reviews/2026-09-22.md`; its
+findings are in the policy's log and caveats) found the map sound on both providers; the
+Sol and Luna prices verified at about a fifth and a hundredth of Astra's, while Sol's
+performance claim was not verifiable from a primary source; `claude-opus-5-5` released the same
+day and made the CLI's default Opus, which the adapter's explicit `claude-opus-5` pin is
+unaffected by; `claude-haiku-4-5-20251001` committed only to at least 2026-10-15; `gpt-5.5`
+leaving Codex on 2026-10-14; and that cached input makes the Architect's 44% of the full-book
+trial's tokens about 19% of its credits, so the candidate routing would save about 23%. The
+Claude adapter passes no `--effort`, so a Claude model change must pin effort in the same
+change; `providers/cli.py` is frozen by the promise/payoff registration and is not edited here.
+
+**Residuals.** No routed call has run. The candidate roles move to their tiers only after a
+registered comparison (recorded requests replayed on the candidate model and compared in code:
+schema conformance, validator and world-check pass rate, refusals and retries, tokens, and field
+agreement with the accepted records) and the operator's agreement. The Architect's calls use the
+world tool bridge, so a replay needs the store as it stood before each call.

@@ -34,6 +34,7 @@ from litharness.providers.registry import (
     ProviderRegistry,
     in_test_mode,
 )
+from litharness.providers.routing import ModelRouting, codex_efforts
 
 
 def build_default_registry() -> ProviderRegistry:
@@ -77,19 +78,33 @@ def build_default_registry() -> ProviderRegistry:
         # Set here and nowhere else, because this is the road that drafts a book the loop
         # created rather than one it imported — see the field's own note.
         return ProviderRegistry(FakeProvider(pad_to_chars=pad, carry_status=True))
-    selected = os.environ.get("LITHARNESS_PROVIDER", "claude").strip().lower()
+    selected = selected_provider()
     if selected == "codex":
         binary = os.environ.get("LITHARNESS_CODEX_BINARY")
-        provider = CodexCliProvider()
+        provider = CodexCliProvider(model_efforts=codex_efforts())
         if binary:
             provider.binary = binary
         trace_directory = os.environ.get("LITHARNESS_CODEX_TRACE_DIR")
         if trace_directory:
             provider.trace_directory = Path(trace_directory)
-        return ProviderRegistry(provider)
-    if selected not in {"claude", "claude_code"}:
+        return ProviderRegistry(provider, routing=ModelRouting.from_environ("codex"))
+    return ProviderRegistry(ClaudeCodeProvider(), routing=ModelRouting.from_environ("claude"))
+
+
+def selected_provider(environ: dict[str, str] | None = None) -> str:
+    """`LITHARNESS_PROVIDER` as `claude` or `codex`: the operator's one switch between accounts.
+
+    Switching is deliberate and whole: every production call moves, and every capability tier
+    is mapped on both providers (`providers/routing.py`), so a Claude-only or a Codex-only run
+    needs nothing else. It is never an automatic reaction to a failed call.
+    """
+    source = os.environ if environ is None else environ
+    selected = source.get("LITHARNESS_PROVIDER", "claude").strip().lower()
+    if selected == "claude_code":
+        return "claude"
+    if selected not in {"claude", "codex"}:
         raise ValueError(f"Unknown LITHARNESS_PROVIDER: {selected!r}")
-    return ProviderRegistry(ClaudeCodeProvider())
+    return selected
 
 
 __all__ = [
@@ -101,6 +116,7 @@ __all__ = [
     "CompletionRequest",
     "CompletionResult",
     "FakeProvider",
+    "ModelRouting",
     "Provider",
     "ProviderError",
     "ProviderFailureKind",
@@ -113,4 +129,5 @@ __all__ = [
     "classify_provider_failure",
     "in_test_mode",
     "provider_error",
+    "selected_provider",
 ]
