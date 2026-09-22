@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/cost-that-bites-milder-20260922/PREREG.md",
+      "sha256": "475398c7f9dba037dbb315ca90267b0ec12e1eb63d107c03efeb649629ac8b62"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/cost-that-bites-milder-20260922/AMENDMENT-1.md",
+      "sha256": "6f7d43de5a53af5d0d4eda76b12dfd357ac051d7934b7c9931a588bf9709ac2e"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/cost-that-bites-milder-20260922/registration-v4a.json",
+      "sha256": "452ce942fc994b048386481f10b8727301a079a0f589ab32dfe620f35ef2fc2d"
+    }
+  ],
+  "claim_id": "cost-that-bites.milder-v4a.claude",
+  "schema": "litharness.epistemic-claim.v1",
+  "statement": "fcr.v0's costed reader (claude-haiku-4-5 over claude -p) reads a fitness book in slot A less when a seeded partial shuffle reorders 65% of its paragraphs among themselves, beyond a whitespace sham, at twenty books and six sessions per version; not a quality instrument and not a qualification. Bought as arm milder-v4a under AMENDMENT-1, through the transport that runs outside the repository; milder-v4's contaminated purchase is not read.",
+  "status": "registered"
+}
