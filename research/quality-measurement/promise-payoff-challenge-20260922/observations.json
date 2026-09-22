@@ -1,0 +1,48 @@
+{
+  "absence_certified": false,
+  "complete": false,
+  "completed_calls": 0,
+  "controls_expected": 8,
+  "controls_passed": 0,
+  "controls_seen": 0,
+  "errors": [
+    {
+      "error": "ProviderError",
+      "task_id": "isolation"
+    }
+  ],
+  "expected_calls": 27,
+  "holdout_books": 0,
+  "independent_books": 1,
+  "isolation_passed": false,
+  "items": [
+    {
+      "disposition": "semantic_review_required_no_admission",
+      "item_id": "pp-959968151914847be23e93e2",
+      "located_candidates": {}
+    },
+    {
+      "disposition": "semantic_review_required_no_admission",
+      "item_id": "pp-cb90677f8b99bef55c97f0df",
+      "located_candidates": {}
+    },
+    {
+      "disposition": "semantic_review_required_no_admission",
+      "item_id": "pp-efee3d4c7fa3903ed60435cf",
+      "located_candidates": {}
+    }
+  ],
+  "observations": [],
+  "production_authority": false,
+  "raw_sha256": "4b550a0918f6357b53fe499e2c3a26c31614a4bf3742945b25d9551f9dcb24bc",
+  "run": {
+    "binary_sha256": "0b35df94c1307004f07b738390bfef8dfca5e9af29aaf6517f305bf086b95b03",
+    "cost_usd": 0.0,
+    "elapsed_seconds": 2.165508299949579,
+    "registration_sha256": "8c6ffdebffacccecdcb3dd28c843e5a0d837ae5cd4f3235e725cb2e01f1bcc13",
+    "tokens": 0
+  },
+  "semantic_admission": false,
+  "tasks_sha256": "301843caf8bc72264874b36799cd6e8e301cdda4a1655a4da1ef83da84f6456c",
+  "version": "promise-payoff-challenge.v1"
+}

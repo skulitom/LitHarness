@@ -30,6 +30,12 @@ The existing ecological model-admission flag is unchanged; these research packet
 the production reader loop. The [construction report](../research/quality-measurement/promise-payoff-builder-20260919/RESULTS.md)
 records both completed cases and refusals without treating either as a reader result.
 
+**2026-09-22 follow-up:** the [full-book evidence challenge](../research/quality-measurement/promise-payoff-challenge-20260922/RESULTS.md)
+registers independent quotation searches for alternative fulfilments and downstream dependencies
+of both deletions. It extends search to the entire frozen book, including later chapters. Its
+first collection stopped on expired authentication before any observation. Located quotations
+would still be semantic hypotheses, and no result from this diagnostic can grant admission.
+
 ## What the stored records can certify
 
 | Requested family | Existing substrate | Admission now |

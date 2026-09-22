@@ -73,3 +73,10 @@ request, enforce token budgets and keep the private keys out of all reader input
 The [regression suite](../../../tests/test_promise_payoff_builder.py) exercises source
 integrity, ambiguity, context retention, matched edits, protected references, public/private
 separation, deterministic identities, read-only WAL snapshots and failure on pending migrations.
+
+## Follow-up, 2026-09-22
+
+The [full-book evidence challenge](../promise-payoff-challenge-20260922/RESULTS.md) now constructs
+independent alternative-fulfilment and deletion-dependency requests, including scenes after the
+registered payment. Its first collection attempt stopped on expired CLI authentication before
+any model observation; the original construction results and semantic-admission boundary stand.
