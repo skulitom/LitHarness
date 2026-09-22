@@ -1,4 +1,7 @@
-# Promise/payoff challenge: collection stopped at authentication
+# Promise/payoff challenge: collection stopped at authentication, and the line closed unrun
+
+**Closed 2026-09-22.** The [final attempt](recovery2/RESULTS.md) stopped before dispatch on a
+wrapper defect (zero calls), and under its amendment the line closes without an observation.
 
 The [explicit authentication retry](recovery/RESULTS.md) also stopped before any model
 observation. The CLI-specific credentials-file profile still needs re-authentication; the

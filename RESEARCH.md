@@ -1,6 +1,6 @@
 # LitHarness research overview
 
-<!-- research-overview: ledger through §253; checked 2026-09-22 -->
+<!-- research-overview: ledger through §256; checked 2026-09-22 -->
 
 This page is for someone opening the repository who wants to know what the research has
 established, why each line of work was opened, and what matters now. It is a map of the
@@ -48,19 +48,19 @@ mechanisms, costed readers and representation probes are others.
 families and the qualification boundary.
 
 **Status line.** The production loop is real and drafts books end to end. No simulated reader
-mechanism is qualified, and none has earned the right to certify or steer prose. One
-mechanism, a reader whose continuing costs it something, has moved under a story-level
-manipulation and held under replication (§230); it satisfies, arguably, one of the ten evidence
-fields qualification requires. That is the whole of what the research has bought on the central
-question so far. The milder manipulation the operator approved for it on 2026-09-10 is
-unregistered, because no census of the stores has admitted a test item for it (section 4.4).
-No registered reader arm has run since §230's replication on 2026-09-04; the only simulated
-reads of chapters on record since are a feasibility screen registered that day, whose run date
-its audit could not establish and which may not be read for an effect (section 4.4), and the
-production readership at the end of volume one's first arc on 2026-09-07 (§242). Off the
-central question, on 2026-09-19 the pipeline drafted its first complete volume, twenty-four
-chapters on the opt-in structured planning path, as a mixed-revision recovery from an outline
-failure rather than an uninterrupted run (`OBSERVED`; section 4.7.1).
+mechanism is qualified, and none has earned the right to certify or steer prose. One mechanism,
+a reader whose continuing costs it something, has moved under a story-level manipulation and
+held under replication (§230); it satisfies, arguably, one of the ten evidence fields
+qualification requires. That is the whole of what the research has bought on the central
+question so far. The milder manipulation the operator approved for it is registered, as a seeded
+partial shuffle on the same books, and has not run (section 4.4). No registered reader arm has
+run since §230's replication on 2026-09-04; the only simulated reads of chapters on record since
+are a feasibility screen registered that day, whose run date its audit could not establish and
+which may not be read for an effect (section 4.4), and the production readership at the end of
+volume one's first arc on 2026-09-07 (§242). Off the central question, on 2026-09-19 the
+pipeline drafted its first complete volume, twenty-four chapters on the opt-in structured
+planning path, as a mixed-revision recovery from an outline failure rather than an uninterrupted
+run (`OBSERVED`; section 4.7.1).
 
 ## 2. The constraints every experiment runs under
 
@@ -207,12 +207,13 @@ against a matched control and a placebo, registered before spend.
 | The anticipation probe (describe three futures, mark hope or dread) returns the same answer whatever is done to the passage: the arms' mean specificity spans 0.008 against a registered floor of 0.05, and the whitespace placebo moved it further than deleting the stakes did | `REFUTED` | §124, §227; [research/quality-measurement/anticipation-run/FINDINGS.md](research/quality-measurement/anticipation-run/FINDINGS.md); BRIEF.md §2 Pass 7 |
 | The first costed-reader arm came back unreadable, one session below its scorable floor after a contiguous transport stop the instrument could not classify; what it did measure is that the reader's positional lean eats three quarters of the design | `OBSERVED` | §222, §224; [research/quality-measurement/cost-that-bites/FINDINGS.md](research/quality-measurement/cost-that-bites/FINDINGS.md) |
 | A reader whose continuing costs it something reads a book less when that book's paragraph order is destroyed, and further than a whitespace placebo moves it; replicated with the permutation redrawn, inside the band the registration fixed. The first mechanism in this house to move with a story-level manipulation and hold under replication | `SUPPORTED` | §230; [research/quality-measurement/cost-that-bites/FINDINGS-v2.md](research/quality-measurement/cost-that-bites/FINDINGS-v2.md) and [FINDINGS-v3.md](research/quality-measurement/cost-that-bites/FINDINGS-v3.md); the claim record is [order-sensitivity-claim.json](research/quality-measurement/causal-reader-admission-20260910/order-sensitivity-claim.json) |
+| The one further experiment §230 licenses is registered: the same reader on the same twenty books at a seeded partial shuffle of 65% of paragraphs, six sessions per version (power 0.86 to 0.97 under the central assumptions, by a call-free record); its request identity with v2 reproduced 120 of 120 cached cells before registration. Not yet run | `REGISTERED` | [research/quality-measurement/cost-that-bites-milder-20260922/PREREG.md](research/quality-measurement/cost-that-bites-milder-20260922/PREREG.md) and [ATTAINABILITY.md](research/quality-measurement/cost-that-bites-milder-20260922/ATTAINABILITY.md) |
 | The sim-readership backtest asks whether the readership, blind and stopped part-way, can post-dict which of two real Royal Road books the real readership stayed with. Every free slot is filled (thousands of divergent pairs, a conditional primary with calibrated type-I, a cutoff-clean set that is empty so recognition probes carry the whole memorisation defence); ~~no paid call has been made~~ corrected 2026-09-22: the pilot ran twice under the operator's go, on 2026-08-30/31 and again on 2026-08-31 after a transport fix; the second run returned a descriptive number with its sham corner void and `insufficient_n` as the stage's verdict, and the confirmatory stage was started and then paused by the operator on 2026-09-01, with a top-up defect unfixed. The programme's own re-anchoring of 2026-09-03 owns the record | ~~`REGISTERED`~~ `OBSERVED` | §123; [research/sim-readership-backtest/FINDINGS.md](research/sim-readership-backtest/FINDINGS.md) |
 | Correcting the simulated readership against what a real population did (the SYN-DIGITS reading): the distributional half is admissible and gated on a decision not yet taken; individual-level calibration is closed twice | `REGISTERED` | §106; [plan/sim-readership-calibration.md](plan/sim-readership-calibration.md) |
 | Whether the sim predicts the real readership's continuation on a book it has never had readers for is registered against the release queue and waits for a posted chapter | `REGISTERED` | [research/launch-outsample/PREREG.md](research/launch-outsample/PREREG.md); §221 |
 | The volume screen, registered on 2026-09-04 to ask whether a multi-chapter book of ours can carry a costed-reader session and never to be read for an effect: its saved records reconcile with their raw caches and spend their registered budgets, but they cover more books than the registration names, with no amendment, and keep no source digests. They are feasibility records and not a null for a new arm, and no allocation contrast was computed from them | `—` | [registration](research/quality-measurement/cost-that-bites/PREREG-volume-screen.md); [research/quality-measurement/volume-screen-audit-20260910/REPORT.md](research/quality-measurement/volume-screen-audit-20260910/REPORT.md) |
 | Before the costed reader could be tried on a manipulation milder than a whole-book shuffle (approved 2026-09-10), call-free censuses of every available store, repeated after newer books and again after the complete volume, admitted no state-continuity, event-consequence, progression-cost or character-cause item and generated no ecological test item. The promise/payoff candidates they find have no verified damage-and-sham transformation, so the arm stops at its precondition and is unregistered | `OBSERVED` | [research/quality-measurement/causal-reader-admission-20260910/REPORT.md](research/quality-measurement/causal-reader-admission-20260910/REPORT.md) and [its runbook](research/quality-measurement/causal-reader-admission-20260910/RUNBOOK.md); [research/quality-measurement/causal-reader-admission-20260913/REPORT.md](research/quality-measurement/causal-reader-admission-20260913/REPORT.md); the complete volume's [admission readout](research/quality-measurement/full-book-trial-20260919/RESULTS.md) |
-| A promise/payment builder cuts deletion items with matched controls out of the complete volume and gives a reason for every promise it refuses. Construction certifies where a recorded payment quotation sits, not that the payoff is lost, so no item is eligible for a reader. The follow-up challenge, which asks whether a quotation extractor finds fulfilments or dependencies the constructor did not control and which by registration cannot open admission, stopped twice on an expired Claude CLI login before any observation; one further attempt is registered and has not run, and the line closes after it | `OBSERVED` | [builder](research/quality-measurement/promise-payoff-builder-20260919/RESULTS.md) and [its runbook](research/quality-measurement/promise-payoff-builder-20260919/RUNBOOK.md); [challenge](research/quality-measurement/promise-payoff-challenge-20260922/RESULTS.md) and [its runbook](research/quality-measurement/promise-payoff-challenge-20260922/RUNBOOK.md); [first recovery](research/quality-measurement/promise-payoff-challenge-20260922/recovery/RESULTS.md); [second recovery](research/quality-measurement/promise-payoff-challenge-20260922/RECOVERY2.md) and [its registration](research/quality-measurement/promise-payoff-challenge-20260922/recovery2/registration.json) |
+| A promise/payment builder cuts deletion items with matched controls out of the complete volume and gives a reason for every promise it refuses. Construction certifies where a recorded payment quotation sits, not that the payoff is lost, so no item is eligible for a reader. The follow-up challenge, which asks whether a quotation extractor finds fulfilments or dependencies the constructor did not control and which by registration cannot open admission, stopped twice on an expired Claude CLI login before any observation; its final attempt stopped before dispatch on a wrapper defect, and the line closed unrun | `OBSERVED` | [builder](research/quality-measurement/promise-payoff-builder-20260919/RESULTS.md) and [its runbook](research/quality-measurement/promise-payoff-builder-20260919/RUNBOOK.md); [challenge](research/quality-measurement/promise-payoff-challenge-20260922/RESULTS.md) and [its runbook](research/quality-measurement/promise-payoff-challenge-20260922/RUNBOOK.md); [first recovery](research/quality-measurement/promise-payoff-challenge-20260922/recovery/RESULTS.md); [second recovery](research/quality-measurement/promise-payoff-challenge-20260922/RECOVERY2.md) and [its result](research/quality-measurement/promise-payoff-challenge-20260922/recovery2/RESULTS.md) |
 
 **What it means, and what it does not.** Three instruments designed to avoid the verdict channel
 inherited saturation instead: a cooperative reader that can answer for free answers the same way
@@ -457,6 +458,9 @@ same way: the store the run wrote is the measurement.
 | Repeatable growth: a funded second investment in one capability was blocked by the shared maximum-one ceiling, so declared repeatable growth now has its own value; fresh Architect outputs kept the repeatable, ownership-only and capped distinctions, and a six-chapter continuation bought two different upgrades while no capability received a second paid investment live. The same study's payoff-deletion construction produced no verified test pair | `OBSERVED` | §252; [next priorities](research/quality-measurement/next-priorities-20260913/REPORT.md), [growth declarations](research/quality-measurement/growth-declarations-20260913/REPORT.md), [growth continuation](research/quality-measurement/growth-continuation-20260913/REPORT.md) |
 | Compacting JSON whitespace in Codex tool replies shrank the replies, but reported tokens fell in one pair and rose in the other; the option stays off, with no operator switch | `OBSERVED` | §253; [research/quality-measurement/compact-json-20260913/REPORT.md](research/quality-measurement/compact-json-20260913/REPORT.md) |
 | Two operator-requested opening fixes against a historical opening, consequential scene choices and then selective scene treatment: each six-chapter output changed the located behaviour (the earlier Load defect absent; more consequential personal responses, with a failed-repair cost softened) while procedural pacing and repeated explanation remained. A follow-up with book-specific directions failed its registered point-balance check | `OBSERVED` | §253; [scene consequence](research/quality-measurement/scene-consequence-20260913/REPORT.md), [scene focus](research/quality-measurement/scene-focus-20260913/REPORT.md), [opening consequence](research/quality-measurement/opening-consequence-20260914/REPORT.md) |
+| A priced grant printed as its allowance (10 cm, 60 s, 100 N) now binds as the purchases its stock paid for, so the sheet's Point accounting can balance; the stored books replay unchanged, and their 0 of 8 identical replays predate the change | — | §254 |
+| The coordinator's gate on the complete volume failed it at the concept (no one-person exception, a status "ledger", creditors and salvage contracts); the standing directions §243's switch had dropped as side effects return at invention, seed and outline (the exception working in chapter one, counted ranks with a starting rank, a lived world and personal costs, the target readership) and the book's promises stop reading as debts. Instruction delivery only: no draw has tested it | — | §255 |
+| Roles name a capability tier and each provider maps it to a model (Codex Sol and Luna, Claude Sonnet and Haiku, the strong tier each adapter's default); one setting switches the whole pipeline between accounts; the shipped default routes nothing until a registered comparison passes; [docs/model-policy.md](docs/model-policy.md) records the map and its fortnightly review | — | §256 |
 | An open factual-inference checkpoint screened on authored synthetic fixtures is worth further testing as an optional factual-support checker with abstention, not as an automatic continuity judge, gate or release authority; its registered confident-false-entailment kill did not fire, and among its errors it took an old possession for a current one | `OBSERVED` | [research/quality-measurement/jev-verification-20260919/RESULTS.md](research/quality-measurement/jev-verification-20260919/RESULTS.md) and [its runbook](research/quality-measurement/jev-verification-20260919/RUNBOOK.md) |
 
 **What it changed.** Almost everything under `src/litharness/` that is not plumbing: the
@@ -559,8 +563,8 @@ posted chapters and the operator's go, and the sim-readership backtest (§123) i
 since its pilot ran twice and its confirmatory stage is paused
 ([research/sim-readership-backtest/FINDINGS.md](research/sim-readership-backtest/FINDINGS.md);
 section 4.4). The surprisal field (§99) and the dossier-voice arm (§150.6) are registered and
-unscheduled, and one more attempt at the promise/payoff challenge is registered and has not run
-(section 4.4). The reader-sims brief that listed what the costed reader owed is deleted, as its
+unscheduled, and the promise/payoff challenge closed unrun on 2026-09-22 when its final attempt
+stopped before dispatch (section 4.4). The reader-sims brief that listed what the costed reader owed is deleted, as its
 own rule required once every item had a result at its home: the cost that bites at §222, §224
 and §230; order recovery at §225; the backtest's calibration pilot at its FINDINGS.md
 re-anchoring of 2026-09-03; the anticipation probe's paid run at §227; and the proposal at
@@ -593,8 +597,7 @@ static proxy in BRIEF.md §2. Representation-level readers are parked, not close
 **What would change this page.** A mechanism reaching `QUALIFIED` through the
 `reader-mechanism qualify` command; the costed reader moving under a manipulation quieter than
 a whole-book shuffle, which first needs an admitted battery of test items across independent
-books; the backtest's confirmatory stage resuming; the promise/payoff challenge's remaining
-attempt; a chapter posted through the release queue and the out-of-sample registration
+books; the backtest's confirmatory stage resuming; a chapter posted through the release queue and the out-of-sample registration
 answering.
 
 ## 6. How to update this page

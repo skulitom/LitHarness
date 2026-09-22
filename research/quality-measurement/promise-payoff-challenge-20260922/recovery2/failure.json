@@ -1,0 +1,6 @@
+{
+  "detail": "recover2.verify_original checked base.sources() after execute() had rebound base.HERE to recovery2/, so it asked git for recovery2/RUNBOOK.md, which does not exist; the runner's first verify() raised before its raw output was opened",
+  "error": "CalledProcessError",
+  "stage": "verify before dispatch",
+  "completed_calls": 0
+}
