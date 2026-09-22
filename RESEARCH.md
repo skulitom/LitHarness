@@ -1,6 +1,6 @@
 # LitHarness research overview
 
-<!-- research-overview: ledger through §256; checked 2026-09-22 -->
+<!-- research-overview: ledger through §257; checked 2026-09-22 -->
 
 This page is for someone opening the repository who wants to know what the research has
 established, why each line of work was opened, and what matters now. It is a map of the
@@ -461,6 +461,7 @@ same way: the store the run wrote is the measurement.
 | A priced grant printed as its allowance (10 cm, 60 s, 100 N) now binds as the purchases its stock paid for, so the sheet's Point accounting can balance; the stored books replay unchanged, and their 0 of 8 identical replays predate the change | — | §254 |
 | The coordinator's gate on the complete volume failed it at the concept (no one-person exception, a status "ledger", creditors and salvage contracts); the standing directions §243's switch had dropped as side effects return at invention, seed and outline (the exception working in chapter one, counted ranks with a starting rank, a lived world and personal costs, the target readership) and the book's promises stop reading as debts. Instruction delivery only: no draw has tested it | — | §255 |
 | Roles name a capability tier and each provider maps it to a model (Codex Sol and Luna, Claude Sonnet and Haiku, the strong tier each adapter's default); one setting switches the whole pipeline between accounts; the shipped default routes nothing until a registered comparison passes; [docs/model-policy.md](docs/model-policy.md) records the map and its fortnightly review | — | §256 |
+| A packed promise line in a drafting job's source map now names the ledger row it was rendered from, that row's recorded upstream identities and the ones it never recorded; the request, the packet and the sample are unchanged, and jobs from before it report the derivation as not recorded. Provenance for an investigator, not a quality claim | — | §257 |
 | An open factual-inference checkpoint screened on authored synthetic fixtures is worth further testing as an optional factual-support checker with abstention, not as an automatic continuity judge, gate or release authority; its registered confident-false-entailment kill did not fire, and among its errors it took an old possession for a current one | `OBSERVED` | [research/quality-measurement/jev-verification-20260919/RESULTS.md](research/quality-measurement/jev-verification-20260919/RESULTS.md) and [its runbook](research/quality-measurement/jev-verification-20260919/RUNBOOK.md) |
 
 **What it changed.** Almost everything under `src/litharness/` that is not plumbing: the

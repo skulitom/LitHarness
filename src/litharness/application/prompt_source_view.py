@@ -5,6 +5,11 @@ from __future__ import annotations
 from hashlib import sha256
 from typing import Any
 
+from litharness.application.fragment_derivation import (
+    DERIVATION_COVERAGE,
+    derivation_summary,
+    valid_derivation,
+)
 from litharness.domain.jobs import input_digest_for
 
 SCHEMA = "litharness.prompt-sources.v1"
@@ -12,6 +17,9 @@ MAX_SOURCE_LIMIT = 100
 COMPOSITION_COVERAGE = (
     "selected_packet_items_and_renderer_fragments; upstream_inputs_of_derived_fragments_not_mapped"
 )
+#: Both describe a drafting composition. The second adds declared promise-line derivations
+#: (`application/fragment_derivation.py`); a map carrying one may not claim the first.
+COMPOSITION_COVERAGES = (COMPOSITION_COVERAGE, DERIVATION_COVERAGE)
 _CONTEXT_FIELDS = {
     "source",
     "query",
@@ -68,10 +76,20 @@ def validate_source_query(source_id: str | None, source_offset: int, source_limi
         raise ValueError(f"source_limit must be an integer from 0 through {MAX_SOURCE_LIMIT}")
 
 
-def _source_valid(source: dict[str, Any], kind: str, entry_hash: str) -> bool:
+def _source_valid(
+    source: dict[str, Any], kind: str, entry_hash: str, context: dict[str, Any]
+) -> bool:
     if kind == "context_item":
-        if not source.keys() >= _ITEM_FIELDS or source.keys() - (
-            _ITEM_FIELDS | {"source_record_sha256", "plan_revision_id"}
+        optional = {"source_record_sha256", "plan_revision_id"}
+        if context.get("coverage") == DERIVATION_COVERAGE:
+            optional.add("derivation")
+        if not source.keys() >= _ITEM_FIELDS or source.keys() - (_ITEM_FIELDS | optional):
+            return False
+        if "derivation" in source and not valid_derivation(
+            source["derivation"],
+            source=source,
+            entry_sha256=entry_hash,
+            drafting_at=context.get("disclosure_at"),
         ):
             return False
         if not all(
@@ -163,7 +181,7 @@ def _validated(
         return None, "malformed_source_context"
     if any(value is not None and not _string(value) for value in context.values()):
         return None, "malformed_source_context"
-    if "coverage" in context and context["coverage"] != COMPOSITION_COVERAGE:
+    if "coverage" in context and context["coverage"] not in COMPOSITION_COVERAGES:
         return None, "malformed_source_context"
     for key, payload_key in (
         ("book_id", "book_id"),
@@ -209,7 +227,7 @@ def _validated(
         if (
             not _string(entry["section"])
             or not isinstance(entry["source"], dict)
-            or not _source_valid(entry["source"], entry["kind"], entry["sha256"])
+            or not _source_valid(entry["source"], entry["kind"], entry["sha256"], context)
         ):
             return None, "malformed_source_metadata"
         if entry["kind"] == "scene_plan" and entry["source"].get("plan_revision_id") is not None:
@@ -269,6 +287,7 @@ def build_prompt_source_view(
         "stages": {},
         "entries": [],
         "context": None,
+        "derivations": None,
         "pagination": {
             "offset": source_offset,
             "limit": source_limit,
@@ -308,6 +327,7 @@ def build_prompt_source_view(
         "matched_count": len(selected),
         "entries": shown,
         "context": recorded["context"],
+        "derivations": derivation_summary(recorded["entries"], recorded["context"].get("coverage")),
         "pagination": {
             "offset": source_offset,
             "limit": source_limit,
@@ -320,6 +340,7 @@ def build_prompt_source_view(
 
 __all__ = [
     "COMPOSITION_COVERAGE",
+    "COMPOSITION_COVERAGES",
     "MAX_SOURCE_LIMIT",
     "SCHEMA",
     "build_prompt_source_view",

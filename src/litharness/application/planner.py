@@ -64,6 +64,7 @@ from litharness.application.director import (
 )
 from litharness.application.editorial import enqueue_ready_editorial_panel
 from litharness.application.exemplars import Shelf
+from litharness.application.fragment_derivation import attach_promise_derivations
 from litharness.application.handlers import SCENE_DRAFT
 from litharness.application.narrative_planner import (
     NARRATIVE_PLAN,
@@ -120,6 +121,7 @@ from litharness.domain.jobs import Job, input_digest_for
 from litharness.domain.moves import status_update_syntax
 from litharness.domain.nodes import NodeKind
 from litharness.domain.plans import premise_of, scene_plan_for, scene_plan_line
+from litharness.domain.promises import Promise
 from litharness.domain.revision import Revision
 from litharness.domain.scene_brief import render_plan
 from litharness.domain.serials import (
@@ -800,6 +802,7 @@ def packet_for(
     *,
     token_budget: int = DEFAULT_TOKEN_BUDGET,
     pov_character_id: str | None = None,
+    ledger: Sequence[Promise] | None = None,
 ) -> ContextPacket:
     """Assemble scene-entry context from plans, state and matching manuscript summaries.
 
@@ -808,6 +811,9 @@ def packet_for(
     that coordinate, scene entry withholds positioned facts and their dependent event
     components; an unknown position is not permission to reveal future state. Unplaced
     world definitions remain available, subject to authority and viewpoint visibility.
+
+    `ledger` is the open promise ledger when the caller has already read it, so the caller can
+    record what the packed promise lines were rendered from (§257); `None` reads it here.
     """
     # **Only a summary of the prose that is actually there.** `scene_summaries` returns every
     # summary ever written for a scene, keyed by the content hash it was written from, and the
@@ -873,7 +879,11 @@ def packet_for(
         # generation gets to SEE what the book owes and by when. Read-only, and `assemble`
         # packs them as DERIVED — a model-sourced debt informs the scene without entering
         # canon, the property §46 built for milestones.
-        promises=tuple(store.promises(revision.book_id, revision.branch_id, open_only=True)),
+        promises=tuple(
+            store.promises(revision.book_id, revision.branch_id, open_only=True)
+            if ledger is None
+            else ledger
+        ),
     )
 
 
@@ -1325,6 +1335,9 @@ def make_plan_selector(
                 if store.has_job(job_id):
                     # Already planned under this epoch: in flight, or burned by a poison.
                     continue
+                # One ledger read for the packet and for the record of what its promise lines
+                # were rendered from (§257), so the two cannot describe different rows.
+                ledger = tuple(store.promises(progress.book_id, progress.branch_id, open_only=True))
                 try:
                     packet = packet_for(
                         store,
@@ -1332,6 +1345,7 @@ def make_plan_selector(
                         beat,
                         token_budget=token_budget,
                         pov_character_id=pov_id,
+                        ledger=ledger,
                     )
                 except ContextBudgetTooSmall:
                     # A ceiling too small to hold the premise refuses the *book*, not this
@@ -1573,6 +1587,8 @@ def make_plan_selector(
                             )
                         if source["source_kind"] == lc.ResourceKind.PLAN.value:
                             source["plan_revision_id"] = plan_revision.plan_revision_id
+                # Sidecar only: `system` and `prompt` are final above and are not read here.
+                attach_promise_derivations(prompt_sources, ledger, drafting_at=beat.story_order_key)
                 payload: dict[str, object] = {
                     "prompt_sources": prompt_sources,
                     "revision_id": head.revision_id,

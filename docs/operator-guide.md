@@ -408,9 +408,17 @@ entries, optionally filtering an exact `source_id`. Use the returned stage and o
 the existing excerpt parameters to inspect the input. Rules and locks map to the system
 message; shelf insertion shifts prompt offsets and shelf exposure withholds source entries.
 Older jobs report `not_recorded`; current state is never substituted for missing provenance.
-The map identifies inserted packet items and producing renderer fragments. Derived fragments
-and aggregate cast/world items do not expose complete upstream declaration lineage. Source
-matches establish input provenance, not why the model chose a passage or its literary quality.
+The map identifies inserted packet items and producing renderer fragments. One derived fragment
+type is followed further (stage-0 §257): a packed promise line carries a `derivation` naming the
+ledger row it was rendered from (by id and content digest, as read at composition), the
+renderer and its fingerprint, the row's recorded upstream identities (the manuscript revision it
+was opened under, a located opening quote, the plan revision that proposed its window), the
+line's story keys against the drafting position, and every upstream identity the row does not
+record. `source_map.derivations` counts them; maps from before the extension report
+`not_recorded`. An edge is a declared derivation, not a claim about what the model attended to.
+Other derived fragments and aggregate cast/world items still do not expose complete upstream
+declaration lineage. Source matches establish input provenance, not why the model chose a
+passage or its literary quality.
 
 ### Read boundaries
 

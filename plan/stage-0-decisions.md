@@ -26629,3 +26629,72 @@ registered comparison (recorded requests replayed on the candidate model and com
 schema conformance, validator and world-check pass rate, refusals and retries, tokens, and field
 agreement with the accepted records) and the operator's agreement. The Architect's calls use the
 world tool bridge, so a replay needs the store as it stood before each call.
+
+## 257. A packed promise line follows back to its recorded inputs; other derived fragments still stop at the item (2026-09-22)
+
+The drafting source map (`application/prompt_sources.py`, read by
+`prompt_source_view.build_prompt_source_view`) declared its coverage as
+`upstream_inputs_of_derived_fragments_not_mapped`. For a packed promise line that meant the map
+named the promise id and the packed text's hash and nothing else: not the ledger row the line was
+rendered from, what that row said when it was read, the renderer, or where the row sits in story
+time against the scene being drafted.
+
+**One fragment type, chosen because its inputs are stored.** `promises.describe_owed` is a pure
+function of four fields on a `promises` row the planner already reads, and the row carries its own
+upstream identities: `opened_by_revision`, `opened_at_key`, `model`, the located opening quote
+(`opened_logical_id`, span, `opened_content_hash`) when the summary answer's quote was found, and
+`scheduled_by_plan_revision` for a payoff window. Scene summaries were the other candidate and
+were refused: a `scene_summaries` row keeps the scene's content hash, model and profile but not the
+job or the request the summary call received (the open threads and the open ledger), so a summary
+cannot be followed to its complete inputs without reconstructing them.
+
+**What is recorded, at composition.** `planner.make_plan_selector` reads the open ledger once and
+passes that tuple to `packet_for` (new `ledger=` keyword; `None` keeps the old in-function read),
+so the packed lines and their record describe one read. After `system` and `prompt` are final,
+`fragment_derivation.attach_promise_derivations` writes a `derivation` onto each packed promise
+line's source entry, matched by the entry's own item and source ids. It re-renders the row and
+requires the packed text's digest (otherwise the entry records `not_recorded` with
+`rendered_text_mismatch`), and records: the producer's name and a behavioural fingerprint over two
+fixed probes; the row's id, content digest, status at read and asserting model; the rendered
+inputs (the description only as a digest, plus the due and window keys); edges each declared by
+one column (`opened_under` a manuscript revision, `opening_quote_located_in` a scene text span,
+`payoff_window_proposed_by` a plan revision); the opened and due keys against the drafting
+position; and a `not_recorded` list naming each upstream identity the row does not hold. Keys
+compare only within one order-key space and one width (`fragment_derivation.position_relation`),
+so `s2` against `s000003` or a schedule key against a scene key is `ambiguous`, not an order. The map's
+coverage becomes `DERIVATION_COVERAGE`. The schema stays `litharness.prompt-sources.v1`, so the
+drafting sampler still excludes the map and the reviser, which now accepts either drafting coverage,
+still recovers the lock block.
+
+**What is exposed.** `valid_derivation` checks a derivation before the view pages it: closed key
+sets, edges only between present nodes of the declared kinds, relations recomputed from the recorded
+keys, and a `not_recorded` list that names exactly what the nodes lack. A failure closes the whole
+map as `malformed_source_metadata`, as the v1 map already did for any bad entry. The view reports
+`derivations` (counts and the `declared_derivation_not_model_attention` claim), and `scene_trace`
+and MCP `scene_trace` page it with the entries. Shelf exposure withholds it with the rest of the
+map. A map written before this change reports `not_recorded` (`composition_predates_fragment_derivation`),
+and a derivation under the old coverage closes the map. Nothing in the view reads current state.
+
+**What does not change.** The system and prompt bytes, the packet and its accounting, ranking,
+packing, omissions, summary generation, planner selection, the job id and the drafting sample are
+unchanged. `test_recording_derivations_changes_no_request_byte_packet_or_sample` compares a job
+composed with and without the recording, and
+`test_the_packet_is_the_same_whether_the_ledger_is_read_inside_or_passed_in` covers the `ledger=`
+path. The job's input digest does change, because it binds the sidecar, which is how a changed
+recorded digest fails as `input_digest_mismatch`. The other cases are in `test_fragment_derivation.py`:
+a superseded row (`test_a_frozen_derivation_keeps_the_row_it_read_after_the_ledger_moves`), missing
+row history (`test_missing_row_history_is_named_not_recorded_and_never_filled`), the ambiguous
+boundary (`test_story_positions_compare_only_within_one_space_and_width`) and the restricted source
+(`test_shelf_exposure_withholds_every_upstream_identity`).
+
+**Residuals.** No history is migrated: jobs enqueued before this change report `not_recorded`. No
+row records which call opened it (a summary call or a `litharness new --promises` seed), so
+`opening_call_request` is always listed. Neither the summary row nor anything else keeps the summary
+call's request, so the chain stops at the row's recorded identities. Recording that request would
+take a summary-handler change and a migration and was not done. A window written before migration
+029 reads as unscheduled, which is what the renderer saw. The fingerprint moves when the probes'
+rendering moves; it is not a code identity. The `source_id` filter still matches only item and
+source ids, not upstream nodes. Summaries, cast and world aggregates and renderer fragments still
+map no upstream inputs. The packet takes every open promise regardless of story position, so a
+redraft of an earlier scene can carry a line whose `opened_relation` is `after`. The derivation
+records that without changing it, and how often it occurs in stored books was not measured.

@@ -11,7 +11,7 @@ from itertools import pairwise
 from typing import Any
 
 from litharness.application.prompt_source_view import (
-    COMPOSITION_COVERAGE,
+    COMPOSITION_COVERAGES,
     validated_prompt_sources,
 )
 from litharness.domain import house
@@ -88,7 +88,7 @@ def revision_author_locks(
     context = recorded["context"]
     if (
         context.get("source") != "drafting_composition"
-        or context.get("coverage") != COMPOSITION_COVERAGE
+        or context.get("coverage") not in COMPOSITION_COVERAGES
     ):
         return None, "revision_composition_not_established"
     for source_key, payload_key in (

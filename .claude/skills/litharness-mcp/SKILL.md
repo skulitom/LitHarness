@@ -117,7 +117,10 @@ Each identifies an original stage, half-open character range and hash; use the e
 excerpt parameters to read it. Duplicate text from different items has distinct entries.
 Authority, visibility and section membership describe recorded handling, not permission
 to reveal a claim. Renderer fragments and aggregate cast/world items do not provide complete
-upstream lineage. Legacy jobs report `not_recorded`; current state never fills the gap.
+upstream lineage. A packed promise line's entry carries `source.derivation`: the ledger row it
+was rendered from, that row's recorded upstream identities as edges, its story keys against the
+drafting position, and a `not_recorded` list for what the row never stored (§257).
+Legacy jobs report `not_recorded`; current state never fills the gap.
 Maps establish input provenance, not semantic support, model causation or literary quality.
 
 For disclosure conflicts, pass `request.story_order.key` as `at` in `world(view=threads)`
