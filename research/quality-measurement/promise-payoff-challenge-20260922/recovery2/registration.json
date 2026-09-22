@@ -1,0 +1,267 @@
+{
+  "binary": "C:\\Users\\artem\\.local\\bin\\claude.exe",
+  "binary_sha256": "0e4195524b73eb77efbdf3e2b36de5322a29f0ca575dfd2d9b4f946b1d425469",
+  "binary_version": "2.1.280 (Claude Code)",
+  "input_hashes": {
+    "runs/promise-payoff-builder-20260919/book/keys.private.json": "e8243f4e7d045215786c66d1b6e88037cdfef8b41bf42aa2c9fc46d0d9a4fabc",
+    "runs/promise-payoff-builder-20260919/book/packets.public.json": "998291e7265a6845a00d73825b9528e11fb4c932ffc2ef6c3c13250205268a9f",
+    "runs/promise-payoff-builder-20260919/book/report.json": "0fc3113b78286cb5db3fa94e0f7bcdf86b9739bf8fc36e232e2c822d2d590685",
+    "runs/promise-payoff-builder-20260919/book/source.db": "4321aab14a2caa25fe6e32858d86d891db059c04719d8da82e35d69dcf6de82c",
+    "runs/promise-payoff-challenge-20260922/tasks.private.json": "301843caf8bc72264874b36799cd6e8e301cdda4a1655a4da1ef83da84f6456c"
+  },
+  "limits": {
+    "calls": 27,
+    "cost_usd": 8.0,
+    "seconds": 3600,
+    "tokens": 1600000
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "recovery2": {
+    "combined_dispatch_ceiling": 29,
+    "extra_hashes": {
+      "research/quality-measurement/promise-payoff-challenge-20260922/RECOVERY2.md": "78bb3f908e387b8618646bb082fa47284345aff461ec592f980f9cc8b5791090",
+      "research/quality-measurement/promise-payoff-challenge-20260922/failure.json": "08886076e2f0e037098a9272550ea80ad45474742555a96a7b9d9091eca0b1a5",
+      "research/quality-measurement/promise-payoff-challenge-20260922/observations.json": "d55e14a48bc0b85f390d2f4257813df60493ef51ec5c4e4fbeeb28fad9be0b00",
+      "research/quality-measurement/promise-payoff-challenge-20260922/recover.py": "da8a2ef65647def1f980d916fe5d94409bd6fbc60c7e196cdd0d93051bc4d26a",
+      "research/quality-measurement/promise-payoff-challenge-20260922/recover2.py": "32e7d77874f7849255dd44915a3796dc4d2a8984326f86c91a541ad3e7eb163b",
+      "research/quality-measurement/promise-payoff-challenge-20260922/recovery/failure.json": "7a56076a261e86c059cfb10bac06281890753868c1227c7551018c86b33769e9",
+      "research/quality-measurement/promise-payoff-challenge-20260922/recovery/observations.json": "4d24083401e1996eaf7c31fc708a68d19ecc01d1841cf08761aaa007adf5f5c2",
+      "research/quality-measurement/promise-payoff-challenge-20260922/recovery/registration.json": "6599eaf708b1cdde88355868f816ade26e7576bf92c10eff1517eda0c1be1963",
+      "runs/promise-payoff-challenge-20260922/raw.jsonl": "4b550a0918f6357b53fe499e2c3a26c31614a4bf3742945b25d9551f9dcb24bc",
+      "runs/promise-payoff-challenge-20260922/recovery/raw.jsonl": "4b550a0918f6357b53fe499e2c3a26c31614a4bf3742945b25d9551f9dcb24bc",
+      "tests/test_promise_payoff_recovery2.py": "7f49750787c8e68aa9bb41c2968b8ad1b388290c1318ae875cf61243b85da221"
+    },
+    "original_registration_sha256": "8c6ffdebffacccecdcb3dd28c843e5a0d837ae5cd4f3235e725cb2e01f1bcc13",
+    "previous_binary_sha256": "0b35df94c1307004f07b738390bfef8dfca5e9af29aaf6517f305bf086b95b03",
+    "previous_binary_version": "2.1.263 (Claude Code)",
+    "prior_failed_attempts": 2,
+    "recovery1_registration_sha256": "6599eaf708b1cdde88355868f816ade26e7576bf92c10eff1517eda0c1be1963",
+    "tasks_sha256": "301843caf8bc72264874b36799cd6e8e301cdda4a1655a4da1ef83da84f6456c"
+  },
+  "source_hashes": {
+    "research/quality-measurement/promise-payoff-challenge-20260922/RUNBOOK.md": "4f07fa84ec172007661ca97740193eafe6a4618f1310ac0907155117c6552a2b",
+    "research/quality-measurement/promise_payoff_builder.py": "7bf4eb9ac3a88cfa1324f07b0383e4882f427e9fa981ce94bd58f8514057af90",
+    "research/quality-measurement/promise_payoff_challenge.py": "40f0ca5d13f6000fed5957c29b0fb5d5ae05424423e59529de2c9b82db93fefa",
+    "src/litharness/domain/failures.py": "bf66835e0f7090477cef66f4c75b8951749a47ab1fada3ff44d8d4fb4ba9d2cb",
+    "src/litharness/domain/generation.py": "8643de34f08191fa4dd7b9fa87a346d353ff6a27b8f0806a23b07cf0e70d0db2",
+    "src/litharness/providers/base.py": "e6795fe70771de49328c02222844f4d54b4be52db9b8dac4879e6ce538f2fc20",
+    "src/litharness/providers/cli.py": "97d9f3cf38ed08668663d3d295f71413ea858501f0a6033cb9231c1d50e9175a",
+    "tests/test_promise_payoff_challenge.py": "2cd2d684ba6b9493b48ea9ebac3cf64e92217be4908eea1d37900595dcb8d196",
+    "uv.lock": "f2b0a31399e19885479d69cc574f743bdc94d2514182c36c1815a0603be37dd5"
+  },
+  "tasks": [
+    {
+      "control": "direct",
+      "input_chars": 1585,
+      "request_sha256": "8daad060fd0af36be237591369c2c620ad0421dd00a99b8b223ca438ef5e7b12",
+      "task": "fulfilment",
+      "task_id": "04a3ac6511fe99b9e34e3d02"
+    },
+    {
+      "control": "alternative",
+      "input_chars": 1615,
+      "request_sha256": "e98c8dca230f2bdf0e0ef40064014d4576cf1b417cd6f02a9d9277e4eeaa9623",
+      "task": "fulfilment",
+      "task_id": "1827febb0a579c71abc78004"
+    },
+    {
+      "control": "trap-0",
+      "input_chars": 1573,
+      "request_sha256": "b6b702eac17b8d055f04033d717d5c7e41f9abd425b6422b756d0b77a31a3f97",
+      "task": "fulfilment",
+      "task_id": "92a45465afec4b425f5a7298"
+    },
+    {
+      "control": "trap-1",
+      "input_chars": 1573,
+      "request_sha256": "90a6728c45793eaf433b66d3394b918d585c47fd6c83017b6a9f9cfd9975688c",
+      "task": "fulfilment",
+      "task_id": "bcfc33ca07783b7a073dc514"
+    },
+    {
+      "control": "trap-2",
+      "input_chars": 1582,
+      "request_sha256": "a3250d7b9f81b3af3a8a085ecc2426549f177abce8e8dc2d0c434b2451d8227a",
+      "task": "fulfilment",
+      "task_id": "055a88ecf498b6804da10533"
+    },
+    {
+      "control": "trap-3",
+      "input_chars": 1596,
+      "request_sha256": "b01bc95aa12ce91f92a2758ea94915a89ef221d71deb7cff7bb9dafa3585d7d6",
+      "task": "fulfilment",
+      "task_id": "76693fbeb15dc2c8bd2c76fd"
+    },
+    {
+      "control": "dependency",
+      "input_chars": 1559,
+      "request_sha256": "50ac2cbf9fcf83e1cba572b7b3009d77d7092c3688890dace0d2f7cf766e170f",
+      "task": "dependency",
+      "task_id": "6b640b8125a0b449088b29f4"
+    },
+    {
+      "control": "unrelated",
+      "input_chars": 1540,
+      "request_sha256": "9feb76c786d58356c14b8f8a14bb7ade2529ad33e053db48b7ef92450ae23c3d",
+      "task": "dependency",
+      "task_id": "31c337c6582de2c75c950f43"
+    },
+    {
+      "condition": "clean",
+      "input_chars": 320636,
+      "item_id": "pp-959968151914847be23e93e2",
+      "request_sha256": "b2e84cfacc034f43c2f0c1988ea5b44614597a55958ae4a05a2b82ebd8f3f4e1",
+      "scene_count": 24,
+      "task": "fulfilment",
+      "task_id": "06eb04d659bc3c0f2290a0cf"
+    },
+    {
+      "condition": "payment",
+      "input_chars": 320607,
+      "item_id": "pp-959968151914847be23e93e2",
+      "request_sha256": "3f3f8d27f778133a8b6ab30c29931c822b85ef33c3df20bd1359ad60a566e70c",
+      "scene_count": 24,
+      "task": "fulfilment",
+      "task_id": "1388cf6e5625fd9e0ae48d06"
+    },
+    {
+      "condition": "whitespace",
+      "input_chars": 324464,
+      "item_id": "pp-959968151914847be23e93e2",
+      "request_sha256": "506f147f57b0fd689ddfd461c69bf1a474951ee360a06bba0be18416bbc4e72c",
+      "scene_count": 24,
+      "task": "fulfilment",
+      "task_id": "1f7569e4786d3d8bbede1341"
+    },
+    {
+      "condition": "control",
+      "input_chars": 320754,
+      "item_id": "pp-cb90677f8b99bef55c97f0df",
+      "request_sha256": "972b6c92dfdcf8433e49c5b2c271a844ba004ff8c9b99936b2f8faf46f3c6d1c",
+      "task": "dependency",
+      "task_id": "40ba6ccf5659e02c1ff179b6"
+    },
+    {
+      "condition": "payment",
+      "input_chars": 320600,
+      "item_id": "pp-959968151914847be23e93e2",
+      "request_sha256": "1cfb46539c529230729ccb87e3f5226f9b7b9b188cf7d5251efcc36b512a3e58",
+      "task": "dependency",
+      "task_id": "486e56a354475b88d5f0ac55"
+    },
+    {
+      "condition": "control",
+      "input_chars": 320606,
+      "item_id": "pp-959968151914847be23e93e2",
+      "request_sha256": "96a68bae3d72d69f3655ec1dfeac7313f1875753cb713d18dbace1955f7ddd7a",
+      "task": "dependency",
+      "task_id": "5105009d4344613cde9f97ed"
+    },
+    {
+      "condition": "payment",
+      "input_chars": 320671,
+      "item_id": "pp-efee3d4c7fa3903ed60435cf",
+      "request_sha256": "7f09b56dba7afa110f1b8b9cffe2c3a547a1f067b2add576f8fdf024fc1c1298",
+      "task": "dependency",
+      "task_id": "5d06e6895fa0b203fc56359a"
+    },
+    {
+      "condition": "payment",
+      "input_chars": 320453,
+      "item_id": "pp-cb90677f8b99bef55c97f0df",
+      "request_sha256": "57ea9fcdf432400ee250148595caa2c0b56862ef7a4d4b66e768ec697b42e66e",
+      "scene_count": 24,
+      "task": "fulfilment",
+      "task_id": "67bc47d1f39d4585eb189ba7"
+    },
+    {
+      "condition": "whitespace",
+      "input_chars": 324485,
+      "item_id": "pp-efee3d4c7fa3903ed60435cf",
+      "request_sha256": "6571443559deb930e209db55b20840c098f2464bbe524cb5eabecc6a3afa4a91",
+      "scene_count": 24,
+      "task": "fulfilment",
+      "task_id": "72239f0e974c9c85a4ec6fba"
+    },
+    {
+      "condition": "whitespace",
+      "input_chars": 324453,
+      "item_id": "pp-cb90677f8b99bef55c97f0df",
+      "request_sha256": "ae5dae17549efd6174a9116ad98997ed010546afa92b9ba56df20124fe4c6640",
+      "scene_count": 24,
+      "task": "fulfilment",
+      "task_id": "85df61ccaf7093f282746b32"
+    },
+    {
+      "condition": "control",
+      "input_chars": 320653,
+      "item_id": "pp-efee3d4c7fa3903ed60435cf",
+      "request_sha256": "3f4b7d5710696bfc67dd3bd12fa7feb87b698e6c56721411004d30f530f2e68c",
+      "task": "dependency",
+      "task_id": "b7d99a1157cb9be177cc5f9c"
+    },
+    {
+      "condition": "control",
+      "input_chars": 320601,
+      "item_id": "pp-959968151914847be23e93e2",
+      "request_sha256": "bba9aa25b81e7f82de45518d31ef95694827f00a874e1423299be63f112a70a7",
+      "scene_count": 24,
+      "task": "fulfilment",
+      "task_id": "b8b1252d945ed243f960fed5"
+    },
+    {
+      "condition": "clean",
+      "input_chars": 320625,
+      "item_id": "pp-cb90677f8b99bef55c97f0df",
+      "request_sha256": "50f0acd68dea1b7222f265c80f28d2f821ce59ac80faa8ba3c64a169310c0521",
+      "scene_count": 24,
+      "task": "fulfilment",
+      "task_id": "c727e0cc76054f2aa2745773"
+    },
+    {
+      "condition": "payment",
+      "input_chars": 320743,
+      "item_id": "pp-cb90677f8b99bef55c97f0df",
+      "request_sha256": "6cf97d426fa49704f0ca3fe8f123acc6cc9401220bef713b3aed2e56e486b9fd",
+      "task": "dependency",
+      "task_id": "cc882a672961355b9c751910"
+    },
+    {
+      "condition": "control",
+      "input_chars": 320442,
+      "item_id": "pp-cb90677f8b99bef55c97f0df",
+      "request_sha256": "6ba89ddf2a54a96f32309de1c74309a23cc1ddf040f9f70364d2641828747e67",
+      "scene_count": 24,
+      "task": "fulfilment",
+      "task_id": "cfbec3ce80b0eb1b3a4201c8"
+    },
+    {
+      "condition": "clean",
+      "input_chars": 320657,
+      "item_id": "pp-efee3d4c7fa3903ed60435cf",
+      "request_sha256": "193880ff006e5e701c52132fed5e280dedf51cdbacfb6f502eeecf084bb08560",
+      "scene_count": 24,
+      "task": "fulfilment",
+      "task_id": "d336c56a0c94fdf9ee51d456"
+    },
+    {
+      "condition": "payment",
+      "input_chars": 320557,
+      "item_id": "pp-efee3d4c7fa3903ed60435cf",
+      "request_sha256": "d3fc13ca6971aba2b18c2d915d9233256ec280abde94c2c1817bdbe9192d3543",
+      "scene_count": 24,
+      "task": "fulfilment",
+      "task_id": "e726da9de46d658e977e947b"
+    },
+    {
+      "condition": "control",
+      "input_chars": 320575,
+      "item_id": "pp-efee3d4c7fa3903ed60435cf",
+      "request_sha256": "f938c421a0b693bd8b3e3c2ce76ba13ebc70bd644b88c1599b70c26ebd7d304a",
+      "scene_count": 24,
+      "task": "fulfilment",
+      "task_id": "edac63a46f0093bb765721f0"
+    }
+  ],
+  "version": "promise-payoff-challenge.v1"
+}
