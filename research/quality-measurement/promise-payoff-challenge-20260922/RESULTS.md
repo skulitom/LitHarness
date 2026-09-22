@@ -1,5 +1,9 @@
 # Promise/payoff challenge: collection stopped at authentication
 
+The [explicit authentication retry](recovery/RESULTS.md) also stopped before any model
+observation. The CLI-specific credentials-file profile still needs re-authentication; the
+reported re-login did not establish a successful CLI completion. Both attempts are preserved.
+
 The full-book challenge is implemented and registered in commit `0bbcd1b`. Collection stopped
 on its first isolation probe because the installed Claude CLI reported that its Anthropic
 profile login had expired. **No extraction check or book request ran.** This is an operational

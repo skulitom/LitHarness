@@ -1,0 +1,18 @@
+{
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/promise-payoff-challenge-20260922/recovery/registration.json",
+      "sha256": "6599eaf708b1cdde88355868f816ade26e7576bf92c10eff1517eda0c1be1963"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/promise-payoff-challenge-20260922/recovery/observations.json",
+      "sha256": "4d24083401e1996eaf7c31fc708a68d19ecc01d1841cf08761aaa007adf5f5c2"
+    }
+  ],
+  "claim_id": "promise-payoff-challenge.v1.recovery1",
+  "schema": "litharness.epistemic-claim.v1",
+  "statement": "A frozen quotation extractor is challenged on explicit traps and searches one development book for candidate fulfilments and deletion dependencies; located quotations do not certify semantic validity or absence.",
+  "status": "observed"
+}

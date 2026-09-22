@@ -1,0 +1,5 @@
+{
+  "detail": "claude_code reported an error: None Anthropic profile login expired · Run /login to use your claude.ai account instead, or re-authenticate the profile",
+  "error": "ProviderError",
+  "task_id": "isolation"
+}
