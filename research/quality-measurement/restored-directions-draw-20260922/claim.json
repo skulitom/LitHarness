@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/restored-directions-draw-20260922/PREREG.md",
+      "sha256": "dbb33347adc20e531751fa69c448fcedd6c6903edec0b48d43a5e85ef329ccc2"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/restored-directions-draw-20260922/RUNBOOK.md",
+      "sha256": "2375529a2b72a7cf5008edf7a8aee65f71f49da03f8565885bb735cd2990c957"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/restored-directions-draw-20260922/registration.json",
+      "sha256": "2f2a9eeea67d0947d34f7976d748a0b6edb1c02ba4f9499f48a24302b27aaf45"
+    }
+  ],
+  "claim_id": "restored-directions-draw-20260922",
+  "schema": "litharness.epistemic-claim.v1",
+  "statement": "A registered chapter-one draw series (at most three draws) records whether the restored operator directions reach the production requests they are written for, end to end on the default route through Codex, beside a person's pass or fail at four checkpoints. Delivery is not compliance; one draw is not a rate; no quality, reader or enjoyment claim is licensed.",
+  "status": "registered"
+}

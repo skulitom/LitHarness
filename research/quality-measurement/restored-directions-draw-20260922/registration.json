@@ -1,0 +1,557 @@
+{
+  "amendment": null,
+  "brief": {
+    "sha256": "20fef8c91570140f79f83ec5031e5300fc1515d8745044406127dc984e55a54e",
+    "text": "System apocalypse. When the System arrives, every person on Earth receives exactly one Slot for one skill. The protagonist, a man in his twenties, receives a Slot that can hold as many skills as he can take. Invent the rest."
+  },
+  "checkpoint_items": {
+    "chapter": [
+      [
+        "H1",
+        "the exception is one person's and works on the page in chapter one"
+      ],
+      [
+        "H2",
+        "no debt, ledger, licence or administration register"
+      ],
+      [
+        "H3",
+        "system numbers are present and the status sheet renders"
+      ],
+      [
+        "H4",
+        "progression is felt in the chapter"
+      ],
+      [
+        "H5",
+        "the protagonist is in his twenties with a prior life the reader has lived"
+      ],
+      [
+        "H6",
+        "the chapter's attention goes to the pursuit, not to one procedure"
+      ],
+      [
+        "H7",
+        "the tone matches the popcorn shelf"
+      ],
+      [
+        "H8",
+        "third person throughout"
+      ]
+    ],
+    "concept": [
+      [
+        "C1",
+        "the exception belongs to one person and works for them in chapter one"
+      ],
+      [
+        "C2",
+        "the ranks are counted and system.start_rank places the protagonist on them"
+      ],
+      [
+        "C3",
+        "the threat is physical"
+      ],
+      [
+        "C4",
+        "no debt, ledger, court or tenancy frame in the premise, the threat or the system's look"
+      ]
+    ],
+    "listing": [
+      [
+        "L1",
+        "the listing promises LitRPG: a system and progression the reader can see"
+      ],
+      [
+        "L2",
+        "the exception it sells is the one person's, not a shared or issued power"
+      ],
+      [
+        "L3",
+        "no institution-issued engine and no debt, ledger, court, tenancy or licence frame"
+      ],
+      [
+        "L4",
+        "no internal schema word in the title or the listing"
+      ]
+    ],
+    "world": [
+      [
+        "W1",
+        "no administrative pressure: the pressure comes from people, danger, distance and need"
+      ],
+      [
+        "W2",
+        "the protagonist is placed on the ladder at the concept's start rank, or not placed for an unranked start"
+      ],
+      [
+        "W3",
+        "world check reports no snapshot fault and no would-breach"
+      ]
+    ]
+  },
+  "dirty_paths_left_out_of_the_archive": [],
+  "disclosed_deviations": [
+    "listing --no-title-check",
+    "concept --person third (the README recipe passes no person to concept)",
+    "--max-invocations-per-day 60 --max-tokens-per-day 2000000 on every verb (CLI defaults 500 and 5,000,000)"
+  ],
+  "draw": 1,
+  "files": {
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts-0.2.0.dist-info\\INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts-0.2.0.dist-info\\METADATA": "e77c43c58481c9a17edf413c06fd53d976c302b71b8d9934dfdcae35b5560f85",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts-0.2.0.dist-info\\RECORD": "c582e31b5cf492579e0240e02634955dd86d93a990d56771e1792b65ec72f734",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts-0.2.0.dist-info\\REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts-0.2.0.dist-info\\WHEEL": "ccec20e2307acd7da453dd7437e70c6b08e2bc3ead3bc3445af135da37b56d59",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts-0.2.0.dist-info\\direct_url.json": "0cea642a68dfc2a3c5c283d324ad80b60a518ac463d1e679a68e3b1aecf8c527",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts-0.2.0.dist-info\\licenses\\LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts-0.2.0.dist-info\\uv_build.json": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\__init__.py": "1568d6269a41601e193df6d9d22cad2b1c6f2b29f8ad399f24c7385ab4b0b08b",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\_schema.py": "e72426bdb62d0f09c10b48b11a1deddd8a2b1c3a012b2b121a2252349acc44c9",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\_serde.py": "660ab07a13bd957d076f5f4b87e86a6a26c5d595cd7c36fe86620d320dd52fbe",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\conductor.py": "e1c824beb2044d1e9727ad2a75193af31a722c7e75b9f0a9f5f78096aff71663",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\context.py": "02f17069509a44fc441157f3fe2a08ac6f077c44d70b79e320d88490fb9910a0",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\envelope.py": "3c14a99f994233306de85c99472cc8392340a85b0bd6d00587fa834811916826",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\evaluation.py": "2b2ece1f2d301f90d82d81a11ccfe7ab6b60f1cf7b87fa59afb899dd0d5b4286",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\events.py": "c1d989cce331da1152cf53e3bcdcf5b0e5d1c6b55884ff6a706966a26507234b",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixture_build.py": "a155e87cd27dd0f365024f8d3e84b65d054838aa0cff1ff613d78f4bead5d828",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\__init__.py": "66bace271eae7889b9aa925c76ea0572f5b21e45557d9eb054645812318bf42e",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\golden\\litrpg\\context_gold.json": "3e7867202e85d255df766375109961062afdf8b79ec982c83ffb1b7409d94107",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\golden\\litrpg\\findings.json": "ce4e9dec8091bbf48c3eec1b8116e9979bfe2471ad8bb4e035e4bcbb81a1cc56",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\golden\\litrpg\\impact_gold.json": "3389242464ced2477e7b8ed35ef623b7da829ff6e464b2e8c75dec07eafa1957",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\golden\\litrpg\\manuscript.json": "302dbe106c427dfe244530aa5036622878326d420583790f3a9ff8aafe3ae6d4",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\golden\\litrpg\\plans.json": "f3020b396d0c504749cc5dcd4944b5a03650c6958b67a859cd3106f11ebc52fe",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\golden\\litrpg\\state.json": "0db82e90e62ab99dbcd2e1d23ee5b5ae21a7c345c4998f8e4cfe6730c0bd7919",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\golden\\mystery\\context_gold.json": "161f273d2bc2a4e5c85c10bb80c09e03f32cef5b0c3222ad9c48d52e08a7992a",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\golden\\mystery\\findings.json": "dc9d5312ffb2cf0eeff39ca415df1e2963fc5356c183ed7879b7131911ce97a2",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\golden\\mystery\\impact_gold.json": "6de7c5a70ed6de51f6521b2315efb5a8960b0755a74ef001e7829ad2e109cc98",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\golden\\mystery\\manuscript.json": "3e78ef8d547b7ff814f119a2bfafdb97b5b69e8531003aaa9172aaa1c06279dd",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\golden\\mystery\\plans.json": "dae6905cec47c2add2a3fb0706e8c791ed240ec1b6e9745f587e5a538209ff41",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\fixtures\\golden\\mystery\\state.json": "650bbe94da5c5fac21b22121fa6bafa0ac10b9cb7a35600f8919cc1f4db13ef2",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\generation.py": "f851ca13434e48ce15629bbeb74974bcdb225c961c317a2ea75de8dc52967641",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\goldens.py": "6c9fe5486c13c7062cc0db7aeeddb0e20397285682db324e0976fa72b12312c9",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\ids.py": "379e98249697e4f241b91d89c0161a7e40597a0ce99da2e86c2c24ab567aa7a9",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\manuscript.py": "7c4f599234520dc2c3193109160372956cfadd40246ac23196317821b9063909",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\plans.py": "7a22782994eedb19fe70902809afe4008a46b408dee3f979643c361a3fd40e5d",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\propagation.py": "095d073287cc036a52fd357248dcf3723d09f145b229196b5904a7e5431b6bf9",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\py.typed": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\runs.py": "e947b0a27d0a359b764f85b1e920b209585d8d7988a6e646558da1af83605482",
+    "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages\\litharness_contracts\\state.py": "8ebeae47881fc6916c56edee6e0a967d336113ca4af0f8a7f4ab0ae79ada3aed",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\restored-directions-draw-20260922\\PREREG.md": "dbb33347adc20e531751fa69c448fcedd6c6903edec0b48d43a5e85ef329ccc2",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\restored-directions-draw-20260922\\RUNBOOK.md": "2375529a2b72a7cf5008edf7a8aee65f71f49da03f8565885bb735cd2990c957",
+    "C:\\DEV\\LitHarness\\research\\quality-measurement\\restored-directions-draw-20260922\\run.py": "a4ca267427e54374d929326f450ee64ede57daa12e70c91ff8eb1c3bf1e0d9b9",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\brief.txt": "20fef8c91570140f79f83ec5031e5300fc1515d8745044406127dc984e55a54e",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\preflight.json": "f5909f15f6c981ac4dada281ca2864d2440ddb1a31468831347b2a9f36865f0c",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\runtime.json": "16368ece98f90e27ef6d5e23903454defba10e67a4ba1f865773c44b8dba7e66",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\runtime\\Lib\\site-packages\\restored-directions-source.pth": "b95cac1e69ab2b4af9fa356efaf58fff14321a07d893f58af945f1d94b7e51cd",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\runtime\\Scripts\\python.exe": "757d8fa9c57147638703f3d3dd5ac61d96359382e47f68abb08763f128547f20",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\runtime\\pyvenv.cfg": "eb18133b358d8b64ff50d63ffcd31492f6eb8c8647e99bb39337fc00bc5cb957",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\seed.json": "ccc45ab29cbcf4bafde46fdcd35b98a3adec7f64ff6cac48f4d39e7e239d5cee",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\settings.json": "eb8450e2d2b64a0a2c63a7af969800d86b3d421ef90a6790f2bb7ec19f187613",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source.zip": "15f62347cba85bffc36592bbb2ef2762e58f262d38f0626f30658b473b7f614c",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\001_initial.sql": "a3ab2cf31a0d476d54418c288e7eb72d695a2483627acf590337a8dcd669d5c3",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\002_conductor.sql": "dd0a533b1a42783bc2708a52a64be0418a0d6c35717a7923d5c3dfc4e5861cb1",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\003_job_input.sql": "d0f58b7538a7cc71eb153dedb927de0f67ab6a383f7c8becd787ae5251d94c6f",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\004_policy_decisions.sql": "10a9a25a838af103196a587eefa5c3e7e18176d327d7fc6b62218b120d98fa09",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\005_directives.sql": "cf75a0628dfcae22b5adad690677fe72f4e08a50d826fcef3423947fe388de16",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\006_outbox_backoff.sql": "d6a8d2564c07690bc49bf9b45ad9394cfc4c3aada1bc81380d87938ff3c69caf",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\007_control.sql": "85ce68ba7322e168a23191e39f4ba9c603c35ea3f231508f39c4e6f203070eaa",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\008_decision_cost.sql": "8b794639522b6fba9ca2ab84263db571bee1acf77b886df1d98b0cf7e5832baf",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\009_exceptions.sql": "8e997ab7b6576597adfc5aee69da44f4dfe88b5f028b08f68857078fb704203c",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\010_branch_heads.sql": "38eb9031809a103f2d3a96e31976eebd330b1f7e525354222082f5f06d7270a4",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\011_plan.sql": "62e843f1f4712e8a05a73f63226aa9e579d14697fd8163170b96b962a3e29e4b",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\012_state.sql": "d26f2ed5a9cd4dae51b5764da962954d58ee4d5e3387be0fbdfe2e9589f11c8e",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\013_findings.sql": "207aa663fd4d5ccb0a0812c34fa13ff6924b5220c64c3c2bf017b8f8c07bb073",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\014_calibration.sql": "f93eb728255d91eef3e02b358d7ef0201be45c7208d97d87e2fa6b300d37cd60",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\015_calibration_flagged.sql": "33ff34d88faf0760f0b56a495752e1423af8462c0864e610ce87c2b2e8903898",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\016_state_retraction.sql": "363444e5d5724493b6e6754b309da392b906e3e22d692de9ff6d9fe5dc5eadb3",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\017_plan_refinement.sql": "dfe58dddc9b5e29b4023804f30e215f3225287cc656fc740f35cdd0883e956fa",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\018_calibration_evidence.sql": "ae38d367c0d028c5f085a5f404043490975fd9414077abd3b1f2bc648c92f097",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\019_scene_summaries.sql": "ab2c77982fd3819863ecff7ed8ac98f20cb699ab90ca8544b32b73b274582b2b",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\020_calibration_counts.sql": "7c4d297706444e1d4b5548978eff899b01b0a2fc07cf5170134e888d14392324",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\021_foreground_loop.sql": "e62f278fee1018ac6bea0d754b72391c01aacaeda84082854edcb47f8fd9586e",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\022_preference.sql": "db5c9a380f16d98c5c6304bd49693e0779e18cb0ac3e74334b0d47d8ea047b36",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\023_promises.sql": "5f474edc22c15b3c3ea79e39a4ba182c3530573e2d37a51fccdbb12044952657",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\024_span_candidates.sql": "4ed7e82e3a152d0e3ae9df251e29e8da35fe6da4d968e2e47ed7219dc60e683d",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\025_reader_judge_loop.sql": "45b421b2075fe8c913bef1db5a82cc844c89acac7aa04d15a750eaef2108847e",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\026_judge_discards.sql": "d75159f07d45c8de4152839f6450f8e559aac458d5e9acfd783c2f7f44afdf00",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\027_directive_author.sql": "b11752e066d271df754370bea38a523de693165bc0e7904d7659e6c8617b2bab",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\028_promise_kind.sql": "806231049615376d746579ccecb51eb0b4f4bb328c0dac18aba42438aada8c03",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\029_payoff_windows.sql": "665f8cf3d748557010f26608a43fc24a84c97f839762b3d3bfc03a10999e46fc",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\030_variation_sessions.sql": "e1a18f9d58189b17ec730d658c8b7a375d26568a2b127bccb7b31d526999e589",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\031_reader_reads.sql": "e86a7b9af84a1eaa7a1957eb1a78fce95d0322a84110ff7fb00c22c6dc9b65f7",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\032_reader_futures.sql": "e80e2ff7a86687c5daf61e4e6ee0e14364eb0741740ea64d929a6a653476a35f",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\033_reader_control_plane.sql": "6ed21b5fa36ab9d324985fd0457e20954bc90829004bfdd653fb7367381ccfff",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\034_reader_evidence_completion.sql": "39cde40310a57d7d1887a5965c7db9da6a308241133f2bd181bae1871719aa14",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\035_writer_roster.sql": "107d2abace958446eb30cfa58cbec18b6ebe44161a3c3f6b4f013ebf2c1e3a67",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\036_roster_refusal.sql": "3f6cc045401335a46a005160c84f7de8f97c1a5772cb63ac49deb304fbce9b01",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\037_voice_exemplars.sql": "a5656dc88351649735c9914bc140a163e38970d61806a87d17ab05539761ba71",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\038_pre_revision_drafts.sql": "26b4e424e3c0b59b9a48dde7a10c7fec65703e0b41fbc64ec1c9e014e1d00426",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\migrations\\039_release_queue.sql": "be9c81dc745092baa6884c62cb35749d5955aa8feeb4e35e9cd830c2892db2e5",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\pyproject.toml": "c02b040ae443ce5fd5724c1f362404ee669ace8f1cfd78665e74299705d6f252",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\__init__.py": "0cc3e6e1d8db6b5b087595e7bf04a5be83a5a22e81476e9ce8996304ff917d04",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\__main__.py": "699a8be8caf3ac529fe37060f87ae24d09cdcdbb2c480e7ffcee759ae00ffa21",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\adapters\\__init__.py": "ae43b0051296cf795cd7958376f98aed47748e4711577197dcdccf2fbdca33d4",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\adapters\\continuity_cli.py": "6ff91559ebf56855e066838abafae01bca20b36d2c6dda117bad9cdf12c5a38e",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\adapters\\contracts_fixtures.py": "770b1301969438f69fcfd8baa98f58ad1c0fc9b4ad59722ca72833f98010728f",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\adapters\\evaluation_artifact.py": "c8f79c9dd03fe04180a2a60db59aaf41a2d8bf7b96448833321d8fc1a492e3a9",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\adapters\\sqlite_audience.py": "bf4be64db59c3c09e3fdc60ba60609fdbc6548456fcab3bd7a82e27ac56bea0e",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\adapters\\sqlite_errors.py": "4f1baee84e3c4c6377bf1fadf30618405908ed9ed22415936af9a96433e5b14b",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\adapters\\sqlite_jobs.py": "39a9ea52db52959964c8ef2c8e6199c5dcd61896aa1a42920e8f9fea37924248",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\adapters\\sqlite_plans.py": "5345a219edcb8b3e7e0b3e2dc1643ae4d7e2a4c2cea95a3f728e65686b6659d3",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\adapters\\sqlite_release.py": "d9ed174b6f27576d3a13eb2d6da80da7ec50bfea09060536f4f4922cfcb993ad",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\adapters\\sqlite_roster.py": "9b819e93dba55774ce0cbe89395dce5417a9ade355f2ef1634de04e58c780be0",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\adapters\\sqlite_store.py": "a1e89c82c96d2af8e1b65ac0f3da0cee6cfe4ec842d08731287721712dc453b9",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\adapters\\sqlite_voice.py": "f2f10839383225202119c5737c838f581997deb9056774cdfedfb1beee51464b",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\__init__.py": "f3fb4bd672b7c2f1e4244aeeeed9ed9b39d3575a78d41d11093d5c7a7aa5f88d",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\bookaudit.py": "646d2dbb7834178e194b782185503dfc814a12d61b74c6b30bf45b21d6d6b15f",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\chapter_coverage.py": "57f16164fd226833360a1125502c25c2e5a8309dc1fb6a91182f73e26f787605",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\chapter_layout.py": "17b1d0ff570b22e044838026c3d9c9c26c68096dcab6b369cdaf985d56e66ede",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\concept.py": "179ffd39b378aad5b1f80badb199db164009eec3493b02c762372001947bd4e2",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\conductor.py": "08160c10711f5b718ab6c88e552176babd5c821db9ed3b616652263146e577a1",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\covers.py": "9986f68215b2f38d34de5508fbd648237e717aa1c4ce5c204e793ee58d6e2ec6",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\development_coverage.py": "9f12c64fc3166579522892d335dbd31c6706b94e3c7988466981caa76b47e3dc",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\directive_planner.py": "613221332792f3b43ddedac254dbcf3b4cbae89306476387805ae04cad4d248f",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\director.py": "7e2c5264879825cee422d28316c70750fb07523aa5c7254238def6899eb7fdc4",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\discovery.py": "5835e8e26913a1861a4631281931e09ccb44dc1c31f220866c8abbe795d0cbfe",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\dossier.py": "ea2e06f38cd104f950fba4ccbba1b52b4ec232b2720ea41e4af565822703a61f",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\editorial.py": "ffc2ea3ee5c467095432bf4d9132b205a579dda931cfc85481f2497b32a0665d",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\evaluation.py": "fb4355b8f8f3c292d81aafa774edac06378bda70a7cc8fa652b78ad0652f75b5",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\exemplars.py": "9d8cd5dd9684e88b497b8e628d28f698437766a4310dd100f8a606b21857a1b4",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\export.py": "57ec4b848879e7e404bc53cdadeaa01de5bf13fa524e4f2eac64e74cb9bff33e",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\fragment_derivation.py": "92c1cca51cbd9a4428b2d257f863b871db0ba3c703905e0383f28c818dc3316a",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\handlers.py": "14b479104f49efec94e5b8a25b15a3a228233568595e01cab443cdcfdb404578",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\instrument.py": "ec856378515358eb949b59339315943b25c3a7661538aff7de8c9d6f8027790b",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\library.py": "b9c212887683bfa9ce8271454eaece3a8a3e739a2829befc2fca529c71913e77",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\model_context.py": "e432624dacf3955bff502b6ac8c65f48a08823df1639dfdc0147138fef7c62fd",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\narrative_planner.py": "c847089be87fd381986db817ac20305473fdea8b72c1d5591ed03ca95cfc1944",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\operations.py": "5ffd75786b788ad08dc0ca2d4b2d0ae8732bd921b714c35765180836eee41d4e",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\outline.py": "b4284cf91ad66555c5b4973cfa7197beedcf097e837efe79ae8644eacfdf635c",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\overview.py": "f67f8b622865ebe804535ae486a3ebb27d94445d0036a305d53463d29e442a5b",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\plan_refinement.py": "784a8aad81f344768fe70d2e859f6e3b3b0b07f7efc1a062e420c2e22a79dcd1",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\planner.py": "1ec1dd87e5e79b949711ff7144deccf8ad71995a9c62adbe524037c413ade862",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\policy_events.py": "aa61796252df79b7227f817f37abb7a6b4320a16d7a48b3a58f32a11690438dd",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\ports.py": "f5ea239da4875e4c04fb576706a0a169481406f95d5df8c50a81b7285698b855",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\precision.py": "eb4f8efc84c26125d9b3599c987a8340408eb7df13251286b83ac1536b729d95",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\prompt_source_view.py": "5cb2025c2a14b10bd8f130c58041f9a4efdb616ff3299ca0f8ceb944113f6437",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\prompt_sources.py": "85b31e2491d42cb68712e9d12aaec942a09442f23a8e2373ee60990e12e62aa9",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\readers.py": "42012c77c66a903f192a94076773ac9e8805354ad62bcae69c997ee9e4a1c9b6",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\recruiter.py": "2406d034546c975d613012da1cc32f082b10f3a0bf6c83f3f2d39ed3ac1fce41",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\release.py": "ee566fbc45e9f29cce021c88853f9ceaca4a3bf765a7c9c6991a8d22507d77d8",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\repair.py": "ca025e82d345beba4be83a6a042b80c712bf4ec7a2842230897b7ee4b35c2412",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\reviser.py": "347f6753121eba9d6ab13a0e5416ea0b6ebbf294dcaa9abe845495f129b4ec9e",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\revoice.py": "0c4e1d3730118d1459efffe1ad42e25760b19352e42570b55b64ae9ef46f42bf",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\roster.py": "6630ee98fc52b58658b548874868a24e9dee7bd917aa6b4481e744dd908bd5df",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\scene_trace.py": "46c66b4dc780f6343a2aab44d8d49c39ee61a6063bc5e2288cd53399f83cde3a",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\status.py": "74b6843e3d2e5c6dc0c23344cbea39cd1f3cb427b15307791d69e2c89a8b8587",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\statusline.py": "884a6155a4295cbbed2d35d694199920c0033a310589d570eca572e0fab394a9",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\story_material.py": "1b7f1341dc68bfb41c78f563464dc08c8fcf5a54299ca37951ec2c337123f899",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\summarize.py": "7823616d1b3974d270f7240e8f126adb76252738b4b03449c68c4ce3c2d7d452",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\tells_pass.py": "4934e3f56224af38461197553af05b0e24e4bef66f6c3d9c5fbce579742fefa3",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\titles.py": "0b6c3b7a25507f6bd8f2e842c04b51df83901fe14e9bd10b5817ff33f4efdf04",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\views.py": "82f3afc3576d96ed03bb3fa42293db16af1935d4d233e7ed73dd1743229046b4",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\world.py": "4d8bbf0028b5457c882e882639846cbfea928f91cb93df0f9c2cf42017420c6a",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\application\\world_agent.py": "01c3b1d7ae57a80b0264c3635f8d22664a0ecd55aafe1d5dd70987a920bb97c7",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\cli.py": "9cb090c97023c34f775a457e9b7dcfbc7c443b1c378dbe9a97ef4701fe07ca00",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\__init__.py": "2d681b619d322d9f23aa4b99fc0b8effc5a2974902a2a6ca4372618c3eb66f73",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\advancement.py": "52043c47af7c10a9d9140a45d0ee46d0f9ce7b241ea3810afd4a5b36884adfc9",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\audience.py": "053299e434530c8a5525dd1d07c2fd4c0a3fdfa3c326ce2b860d0d77bf56ce61",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\beats.py": "7f0352424fbe395e8eda4e7df177ade9d40836c13732af77cd3fff6cbcc15290",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\budget.py": "95de47c81255a4e056df09d3c8a6c37b0e8142dd66add27dda66d36b3a9708d2",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\characters.py": "6ee5640e47d5baf5fdbe13d70e8a2e67fad159599df227b217566afa7936d42e",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\context.py": "e6907ddb7d3e1c5294da1e9c9ea0dbd6da97686f2c695b8b43fdaaeccc45c88e",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\directives.py": "54827d2a2604023d55062ae275cbee0062e9d2bc596b710243a10bfa7bd50367",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\directors.py": "6256ebf32e752dbba5930f465ab59ebe9fc79356db973649928a99a779759727",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\draft.py": "1fa58dc4c40e96094e0739f650a99d943da2787a03d81c11a93bc725f1c8c1b9",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\editorial.py": "06af0be467dad2937b5602e528d13e35567168662668bedd3bbfff3f122052ff",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\events.py": "fb0f28a6ed56da01898c94f41d503796ec70c7788a9357006ee1023f6771ee97",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\exceptions.py": "c750f0433f2dece438aca6fc9146faed1f232f020357630ddd5c189ac4a9c3b5",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\extraction.py": "d24ed130f81a0ba483237b7b663f4985a4ae83dbd706894b3c4c11d8df763dc4",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\failures.py": "bf66835e0f7090477cef66f4c75b8951749a47ab1fada3ff44d8d4fb4ba9d2cb",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\findings.py": "a7b089f6f2cfef099176edfb6b30c6549217eaf6953a56c3589b5d250e305f29",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\gamesystem.py": "bbcc6e3d2e0ee24fab8f35cc3f0d09153d7c15107e9adc721ca90d730ffb9429",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\generation.py": "8643de34f08191fa4dd7b9fa87a346d353ff6a27b8f0806a23b07cf0e70d0db2",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\genre.py": "946d53c4a718a27ce5dee78c63800266fb75087e3577319268701f853e10ce58",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\graphline.py": "ba3becffe45b08d80344fdbd59b51c5c9b6d85f67d47da188bb760c308e3d839",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\house.py": "a413089d33f3dcf3159c89f9dc90297ed3f6d4082452463dd72ff1ce94fbf9bc",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\integrity.py": "144d83a7e71f1582e3a445cb1f26e429d0f39dba6575245218abca7f061f4f6a",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\invention.py": "e91864c2a2600555ced5b9dc966428ef8b77d13fef5e0fc03b8d466564d14600",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\jobs.py": "fe3ad181f0bb9a2fbad69470b04b075ec0ce463544bfd4458b5c40292bca03ab",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\moves.py": "fc2684cbf087d4b0ef6c39a08cab1c064c98e69f5f14c0a9fe0431ffe637f418",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\names.py": "58de8fedbab092394c679effd66e32f47dcb38f680e94eefb3677a9a8873c665",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\nodes.py": "42697ff7aaecac226dc5eda251d5af02cf90cafda2197a44182758bde0773933",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\patch.py": "f76d29ff0ee80567b176986bc2a077cbe883202240f97af671911dceb6291cc3",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\plan_refinement.py": "56199c82a1f6fa5c1cf01263340eed415ff0f662cdf5df51445b629b7aedafde",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\plans.py": "277ed4e4b4f42d22787d2628dd1707dec86f2ffad1eb8942fcb8840dd390e5e6",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\policy.py": "c9ce36eea8fa7b20b0a9b9a7b9d45f086a674c5f997b29f20ad8cfce6d80a429",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\position.py": "181da403320f18bc628123f2bc2ad02a2452b64e7108fa33359b753a0932398d",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\progression.py": "86634408e1e2a9a88e64192a97615238fdb1eb1875c6b0c282674672416c4e00",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\promises.py": "b599339e44b81ca0961cd7d1e9df9bd8fad0849f0806053482115ab54fb5f4c7",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\propagation.py": "7de85aafed92e819c5094dfebc80d7b068b7e95bc2b4b8e8e455e807a32d0074",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\release.py": "b65e0e24fa47d90092b433b10576f6ce737245d3dfe37a4a69f6eb6ef6884f0e",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\reviser.py": "bf686c104496b70573ff70515977104e6692c9a933766537a38af9838b9e4a80",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\revision.py": "b460ebe74bcc681a8fd780b830b5bf889f5c5cb6a31bf8c27717478792cc4021",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\rivals.py": "3e3a269a42fb78eadeb44669cedc187a2338fdd2d40647f1e0ee45519239da1a",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\salience.py": "1589d262d7e2e2da3c9bb15e0f1043d3cf62ecc0547fa7ded0609e7007f6c430",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\scene_brief.py": "f217beb35fe7d55c60078f51c76e8c3099c4e74598ff04fb7d70afa0989596e1",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\schema_words.py": "0abe05c72d60a541e3d5c6ef37c9c1e2c160301080f77e554ef01072bd0ed246",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\serials.py": "354aff5006229611affd5b3a0f890643df83738bb5baad2608817579e7cea71d",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\sheet.py": "606602feffde56a5d877a3f306cc1580ffc4f434ac8bcf7c6a7e68b700703f12",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\staging.py": "a16fa9aefd2b336ff871ed9541a3cdb0097d0bff5a6a2c1b87c706a76ced40ad",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\state.py": "76b0ad70f99b5dc092fb1f7d3a2ecf8352c1f7821beab8a6160e537965900606",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\systems.py": "34bed5c3bcdc4fa8543ccf7af344817f053769c66b68a8744a55658c46844ce4",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\tells.py": "c4459441995291de158f18dbbcb7b903b4e126c164fef0e955f01fedddea589c",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\text.py": "780dcc12cdb8becf60a7f3676132735e18db18a34adfca8241b8498c221646c0",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\voice.py": "c5dfc24f4f93a5c880c7b61b78e8ba34c4e4d849d10cb51dae2a19fee90c55fd",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\world_brief.py": "831ac184e451727010ac378029337471c4e4316e5d51f0d22924babf49d7d5bf",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\worlds.py": "a3412a746eed36f36ac9c72e04528123323d3288486053d0d2f53345543ed632",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\domain\\writers.py": "ec8aca16773f61575cb73beeba7b344cadc44f10a7dbdd83e7df4d6091e170f5",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\mcp_server.py": "0cb6468387d3ac4a7051f376b6c9944929e59a7e13fc8c1f576991fe97f492e3",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\packs\\__init__.py": "72b0d1bd3772e3638573249b0dfb8a01e970b6fe5000ee6d70e4310f69e91ce2",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\packs\\litrpg\\__init__.py": "b24d8a3c5e7400549186429ba9af1df46fca81f9d513d8efd7abfc8f18bb0616",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\packs\\plain\\__init__.py": "535dd08838896923cfc12b01a6c6d8f670612297758ba628f06485c5c02d7f3c",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\providers\\__init__.py": "f01e6ab1b2359816eb8269303382a6e3eb0e057a7871bed9746776ffbd83004d",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\providers\\base.py": "e6795fe70771de49328c02222844f4d54b4be52db9b8dac4879e6ce538f2fc20",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\providers\\cli.py": "ccba7ed4582a856b6371c08c32c034830803699e90be01b5cbd5a8f9d4d18b85",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\providers\\codex_cli.py": "35303484f85bc3bdd76cdf875abe2d528fba471567e4150cbfe5861d1310d8be",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\providers\\codex_schema.py": "8804db3bb9e91f0c695cbab63c44345bc3197d4f033a43958ff41363195847db",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\providers\\codex_tools.py": "ac1691bf57871d0931d8d8ad1c1c56b9271e1f140ea0c68f7502d7f7d0b77c4c",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\providers\\fake.py": "9a06f3ab20dd385228358337817b5f69e2d22f749163447ace1d581bf5f60216",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\providers\\registry.py": "008c33e6757486aacf473f6dd58e5e2377ad270a7d6c613c7c157bb987c5c2f4",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\src\\litharness\\providers\\routing.py": "29d37a98d60fc4e2b6da61089d31c09161d0199a9215c435481039abf3528cad",
+    "C:\\DEV\\LitHarness\\runs\\restored-directions-draw-20260922\\draw-1\\source\\uv.lock": "f2b0a31399e19885479d69cc574f743bdc94d2514182c36c1815a0603be37dd5",
+    "C:\\DEV\\LitHarness\\tests\\test_restored_directions_draw.py": "e47ff31079d0c49b35b0c0b95ba43f05a160718e3ec391d6c87fff7dc771388b",
+    "C:\\Users\\artem\\AppData\\Local\\OpenAI\\Codex\\bin\\247581e40ee272fb\\codex.exe": "bc45017e8239dc150258f69309ced9df6bbcdf5b8e4f346decf780ac0999e226"
+  },
+  "layout": {
+    "arc_chapters": 6,
+    "chapter_scenes": 4,
+    "person": "third",
+    "planning_material": false,
+    "scenes": 24,
+    "target_words": "CLI default",
+    "title_check": false
+  },
+  "lexicons": {
+    "admin": {
+      "account": "\\baccount(?:s|ed|ing|ants?)?\\b",
+      "certify": "\\bcertif(?:y|ies|ied|ying|icates?|ication)\\b",
+      "claim": "\\bclaim(?:s|ed|ing|ants?)?\\b",
+      "compensation": "\\bcompensat(?:e|es|ed|ing|ion)\\b",
+      "contract": "\\bcontract(?:s|ed|ual)?\\b",
+      "debt": "\\bdebt(?:s|ors?)?\\b",
+      "inspect": "\\binspect(?:s|ed|ing|ions?|ors?)?\\b",
+      "ledger": "\\bledgers?\\b",
+      "permission": "\\bpermissions?\\b",
+      "tenancy": "\\btenan(?:cy|cies|ts?)\\b"
+    },
+    "frame": {
+      "clerk": "\\bclerks?\\b",
+      "court": "\\bcourts?\\b",
+      "fee": "\\bfees?\\b",
+      "licence": "\\blicen[cs](?:e|es|ed|ing)\\b",
+      "owe": "\\bow(?:e|es|ed|ing)\\b",
+      "permit": "\\bpermits?\\b",
+      "registry": "\\bregist(?:ry|ries|rars?|ration|ered)\\b",
+      "tax": "\\btax(?:es|ed)?\\b"
+    }
+  },
+  "limits": {
+    "cli_daily": {
+      "invocations": 60,
+      "tokens": 2000000
+    },
+    "max_draws": 3,
+    "max_failed_ticks": 3,
+    "max_ticks": 24,
+    "per_draw": {
+      "calls": 60,
+      "seconds": 7200,
+      "tokens": 2000000
+    },
+    "total": {
+      "calls": 180,
+      "seconds": 21600,
+      "tokens": 6000000
+    }
+  },
+  "lock_prefix": "restored-directions-draw-20260922:",
+  "manifest_sha256": "5769adb784335c516ff1dc72c417505af60646ba826217f9ef5252dba761224a",
+  "preflight": {
+    "adapter": {
+      "effort": "medium",
+      "model": "gpt-6-astra"
+    },
+    "delivery_table": {
+      "development": {
+        "needles": {
+          "exception_ask": "9ffb6a24f403c5fbdfe2431dacdaaf9ff4edf473ff19db7a39dc60da0331e422",
+          "start_rank_ask": "a719125a947d708993885226cef3e8a9a7753d20dda612e5063bd25b6dd1dbfc",
+          "world_direction": "3ac5fdf2ffc495786fc8a7df138b290b8cefcc8c6333b9574e975d1214722a1d"
+        },
+        "profile": "writer.concept.discovery.v9",
+        "stage": "concept"
+      },
+      "discovery": {
+        "needles": {
+          "direction": "565ad1544fd573e9c3ba4531267f420d4ae7ef82229d0fe40b9d802ac2faaa9d",
+          "world_direction": "3ac5fdf2ffc495786fc8a7df138b290b8cefcc8c6333b9574e975d1214722a1d"
+        },
+        "profile": "writer.discovery.v14",
+        "stage": "concept"
+      },
+      "outline": {
+        "needles": {
+          "early_magic_rule": "16360df31302f716410ce2f6a40b92a8bcc3b7c2a6aceda41613fabd2920241b",
+          "first_use_rule": "221a407f7144e03e56254441a800fde07d87fe35867983901179cb1b38a653f3"
+        },
+        "profile": "planner.outline.v8",
+        "stage": "chapter"
+      },
+      "seed": {
+        "needles": {
+          "lived_world": "f53abc678a08028fc8a07e3b21290d391ddd7c971b78d892bd71025129bd9433",
+          "stands_at": "dba514360c55f225761f2ce31f61104fb40cfa086f676a19d2d5dd004d7ce787"
+        },
+        "profile": "architect.seed.v9",
+        "stage": "seed"
+      }
+    },
+    "invention": {
+      "bits": 2048,
+      "version": "invention-seed.v3"
+    },
+    "profile": "writer.discovery.v14",
+    "provider_calls": 0,
+    "request_sha256": "43fc541a567faf51e676c48f0313e5eda7438f33c23eeea0a60a3ce222015e60",
+    "routing": {
+      "role_tiers": [],
+      "strong": "adapter default"
+    }
+  },
+  "provider": {
+    "binary": {
+      "path": "C:\\Users\\artem\\AppData\\Local\\OpenAI\\Codex\\bin\\247581e40ee272fb\\codex.exe",
+      "sha256": "bc45017e8239dc150258f69309ced9df6bbcdf5b8e4f346decf780ac0999e226",
+      "version": "codex-cli 0.155.0-alpha.9.2"
+    },
+    "effort": "medium",
+    "model": "gpt-6-astra",
+    "name": "codex",
+    "unset": [
+      "LITHARNESS_MODEL_TIERS",
+      "LITHARNESS_CODEX_EFFORTS",
+      "LITHARNESS_CODEX_MODELS"
+    ]
+  },
+  "revision": "63dabc33ca27a65266969ae6861ead0d5aa5eada",
+  "runtime": {
+    "contracts_version": "0.2.0",
+    "distributions": [
+      "PyJWT==2.13.0",
+      "Pygments==2.20.0",
+      "annotated-types==0.8.0",
+      "anyio==4.14.2",
+      "ast_serialize==0.8.0",
+      "attrs==26.1.0",
+      "cffi==2.1.1",
+      "click==8.4.2",
+      "colorama==0.4.6",
+      "coverage==7.15.4",
+      "cryptography==50.0.1",
+      "execnet==2.1.2",
+      "h11==0.16.0",
+      "httpcore2==2.12.0",
+      "httpx2==2.12.0",
+      "hypothesis==6.165.3",
+      "idna==3.18",
+      "iniconfig==2.3.0",
+      "jsonschema-specifications==2025.9.1",
+      "jsonschema==4.26.0",
+      "librt==0.15.0",
+      "litharness-contracts==0.2.0",
+      "litharness==0.1.0",
+      "mcp-types==2.1.1",
+      "mcp==2.1.1",
+      "mypy==2.3.0",
+      "mypy_extensions==1.1.0",
+      "numpy==2.5.2",
+      "opentelemetry-api==1.44.0",
+      "packaging==26.3",
+      "pathspec==1.1.1",
+      "pillow==12.3.0",
+      "pluggy==1.6.0",
+      "pycparser==3.0",
+      "pydantic==2.13.4",
+      "pydantic_core==2.46.4",
+      "pytest-cov==7.1.0",
+      "pytest-xdist==3.8.0",
+      "pytest==9.1.1",
+      "python-multipart==0.0.32",
+      "pywin32==312",
+      "referencing==0.37.0",
+      "rpds-py==2026.6.3",
+      "ruff==0.16.2",
+      "sortedcontainers==2.4.0",
+      "sse-starlette==3.4.11",
+      "starlette==1.6.0",
+      "truststore==0.10.4",
+      "typing-inspection==0.4.4",
+      "typing_extensions==4.16.0",
+      "uvicorn==0.52.4"
+    ],
+    "purelib": "C:\\DEV\\LitHarness\\.venv\\Lib\\site-packages"
+  },
+  "schema": "restored-directions-draw.registration.v1",
+  "seed_sha256": "ccc45ab29cbcf4bafde46fdcd35b98a3adec7f64ff6cac48f4d39e7e239d5cee",
+  "stages": {
+    "chapter": {
+      "checkpoint": "chapter",
+      "steps": [
+        "world-accept",
+        "tick"
+      ]
+    },
+    "concept": {
+      "checkpoint": "concept",
+      "steps": [
+        "concept"
+      ]
+    },
+    "listing": {
+      "checkpoint": "listing",
+      "steps": [
+        "listing"
+      ]
+    },
+    "seed": {
+      "checkpoint": "world",
+      "steps": [
+        "architect-seed",
+        "world-check"
+      ]
+    }
+  },
+  "writer": {
+    "dossier_sha256": "b97a225325e883c55c5fe18a04fa6cd48ba6ce638e1d98a48efcf33d9221ffa8",
+    "name": "rowntree",
+    "roster_copy_sha256": "b557025b4d89d5f9493f136ce63831678c0e29c3ce2a8b57f61e04ccbd3cdb4d",
+    "rule": {
+      "default_genre_shelves": [
+        "isekai",
+        "portal-fantasy",
+        "progression-fantasy"
+      ],
+      "sequence": [
+        "rowntree",
+        "barlow",
+        "carver",
+        "hollis",
+        "tanaka",
+        "marsh"
+      ],
+      "slate": "application/recruiter.py SLATE, then SUPPLEMENTARY"
+    },
+    "writer_id": "wtr-43f373dd421c86f46c622872"
+  }
+}
