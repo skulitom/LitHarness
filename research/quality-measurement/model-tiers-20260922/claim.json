@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/model-tiers-20260922/PREREG.md",
+      "sha256": "4bcb12d144eae3b0005a29f14b07e1125a30a41960e2bea211490b76c8ddc7b8"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/model-tiers-20260922/RUNBOOK.md",
+      "sha256": "8aaad5470f50e85331b1346cdc35c0355d7975bf626792263c213087ed986e32"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/model-tiers-20260922/registration.json",
+      "sha256": "5fed7b0a71c8cb462034680a2deaf74545b4d782be7afc3b996c632205e9dec0"
+    }
+  ],
+  "claim_id": "model-tiers.v1",
+  "schema": "litharness.epistemic-claim.v1",
+  "statement": "On the Codex provider only, against fresh gpt-6-astra controls on one pinned binary and one pinned source, gpt-6-luna (medium or high effort) summarises the full-book trial's 24 scenes, under the recorded wording and under the current (stage-0 section 255) wording, with validator outcomes, settled-promise sets and structured agreement no worse than the control beyond the registered margins; one book, computed in code, licensing only a Codex-only proposal to the operator. Two gpt-6-sol seeds of that trial's world are a screen for gross failure and license nothing.",
+  "status": "registered"
+}
