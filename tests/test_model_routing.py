@@ -28,7 +28,7 @@ REPO = Path(__file__).resolve().parents[1]
 CANDIDATE_EXPECTED = {
     "architect.seed.v9": "standard",
     "architect.grow.v5": "standard",
-    "mechanical": "basic",
+    "mechanical": "strong",
     "title.availability.v0": "basic",
     "default": "strong",
     "prose": "strong",
@@ -121,7 +121,8 @@ def test_an_override_replaces_a_tier_model_on_the_day_one_is_unavailable() -> No
         "codex",
         {"LITHARNESS_MODEL_TIERS": "candidate", "LITHARNESS_CODEX_MODELS": "basic=gpt-6-sol"},
     )
-    assert routing.route(CompletionRequest(prompt="x", profile="mechanical")).model == "gpt-6-sol"
+    routed = routing.route(CompletionRequest(prompt="x", profile="title.availability.v0"))
+    assert routed.model == "gpt-6-sol"
 
 
 @pytest.mark.parametrize(

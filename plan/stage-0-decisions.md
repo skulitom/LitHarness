@@ -26811,3 +26811,29 @@ table's conditional, "if this run's reader is the one §230 measured, §230's cl
 **not supported**: the arm's reading stands on its own reader. The PREREG's rule against choosing
 another dose or reader to hunt for movement stands; a next step on this mechanism needs its own
 justification.
+
+
+## 260. Scene summaries stay on the strong tier: the cheap model misplaced evidence and misjudged paid promises (2026-09-23)
+
+2026-09-23. The registered comparison §256's policy requires before a role moves tier
+(`model-tiers.v1`, [RESULTS.md](../research/quality-measurement/model-tiers-20260922/RESULTS.md))
+bought all 172 Codex calls with no transport failure. The full-book trial's 24 scene-summary
+requests, replayed byte for byte and rebuilt on today's §255 wording, went to `gpt-6-luna` at
+medium and high effort beside fresh `gpt-6-astra` controls; every outcome was computed in code.
+Luna conformed to the schema on every scene but located every evidence quote in only 12 to 18
+of 24 scenes (the control 24) and matched the accepted record's paid promises in 8 to 17 (the
+control 23); its field agreement on today's wording was 0.52 at medium effort, a fail, and 0.69
+at high, significantly below the control's 0.89. No candidate passed, so nothing is proposed.
+
+**What changes.** `mechanical` leaves `providers/routing.py`'s `CANDIDATE_ROLE_TIERS`, so
+`LITHARNESS_MODEL_TIERS=candidate` no longer sends summaries to the basic tier;
+[docs/model-policy.md](../docs/model-policy.md) records the result. Summaries feed later
+drafting context, and a misplaced quote or a wrong paid promise is exactly the error that would
+travel into it.
+
+**The seed screen.** Two `gpt-6-sol` seeds of the trial's own pre-seed store came back clean
+through `world check`, `world accept` and `world check` again, as did two Astra seeds, with
+structural agreement 0.99 against 1.00: no gross failure seen. Two replicates a side cannot
+establish reliability, so the screen licenses nothing; the Architect stays a candidate, and
+moving it needs its own registration with enough replicates and covering grow (7 of its 8 calls
+in a book). The shipped default still routes every role to strong.

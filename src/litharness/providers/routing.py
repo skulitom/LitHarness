@@ -48,9 +48,10 @@ PROVIDER_TIERS: Final[dict[str, dict[Tier, str | None]]] = {
 
 #: Request-profile prefixes and the tier a registered comparison is testing for them. Never
 #: a prose role: discovery, concept, outline and scene drafting are absent and stay strong.
+#: Scene summaries (`mechanical`) were a candidate until model-tiers.v1 (§260) found
+#: `gpt-6-luna` worse than the strong tier at both efforts; they stay strong.
 CANDIDATE_ROLE_TIERS: Final[tuple[tuple[str, Tier], ...]] = (
     ("architect.", "standard"),
-    ("mechanical", "basic"),
     ("title.availability.", "basic"),
 )
 

@@ -21,7 +21,7 @@ of its models ([`providers/routing.py`](../src/litharness/providers/routing.py))
 | --- | --- | --- | --- |
 | strong | adapter default (`claude-opus-5`) | adapter default (`gpt-6-astra`) | scene drafting, discovery and concept invention, titles and listings, precision line edits, outlines and planning, the reviser and rewrite passes, the director, every simulated-reader instrument |
 | standard | `claude-sonnet-5` | `gpt-6-sol` | candidate: the Architect's world keeping (seed and grow) |
-| basic | `claude-haiku-4-5` | `gpt-6-luna` | candidate: scene summaries (they feed later drafting context, so only after the comparison), title availability checks |
+| basic | `claude-haiku-4-5` | `gpt-6-luna` | candidate: title availability checks. Scene summaries stay strong: `gpt-6-luna` failed the registered comparison (§260) |
 
 **The shipped default routes every role to strong.** The candidate roles move only after a
 registered comparison passes and the operator agrees; until then `LITHARNESS_MODEL_TIERS=candidate`
@@ -59,6 +59,12 @@ unavailable on the day, are `LITHARNESS_CLAUDE_MODELS` and `LITHARNESS_CODEX_MOD
   proposed would save about 23% of credits; scene drafting is about 60%.
 - OpenAI recommends starting `gpt-6-luna` at high effort; the Codex adapter's default is medium,
   so a Luna comparison tests both.
+
+- The registered comparison (`model-tiers.v1`, §260, 2026-09-23) found `gpt-6-luna` worse than
+  `gpt-6-astra` at scene summaries at both efforts (evidence quotes located in 12-18 of 24 scenes
+  against 24; paid promises matching the record in 8-17 against 23), so summaries stay strong.
+  Its `gpt-6-sol` seed screen saw no gross failure in two replicates, which licenses nothing;
+  moving the Architect needs its own registration with more replicates and grow.
 
 ## Rules
 

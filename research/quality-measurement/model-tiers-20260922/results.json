@@ -1,0 +1,1788 @@
+{
+  "analysis_sha256": "3a097969b8080d8395d738846763a34bc017a3ca9c9f0eea50c24252d8b30892",
+  "binary": {
+    "folder": "runs/model-tiers-20260922/codex/247581e40ee272fb",
+    "folder_hashes": {
+      "codex-code-mode-host.exe": "b0deb8a88723e9ff59d2a0bf069f2446a9d14f6d23b91497f2fae58deb3273c6",
+      "codex-command-runner.exe": "673f263039d9547efdbc445dce700bc20549d8ab480fdfa99bca9dfb040fb0d1",
+      "codex-windows-sandbox-setup.exe": "827cbf395d0da31be53a1a8a85e98f8bdbce2c265c4f1e95b4ccaae61d728370",
+      "codex.exe": "bc45017e8239dc150258f69309ced9df6bbcdf5b8e4f346decf780ac0999e226"
+    },
+    "original": "C:\\Users\\artem\\AppData\\Local\\OpenAI\\Codex\\bin\\247581e40ee272fb\\codex.exe",
+    "path": "C:\\DEV\\LitHarness\\runs\\model-tiers-20260922\\codex\\247581e40ee272fb\\codex.exe",
+    "sha256": "bc45017e8239dc150258f69309ced9df6bbcdf5b8e4f346decf780ac0999e226",
+    "version": "codex-cli 0.155.0-alpha.9.2"
+  },
+  "ledger_sha256": "03ab2a3da2831cac051ac81a18326f3a2bb86221c7a3bd887ad373944ac67327",
+  "licence": "A summary candidate's pass licenses proposing `mechanical` on the basic tier to the operator for LITHARNESS_PROVIDER=codex only; enacting it needs a Claude arm on the same requests or a per-provider role map first. The seed screen licenses nothing. Nothing moves without the operator's agreement (docs/model-policy.md, Rules).",
+  "not_established": [
+    "anything about quality: no prose field is scored, and agreement with Astra's record is not correctness",
+    "any book but this one: 24 scenes and one world from one trial, one writer, one generator",
+    "the current (post-§255) wording against an accepted record: none exists, so that block reads a candidate against a second Astra, not against what production accepted",
+    "the ledger's feedback loop: each replayed request shows Astra's own ledger, so whether a candidate reproduces subjects it coined itself scenes earlier is untested",
+    "downstream effect on drafting: summaries feed evicted context, and no chapter is drafted",
+    "the Claude provider: a pass covers LITHARNESS_PROVIDER=codex only, and the role map would move Claude summaries to claude-haiku-4-5 too",
+    "the Architect's seed on standard: two replicates a side are a screen, never a licence",
+    "the Architect's grow, which is 7 of the trial's 8 Architect calls and most of its tokens",
+    "title availability checks: no recorded request exists",
+    "the served model: Codex JSONL reports the requested model, not a resolved one",
+    "credits or dollars: Codex reports tokens only",
+    "that the candidate is equivalent: a pass bounds a deficit at the registered margins only"
+  ],
+  "registration_digest": "0608dd6d6a0934a2e46f9b2ce752414d214f43c264e9e5fea3fd158ffc9fb734",
+  "registration_sha256": "5fed7b0a71c8cb462034680a2deaf74545b4d782be7afc3b996c632205e9dec0",
+  "seeds": {
+    "cells": {
+      "astra-medium": {
+        "r0": {
+          "accept_exit": 0,
+          "accept_refusal_kinds": {},
+          "agreement": 1.0,
+          "bridge": {
+            "bridge_errors_by_kind": {
+              "invalid_arguments": 2
+            },
+            "by_verb": {
+              "(not executed)": 2,
+              "world check": 3,
+              "world declare-batch": 10,
+              "world query": 2,
+              "world summary": 1,
+              "world vocabulary": 1
+            },
+            "commands": 19,
+            "declaration_refusals": 0,
+            "declared": 189,
+            "nonzero_exit_by_verb": {
+              "world check": 1
+            }
+          },
+          "clean": true,
+          "components": {
+            "cast": 1.0,
+            "grant_counts": 1.0,
+            "ladder_lengths": 1.0,
+            "protagonists": 1.0,
+            "status_sheet": 1.0,
+            "system_count": 1.0
+          },
+          "post_check": {
+            "complaint_kinds": {},
+            "complaints": 0,
+            "exit": 0,
+            "gaps": 1,
+            "machinery_names": 0,
+            "ok": true,
+            "parsed": true,
+            "snapshot_faults": 0,
+            "unmanifested": 0,
+            "unplaceable": 0,
+            "will_not_resolve": 0,
+            "would_breach": 0,
+            "would_not_finish": 0
+          },
+          "pre_check": {
+            "complaint_kinds": {},
+            "complaints": 0,
+            "exit": 0,
+            "gaps": 2,
+            "machinery_names": 0,
+            "ok": true,
+            "parsed": true,
+            "snapshot_faults": 0,
+            "unmanifested": 0,
+            "unplaceable": 0,
+            "will_not_resolve": 0,
+            "would_breach": 0,
+            "would_not_finish": 0
+          },
+          "shape": {
+            "authority": {
+              "accepted_canon": 181,
+              "proposed": 8
+            },
+            "basis": "accepted",
+            "by_predicate": {
+              "believes": 4,
+              "can_do": 8,
+              "claim.content": 8,
+              "comparator": 1,
+              "consequence": 1,
+              "costs": 7,
+              "disposition": 6,
+              "entity_role": 28,
+              "evaluates": 1,
+              "governed_by": 8,
+              "graph_line": 1,
+              "is_a": 32,
+              "manifests_as": 37,
+              "precedes": 4,
+              "requires": 3,
+              "stands_at": 1,
+              "status_sheet": 1,
+              "status_snapshot": 2,
+              "taught_by": 5,
+              "type": 1,
+              "voice_tag": 6,
+              "wants": 6,
+              "world_rule": 10
+            },
+            "cast": 5,
+            "grant_counts": [
+              7
+            ],
+            "ladder_lengths": [
+              5
+            ],
+            "protagonist_standing": false,
+            "protagonists": 1,
+            "records": 181,
+            "status_sheet": true,
+            "systems": 1
+          },
+          "status": "answered",
+          "tokens": 210532,
+          "unusable_kind": null,
+          "usage": {
+            "cache_read_tokens": 171264,
+            "cache_write_tokens": 0,
+            "input_tokens": 34251,
+            "output_tokens": 4742,
+            "reasoning_tokens": 275
+          },
+          "wall_ms": 187877
+        },
+        "r1": {
+          "accept_exit": 0,
+          "accept_refusal_kinds": {},
+          "agreement": 1.0,
+          "bridge": {
+            "bridge_errors_by_kind": {
+              "invalid_arguments": 2
+            },
+            "by_verb": {
+              "(not executed)": 2,
+              "world check": 4,
+              "world declare-batch": 8,
+              "world query": 2,
+              "world summary": 1,
+              "world vocabulary": 1
+            },
+            "commands": 18,
+            "declaration_refusals": 0,
+            "declared": 183,
+            "nonzero_exit_by_verb": {
+              "world check": 1
+            }
+          },
+          "clean": true,
+          "components": {
+            "cast": 1.0,
+            "grant_counts": 1.0,
+            "ladder_lengths": 1.0,
+            "protagonists": 1.0,
+            "status_sheet": 1.0,
+            "system_count": 1.0
+          },
+          "post_check": {
+            "complaint_kinds": {},
+            "complaints": 0,
+            "exit": 0,
+            "gaps": 0,
+            "machinery_names": 0,
+            "ok": true,
+            "parsed": true,
+            "snapshot_faults": 0,
+            "unmanifested": 0,
+            "unplaceable": 0,
+            "will_not_resolve": 0,
+            "would_breach": 0,
+            "would_not_finish": 0
+          },
+          "pre_check": {
+            "complaint_kinds": {},
+            "complaints": 0,
+            "exit": 0,
+            "gaps": 2,
+            "machinery_names": 0,
+            "ok": true,
+            "parsed": true,
+            "snapshot_faults": 0,
+            "unmanifested": 0,
+            "unplaceable": 0,
+            "will_not_resolve": 0,
+            "would_breach": 0,
+            "would_not_finish": 0
+          },
+          "shape": {
+            "authority": {
+              "accepted_canon": 181,
+              "proposed": 4
+            },
+            "basis": "accepted",
+            "by_predicate": {
+              "believes": 2,
+              "can_do": 6,
+              "claim.content": 5,
+              "comparator": 1,
+              "consequence": 2,
+              "costs": 9,
+              "disposition": 6,
+              "entity_role": 23,
+              "evaluates": 1,
+              "governed_by": 8,
+              "graph_line": 1,
+              "growth_limit": 7,
+              "is_a": 29,
+              "magnitude_scale": 1,
+              "manifests_as": 40,
+              "precedes": 4,
+              "requires": 4,
+              "stands_at": 1,
+              "status_sheet": 1,
+              "status_snapshot": 1,
+              "system_digest": 1,
+              "type": 1,
+              "voice_tag": 6,
+              "wants": 6,
+              "world_rule": 15
+            },
+            "cast": 5,
+            "grant_counts": [
+              7
+            ],
+            "ladder_lengths": [
+              5
+            ],
+            "protagonist_standing": false,
+            "protagonists": 1,
+            "records": 181,
+            "status_sheet": true,
+            "systems": 1
+          },
+          "status": "answered",
+          "tokens": 298320,
+          "unusable_kind": null,
+          "usage": {
+            "cache_read_tokens": 256768,
+            "cache_write_tokens": 0,
+            "input_tokens": 35985,
+            "output_tokens": 5018,
+            "reasoning_tokens": 549
+          },
+          "wall_ms": 214339
+        }
+      },
+      "sol-medium": {
+        "r0": {
+          "accept_exit": 0,
+          "accept_refusal_kinds": {},
+          "agreement": 1.0,
+          "bridge": {
+            "bridge_errors_by_kind": {},
+            "by_verb": {
+              "world check": 2,
+              "world declare-batch": 10,
+              "world query": 1,
+              "world summary": 1,
+              "world vocabulary": 1
+            },
+            "commands": 15,
+            "declaration_refusals": 0,
+            "declared": 166,
+            "nonzero_exit_by_verb": {}
+          },
+          "clean": true,
+          "components": {
+            "cast": 1.0,
+            "grant_counts": 1.0,
+            "ladder_lengths": 1.0,
+            "protagonists": 1.0,
+            "status_sheet": 1.0,
+            "system_count": 1.0
+          },
+          "post_check": {
+            "complaint_kinds": {},
+            "complaints": 0,
+            "exit": 0,
+            "gaps": 0,
+            "machinery_names": 0,
+            "ok": true,
+            "parsed": true,
+            "snapshot_faults": 0,
+            "unmanifested": 0,
+            "unplaceable": 0,
+            "will_not_resolve": 0,
+            "would_breach": 0,
+            "would_not_finish": 0
+          },
+          "pre_check": {
+            "complaint_kinds": {},
+            "complaints": 0,
+            "exit": 0,
+            "gaps": 2,
+            "machinery_names": 0,
+            "ok": true,
+            "parsed": true,
+            "snapshot_faults": 0,
+            "unmanifested": 0,
+            "unplaceable": 0,
+            "will_not_resolve": 0,
+            "would_breach": 0,
+            "would_not_finish": 0
+          },
+          "shape": {
+            "authority": {
+              "accepted_canon": 160,
+              "proposed": 8
+            },
+            "basis": "accepted",
+            "by_predicate": {
+              "comparator": 1,
+              "costs": 7,
+              "disposition": 6,
+              "entity_role": 24,
+              "evaluates": 1,
+              "governed_by": 8,
+              "graph_line": 1,
+              "growth_limit": 6,
+              "is_a": 30,
+              "magnitude_scale": 1,
+              "manifests_as": 29,
+              "precedes": 4,
+              "requires": 6,
+              "status_sheet": 1,
+              "status_snapshot": 1,
+              "system_digest": 1,
+              "type": 1,
+              "voice_tag": 6,
+              "wants": 6,
+              "world_rule": 20
+            },
+            "cast": 5,
+            "grant_counts": [
+              7
+            ],
+            "ladder_lengths": [
+              5
+            ],
+            "protagonist_standing": false,
+            "protagonists": 1,
+            "records": 160,
+            "status_sheet": true,
+            "systems": 1
+          },
+          "status": "answered",
+          "tokens": 240143,
+          "unusable_kind": null,
+          "usage": {
+            "cache_read_tokens": 200960,
+            "cache_write_tokens": 0,
+            "input_tokens": 27330,
+            "output_tokens": 9970,
+            "reasoning_tokens": 1883
+          },
+          "wall_ms": 376040
+        },
+        "r1": {
+          "accept_exit": 0,
+          "accept_refusal_kinds": {},
+          "agreement": 0.9722222222222222,
+          "bridge": {
+            "bridge_errors_by_kind": {},
+            "by_verb": {
+              "world check": 2,
+              "world declare-batch": 7,
+              "world query": 2,
+              "world summary": 1,
+              "world vocabulary": 1
+            },
+            "commands": 13,
+            "declaration_refusals": 0,
+            "declared": 157,
+            "nonzero_exit_by_verb": {}
+          },
+          "clean": true,
+          "components": {
+            "cast": 0.8333333333333334,
+            "grant_counts": 1.0,
+            "ladder_lengths": 1.0,
+            "protagonists": 1.0,
+            "status_sheet": 1.0,
+            "system_count": 1.0
+          },
+          "post_check": {
+            "complaint_kinds": {},
+            "complaints": 0,
+            "exit": 0,
+            "gaps": 0,
+            "machinery_names": 0,
+            "ok": true,
+            "parsed": true,
+            "snapshot_faults": 0,
+            "unmanifested": 0,
+            "unplaceable": 0,
+            "will_not_resolve": 0,
+            "would_breach": 0,
+            "would_not_finish": 0
+          },
+          "pre_check": {
+            "complaint_kinds": {},
+            "complaints": 0,
+            "exit": 0,
+            "gaps": 2,
+            "machinery_names": 0,
+            "ok": true,
+            "parsed": true,
+            "snapshot_faults": 0,
+            "unmanifested": 0,
+            "unplaceable": 0,
+            "will_not_resolve": 0,
+            "would_breach": 0,
+            "would_not_finish": 0
+          },
+          "shape": {
+            "authority": {
+              "accepted_canon": 156,
+              "proposed": 3
+            },
+            "basis": "accepted",
+            "by_predicate": {
+              "believes": 1,
+              "can_do": 1,
+              "claim.content": 1,
+              "comparator": 1,
+              "consequence": 3,
+              "costs": 7,
+              "disposition": 6,
+              "entity_role": 22,
+              "evaluates": 1,
+              "governed_by": 8,
+              "graph_line": 1,
+              "growth_limit": 7,
+              "is_a": 14,
+              "magnitude_scale": 1,
+              "manifests_as": 41,
+              "precedes": 4,
+              "requires": 3,
+              "status_sheet": 1,
+              "status_snapshot": 1,
+              "system_digest": 1,
+              "taught_by": 2,
+              "type": 1,
+              "voice_tag": 5,
+              "wants": 6,
+              "world_rule": 17
+            },
+            "cast": 6,
+            "grant_counts": [
+              7
+            ],
+            "ladder_lengths": [
+              5
+            ],
+            "protagonist_standing": false,
+            "protagonists": 1,
+            "records": 156,
+            "status_sheet": true,
+            "systems": 1
+          },
+          "status": "answered",
+          "tokens": 247455,
+          "unusable_kind": null,
+          "usage": {
+            "cache_read_tokens": 203904,
+            "cache_write_tokens": 0,
+            "input_tokens": 30175,
+            "output_tokens": 11533,
+            "reasoning_tokens": 1843
+          },
+          "wall_ms": 415528
+        }
+      }
+    },
+    "decision": {
+      "agreement_candidate": 0.9861111111111112,
+      "agreement_control": 1.0,
+      "clean_candidate": 2,
+      "clean_control": 2,
+      "licence": "none: two replicates a side can show a gross failure and cannot establish reliability (a Sol clean 70% of the time would look clean in both 49% of the time), so no outcome here proposes a seed tier; that needs its own registration with enough replicates, and grow",
+      "margin": 0.25,
+      "proposal": null,
+      "verdict": "no_gross_failure_seen"
+    },
+    "record": {
+      "cast": 5,
+      "grant_counts": [
+        7
+      ],
+      "ladder_lengths": [
+        5
+      ],
+      "protagonist_standing": false,
+      "protagonists": 1,
+      "records": 198,
+      "status_sheet": true,
+      "systems": 1
+    }
+  },
+  "study": "model-tiers.v1",
+  "summaries": {
+    "current": {
+      "cells": {
+        "astra-medium": {
+          "answers": 24,
+          "component_means": {
+            "delta_presence": null,
+            "delta_who": null,
+            "opened_count": null,
+            "opened_kinds": null,
+            "paid_matched_set": null
+          },
+          "composite_mean": null,
+          "conformance_passes": 24,
+          "evidence_passes": 24,
+          "field_agreement": {
+            "delta.from": {
+              "exact": null,
+              "normalized": null
+            },
+            "delta.null": {
+              "exact": null,
+              "normalized": null
+            },
+            "delta.to": {
+              "exact": null,
+              "normalized": null
+            },
+            "delta.what_changed": {
+              "exact": null,
+              "normalized": null
+            },
+            "delta.who": {
+              "exact": null,
+              "normalized": null
+            },
+            "promises_opened.count": {
+              "exact": null,
+              "normalized": null
+            },
+            "promises_opened.description": {
+              "exact": null,
+              "normalized": null
+            },
+            "promises_opened.due_hint": {
+              "exact": null,
+              "normalized": null
+            },
+            "promises_opened.evidence_quote": {
+              "exact": null,
+              "normalized": null
+            },
+            "promises_opened.kind": {
+              "exact": null,
+              "normalized": null
+            },
+            "promises_opened.subject": {
+              "exact": null,
+              "normalized": null
+            },
+            "promises_paid.count": {
+              "exact": null,
+              "normalized": null
+            },
+            "promises_paid.evidence_quote": {
+              "exact": null,
+              "normalized": null
+            },
+            "promises_paid.matched": {
+              "exact": null,
+              "normalized": null
+            },
+            "promises_paid.subject": {
+              "exact": null,
+              "normalized": null
+            }
+          },
+          "handler_losses": {},
+          "names_present": 164,
+          "names_required": 181,
+          "paid_unmatched": 2,
+          "parse_failures_would_retry": 0,
+          "prose_words_max": 60,
+          "prose_words_mean": 51.458333333333336,
+          "quantities_present": 11,
+          "quantities_required": 13,
+          "quotes": 98,
+          "quotes_located": 98,
+          "scenes_with_paid_unmatched": 1,
+          "scored_scenes": 0,
+          "strict_schema_failures": 0,
+          "tokens_max": 8310,
+          "tokens_mean": 8095.791666666667,
+          "tokens_total": 194299,
+          "unusable": 0,
+          "usage_totals": {
+            "cache_read_tokens": 29568,
+            "cache_write_tokens": 0,
+            "input_tokens": 156361,
+            "output_tokens": 7476,
+            "reasoning_tokens": 894
+          },
+          "wall_ms_max": 21796,
+          "wall_ms_mean": 14521.5
+        },
+        "astra-medium-2": {
+          "answers": 24,
+          "component_means": {
+            "delta_presence": 1.0,
+            "delta_who": 0.9583333333333334,
+            "opened_count": 0.8645833333333334,
+            "opened_kinds": 0.8506944444444445,
+            "paid_matched_set": 0.9583333333333334
+          },
+          "composite_mean": 0.8912037037037037,
+          "conformance_passes": 24,
+          "evidence_passes": 23,
+          "field_agreement": {
+            "delta.from": {
+              "exact": 0.25,
+              "normalized": 0.3333333333333333
+            },
+            "delta.null": {
+              "exact": 1.0,
+              "normalized": 1.0
+            },
+            "delta.to": {
+              "exact": 0.3333333333333333,
+              "normalized": 0.375
+            },
+            "delta.what_changed": {
+              "exact": 0.25,
+              "normalized": 0.2916666666666667
+            },
+            "delta.who": {
+              "exact": 0.9583333333333334,
+              "normalized": 0.9583333333333334
+            },
+            "promises_opened.count": {
+              "exact": 0.6666666666666666,
+              "normalized": 0.6666666666666666
+            },
+            "promises_opened.description": {
+              "exact": 0.20039682539682538,
+              "normalized": 0.20039682539682538
+            },
+            "promises_opened.due_hint": {
+              "exact": 0.8229166666666666,
+              "normalized": 0.8645833333333334
+            },
+            "promises_opened.evidence_quote": {
+              "exact": 0.6875,
+              "normalized": 0.6875
+            },
+            "promises_opened.kind": {
+              "exact": 0.8506944444444445,
+              "normalized": 0.8506944444444445
+            },
+            "promises_opened.subject": {
+              "exact": 0.5569444444444445,
+              "normalized": 0.5569444444444445
+            },
+            "promises_paid.count": {
+              "exact": 0.9583333333333334,
+              "normalized": 0.9583333333333334
+            },
+            "promises_paid.evidence_quote": {
+              "exact": 0.690873015873016,
+              "normalized": 0.7436507936507937
+            },
+            "promises_paid.matched": {
+              "exact": 0.9583333333333334,
+              "normalized": 0.9583333333333334
+            },
+            "promises_paid.subject": {
+              "exact": 0.9638888888888889,
+              "normalized": 0.9638888888888889
+            }
+          },
+          "handler_losses": {},
+          "names_present": 166,
+          "names_required": 181,
+          "paid_unmatched": 2,
+          "parse_failures_would_retry": 0,
+          "prose_words_max": 59,
+          "prose_words_mean": 51.5,
+          "quantities_present": 10,
+          "quantities_required": 13,
+          "quotes": 94,
+          "quotes_located": 93,
+          "scenes_with_paid_unmatched": 1,
+          "scored_scenes": 24,
+          "strict_schema_failures": 0,
+          "tokens_max": 8368,
+          "tokens_mean": 8096.125,
+          "tokens_total": 194307,
+          "unusable": 0,
+          "usage_totals": {
+            "cache_read_tokens": 21504,
+            "cache_write_tokens": 0,
+            "input_tokens": 164437,
+            "output_tokens": 7269,
+            "reasoning_tokens": 1097
+          },
+          "wall_ms_max": 21973,
+          "wall_ms_mean": 14648.25
+        },
+        "luna-high": {
+          "answers": 24,
+          "component_means": {
+            "delta_presence": 1.0,
+            "delta_who": 0.8333333333333334,
+            "opened_count": 0.6805555555555555,
+            "opened_kinds": 0.5625,
+            "paid_matched_set": 0.7083333333333334
+          },
+          "composite_mean": 0.6921296296296297,
+          "conformance_passes": 24,
+          "evidence_passes": 18,
+          "field_agreement": {
+            "delta.from": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "delta.null": {
+              "exact": 1.0,
+              "normalized": 1.0
+            },
+            "delta.to": {
+              "exact": 0.0,
+              "normalized": 0.041666666666666664
+            },
+            "delta.what_changed": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "delta.who": {
+              "exact": 0.8333333333333334,
+              "normalized": 0.8333333333333334
+            },
+            "promises_opened.count": {
+              "exact": 0.4166666666666667,
+              "normalized": 0.4166666666666667
+            },
+            "promises_opened.description": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "promises_opened.due_hint": {
+              "exact": 0.625,
+              "normalized": 0.6805555555555555
+            },
+            "promises_opened.evidence_quote": {
+              "exact": 0.2875,
+              "normalized": 0.29444444444444445
+            },
+            "promises_opened.kind": {
+              "exact": 0.5625,
+              "normalized": 0.5625
+            },
+            "promises_opened.subject": {
+              "exact": 0.041666666666666664,
+              "normalized": 0.07083333333333333
+            },
+            "promises_paid.count": {
+              "exact": 0.6666666666666666,
+              "normalized": 0.6666666666666666
+            },
+            "promises_paid.evidence_quote": {
+              "exact": 0.22293470418470418,
+              "normalized": 0.27759740259740256
+            },
+            "promises_paid.matched": {
+              "exact": 0.7083333333333334,
+              "normalized": 0.7083333333333334
+            },
+            "promises_paid.subject": {
+              "exact": 0.8055555555555555,
+              "normalized": 0.8055555555555555
+            }
+          },
+          "handler_losses": {},
+          "names_present": 170,
+          "names_required": 181,
+          "paid_unmatched": 0,
+          "parse_failures_would_retry": 0,
+          "prose_words_max": 130,
+          "prose_words_mean": 103.83333333333333,
+          "quantities_present": 5,
+          "quantities_required": 13,
+          "quotes": 84,
+          "quotes_located": 76,
+          "scenes_with_paid_unmatched": 0,
+          "scored_scenes": 24,
+          "strict_schema_failures": 0,
+          "tokens_max": 9680,
+          "tokens_mean": 8995.708333333334,
+          "tokens_total": 215897,
+          "unusable": 0,
+          "usage_totals": {
+            "cache_read_tokens": 50944,
+            "cache_write_tokens": 0,
+            "input_tokens": 134999,
+            "output_tokens": 8570,
+            "reasoning_tokens": 21384
+          },
+          "wall_ms_max": 75405,
+          "wall_ms_mean": 31249.791666666668
+        },
+        "luna-medium": {
+          "answers": 24,
+          "component_means": {
+            "delta_presence": 1.0,
+            "delta_who": 0.8333333333333334,
+            "opened_count": 0.49374999999999997,
+            "opened_kinds": 0.24722222222222223,
+            "paid_matched_set": 0.375
+          },
+          "composite_mean": 0.5247685185185186,
+          "conformance_passes": 24,
+          "evidence_passes": 16,
+          "field_agreement": {
+            "delta.from": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "delta.null": {
+              "exact": 1.0,
+              "normalized": 1.0
+            },
+            "delta.to": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "delta.what_changed": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "delta.who": {
+              "exact": 0.8333333333333334,
+              "normalized": 0.8333333333333334
+            },
+            "promises_opened.count": {
+              "exact": 0.25,
+              "normalized": 0.25
+            },
+            "promises_opened.description": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "promises_opened.due_hint": {
+              "exact": 0.35694444444444445,
+              "normalized": 0.40208333333333335
+            },
+            "promises_opened.evidence_quote": {
+              "exact": 0.052083333333333336,
+              "normalized": 0.08928571428571429
+            },
+            "promises_opened.kind": {
+              "exact": 0.24722222222222223,
+              "normalized": 0.24722222222222223
+            },
+            "promises_opened.subject": {
+              "exact": 0.0,
+              "normalized": 0.03125
+            },
+            "promises_paid.count": {
+              "exact": 0.3333333333333333,
+              "normalized": 0.3333333333333333
+            },
+            "promises_paid.evidence_quote": {
+              "exact": 0.13194444444444445,
+              "normalized": 0.21798941798941798
+            },
+            "promises_paid.matched": {
+              "exact": 0.375,
+              "normalized": 0.375
+            },
+            "promises_paid.subject": {
+              "exact": 0.5618055555555556,
+              "normalized": 0.5618055555555556
+            }
+          },
+          "handler_losses": {},
+          "names_present": 169,
+          "names_required": 181,
+          "paid_unmatched": 0,
+          "parse_failures_would_retry": 0,
+          "prose_words_max": 159,
+          "prose_words_mean": 133.04166666666666,
+          "quantities_present": 4,
+          "quantities_required": 13,
+          "quotes": 86,
+          "quotes_located": 69,
+          "scenes_with_paid_unmatched": 0,
+          "scored_scenes": 24,
+          "strict_schema_failures": 0,
+          "tokens_max": 8732,
+          "tokens_mean": 8214.833333333334,
+          "tokens_total": 197156,
+          "unusable": 0,
+          "usage_totals": {
+            "cache_read_tokens": 47104,
+            "cache_write_tokens": 0,
+            "input_tokens": 138821,
+            "output_tokens": 10195,
+            "reasoning_tokens": 1036
+          },
+          "wall_ms_max": 19365,
+          "wall_ms_mean": 13022.125
+        }
+      },
+      "floor": "astra-medium-2",
+      "ledger_scenes": 23,
+      "reference": "astra-medium"
+    },
+    "decision": {
+      "candidates": {
+        "luna-high": {
+          "tests": {
+            "current": {
+              "agreement": {
+                "alpha": 0.025,
+                "candidate_mean": 0.6921296296296297,
+                "control_mean": 0.8912037037037037,
+                "lower": -0.31912486349809993,
+                "margin": 0.1,
+                "mean_difference": -0.1990740740740741,
+                "n": 24,
+                "sd_difference": 0.28430338188986926,
+                "upper": -0.07902328465004828,
+                "verdict": "inconclusive"
+              },
+              "clean_copy": {
+                "alpha": 0.025,
+                "candidate_only_failures": 0,
+                "candidate_passes": 23,
+                "control_only_failures": 0,
+                "control_passes": 23,
+                "excess_lower_bound": -0.173473167604517,
+                "excess_upper_bound": 0.14818512891522437,
+                "margin": 0.15,
+                "n": 23,
+                "verdict": "pass"
+              },
+              "conformance": {
+                "alpha": 0.025,
+                "candidate_only_failures": 0,
+                "candidate_passes": 24,
+                "control_only_failures": 0,
+                "control_passes": 24,
+                "excess_lower_bound": -0.16688570980489742,
+                "excess_upper_bound": 0.14247359772252563,
+                "margin": 0.15,
+                "n": 24,
+                "verdict": "pass"
+              },
+              "evidence": {
+                "alpha": 0.025,
+                "candidate_only_failures": 6,
+                "candidate_passes": 18,
+                "control_only_failures": 0,
+                "control_passes": 24,
+                "excess_lower_bound": -0.08299567106472862,
+                "excess_upper_bound": 0.46711280242266934,
+                "margin": 0.15,
+                "n": 24,
+                "verdict": "inconclusive"
+              },
+              "settlement": {
+                "alpha": 0.025,
+                "candidate_agrees": 17,
+                "candidate_only_agreements": 1,
+                "control_agrees": 23,
+                "control_only_agreements": 7,
+                "excess_lower_bound": -0.12776420835766025,
+                "excess_upper_bound": 0.5390398707212345,
+                "margin": 0.25,
+                "margin_scenes": 6.0,
+                "n": 24,
+                "verdict": "inconclusive"
+              }
+            },
+            "recorded": {
+              "agreement": {
+                "alpha": 0.025,
+                "candidate_mean": 0.7372685185185185,
+                "control_mean": 0.7928240740740741,
+                "lower": -0.2214721721052309,
+                "margin": 0.1,
+                "mean_difference": -0.05555555555555555,
+                "n": 24,
+                "sd_difference": 0.3929224907483788,
+                "upper": 0.1103610609941198,
+                "verdict": "inconclusive"
+              },
+              "conformance": {
+                "alpha": 0.025,
+                "candidate_only_failures": 0,
+                "candidate_passes": 24,
+                "control_only_failures": 0,
+                "control_passes": 24,
+                "excess_lower_bound": -0.16688570980489742,
+                "excess_upper_bound": 0.14247359772252563,
+                "margin": 0.15,
+                "n": 24,
+                "verdict": "pass"
+              },
+              "evidence": {
+                "alpha": 0.025,
+                "candidate_only_failures": 6,
+                "candidate_passes": 18,
+                "control_only_failures": 0,
+                "control_passes": 24,
+                "excess_lower_bound": -0.08299567106472862,
+                "excess_upper_bound": 0.46711280242266934,
+                "margin": 0.15,
+                "n": 24,
+                "verdict": "inconclusive"
+              },
+              "settlement": {
+                "alpha": 0.025,
+                "candidate_agrees": 17,
+                "candidate_only_agreements": 1,
+                "control_agrees": 23,
+                "control_only_agreements": 7,
+                "excess_lower_bound": -0.12776420835766025,
+                "excess_upper_bound": 0.5390398707212345,
+                "margin": 0.25,
+                "margin_scenes": 6.0,
+                "n": 24,
+                "verdict": "inconclusive"
+              }
+            }
+          },
+          "tokens": 426843,
+          "verdict": "inconclusive"
+        },
+        "luna-medium": {
+          "tests": {
+            "current": {
+              "agreement": {
+                "alpha": 0.025,
+                "candidate_mean": 0.5247685185185186,
+                "control_mean": 0.8912037037037037,
+                "lower": -0.46303180700444097,
+                "margin": 0.1,
+                "mean_difference": -0.3664351851851852,
+                "n": 24,
+                "sd_difference": 0.22875939753591507,
+                "upper": -0.26983856336592943,
+                "verdict": "fail"
+              },
+              "clean_copy": {
+                "alpha": 0.025,
+                "candidate_only_failures": 0,
+                "candidate_passes": 23,
+                "control_only_failures": 0,
+                "control_passes": 23,
+                "excess_lower_bound": -0.173473167604517,
+                "excess_upper_bound": 0.14818512891522437,
+                "margin": 0.15,
+                "n": 23,
+                "verdict": "pass"
+              },
+              "conformance": {
+                "alpha": 0.025,
+                "candidate_only_failures": 0,
+                "candidate_passes": 24,
+                "control_only_failures": 0,
+                "control_passes": 24,
+                "excess_lower_bound": -0.16688570980489742,
+                "excess_upper_bound": 0.14247359772252563,
+                "margin": 0.15,
+                "n": 24,
+                "verdict": "pass"
+              },
+              "evidence": {
+                "alpha": 0.025,
+                "candidate_only_failures": 8,
+                "candidate_passes": 16,
+                "control_only_failures": 0,
+                "control_passes": 24,
+                "excess_lower_bound": -0.028527679879583517,
+                "excess_upper_bound": 0.5532196156596482,
+                "margin": 0.15,
+                "n": 24,
+                "verdict": "inconclusive"
+              },
+              "settlement": {
+                "alpha": 0.025,
+                "candidate_agrees": 9,
+                "candidate_only_agreements": 0,
+                "control_agrees": 23,
+                "control_only_agreements": 14,
+                "excess_lower_bound": 0.17312129382364583,
+                "excess_upper_bound": 0.8002752249255695,
+                "margin": 0.25,
+                "margin_scenes": 6.0,
+                "n": 24,
+                "verdict": "inconclusive"
+              }
+            },
+            "recorded": {
+              "agreement": {
+                "alpha": 0.025,
+                "candidate_mean": 0.6326388888888889,
+                "control_mean": 0.7928240740740741,
+                "lower": -0.29668604177283675,
+                "margin": 0.1,
+                "mean_difference": -0.16018518518518518,
+                "n": 24,
+                "sd_difference": 0.3232603079490186,
+                "upper": -0.023684328597533638,
+                "verdict": "inconclusive"
+              },
+              "conformance": {
+                "alpha": 0.025,
+                "candidate_only_failures": 0,
+                "candidate_passes": 24,
+                "control_only_failures": 0,
+                "control_passes": 24,
+                "excess_lower_bound": -0.16688570980489742,
+                "excess_upper_bound": 0.14247359772252563,
+                "margin": 0.15,
+                "n": 24,
+                "verdict": "pass"
+              },
+              "evidence": {
+                "alpha": 0.025,
+                "candidate_only_failures": 12,
+                "candidate_passes": 12,
+                "control_only_failures": 0,
+                "control_passes": 24,
+                "excess_lower_bound": 0.10016475555590348,
+                "excess_upper_bound": 0.7087582201637881,
+                "margin": 0.15,
+                "n": 24,
+                "verdict": "inconclusive"
+              },
+              "settlement": {
+                "alpha": 0.025,
+                "candidate_agrees": 8,
+                "candidate_only_agreements": 0,
+                "control_agrees": 23,
+                "control_only_agreements": 15,
+                "excess_lower_bound": 0.21173526106160334,
+                "excess_upper_bound": 0.831744365696071,
+                "margin": 0.25,
+                "margin_scenes": 6.0,
+                "n": 24,
+                "verdict": "inconclusive"
+              }
+            }
+          },
+          "tokens": 391699,
+          "verdict": "fail"
+        }
+      },
+      "proposal": null,
+      "tie_break": "fewest recorded tokens over both blocks, then medium effort"
+    },
+    "recorded": {
+      "agreement_with_control": {
+        "luna-high": {
+          "delta.from": {
+            "exact": 0.0,
+            "normalized": 0.0
+          },
+          "delta.null": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "delta.to": {
+            "exact": 0.0,
+            "normalized": 0.0
+          },
+          "delta.what_changed": {
+            "exact": 0.0,
+            "normalized": 0.0
+          },
+          "delta.who": {
+            "exact": 0.8333333333333334,
+            "normalized": 0.8333333333333334
+          },
+          "promises_opened.count": {
+            "exact": 0.375,
+            "normalized": 0.375
+          },
+          "promises_opened.description": {
+            "exact": 0.041666666666666664,
+            "normalized": 0.041666666666666664
+          },
+          "promises_opened.due_hint": {
+            "exact": 0.548611111111111,
+            "normalized": 0.6319444444444444
+          },
+          "promises_opened.evidence_quote": {
+            "exact": 0.32222222222222224,
+            "normalized": 0.3847222222222222
+          },
+          "promises_opened.kind": {
+            "exact": 0.5659722222222222,
+            "normalized": 0.5659722222222222
+          },
+          "promises_opened.subject": {
+            "exact": 0.16319444444444445,
+            "normalized": 0.16319444444444445
+          },
+          "promises_paid.count": {
+            "exact": 0.625,
+            "normalized": 0.625
+          },
+          "promises_paid.evidence_quote": {
+            "exact": 0.33268849206349205,
+            "normalized": 0.3785218253968254
+          },
+          "promises_paid.matched": {
+            "exact": 0.6666666666666666,
+            "normalized": 0.6666666666666666
+          },
+          "promises_paid.subject": {
+            "exact": 0.7611111111111111,
+            "normalized": 0.7611111111111111
+          }
+        },
+        "luna-medium": {
+          "delta.from": {
+            "exact": 0.0,
+            "normalized": 0.0
+          },
+          "delta.null": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "delta.to": {
+            "exact": 0.0,
+            "normalized": 0.0
+          },
+          "delta.what_changed": {
+            "exact": 0.0,
+            "normalized": 0.0
+          },
+          "delta.who": {
+            "exact": 0.7916666666666666,
+            "normalized": 0.7916666666666666
+          },
+          "promises_opened.count": {
+            "exact": 0.4583333333333333,
+            "normalized": 0.4583333333333333
+          },
+          "promises_opened.description": {
+            "exact": 0.041666666666666664,
+            "normalized": 0.041666666666666664
+          },
+          "promises_opened.due_hint": {
+            "exact": 0.36527777777777776,
+            "normalized": 0.45902777777777776
+          },
+          "promises_opened.evidence_quote": {
+            "exact": 0.06636904761904762,
+            "normalized": 0.11498015873015872
+          },
+          "promises_opened.kind": {
+            "exact": 0.37222222222222223,
+            "normalized": 0.37222222222222223
+          },
+          "promises_opened.subject": {
+            "exact": 0.08333333333333333,
+            "normalized": 0.09166666666666667
+          },
+          "promises_paid.count": {
+            "exact": 0.375,
+            "normalized": 0.375
+          },
+          "promises_paid.evidence_quote": {
+            "exact": 0.10282738095238096,
+            "normalized": 0.14449404761904763
+          },
+          "promises_paid.matched": {
+            "exact": 0.3333333333333333,
+            "normalized": 0.3333333333333333
+          },
+          "promises_paid.subject": {
+            "exact": 0.4847222222222222,
+            "normalized": 0.4847222222222222
+          }
+        }
+      },
+      "cells": {
+        "astra-medium": {
+          "answers": 24,
+          "component_means": {
+            "delta_presence": 1.0,
+            "delta_who": 0.9166666666666666,
+            "opened_count": 0.7673611111111112,
+            "opened_kinds": 0.6944444444444445,
+            "paid_matched_set": 0.9583333333333334
+          },
+          "composite_mean": 0.7928240740740741,
+          "conformance_passes": 24,
+          "evidence_passes": 24,
+          "field_agreement": {
+            "delta.from": {
+              "exact": 0.08333333333333333,
+              "normalized": 0.16666666666666666
+            },
+            "delta.null": {
+              "exact": 1.0,
+              "normalized": 1.0
+            },
+            "delta.to": {
+              "exact": 0.041666666666666664,
+              "normalized": 0.25
+            },
+            "delta.what_changed": {
+              "exact": 0.0,
+              "normalized": 0.08333333333333333
+            },
+            "delta.who": {
+              "exact": 0.9166666666666666,
+              "normalized": 0.9166666666666666
+            },
+            "promises_opened.count": {
+              "exact": 0.5416666666666666,
+              "normalized": 0.5416666666666666
+            },
+            "promises_opened.description": {
+              "exact": 0.08333333333333333,
+              "normalized": 0.08333333333333333
+            },
+            "promises_opened.due_hint": {
+              "exact": 0.71875,
+              "normalized": 0.7673611111111112
+            },
+            "promises_opened.evidence_quote": {
+              "exact": 0.44236111111111115,
+              "normalized": 0.46319444444444446
+            },
+            "promises_opened.kind": {
+              "exact": 0.6944444444444445,
+              "normalized": 0.6944444444444445
+            },
+            "promises_opened.subject": {
+              "exact": 0.35486111111111107,
+              "normalized": 0.36319444444444443
+            },
+            "promises_paid.count": {
+              "exact": 0.9166666666666666,
+              "normalized": 0.9166666666666666
+            },
+            "promises_paid.evidence_quote": {
+              "exact": 0.566220238095238,
+              "normalized": 0.5773313492063492
+            },
+            "promises_paid.matched": {
+              "exact": 0.9583333333333334,
+              "normalized": 0.9583333333333334
+            },
+            "promises_paid.subject": {
+              "exact": 0.9513888888888888,
+              "normalized": 0.9513888888888888
+            }
+          },
+          "handler_losses": {},
+          "names_present": 167,
+          "names_required": 181,
+          "paid_unmatched": 1,
+          "parse_failures_would_retry": 0,
+          "prose_words_max": 61,
+          "prose_words_mean": 52.416666666666664,
+          "quantities_present": 10,
+          "quantities_required": 13,
+          "quotes": 96,
+          "quotes_located": 96,
+          "scenes_with_paid_unmatched": 1,
+          "scored_scenes": 24,
+          "strict_schema_failures": 0,
+          "tokens_max": 8328,
+          "tokens_mean": 8059.208333333333,
+          "tokens_total": 193421,
+          "unusable": 0,
+          "usage_totals": {
+            "cache_read_tokens": 24192,
+            "cache_write_tokens": 0,
+            "input_tokens": 160706,
+            "output_tokens": 7104,
+            "reasoning_tokens": 1419
+          },
+          "wall_ms_max": 20416,
+          "wall_ms_mean": 14565.416666666666
+        },
+        "luna-high": {
+          "answers": 24,
+          "component_means": {
+            "delta_presence": 1.0,
+            "delta_who": 0.9166666666666666,
+            "opened_count": 0.6840277777777778,
+            "opened_kinds": 0.611111111111111,
+            "paid_matched_set": 0.7083333333333334
+          },
+          "composite_mean": 0.7372685185185185,
+          "conformance_passes": 24,
+          "evidence_passes": 18,
+          "field_agreement": {
+            "delta.from": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "delta.null": {
+              "exact": 1.0,
+              "normalized": 1.0
+            },
+            "delta.to": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "delta.what_changed": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "delta.who": {
+              "exact": 0.9166666666666666,
+              "normalized": 0.9166666666666666
+            },
+            "promises_opened.count": {
+              "exact": 0.4166666666666667,
+              "normalized": 0.4166666666666667
+            },
+            "promises_opened.description": {
+              "exact": 0.08333333333333333,
+              "normalized": 0.08333333333333333
+            },
+            "promises_opened.due_hint": {
+              "exact": 0.611111111111111,
+              "normalized": 0.6840277777777778
+            },
+            "promises_opened.evidence_quote": {
+              "exact": 0.3451388888888889,
+              "normalized": 0.3833333333333333
+            },
+            "promises_opened.kind": {
+              "exact": 0.611111111111111,
+              "normalized": 0.611111111111111
+            },
+            "promises_opened.subject": {
+              "exact": 0.14583333333333334,
+              "normalized": 0.1597222222222222
+            },
+            "promises_paid.count": {
+              "exact": 0.6666666666666666,
+              "normalized": 0.6666666666666666
+            },
+            "promises_paid.evidence_quote": {
+              "exact": 0.28095238095238095,
+              "normalized": 0.29484126984126985
+            },
+            "promises_paid.matched": {
+              "exact": 0.7083333333333334,
+              "normalized": 0.7083333333333334
+            },
+            "promises_paid.subject": {
+              "exact": 0.7680555555555556,
+              "normalized": 0.7680555555555556
+            }
+          },
+          "handler_losses": {},
+          "names_present": 170,
+          "names_required": 181,
+          "paid_unmatched": 0,
+          "parse_failures_would_retry": 0,
+          "prose_words_max": 142,
+          "prose_words_mean": 101.04166666666667,
+          "quantities_present": 7,
+          "quantities_required": 13,
+          "quotes": 72,
+          "quotes_located": 63,
+          "scenes_with_paid_unmatched": 0,
+          "scored_scenes": 24,
+          "strict_schema_failures": 0,
+          "tokens_max": 9484,
+          "tokens_mean": 8789.416666666666,
+          "tokens_total": 210946,
+          "unusable": 0,
+          "usage_totals": {
+            "cache_read_tokens": 47872,
+            "cache_write_tokens": 0,
+            "input_tokens": 137030,
+            "output_tokens": 8357,
+            "reasoning_tokens": 17687
+          },
+          "wall_ms_max": 66291,
+          "wall_ms_mean": 29041.875
+        },
+        "luna-medium": {
+          "answers": 24,
+          "component_means": {
+            "delta_presence": 1.0,
+            "delta_who": 0.875,
+            "opened_count": 0.5756944444444444,
+            "opened_kinds": 0.4472222222222222,
+            "paid_matched_set": 0.3333333333333333
+          },
+          "composite_mean": 0.6326388888888889,
+          "conformance_passes": 24,
+          "evidence_passes": 12,
+          "field_agreement": {
+            "delta.from": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "delta.null": {
+              "exact": 1.0,
+              "normalized": 1.0
+            },
+            "delta.to": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "delta.what_changed": {
+              "exact": 0.0,
+              "normalized": 0.0
+            },
+            "delta.who": {
+              "exact": 0.875,
+              "normalized": 0.875
+            },
+            "promises_opened.count": {
+              "exact": 0.25,
+              "normalized": 0.25
+            },
+            "promises_opened.description": {
+              "exact": 0.09027777777777778,
+              "normalized": 0.09027777777777778
+            },
+            "promises_opened.due_hint": {
+              "exact": 0.3659722222222222,
+              "normalized": 0.4055555555555555
+            },
+            "promises_opened.evidence_quote": {
+              "exact": 0.1076388888888889,
+              "normalized": 0.13541666666666666
+            },
+            "promises_opened.kind": {
+              "exact": 0.4472222222222222,
+              "normalized": 0.4472222222222222
+            },
+            "promises_opened.subject": {
+              "exact": 0.10416666666666667,
+              "normalized": 0.10416666666666667
+            },
+            "promises_paid.count": {
+              "exact": 0.375,
+              "normalized": 0.375
+            },
+            "promises_paid.evidence_quote": {
+              "exact": 0.11076388888888888,
+              "normalized": 0.13159722222222223
+            },
+            "promises_paid.matched": {
+              "exact": 0.3333333333333333,
+              "normalized": 0.3333333333333333
+            },
+            "promises_paid.subject": {
+              "exact": 0.4777777777777778,
+              "normalized": 0.4777777777777778
+            }
+          },
+          "handler_losses": {},
+          "names_present": 171,
+          "names_required": 181,
+          "paid_unmatched": 0,
+          "parse_failures_would_retry": 0,
+          "prose_words_max": 196,
+          "prose_words_mean": 130.66666666666666,
+          "quantities_present": 3,
+          "quantities_required": 13,
+          "quotes": 66,
+          "quotes_located": 50,
+          "scenes_with_paid_unmatched": 0,
+          "scored_scenes": 24,
+          "strict_schema_failures": 0,
+          "tokens_max": 8389,
+          "tokens_mean": 8105.958333333333,
+          "tokens_total": 194543,
+          "unusable": 0,
+          "usage_totals": {
+            "cache_read_tokens": 51200,
+            "cache_write_tokens": 0,
+            "input_tokens": 133708,
+            "output_tokens": 9635,
+            "reasoning_tokens": 0
+          },
+          "wall_ms_max": 28771,
+          "wall_ms_mean": 12369.333333333334
+        }
+      },
+      "record": {
+        "answers": 24,
+        "component_means": {
+          "delta_presence": 1.0,
+          "delta_who": 1.0,
+          "opened_count": 1.0,
+          "opened_kinds": 1.0,
+          "paid_matched_set": 1.0
+        },
+        "composite_mean": 1.0,
+        "conformance_passes": 24,
+        "evidence_passes": 24,
+        "field_agreement": {
+          "delta.from": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "delta.null": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "delta.to": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "delta.what_changed": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "delta.who": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "promises_opened.count": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "promises_opened.description": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "promises_opened.due_hint": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "promises_opened.evidence_quote": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "promises_opened.kind": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "promises_opened.subject": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "promises_paid.count": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "promises_paid.evidence_quote": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "promises_paid.matched": {
+            "exact": 1.0,
+            "normalized": 1.0
+          },
+          "promises_paid.subject": {
+            "exact": 1.0,
+            "normalized": 1.0
+          }
+        },
+        "handler_losses": {},
+        "names_present": 167,
+        "names_required": 181,
+        "paid_unmatched": 2,
+        "parse_failures_would_retry": 0,
+        "prose_words_max": 62,
+        "prose_words_mean": 52.958333333333336,
+        "quantities_present": 10,
+        "quantities_required": 13,
+        "quotes": 102,
+        "quotes_located": 102,
+        "scenes_with_paid_unmatched": 1,
+        "scored_scenes": 24,
+        "strict_schema_failures": 0,
+        "tokens_max": 8485,
+        "tokens_mean": 8113.541666666667,
+        "tokens_total": 194725,
+        "unusable": 0,
+        "usage_totals": {
+          "cache_read_tokens": 5376,
+          "cache_write_tokens": 0,
+          "input_tokens": 179678,
+          "output_tokens": 8402,
+          "reasoning_tokens": 1269
+        },
+        "wall_ms_max": 23912,
+        "wall_ms_mean": 17126.625
+      }
+    }
+  },
+  "transport": {
+    "answered_units": 172,
+    "by_cell_status": {
+      "current/astra-medium": {
+        "answered": 24
+      },
+      "current/astra-medium-2": {
+        "answered": 24
+      },
+      "current/luna-high": {
+        "answered": 24
+      },
+      "current/luna-medium": {
+        "answered": 24
+      },
+      "seed/astra-medium": {
+        "answered": 2
+      },
+      "seed/sol-medium": {
+        "answered": 2
+      },
+      "summary/astra-medium": {
+        "answered": 24
+      },
+      "summary/luna-high": {
+        "answered": 24
+      },
+      "summary/luna-medium": {
+        "answered": 24
+      }
+    },
+    "coverage": "complete",
+    "dispatched": 172,
+    "halted_units": [],
+    "halts": [],
+    "interrupted_dispatches": [],
+    "invocations": 1,
+    "limits": {
+      "calls": 240,
+      "seconds": 14400,
+      "tokens": 7000000
+    },
+    "missing_units": [],
+    "planned_units": 172,
+    "redispatched_units": [],
+    "stops": [
+      null
+    ],
+    "transport_failures_by_kind": {},
+    "unknown_usage_attempts": 0,
+    "unusable_answers_by_kind": {},
+    "used": {
+      "calls": 172.0,
+      "seconds": 4300.152000000002,
+      "tokens": 2397019.0
+    }
+  }
+}
