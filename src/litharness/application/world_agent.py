@@ -21,8 +21,8 @@ if TYPE_CHECKING:
     from litharness.application.concept import Concept
 
 #: Frozen profiles, one per job, so seeding a world and growing one are separable on the rows.
-SEED_PROFILE = "architect.seed.v9"
-GROW_PROFILE = "architect.grow.v5"
+SEED_PROFILE = "architect.seed.v10"
+GROW_PROFILE = "architect.grow.v6"
 
 # Explicit subcommands exclude acceptance. A broad world:* allowance would permit it.
 # Transport joins entries with commas; tests compare this list with the real parser.
@@ -73,8 +73,8 @@ _TOOLS = (
 _GROWTH = (
     "On a capability, use growth_limit when supplied mechanics establish its growth: 1 for "
     "ownership only, the explicit positive maximum when given, or open when repeatable "
-    "gains or investments have no supplied cap. A price alone does not establish repeatability. "
-    "Leave unspecified growth undeclared."
+    "gains or investments have no supplied cap. A requirement alone does not establish "
+    "repeatability. Leave unspecified growth undeclared."
 )
 
 # System mechanics use the vocabulary returned by the world tool.
@@ -85,9 +85,9 @@ _SYSTEM = (
     "columns and nothing else, because a sheet that prints other numbers is a position in no "
     "system and leaves the one you declared unfinished. The line the book prints when a "
     "standing changes may carry a second phrase, in the system's words, for a grant gained.\n"
-    "Declare what the system grants, in what order and at what cost, each grant countable and "
-    "named in short plain words with no digits in them; at least one of them needs another one "
-    "first, or what you have declared is a list rather than a graph; the engine accepts "
+    "Declare what the system grants, in what order and what each takes, each grant countable "
+    "and named in short plain words with no digits in them; at least one of them needs another "
+    "one first, or what you have declared is a list rather than a graph; the engine accepts "
     "five to eight grants per system.\n"
     "Let entry-level capabilities be useful without separately acquired perception or "
     "control grants; fundamental handling can be part of the capability. Use numerical "
@@ -98,13 +98,13 @@ _SYSTEM = (
     "Declaring a grant does not "
     "give it to the viewpoint character or require its introduction in chapter one.\n"
     "Declare a permanent fork only when the supplied story specifies mutually exclusive "
-    "paths, with its ways, grants and opening rungs; spending one resource among upgrades "
-    "does not permanently exclude those upgrades. A way may have manifests_as and requires "
-    "edges for grants at a depth.\n"
-    "Where the system hands out something to be spent on its grants, declare it as a grant "
-    "of its own that says per_rung how much every rung gives, and say on each grant it "
-    "buys what that grant costs in it; a grant the rungs hand out is never gained or "
-    "deepened, and a grant that costs it is not offered until it can be paid.\n"
+    "paths, with its ways, grants and opening rungs; putting one resource into some "
+    "upgrades does not permanently exclude the others. A way may have manifests_as and "
+    "requires edges for grants at a depth.\n"
+    "Where the system hands out points that people put into its grants, declare the points "
+    "as a grant of its own that says per_rung how many every rung gives, and say on each "
+    "grant how many it takes; a grant the rungs hand out is never gained or deepened, and a "
+    "grant is not offered until those points are there.\n"
     f"{_GROWTH}"
 )
 

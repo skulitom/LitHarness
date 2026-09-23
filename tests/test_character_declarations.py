@@ -149,7 +149,7 @@ def test_grow_preserves_adopted_wants_without_promoting_a_conditional_thought() 
     """Pin request routing; semantic compliance is measured by the registered goal contrast."""
     chapter = "Perhaps the visitor knew the route. Rook still wanted to mend the roof."
     request = world_agent.render_grow_request(chapter, logical_id="scene-2", story_order_key="s2")
-    assert request.profile == "architect.grow.v5"
+    assert request.profile == "architect.grow.v6"
     assert chapter in request.prompt and "exact story key: s2" in request.prompt
     assert (
         "A wants assertion records an established desire or adopted pursuit. A conditional "

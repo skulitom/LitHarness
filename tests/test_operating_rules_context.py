@@ -185,7 +185,7 @@ def test_writer_gets_the_rule_block_above_guidance_and_below_author_locks(tmp_pa
             "AUTHOR-LOCKED STORY DECISIONS"
         )
         assert "Four tokens" in system and "Four tokens" not in prompt
-        numeric_cost = "spark is paid for in marks, 2 each time it is gained or deepened"
+        numeric_cost = "spark takes 2 marks each time it is gained or deepened"
         assert numeric_cost in system and numeric_cost not in prompt
         assert f"spark costs {prose_cost}" in system and prose_cost not in prompt
         assert job.payload["context"]["sections"][context.RULES] == len(rules)

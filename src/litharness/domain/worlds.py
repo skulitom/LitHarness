@@ -2046,8 +2046,8 @@ def _record_sentence(
         and not isinstance(record.value, bool)
     ):
         return (
-            f"{record.subject} is paid for in {record.object_ref}, "
-            f"{record.value} each time it is gained or deepened"
+            f"{record.subject} takes {record.value} {record.object_ref} "
+            "each time it is gained or deepened"
         )
     if (
         record.predicate == PER_RUNG

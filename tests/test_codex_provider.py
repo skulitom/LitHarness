@@ -523,9 +523,9 @@ def test_codex_resource_builtins_remain_outside_bridge_allowance(monkeypatch, tm
 @pytest.mark.parametrize("profile", [
     "architect.seed.v1", "architect.seed.v2", "architect.seed.v3", "architect.seed.v4",
     "architect.seed.v5", "architect.seed.v6", "architect.seed.v7", "architect.seed.v8",
-    "architect.seed.v9",
+    "architect.seed.v9", "architect.seed.v10",
     "architect.grow.v1", "architect.grow.v2", "architect.grow.v3", "architect.grow.v4",
-    "architect.grow.v5",
+    "architect.grow.v5", "architect.grow.v6",
 ])
 def test_codex_architect_cannot_succeed_without_a_command_receipt(profile):
     with pytest.raises(ValueError, match="without any successful"):
@@ -692,14 +692,19 @@ def test_codex_optional_trace_survives_failed_calls_without_overwrite(tmp_path):
     runner.mismatch = True
     trace = tmp_path / "trace"
     provider = CodexCliProvider(runner=runner, trace_directory=trace)
+    request = CompletionRequest(prompt="Retain this exact request.", profile="trace.test.v0")
     for _ in range(2):
         with pytest.raises(ProviderError):
-            provider.complete(CompletionRequest(prompt="Retain this exact request."))
+            provider.complete(request)
     records = list(trace.glob("attempt-*.json"))
     assert len(records) == 2
     for path in records:
         raw = json.loads(path.read_bytes())
         assert raw["prompt"] == "Retain this exact request."
+        # The trace names its call by the request's own profile (stage-0 §262); the bytes the
+        # CLI is sent are the request's, with nothing of the profile added to them.
+        assert raw["profile"] == "trace.test.v0"
+        assert "trace.test.v0" not in raw["system"] + raw["prompt"] + " ".join(raw["argv"])
         assert raw["final_text"] == "different"
         assert runner.text in [
             json.loads(line).get("item", {}).get("text") for line in raw["stdout"].splitlines()

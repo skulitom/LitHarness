@@ -317,19 +317,20 @@ def vocabulary() -> dict[str, Any]:
                 "distinguish learning, deepening or ordinary use when they differ, including "
                 "whether a requirement gates attempts, successful use or recorded mastery, "
                 "according to the supplied mechanics. Alternatively, --object a grant every "
-                "rung hands out and --value the whole number of it paid each time this is "
-                "gained or deepened, in which case a grant that cannot be paid for is not offered"
+                "rung hands out and --value the whole number of it taken each time this is "
+                "gained or deepened, in which case a grant whose points are not there is not "
+                "offered"
             ),
             "per_rung": (
                 "how much of this grant every rung hands out; --value a whole number. A "
                 "grant with it opens at nothing, is never gained or deepened, and is what "
-                "other grants are paid in"
+                "other grants take"
             ),
             "growth_limit": (
                 "how far a capability can be gained or deepened; the capability is the subject, "
                 "--value a positive whole number for its supplied maximum (1 means ownership "
                 "only), or open for declared repeatable growth with no supplied cap. This is "
-                "timeless. Omit when growth is unspecified; a price alone does not imply "
+                "timeless. Omit when growth is unspecified; a requirement alone does not imply "
                 "repeatability. Stocks handed out per_rung never take this declaration"
             ),
             "taught_by": "who teaches it; --object the teacher",
@@ -364,7 +365,7 @@ def vocabulary() -> dict[str, Any]:
                 "what the one exceptional person can do that nobody else can; --value in "
                 "plain words"
             ),
-            "price": "what a thing charges; --value in plain words",
+            "price": "what having it takes from them; --value in plain words",
             "exception_to": "the rule that does not hold here; --object the rule",
             # **The three that were reachable, load-bearing and undocumented** (§163). Every
             # one is a JSON object in the value slot, which `cli._scalar` has kept whole since
@@ -390,7 +391,7 @@ def vocabulary() -> dict[str, Any]:
                 'naming it under "system", and that sheet prints the system\'s grants as '
                 "they stand, so a grant declared after the seed is a column at once. A sheet "
                 "naming a system may declare columns of its own beside the system's (a pool, "
-                "a currency, a class, an age): they print where declared, the system's "
+                "a class, an age): they print where declared, the system's "
                 "columns take the place of the first of theirs, and a snapshot that carries "
                 "the rung column is a position in the system whatever else it prints. An "
                 "owner's sheet is printed where a scene's plan names the owner: that scene "

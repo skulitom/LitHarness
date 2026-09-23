@@ -185,6 +185,9 @@ class CodexCliProvider:
         started = time.monotonic()
         raw: dict[str, Any] = {
             "provider": self.name,
+            # The request's own frozen profile, so a trace names its call without the
+            # request bytes changing (stage-0 §262).
+            "profile": request.profile,
             "requested_model": request.model or self.model,
             "reasoning_effort": self.effort_for(request.model or self.model),
         }

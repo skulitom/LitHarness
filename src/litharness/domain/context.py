@@ -417,7 +417,7 @@ class ContextPacket:
             "Scene plans, milestones and dramatic instructions must fit these facts. "
             "Apply each rule within its stated scope and declared exceptions. "
             "Satisfy a cost, prerequisite or activation condition before its dependent effect, "
-            "unless the rule explicitly allows delayed payment. Preserve declared quantities "
+            "unless the rule explicitly allows it to come later. Preserve declared quantities "
             "and entity identities across actions and scenes. These constrain what happens; "
             "they are not a checklist of explanations to put in the prose:\n",
         )

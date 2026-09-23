@@ -26,8 +26,8 @@ REPO = Path(__file__).resolve().parents[1]
 
 #: Profiles the pipeline sends, with the tier the candidate map gives each.
 CANDIDATE_EXPECTED = {
-    "architect.seed.v9": "standard",
-    "architect.grow.v5": "standard",
+    "architect.seed.v10": "standard",
+    "architect.grow.v6": "standard",
     "mechanical": "strong",
     "title.availability.v0": "basic",
     "default": "strong",
@@ -144,7 +144,7 @@ def test_the_registry_applies_routing_before_the_provider_sees_the_request() -> 
         recorder,  # type: ignore[arg-type]
         routing=ModelRouting.from_environ("codex", {"LITHARNESS_MODEL_TIERS": "candidate"}),
     )
-    registry.complete(CompletionRequest(prompt="x", profile="architect.grow.v5"))
+    registry.complete(CompletionRequest(prompt="x", profile="architect.grow.v6"))
     registry.complete(CompletionRequest(prompt="x", profile="default"))
     assert [request.model for request in recorder.seen] == ["gpt-6-sol", None]
 

@@ -282,7 +282,7 @@ class _Ladder:
     #: Markdown markers the strip removed before the gates (`draft.strip_markup`); `0` for
     #: every text that carried none, and defaulted so the ladder's callers need no change.
     markup_removed: int = 0
-    #: What the tells pass did to this text (`tells_pass.apply`), or `None` without a shelf,
+    #: What the tells pass counted in this text (`tells_pass.observe`), or `None` without a shelf,
     #: which is every book drafted before stage-0 §199 and every book with no ceiling.
     tells: tells_pass.TellsResult | None = None
 

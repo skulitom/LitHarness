@@ -192,7 +192,7 @@ def _costs() -> lc.StateRecord:
     assert worlds.project([record]) == {}
     priced = rec("threadpull", worlds.COSTS, object_ref="marks", value=1)
     assert sentences([priced]) == (
-        "threadpull is paid for in marks, 1 each time it is gained or deepened"
+        "threadpull takes 1 marks each time it is gained or deepened"
     )
     return record
 
@@ -830,7 +830,7 @@ def test_the_vocabulary_an_architect_reads_names_the_domain_and_the_criterion(
     assert "learning, deepening or ordinary use" in predicates["costs"]
     assert "attempts, successful use or recorded mastery" in predicates["costs"]
     assert "according to the supplied mechanics" in predicates["costs"]
-    assert "paid each time this is gained or deepened" in predicates["costs"]
+    assert "taken each time this is gained or deepened" in predicates["costs"]
 
 
 def test_an_unreadable_sheet_is_a_complaint_and_a_refusal_never_a_traceback(

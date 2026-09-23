@@ -197,5 +197,5 @@ def test_seed_and_grow_expose_growth_without_inferring_it_from_a_price() -> None
     for request in (seed, grow):
         assert "use growth_limit when supplied mechanics establish its growth" in request.system
         assert "explicit positive maximum when given" in request.system
-        assert "A price alone does not establish repeatability" in request.system
+        assert "A requirement alone does not establish repeatability" in request.system
         assert "Leave unspecified growth undeclared" in request.system
