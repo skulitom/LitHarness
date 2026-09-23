@@ -30,6 +30,35 @@ def test_the_longest_sentence_is_counted_in_words_and_split_on_stops() -> None:
     assert overview.longest_sentence(BLURBS[0]) == 9
 
 
+#: Draw 2 of the restored-directions draw (read 20), our own output: a sentence that ends inside
+#: its closing quote, then a paragraph break. The old splitter read the two as one 14-word
+#: sentence (stage-0 §262).
+DRAW_2 = (
+    "Anchor lets him brace a makeshift bridge. Reedstep could carry him across fragile "
+    "vegetation. Everyone else gets one permanent skill. His interface reads \u201cSkill "
+    "capacity: Unbounded.\u201d\n\n"
+    "Each new ability starts at Skill Rank 0. Raising his Personal Rank takes harder trials, "
+    "not just collecting kernels."
+)
+
+
+def test_a_closing_quote_or_a_paragraph_break_ends_a_sentence() -> None:
+    parts = overview.sentences(DRAW_2)
+    assert len(parts) == 6
+    assert "His interface reads \u201cSkill capacity: Unbounded.\u201d" in parts
+    assert "Each new ability starts at Skill Rank 0." in parts
+    # Saved on disk the listing has Windows line ends; the split is the same.
+    assert overview.sentences(DRAW_2.replace("\n", "\r\n")) == parts
+    assert overview.sentences("A line with no stop\n\nThen a sentence.") == [
+        "A line with no stop",
+        "Then a sentence.",
+    ]
+    assert overview.sentences("She said 'Go.' He went.") == ["She said 'Go.'", "He went."]
+    assert overview.longest_sentence(DRAW_2) == 11
+    # The shelf's ceiling is counted by the same splitter, so it moves with the listing's side.
+    assert overview.sentence_ceiling([DRAW_2]) == 11
+
+
 def test_the_ceiling_is_the_shelf_s_longest_and_none_without_a_shelf() -> None:
     assert overview.sentence_ceiling(BLURBS) == 14
     assert overview.sentence_ceiling(()) is None

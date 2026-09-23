@@ -53,16 +53,27 @@ def chains_too_hard(listing: str, *, ceiling: float) -> bool:
     return coordinator_density(listing) > ceiling
 
 
-_SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
+_PARAGRAPH_BREAK = re.compile(r"\n\s*\n")
+_SENTENCE_END = re.compile(r"(?<=[.!?])\s+|(?<=[.!?][\"'\u201d\u2019])\s+")
+
+
+def sentences(listing: str) -> list[str]:
+    """Split text into paragraphs, then each paragraph into sentences.
+
+    A paragraph break always ends a sentence. Otherwise a boundary is end punctuation,
+    optionally followed by a closing quote, and then whitespace. Not a language parser.
+    """
+    return [
+        part.strip()
+        for paragraph in _PARAGRAPH_BREAK.split(listing.strip())
+        for part in _SENTENCE_END.split(paragraph.strip())
+        if part.strip()
+    ]
 
 
 def longest_sentence(listing: str) -> int:
-    """Return the longest sentence's word count, or zero for empty text.
-
-    Sentence boundaries are punctuation followed by whitespace, not a language parser.
-    """
-    parts = (part for part in _SENTENCE_END.split(listing.strip()) if part.strip())
-    return max((len(part.split()) for part in parts), default=0)
+    """Return the longest sentence's word count under `sentences`, or zero for empty text."""
+    return max((len(part.split()) for part in sentences(listing)), default=0)
 
 
 def sentence_ceiling(blurbs: Sequence[str]) -> int | None:
@@ -107,28 +118,26 @@ _TASK = (
 )
 
 
-# A supplied concept owns the story; this task introduces it to a new reader.
+# A supplied concept owns the story; this task introduces it to a new reader. It asks for a
+# hook, not an inventory: the numbers sentence and the paragraph sentence are `_TASK`'s own,
+# word for word (stage-0 §262).
 _CONCEPT_TASK = (
-    "Write the public listing for the supplied LitRPG fantasy serial, for someone who has read "
-    "neither the book nor its plan. They are deciding whether to open chapter one.\n"
-    "Give them an understandable situation and a reason to follow this person: what has "
-    "changed, what they want to do about it, and why that matters to them. Select connected "
-    "details from the material rather than summarising each field.\n"
-    "Make the magical adventure and the game system's progression concrete through the "
-    "abilities this person can develop and what those let them pursue. Name the game system, "
-    "its skills and the ranks or levels it counts as the book names them: those words tell a "
-    "LitRPG reader the book is for them. Use ordinary language for everything else, and keep "
-    "another unfamiliar name only when it helps the reader follow the situation, without "
-    "requiring a glossary or a lesson in the rules.\n"
-    "Curiosity should concern what will happen, not what the sentences mean. The source "
-    "includes developments a new reader has not reached: withhold their answers without "
-    "withholding the setup needed to understand the pursuit.\n"
-    "Keep the supplied character, motives and story intact; do not invent stakes, powers "
-    "or promises to make the pitch more dramatic. Exact incidental counts and timestamps "
-    "do not belong in the listing; a rank the system counts is not incidental.\n"
-    "Write about a hundred words of finished listing only, with no title, headings, tags, "
-    "author commentary or dashes; use first or third person, never address the reader as "
-    "the protagonist."
+    "Write the public listing for the supplied LitRPG serial: the hundred or so words a reader "
+    "meets on a list of serials, and the only thing that decides whether they open chapter one.\n"
+    "Its first sentence already holds the change that starts this person's story or what they "
+    "alone can do, and who they were the day before is one plain clause, no more.\n"
+    "Then say what they want now and what stands in their way, in the words they would use "
+    "themselves.\n"
+    "Name the game system once as the book names it, and show the one thing this person can do "
+    "that nobody else can by what it lets them do.\n"
+    "Exactness spent on floors, ranks, counts and lengths of time is space the hook needed.\n"
+    "A paragraph holds together or it is not a paragraph: a sentence that could be lifted out "
+    "and dropped anywhere in the listing has failed.\n"
+    "End on what they are about to try or what could go wrong.\n"
+    "Keep the supplied person, motives and story; invent nothing the material does not hold, "
+    "and give away nothing past the opening chapter.\n"
+    "No title, headings, tags, author commentary or dashes; first or third person, never "
+    "addressing the reader as the protagonist."
 )
 
 

@@ -670,8 +670,12 @@ class Concept:
         lines = [
             "The book this listing introduces, as its writer conceived it:",
             f"The person: {self.person_before}",
-            f"Their pursuit and why it matters: {self.want}",
         ]
+        # A listing follows the order of its material, and a discovery treatment holds the
+        # one-person advantage only inside its world text, so it gets its own line up top.
+        if self.story_material is None and self.discovery:
+            lines.append(f"Their magical advantage: {self.exception}")
+        lines.append(f"Their pursuit and why it matters: {self.want}")
         if self.story_material is not None:
             lines.extend((
                 f"The world they encounter: {self.story_material.world}",

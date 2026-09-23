@@ -1152,6 +1152,26 @@ def test_discovery_material_reaches_listing_and_later_arcs_with_scoped_world_inp
         assert not any("numbers must actually move" in rule for rule in parsed["rules"])
 
 
+def test_a_discovery_listing_is_handed_the_one_person_advantage_before_the_world() -> None:
+    """Read 20: draw 2's advantage sat mid-world in the material and mid-listing in the result."""
+    drawn = concept.Concept.from_payload({**_example(), "discovery": _discovery()})
+    assert drawn.discovery is not None
+    lines = drawn.render_for_listing().splitlines()
+    advantage = f"Their magical advantage: {drawn.exception}"
+    assert lines[1:4] == [
+        f"The person: {drawn.person_before}",
+        advantage,
+        f"Their pursuit and why it matters: {drawn.want}",
+    ]
+    assert lines.count(advantage) == 1
+    assert lines.index(advantage) < lines.index(
+        f"The world they encounter: {drawn.discovery.world}"
+    )
+    # The legacy branch keeps its own order.
+    legacy = concept.Concept.from_payload(_example()).render_for_listing().splitlines()
+    assert legacy[2] == f"Their pursuit and why it matters: {drawn.want}"
+
+
 def test_inhabited_world_survives_with_pending_discoveries_separate_from_world_properties() -> None:
     source = discovery.Discovery.from_invention({
         "world": (
