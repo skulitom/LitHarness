@@ -1,0 +1,2492 @@
+{
+  "audited_at": "2026-09-23T06:17:43.500469+00:00",
+  "claim_id": "restored-directions-draw-20260922",
+  "closed": null,
+  "draws": [
+    {
+      "all_transport_controls_pass": true,
+      "binary": {
+        "sha256": "bc45017e8239dc150258f69309ced9df6bbcdf5b8e4f346decf780ac0999e226",
+        "version": "codex-cli 0.155.0-alpha.9.2"
+      },
+      "calls": [
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 1,
+          "profile": "default",
+          "receipt_sha256": "0f03f5ce3b2aa62b738ddad1fa91858df38c5e89646c67122eb897876f5703c4",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "concept",
+          "status": "completed",
+          "tokens": 3688
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 2,
+          "profile": "writer.discovery.v14",
+          "receipt_sha256": "9e95ba96247407245d6c1dab3b5b52c0d76002cdd52d50ebdf202b5351ff7259",
+          "request_sha256": "43fc541a567faf51e676c48f0313e5eda7438f33c23eeea0a60a3ce222015e60",
+          "stage": "concept",
+          "status": "completed",
+          "tokens": 8237
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 3,
+          "profile": "writer.concept.discovery.v9",
+          "receipt_sha256": "9cbc1d75b1a5ea4b3e1099493b52562e0f869e106b9ab494976a855f7c2df1a6",
+          "request_sha256": "0c33a20b1b160578bd370ecc7b0269a487382568e642161508a9ff970992b387",
+          "stage": "concept",
+          "status": "completed",
+          "tokens": 10274
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 4,
+          "profile": "writer.concept.precision.v1",
+          "receipt_sha256": "ad7a9ea0a60185cb9bb04ff095019e49ac33d45ec17e27e4c72d8694ff42c0ab",
+          "request_sha256": "d42ef43de64954cd6096caa523e623ee56d4eceedc378f3cc836200c4c2ce7f3",
+          "stage": "concept",
+          "status": "completed",
+          "tokens": 9595
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 5,
+          "profile": "default",
+          "receipt_sha256": "7bd47cc2affaf6116d61408278d489818e3dd403352431f5ca1fc331d80d4748",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 3690
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 6,
+          "profile": "writer.overview.concept.v2",
+          "receipt_sha256": "070b5015478406ff96dcea0efd8e4a48931a99b72f4fbc5780180a6fffc3900c",
+          "request_sha256": "b63cc0b99d947c2da7754cf58115e84445fe125fdb18c2f46cdc26596a54853f",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 6743
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 7,
+          "profile": "reader.appetite.v0",
+          "receipt_sha256": "4d6c04c618883c2ac60bc937cfb56cc59d79b33f1a9cad28aab1d3f03d2ae1a2",
+          "request_sha256": "90e7046f78b9ba4811d8092fc256b7a14b964ec6d494ab0bd81f81f167460ed5",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4524
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 8,
+          "profile": "reader.appetite.v0",
+          "receipt_sha256": "e389c64ee285b0d22a18970313efae7138066aa12d728689eb828b645aa80bea",
+          "request_sha256": "7c21e9d174df39de6dde68694a9d9c35eee6ad7749ad20feae540dd6862df09e",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4516
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 9,
+          "profile": "reader.appetite.v0",
+          "receipt_sha256": "eaa24e2e00beb95fe62f3d2e720bb20dd2e7c625d2a2adeec7365b9abc1ce0e4",
+          "request_sha256": "42dd1b48c4fb4c2fa5da8d8fdd5f673666b942fa22bbab3fcbf31b4a9e3667fa",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4549
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 10,
+          "profile": "reader.appetite.v0",
+          "receipt_sha256": "6d5f30a95719660c1c020ff5a13776dbf79b10d49b2984aa5d5e99b0971461c6",
+          "request_sha256": "c25a971be3dbe7e0d063471be2887add963cd43b865f10cb25272c8c373d3e3e",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4550
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 11,
+          "profile": "writer.title.v0",
+          "receipt_sha256": "33958acff5b3ad0888372a7944d46cc86071a2d116ed231419479601cc4b1412",
+          "request_sha256": "348e90ecbb4de3e94a459c71a20d34395b6f4f2c3b97ae79200a253edd61cca1",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4234
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 12,
+          "profile": "reader.start.v0",
+          "receipt_sha256": "7fd45282286076652fac5f699b23a26139c706c3346e6a2b1bd5a378123af729",
+          "request_sha256": "c5c3a5b5a1e4c85f5189c931bd2496432df2fa64996970cc819e8b1e8385508a",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4170
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 13,
+          "profile": "reader.start.v0",
+          "receipt_sha256": "f0d483bb9776e455d1127c7c8d20de56382b81158d7024b887b8e49d7cada097",
+          "request_sha256": "0b680e75876368526a32da6327e7c7df9fcdd42991a85a831edb11269efd8157",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4170
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 14,
+          "profile": "reader.start.v0",
+          "receipt_sha256": "d08e1824cebed91f091989bc9b09dc81b1ff01f468919df26ca7f5658f6657dc",
+          "request_sha256": "c047e76a44ae98e15fc19ee273a11424f617ec8efe1b4cefbfeb059c48cdbac9",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4178
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 15,
+          "profile": "reader.start.v0",
+          "receipt_sha256": "0431db88ed6c62f416c3b7784a516e731d25d0f9b4fab667ce3a774a1d560d78",
+          "request_sha256": "9d50769e0c3917ae59df310f96e0d3105a4699069505aa87db9af81b13b43ac5",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4192
+        }
+      ],
+      "checkpoints": {
+        "concept": {
+          "binding_sha256": "1460f6284fc8de8da12b5140bc372d0e2bb8b9bb11920d3183d5b792bd0271c4",
+          "observation": "recorded",
+          "observations": {
+            "author_brief_retained": true,
+            "discovery_version_is_current": true,
+            "fields": {
+              "discovery.experience_brief": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 2,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 2,
+                "words": 186
+              },
+              "discovery.growth": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 29,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 18,
+                "words": 702
+              },
+              "discovery.opening": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 19,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 15,
+                "words": 639
+              },
+              "discovery.world": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 4,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 4,
+                "words": 575
+              },
+              "exception": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 0,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 0,
+                "words": 82
+              },
+              "first_use": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 4,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 4,
+                "words": 80
+              },
+              "person_before": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 0,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 0,
+                "words": 76
+              },
+              "system.look": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 0,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 0,
+                "words": 36
+              },
+              "system.manner": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 2,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 2,
+                "words": 89
+              },
+              "system.name": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 0,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 0,
+                "words": 3
+              },
+              "system.pays": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 0,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 0,
+                "words": 80
+              },
+              "system.strongest_known": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 7,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 7,
+                "words": 65
+              },
+              "threat.first_reach": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 2,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 2,
+                "words": 55
+              },
+              "threat.what": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 0,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 0,
+                "words": 59
+              },
+              "want": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 0,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 0,
+                "words": 64
+              }
+            },
+            "open_questions": 4,
+            "precision_calls": 1,
+            "precision_kept": {
+              "start_rank": true,
+              "steps": true,
+              "strongest_known": true
+            },
+            "premise_threat_look": {
+              "admin_lexicon": {
+                "counts": {},
+                "per_1k_words": 0.0,
+                "total": 0
+              },
+              "digit_characters": 0,
+              "frame_lexicon": {
+                "counts": {},
+                "per_1k_words": 0.0,
+                "total": 0
+              },
+              "numbers": 0,
+              "words": 317
+            },
+            "second_system": false,
+            "start_rank": 0,
+            "start_rank_in_range": true,
+            "start_rank_present": true,
+            "strongest_known_carries_a_number": true,
+            "system_steps": 6
+          },
+          "sha256": "f6ad718e99d6d3888bb291274bf486b1c20b2edea9f498c906f3221b4a2a9e15"
+        },
+        "listing": {
+          "binding_sha256": "0c828023eaa8d3306c874a53646cc3ef13f91db81616e1cc7e3bbd438261df81",
+          "observation": "recorded",
+          "observations": {
+            "book_scenes": 24,
+            "book_stood_up": true,
+            "listing": {
+              "admin_lexicon": {
+                "counts": {},
+                "per_1k_words": 0.0,
+                "total": 0
+              },
+              "digit_characters": 0,
+              "frame_lexicon": {
+                "counts": {},
+                "per_1k_words": 0.0,
+                "total": 0
+              },
+              "numbers": 0,
+              "status_cells": 0,
+              "status_lines": 0,
+              "tells": {
+                "located": {},
+                "longest_sentence_words": 19,
+                "per_1k_words": {
+                  "absence": 0.0,
+                  "chained_and": 0.0,
+                  "echo": 0.0,
+                  "long": 0.0,
+                  "paradox": 0.0,
+                  "the_way": 0.0
+                }
+              },
+              "words": 116
+            },
+            "schema_words_in_listing": 0,
+            "schema_words_in_title": 0,
+            "title_words": 4
+          },
+          "sha256": "3a1e85a75957ef37b7faefc793e11b840c650827dbf80a0bc36c0f4c37613fee"
+        }
+      },
+      "delivery": {
+        "development": {
+          "carrying": {
+            "exception_ask": 1,
+            "start_rank_ask": 1,
+            "world_direction": 1
+          },
+          "delivered": true,
+          "profile": "writer.concept.discovery.v9",
+          "requests": 1,
+          "schema_requires_start_rank": true
+        },
+        "discovery": {
+          "carrying": {
+            "direction": 1,
+            "world_direction": 1
+          },
+          "delivered": true,
+          "profile": "writer.discovery.v14",
+          "requests": 1
+        },
+        "outline": {
+          "carrying": {
+            "concept_first_use": 0,
+            "early_magic_rule": 0,
+            "first_use_rule": 0,
+            "start_rank_label": 0
+          },
+          "delivered": false,
+          "profile": "planner.outline.v8",
+          "requests": 0
+        },
+        "seed": {
+          "carrying": {
+            "lived_world": 0,
+            "stands_at": 0
+          },
+          "delivered": false,
+          "profile": "architect.seed.v9",
+          "requests": 0
+        }
+      },
+      "dossier_sha256": "b97a225325e883c55c5fe18a04fa6cd48ba6ce638e1d98a48efcf33d9221ffa8",
+      "draw": 1,
+      "first_request_matches_preflight": true,
+      "gates": {
+        "concept": {
+          "binding_sha256": "1460f6284fc8de8da12b5140bc372d0e2bb8b9bb11920d3183d5b792bd0271c4",
+          "checkpoint_sha256": "f6ad718e99d6d3888bb291274bf486b1c20b2edea9f498c906f3221b4a2a9e15",
+          "items": {
+            "C1": "PASS",
+            "C2": "PASS",
+            "C3": "PASS",
+            "C4": "PASS"
+          },
+          "observation": "recorded",
+          "read_sha256": "222f838e2956f46cca0ce23c4d5fabde5c15effbebe0c8be05347bc093013cfc",
+          "result": "pass"
+        },
+        "listing": {
+          "binding_sha256": "0c828023eaa8d3306c874a53646cc3ef13f91db81616e1cc7e3bbd438261df81",
+          "checkpoint_sha256": "3a1e85a75957ef37b7faefc793e11b840c650827dbf80a0bc36c0f4c37613fee",
+          "items": {
+            "L1": "PARTIAL",
+            "L2": "PASS",
+            "L3": "PASS",
+            "L4": "PASS"
+          },
+          "observation": "recorded",
+          "read_sha256": "85b372e4d26be59e29a9a1bbde23781bb50d0a775ca951bc9c90aa6d4bf700f7",
+          "result": "fail"
+        }
+      },
+      "known_tokens": 81310,
+      "published": false,
+      "registration_sha256": "2f2a9eeea67d0947d34f7976d748a0b6edb1c02ba4f9499f48a24302b27aaf45",
+      "revision": "63dabc33ca27a65266969ae6861ead0d5aa5eada",
+      "shown": true,
+      "stages": {
+        "concept": {
+          "reason": null,
+          "seconds": 212.2,
+          "status": "done",
+          "steps": 1
+        },
+        "listing": {
+          "reason": null,
+          "seconds": 108.1,
+          "status": "done",
+          "steps": 1
+        }
+      },
+      "status": "failed",
+      "steps": [
+        {
+          "key": "concept-concept-1",
+          "returncode": 0,
+          "sha256": "9a0c1b39c873117c7cb5eb533c731b9ade9cf5a144a8612f97e3d5d46fb7366f"
+        },
+        {
+          "key": "listing-listing-1",
+          "returncode": 0,
+          "sha256": "408a84050eb494315766e1cb3658b1e2797e7754bcb6b5fde2c5e80b074959d5"
+        }
+      ],
+      "stop": null,
+      "writer": "rowntree",
+      "writer_id": "wtr-43f373dd421c86f46c622872"
+    },
+    {
+      "all_transport_controls_pass": true,
+      "binary": {
+        "sha256": "bc45017e8239dc150258f69309ced9df6bbcdf5b8e4f346decf780ac0999e226",
+        "version": "codex-cli 0.155.0-alpha.9.2"
+      },
+      "calls": [
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 1,
+          "profile": "default",
+          "receipt_sha256": "e08f5a72b8e1a248cf281e50e5ac9f88305e5e69c995178c37f6a8a9b9e7331e",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "concept",
+          "status": "completed",
+          "tokens": 3692
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 2,
+          "profile": "writer.discovery.v14",
+          "receipt_sha256": "ef3933fbc2cc9335de80eff786615e88cae00739361b8b15f2ae1d92470ffd97",
+          "request_sha256": "adff232639cc7d094f37b601ff35331c05730b4ce048812aad5121ed172f55f7",
+          "stage": "concept",
+          "status": "completed",
+          "tokens": 8143
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 3,
+          "profile": "writer.concept.discovery.v9",
+          "receipt_sha256": "8ed46c92f11768dc334970b95a7a29cec00b41800fc010b143ffa0c1dc849e2f",
+          "request_sha256": "a4f7917d473e512a19bb47b099851674619bbe0293924e33034e8c7bce1cd4d5",
+          "stage": "concept",
+          "status": "completed",
+          "tokens": 10026
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 4,
+          "profile": "writer.concept.precision.v1",
+          "receipt_sha256": "569eeac9f071cc906bdcf3a0f2ff6266a421994a74d8a5788fcbc2e75e7c9120",
+          "request_sha256": "3455cf6a53b473696f72c8877c9b09fac986b4b4fc440b75cb473addd667e8c2",
+          "stage": "concept",
+          "status": "completed",
+          "tokens": 9197
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 5,
+          "profile": "default",
+          "receipt_sha256": "591b1152b0d07e912416c1280904921e5a56a480904dbdfe349547cc77f302fe",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 3690
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 6,
+          "profile": "writer.overview.concept.v3",
+          "receipt_sha256": "66785315cbe66441ee9334e7dee88ab1e921fb02be0ab163fcda9b48c0461ada",
+          "request_sha256": "4f11372d34fff647d6946219aac09a6be4f69280cc5d22c100a8def5dd70b7ef",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 6485
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 7,
+          "profile": "reader.appetite.v0",
+          "receipt_sha256": "4a7a591102835353c2e7932fd245efcb2695e3c84c06552663be8d342f06ea8b",
+          "request_sha256": "910d73e0d0bf53c2143e86203972a909b45c11b49311ff643a45a8518bc030b2",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4541
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 8,
+          "profile": "reader.appetite.v0",
+          "receipt_sha256": "9138e8534350681b02b57225992fe1bc8aad9502f85557d923a26cc7cd837c35",
+          "request_sha256": "8ca5d6b59c626b1af0648758dd2678bfabd665b65f6abe84245a1f9e88ea4e88",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4524
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 9,
+          "profile": "reader.appetite.v0",
+          "receipt_sha256": "d524f856c7a779b13aa737e69c7c8e551c5c598d12630c56ef0e163bcbe03bfb",
+          "request_sha256": "41e55df9068701fb9d2dc34e018343d9ab0d0f6fd23714c49e4c2a2fca2c39a9",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4542
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 10,
+          "profile": "reader.appetite.v0",
+          "receipt_sha256": "eab9fc073e096e300fd39cb91268d2337666c299b604cac3792b9c58f319e9ab",
+          "request_sha256": "3a43e3aa5842b0411949a076320c0b14fe2d88d60e65cbeecffdfe4ddc9b07a3",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4526
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 11,
+          "profile": "writer.title.v0",
+          "receipt_sha256": "e16f30251847ce6ed40987d8d46011c7ce824cf97600563be1f3d00f2170ea3d",
+          "request_sha256": "b52b8301e93229e379c0f46694c924ff3d2447bbb17c8d5f5c50b02632409045",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4271
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 12,
+          "profile": "reader.start.v0",
+          "receipt_sha256": "0757245b90ef10b74012b61a28ee377103e5de1c7cf771a2a2edbfb9161881d8",
+          "request_sha256": "7f5d351686b9983c2861a4c2d06c7f9ac8eb781562eee0f56506a5b484f7f843",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4182
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 13,
+          "profile": "reader.start.v0",
+          "receipt_sha256": "ba695f7ccfb8021b953d62a152f0d86f620f81365fde9c7e0d2c705ce7497f4d",
+          "request_sha256": "71abf829d1c98308af16802e6df3c6bf7d9abad9eb0eee90864cbfda9bb9c72d",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4180
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 14,
+          "profile": "reader.start.v0",
+          "receipt_sha256": "a14f8334aff8d6ae7efdab50aca33118d418ab8ef612ad57ea2fc3be3640b02b",
+          "request_sha256": "dcee4d039af7d3467cad2e4de2ee98f482d62173481c0916661d3f40b5357ea5",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4187
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 15,
+          "profile": "reader.start.v0",
+          "receipt_sha256": "00f7af001d83a3bc8939c6e33c8c96322863d81d0aa3aea829dacf629ac24cea",
+          "request_sha256": "8639f36ae77aa5a8d056906c4cf6112b97e730591f57b3e8bfb875e1f8614291",
+          "stage": "listing",
+          "status": "completed",
+          "tokens": 4196
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 16,
+          "profile": "default",
+          "receipt_sha256": "4bc3d7a6b751b034e8715bb1f1877393fff4e30a6a56e82094523e3c4125bdae",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "seed",
+          "status": "completed",
+          "tokens": 3688
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 17,
+          "profile": "architect.seed.v9",
+          "receipt_sha256": "1bf331189365fa5aedbb452587c2e820ecf5a00b4fe493b82cd968c181780120",
+          "request_sha256": "7be7f9698c553d399f62728f694439e91621fa3ec11967d80cb336d218d8e9ba",
+          "stage": "seed",
+          "status": "completed",
+          "tokens": 211493
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 18,
+          "profile": "default",
+          "receipt_sha256": "8955d5116ed4adabb21b8f592ec7db32a5f2df707aed91bfaa2cb95c74ef779f",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 3690
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 19,
+          "profile": "planner.outline.v8",
+          "receipt_sha256": "82ae515dd5eafe209791cde416f7465ddcd0b1d384930338629f688a9131e28d",
+          "request_sha256": "32dccb54adbe217fb578249c0ec5547c2c3ea940cd473809d89238a12c2ebe6b",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 27502
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 20,
+          "profile": "default",
+          "receipt_sha256": "6e60bff8c0f612c795b70788333789ad4e837622a1c5d283b137c60bc2364c92",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 3688
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 21,
+          "profile": "default",
+          "receipt_sha256": "233e9450f536438d2bfcb23b9a5626a71a73467b78d48b024def9f1e7a8a24d4",
+          "request_sha256": "f81f7aefc97abef0a9b6dfed5e95a6fd5f0f41b65ddf23a89ee2c126e240f06b",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 10937
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 22,
+          "profile": "default",
+          "receipt_sha256": "ea74f9db86e771a3c711568fbc377843130f5f8b061933a1b4dae1193d8bbd82",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 3688
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 23,
+          "profile": "mechanical",
+          "receipt_sha256": "65476fc480f35116f4af3545c179980fc70860fca2f14221c6929b515b2124f6",
+          "request_sha256": "e50e160ff79e9c9ac218dd9a40d2c3888d9c8a5d341470f2dc6d4ff2c3372dc4",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 6150
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 24,
+          "profile": "default",
+          "receipt_sha256": "4e397ea50af94b6fb2b6690d9cf4028144f2f4ddd829e2e763c3d28873065208",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 3692
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 25,
+          "profile": "default",
+          "receipt_sha256": "179b9a56a5e96dc627a812ae59b82f27fface03acb871ce2b69869738d880fc7",
+          "request_sha256": "3cb7b4f737d72c123c788bb1cf05968c28586df60400037b6a60ce80bab5ca5a",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 12451
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 26,
+          "profile": "default",
+          "receipt_sha256": "11162a5cf572c932eecb7ebf12b99c77986fe4c3386271a8da246394d63bc48a",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 3688
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 27,
+          "profile": "mechanical",
+          "receipt_sha256": "c95844060d33c0967888dda0c159aef477a49b346a07a365fcbe90eef1a7a79b",
+          "request_sha256": "6200fa2dc22375da768c354f606e914aaed1b78bb1833dc7e39336ede111d577",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 6398
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 28,
+          "profile": "default",
+          "receipt_sha256": "1d12fcd76ffed6dbf22f271f1ca1ca4089f7b719968c25e97f78826acaa357d8",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 3690
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 29,
+          "profile": "default",
+          "receipt_sha256": "5c27addfd6f97262a47b50de089cec05cd3a610a8145b5f67148aa504a32d255",
+          "request_sha256": "a3b5e293c96e54797f77648bfb5d05d4fd3566139f32e9970c1641bdd1c8c053",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 13635
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 30,
+          "profile": "default",
+          "receipt_sha256": "f3a41b557fa738df548003298f7619fb021705daf753b5fa3dc2daa236c5192f",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 3688
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 31,
+          "profile": "mechanical",
+          "receipt_sha256": "8bfaf720ed90b1a6a36b6ede33c05ea9a800d1158af0dfe55d2e3cf9e4438ba3",
+          "request_sha256": "2d7e837a81661967562fe579f74356aee2871125df36fe5b51418f7dd9e31fc3",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 6284
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 32,
+          "profile": "default",
+          "receipt_sha256": "ece8aff2e60fcdbcc4611a9319fe5905927d3a90b1294eb29da0043f1876449a",
+          "request_sha256": "44c28c55cada65ef2c8c7bd8262a5c636b4c76dfd11a3456f1012d669a4cf871",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 3688
+        },
+        {
+          "checks": {
+            "bridge_runtime": true,
+            "completed": true,
+            "effort": true,
+            "fresh_session": true,
+            "isolated": true,
+            "mode": true,
+            "model": true,
+            "no_memory": true,
+            "no_project_docs": true,
+            "no_search": true,
+            "outside_repository": true,
+            "prompt": true,
+            "provider": true,
+            "receipt_chain": true,
+            "skip_git_repo_check": true,
+            "usage_recorded": true,
+            "world_only": true
+          },
+          "number": 33,
+          "profile": "default",
+          "receipt_sha256": "89d66f4a94f22aa6f39cb0f994e13f0f441a25c9726f6d324fc057af9358b527",
+          "request_sha256": "77a272504a022ed2d7673fa98a7cfe8a092a137db904c683ee4a81471b489004",
+          "stage": "chapter",
+          "status": "completed",
+          "tokens": 14791
+        }
+      ],
+      "checkpoints": {
+        "chapter": {
+          "binding_sha256": "f6371b38d0e982bf39071b76af43831471f40ba9cd17d6f3c0651ed71c115186",
+          "observation": "recorded",
+          "observations": {
+            "cast_declared": 7,
+            "cast_named_in_chapter": 3,
+            "chapter": {
+              "admin_lexicon": {
+                "counts": {
+                  "permission": 1
+                },
+                "per_1k_words": 0.26,
+                "total": 1
+              },
+              "digit_characters": 9,
+              "frame_lexicon": {
+                "counts": {},
+                "per_1k_words": 0.0,
+                "total": 0
+              },
+              "numbers": 9,
+              "status_cells": 7,
+              "status_lines": 5,
+              "tells": {
+                "located": {
+                  "absence": 9,
+                  "echo": 1
+                },
+                "longest_sentence_words": 28,
+                "per_1k_words": {
+                  "absence": 2.33,
+                  "chained_and": 0.0,
+                  "echo": 0.26,
+                  "long": 0.0,
+                  "paradox": 0.0,
+                  "the_way": 0.0
+                }
+              },
+              "words": 3891
+            },
+            "library_shelves": 1,
+            "promise_lines_by_profile": {
+              "architect.seed.v9": {
+                "old_owes": 0,
+                "open_prefix": 0,
+                "requests": 1,
+                "threads_heading": 0
+              },
+              "default": {
+                "old_owes": 0,
+                "open_prefix": 12,
+                "requests": 4,
+                "threads_heading": 3
+              },
+              "mechanical": {
+                "old_owes": 0,
+                "open_prefix": 9,
+                "requests": 3,
+                "threads_heading": 0
+              },
+              "planner.outline.v8": {
+                "old_owes": 0,
+                "open_prefix": 0,
+                "requests": 1,
+                "threads_heading": 0
+              },
+              "reader.appetite.v0": {
+                "old_owes": 0,
+                "open_prefix": 0,
+                "requests": 4,
+                "threads_heading": 0
+              },
+              "reader.start.v0": {
+                "old_owes": 0,
+                "open_prefix": 0,
+                "requests": 4,
+                "threads_heading": 0
+              },
+              "writer.concept.discovery.v9": {
+                "old_owes": 0,
+                "open_prefix": 0,
+                "requests": 1,
+                "threads_heading": 0
+              },
+              "writer.concept.precision.v1": {
+                "old_owes": 0,
+                "open_prefix": 0,
+                "requests": 1,
+                "threads_heading": 0
+              },
+              "writer.discovery.v14": {
+                "old_owes": 0,
+                "open_prefix": 0,
+                "requests": 1,
+                "threads_heading": 0
+              },
+              "writer.overview.concept.v3": {
+                "old_owes": 0,
+                "open_prefix": 0,
+                "requests": 1,
+                "threads_heading": 0
+              },
+              "writer.title.v0": {
+                "old_owes": 0,
+                "open_prefix": 0,
+                "requests": 1,
+                "threads_heading": 0
+              }
+            },
+            "scene_words": 4,
+            "scenes": 4,
+            "schema_words_in_chapter": 0
+          },
+          "sha256": "53e54871ccee920d2cdd6f85da9b42bbf30235a3980a91ed806d1260db3dbc17"
+        },
+        "concept": {
+          "binding_sha256": "69e3afa06269bf3de4eb7187dec515f64d7d235b49ee4f48b1bd75b0146f02b8",
+          "observation": "recorded",
+          "observations": {
+            "author_brief_retained": true,
+            "discovery_version_is_current": true,
+            "fields": {
+              "discovery.experience_brief": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 3,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 3,
+                "words": 184
+              },
+              "discovery.growth": {
+                "admin_lexicon": {
+                  "counts": {
+                    "claim": 1,
+                    "permission": 1
+                  },
+                  "per_1k_words": 3.48,
+                  "total": 2
+                },
+                "digit_characters": 79,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 47,
+                "words": 575
+              },
+              "discovery.opening": {
+                "admin_lexicon": {
+                  "counts": {
+                    "inspect": 1
+                  },
+                  "per_1k_words": 1.82,
+                  "total": 1
+                },
+                "digit_characters": 18,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 14,
+                "words": 549
+              },
+              "discovery.world": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 3,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 3,
+                "words": 520
+              },
+              "exception": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 1,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 1,
+                "words": 84
+              },
+              "first_use": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 8,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 8,
+                "words": 99
+              },
+              "person_before": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 0,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 0,
+                "words": 44
+              },
+              "system.look": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 0,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 0,
+                "words": 35
+              },
+              "system.manner": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 2,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 2,
+                "words": 111
+              },
+              "system.name": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 0,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 0,
+                "words": 2
+              },
+              "system.pays": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 1,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 1,
+                "words": 108
+              },
+              "system.strongest_known": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 6,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 6,
+                "words": 76
+              },
+              "threat.first_reach": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 2,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 2,
+                "words": 49
+              },
+              "threat.what": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 0,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 0,
+                "words": 72
+              },
+              "want": {
+                "admin_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "digit_characters": 0,
+                "frame_lexicon": {
+                  "counts": {},
+                  "per_1k_words": 0.0,
+                  "total": 0
+                },
+                "numbers": 0,
+                "words": 56
+              }
+            },
+            "open_questions": 4,
+            "precision_calls": 1,
+            "precision_kept": {
+              "start_rank": true,
+              "steps": true,
+              "strongest_known": true
+            },
+            "premise_threat_look": {
+              "admin_lexicon": {
+                "counts": {},
+                "per_1k_words": 0.0,
+                "total": 0
+              },
+              "digit_characters": 1,
+              "frame_lexicon": {
+                "counts": {},
+                "per_1k_words": 0.0,
+                "total": 0
+              },
+              "numbers": 1,
+              "words": 291
+            },
+            "second_system": false,
+            "start_rank": 0,
+            "start_rank_in_range": true,
+            "start_rank_present": true,
+            "strongest_known_carries_a_number": true,
+            "system_steps": 6
+          },
+          "sha256": "d365b630e9daa047170ed1085f30ea67fa706c97f12815aa5c83703a2e0e4d15"
+        },
+        "listing": {
+          "binding_sha256": "8df2f9e4efe4714d664e9065d00c816a33ebde3daaf3c9028b20dc5d7d382a08",
+          "observation": "recorded",
+          "observations": {
+            "book_scenes": 24,
+            "book_stood_up": true,
+            "listing": {
+              "admin_lexicon": {
+                "counts": {},
+                "per_1k_words": 0.0,
+                "total": 0
+              },
+              "digit_characters": 1,
+              "frame_lexicon": {
+                "counts": {},
+                "per_1k_words": 0.0,
+                "total": 0
+              },
+              "numbers": 1,
+              "status_cells": 0,
+              "status_lines": 0,
+              "tells": {
+                "located": {},
+                "longest_sentence_words": 17,
+                "per_1k_words": {
+                  "absence": 0.0,
+                  "chained_and": 0.0,
+                  "echo": 0.0,
+                  "long": 0.0,
+                  "paradox": 0.0,
+                  "the_way": 0.0
+                }
+              },
+              "words": 112
+            },
+            "schema_words_in_listing": 0,
+            "schema_words_in_title": 0,
+            "title_words": 5
+          },
+          "sha256": "6ca71d34bbcefdf4c857632b32bbd8d90c484e79d539f9996f23009e0f0e90ac"
+        },
+        "world": {
+          "binding_sha256": "41aef43bfcfc844d2cdab70d19262642128270b335706031b63e71105e0ac03d",
+          "observation": "recorded",
+          "observations": {
+            "concept_start_rank": 0,
+            "declared_start_matches_concept": true,
+            "declared_start_rank": null,
+            "ladder_found": false,
+            "proposed": 154,
+            "protagonist_opening_standings": 0,
+            "protagonist_stands_at": 0,
+            "protagonists": 1,
+            "records": 154,
+            "records_written": 156,
+            "replaced": 2,
+            "roles": {
+              "capability": 6,
+              "carrier": 1,
+              "cast": 6,
+              "creature": 1,
+              "place": 8,
+              "protagonist": 1,
+              "system": 1
+            },
+            "schema_word_complaints": 0,
+            "world_check": {
+              "complaints": 0,
+              "gaps": 2,
+              "grown": 0,
+              "machinery_names": 0,
+              "ok": true,
+              "returncode": 0,
+              "snapshot_faults": 0,
+              "unmanifested": 0,
+              "unplaceable": 0,
+              "will_not_resolve": 0,
+              "would_breach": 0,
+              "would_not_finish": 0
+            },
+            "world_text": {
+              "admin_lexicon": {
+                "counts": {},
+                "per_1k_words": 0.0,
+                "total": 0
+              },
+              "digit_characters": 26,
+              "frame_lexicon": {
+                "counts": {},
+                "per_1k_words": 0.0,
+                "total": 0
+              },
+              "numbers": 26,
+              "words": 2021
+            }
+          },
+          "sha256": "ab79d39fe4befdf77db0626da4b22edf51451f57237cd0a2758aaeea565d2678"
+        }
+      },
+      "delivery": {
+        "development": {
+          "carrying": {
+            "exception_ask": 1,
+            "start_rank_ask": 1,
+            "world_direction": 1
+          },
+          "delivered": true,
+          "profile": "writer.concept.discovery.v9",
+          "requests": 1,
+          "schema_requires_start_rank": true
+        },
+        "discovery": {
+          "carrying": {
+            "direction": 1,
+            "world_direction": 1
+          },
+          "delivered": true,
+          "profile": "writer.discovery.v14",
+          "requests": 1
+        },
+        "outline": {
+          "carrying": {
+            "concept_first_use": 1,
+            "early_magic_rule": 1,
+            "first_use_rule": 1,
+            "start_rank_label": 1
+          },
+          "delivered": true,
+          "profile": "planner.outline.v8",
+          "requests": 1
+        },
+        "seed": {
+          "carrying": {
+            "lived_world": 1,
+            "stands_at": 1
+          },
+          "delivered": true,
+          "profile": "architect.seed.v9",
+          "requests": 1
+        }
+      },
+      "dossier_sha256": "b97a225325e883c55c5fe18a04fa6cd48ba6ce638e1d98a48efcf33d9221ffa8",
+      "draw": 2,
+      "first_request_matches_preflight": true,
+      "gates": {
+        "chapter": {
+          "binding_sha256": "f6371b38d0e982bf39071b76af43831471f40ba9cd17d6f3c0651ed71c115186",
+          "checkpoint_sha256": "53e54871ccee920d2cdd6f85da9b42bbf30235a3980a91ed806d1260db3dbc17",
+          "items": {
+            "H1": "PASS",
+            "H2": "PASS",
+            "H3": "PASS",
+            "H4": "PASS",
+            "H5": "PASS",
+            "H6": "PASS",
+            "H7": "PASS",
+            "H8": "PASS"
+          },
+          "observation": "recorded",
+          "read_sha256": "63e6e8a8a9e58d45a7a775c777c66b52a630a7e5fd12ba87dbd44b60f14546ee",
+          "result": "pass"
+        },
+        "concept": {
+          "binding_sha256": "69e3afa06269bf3de4eb7187dec515f64d7d235b49ee4f48b1bd75b0146f02b8",
+          "checkpoint_sha256": "d365b630e9daa047170ed1085f30ea67fa706c97f12815aa5c83703a2e0e4d15",
+          "items": {
+            "C1": "PASS",
+            "C2": "PASS",
+            "C3": "PASS",
+            "C4": "PASS"
+          },
+          "observation": "recorded",
+          "read_sha256": "9b01d2fe995bd9ec3d5d4dd0e540d00dfc2ad616bf363c0d32e5bf7fd601177e",
+          "result": "pass"
+        },
+        "listing": {
+          "binding_sha256": "8df2f9e4efe4714d664e9065d00c816a33ebde3daaf3c9028b20dc5d7d382a08",
+          "checkpoint_sha256": "6ca71d34bbcefdf4c857632b32bbd8d90c484e79d539f9996f23009e0f0e90ac",
+          "items": {
+            "L1": "PASS",
+            "L2": "PASS",
+            "L3": "PASS",
+            "L4": "PASS"
+          },
+          "observation": "recorded",
+          "read_sha256": "beb4bbe9ec44ee73f420410cc6b1bf631805aba8c5703e285b02367d77af0ca4",
+          "result": "pass"
+        },
+        "world": {
+          "binding_sha256": "41aef43bfcfc844d2cdab70d19262642128270b335706031b63e71105e0ac03d",
+          "checkpoint_sha256": "ab79d39fe4befdf77db0626da4b22edf51451f57237cd0a2758aaeea565d2678",
+          "items": {
+            "W1": "PASS",
+            "W2": "PASS",
+            "W3": "PASS"
+          },
+          "observation": "recorded",
+          "read_sha256": "589ddbdabfff4b1fa58cb15f063fdad8774fd607bb0385fcd8880e26d37d5af3",
+          "result": "pass"
+        }
+      },
+      "known_tokens": 423223,
+      "published": true,
+      "registration_sha256": "d646d6e3569292ddf83e8f93e8b7194967af8f1aa1b871a0967c5201f17ff715",
+      "revision": "0ab40e3ec3014727299bfe73d233f3c143a88e9e",
+      "shown": true,
+      "stages": {
+        "chapter": {
+          "reason": null,
+          "seconds": 636.1,
+          "status": "done",
+          "steps": 12
+        },
+        "concept": {
+          "reason": null,
+          "seconds": 215.5,
+          "status": "done",
+          "steps": 1
+        },
+        "listing": {
+          "reason": null,
+          "seconds": 111.4,
+          "status": "done",
+          "steps": 1
+        },
+        "seed": {
+          "reason": null,
+          "seconds": 187.1,
+          "status": "done",
+          "steps": 2
+        }
+      },
+      "status": "passed",
+      "steps": [
+        {
+          "key": "chapter-tick-1",
+          "returncode": 0,
+          "sha256": "7a5a2da9dde330f55a31ad44c004509204268d15dbe128b157c8392b86e9510c"
+        },
+        {
+          "key": "chapter-tick-10",
+          "returncode": 0,
+          "sha256": "a2696f2cab89c89f3bcb882889ae23601b21e37a8e1756d560de09af35bbc30b"
+        },
+        {
+          "key": "chapter-tick-11",
+          "returncode": 0,
+          "sha256": "e68b67b22b8770a67a0a963d3b0b92d9253d9b409670c696076b74e826b33c14"
+        },
+        {
+          "key": "chapter-tick-2",
+          "returncode": 0,
+          "sha256": "34c1666a81d7295c8cb9caf49093abc666e66bf7782c7be0962cb7006a170c14"
+        },
+        {
+          "key": "chapter-tick-3",
+          "returncode": 0,
+          "sha256": "0ce7a1b26f584b276fbca8339cd58f3a5cac1977cfe191fad4a5875a3f1f6f43"
+        },
+        {
+          "key": "chapter-tick-4",
+          "returncode": 0,
+          "sha256": "643ebd95b09075979375fc4c69adddf94722f39a396b1707cf3f16c7bb4914c8"
+        },
+        {
+          "key": "chapter-tick-5",
+          "returncode": 0,
+          "sha256": "bf1e342dc848e7c4d73d261a4194ff0223047859d97c524f70fd290ff7abf44a"
+        },
+        {
+          "key": "chapter-tick-6",
+          "returncode": 0,
+          "sha256": "531f1264869d5af1ff415bb3a15f36f6b2dfad9bfc3db9acd3963b6f7423e948"
+        },
+        {
+          "key": "chapter-tick-7",
+          "returncode": 0,
+          "sha256": "504a2253b2f552a99810a8281c8eea53198ade694d2857d73108ce1bacc27a89"
+        },
+        {
+          "key": "chapter-tick-8",
+          "returncode": 0,
+          "sha256": "40668bb3db46dec233400dfb369b9c744179e1a3cda5d5ea827fc2432e11340d"
+        },
+        {
+          "key": "chapter-tick-9",
+          "returncode": 0,
+          "sha256": "f7ed96ace36c00f744a97519fc6283b55b666e541c312ef7456e0e56e810a19a"
+        },
+        {
+          "key": "chapter-world-accept-1",
+          "returncode": 0,
+          "sha256": "d41878af3739435b880106b164822c1f010502aa4c9e2cfa17ee8a5aa83853c2"
+        },
+        {
+          "key": "concept-concept-1",
+          "returncode": 0,
+          "sha256": "900a1935217b581d29b8a9bde9448b86c0114a78992c9f950637101c0f2575a4"
+        },
+        {
+          "key": "listing-listing-1",
+          "returncode": 0,
+          "sha256": "5c685695b48735ca61c8f75cd418ec563513ad7d08376a06d226f8ff6dc75041"
+        },
+        {
+          "key": "seed-architect-seed-1",
+          "returncode": 0,
+          "sha256": "fd8d24cb1f812522de78626c3b4e8683c0a3aeac6f1e304ec753d2a5a39e5501"
+        },
+        {
+          "key": "seed-world-check-1",
+          "returncode": 0,
+          "sha256": "e390c991eccd383e46b5b7efb48d35274d4fd6200f3e470688aa2d6e823c0c5a"
+        }
+      ],
+      "stop": null,
+      "writer": "rowntree",
+      "writer_id": "wtr-43f373dd421c86f46c622872"
+    }
+  ],
+  "schema": "restored-directions-draw.evidence.v1",
+  "totals": {
+    "calls": 48,
+    "tokens": 504533
+  }
+}

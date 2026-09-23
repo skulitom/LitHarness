@@ -29,10 +29,15 @@
       "kind": "registration",
       "path": "research/quality-measurement/restored-directions-draw-20260922/amendment-2.json",
       "sha256": "80035f388a76a503244de1c82746209c5c6e7a0f8daa762cf946c48971308b4c"
+    },
+    {
+      "kind": "derived_result",
+      "path": "research/quality-measurement/restored-directions-draw-20260922/evidence.json",
+      "sha256": "65c8c9184607444b74054989b9bfebd778df6a7776231351352b08f7fb7239e6"
     }
   ],
   "claim_id": "restored-directions-draw-20260922",
   "schema": "litharness.epistemic-claim.v1",
   "statement": "A registered chapter-one draw series (at most three draws) records whether the restored operator directions reach the production requests they are written for, end to end on the default route through Codex, beside a person's pass or fail at four checkpoints. Delivery is not compliance; one draw is not a rate; no quality, reader or enjoyment claim is licensed.",
-  "status": "registered"
+  "status": "observed"
 }
