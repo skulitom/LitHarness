@@ -1,6 +1,6 @@
 # LitHarness research overview
 
-<!-- research-overview: ledger through §258; checked 2026-09-22 -->
+<!-- research-overview: ledger through §259; checked 2026-09-23 -->
 
 This page is for someone opening the repository who wants to know what the research has
 established, why each line of work was opened, and what matters now. It is a map of the
@@ -50,12 +50,12 @@ families and the qualification boundary.
 **Status line.** The production loop is real and drafts books end to end. No simulated reader
 mechanism is qualified, and none has earned the right to certify or steer prose. One mechanism,
 a reader whose continuing costs it something, has moved under a story-level manipulation and
-held under replication (§230), though every Claude reader arm before 2026-09-22, that one
-included, ran where the CLI could show it the repository's git status (§258); it satisfies,
-arguably, one of the ten evidence fields qualification requires. That is the whole of what the research has bought on the central
-question so far. The milder manipulation the operator approved for it is registered, as a seeded
-partial shuffle on the same books, and has not run (section 4.4). No registered reader arm has
-run since §230's replication on 2026-09-04; the only simulated reads of chapters on record since
+held under replication (§230), and moved again, as far, when a seeded partial shuffle reordered
+65% of paragraphs (§259), though on a reader that had drifted from §230's; every Claude reader
+arm before 2026-09-22 ran where the CLI could show it the repository's git status (§258). It
+satisfies, arguably, one of the ten evidence fields qualification requires. That is the whole of
+what the research has bought on the central question so far. Apart from that arm, no registered
+reader arm has run since 2026-09-04; the only other simulated reads of chapters on record since
 are a feasibility screen registered that day, whose run date its audit could not establish and
 which may not be read for an effect (section 4.4), and the production readership at the end of
 volume one's first arc on 2026-09-07 (§242). Off the central question, on 2026-09-19 the
@@ -208,7 +208,7 @@ against a matched control and a placebo, registered before spend.
 | The anticipation probe (describe three futures, mark hope or dread) returns the same answer whatever is done to the passage: the arms' mean specificity spans 0.008 against a registered floor of 0.05, and the whitespace placebo moved it further than deleting the stakes did | `REFUTED` | §124, §227; [research/quality-measurement/anticipation-run/FINDINGS.md](research/quality-measurement/anticipation-run/FINDINGS.md); BRIEF.md §2 Pass 7 |
 | The first costed-reader arm came back unreadable, one session below its scorable floor after a contiguous transport stop the instrument could not classify; what it did measure is that the reader's positional lean eats three quarters of the design | `OBSERVED` | §222, §224; [research/quality-measurement/cost-that-bites/FINDINGS.md](research/quality-measurement/cost-that-bites/FINDINGS.md) |
 | A reader whose continuing costs it something reads a book less when that book's paragraph order is destroyed, and further than a whitespace placebo moves it; replicated with the permutation redrawn, inside the band the registration fixed. The first mechanism in this house to move with a story-level manipulation and hold under replication | `SUPPORTED` | §230; [research/quality-measurement/cost-that-bites/FINDINGS-v2.md](research/quality-measurement/cost-that-bites/FINDINGS-v2.md) and [FINDINGS-v3.md](research/quality-measurement/cost-that-bites/FINDINGS-v3.md); the claim record is [order-sensitivity-claim.json](research/quality-measurement/causal-reader-admission-20260910/order-sensitivity-claim.json) |
-| The one further experiment §230 licenses is registered: the same reader on the same twenty books at a seeded partial shuffle of 65% of paragraphs, six sessions per version (power 0.86 to 0.97 under the central assumptions, by a call-free record); its request identity with v2 reproduced 120 of 120 cached cells before registration. Not yet run | `REGISTERED` | [research/quality-measurement/cost-that-bites-milder-20260922/PREREG.md](research/quality-measurement/cost-that-bites-milder-20260922/PREREG.md) and [ATTAINABILITY.md](research/quality-measurement/cost-that-bites-milder-20260922/ATTAINABILITY.md) |
+| The one further experiment §230 licenses: the same twenty books at a seeded partial shuffle of 65% of paragraphs, six sessions per version, re-bought clean after §258. The reader read the shuffled book less, beyond a whitespace sham (+0.194 [+0.134, +0.252]), no less than at the full shuffle; but on requests identical to v2's it read the intact book +0.153 more than v2's reader, so the result stands on its own reader, not as an extension of §230 | `OBSERVED` | §259; [RESULTS.md](research/quality-measurement/cost-that-bites-milder-20260922/RESULTS.md), [PREREG.md](research/quality-measurement/cost-that-bites-milder-20260922/PREREG.md) and [AMENDMENT-1.md](research/quality-measurement/cost-that-bites-milder-20260922/AMENDMENT-1.md) |
 | A `claude -p` call run from inside the repository intermittently received its git status and path (2 of 5 and about 2 of 5 on CLI 2.1.280); every Claude reader arm since 2026-08-17 ran that way, so their isolation is caveated, not withdrawn, and every Claude transport now runs from an empty temporary directory. The milder-dose arm's 70 bought sessions are preserved as contaminated and it is re-bought in full under an amendment | — | §258; [AMENDMENT-1.md](research/quality-measurement/cost-that-bites-milder-20260922/AMENDMENT-1.md) |
 | The sim-readership backtest asks whether the readership, blind and stopped part-way, can post-dict which of two real Royal Road books the real readership stayed with. Every free slot is filled (thousands of divergent pairs, a conditional primary with calibrated type-I, a cutoff-clean set that is empty so recognition probes carry the whole memorisation defence); ~~no paid call has been made~~ corrected 2026-09-22: the pilot ran twice under the operator's go, on 2026-08-30/31 and again on 2026-08-31 after a transport fix; the second run returned a descriptive number with its sham corner void and `insufficient_n` as the stage's verdict, and the confirmatory stage was started and then paused by the operator on 2026-09-01, with a top-up defect unfixed. The programme's own re-anchoring of 2026-09-03 owns the record | ~~`REGISTERED`~~ `OBSERVED` | §123; [research/sim-readership-backtest/FINDINGS.md](research/sim-readership-backtest/FINDINGS.md) |
 | Correcting the simulated readership against what a real population did (the SYN-DIGITS reading): the distributional half is admissible and gated on a decision not yet taken; individual-level calibration is closed twice | `REGISTERED` | §106; [plan/sim-readership-calibration.md](plan/sim-readership-calibration.md) |

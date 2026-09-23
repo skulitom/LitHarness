@@ -26779,3 +26779,35 @@ to a model, now a meaningless temporary directory. Whether Read, Glob and Grep r
 approval for tool-using roles under `--permission-mode manual` is not on record. World records
 in the `runs/*.db` stores were not scanned for repository markers. The F1 checkpoint in
 `force_harness` does not refuse a pooled resume; it records the working directory only.
+
+
+## 259. The costed reader reads a book less when two thirds of its paragraphs are reordered, as much as when all are, and on a reader that drifted from §230's (2026-09-23)
+
+2026-09-23. The one further experiment §230 licensed, run clean under §258's amendment:
+`milder-v4a` bought all 360 sessions (20 fitness books x intact, a seeded partial shuffle of 65%
+of paragraphs, and a whitespace sham x 6 replicates) through the fixed transport, $69.35
+equivalent ($89.12 with milder-v4's contaminated, unread purchase; the operator's sign-off was
+$170). Every precondition passed, including request identity with v2's cache (120 of 120).
+[RESULTS.md](../research/quality-measurement/cost-that-bites-milder-20260922/RESULTS.md) owns
+the numbers.
+
+**Reading: MOVES_WITH_ORDER.** Target read share, intact - partial **+0.194** [+0.134, +0.252]
+and sham - partial **+0.199** [+0.121, +0.275] (90% cluster bootstrap over books), with intact -
+sham -0.005 [-0.090, +0.082]. The claim is OBSERVED and, by the PREREG's table, eligible for
+SUPPORTED on review. Its licence is the registered one: this reader reads a book less when 65% of
+its paragraphs are reordered, beyond the sham, in slot A on this shelf; inside its window that
+dose breaks 87% of adjacencies against the full shuffle's 99%, so it is a short step from
+destroyed order, not a book that is merely worse. Not a quality instrument, not QUALIFIED, no
+editorial intervention.
+
+**Two things reported beside it, deciding nothing, change how far it reaches.** The effect did
+not attenuate: +0.194 is above the power record's bracket [0.075, 0.155] and equal to the full
+shuffle's (+0.164, +0.189), so at this dose the reader pays the whole-book price, which says
+nothing yet about a merely worse book. And the reader drifted: on requests byte-identical to
+v2's, its intact target read share was **+0.153** above v2's [+0.061, +0.241] (sham -0.002),
+against a same-reader baseline of +0.068 [+0.013, +0.126] between v3 and v2. The CLI version and
+the working directory (§258) both changed since v2 and the run cannot separate them, so the
+table's conditional, "if this run's reader is the one §230 measured, §230's claim extends", is
+**not supported**: the arm's reading stands on its own reader. The PREREG's rule against choosing
+another dose or reader to hunt for movement stands; a next step on this mechanism needs its own
+justification.
