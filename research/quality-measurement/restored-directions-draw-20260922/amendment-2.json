@@ -1,0 +1,9 @@
+{
+  "schema": "restored-directions-draw.amendment.v1",
+  "draw": 2,
+  "previous_draw": 1,
+  "located_cause": {"checkpoint": "listing", "where": "draw-1/listing/listing.txt; src/litharness/application/overview.py _CONCEPT_TASK (writer.overview.concept.v2)"},
+  "kind": "fix",
+  "fix_commits": ["406073f74b1e1c35d3b421ec42c11c347eb3132d"],
+  "registration_changes": []
+}
