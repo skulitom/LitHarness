@@ -37,7 +37,7 @@ CANDIDATE_EXPECTED = {
     "writer.concept.material.v2": "strong",
     "writer.concept.v1": "strong",
     "writer.concept.precision.v1": "strong",
-    "writer.overview.concept.v2": "strong",
+    "writer.overview.concept.v3": "strong",
     "writer.title.v0": "strong",
     "planner.outline.v8": "strong",
     "planner.outline.structured.v4": "strong",

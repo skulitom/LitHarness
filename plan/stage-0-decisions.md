@@ -26837,3 +26837,26 @@ structural agreement 0.99 against 1.00: no gross failure seen. Two replicates a 
 establish reliability, so the screen licenses nothing; the Architect stays a candidate, and
 moving it needs its own registration with enough replicates and covering grow (7 of its 8 calls
 in a book). The shipped default still routes every role to strong.
+
+
+## 261. The concept listing names the System, its skills and its ranks, because those words tell a LitRPG reader the book is for them (2026-09-23)
+
+2026-09-23. Draw 1 of the registered restored-directions draw
+(`research/quality-measurement/restored-directions-draw-20260922/`) passed its concept gate: the
+concept carried §255's one-person exception working in chapter one, counted ranks with a
+starting rank of 0, a physical threat and no debt or ledger frame. Its listing failed item L1
+("the listing promises LitRPG: a system and progression the reader can see"): the word System
+never appeared, the book's Slot became "room for one magical skill", and progression was only
+"Getting better takes practice". The located cause is `application/overview.py`'s
+`_CONCEPT_TASK`, which told the listing writer to "use ordinary language before special
+terminology" and that exact counts do not belong. To a LitRPG reader the System, its skills and
+its ranks are the genre's furniture, not special terminology, and a rank is not an incidental
+count; the operator named the same absence at read 8 ("not litrpg at all").
+
+The supplied-concept listing task (`writer.overview.concept.v3`) now asks the writer to name the
+game system, its skills and the ranks or levels it counts as the book names them, keeps ordinary
+language for everything else, and says a rank the system counts is not incidental. The
+brief-only listing task is unchanged. Pinned by
+`test_the_concept_listing_asks_for_the_system_skills_and_ranks_by_the_books_names`. Draw 2 is
+licensed by this commit as a registered `fix` amendment; whether the listing now shows the genre
+is that draw's gate to read.

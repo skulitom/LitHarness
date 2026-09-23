@@ -20,7 +20,7 @@ from litharness.domain.writers import Writer
 
 # Separate profiles retain the identity of legacy and supplied-concept requests.
 OVERVIEW_PROFILE = "writer.overview.v0"
-CONCEPT_OVERVIEW_PROFILE = "writer.overview.concept.v2"
+CONCEPT_OVERVIEW_PROFILE = "writer.overview.concept.v3"
 TITLE_PROFILE = "writer.title.v0"
 
 MAX_OUTPUT_TOKENS = 4000
@@ -115,15 +115,17 @@ _CONCEPT_TASK = (
     "changed, what they want to do about it, and why that matters to them. Select connected "
     "details from the material rather than summarising each field.\n"
     "Make the magical adventure and the game system's progression concrete through the "
-    "abilities this person can develop and what those let them pursue. Use ordinary language "
-    "before special terminology; retain an unfamiliar name only when it helps the reader follow "
-    "the situation, without requiring a glossary or a lesson in the rules.\n"
+    "abilities this person can develop and what those let them pursue. Name the game system, "
+    "its skills and the ranks or levels it counts as the book names them: those words tell a "
+    "LitRPG reader the book is for them. Use ordinary language for everything else, and keep "
+    "another unfamiliar name only when it helps the reader follow the situation, without "
+    "requiring a glossary or a lesson in the rules.\n"
     "Curiosity should concern what will happen, not what the sentences mean. The source "
     "includes developments a new reader has not reached: withhold their answers without "
     "withholding the setup needed to understand the pursuit.\n"
     "Keep the supplied character, motives and story intact; do not invent stakes, powers "
     "or promises to make the pitch more dramatic. Exact incidental counts and timestamps "
-    "do not belong in the listing.\n"
+    "do not belong in the listing; a rank the system counts is not incidental.\n"
     "Write about a hundred words of finished listing only, with no title, headings, tags, "
     "author commentary or dashes; use first or third person, never address the reader as "
     "the protagonist."
