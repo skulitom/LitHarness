@@ -119,8 +119,8 @@ BOOK_OUTLINE = "book_outline"
 
 #: Frozen generation profile, recorded in provenance like every other model call here.
 PROFILE = "planner.outline.v3"
-CONCEPT_PROFILE = "planner.outline.v8"
-STRUCTURED_PROFILE = "planner.outline.structured.v4"
+CONCEPT_PROFILE = "planner.outline.v9"
+STRUCTURED_PROFILE = "planner.outline.structured.v5"
 
 #: Ranks above scene drafting (0) and below director direction (500+). A scene drafted before
 #: its statement exists would be drafted against the empty plan this module exists to fill, so
@@ -154,8 +154,8 @@ CONTINUATION_RULE = (
     "retains original chapter and story coordinates. Earlier output requests in the original "
     "author brief keep their original scope. Ongoing story directions and applicable author "
     "locks remain binding. Generated first-arc suggestions do not replace established events. "
-    "Scene references in the unchanged book_concept, including its due_scene values, use "
-    "the original arc ordinals in this mapping, not response ordinals. Express response "
+    "Scene references in the unchanged book_concept, including its answered_by_scene values, "
+    "use the original arc ordinals in this mapping, not response ordinals. Express response "
     "milestones and payoff windows using response ordinals."
 )
 
@@ -357,8 +357,8 @@ SCENE_HANDOFF_RULES = (
     "and established story context. It will not receive book_concept or the original "
     "treatment. Include the scene's necessary setup and causal connections in the brief.",
     "future_dependencies contains only later-story commitments this scene must leave "
-    "possible, including identity, capability or disclosure limits where needed. Use an "
-    "empty list when none apply. These are planning constraints, not present events or "
+    "possible, including identity or disclosure limits where needed. Use an empty list "
+    "when none apply. These are planning constraints, not present events or "
     "instructions to explain future developments in the scene.",
     "Preserve the premise's pursuit and magical promise; original author instructions, "
     "author locks, established history and world rules remain binding. The supplied concept "
@@ -1389,7 +1389,7 @@ def _policy_digest(*, target_scene_words: int | None = None) -> str:
                 if target_scene_words is not None else {}
             ),
             "schema": OUTLINE_SCHEMA,
-            "concept_planning_version": 17,
+            "concept_planning_version": 18,
             "starting_state_selection": "protagonist-or-unambiguous-owner.v1",
             "structured_profile": STRUCTURED_PROFILE,
             "continuation_scope": {

@@ -119,7 +119,7 @@ def test_new_concept_debts_reach_initial_outline_without_becoming_reader_owed_th
         assert store.latest_decision_for(job.job_id).accepted
         store.save_job(replace(job, status=JobStatus.SUCCEEDED))
         request = json.loads(source.requests[0].prompt)
-        assert request["book_concept"]["debts"] == intended.for_outline()["debts"]
+        assert request["book_concept"]["open_questions"] == intended.for_outline()["open_questions"]
         assert request["open_promises"] is None
         assert cli.FIRST_PERSON_CONSTRAINT in [item["text"] for item in request["author_locks"]]
         writer = select(store, "writer", START + 1, 60)
@@ -205,7 +205,7 @@ def test_accepted_same_subject_observation_reaches_outline_and_writer_then_is_pa
         assert store.latest_decision_for(outline_job.job_id).accepted
         store.save_job(replace(outline_job, status=JobStatus.SUCCEEDED))
         request = json.loads(source.requests[0].prompt)
-        assert request["book_concept"]["debts"] == intended.for_outline()["debts"]
+        assert request["book_concept"]["open_questions"] == intended.for_outline()["open_questions"]
         assert [(row["subject"], row["still_open"]) for row in request["open_promises"]] == [
             (SUBJECT, opened.description),
         ]

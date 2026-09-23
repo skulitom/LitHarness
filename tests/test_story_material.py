@@ -339,7 +339,7 @@ def test_outline_uses_same_references_with_history_locks_and_actual_promise_date
         target_scene_words=1400,
     )
     body = json.loads(request.prompt)
-    assert request.profile == "planner.outline.structured.v4"
+    assert request.profile == "planner.outline.structured.v5"
     assert "chapters" in request.schema["properties"]
     assert "development_coverage" in request.schema["required"]
     assert len(body["writing_layout"]["chapters"]) == 6
@@ -407,7 +407,7 @@ def test_material_invention_asks_for_one_person_s_exception_and_counted_ranks():
     assert request.system.count(discovery.DIRECTION) == 1
     assert request.system.count(discovery.WORLD_DIRECTION) == 1
     assert "need not be unique" not in request.system
-    assert request.profile == "writer.concept.material.v2"
+    assert request.profile == "writer.concept.material.v3"
     system = request.schema["properties"]["system"]
     assert system is concept.COUNTED_SYSTEM_SCHEMA
     assert list(request.schema["properties"])[:5] == [

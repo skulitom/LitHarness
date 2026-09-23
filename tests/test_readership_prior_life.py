@@ -29,7 +29,7 @@ import re
 
 import pytest
 
-from litharness.application import overview, readers
+from litharness.application import discovery, overview, readers
 from litharness.domain import house
 from litharness.domain import writers as writers_domain
 from litharness.packs import litrpg
@@ -123,6 +123,19 @@ def test_the_constraint_lives_at_the_call_that_chooses_the_person_and_nowhere_el
     assert _PRIOR_LIFE not in house.HOUSE_RULES
     for instance in (*_ENUMERATED, _CONDITIONAL):
         assert instance not in house.HOUSE_RULES
+
+
+def test_the_invention_direction_does_not_carry_the_removed_enumeration_either() -> None:
+    """The same verbatim guard over the other text that describes the prior life (stage-0 §262).
+
+    This file scanned only the listing task and the house floor, and §255 restored the
+    direction into `discovery.WORLD_DIRECTION` as "a job that covers rent", outside both. Read
+    20 found rent in both concepts drawn from it and on the page. Like the checks above, this is
+    our own prompt text held against one clause that came back, not a list of words a model may
+    not write.
+    """
+    for instance in (*_ENUMERATED, "covers rent"):
+        assert instance not in discovery.WORLD_DIRECTION, instance
 
 
 def test_the_listing_still_keeps_the_biography_off_the_page() -> None:

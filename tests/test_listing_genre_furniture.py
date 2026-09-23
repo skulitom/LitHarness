@@ -15,7 +15,7 @@ def test_the_concept_listing_asks_for_the_system_skills_and_ranks_by_the_books_n
     assert "Name the game system, its skills and the ranks or levels it counts" in task
     assert "a rank the system counts is not incidental" in task
     assert "Use ordinary language before special terminology" not in task
-    assert overview.CONCEPT_OVERVIEW_PROFILE == "writer.overview.concept.v3"
+    assert overview.CONCEPT_OVERVIEW_PROFILE == "writer.overview.concept.v4"
 
 
 def test_the_brief_only_listing_task_is_unchanged() -> None:

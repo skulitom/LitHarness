@@ -260,10 +260,17 @@ def test_production_outline_to_draft_handoff_excludes_source_but_preserves_canon
         assert "opens" not in source["first_arc"]
         assert source["person_before"] == drawn.person_before
         assert source["want"] == drawn.want
-        assert source["system"] == drawn.to_jsonable()["system"]
+        # The planner reads the concept under the names a model is shown (stage-0 §262).
+        shown = concept.PRESENTED_NAMES
+        assert source["system"] == {
+            shown.get(key, key): value for key, value in drawn.to_jsonable()["system"].items()
+        }
         assert source["second_system"] == drawn.to_jsonable()["second_system"]
         assert source["turn"] == drawn.to_jsonable()["turn"]
-        assert source["debts"] == drawn.to_jsonable()["debts"]
+        assert source["open_questions"] == [
+            {shown.get(key, key): value for key, value in debt.items()}
+            for debt in drawn.to_jsonable()["debts"]
+        ]
         assert source["first_arc"]["closes"] == drawn.first_arc.closes
         assert concept.concept_of(store.plan_items(BOOK_ID, BRANCH_ID)) == drawn
         plan = scene_plan_for(store.plan_items(BOOK_ID, BRANCH_ID), "scene-1")

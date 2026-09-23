@@ -18,7 +18,7 @@ from litharness.domain.generation import CompletionRequest
 from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v14"
+PROFILE = "writer.discovery.v15"
 VERSION = "magical-discovery.v7"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
@@ -113,16 +113,18 @@ LIVED_WORLD = (
     "on people comes from rivals, teachers, danger, distance, hunger and each other."
 )
 PERSONAL_COST = (
-    "Where a choice costs the protagonist something, they pay in time, in risk, or in "
-    "somebody now against them."
+    "Where a choice costs the protagonist something, it costs them time, risk, or somebody "
+    "now against them."
 )
 # Operator direction (2026-08-23, restored in §255): the shelf's reader is in their twenties,
 # so the person they wear is too. Declarative only (§112): who the person was, never how a
-# reader should feel about them. Dropped with the rest of the legacy task at §243.
+# reader should feel about them. Dropped with the rest of the legacy task at §243. §255's
+# "a job that covers rent" put rent into both concepts drawn and onto the page (read 20), so
+# §262 keeps the job and drops what it paid for.
 READER_LIFE = (
     "By default the protagonist is near the reader's own age, in their twenties, and the day "
-    "before they had a life that reader has lived: a degree, a job that covers rent, or "
-    "something they know far too much about, not decades at a trade."
+    "before they had a life that reader has lived: a degree, a job, or something they know "
+    "far too much about, not decades at one craft."
 )
 WORLD_DIRECTION = f"{LIVED_WORLD} {READER_LIFE} {PERSONAL_COST}"
 

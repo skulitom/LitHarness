@@ -20,7 +20,7 @@ from litharness.domain.writers import Writer
 
 # Separate profiles retain the identity of legacy and supplied-concept requests.
 OVERVIEW_PROFILE = "writer.overview.v0"
-CONCEPT_OVERVIEW_PROFILE = "writer.overview.concept.v3"
+CONCEPT_OVERVIEW_PROFILE = "writer.overview.concept.v4"
 TITLE_PROFILE = "writer.title.v0"
 
 MAX_OUTPUT_TOKENS = 4000

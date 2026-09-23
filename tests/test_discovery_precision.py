@@ -202,16 +202,23 @@ def test_concept_precision_protects_structure_and_edits_the_opening_at_one_addre
     assert "first_arc.opens" not in fields
     assert protected["first_arc.opens"] == developed.discovery.opening
     assert protected["system.steps"] == 12
-    assert protected["debts.0.due_scene"] == 5
+    # Paths use the names a model is shown (stage-0 §262); stored paths are not fields.
+    assert protected["open_questions.0.answered_by_scene"] == 5
+    assert "system.what_rising_gives" in fields
     assert protected["system.name"] == "the Tally"
     assert developed.with_precision_edits({"edits": []}) == developed
-    for field in ("system.steps", "debts.0.due_scene", "first_arc.opens", "discovery.version"):
+    for field in (
+        "system.steps", "open_questions.0.answered_by_scene", "first_arc.opens",
+        "discovery.version", "debts.1.subject", "system.pays",
+    ):
         with pytest.raises(ValueError, match="unknown field"):
             developed.with_precision_edits(
                 {"edits": [{"field": field, "before": "12", "after": "many"}]}
             )
     changed = developed.with_precision_edits(
-        {"edits": [{"field": "debts.1.subject", "before": "eleven years", "after": "lost years"}]}
+        {"edits": [{
+            "field": "open_questions.1.subject", "before": "eleven years", "after": "lost years",
+        }]}
     )
     assert changed.debts[1].subject == "the lost years"
     assert changed.debts[1].due_scene == developed.debts[1].due_scene

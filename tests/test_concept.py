@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import replace
 from pathlib import Path
 
@@ -10,7 +11,15 @@ import litharness_contracts as lc
 import pytest
 
 from litharness.adapters.sqlite_store import SqliteStore
-from litharness.application import concept, discovery, export, outline, overview, world_agent
+from litharness.application import (
+    chapter_layout,
+    concept,
+    discovery,
+    export,
+    outline,
+    overview,
+    world_agent,
+)
 from litharness.cli import EXIT_FAULT, EXIT_OK, main
 from litharness.domain import house
 from litharness.domain import writers as writers_domain
@@ -18,8 +27,15 @@ from litharness.domain.beats import arc_template, beats_for
 from litharness.domain.generation import CompletionResult, Usage
 from litharness.domain.plans import constraints_of, premise_of
 from litharness.domain.revision import new_book
+from litharness.domain.serials import SerialShape
 
 WRITER = writers_domain.CAST["ferreira"]
+
+
+def _shown(fields: object) -> object:
+    """Stored concept keys under the names a model is shown (stage-0 §262), one level deep."""
+    assert isinstance(fields, dict)
+    return {concept.PRESENTED_NAMES.get(key, key): value for key, value in fields.items()}
 
 
 def test_concept_trace_retains_request_controls_and_native_receipt(tmp_path):
@@ -258,7 +274,7 @@ def test_the_listing_is_written_from_the_concept_and_renders_as_it_was_without_o
         "a brief", WRITER, person="first", concept=drawn.render_for_listing()
     )
     without = overview.render_overview_request("a brief", WRITER, person="first")
-    assert "The book this listing sells, as its writer conceived it:" in with_it.prompt
+    assert "The book this listing introduces, as its writer conceived it:" in with_it.prompt
     assert "the Accord" in with_it.prompt
     assert with_it.prompt.startswith("What this book is to be about:\na brief")
     assert with_it.profile == overview.CONCEPT_OVERVIEW_PROFILE
@@ -396,9 +412,12 @@ def test_the_outline_plans_the_first_arc_against_the_concept_and_the_old_payload
     # Carry-over conditions must reach the actual planner request, not just the saved
     # concept: losing this field lets its milestone schedule contradict the intended turn.
     assert payload["book_concept"]["second_system"] == _example()["second_system"]
-    assert payload["book_concept"]["system"] == _example()["system"]
+    assert payload["book_concept"]["system"] == _shown(_example()["system"])
     assert payload["book_concept"]["exception"] == drawn.exception
-    assert payload["book_concept"]["debts"] == _example()["debts"]
+    assert payload["book_concept"]["open_questions"] == [
+        _shown(debt) for debt in _example()["debts"]  # type: ignore[attr-defined]
+    ]
+    assert "debts" not in payload["book_concept"]
     assert concept.FIRST_ARC_RULE in payload["rules"]
     assert concept.TURN_RULE in payload["rules"]
     assert payload["book_concept"]["first_use"] == drawn.first_use
@@ -769,7 +788,7 @@ def test_new_invention_restores_the_one_person_exception_and_counted_ranks() -> 
     assert "reveal limitations through use" not in discovery.DIRECTION
     request = discovery.render_request("")
     assert request.system.count(discovery.DIRECTION) == 1
-    assert request.profile == "writer.discovery.v14"
+    assert request.profile == "writer.discovery.v15"
 
 
 def test_development_asks_for_one_person_s_exception_first_working_and_counted_ranks() -> None:
@@ -787,25 +806,61 @@ def test_development_asks_for_one_person_s_exception_first_working_and_counted_r
     ):
         assert asked in request.system, asked
     assert "need not be exclusive" not in request.system
-    assert request.profile == "writer.concept.discovery.v9"
+    assert request.profile == "writer.concept.discovery.v10"
 
 
 def test_the_concept_s_questions_are_asked_and_shown_as_questions_not_debts() -> None:
-    """Stage-0 §255: the stored `debts`/`owed` keys stay, and the words around them say what
-    they hold, a question the book raises for the reader."""
+    """Stage-0 §255 kept the stored `debts`/`owed`/`pays` keys; §262 shows the model neutral
+    names for them in every request, so no stored key name reaches the development call."""
     request = concept.render_concept_request(
         "", scenes=6, discovery=discovery.Discovery.from_invention(_discovery()),
+        layout=chapter_layout.WritingLayout.opening(6, SerialShape(3, 2), None),
     )
     assert (
-        "debts holds two to four open questions the book raises for the reader, each with a "
-        "due_scene within the requested arc; owed states the question."
+        "open_questions holds two to four questions the book raises for the reader, each with "
+        "an answered_by_scene within the requested arc."
     ) in request.system
+    assert "what_rising_gives names a useful change" in request.system
+    shown = request.system + json.dumps(request.schema)
+    for stored in concept.PRESENTED_NAMES:
+        assert re.search(rf"\b{stored}\b", shown) is None, stored
     rendered = concept.Concept.from_payload(_example()).render()
     assert "Open questions the book raises, and the scene each is answered by:" in rendered
     assert concept.TURN_RULE == (
         "book_concept.turn lands where its when says and no earlier: a turn due after this arc "
         "is prepared inside it and does not happen in it."
     )
+
+
+def test_the_shown_names_read_back_under_the_stored_ones_and_nothing_migrates() -> None:
+    """Stage-0 §262: presentation only. A model's answer under the shown names and a stored
+    file under the stored names are the same concept, which serialises under the stored names;
+    the planning projection and precision paths use the shown names, and a field given under
+    both names is refused rather than merged."""
+    stored = _example()
+    answer = {
+        **_shown(stored),  # type: ignore[dict-item]
+        "system": _shown(stored["system"]),
+        "open_questions": [_shown(debt) for debt in stored["debts"]],  # type: ignore[attr-defined]
+    }
+    drawn = concept.Concept.from_payload(answer)
+    assert drawn == concept.Concept.from_payload(stored)
+    assert drawn.to_jsonable()["debts"] == stored["debts"]
+    assert drawn.to_jsonable()["system"]["pays"] == stored["system"]["pays"]  # type: ignore[index]
+    assert concept.Concept.from_text(drawn.to_text()) == drawn
+    projected = json.dumps(drawn.for_outline())
+    fields, protected = drawn.precision_material()
+    for name in concept.PRESENTED_NAMES:
+        assert f'"{name}"' not in projected, name
+        assert not any(name in path.split(".") for path in (*fields, *protected)), name
+    assert "open_questions.0.question" in fields
+    assert "system.what_rising_gives" in fields
+    twice = "is given twice, once as"
+    with pytest.raises(concept.MalformedConcept, match=f"debts {twice} open_questions"):
+        concept.Concept.from_payload({**stored, "open_questions": answer["open_questions"]})
+    both = {**stored["system"], "what_rising_gives": "x"}  # type: ignore[dict-item]
+    with pytest.raises(concept.MalformedConcept, match=f"pays {twice} what_rising_gives"):
+        concept.Concept.from_payload({**stored, "system": both})
 
 
 def _with_start_rank(rank: object) -> dict[str, object]:
@@ -825,16 +880,28 @@ def test_new_development_schema_requires_a_start_rank_and_the_legacy_schema_does
     assert "start_rank" in system["required"]
     assert set(system["required"]) == set(system["properties"])
     assert system["properties"]["start_rank"] == {"type": "integer"}
-    # The rest of the development schema is the legacy one, unchanged.
+    # The rest of the development schema is the legacy one under the shown names (§262).
+    legacy = concept.CONCEPT_SCHEMA["properties"]
+    assert development.schema["required"] == [
+        concept.PRESENTED_NAMES.get(key, key) for key in concept.CONCEPT_SCHEMA["required"]
+    ]
     assert {
-        key: value for key, value in development.schema["properties"].items() if key != "system"
-    } == {
-        key: value for key, value in concept.CONCEPT_SCHEMA["properties"].items()
-        if key != "system"
-    }
-    assert parse_schema_payload(
-        json.dumps(_with_start_rank(3)), development.schema
-    ) == _with_start_rank(3)
+        key: value for key, value in development.schema["properties"].items()
+        if key not in {"system", "open_questions"}
+    } == {key: value for key, value in legacy.items() if key not in {"system", "debts"}}
+    questions = development.schema["properties"]["open_questions"]["items"]
+    assert questions["required"] == ["subject", "question", "answered_by_scene"]
+    assert list(questions["properties"].values()) == list(
+        legacy["debts"]["items"]["properties"].values()
+    )
+    answer = {**_shown(_with_start_rank(3)), "open_questions": [
+        _shown(debt) for debt in _example()["debts"]  # type: ignore[attr-defined]
+    ]}
+    answer["system"] = _shown(answer["system"])  # type: ignore[index]
+    assert parse_schema_payload(json.dumps(answer), development.schema) == answer
+    assert concept.Concept.from_payload(answer) == concept.Concept.from_payload(
+        _with_start_rank(3)
+    )
     assert concept.render_concept_request("", scenes=6).schema is concept.CONCEPT_SCHEMA
     assert "start_rank" not in concept.CONCEPT_SCHEMA["properties"]["system"]["properties"]
 
@@ -886,7 +953,9 @@ def test_a_start_rank_reaches_render_world_and_planning() -> None:
     before = concept.Concept.from_payload(_example())
     assert "They start" not in before.render()
     assert "protagonist starts" not in before.render_for_world()
-    assert set(before.for_outline()["horizon"]) == {"steps", "strongest_known", "pays"}
+    assert set(before.for_outline()["horizon"]) == {
+        "steps", "strongest_known", "what_rising_gives",
+    }
 
 
 def test_the_seed_puts_the_protagonist_at_the_concept_s_counted_start() -> None:

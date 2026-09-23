@@ -344,9 +344,9 @@ def _reveals(records: Sequence[lc.StateRecord]) -> tuple[Reveal, ...]:
 #: World constraints and disclosure boundaries for planning; they do not prescribe scene events.
 WORLD_RULES: tuple[str, ...] = (
     "The world's declared rules constrain scene plans and milestones. For a planned gain, "
-    "place its required payment, prerequisite and activation condition before its effect, "
-    "unless the rule explicitly permits delayed payment; an unaffordable or unavailable "
-    "gain waits until its conditions can be met.",
+    "place what it requires, its prerequisite and activation condition before its effect, "
+    "unless the rule explicitly allows them later; a gain whose conditions are not yet met "
+    "waits until they are.",
     "Preserve declared quantities, scope and exceptions across scenes. Continued action by "
     "an existing entity does not introduce another instance of it.",
     "Choose scene developments from the characters' pursuits in this world. Its rules "
@@ -384,7 +384,8 @@ LADDER_RULES: tuple[str, ...] = (
     "No two milestones in a row name the same rung.",
     "Place them at scenes whose statement, as you wrote it, would plausibly change what "
     "{protagonist} counts as.",
-    "Every rung carries a cost_to_reach. The statement at a milestone scene says what is paid.",
+    "Every rung carries a cost_to_reach. The statement at a milestone scene says what "
+    "reaching it took.",
 )
 
 

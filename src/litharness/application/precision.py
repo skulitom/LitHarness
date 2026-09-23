@@ -12,7 +12,7 @@ from typing import Any
 from litharness.domain import house, schema_words
 from litharness.domain.generation import CompletionRequest
 
-PROFILE = "writer.concept.precision.v1"
+PROFILE = "writer.concept.precision.v2"
 
 # A cheap scheduling check, not a quality measure: if there is no numeric expression,
 # there is no quantity phrase to edit. The editing model decides relevance, not a counter.

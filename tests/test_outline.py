@@ -395,8 +395,8 @@ def test_the_outline_profiles_record_the_restored_directions() -> None:
     from litharness.application import outline
 
     assert outline.PROFILE == "planner.outline.v3", "the payoff lane rides plain outlines too"
-    assert outline.CONCEPT_PROFILE == "planner.outline.v8"
-    assert outline.STRUCTURED_PROFILE == "planner.outline.structured.v4"
+    assert outline.CONCEPT_PROFILE == "planner.outline.v9"
+    assert outline.STRUCTURED_PROFILE == "planner.outline.structured.v5"
 
 
 @pytest.mark.parametrize("name", ["FIRST_USE_RULE", "EARLY_MAGIC_RULE", "MATERIAL_FIRST_USE_RULE"])

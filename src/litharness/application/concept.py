@@ -24,8 +24,8 @@ from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
 CONCEPT_PROFILE = "writer.concept.v1"
-DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v9"
-MATERIAL_CONCEPT_PROFILE = "writer.concept.material.v2"
+DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v10"
+MATERIAL_CONCEPT_PROFILE = "writer.concept.material.v3"
 
 #: The plan item id the concept is persisted under; one per book, like `plan-premise`.
 CONCEPT_PLAN_ID = "plan-concept"
@@ -147,9 +147,36 @@ CONCEPT_SCHEMA: dict[str, Any] = {
     },
 }
 
+#: **The names a model is shown for four stored keys** (stage-0 §262, read 20). The stored
+#: names keep a bookkeeping frame (a question the book owes, a step up that pays), and a key
+#: name is vocabulary to the model that reads it: draw 2's planner, shown `debts`, `owed` and
+#: `pays`, put commerce words into 13 of its 24 scene briefs (exposure, not a measured cause).
+#: Stored `concept.json` keeps its names, so nothing migrates; every request schema, task
+#: text, precision path and planning projection shows these names, and `from_payload` reads
+#: both. The structured route's questions were already `questions` (`story_material.SCHEMA`).
+PRESENTED_NAMES: dict[str, str] = {
+    "debts": "open_questions",
+    "owed": "question",
+    "due_scene": "answered_by_scene",
+    "pays": "what_rising_gives",
+}
+_STORED_NAMES = {shown: stored for stored, shown in PRESENTED_NAMES.items()}
+
+
+def _presented_object(schema: Mapping[str, Any]) -> dict[str, Any]:
+    """An object schema written in stored names, with its properties under the shown ones."""
+    return {
+        **schema,
+        "required": [PRESENTED_NAMES.get(name, name) for name in schema["required"]],
+        "properties": {
+            PRESENTED_NAMES.get(name, name): value for name, value in schema["properties"].items()
+        },
+    }
+
+
 #: New concepts also say where the protagonist starts on the counted ranks (stage-0 §255).
 #: CONCEPT_SCHEMA and the legacy request stay unchanged, and stored concepts without it read.
-COUNTED_SYSTEM_SCHEMA: dict[str, Any] = {
+COUNTED_SYSTEM_SCHEMA: dict[str, Any] = _presented_object({
     "type": "object",
     "additionalProperties": False,
     "required": [*CONCEPT_SCHEMA["properties"]["system"]["required"], "start_rank"],
@@ -157,11 +184,18 @@ COUNTED_SYSTEM_SCHEMA: dict[str, Any] = {
         **CONCEPT_SCHEMA["properties"]["system"]["properties"],
         "start_rank": {"type": "integer"},
     },
-}
-DISCOVERY_CONCEPT_SCHEMA: dict[str, Any] = {
+})
+DISCOVERY_CONCEPT_SCHEMA: dict[str, Any] = _presented_object({
     **CONCEPT_SCHEMA,
-    "properties": {**CONCEPT_SCHEMA["properties"], "system": COUNTED_SYSTEM_SCHEMA},
-}
+    "properties": {
+        **CONCEPT_SCHEMA["properties"],
+        "system": COUNTED_SYSTEM_SCHEMA,
+        "debts": {
+            **CONCEPT_SCHEMA["properties"]["debts"],
+            "items": _presented_object(CONCEPT_SCHEMA["properties"]["debts"]["items"]),
+        },
+    },
+})
 
 
 @dataclass(frozen=True, slots=True)
@@ -276,7 +310,12 @@ class Concept:
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> Concept:
-        """A concept off a model answer or a file, or `MalformedConcept` naming the field."""
+        """A concept off a model answer or a file, or `MalformedConcept` naming the field.
+
+        A model answers under `PRESENTED_NAMES` and a file holds the stored names; either
+        reads, and errors name the stored field.
+        """
+        payload = _with_names(payload, _STORED_NAMES)
         author_brief = payload.get("author_brief", "")
         if not isinstance(author_brief, str):
             raise MalformedConcept("author_brief must be text")
@@ -453,8 +492,15 @@ class Concept:
             else:
                 protected[path] = value
 
-        # Generation provenance is not editable prose or an instruction for this model.
-        visit({k: v for k, v in self.to_jsonable().items() if k != "invention_seed"}, "")
+        # Generation provenance is not editable prose or an instruction for this model. Paths
+        # are addressed in the names a model is shown (`PRESENTED_NAMES`).
+        visit(
+            {
+                k: v for k, v in _with_names(self.to_jsonable(), PRESENTED_NAMES).items()
+                if k != "invention_seed"
+            },
+            "",
+        )
         return fields, protected
 
     def has_quantities(self) -> bool:
@@ -465,7 +511,8 @@ class Concept:
         """Prepare all invented prose after development; never edit structural values."""
         fields, _ = self.precision_material()
         prepared = precision.apply_edits(fields, edits)
-        payload = self.to_jsonable()
+        # The same shown names the paths use; `from_payload` reads them back under stored ones.
+        payload = _with_names(self.to_jsonable(), PRESENTED_NAMES)
         for path, text in prepared.items():
             parts = path.split(".")
             parent: Any = payload
@@ -587,7 +634,7 @@ class Concept:
                 [f"They start {self._start_rank_text()}"]
                 if self.system.start_rank is not None else []
             ),
-            f"What a step up buys: {self.system.pays}",
+            f"What rising a rank gives them: {self.system.pays}",
             f"{threat_label}: {self.threat.what}",
             f"Where it first reaches them: {self.threat.first_reach}",
             f"The turn, {self.turn.when}: {self.turn.event}",
@@ -621,7 +668,7 @@ class Concept:
         listing task still has to introduce the situation and choose what to disclose.
         """
         lines = [
-            "The book this listing sells, as its writer conceived it:",
+            "The book this listing introduces, as its writer conceived it:",
             f"The person: {self.person_before}",
             f"Their pursuit and why it matters: {self.want}",
         ]
@@ -718,7 +765,8 @@ class Concept:
         or a continuation past it), which would otherwise see a first use that has already
         happened without the rule that places it.
         The generated brief remains a revisable proposal. The full concept remains stored;
-        author locks reach planning separately, unchanged.
+        author locks reach planning separately, unchanged. Keys are the ones a model is shown
+        (`PRESENTED_NAMES`, stage-0 §262), not the stored ones.
         """
         material = self.to_jsonable()
         material.pop("invention_seed", None)
@@ -727,14 +775,14 @@ class Concept:
             material["system"]["start_rank"] = self._start_rank_label()
         if self.story_material is not None:
             material["story_material"] = self.story_material.for_planning()
-            return material
+            return _with_names(material, PRESENTED_NAMES)
         if not (opening and self.places_first_use):
             del material["first_use"]
         del material["first_arc"]["opens"]
         del material["threat"]["first_reach"]
         if self.discovery is not None:
             del material["discovery"]["opening"]
-        return {
+        return _with_names({
             **material,
             "horizon": {
                 "steps": self.system.steps,
@@ -745,7 +793,7 @@ class Concept:
                 "strongest_known": self.system.strongest_known,
                 "pays": self.system.pays,
             },
-        }
+        }, PRESENTED_NAMES)
 
     @property
     def places_first_use(self) -> bool:
@@ -1122,16 +1170,16 @@ def render_concept_request(
             "ceiling; start_rank is the rank the protagonist holds when the book opens, below "
             "steps, or 0 when they start unranked; strongest_known says at which counted rank "
             "the strongest person anyone has heard of stands and what that rank lets them do. "
-            "pays names a useful change in what this character can do, including beyond their "
-            "initial advantage.\n"
+            "what_rising_gives names a useful change in what this character can do, including "
+            "beyond their initial advantage.\n"
             "threat is the story's obstacle or danger and first_reach its encounter; a "
             "mass killing or world invasion is not required. The turn develops the pursuit; "
             "use second_system only if the treatment calls for it, preserving earned "
             "capabilities across any transition.\n"
             "first_arc develops the supplied opening into a middle and close; the opening "
-            "has not happened yet and its developments may span chapters. debts holds two to "
-            "four open questions the book raises for the reader, each with a due_scene within "
-            "the requested arc; owed states the question. Return only the "
+            "has not happened yet and its developments may span chapters. open_questions holds "
+            "two to four questions the book raises for the reader, each with an "
+            "answered_by_scene within the requested arc. Return only the "
             "schema fields; the original discovery treatment is retained separately."
         )
         # Discovery already made the creative choices. Mechanical development receives
@@ -1173,6 +1221,34 @@ def _mapping(payload: Mapping[str, Any], key: str) -> Mapping[str, Any]:
     if not isinstance(value, Mapping):
         raise MalformedConcept(f"{key} must be an object")
     return value
+
+
+def _renamed(fields: Mapping[str, Any], names: Mapping[str, str]) -> dict[str, Any]:
+    """`fields` with each key in `names` renamed in place; a field under both names is refused."""
+    for key in fields:
+        if key in names and names[key] in fields:
+            raise MalformedConcept(f"{names[key]} is given twice, once as {key}")
+    return {names.get(key, key): value for key, value in fields.items()}
+
+
+def _with_names(material: Mapping[str, Any], names: Mapping[str, str]) -> dict[str, Any]:
+    """A concept's keys renamed where they sit: the top level, each question, system, horizon.
+
+    `names` is `PRESENTED_NAMES` or its inverse. Nothing else is renamed, so the discovery
+    treatment and `story_material` keep their own keys whatever they are called.
+    """
+    renamed = _renamed(material, names)
+    for part in ("system", "horizon"):
+        if isinstance(renamed.get(part), Mapping):
+            renamed[part] = _renamed(renamed[part], names)
+    for part in ("debts", "open_questions"):
+        entries = renamed.get(part)
+        if isinstance(entries, Sequence) and not isinstance(entries, str):
+            renamed[part] = [
+                _renamed(entry, names) if isinstance(entry, Mapping) else entry
+                for entry in entries
+            ]
+    return renamed
 
 
 def _sentence(line: str) -> str:
