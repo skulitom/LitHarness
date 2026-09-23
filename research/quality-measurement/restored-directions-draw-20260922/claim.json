@@ -14,6 +14,21 @@
       "kind": "registration",
       "path": "research/quality-measurement/restored-directions-draw-20260922/registration.json",
       "sha256": "2f2a9eeea67d0947d34f7976d748a0b6edb1c02ba4f9499f48a24302b27aaf45"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/restored-directions-draw-20260922/registration-draw2.json",
+      "sha256": "d646d6e3569292ddf83e8f93e8b7194967af8f1aa1b871a0967c5201f17ff715"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/restored-directions-draw-20260922/AMENDMENT-2.md",
+      "sha256": "bc60ccbfced45a49ed3dda907fd24a5a29d21b3a38adb255181924be0e777588"
+    },
+    {
+      "kind": "registration",
+      "path": "research/quality-measurement/restored-directions-draw-20260922/amendment-2.json",
+      "sha256": "80035f388a76a503244de1c82746209c5c6e7a0f8daa762cf946c48971308b4c"
     }
   ],
   "claim_id": "restored-directions-draw-20260922",
