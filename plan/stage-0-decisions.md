@@ -27333,3 +27333,39 @@ commerce phrases are recorded as the model's own, with no located cause in our t
 `test_invention_and_seed_share_one_world_direction_verbatim`,
 `test_a_retry_replaces_a_frozen_wrapper_and_keeps_any_other_binary` and
 `test_a_shell_wrapper_resolves_to_the_native_codex_it_launches`.
+
+## 264. The cost sentence stops paying in "somebody now against them", because every draw turned it into a debt (2026-09-24)
+
+**Located at the lane's second concept gate.** Read-21 draw 2 (marsh, `447a6b4`, §263's
+subtraction in force) moved off crossings-as-pressure only partly and failed C-money on a debt in
+chapter one itself: Jamie Vale uses a stranded people's emergency cache and "records the missing
+emergency knot in his route notes, intending to repay its owner", and the arc closes with him
+"repaying the emergency cache" (`runs/chapter-one/read-21/draw-2/GATE-concept.md`). The recorded
+discovery request (call 0002) carries no pay, owe, debt or trade word; its only cost word is
+`PERSONAL_COST`'s *"Where a choice costs the protagonist something, it costs them time, risk, or
+somebody now against them."*
+
+Its last item is acted out as a grudge in every concept that received it, and the grudge is
+settled as an obligation: Malik "no longer accepts" Theo's call over the next find (restored
+draw 2, beside the rent line); "His unlimited capacity has cost him someone else's trust" and an
+arc that closes on "obligations" (read-21 draw 1); Pell "angry about the depleted cache", hence
+the repayment (read-21 draw 2). A cost to another person reads to the model as something owed to
+them.
+
+**What changed** (a subtraction). `PERSONAL_COST` is now *"Where a choice costs the protagonist
+something, it costs them time or risk."* It rides discovery, development and material:
+`writer.discovery` v16 → v17, `writer.concept.discovery` v11 → v12, `writer.concept.material`
+v4 → v5 (each v16, v11 and v4 label was sent once, by read-21 draw 2). The Architect seed does not
+carry it. §116's rule that a price is never money or a debt stays the operator's standing direction;
+the sentence simply names nothing a person could be owed.
+
+**Not changed.** The development and seed texts still ask for inhabitants' "own pursuits", which
+both read-21 concepts filled with an economy (goods exchanged, a cache that "costs someone
+labor"); that is recorded as a residual, since a people with a life of their own is the operator's
+direction and a subtraction there would remove it.
+
+**What it does not establish.** That the next concept carries no obligation; the model supplied
+"unpaid-for shopping" in read-21 draw 1 with no located source. The concept gate reads it.
+
+**Evidence** (delivery only): `test_the_cost_sentence_names_no_person_turned_against_them`,
+`test_the_world_direction_is_its_three_sentences`.

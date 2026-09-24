@@ -18,7 +18,7 @@ from litharness.domain.generation import CompletionRequest
 from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v16"
+PROFILE = "writer.discovery.v17"
 VERSION = "magical-discovery.v7"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
@@ -112,10 +112,9 @@ DIRECTIONS = {
 # other") was recited as the arc in all three draws that received it: a teacher, crossings
 # and routes, water and food, a rival group and a strained friendship, and no fight.
 LIVED_WORLD = "By default the world is a place people live in, not an administration."
-PERSONAL_COST = (
-    "Where a choice costs the protagonist something, it costs them time, risk, or somebody "
-    "now against them."
-)
+# §264: "or somebody now against them" was acted out as a grudge in every draw that
+# received it, and settled as a debt: "intending to repay its owner", "obligations".
+PERSONAL_COST = "Where a choice costs the protagonist something, it costs them time or risk."
 # Operator direction (2026-08-23, restored in §255): the shelf's reader is in their twenties,
 # so the person they wear is too. Declarative only (§112): who the person was, never how a
 # reader should feel about them. Dropped with the rest of the legacy task at §243. §255's

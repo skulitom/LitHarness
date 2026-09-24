@@ -8,7 +8,7 @@ from tests.test_discovery_life_scope_experiment import experiment
 
 def test_production_discovery_uses_exactly_the_registered_scoped_system():
     request = discovery.render_request("EXACT_SOURCE", person="third")
-    assert request.profile == "writer.discovery.v16"
+    assert request.profile == "writer.discovery.v17"
     assert request.system.count(experiment.SCOPED) == 1
     assert experiment.ORIGINAL not in request.system
     assert request.system.count(discovery.WORLD_DIRECTION) == 1

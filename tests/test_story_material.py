@@ -407,7 +407,7 @@ def test_material_invention_asks_for_one_person_s_exception_and_counted_ranks():
     assert request.system.count(discovery.DIRECTION) == 1
     assert request.system.count(discovery.WORLD_DIRECTION) == 1
     assert "need not be unique" not in request.system
-    assert request.profile == "writer.concept.material.v4"
+    assert request.profile == "writer.concept.material.v5"
     system = request.schema["properties"]["system"]
     assert system is concept.COUNTED_SYSTEM_SCHEMA
     assert list(request.schema["properties"])[:5] == [

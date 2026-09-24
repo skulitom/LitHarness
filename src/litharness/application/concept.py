@@ -24,8 +24,8 @@ from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
 CONCEPT_PROFILE = "writer.concept.v1"
-DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v11"
-MATERIAL_CONCEPT_PROFILE = "writer.concept.material.v4"
+DISCOVERY_CONCEPT_PROFILE = "writer.concept.discovery.v12"
+MATERIAL_CONCEPT_PROFILE = "writer.concept.material.v5"
 
 #: The plan item id the concept is persisted under; one per book, like `plan-premise`.
 CONCEPT_PLAN_ID = "plan-concept"

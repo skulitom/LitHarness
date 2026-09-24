@@ -788,7 +788,7 @@ def test_new_invention_restores_the_one_person_exception_and_counted_ranks() -> 
     assert "reveal limitations through use" not in discovery.DIRECTION
     request = discovery.render_request("")
     assert request.system.count(discovery.DIRECTION) == 1
-    assert request.profile == "writer.discovery.v16"
+    assert request.profile == "writer.discovery.v17"
 
 
 def test_development_asks_for_one_person_s_exception_first_working_and_counted_ranks() -> None:
@@ -806,7 +806,7 @@ def test_development_asks_for_one_person_s_exception_first_working_and_counted_r
     ):
         assert asked in request.system, asked
     assert "need not be exclusive" not in request.system
-    assert request.profile == "writer.concept.discovery.v11"
+    assert request.profile == "writer.concept.discovery.v12"
 
 
 def test_the_concept_s_questions_are_asked_and_shown_as_questions_not_debts() -> None:

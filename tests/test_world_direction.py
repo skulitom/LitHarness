@@ -56,6 +56,13 @@ def test_the_lived_world_names_no_list_of_pressures() -> None:
     assert not any(word in text for word in ("rivals", "teachers", "distance", "hunger"))
 
 
+def test_the_cost_sentence_names_no_person_turned_against_them() -> None:
+    """§264: a cost paid in "somebody now against them" became a grudge settled as a debt."""
+    text = discovery.PERSONAL_COST.lower()
+    assert "time or risk" in text
+    assert "against" not in text and "somebody" not in text
+
+
 def test_invention_and_seed_share_one_world_direction_verbatim() -> None:
     layout = chapter_layout.WritingLayout.opening(6, SerialShape(1, 6), 1400)
     invention = {

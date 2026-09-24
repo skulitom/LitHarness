@@ -32,9 +32,9 @@ CANDIDATE_EXPECTED = {
     "title.availability.v0": "basic",
     "default": "strong",
     "prose": "strong",
-    "writer.discovery.v16": "strong",
-    "writer.concept.discovery.v11": "strong",
-    "writer.concept.material.v4": "strong",
+    "writer.discovery.v17": "strong",
+    "writer.concept.discovery.v12": "strong",
+    "writer.concept.material.v5": "strong",
     "writer.concept.v1": "strong",
     "writer.concept.precision.v2": "strong",
     "writer.overview.concept.v4": "strong",
@@ -100,7 +100,7 @@ def test_prose_planning_and_reader_roles_cannot_be_lowered_by_a_setting() -> Non
         f"{prefix}=basic" for prefix in ("default", "writer.", "planner.", "reader.")
     )
     routing = ModelRouting.from_environ("codex", {"LITHARNESS_MODEL_TIERS": override})
-    for profile in ("default", "writer.discovery.v16", "planner.outline.v9", "reader.continue.v0"):
+    for profile in ("default", "writer.discovery.v17", "planner.outline.v9", "reader.continue.v0"):
         assert routing.tier_for(profile) == "strong", profile
     assert not any(
         profile.startswith(pinned)
