@@ -26856,7 +26856,8 @@ count; the operator named the same absence at read 8 ("not litrpg at all").
 The supplied-concept listing task (`writer.overview.concept.v3`) now asks the writer to name the
 game system, its skills and the ranks or levels it counts as the book names them, keeps ordinary
 language for everything else, and says a rank the system counts is not incidental. The
-brief-only listing task is unchanged. Pinned by
-`test_the_concept_listing_asks_for_the_system_skills_and_ranks_by_the_books_names`. Draw 2 is
+brief-only listing task is unchanged. Pinned at the time by a test that `writer.overview.concept.v4`
+replaced (§262 corrects this entry: v4 names the game system once and asks for a hook, pinned by
+`test_the_concept_listing_names_the_game_system_once_and_asks_for_a_hook`). Draw 2 is
 licensed by this commit as a registered `fix` amendment; whether the listing now shows the genre
 is that draw's gate to read.
