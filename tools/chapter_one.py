@@ -25,40 +25,65 @@ no prose for a verdict and never chooses among draws. The register report
 (`research/quality-measurement/register_report.py`) runs beside each gate as a subprocess and
 decides nothing; its failure blocks nothing.
 
+**Transport.** Every call a stage made is read off its trace before the stage binds its
+checkpoint. A call that ran without its isolation controls, a failed call production never
+followed with a completed call of the same profile, or a trace nobody can read (a call killed
+while its trace was written) stops the stage operationally before anything is bound or read,
+so the remedy is a retry. The gate rebuilds the same summary from the traces, files it beside
+the gate record with every failed call listed and whether it was retried, and refuses a pass
+over any of the three or over a stage with no traced call at all.
+
 **Retries and redraws.** A stage that stopped for an operational cause (an exit-2 fault, a
-killed runner, failed ticks, a binding failure) may be retried twice with a failure note whose
-SHA-256 is recorded before dispatch; the failed attempt is kept under `attempts/`, the store
-is restored from the previous checkpoint's backup, and ceilings count every attempt. A content
-stop or a gate fail ends the draw. A new draw needs the previous draw ended, a located cause,
-and either a new commit touching `src/` or `migrations/` or a different accepted writer; every
-draw is counted and the published `DRAW.json` says "draw k of n" (BRIEF.md §6, question 6).
+killed runner, failed ticks, a binding failure, a failed transport check) may be retried twice
+with a failure note whose SHA-256 is recorded before dispatch. The runner and every step child
+the stage recorded (the process it started and the interpreter that process runs, which on
+Windows are two and outlive a stopped runner) must be gone, by the OS or by a
+`--verified-dead-pid` for each. The store is restored from the previous checkpoint's backup and
+checked before anything is recorded or moved; the failed attempt is kept under `attempts/`, and
+ceilings count every attempt, an unreadable trace as a call of unknown usage. A content stop or a
+gate fail ends the draw. A new draw needs the previous draw ended, at least one located cause
+(`<checkpoint>: <file>[:line][ locator]: <what the read found>`, the file one that exists in the
+draw or the repository), and either a new commit touching `src/` or `migrations/` or a different
+accepted writer. Every draw of a brief is counted, across lines and before the lane: one brief
+has one line, a brief a registered runner already drew (`runs/<arm>/draw-<n>/brief.txt`) starts
+its line as a redraw of the latest of those, and the published `DRAW.json` says "draw k of n"
+over all of them (BRIEF.md §6, question 6). No brief comes from `plan/` or has the bytes of a
+file there or of any read a draw recorded.
 
 **One iteration**, from the repository root (`--no-sync` keeps uv from re-syncing the shared
 environment each draw's runtime imports its dependencies from):
 
     # 0. the box: check the process list, then take the lock with this lane's prefix
     mkdir runs/box.lock && echo "chapter-one: <who>, <line> draw N" > runs/box.lock/holder
-    # 1. a line fixes its brief; draw 1 builds the runtime (no provider call)
-    uv run --no-sync python tools/chapter_one.py start --line <line> --brief-file <brief> \\
-        --writer <accepted writer>
+    # 1. a line fixes its brief; draw 1 builds the runtime (no provider call). A brief drawn
+    #    before the lane takes causes and a change as a redraw does. The next draw is this one:
+    #    the closed restored-directions draws 1 and 2 (rowntree) make it draw 3 of 3.
+    uv run --no-sync python tools/chapter_one.py start --line read-21 \\
+        --brief-file runs/restored-directions-draw-20260922/draw-2/brief.txt --writer marsh \\
+        --cause "listing: plan/reader-read-20.md items 1, 4: a list of facts, not a hook" \\
+        --cause "chapter: plan/reader-read-20.md items 2, 3: a rent line; 'surviving tread'"
     # 2. each stage stops at its checkpoint; write GATE-<checkpoint>.md in the draw folder with
     #    one `<id>: PASS|FAIL|PARTIAL <location>` line per item, then record it
-    uv run --no-sync python tools/chapter_one.py concept --line <line>
-    uv run --no-sync python tools/chapter_one.py gate concept pass --line <line> \\
-        --read runs/chapter-one/<line>/draw-1/GATE-concept.md --by coordinator
-    uv run --no-sync python tools/chapter_one.py listing --line <line>   # then gate listing
-    uv run --no-sync python tools/chapter_one.py seed --line <line>      # then gate world
-    uv run --no-sync python tools/chapter_one.py chapter --line <line>   # then gate chapter
+    uv run --no-sync python tools/chapter_one.py concept --line read-21
+    uv run --no-sync python tools/chapter_one.py gate concept pass --line read-21 \\
+        --read runs/chapter-one/read-21/draw-1/GATE-concept.md --by coordinator
+    uv run --no-sync python tools/chapter_one.py listing --line read-21   # then gate listing
+    uv run --no-sync python tools/chapter_one.py seed --line read-21      # then gate world
+    uv run --no-sync python tools/chapter_one.py chapter --line read-21   # then gate chapter
     # 3. after a chapter pass
-    uv run --no-sync python tools/chapter_one.py publish --line <line>
-    uv run --no-sync python tools/chapter_one.py sent --line <line> --how "<where>"
-    uv run --no-sync python tools/chapter_one.py read --line <line> --harvest <read file>
-    # a stage stopped operationally: write a failure note, then
-    uv run --no-sync python tools/chapter_one.py retry <stage> --line <line> --failure <note>
+    uv run --no-sync python tools/chapter_one.py publish --line read-21
+    uv run --no-sync python tools/chapter_one.py sent --line read-21 --how "<where>"
+    uv run --no-sync python tools/chapter_one.py read --line read-21 --harvest <read file>
+    # a stage stopped operationally: write a failure note, then retry; a refusal names each PID
+    # the OS still reports and wants a --verified-dead-pid for it once `taskkill /PID <pid> /T /F`
+    # or the process list shows it gone
+    uv run --no-sync python tools/chapter_one.py retry <stage> --line read-21 \\
+        --failure <note> [--verified-dead-pid <pid> ...]
     # the next draw, after a gate fail, a stop, or a recorded read
-    uv run --no-sync python tools/chapter_one.py redraw --line <line> \\
-        --cause "<where: what the read found>" --fix <40-hex commit> [--writer <other>]
-    uv run --no-sync python tools/chapter_one.py status --line <line>
+    uv run --no-sync python tools/chapter_one.py redraw --line read-21 \\
+        --cause "<checkpoint>: <file>[:line][ locator]: <what the read found>" \\
+        --fix <40-hex commit> [--writer <other>]
+    uv run --no-sync python tools/chapter_one.py status --line read-21
 
 Release the lock after each command that needs it (`start`, `redraw`, a stage, `retry`), or
 hold it across a checkpoint when nothing else is waiting. Exit 0 answered, 1 a stage stopped
@@ -82,9 +107,11 @@ import sqlite3
 import subprocess
 import sys
 import sysconfig
+import time
 import venv
 import zipfile
 from collections import Counter
+from collections.abc import Callable, Sequence
 from datetime import UTC, datetime
 from importlib import metadata as importlib_metadata
 from pathlib import Path
@@ -93,6 +120,11 @@ from typing import Any
 TOOL = Path(__file__).resolve()
 REPO = TOOL.parents[1]
 RUNS = REPO / "runs" / "chapter-one"
+#: Where the registered draw runners kept each draw's brief (`runs/<arm>/draw-<n>/brief.txt`):
+#: a brief found there was drawn before the lane, and those draws count.
+EARLIER_DRAWS = REPO / "runs"
+#: The operator's reads live here (`plan/reader-read-N.md`); no brief is taken from it.
+PLAN = REPO / "plan"
 LIBRARY = REPO / "book-library"
 ROSTER = REPO / "runs" / "roster" / "roster.db"
 #: The coordinator's gate items, snapshotted into each draw at prepare. Coordinator-facing:
@@ -160,6 +192,8 @@ VERDICT_LINE = re.compile(
     r"^[ \t]*(?:[-*][ \t]+)?(?P<item>[A-Z](?:\d+|-[a-z]+)):[ \t]*(?P<verdict>PASS|FAIL|PARTIAL)\b",
     re.MULTILINE,
 )
+#: The mark of a stage stopped by its transport check, before anything was bound or read.
+TRANSPORT_STOP = "(transport check)"
 #: Stop reasons a retry may follow; anything else (a ceiling, a refused world, a parked unit,
 #: an idle tick, a scene past chapter one) ends the draw, and the remedy is a redraw.
 OPERATIONAL_STOPS = (
@@ -169,7 +203,11 @@ OPERATIONAL_STOPS = (
     "consecutive failed ticks",
     "without a step record",
     "runner process ended",
+    TRANSPORT_STOP,
 )
+#: A cause's first word: one of the four checkpoints (a stage name maps to its checkpoint), or
+#: `operational` for a draw that ended on a stop no retry could clear.
+CAUSE = re.compile(r"\s*(?P<checkpoint>[a-z]+)\s*:\s+(?P<where>\S.*?)\s*:\s+(?P<what>\S.*)", re.S)
 #: The only flags a step or view may carry; the paths among them must lie inside the draw.
 PATH_FLAGS = frozenset(
     {"--database", "--roster-database", "--library", "--brief-file", "--concept", "--out"}
@@ -231,6 +269,14 @@ def write(path: Path | str, value: Any) -> None:
     with temporary.open("w", encoding="utf-8", newline="\n") as stream:
         json.dump(value, stream, ensure_ascii=False, sort_keys=True, indent=2)
         stream.write("\n")
+    # On Windows a reader holding the file open (a `status` beside a running stage) refuses the
+    # rename for a moment; a runner that raised here would stop its stage for nothing.
+    for wait in (0.05,) * 40:
+        try:
+            temporary.replace(path)
+            return
+        except PermissionError:
+            time.sleep(wait)
     temporary.replace(path)
 
 
@@ -251,6 +297,49 @@ def within(path: Path | str, root: Path | str) -> bool:
         return os.path.commonpath([inner, outer]) == outer
     except ValueError:  # different drives
         return False
+
+
+if sys.platform == "win32":
+
+    def pid_running(pid: int) -> bool | None:
+        """Whether the OS reports a process with this PID still running; None when it cannot
+        tell (a process of another user it may not open)."""
+        import ctypes
+        from ctypes import wintypes
+
+        if pid <= 0:
+            return False
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.OpenProcess.restype = wintypes.HANDLE
+        kernel32.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)
+        kernel32.GetExitCodeProcess.argtypes = (wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD))
+        kernel32.CloseHandle.argtypes = (wintypes.HANDLE,)
+        handle = kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+        if not handle:
+            # ERROR_INVALID_PARAMETER: no process has this PID. Anything else (access denied)
+            # means one does, and whose it is is not known here.
+            return False if ctypes.get_last_error() == 87 else None
+        try:
+            code = wintypes.DWORD()
+            if not kernel32.GetExitCodeProcess(handle, ctypes.byref(code)):
+                return None
+            return bool(code.value == 259)  # STILL_ACTIVE
+        finally:
+            kernel32.CloseHandle(handle)
+
+else:
+
+    def pid_running(pid: int) -> bool | None:
+        """Whether the OS reports a process with this PID still running."""
+        if pid <= 0:
+            return False
+        try:
+            os.kill(pid, 0)
+        except ProcessLookupError:
+            return False
+        except PermissionError:
+            return True
+        return True
 
 
 def parse_key(key: str) -> tuple[str, str, int]:
@@ -365,13 +454,14 @@ def is_ancestor(older: str, newer: str) -> bool:
     return done.returncode == 0
 
 
-def fix_problem(commit: str, previous_revision: str) -> str | None:
-    """Why `commit` cannot license a redraw after a draw at `previous_revision`, or None."""
+def fix_problem(commit: str, previous_revision: str | None) -> str | None:
+    """Why `commit` cannot license a redraw after a draw at `previous_revision`, or None. A
+    declared earlier draw whose revision is not on disk checks only the commit itself."""
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         return f"{commit!r} is not a full commit id"
     if not is_ancestor(commit, "HEAD"):
         return f"{commit} is not on HEAD"
-    if is_ancestor(commit, previous_revision):
+    if previous_revision is not None and is_ancestor(commit, previous_revision):
         return f"{commit} was already in the previous draw; a redraw follows a new fix"
     paths = git_out("diff-tree", "--no-commit-id", "--name-only", "-r", "--root", commit).split()
     if not any(path.startswith(("src/", "migrations/")) for path in paths):
@@ -636,6 +726,12 @@ def prepare(line: str, n: int, *, writer: str, binary: str | None, extra: dict[s
         raise Refusal("the draw's brief is not the line's brief")
     shutil.copy2(ITEMS, d / "items.json")
     write(d / "seed.json", {"label": str(secrets.randbits(SEED_BITS))})
+    # The causes say what a read found, so they stay out of `settings.json`, which every child
+    # reads; the draw keeps them beside it, by hash in the settings.
+    causes = extra.pop("causes", None)
+    if causes is not None:
+        write_new(d / "causes.json", causes)
+        extra["causes_sha256"] = sha(d / "causes.json")
     settings = {
         "line": line,
         "draw": n,
@@ -674,12 +770,171 @@ def prepare(line: str, n: int, *, writer: str, binary: str | None, extra: dict[s
         writer=writer,
         model=runtime.get("model"),
         effort=runtime.get("effort"),
+        causes=causes,
         **extra,
     )
     print(f"Prepared {line} draw {n} at {revision[:12]} ({writer}); no provider call.")
     if not settings["on_remote"]:
         print("  note: HEAD is on no remote branch; push it so the draw's revision is backed up.")
     return d
+
+
+def located_cause(cause: str, roots: Sequence[Path]) -> dict[str, str]:
+    """`cause` as a located cause's fields, or a Refusal saying why it is not one.
+
+    A located cause is `<checkpoint>: <file>[:line][ locator]: <what the read found>`: the
+    checkpoint is one of the four (a stage name maps to its own) or `operational`; the file
+    exists, under one of `roots` (the draw the cause was found in, its line, the repository) or
+    as an absolute path, with an optional `:line` and any further locator (`items 1, 4`); and
+    `what` says what the read found there. The frozen runner asked the same of an amendment's
+    `located_cause` (a checkpoint and a `where`)."""
+    shape = (
+        "a located cause reads `<checkpoint>: <file>[:line][ locator]: <what the read found>`, "
+        f"the checkpoint one of {[*CHECKPOINTS, 'operational']}"
+    )
+    match = CAUSE.fullmatch(cause)
+    if not match:
+        raise Refusal(f"{shape}; {cause!r} is not one")
+    checkpoint = CHECKPOINT_OF.get(match["checkpoint"], match["checkpoint"])
+    if checkpoint not in (*CHECKPOINTS, "operational"):
+        raise Refusal(f"{shape}; {match['checkpoint']!r} is no checkpoint")
+    token, _, locator = match["where"].partition(" ")
+    name = re.sub(r"(?::\d+(?:-\d+)?)+$", "", token)
+    candidate = Path(name)
+    places = [candidate] if candidate.is_absolute() else [root / candidate for root in roots]
+    if not name or not any(place.is_file() for place in places):
+        raise Refusal(
+            f"{shape}; {name!r} is no file in {[str(root) for root in roots]} or on its own path"
+        )
+    return {
+        "checkpoint": checkpoint,
+        "file": name,
+        "where": match["where"],
+        "locator": locator.strip(),
+        "what": match["what"].strip(),
+    }
+
+
+def located_causes(causes: Sequence[str], roots: Sequence[Path]) -> list[dict[str, str]]:
+    if not causes:
+        raise Refusal("a redraw names at least one located cause (--cause)")
+    return [located_cause(cause, roots) for cause in causes]
+
+
+def brief_problem(path: Path, brief: bytes) -> str | None:
+    """Why a file may not be a line's brief, or None. The brief is the one text of the lane's
+    that reaches a model, so it never comes from `plan/`, where the operator's reads are kept,
+    never has the bytes of a file there, and never has the bytes of a read or a gate read any
+    draw recorded (§97.1, §148)."""
+    if within(path, PLAN):
+        return f"{path} is under plan/, where the operator's reads are kept; a read is no brief"
+    brief_sha = hashlib.sha256(brief).hexdigest()
+    same_size = (
+        kept for kept in PLAN.rglob("*") if kept.is_file() and kept.stat().st_size == len(brief)
+    )
+    for kept in same_size:
+        if sha(kept) == brief_sha:
+            return f"{path} has the bytes of {kept}; nothing kept under plan/ is a brief"
+    for recorded in sorted(RUNS.glob("*/draw-*/progress.json")):
+        state = read(recorded)
+        reads = [state.get("read") or {}, *state.get("gates", {}).values()]
+        if brief_sha in {entry.get("sha256") or entry.get("read_sha256") for entry in reads}:
+            return f"{path} has the bytes of a read {recorded.parent} recorded; a read is no brief"
+    return None
+
+
+def lines_with_brief(brief_sha: str) -> list[str]:
+    return sorted(
+        path.parent.name
+        for path in RUNS.glob("*/line.json")
+        if read(path).get("brief_sha256") == brief_sha
+    )
+
+
+def earlier_draws(brief_sha: str) -> list[Path]:
+    """Draw folders outside the lane whose brief has these bytes, in draw order."""
+    found = [
+        path.parent
+        for path in EARLIER_DRAWS.glob("*/draw-*/brief.txt")
+        if re.fullmatch(r"draw-\d+", path.parent.name)
+        and not within(path, RUNS)
+        and sha(path) == brief_sha
+    ]
+
+    def order(folder: Path) -> tuple[str, int]:
+        return str(folder.parent), int(folder.name.removeprefix("draw-"))
+
+    return sorted(found, key=order)
+
+
+def earlier_record(
+    brief_sha: str,
+    writer: str,
+    *,
+    causes: Sequence[str],
+    fixes: Sequence[str],
+    prior_draws: int,
+    prior_source: Path | None,
+) -> dict[str, Any]:
+    """The draws of this brief made before its line, which the line's count starts after.
+
+    Found: a registered runner's draws of the same bytes. Declared: `prior_draws` the scan
+    cannot see, with `prior_source` saying where they are recorded. A line's first draw after
+    any of them is a redraw, held to the redraw rule against the latest one found."""
+    found = earlier_draws(brief_sha)
+    if prior_draws < 0:
+        raise Refusal("--prior-draws counts draws; it is never negative")
+    if prior_draws and (prior_source is None or not Path(prior_source).exists()):
+        raise Refusal("--prior-draws needs --prior-source naming where those draws are recorded")
+    record: dict[str, Any] = {
+        "draws": len(found) + prior_draws,
+        "found": [str(folder) for folder in found],
+        "declared": prior_draws,
+        "source": str(Path(prior_source).resolve()) if prior_source else None,
+    }
+    if not record["draws"]:
+        if causes or fixes:
+            raise Refusal("a brief nobody drew before has no redraw cause or fix to record")
+        return record
+    roots = [found[-1], REPO] if found else [REPO]
+    try:
+        located = located_causes(causes, roots)
+    except Refusal as error:
+        raise Refusal(
+            f"this brief was drawn {record['draws']} times before ({record['found']}, "
+            f"{prior_draws} declared), so this line's first draw is a redraw: {error}"
+        ) from error
+    after: dict[str, Any] | None = None
+    if found:
+        settings_path = found[-1] / "settings.json"
+        before = read(settings_path) if settings_path.is_file() else {}
+        if not before.get("revision") or not before.get("writer"):
+            raise Refusal(f"{settings_path} records no revision and writer to redraw against")
+        after = {
+            "folder": str(found[-1]),
+            "revision": str(before["revision"]),
+            "writer": str(before["writer"]),
+        }
+    problems = [p for c in fixes if (p := fix_problem(c, after["revision"] if after else None))]
+    if problems:
+        raise Refusal("; ".join(problems))
+    if after and not fixes and writer == after["writer"]:
+        raise Refusal(
+            "the same revision and writer draw the same distribution again: a redraw needs a "
+            "new commit touching src/ or migrations/ (--fix) or a different accepted writer"
+        )
+    if after is None and not fixes:
+        raise Refusal(
+            "the declared earlier draws leave no revision or writer here to compare a writer "
+            "with, so a redraw after them names a new commit touching src/ or migrations/ (--fix)"
+        )
+    return record | {"after": after, "causes": located, "fixes": list(fixes)}
+
+
+def drawn_before(line: str) -> int:
+    """How many draws of this line's brief came before its draw 1."""
+    earlier = read(line_dir(line) / "line.json").get("earlier") or {}
+    return int(earlier.get("draws") or 0)
 
 
 def start(
@@ -690,6 +945,10 @@ def start(
     binary: str | None = None,
     layout: dict[str, Any] | None = None,
     limits: dict[str, int] | None = None,
+    causes: Sequence[str] = (),
+    fixes: Sequence[str] = (),
+    prior_draws: int = 0,
+    prior_source: Path | None = None,
 ) -> Path:
     refuse_live_environment()
     lock()
@@ -699,11 +958,31 @@ def start(
     brief = Path(brief_file).read_bytes()
     if not brief.strip():
         raise Refusal("the brief is empty")
+    brief_sha = hashlib.sha256(brief).hexdigest()
+    problem = brief_problem(Path(brief_file), brief)
+    if problem:
+        raise Refusal(problem)
+    # A second line on one brief would start its count again at draw 1 and skip the redraw rule.
+    others = [name for name in lines_with_brief(brief_sha) if name != line]
+    if others:
+        raise Refusal(
+            f"line {others[0]} already draws this brief; its next draw is "
+            f"`redraw --line {others[0]}`"
+        )
+    earlier = earlier_record(
+        brief_sha,
+        writer,
+        causes=causes,
+        fixes=fixes,
+        prior_draws=prior_draws,
+        prior_source=prior_source,
+    )
     fixed = {
-        "brief_sha256": hashlib.sha256(brief).hexdigest(),
+        "brief_sha256": brief_sha,
         "provider": PROVIDER,
         "layout": layout or dict(DEFAULT_LAYOUT),
         "limits": limits or dict(DEFAULT_LIMITS),
+        "earlier": earlier,
     }
     if (root / "line.json").exists():
         # A first prepare that was refused bought nothing; the line starts again only as it was.
@@ -715,13 +994,26 @@ def start(
         (root / "brief.txt").write_bytes(brief)
         record = {"line": line, "brief_from": str(Path(brief_file).resolve()), **fixed}
         write_new(root / "line.json", record | {"created_at": now()})
-    return prepare(line, 1, writer=writer, binary=binary, extra={})
+    extra: dict[str, Any] = {}
+    if earlier["draws"]:
+        after = earlier["after"] or {}
+        extra = {
+            "after_earlier": earlier["draws"],
+            "causes": earlier["causes"],
+            "fixes": list(fixes),
+            "writer_changed_from": after.get("writer") if after.get("writer") != writer else None,
+        }
+    return prepare(line, 1, writer=writer, binary=binary, extra=extra)
 
 
 def redraw(
-    line: str, cause: str, fixes: list[str], writer: str | None, binary: str | None = None
+    line: str,
+    causes: Sequence[str],
+    fixes: list[str],
+    writer: str | None,
+    binary: str | None = None,
 ) -> Path:
-    """The next draw: the previous one ended, the cause is located, and something changed."""
+    """The next draw: the previous one ended, each cause is located, and something changed."""
     refuse_live_environment()
     lock()
     found = draws(line)
@@ -735,8 +1027,7 @@ def redraw(
             f"draw {found[-1]} has not ended ({state['status']}): a gate fail, a stop, or a "
             "published chapter whose read is recorded ends it"
         )
-    if not cause.strip():
-        raise Refusal("a redraw names its located cause: where, and what the read found")
+    located = located_causes(causes, [previous, previous.parent, REPO])
     problems = [p for commit in fixes if (p := fix_problem(commit, settings["revision"]))]
     if problems:
         raise Refusal("; ".join(problems))
@@ -748,7 +1039,7 @@ def redraw(
         )
     extra = {
         "after": found[-1],
-        "cause": cause,
+        "causes": located,
         "fixes": fixes,
         "writer_changed_from": settings["writer"] if chosen != settings["writer"] else None,
     }
@@ -769,6 +1060,17 @@ def traces(d: Path, *, stage: str | None = None, attempts: bool = True) -> list[
     return sorted(found, key=lambda path: (path.stat().st_mtime_ns, path.name))
 
 
+def read_trace(path: Path) -> dict[str, Any] | None:
+    """A trace as production wrote it, or None when it cannot be read: a call killed while its
+    trace was being written leaves a truncated file, which is a call whose usage and isolation
+    are unknown, never a reason for the lane to stop answering."""
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    return raw if isinstance(raw, dict) else None
+
+
 def trace_tokens(raw: dict[str, Any]) -> int | None:
     for event in raw.get("events") or []:
         usage = event.get("usage") if event.get("type") == "turn.completed" else None
@@ -778,12 +1080,14 @@ def trace_tokens(raw: dict[str, Any]) -> int | None:
 
 
 def spend(d: Path) -> dict[str, int]:
-    rows = [read(path) for path in traces(d)]
-    tokens = [trace_tokens(raw) for raw in rows]
+    """Every traced call counts, an unreadable one as a call of unknown usage."""
+    rows = [read_trace(path) for path in traces(d)]
+    tokens = [None if raw is None else trace_tokens(raw) for raw in rows]
     return {
         "calls": len(rows),
         "tokens": sum(t for t in tokens if t is not None),
         "usage_unknown": sum(t is None for t in tokens),
+        "unreadable": sum(raw is None for raw in rows),
     }
 
 
@@ -816,9 +1120,18 @@ def admission(d: Path, state: dict[str, Any]) -> str | None:
 def trace_checks(raw: dict[str, Any], python: Path) -> dict[str, bool]:
     """A dispatched Codex call's isolation, read off production's own trace."""
     argv, settings = raw.get("argv") or [], raw.get("settings") or {}
-    bridge = [
-        json.loads(line) for line in (raw.get("commands_jsonl") or "").splitlines() if line.strip()
-    ]
+    bridge: list[dict[str, Any]] = []
+    bridge_readable = True
+    for line in (raw.get("commands_jsonl") or "").splitlines():
+        if not line.strip():
+            continue
+        try:
+            entry = json.loads(line)
+        except json.JSONDecodeError:
+            bridge_readable = False
+            continue
+        if isinstance(entry, dict):
+            bridge.append(entry)
     results = [e for e in bridge if e.get("phase") == "result" and e.get("argv") is not None]
     working = raw.get("working_directory")
     return {
@@ -829,7 +1142,8 @@ def trace_checks(raw: dict[str, Any], python: Path) -> dict[str, bool]:
         "no_memory": settings.get("features.memories") is False,
         "no_project_docs": settings.get("project_doc_max_bytes") == 0,
         "no_search": settings.get("web_search") == "disabled",
-        "bridge_runtime": all(
+        "bridge_runtime": bridge_readable
+        and all(
             bool(entry["argv"])
             and entry["argv"][1:3] == ["-m", "litharness"]
             and os.path.normcase(str(entry["argv"][0])) == os.path.normcase(str(python))
@@ -838,20 +1152,43 @@ def trace_checks(raw: dict[str, Any], python: Path) -> dict[str, bool]:
     }
 
 
-def transport_summary(d: Path, stage: str, checkpoint: str) -> dict[str, Any]:
-    """The stage's calls as production traced them: failed ones listed (production may have
-    retried them), and every isolation check that failed on a dispatched call."""
+def transport_summary(
+    d: Path, stage: str, checkpoint: str, kind: str = "transport"
+) -> dict[str, Any]:
+    """The stage's calls as production traced them, filed as `checkpoints/<cp>.<kind>.json`.
+
+    Every failed call is listed with whether production retried it, meaning a completed call
+    of the same profile came after it in the stage (the scheduler retries a failed job on a
+    later tick). Every isolation check that failed on a dispatched call is listed too. A trace
+    nobody can read fails the isolation check, since what that call was sent is not known."""
     python = runtime_python(d)
-    failed: list[dict[str, str]] = []
+    rows = [(path, read_trace(path)) for path in traces(d, stage=stage, attempts=False)]
+    failed: list[dict[str, Any]] = []
     isolation: dict[str, list[str]] = {}
     models: Counter[str] = Counter()
-    rows = traces(d, stage=stage, attempts=False)
     tokens = 0
-    for path in rows:
-        raw = read(path)
+    for index, (path, raw) in enumerate(rows):
         name = path.relative_to(d).as_posix()
-        if "failure" in raw or raw.get("returncode") not in (0, None) or "final_text" not in raw:
-            failed.append({"trace": name, "failure": str(raw.get("failure") or "")[:300]})
+        if raw is None:
+            failed.append({"trace": name, "failure": "unreadable trace", "retried": False})
+            isolation[name] = ["readable"]
+            models["unreadable trace"] += 1
+            continue
+        if call_failed(raw):
+            retried = any(
+                later is not None
+                and not call_failed(later)
+                and later.get("profile") == raw.get("profile")
+                for _, later in rows[index + 1 :]
+            )
+            failed.append(
+                {
+                    "trace": name,
+                    "profile": raw.get("profile"),
+                    "failure": str(raw.get("failure") or "")[:300],
+                    "retried": retried,
+                }
+            )
         if "argv" in raw:
             broken = [check for check, ok in trace_checks(raw, python).items() if not ok]
             if broken:
@@ -865,13 +1202,37 @@ def transport_summary(d: Path, stage: str, checkpoint: str) -> dict[str, Any]:
         "calls": len(rows),
         "tokens": tokens,
         "failed": failed,
+        "unretried": [entry["trace"] for entry in failed if not entry["retried"]],
         "isolation_failures": isolation,
         "profiles": dict(sorted(models.items())),
         "draw_spend": spend(d),
         "recorded_at": now(),
     }
-    write(checkpoint_path(d, checkpoint, "transport"), summary)
+    write(checkpoint_path(d, checkpoint, kind), summary)
     return summary
+
+
+def call_failed(raw: dict[str, Any]) -> bool:
+    return "failure" in raw or raw.get("returncode") not in (0, None) or "final_text" not in raw
+
+
+def transport_problem(summary: dict[str, Any]) -> str | None:
+    """Why no gate may read over these calls, or None: a call that ran without its isolation
+    controls or cannot be read (what the model saw is not known), a failed call production never
+    retried (the checkpoint may lack its answer), or no traced call at all (no evidence)."""
+    if not summary["calls"]:
+        return "the stage traced no call, so nothing shows how its calls were isolated"
+    parts = []
+    if summary["isolation_failures"]:
+        parts.append(
+            "a call ran without its isolation controls or left a trace nobody can read, so what "
+            f"the model saw is not known: {sorted(summary['isolation_failures'])}"
+        )
+    unreadable = set(summary["isolation_failures"])
+    unretried = [trace for trace in summary["unretried"] if trace not in unreadable]
+    if unretried:
+        parts.append(f"a failed call production never retried: {unretried}")
+    return "; ".join(parts) or None
 
 
 def write_receipts(d: Path) -> None:
@@ -882,8 +1243,8 @@ def write_receipts(d: Path) -> None:
         for old in folder.glob("*.json"):
             old.unlink()
     for index, path in enumerate(traces(d, attempts=False), start=1):
-        raw = read(path)
-        if "final_text" not in raw or "failure" in raw:
+        raw = read_trace(path)
+        if raw is None or "final_text" not in raw or "failure" in raw:
             continue
         request = {
             "profile": raw.get("profile"),
@@ -951,12 +1312,12 @@ def require_frozen_source(d: Path) -> None:
         raise Refusal("this child imported an unfrozen source")
 
 
-def metadata(d: Path) -> dict[str, Any]:
+def metadata(d: Path, database: Path | None = None) -> dict[str, Any]:
     from litharness.adapters.sqlite_store import SqliteStore
     from litharness.domain.jobs import JobStatus
     from litharness.domain.nodes import NodeKind
 
-    database = d / "book.db"
+    database = database or d / "book.db"
     if not database.exists():
         return {
             "exists": False,
@@ -991,12 +1352,13 @@ def metadata(d: Path) -> dict[str, Any]:
     }
 
 
-def store_digest(d: Path) -> str | None:
+def store_digest(d: Path, database: Path | None = None) -> str | None:
     """One digest over the store a gate read: every state record, and the scenes' ids and
-    accepted texts. None before the store exists."""
+    accepted texts. None before the store exists. `database` digests another copy, such as a
+    checkpoint's backup, by the same rule."""
     from litharness.adapters.sqlite_store import SqliteStore
 
-    database = d / "book.db"
+    database = database or d / "book.db"
     if not database.exists():
         return None
     with SqliteStore.open_read_only(database) as store:
@@ -1010,7 +1372,7 @@ def store_digest(d: Path) -> str | None:
         )
         for record in records
     )
-    book = metadata(d)
+    book = metadata(d, database)
     body = {"records": rows, "scene_ids": book["scene_ids"], "scene_hashes": book["scene_hashes"]}
     return sha_text(json.dumps(body, sort_keys=True, ensure_ascii=False))
 
@@ -1167,6 +1529,25 @@ def child_step(d: Path, key: str) -> None:
     write_new(d / "steps" / f"{key}.json", record)
 
 
+def record_child(d: Path, key: str) -> None:
+    """A child's first act: its own PID beside the draw. On Windows the runtime's `python.exe`
+    is a launcher that runs the interpreter as a process of its own, so the PID the parent saw
+    start is not this one, and the parent can die before it records either."""
+    write(d / "children" / f"{key}.json", {"pid": os.getpid(), "started_at": now()})
+
+
+def child_pids(d: Path, keys: Sequence[str]) -> dict[str, int]:
+    """The PIDs children of these keys recorded for themselves."""
+    found: dict[str, int] = {}
+    for key in keys:
+        path = d / "children" / f"{key}.json"
+        with contextlib.suppress(OSError, ValueError):
+            pid = read(path).get("pid")
+            if isinstance(pid, int):
+                found[f"interpreter {key}"] = pid
+    return found
+
+
 def forbid_provider_calls() -> None:
     from litharness.providers.codex_cli import CodexCliProvider
 
@@ -1190,10 +1571,16 @@ def kill_tree(process: subprocess.Popen[str]) -> None:
 
 
 def run_child(
-    argv: list[str], env: dict[str, str], *, timeout: float | None = None, capture: bool = False
+    argv: list[str],
+    env: dict[str, str],
+    *,
+    timeout: float | None = None,
+    capture: bool = False,
+    started: Callable[[int], None] | None = None,
 ) -> tuple[int | None, str]:
     """A child in the draw's runtime: (its exit code, or None when the wall time ran out;
-    its stdout when captured)."""
+    its stdout when captured). `started` hears the child's PID before anything waits on it; a
+    runner stopped while it waits takes the child's tree down with it."""
     process = subprocess.Popen(
         argv,
         cwd=REPO,
@@ -1203,18 +1590,52 @@ def run_child(
         encoding="utf-8",
     )
     try:
+        if started is not None:
+            started(process.pid)
         out, _ = process.communicate(timeout=timeout)
     except subprocess.TimeoutExpired:
         kill_tree(process)
         process.communicate()
         return None, ""
+    except BaseException:
+        kill_tree(process)
+        raise
     return process.returncode, out or ""
 
 
-def child_digest(d: Path) -> str | None:
-    code, out = run_child(
-        [str(runtime_python(d)), str(TOOL), "_digest", str(d)], environment(d), capture=True
-    )
+def run_tracked(
+    d: Path,
+    stage: str,
+    key: str,
+    argv: list[str],
+    env: dict[str, str],
+    *,
+    timeout: float | None = None,
+) -> int | None:
+    """A child whose PID the stage record holds from its start until it ends. A runner killed
+    by PID leaves its child running on Windows, and that child and its Codex process may still
+    be writing to the store and the traces; `retry` wants every such PID gone. The child also
+    records its own interpreter's PID (`record_child`)."""
+
+    def started(pid: int) -> None:
+        state = progress(d)
+        state["stages"][stage]["child"] = {"key": key, "pid": pid, "started_at": now()}
+        save(d, state)
+
+    code, _ = run_child(argv, env, timeout=timeout, started=started)
+    state = progress(d)
+    child = state["stages"][stage].get("child")
+    if child and child.get("key") == key:
+        child["ended_at"] = now()
+        save(d, state)
+    return code
+
+
+def child_digest(d: Path, database: Path | None = None) -> str | None:
+    argv = [str(runtime_python(d)), str(TOOL), "_digest", str(d)]
+    if database is not None:
+        argv.append(str(database))
+    code, out = run_child(argv, environment(d), capture=True)
     if code != 0:
         raise Refusal(f"the store digest child exited {code}")
     value: str | None = json.loads(out.strip().splitlines()[-1])["store_sha256"]
@@ -1269,7 +1690,7 @@ def dispatch(d: Path, stage: str, name: str, iteration: int) -> dict[str, Any]:
         limit = float(read(d / "settings.json")["limits"]["seconds"])
         remaining = max(limit - draw_seconds(state, now()), 1.0)
         argv = [str(runtime_python(d)), str(TOOL), "_step", str(d), key]
-        code, _ = run_child(argv, environment(d, key), timeout=remaining)
+        code = run_tracked(d, stage, key, argv, environment(d, key), timeout=remaining)
         state = progress(d)
         state.pop("active", None)
         if code is None:
@@ -1407,7 +1828,7 @@ def bind_checkpoint(d: Path, checkpoint: str) -> str | None:
     """Bind what the gate will read; a failure is an operational stop, since nothing unbound
     may be gated."""
     argv = [str(runtime_python(d)), str(TOOL), "_bind", str(d), checkpoint]
-    code, _ = run_child(argv, environment(d))
+    code = run_tracked(d, STAGE_OF[checkpoint], f"bind-{checkpoint}", argv, environment(d))
     if code or not checkpoint_path(d, checkpoint, "binding").is_file():
         return f"the {checkpoint} checkpoint could not be bound (bind exited {code})"
     return None
@@ -1454,13 +1875,19 @@ def run_stage(line: str, stage: str) -> int:
     checkpoint = CHECKPOINT_OF[stage]
     try:
         outcome = drive(d, stage)
+        # Read before anything is bound, so a call no gate may pass over stops the stage while
+        # a retry is still open to it: nothing it wrote has been bound or read.
+        summary = transport_summary(d, stage, checkpoint)
         if outcome is None:
-            outcome = bind_checkpoint(d, checkpoint)
+            problem = transport_problem(summary)
+            if problem:
+                outcome = f"{TRANSPORT_STOP} {problem}; nothing was bound or read"
+            else:
+                outcome = bind_checkpoint(d, checkpoint)
     except BaseException as error:
         finish_stage(d, stage, f"scheduler failure: {error!r}")
         raise
     finish_stage(d, stage, outcome)
-    summary = transport_summary(d, stage, checkpoint)
     if outcome is not None:
         print(f"STOPPED in {stage}: {outcome}")
         print_transport(summary)
@@ -1480,7 +1907,8 @@ def print_transport(summary: dict[str, Any]) -> None:
         f"draw so far {summary['draw_spend']}"
     )
     for failure in summary["failed"]:
-        print(f"  failed (production may have retried it): {failure['trace']} {failure['failure']}")
+        retried = "retried by production" if failure["retried"] else "NOT RETRIED"
+        print(f"  failed call ({retried}): {failure['trace']} {failure['failure']}")
     for name, checks in summary["isolation_failures"].items():
         print(f"  ISOLATION FAILED on {name}: {checks}")
 
@@ -1538,11 +1966,30 @@ def gate_result_refusal(result: str, verdicts: dict[str, str]) -> str | None:
     return None
 
 
+def gate_transport(d: Path, checkpoint: str, summary: dict[str, Any] | None) -> dict[str, Any]:
+    """What the gate record holds of the calls under it: the summary rebuilt at the gate, by
+    path and hash, and every failed call with whether production retried it."""
+    if summary is None:
+        return {"summary": None}
+    path = checkpoint_path(d, checkpoint, "gate-transport")
+    return {
+        "summary": path.relative_to(d).as_posix(),
+        "sha256": sha(path),
+        "calls": summary["calls"],
+        "failed": summary["failed"],
+        "unretried": summary["unretried"],
+        "isolation_failures": summary["isolation_failures"],
+    }
+
+
 def gate(line: str, checkpoint: str, result: str, read_file: Path, by: str) -> dict[str, Any]:
     """Record a person's pass or fail at a checkpoint, held to the items the draw snapshotted.
 
-    The register report is filed beside the gate (run now if it has not been) and recorded by
-    hash; it decides nothing, and a failure to run it blocks nothing.
+    The stage's transport summary is rebuilt from its traces and filed beside the gate record,
+    every failed call listed with whether production retried it; a pass is refused over any
+    call `transport_problem` names, and over a summary that cannot be built. The register
+    report is filed beside the gate (run now if it has not been) and recorded by hash; it
+    decides nothing, and a failure to run it blocks nothing.
     """
     checkpoint = CHECKPOINT_OF.get(checkpoint, checkpoint)
     if checkpoint not in CHECKPOINTS:
@@ -1564,13 +2011,20 @@ def gate(line: str, checkpoint: str, result: str, read_file: Path, by: str) -> d
     changed = binding_changes(d, checkpoint)
     if changed:
         raise Refusal(f"checkpoint artifacts changed since they were bound: {changed}")
-    summary_path = checkpoint_path(d, checkpoint, "transport")
-    summary = read(summary_path) if summary_path.is_file() else {"isolation_failures": {}}
-    if result == "pass" and summary["isolation_failures"]:
-        raise Refusal(
-            "a call ran without its isolation controls, so what the model saw is not "
-            f"known: {sorted(summary['isolation_failures'])}"
-        )
+    # Rebuilt from the stage's traces now, never read from the summary the stage saved: a runner
+    # that died after the stage finished may never have written one, and a summary nobody can
+    # build refuses a pass rather than letting one through unchecked.
+    try:
+        summary = transport_summary(d, STAGE_OF[checkpoint], checkpoint, "gate-transport")
+    except (OSError, ValueError) as error:
+        if result == "pass":
+            raise Refusal(
+                f"the transport summary could not be built, so no pass: {error!r}"
+            ) from error
+        summary = None
+    problem = transport_problem(summary) if summary is not None else None
+    if result == "pass" and problem:
+        raise Refusal(problem)
     text = read_file.read_text(encoding="utf-8") if read_file.is_file() else ""
     if not text.strip():
         raise Refusal("the gate read is missing or empty")
@@ -1586,10 +2040,7 @@ def gate(line: str, checkpoint: str, result: str, read_file: Path, by: str) -> d
         "read_sha256": sha(read_file),
         "binding_sha256": sha(binding_path),
         "items_sha256": sha(d / "items.json"),
-        "transport": {
-            "failed": len(summary.get("failed", [])),
-            "sha256": sha(summary_path) if summary_path.is_file() else None,
-        },
+        "transport": gate_transport(d, checkpoint, summary),
         **file_register_report(d, checkpoint),
         "recorded_at": now(),
     }
@@ -1623,19 +2074,63 @@ def move_into(d: Path, pattern: str, folder: Path) -> None:
         shutil.move(str(path), str(target))
 
 
-def retry(line: str, stage: str, failure: Path, verified_dead_pid: int | None = None) -> int:
+def operational(stop: str) -> bool:
+    return any(marker in stop for marker in OPERATIONAL_STOPS)
+
+
+def live_processes(
+    d: Path, state: dict[str, Any], record: dict[str, Any], verified: Sequence[int]
+) -> dict[str, str]:
+    """The processes a stopped or abandoned stage may still have writing to the draw, each
+    named with what the OS says of it, once neither the OS nor the operator has cleared it.
+
+    They are the runner (while the stage is recorded as running), the child it started and did
+    not see end, and the interpreter that child recorded for itself: on Windows the runtime's
+    `python.exe` is a launcher, so those are two processes, and both outlive a stopped runner."""
+    candidates: dict[str, int] = {}
+    if record.get("status") == "running" and isinstance(record.get("runner_pid"), int):
+        candidates["runner"] = int(record["runner_pid"])
+    child = record.get("child") or {}
+    keys = [str(state["active"])] if state.get("active") else []
+    if child and not child.get("ended_at"):
+        if isinstance(child.get("pid"), int):
+            candidates[f"child {child.get('key')}"] = int(child["pid"])
+        keys.append(str(child.get("key")))
+    candidates |= child_pids(d, sorted(set(keys)))
+    active = str(state.get("active") or "")
+    recorded = child.get("key") == active or any(name.endswith(f" {active}") for name in candidates)
+    if active and not recorded:
+        # Marked active, and no PID recorded for it by the runner or the child: the runner died
+        # between the two, and whether that child started is not known here.
+        candidates[f"child {active} (no PID recorded)"] = -1
+    live: dict[str, str] = {}
+    for name, pid in candidates.items():
+        if pid in verified:
+            continue
+        running = pid_running(pid) if pid > 0 else None
+        if running is False:
+            continue
+        live[name] = f"{pid}, {'running' if running else 'not known to have ended'}"
+    return live
+
+
+def retry(line: str, stage: str, failure: Path, verified_dead_pids: Sequence[int] = ()) -> int:
     """Run a stage again after an operational stop, keeping the failed attempt.
 
-    The failure note's SHA-256 is recorded before anything moves or dispatches. The failed
-    attempt's steps, traces, outputs and store go to `attempts/<stage>-<k>/`; the store is
-    restored from the previous checkpoint's backup and checked against its bound digest; the
-    stage then runs with the same seed and arguments, and the ceilings count every attempt.
+    Everything that can refuse is checked before anything is recorded or moved: the stop, the
+    processes that may still write to the draw, the note, the runtime, and the store itself,
+    restored from the previous checkpoint's backup into `restore/` and digested there. Only then
+    are the retry and its failure note's SHA-256 recorded, the failed attempt's steps, traces,
+    outputs and store moved to `attempts/<stage>-<k>/`, a folder never used before, and the
+    checked copy renamed into place. The stage then runs with the same seed and arguments, and
+    the ceilings count every attempt.
     """
     refuse_live_environment()
     lock()
     if stage not in STAGES:
         raise Refusal(f"unknown stage {stage}")
     d = current(line)
+    verify_runtime(d)
     state = progress(d)
     record = state["stages"].get(stage)
     checkpoint = CHECKPOINT_OF[stage]
@@ -1646,20 +2141,27 @@ def retry(line: str, stage: str, failure: Path, verified_dead_pid: int | None = 
     if checkpoint_path(d, checkpoint, "binding").is_file():
         raise Refusal(f"the {checkpoint} checkpoint is bound; its outputs may have been read")
     if record["status"] == "running":
-        if verified_dead_pid != record.get("runner_pid"):
-            raise Refusal(
-                f"{stage} is recorded as running under PID {record.get('runner_pid')}; "
-                "verify in PowerShell that it has ended, then pass "
-                "--verified-dead-pid with that PID"
-            )
         reason = "the runner process ended mid-stage"
     elif record["status"] == "stopped":
-        reason = str(record.get("reason") or state.get("stop") or "")
+        reason = str(record.get("reason") or "")
     else:
         raise Refusal(f"{stage} is {record['status']}; only a stopped stage is retried")
-    if not any(marker in reason for marker in OPERATIONAL_STOPS):
+    live = live_processes(d, state, record, verified_dead_pids)
+    if live:
         raise Refusal(
-            f"{reason!r} is not an operational stop; the draw has ended, and the "
+            f"{stage} may still have processes writing to {d.name}: {live}. Verify in "
+            "PowerShell that each has ended: stop a live one with `taskkill /PID <pid> /T /F`, "
+            "which takes its Codex process too, or find a PID with no recorded number by its "
+            f"`_step {d}` command line; then pass --verified-dead-pid once per PID (-1 for one "
+            "with no number)"
+        )
+    # The draw's own stop is read as well as the stage's: a ceiling reached before a scheduler
+    # failure was recorded is still a ceiling.
+    stops = [reason, *([str(state["stop"])] if state.get("stop") else [])]
+    content = [stop for stop in stops if not operational(stop)]
+    if content:
+        raise Refusal(
+            f"{content[0]!r} is not an operational stop; the draw has ended, and the "
             "remedy is a redraw with a located cause"
         )
     earlier = state["retries"].get(stage, [])
@@ -1671,6 +2173,27 @@ def retry(line: str, stage: str, failure: Path, verified_dead_pid: int | None = 
             "remedy, and that no answer was read"
         )
     note = {"path": str(failure.resolve()), "sha256": sha(failure)}
+    index = STAGES.index(stage)
+    # The store the stage will start from, restored and checked before anything is recorded
+    # or moved, so a failed check leaves the failed attempt where it was and no retry counted.
+    restore = d / "restore"
+    shutil.rmtree(restore, ignore_errors=True)
+    restored: Path | None = None
+    if index:
+        previous = CHECKPOINT_OF[STAGES[index - 1]]
+        bound = read(checkpoint_path(d, previous, "binding"))
+        if bound["store_backup"]:
+            restore.mkdir()
+            restored = restore / "book.db"
+            shutil.copy2(d / bound["store_backup"], restored)
+        try:
+            found = child_digest(d, restored) if restored else None
+        except Refusal:
+            shutil.rmtree(restore, ignore_errors=True)
+            raise
+        if found != bound["store_sha256"]:
+            shutil.rmtree(restore, ignore_errors=True)
+            raise Refusal(f"the {previous} checkpoint's backup is not the store its gate read")
     if record["status"] == "running":
         # Its wall time ends at the last thing it wrote, not at this retry.
         written = [
@@ -1680,29 +2203,17 @@ def retry(line: str, stage: str, failure: Path, verified_dead_pid: int | None = 
         ended = max(written, default=datetime.fromisoformat(record["started_at"]).timestamp())
         seconds = ended - datetime.fromisoformat(record["started_at"]).timestamp()
         record = record | {"status": "abandoned", "seconds": round(max(seconds, 0.0), 1)}
-    attempt = len(earlier) + 1
+    # A folder no attempt used before, whatever the record says: a failed attempt is never
+    # moved onto another one.
+    used = [
+        int(match.group(1))
+        for path in (d / "attempts").glob(f"{stage}-*")
+        if (match := re.fullmatch(rf"{re.escape(stage)}-(\d+)", path.name))
+    ]
+    attempt = max([len(earlier), *used]) + 1
     folder = d / "attempts" / f"{stage}-{attempt}"
-    ledger(d, "retry", stage=stage, attempt=attempt, stop=reason, failure_note=note)
-    for pattern in (
-        f"steps/{stage}-*.json",
-        f"transport/{stage}-*",
-        f"checkpoints/{checkpoint}.*",
-        "calls",
-        "book.db",
-        "book.db-wal",
-        "book.db-shm",
-        *STAGE_OUTPUTS[stage],
-    ):
-        move_into(d, pattern, folder)
-    index = STAGES.index(stage)
-    if index:
-        previous = CHECKPOINT_OF[STAGES[index - 1]]
-        bound = read(checkpoint_path(d, previous, "binding"))
-        if bound["store_backup"]:
-            shutil.copy2(d / bound["store_backup"], d / "book.db")
-        if child_digest(d) != bound["store_sha256"]:
-            raise Refusal(f"the restored store is not the one the {previous} gate read")
-    state = progress(d)
+    # Recorded before anything moves, so a retry that fails from here on still counts, and the
+    # next one takes the next folder.
     state["attempts"].append(
         {
             "stage": stage,
@@ -1718,6 +2229,24 @@ def retry(line: str, stage: str, failure: Path, verified_dead_pid: int | None = 
     state["stop"] = None
     state["status"] = "ready" if index else "prepared"
     save(d, state)
+    ledger(d, "retry", stage=stage, attempt=attempt, stop=reason, failure_note=note)
+    for pattern in (
+        f"steps/{stage}-*.json",
+        f"transport/{stage}-*",
+        f"children/{stage}-*.json",
+        f"children/bind-{checkpoint}.json",
+        f"checkpoints/{checkpoint}.*",
+        "calls",
+        "book.db",
+        "book.db-wal",
+        "book.db-shm",
+        *STAGE_OUTPUTS[stage],
+    ):
+        move_into(d, pattern, folder)
+    if restored is not None:
+        # The copy checked above, renamed into place: nothing changes its bytes on the way.
+        restored.replace(d / "book.db")
+    shutil.rmtree(restore, ignore_errors=True)
     return run_stage(line, stage)
 
 
@@ -1734,11 +2263,27 @@ def publish(line: str) -> Path:
     shelves = library_shelves(d)
     if len(shelves) != 1:
         raise Refusal(f"expected one library shelf, found {len(shelves)}")
+    # What the operator is sent is what the chapter gate read, file by file: a shelf or reading
+    # copy regenerated after the gate is refused, and so is a file the binding never listed.
+    changed = binding_changes(d, "chapter", state["gates"].get("chapter"))
+    if changed:
+        raise Refusal(f"what the chapter gate read changed since it was recorded: {changed}")
+    bound = read(checkpoint_path(d, "chapter", "binding"))["artifacts"]
+    shelf_files = sorted(p for p in shelves[0].rglob("*") if p.is_file())
+    sources = [d / "chapter-one.md", *shelf_files]
+    unbound = sorted(
+        p.relative_to(d).as_posix() for p in sources if p.relative_to(d).as_posix() not in bound
+    )
+    if unbound:
+        raise Refusal(f"the chapter gate never read {unbound}; nothing ungated is published")
+    if (shelves[0] / "chapter-one.md").exists():
+        raise Refusal("the shelf holds a chapter-one.md, which the reading copy would replace")
     destination = LIBRARY / shelves[0].name
     if destination.exists():
         raise Refusal(f"{destination} exists; a shelf is never overwritten")
     found = draws(line)
     settings = read(d / "settings.json")
+    before = drawn_before(line)
     earlier = []
     for k in found[:-1]:
         other = progress(draw_dir(line, k))
@@ -1755,7 +2300,22 @@ def publish(line: str) -> Path:
         )
     shutil.copytree(shelves[0], destination)
     shutil.copy2(d / "chapter-one.md", destination / "chapter-one.md")
-    number, count = found[-1], len(found)
+    files = {
+        path.relative_to(destination).as_posix(): sha(path)
+        for path in sorted(destination.rglob("*"))
+        if path.is_file()
+    }
+    gated = {"chapter-one.md": bound["chapter-one.md"]} | {
+        p.relative_to(shelves[0]).as_posix(): bound[p.relative_to(d).as_posix()]
+        for p in shelf_files
+    }
+    if files != gated:
+        raise Refusal(
+            f"{destination} does not hold the bytes the chapter gate read; it stays as copied "
+            "for a person to look at, and nothing records it as published"
+        )
+    # Every draw of the brief counts, the ones before this line included.
+    number, count = before + found[-1], before + len(found)
     write_new(
         destination / "DRAW.json",
         {
@@ -1763,24 +2323,28 @@ def publish(line: str) -> Path:
             "draw": number,
             "of": count,
             "label": f"draw {number} of {count}",
+            "line_draw": found[-1],
+            "before_line": read(line_dir(line) / "line.json").get("earlier"),
             "earlier": earlier,
             "revision": settings["revision"],
             "writer": settings["writer"],
             "writer_id": settings["writer_id"],
             "dossier_sha256": settings["dossier_sha256"],
-            "cause": settings.get("cause"),
+            "causes": read(d / "causes.json") if (d / "causes.json").is_file() else [],
             "fixes": settings.get("fixes", []),
             "brief_sha256": settings["brief_sha256"],
             "items_sha256": settings["items_sha256"],
             "gates": {c: g["result"] for c, g in state["gates"].items()},
             "retries": {s: len(r) for s, r in state["retries"].items()},
             "spend": spend(d),
+            "files": files,
         },
     )
     state["published"] = {
         "path": str(destination),
         "at": now(),
         "label": f"draw {number} of {count}",
+        "files": files,
     }
     save(d, state)
     ledger(d, "published", path=str(destination), label=f"draw {number} of {count}")
@@ -1819,14 +2383,29 @@ def record_read(line: str, harvest: Path) -> None:
 
 
 def status(line: str) -> list[dict[str, Any]]:
+    """One row per draw, after the brief every draw of the line is told, printed whole so the
+    coordinator sees what the model is sent."""
     found = draws(line)
+    before = drawn_before(line)
+    brief = line_dir(line) / "brief.txt"
+    print(
+        json.dumps(
+            {
+                "line": line,
+                "brief_sha256": sha(brief),
+                "drawn_before_line": before,
+                "brief": brief.read_text(encoding="utf-8"),
+            },
+            ensure_ascii=False,
+        )
+    )
     rows = []
     for k in found:
         d = draw_dir(line, k)
         state, settings = progress(d), read(d / "settings.json")
         rows.append(
             {
-                "draw": f"{k} of {len(found)}",
+                "draw": f"{before + k} of {before + len(found)}",
                 "status": state["status"],
                 "stop": state.get("stop"),
                 "writer": settings["writer"],
@@ -1863,9 +2442,22 @@ def build_parser() -> argparse.ArgumentParser:
         begin.add_argument(f"--{name.replace('_', '-')}", type=int, default=DEFAULT_LAYOUT[name])
     for name in ("calls", "tokens", "seconds"):
         begin.add_argument(f"--max-{name}", type=int, default=DEFAULT_LIMITS[name])
+    begin.add_argument(
+        "--cause", action="append", default=[], help="for a brief drawn before, as redraw's"
+    )
+    begin.add_argument("--fix", action="append", default=[], help="as redraw's --fix")
+    begin.add_argument(
+        "--prior-draws", type=int, default=0, help="draws of this brief the scan cannot see"
+    )
+    begin.add_argument("--prior-source", type=Path, help="where those draws are recorded")
     again = sub.add_parser("redraw", help="the next draw of a line whose last draw ended")
     again.add_argument("--line", required=True)
-    again.add_argument("--cause", required=True, help="where the cause was located, and what")
+    again.add_argument(
+        "--cause",
+        action="append",
+        required=True,
+        help="`<checkpoint>: <file>[:line][ locator]: <what the read found>`, once per cause",
+    )
     again.add_argument(
         "--fix", action="append", default=[], help="a 40-hex src/ or migrations/ commit"
     )
@@ -1883,7 +2475,9 @@ def build_parser() -> argparse.ArgumentParser:
     retry_parser.add_argument("stage", choices=STAGES)
     retry_parser.add_argument("--line", required=True)
     retry_parser.add_argument("--failure", type=Path, required=True)
-    retry_parser.add_argument("--verified-dead-pid", type=int)
+    retry_parser.add_argument(
+        "--verified-dead-pid", type=int, action="append", default=[], help="once per PID"
+    )
     for name in ("publish", "status"):
         sub.add_parser(name).add_argument("--line", required=True)
     sent_parser = sub.add_parser("sent")
@@ -1897,6 +2491,8 @@ def build_parser() -> argparse.ArgumentParser:
         child_parser.add_argument("draw", type=Path)
         if child != "_digest":
             child_parser.add_argument("name")
+        else:
+            child_parser.add_argument("database", type=Path, nargs="?")
     return parser
 
 
@@ -1924,6 +2520,10 @@ def main(argv: list[str] | None = None) -> int:
                 binary=args.codex_binary,
                 layout=layout,
                 limits=limits,
+                causes=args.cause,
+                fixes=args.fix,
+                prior_draws=args.prior_draws,
+                prior_source=args.prior_source,
             )
         elif args.mode == "redraw":
             redraw(args.line, args.cause, args.fix, args.writer, args.codex_binary)
@@ -1940,14 +2540,16 @@ def main(argv: list[str] | None = None) -> int:
         elif args.mode == "status":
             status(args.line)
         elif args.mode == "_step":
+            record_child(args.draw, args.name)
             child_step(args.draw, args.name)
         elif args.mode == "_bind":
+            record_child(args.draw, f"bind-{args.name}")
             require_frozen_source(args.draw)
             forbid_provider_calls()
             bind(args.draw, args.name)
         elif args.mode == "_digest":
             require_frozen_source(args.draw)
-            print(json.dumps({"store_sha256": store_digest(args.draw)}))
+            print(json.dumps({"store_sha256": store_digest(args.draw, args.database)}))
     except Refusal as error:
         print(f"refused: {error}", file=sys.stderr)
         return 2

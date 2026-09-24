@@ -27065,27 +27065,60 @@ research code, so RS1 forbids a package import of it.
 
 **The lane** (57a13f8). The registered series closed when draw 2 passed chapter one, so the next
 chapter comes from `tools/chapter_one.py`, a production lane with no research claim and so no
-registration, amendment or claim record. It copies, never imports, what worked in the closed
-runner: four checkpoints (concept, listing, seeded world before `world accept`, chapter one)
-with their stop rules; a runtime built by `git archive` of a named commit, refused while
-`src/`, `migrations/`, `pyproject.toml` or `uv.lock` has uncommitted changes; the scrubbed child
-environment; an argument allowlist with no `--exemplars`, `--rivals`, `--planning-material` or
-corpus path; a Codex trace folder per step with transport and isolation checks, and a gate
-refuses a pass over any call that failed one; one verdict line per item with PARTIAL counted as
-FAIL; spend caps of 60 calls and 2,000,000 tokens a day through the CLI's own flags plus 7,200
-wall seconds, counted over every attempt; and a publish that never overwrites a shelf. A stage
-that stopped operationally is retried at most twice under a failure note hashed before dispatch,
-keeping the failed attempt and restoring the store from the previous checkpoint's backup. A
-redraw needs an ended draw, a located cause, and a new `src/` or `migrations/` commit or a
-different accepted writer; `DRAW.json` says "draw k of n", counted per line, so a new line
-starts at draw 1 and does not count the closed series' two. Codex only in v1: it refuses
-`LITHARNESS_ENV=test` and `LITHARNESS_PROVIDER=claude`. It imports nothing from `research/`,
-runs the register report as a subprocess and files its output beside each gate, and a report
-failure blocks nothing. Its items (`tools/chapter_one_items.json`) are the PREREG's C1-C4,
-L1-L4, W1-W3 and H1-H8 with L1, L3 and H2 tightened, plus C-money, L5 (the hook), L6 (a word a
-shelf reader stops on), W-money, H-open and H-diction. They are coordinator-facing and never
-reach an argument, the environment or a step's input; each is read by a person, and none counts
-words.
+registration, amendment or claim record. It copies, never imports, what worked in the closed runner:
+four checkpoints (concept, listing, seeded world before `world accept`, chapter one) with their stop
+rules; a runtime built by `git archive` of a named commit, refused while `src/`, `migrations/`,
+`pyproject.toml` or `uv.lock` has uncommitted changes; the scrubbed child environment; an argument
+allowlist with no `--exemplars`, `--rivals`, `--planning-material` or corpus path; a Codex trace
+folder per step with transport and isolation checks, and a gate ~~refuses a pass over any call that
+failed one~~ **refuses a pass over a call that failed its isolation checks, a trace nobody can read,
+a failed call production never retried, or a stage with no traced call, and lists the failures
+production retried (corrected below)**; one verdict line per item with PARTIAL counted as FAIL;
+spend caps of 60 calls and 2,000,000 tokens a day through the CLI's own flags plus 7,200 wall
+seconds, counted over every attempt; and a publish that never overwrites a shelf. A stage that
+stopped operationally is retried at most twice under a failure note hashed before dispatch, keeping
+the failed attempt and restoring the store from the previous checkpoint's backup. A redraw needs an
+ended draw, a located cause, and a new `src/` or `migrations/` commit or a different accepted
+writer; `DRAW.json` says "draw k of n", ~~counted per line, so a new line starts at draw 1 and does
+not count the closed series' two~~ **counted over every draw of the brief, the closed series' two
+included (corrected below)**. Codex only in v1: it refuses `LITHARNESS_ENV=test` and
+`LITHARNESS_PROVIDER=claude`. It imports nothing from `research/`, runs the register report as a
+subprocess and files its output beside each gate, and a report failure blocks nothing. Its items
+(`tools/chapter_one_items.json`) are the PREREG's C1-C4, L1-L4, W1-W3 and H1-H8 with L1, L3 and H2
+tightened, plus C-money, L5 (the hook), L6 (a word a shelf reader stops on), W-money, H-open and
+H-diction. They are coordinator-facing and never reach an argument, the environment or a step's
+input; each is read by a person, and none counts words.
+
+> **Corrected in place 2026-09-24, after review and before the lane ran.** Three reviewers found
+> holes in the lane's stage machine and records; the fix changes no model-facing text. **Draws count
+> across lines.** A brief has one line, and a brief a registered runner already drew
+> (`runs/<arm>/draw-<n>/brief.txt`, same bytes) opens its line as a redraw of the latest of those:
+> read 21 on draw 2's brief is draw 3 of 3, admitted by a different writer (marsh, after rowntree)
+> and causes located in read 20. **A located cause** reads `<checkpoint>: <file>[:line][ locator]:
+> <what the read found>`, the file one that exists; a draw may name several, and they stay out of
+> the `settings.json` every child reads. **No brief** comes from `plan/`, has the bytes of a file
+> there, or has the bytes of a read or gate read a draw recorded. **Transport fails closed.** A
+> stage checks its traces before it binds, so a call that failed isolation, an unreadable trace or a
+> failed call production never followed with a completed call of the same profile stops it
+> operationally, open to a retry since nothing was bound or read; the gate rebuilds the summary from
+> the traces, files it by hash with every failed call and whether it was retried, and refuses a pass
+> over any of those or over a stage with no traced call. An unreadable trace counts as a call of
+> unknown usage and never stops `status`, `spend` or `retry`. **A retry** wants the runner, the step
+> child it started and the interpreter that child recorded for itself (the runtime's `python.exe` is
+> a launcher on Windows, so they are two processes) gone by the OS or by `--verified-dead-pid`; it
+> reads the draw's stop as well as the stage's, so a ceiling under a scheduler failure ends the
+> draw; and it restores the store into `restore/` and checks its digest before it records the retry
+> or moves the failed attempt, which always takes a folder no attempt used. **Publish** refuses
+> files the chapter gate's binding does not hold with the same bytes and records each copied file's
+> SHA-256 in `DRAW.json` and the draw's progress. **`--build-baseline`** refuses to start unless
+> `runs/box.lock/holder` begins `register-baseline`. Pinned by
+> `test_a_stage_stops_on_its_transport_check_before_anything_is_bound`,
+> `test_a_gate_files_every_failed_call_and_passes_only_over_traced_calls`,
+> `test_a_retry_needs_a_failure_note_and_a_verified_dead_runner`,
+> `test_a_child_records_its_own_interpreter_before_anything_else`,
+> `test_every_draw_of_a_brief_counts_across_lines_and_before_the_lane`,
+> `test_the_docstring_s_next_draw_is_admitted_as_draw_3_of_the_closed_brief` and
+> `test_the_builder_runs_only_under_its_own_box_lock`.
 
 **The governance line** (b04bd04). `EPISTEMIC_GOVERNANCE.md` now separates an operational
 retry from an amendment. Anything a model sees, the sample, items, stop rules, ceilings,

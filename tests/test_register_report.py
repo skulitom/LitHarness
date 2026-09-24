@@ -475,6 +475,30 @@ def test_the_builder_never_reads_book_library() -> None:
     assert not any("book-library" in literal for literal in literals[1:])
 
 
+def test_the_builder_runs_only_under_its_own_box_lock(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A sustained job over a 1.96 GB file shares the box only under the lock: the builder
+    checks for a holder line of its own and never takes the lock itself."""
+    holder = tmp_path / "box.lock" / "holder"
+    monkeypatch.setattr(register_report, "BOX_LOCK_HOLDER", holder)
+    monkeypatch.setattr(register_report, "BUILDER_INPUTS", (tmp_path / "absent.json",))
+
+    def never(**_: Any) -> dict[str, Any]:
+        raise AssertionError("the builder ran")
+
+    monkeypatch.setattr(register_report, "build_baseline", never)
+    assert register_report.main(["--build-baseline"]) == 2
+    assert "runs only under the box lock" in capsys.readouterr().err and not holder.exists()
+    holder.parent.mkdir()
+    holder.write_text("chapter-one: coordinator, read-21 draw 1\n", encoding="utf-8")
+    assert register_report.main(["--build-baseline"]) == 2
+    assert "held by: chapter-one" in capsys.readouterr().err
+    holder.write_text("register-baseline: coordinator, 14:00\n", encoding="utf-8")
+    assert register_report.main(["--build-baseline"]) == 2
+    assert "missing input" in capsys.readouterr().err, "past the lock, to the input check"
+
+
 def test_the_market_row_reads_a_built_baseline(built: dict[str, Any]) -> None:
     result = register_report.report(
         chapter=OPENING, baseline_path=built["out"], table_path=built["table"]

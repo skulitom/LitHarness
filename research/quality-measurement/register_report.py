@@ -10,8 +10,9 @@ FRAME). This module puts our text beside the shelf's distribution. It is a descr
 only a description:
 
 - **No row decides anything.** There is no pass, fail, verdict, flag, colour or threshold. It
-  exits 0 whatever the text holds, and exits 2 only when an input file is missing. The gate
-  items stay the coordinator's.
+  exits 0 whatever the text holds, and exits 2 only when an input file is missing (or, for
+  `--build-baseline`, when the box lock is not held for it). The gate items stay the
+  coordinator's.
 - **Every counter is reused except three word lists.** Sentences come from `overview.sentences`
   and `coordinator_density` from overview.py. Chapter prose comes from
   `chapter_measures.prose_only` with paragraphs normalised by `exemplars._paragraphed`, on
@@ -45,7 +46,12 @@ word, and the rarest-words list is never a locator (§156.3, §156.5).
 
 The market half is built once, under the box lock, by `--build-baseline`. It is a sustained
 CPU and memory job over the backtest's `fictions-v0.json`, so it never runs beside a model arm
-(CLAUDE.md, "Share the box").
+(CLAUDE.md, "Share the box"), and it refuses to start unless `runs/box.lock/holder` begins
+`register-baseline`:
+
+    mkdir runs/box.lock && echo "register-baseline: <who>, <when>" > runs/box.lock/holder
+    uv run python research/quality-measurement/register_report.py --build-baseline
+    rm -f runs/box.lock/holder && rmdir runs/box.lock
 """
 
 from __future__ import annotations
@@ -93,6 +99,9 @@ FREQUENCY_TABLE = HERE / "derived" / "register-freq.json"
 RIVALS = HERE / "derived" / "rivals-all.json"
 FICTIONS = REPO / "research" / "sim-readership-backtest" / "fictions-v0.json"
 BACKTEST_CORPUS = REPO / "research" / "sim-readership-backtest" / "corpus.py"
+#: `--build-baseline` runs only while this holder names it (RUNBOOK.md, "guard and go").
+BOX_LOCK_HOLDER = REPO / "runs" / "box.lock" / "holder"
+BASELINE_HOLDER_PREFIX = "register-baseline"
 
 #: Words at the start of a chapter that a position row looks at.
 FIRST_WINDOW = 150
@@ -1365,6 +1374,26 @@ def _read(path: Path | None) -> str | None:
     return None if path is None else path.read_text(encoding="utf-8")
 
 
+def baseline_lock_refusal(holder: Path | None = None) -> str | None:
+    """Why the baseline may not be built now, or None. The build is a sustained CPU and memory
+    job over the 1.96 GB fictions file, so it runs only under the box lock with its own
+    holder line, taken as the RUNBOOK says; this checks the lock, it never takes it."""
+    holder = holder or BOX_LOCK_HOLDER
+    try:
+        line = holder.read_text(encoding="utf-8-sig")
+    except OSError:
+        line = None
+    if line is not None and line.startswith(BASELINE_HOLDER_PREFIX):
+        return None
+    held = "absent" if line is None else f"held by: {line.strip()}"
+    return (
+        f"refused: --build-baseline runs only under the box lock, with {holder} starting "
+        f"{BASELINE_HOLDER_PREFIX!r} ({held}). Check the process list, then: "
+        f'mkdir runs/box.lock && echo "{BASELINE_HOLDER_PREFIX}: <who>, <when>" '
+        "> runs/box.lock/holder"
+    )
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=HEADER)
     parser.add_argument("--listing", type=Path)
@@ -1381,6 +1410,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         sys.stdout.reconfigure(encoding="utf-8")
 
     if args.build_baseline:
+        refusal = baseline_lock_refusal()
+        if refusal:
+            print(refusal, file=sys.stderr)
+            return 2
         missing = [path for path in BUILDER_INPUTS if not path.is_file()]
         if missing:
             print(f"missing input: {', '.join(str(path) for path in missing)}", file=sys.stderr)
