@@ -26300,6 +26300,13 @@ allowance-printing books moved; the undeclared opening count above moved too.
 
 ## 255. The operator's standing directions return at invention, and the book's promises stop reading as debts (2026-09-22)
 
+> **Amended in place 2026-09-24 (§262).** `READER_LIFE`'s "a job that covers rent" put rent into
+> both concepts the restored-directions draw developed and onto its chapter one's first
+> paragraph; it now says "a job", and `PERSONAL_COST` says a choice "costs them" where the text
+> quoted below says "they pay in". The residual on the debt noun reaching development and every
+> concept outline by key name is retired: the keys are shown to a model under neutral names and
+> stored as before. The roster survey the last residual left undone is done. See §262.
+
 **Located motivation.** The coordinator's gate read of the full-book trial's A1 (*The Last
 Anchorage*: 24 chapters, the structured `--planning-material` route, `gpt-6-astra` through Codex
 per §253) is local under `book-library/the-last-anchorage/GATE.md`. It failed the book on the
@@ -26841,6 +26848,15 @@ in a book). The shipped default still routes every role to strong.
 
 ## 261. The concept listing names the System, its skills and its ranks, because those words tell a LitRPG reader the book is for them (2026-09-23)
 
+> **Corrected in place 2026-09-24 (§262), one read after it shipped.** ~~The supplied-concept
+> listing task now asks the writer to name the game system, its skills and the ranks or levels it
+> counts, and says a rank the system counts is not incidental.~~ **Draw 2's listing answered that
+> clause item by item, and the operator read it as "a list of facts" (read 20).** The clause was
+> the permission form §138 measured, and the task it sat in had already dropped `_TASK`'s numbers
+> sentence. `writer.overview.concept.v4` names the game system once, as the book names it,
+> restores the numbers and paragraph sentences and asks for a hook. Draw 1's L1 failure and its
+> located cause stand, and so does the System's own name as the genre's furniture.
+
 2026-09-23. Draw 1 of the registered restored-directions draw
 (`research/quality-measurement/restored-directions-draw-20260922/`) passed its concept gate: the
 concept carried §255's one-person exception working in chapter one, counted ranks with a
@@ -26861,3 +26877,291 @@ replaced (§262 corrects this entry: v4 names the game system once and asks for 
 `test_the_concept_listing_names_the_game_system_once_and_asks_for_a_hook`). Draw 2 is
 licensed by this commit as a registered `fix` amendment; whether the listing now shows the genre
 is that draw's gate to read.
+
+
+## 262. Read 20's list of facts, its rent line and its odd word each came from our own text, and a chapter-one lane replaces the closed draw (2026-09-24)
+
+2026-09-23. The operator read draw 2 of the registered restored-directions draw
+(`research/quality-measurement/restored-directions-draw-20260922/`): the listing and chapter one
+of *A Thousand Skills from Home* (rowntree, Codex `gpt-6-astra`), which had passed every
+coordinator gate item (C1-C4, L1-L4, W1-W3, H1-H8). [plan/reader-read-20.md](reader-read-20.md)
+holds his words; it is a defect harvest, not data (§95, §148), and none of it enters a prompt
+(§97.1). His items: the listing "reads like a list of facts instead of an overview which should
+grab attention with a hook"; chapter one's "He had reported it with his rent payment last month"
+is "a leak of debts and promises, the same issue as from the very beginning"; "what is a
+surviving tread?"; and he "would probably stop reading around overview/ beginning". The gate
+had passed all three: L1 because the listing named the System and its ranks, which §261 had just
+asked for; H2 with the rent line noted as "the opening joke"; and odd diction was no item at all.
+
+**Located causes.** A read-only mapping pass over draw 2's recorded calls
+(`runs/restored-directions-draw-20260922/draw-2/calls/`, local) found each item in our own text.
+
+1. **The rent came back past the guard written to stop it.** §174 removed "a job that covers the
+   rent" from `house.READER` and pinned the phrase verbatim in
+   `tests/test_readership_prior_life.py`, whose guard scanned the listing task and the house
+   floor. §255 restored the operator's readership direction as `discovery.READER_LIFE`, "a
+   degree, a job that covers rent, or something they know far too much about", inside
+   `WORLD_DIRECTION`, which rides discovery, development and structured invention: outside both
+   texts the guard read. The recorded chain: the development call carried it in its system
+   (`calls/0003`) while its treatment held no "rent"; development wrote `person_before` as "a
+   delivery rider in his twenties, paying rent"; the listing and seed material carried that;
+   the Architect declared theo `wants` "…keep paying rent…" and a building's `manifests_as`
+   "Theo's rented flat faces the courtyard" (`0017`); both records reached every scene packet
+   (`0021`, `0025`, `0033`); and the page has the rent payment in its first paragraph and "the
+   courtyard his rented flat overlooked" later. Draw 1's concept said "His work covers rent", so
+   two concepts of two carried it. The registered gate's word list (debt, ledger, court,
+   tenancy, licence, administration) holds no money word.
+2. **The concept's keys spoke of a debt.** The development and structured schemas asked for
+   `debts[].owed`, `due_scene` and `system.pays`; the precision pass addressed `debts.N.owed`;
+   the outline's `book_concept` carried all of them; and the material labelled the rank "What a
+   step up buys" and the listing's input "The book this listing sells". §255 kept the keys on
+   purpose (its residual: renaming inside the projection moves the projection the registered
+   audits compare). Draw 2's planner, shown them, put commerce words into 13 of its 24 scene
+   briefs, two of which reached a scene prompt and none the page: exposure, not a measured cause.
+3. **The Architect was told price, spend, buy, paid and currency where it meant a
+   requirement**, in the seed and grow text (`world_agent._SYSTEM`, `_GROWTH`) and in the
+   `world vocabulary` glosses it reads (costs "paid each time", per_rung "what other grants are
+   paid in", price "what a thing charges", a status sheet's "a currency"). It wrote "not
+   currency or further kernels" into every capability's costs record, and each was rendered into
+   every scene system: a negation supplying its own money word, the shape §127 recorded ("a rule
+   written to force an outcome supplies its own vocabulary instead of the outcome"). The
+   planner's world rules said "required payment", "delayed payment" and "unaffordable", and the
+   scene's world-rules header "delayed payment".
+4. **The listing task was a checklist.** §261's clause named three things to include (the game
+   system, its skills, the ranks or levels it counts) and said a counted rank is not incidental.
+   That is the permission form §138 measured: what a rule permits is what comes back (47.2
+   number tokens per 1k against a prohibition's 7.0). Draw 2's listing answered it item by
+   item, naming the System, Anchor, Reedstep, Skill Rank 0, Personal Rank and kernels in a run of
+   seven short sentences, then closed on three wants and a moral. `_CONCEPT_TASK` (written
+   2026-09-08 in bd4fb5d) had also left out `_TASK`'s measured numbers sentence and its
+   "lifted out" paragraph sentence, and on the discovery route the one-person exception sat only
+   inside the world text, where the listing put it too (sentence 5 of 12). Read 15 recorded the
+   same complaint of another listing. All four simulated browsing readers started it and praised
+   the mechanics; that lane is not a hook signal.
+5. **The diction chain.** No prompt asked for construction language. The discovery model
+   brought a structural register in unasked (supports that fail when displaced, Anchor defined by
+   a touched fixed surface and a load); the Architect made it world rules; the outline planner
+   multiplied it (load 14 times, sound 7, surviving 6 in its response) and wrote Anchor's limit
+   into a scene's `future_dependencies` ("must use surviving supports"), which
+   `outline.SCENE_HANDOFF_RULES` asked for by listing capability limits there. On the page,
+   "surviving" reached the scene-1 writer only through that brief. "Tread" is in no input: it is
+   the writer's own noun, like junction, surround, brickwork and fixing plate, placed where each
+   use of Anchor has to show which surface still holds. Every later scene receives the prose so
+   far, so the register builds. This is family E2, trade vocabulary, now named in a sixth read
+   (`plan/agent-impact/read-recurrence-map.md`); §181's clause against it lives in the reviser,
+   off since §196, and §156.3 put our rare-word rate inside the genre's range, so rarity does
+   not locate it.
+
+**What changed in production.** Causes removed, nothing added to a scene-writer prompt, no word
+list, and no stored key, predicate or `concept.json` renamed, so nothing migrates.
+
+- **Invention** (cbb5e5b). `READER_LIFE` reads "a degree, a job, or something they know far too
+  much about, not decades at one craft"; `PERSONAL_COST` reads "it costs them time, risk, or
+  somebody now against them" for "they pay in". §174's verbatim guard now scans
+  `WORLD_DIRECTION` as well, for its enumeration and the spelling "covers rent": our own prompt
+  text held against one clause that came back, not a list of words a model may not write.
+- **The concept's keys, presentation only** (cbb5e5b). `concept.PRESENTED_NAMES` shows
+  debts/owed/due_scene/pays to a model as open_questions/question/answered_by_scene/
+  what_rising_gives in the development and structured schemas and task text,
+  `chapter_layout.DEVELOPMENT_RULE` and `PLANNING_RULE`, the precision paths and `for_outline`;
+  `outline.CONTINUATION_RULE` follows. `from_payload` reads both sets and refuses a field given
+  under both names. `CONCEPT_SCHEMA` and the legacy `writer.concept.v1` request are unchanged.
+  Draw 1, draw 2 and the full-book trial's A1 load, and `to_text` is byte-equal to each file.
+  The labels read "What rising a rank gives them:" and "The book this listing introduces".
+- **Planner** (cbb5e5b). `world_brief.WORLD_RULES` places "what it requires" before a gain's
+  effect and says a gain whose conditions are not yet met waits until they are; `LADDER_RULES`
+  says what reaching a rung "took" (the `cost_to_reach` key stays); `SCENE_HANDOFF_RULES` lists
+  "identity or disclosure limits" for `future_dependencies`, dropping capability limits, which
+  reach the writer as world rules already. That closes one route of the diction chain; the
+  brief's own `changes` field can still restate a limit.
+- **Architect and vocabulary** (c6565f2). Seed and grow say what each grant takes, "putting one
+  resource into some upgrades", points "that people put into its grants" and "a grant is not
+  offered until those points are there", and "A requirement alone". The glosses say costs
+  "taken each time" and "a grant whose points are not there", per_rung "what other grants
+  take", growth_limit "a requirement alone", price "what having it takes from them", and the
+  status sheet's example list drops "a currency". Predicate names and `cost_to_reach` stay. The
+  vocabulary has no profile label, so this entry is its record.
+- **Scene side** (c6565f2). `context.py`'s world-rules header lets a condition "come later" in
+  place of "delayed payment", a reworded sentence and no new clause; a numeric stock cost
+  renders "X takes N stock each time it is gained or deepened" in place of "is paid for in".
+  "Satisfy a cost" and "X costs Y" stay: a mechanical cost is the genre's own.
+- **Listing** (b5f8469). `_CONCEPT_TASK` is nine sentences: the first sentence holds the change
+  or what this person alone can do, with who they were the day before as one plain clause; then
+  what they want and what stands in their way, in their own words; "Name the game system once as
+  the book names it", with the one-person power shown by what it lets them do; `_TASK`'s numbers
+  and paragraph sentences, byte-identical; an ending on what they are about to try or what could
+  go wrong; nothing invented and nothing given away past the opening chapter. Rendered on draw
+  2's concept with rowntree's dossier it is 13 demands against the recorded v3 request's 16,
+  under the unchanged ceiling of 18. A discovery concept's listing material now puts "Their
+  magical advantage:" on its own line after the person.
+- **The sentence splitter** (b5f8469). `overview.sentences` splits on paragraph breaks first and
+  lets a closing quote end a sentence, and `longest_sentence` uses it: draw 2's quoted
+  "Unbounded." no longer joins the next paragraph (its longest sentence is 11 words, was 14).
+  The new split only subdivides the old, so a listing's longest sentence can only fall; but
+  `sentence_ceiling` counts the shelf with the same splitter, so with `--exemplars` the ceiling
+  can fall too and the length rail can fire more often or less. The mapping plan's "can only
+  lower redraws" holds only without a shelf, where the rail is off, which is how draw 2 ran and
+  is the lane's default. The redraw message and the stderr line now report the new count.
+- **Also** (c6565f2). A Codex trace record names its request's `profile`, with the request's
+  bytes unchanged; a stale `handlers.py` comment points at `tells_pass.observe`.
+
+**Profiles, each bumped once.**
+
+| profile | from → to | moved by |
+| --- | --- | --- |
+| `writer.discovery` | v14 → v15 | `READER_LIFE`, `PERSONAL_COST` |
+| `writer.concept.discovery`, `writer.concept.material` | v9 → v10, v2 → v3 | the direction, the shown names |
+| `writer.concept.precision` | v1 → v2 | the shown field paths |
+| `writer.overview.concept` | v3 → v4 | the "introduces" label (cbb5e5b), then the task and the advantage line (b5f8469) |
+| `planner.outline`, `planner.outline.structured` | v8 → v9, v4 → v5 | the shown names and the rules; `concept_planning_version` 17 → 18 |
+| `architect.seed`, `architect.grow` | v9 → v10, v5 → v6 | the seed and grow text |
+
+`writer.overview.concept.v4` names two texts: the v3 task with the new label at cbb5e5b, and the
+new task from b5f8469. No request was sent between them. **Digests that move without a label:**
+the outline `_policy_digest`, `11fb8ee56b976dcf` → `09d3a5f0dbcbf081`, on every outline
+decision, the plain route's `planner.outline.v3` included, through `WORLD_RULES`; the directive
+planner's (`planner.directive.v0`), `aa80be22c1a19c46` → `1a10021eb9ee583c`; scene-draft input
+digests, and with them sampling seeds, for every book with world rules, a stock cost or a locked
+concept (whose render carries the new label); and the `world vocabulary` output.
+
+**Closed records that would read differently if re-run.** The connected-chapters and full-book
+trial audits (`research/quality-measurement/connected-chapters-20260916/audit.py`,
+`research/quality-measurement/full-book-trial-20260919/audit.py`) compare each retained outline
+request's `book_concept` with the live `Concept.for_outline()`, which now emits the shown keys,
+so `all_outline_source_projections_match` would read false. The restored-directions runner's
+`delivery_table` compares draws 1 and 2's recorded requests with the live profiles and the live
+`WORLD_DIRECTION` and listing text, all changed. All three are closed; their recorded results
+stand as run, and none was edited or re-run. No `claim.json` hashes a file this entry changed,
+and the registered runners are untouched.
+
+**§261 is corrected in place.** Its clause is withdrawn: the enumeration of the system, its
+skills and its ranks, and "a rank the system counts is not incidental". What stands is its
+reason's first half, that the System's own name tells a LitRPG reader the book is for them, now
+one naming and no tour. Its pin is replaced by
+`test_the_concept_listing_names_the_game_system_once_and_asks_for_a_hook` and
+`test_the_numbers_and_paragraph_sentences_are_the_brief_only_task_s_own`. §255 is amended in
+place where this entry changed its text and retired its key-name residual.
+
+**The register report** (99b6cbb), `research/quality-measurement/register_report.py`, prints
+beside a gate and decides nothing: no pass, fail, verdict or bar key (§61), exit 0 whatever the
+text holds and 2 only for a missing input. Listing rows carry the shape observations kept out of
+production: the longest run of sentences of twelve words or fewer, the book's own mechanic names,
+whether the system is named, where the exception first shows, the first and last sentence, and
+the longest run shared with the listing task. Chapter rows keep household money, loot currency,
+admin and frame apart, each with its rate per thousand words, its count in the first 150 words
+and the position of its first hit; tells come from `tells.density`, never its ceilings. `--draw`
+traces every word and two- or three-word sequence of each scene to the first section of the
+recorded request that holds it, or to `none`. On draw 2: a run of 7 short sentences, 5 mechanic
+names and 7.14 mechanic terms per 100 words in the listing (draw 1's: 0 names); household money
+at 0.78 per 1k, 2 in the first 150 words, first hit at word 32; "surviving" first in the scene
+brief and "tread" from no section. Its registration digest, over the word lists and every
+constant a row depends on, is `40d7f0c7b267dce3`. The market baseline lives at
+`research/quality-measurement/results/register-baseline.json` and holds sorted numbers only,
+with the word-keyed frequency table in gitignored `derived/`; `--build-baseline` builds it from
+the backtest's `fictions-v0.json` under the box lock. **It is not built.** Phase 2 was skipped on
+2026-09-24 because another session's jobs held the machine for over thirty minutes; the lock was
+never taken, and every market column prints "no reference (baseline not built)". The module is
+research code, so RS1 forbids a package import of it.
+
+**The lane** (57a13f8). The registered series closed when draw 2 passed chapter one, so the next
+chapter comes from `tools/chapter_one.py`, a production lane with no research claim and so no
+registration, amendment or claim record. It copies, never imports, what worked in the closed
+runner: four checkpoints (concept, listing, seeded world before `world accept`, chapter one)
+with their stop rules; a runtime built by `git archive` of a named commit, refused while
+`src/`, `migrations/`, `pyproject.toml` or `uv.lock` has uncommitted changes; the scrubbed child
+environment; an argument allowlist with no `--exemplars`, `--rivals`, `--planning-material` or
+corpus path; a Codex trace folder per step with transport and isolation checks, and a gate
+refuses a pass over any call that failed one; one verdict line per item with PARTIAL counted as
+FAIL; spend caps of 60 calls and 2,000,000 tokens a day through the CLI's own flags plus 7,200
+wall seconds, counted over every attempt; and a publish that never overwrites a shelf. A stage
+that stopped operationally is retried at most twice under a failure note hashed before dispatch,
+keeping the failed attempt and restoring the store from the previous checkpoint's backup. A
+redraw needs an ended draw, a located cause, and a new `src/` or `migrations/` commit or a
+different accepted writer; `DRAW.json` says "draw k of n", counted per line, so a new line
+starts at draw 1 and does not count the closed series' two. Codex only in v1: it refuses
+`LITHARNESS_ENV=test` and `LITHARNESS_PROVIDER=claude`. It imports nothing from `research/`,
+runs the register report as a subprocess and files its output beside each gate, and a report
+failure blocks nothing. Its items (`tools/chapter_one_items.json`) are the PREREG's C1-C4,
+L1-L4, W1-W3 and H1-H8 with L1, L3 and H2 tightened, plus C-money, L5 (the hook), L6 (a word a
+shelf reader stops on), W-money, H-open and H-diction. They are coordinator-facing and never
+reach an argument, the environment or a step's input; each is read by a person, and none counts
+words.
+
+**The governance line** (b04bd04). `EPISTEMIC_GOVERNANCE.md` now separates an operational
+retry from an amendment. Anything a model sees, the sample, items, stop rules, ceilings,
+analysis or reading, a production fix, a new writer, and any attempt after a failed attempt's
+answer was read stay amendments. An operational failure (an expired login, a transport error, a
+killed process, a runner defect found before any answer was read) is retried under the same
+registration with a `FAILURE-N.md` whose hash is recorded before dispatch, when no answer was
+read, the requests are unchanged and the ceilings count every attempt, a runner fix is pinned by
+a test showing it changes no request, the failed attempt is kept, and at most two are taken. It
+applies to registrations committed after it that cite it; the closed restored-directions and
+promise-payoff series are untouched. The research README and `AGENTS.md` point at it.
+
+**Held.** C2, a scope sentence on `world_rule` that would stop the Architect declaring how
+ordinary things behave, adds model-facing text, which §156.5 and §187 caution against; it waits
+for a no-model census of stored `world_rule` records. No diction family in the tells pass, no
+reviser re-enabled, no rarity floor, and no gate, redraw or refusal on a count of words.
+`house.ACCUMULATION` and `QUANTITY_DETAIL` are unedited: house floor, no page evidence. Draw 2's
+stores are registered evidence and keep "paying rent".
+
+**Reported to the operator, not done.** §255's residual roster survey, now done on a read-only
+copy: six accepted dossiers carry commerce or obligation words, rowntree, this draw's writer
+("obligations nobody mentioned"), draycott, brannigan, tanaka, penhale and larkin. Dossier text
+is part of the writer's id, so a change is a re-mint and his decision. Proposed: rowntree drops
+the obligations clause; brannigan's "getting rich off it" becomes "making it work far better than
+anyone meant"; tanaka's "pays out for it" becomes "rewards it"; penhale's "pays off slowly: a
+trade" becomes "shows slowly: a craft"; draycott retires or is re-minted with an appetite that is
+not about bargains; vance stays frozen as the control. Larkin's "a market town" has no proposal.
+Until then the next draw casts from accepted writers without such words: sandoval, mabry,
+calloway, trevelyan, marsh, barlow, carver or hollis's accepted row.
+
+**Residuals.**
+
+- Model-facing money words still in place, each kept for a stated reason: `CONCEPT_SCHEMA`'s
+  stored keys and the legacy concept task, sent only by `writer.concept.v1`, which the CLI never
+  sends; `promises_paid` and `payoff_windows`, stored keys where "paid" means a promise
+  delivered; the "price" predicate and the cast line "and it costs"; the reader roles' wording,
+  which is measurement; the genre's "earned", "Satisfy a cost" and "X costs Y"; and the house
+  floor. Candidates for a later round: `world check`'s complaints in `systems.py` ("is paid in",
+  "a price is one or more"), which reach the Architect only on a wrongly declared stock;
+  `extraction`'s note on §254 holdings; the editorial controller's "should be paid later"; the
+  Director example and the older invention decks.
+- The planner and the writer can still bring money or trade words in unasked; draw 2's planner
+  did, with no key to prompt it.
+- The discovery route still sends `discovery.growth` for chapters 2 to 6 to the listing; trimming
+  it is an open decision.
+- `tools/generation_trace.py` still sets no profile for a native Codex trace and could read the
+  record's new `profile`.
+- `test_the_server_refuses_to_start_on_an_absent_database_and_creates_no_file` failed once
+  after earlier tests in a batch and passes alone: an order dependence that predates this entry.
+
+**What this does not establish.** No model call was made. Every change is instruction delivery
+and a round-trip contract, and delivering an instruction is not evidence that a model follows it.
+Nothing here says the next listing hooks, that the next page is free of money, or that the
+writer's own trade nouns stop; the counts above are post-hoc readings of one draw, and the
+register report has no market reference yet. The next chapter one, drawn through the lane from a
+writer outside the six, gated on the tightened items and read by the operator, is the test.
+
+**Evidence** (delivery and round-trip contracts only):
+`test_the_invention_direction_does_not_carry_the_removed_enumeration_either`,
+`test_the_shown_names_read_back_under_the_stored_ones_and_nothing_migrates`,
+`test_the_concept_listing_names_the_game_system_once_and_asks_for_a_hook`,
+`test_the_numbers_and_paragraph_sentences_are_the_brief_only_task_s_own`,
+`test_a_discovery_listing_is_handed_the_one_person_advantage_before_the_world`,
+`test_a_closing_quote_or_a_paragraph_break_ends_a_sentence`,
+`test_seed_and_grow_expose_growth_without_inferring_it_from_a_price`,
+`test_the_vocabulary_an_architect_reads_names_the_domain_and_the_criterion`,
+`test_writer_gets_the_rule_block_above_guidance_and_below_author_locks`,
+`test_codex_optional_trace_survives_failed_calls_without_overwrite`,
+`test_the_report_decides_nothing`, `test_tells_rows_use_density_not_ceilings`,
+`test_admin_and_frame_lists_match_the_registered_runner`,
+`test_the_baseline_holds_numbers_and_no_market_text`,
+`test_provenance_names_each_words_first_source`, `test_the_lane_imports_nothing_from_research`,
+`test_no_corpus_exemplar_or_outside_path_rides_a_step`,
+`test_the_operator_read_and_the_items_never_reach_a_step`,
+`test_a_gate_refuses_a_pass_over_a_call_without_its_isolation_controls`,
+`test_a_retry_is_refused_after_a_read_a_content_stop_or_two_retries`,
+`test_a_redraw_needs_an_ended_draw_a_located_cause_and_a_change`,
+`test_the_register_report_is_filed_beside_the_gate_and_decides_nothing` and
+`test_the_items_carry_read_20_s_checkpoint_items`.
