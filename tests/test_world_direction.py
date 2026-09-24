@@ -46,6 +46,16 @@ def test_the_protagonist_is_described_by_who_they_were_never_by_how_to_feel() ->
     assert not any(word in text for word in ("likeable", "likable", "relatable", "sympathetic"))
 
 
+def test_the_lived_world_names_no_list_of_pressures() -> None:
+    """§263: the six-item pressure list was recited as the arc in all three draws that received
+    it. The direction keeps the world a place people live in and lists nothing for a model to
+    cover."""
+    text = discovery.LIVED_WORLD.lower()
+    assert "a place people live in" in text
+    assert ":" not in text and text.count(",") <= 1
+    assert not any(word in text for word in ("rivals", "teachers", "distance", "hunger"))
+
+
 def test_invention_and_seed_share_one_world_direction_verbatim() -> None:
     layout = chapter_layout.WritingLayout.opening(6, SerialShape(1, 6), 1400)
     invention = {

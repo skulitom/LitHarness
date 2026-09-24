@@ -36,7 +36,7 @@ def treatment():
 @pytest.mark.parametrize("brief", ["", "Keep the brother on the ground until chapter three."])
 def test_discovery_invents_experience_under_author_direction_in_its_existing_call(brief):
     request = discovery.render_request(brief)
-    assert request.profile == "writer.discovery.v15"
+    assert request.profile == "writer.discovery.v16"
     assert "experience_brief" in request.schema["required"]
     assert "Desire, Use, Consequence, Next desire and Coverage" in request.system
     assert "The author's supplied brief takes priority" in request.system

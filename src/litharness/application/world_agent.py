@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from litharness.application.concept import Concept
 
 #: Frozen profiles, one per job, so seeding a world and growing one are separable on the rows.
-SEED_PROFILE = "architect.seed.v10"
+SEED_PROFILE = "architect.seed.v11"
 GROW_PROFILE = "architect.grow.v6"
 
 # Explicit subcommands exclude acceptance. A broad world:* allowance would permit it.

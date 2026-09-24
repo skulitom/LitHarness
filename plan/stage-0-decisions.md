@@ -27289,3 +27289,47 @@ the test.
 `test_the_protagonist_is_described_by_who_they_were_never_by_how_to_feel`,
 `test_a_dialogue_attribution_stays_with_its_quote` and
 `test_check_draw_refuses_a_stock_or_a_price_that_could_not_work`.
+
+## 263. The lived-world direction lists nothing, because its six pressures became every arc (2026-09-24)
+
+**Located at the lane's first concept gate.** Read-21 draw 1 (marsh, `tools/chapter_one.py`, the
+closed draw's brief) returned a concept whose opening does what the operator's directions ask:
+Eli Mercer, returns clerk and climbing obsessive, binds a second skill into the only unbounded
+Slot in chapter one and reaches personal rank 3 while the people around him stand at 1 and 2. The
+coordinator's concept gate fails it (`runs/chapter-one/read-21/draw-1/GATE-concept.md`): C-money
+on "unpaid-for shopping" in the world text, residents who "trade reservoir access", a crossing
+given "in return for" removing anchors and an arc that closes on "obligations"; C4 partial on an
+arc-long dispute between households over diverted water. None of those phrases has a source in
+the recorded requests (calls 0002-0004): the discovery model supplied them.
+
+What does have a source is the arc they sit in. §255's `LIVED_WORLD` ended *"the pressure on
+people comes from rivals, teachers, danger, distance, hunger and each other"*, and §255 itself
+recorded that the six-item list "carries the same recitation risk" §138 measured. Every concept
+drawn under it recites it as the story (restored-directions draws 1 and 2, then this lane's draw,
+draw 3 of the brief): a teacher in each (draw 2's climbing instructor, draw 3's Vey mason),
+distance as crossings and routes (5, 5 and 16 mentions of crossing), hunger as water and food (66,
+16 and 8 mentions of water), a rival group, and in draws 2 and 3 a friendship that turns
+conditional. Across the three concepts, of a system apocalypse, the words fight, combat and
+attack occur zero times. Two different writers, one brief: the list, not the writer.
+
+**What changed** (a subtraction, nothing added). `LIVED_WORLD` is now *"By default the world is a
+place people live in, not an administration."* It rides discovery, development, material and the
+Architect seed, so `writer.discovery` v15 → v16, `writer.concept.discovery` v10 → v11,
+`writer.concept.material` v3 → v4 and `architect.seed` v10 → v11; v15, v10 and v10 were sent once,
+by read-21 draw 1. `PERSONAL_COST`'s three-way list is kept: it is the operator's §116 cost rule,
+and its "somebody now against them" is the likeliest source of the conditional friendship, a
+residual to watch rather than a removal on one reading. Nothing is said about money: a negation
+would supply the words (§262).
+
+**Also recorded.** The lane's first stage stopped before any call because `start` froze npm's
+`codex.cmd`, which production refuses; `3a4db87` resolves a wrapper to the native executable and
+lets a retry replace a frozen one, and the retry is recorded in the draw.
+
+**What it does not establish.** That the next concept's arc leaves water and crossings, or that
+the model stops supplying commerce for invented peoples; the next concept gate reads that. The
+commerce phrases are recorded as the model's own, with no located cause in our text.
+
+**Evidence** (delivery only): `test_the_lived_world_names_no_list_of_pressures`,
+`test_invention_and_seed_share_one_world_direction_verbatim`,
+`test_a_retry_replaces_a_frozen_wrapper_and_keeps_any_other_binary` and
+`test_a_shell_wrapper_resolves_to_the_native_codex_it_launches`.

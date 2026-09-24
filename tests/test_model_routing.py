@@ -26,15 +26,15 @@ REPO = Path(__file__).resolve().parents[1]
 
 #: Profiles the pipeline sends, with the tier the candidate map gives each.
 CANDIDATE_EXPECTED = {
-    "architect.seed.v10": "standard",
+    "architect.seed.v11": "standard",
     "architect.grow.v6": "standard",
     "mechanical": "strong",
     "title.availability.v0": "basic",
     "default": "strong",
     "prose": "strong",
-    "writer.discovery.v15": "strong",
-    "writer.concept.discovery.v10": "strong",
-    "writer.concept.material.v3": "strong",
+    "writer.discovery.v16": "strong",
+    "writer.concept.discovery.v11": "strong",
+    "writer.concept.material.v4": "strong",
     "writer.concept.v1": "strong",
     "writer.concept.precision.v2": "strong",
     "writer.overview.concept.v4": "strong",
@@ -100,7 +100,7 @@ def test_prose_planning_and_reader_roles_cannot_be_lowered_by_a_setting() -> Non
         f"{prefix}=basic" for prefix in ("default", "writer.", "planner.", "reader.")
     )
     routing = ModelRouting.from_environ("codex", {"LITHARNESS_MODEL_TIERS": override})
-    for profile in ("default", "writer.discovery.v15", "planner.outline.v9", "reader.continue.v0"):
+    for profile in ("default", "writer.discovery.v16", "planner.outline.v9", "reader.continue.v0"):
         assert routing.tier_for(profile) == "strong", profile
     assert not any(
         profile.startswith(pinned)

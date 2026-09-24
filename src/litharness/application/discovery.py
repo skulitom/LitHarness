@@ -18,7 +18,7 @@ from litharness.domain.generation import CompletionRequest
 from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v15"
+PROFILE = "writer.discovery.v16"
 VERSION = "magical-discovery.v7"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.
@@ -108,10 +108,10 @@ DIRECTIONS = {
 # listing and scene drafting carry neither (§138 measured an enumerated price clause recited
 # in listings). Kept out of DIRECTION, so no stored treatment's render and no scene writer
 # receives them.
-LIVED_WORLD = (
-    "By default the world is a place people live in, not an administration: the pressure "
-    "on people comes from rivals, teachers, danger, distance, hunger and each other."
-)
+# §263: its six-item pressure list ("rivals, teachers, danger, distance, hunger and each
+# other") was recited as the arc in all three draws that received it: a teacher, crossings
+# and routes, water and food, a rival group and a strained friendship, and no fight.
+LIVED_WORLD = "By default the world is a place people live in, not an administration."
 PERSONAL_COST = (
     "Where a choice costs the protagonist something, it costs them time, risk, or somebody "
     "now against them."

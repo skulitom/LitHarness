@@ -788,7 +788,7 @@ def test_new_invention_restores_the_one_person_exception_and_counted_ranks() -> 
     assert "reveal limitations through use" not in discovery.DIRECTION
     request = discovery.render_request("")
     assert request.system.count(discovery.DIRECTION) == 1
-    assert request.profile == "writer.discovery.v15"
+    assert request.profile == "writer.discovery.v16"
 
 
 def test_development_asks_for_one_person_s_exception_first_working_and_counted_ranks() -> None:
@@ -806,7 +806,7 @@ def test_development_asks_for_one_person_s_exception_first_working_and_counted_r
     ):
         assert asked in request.system, asked
     assert "need not be exclusive" not in request.system
-    assert request.profile == "writer.concept.discovery.v10"
+    assert request.profile == "writer.concept.discovery.v11"
 
 
 def test_the_concept_s_questions_are_asked_and_shown_as_questions_not_debts() -> None:
@@ -1194,7 +1194,7 @@ def test_inhabited_world_survives_with_pending_discoveries_separate_from_world_p
     assert restored.discovery == source
     assert restored.first_arc.opens == source.opening
     assert restored.author_brief == brief
-    assert seed.profile == "architect.seed.v10"
+    assert seed.profile == "architect.seed.v11"
     assert "world declare-batch --records" in seed.system
     assert source.world in seed.prompt
     assert brief in seed.prompt
