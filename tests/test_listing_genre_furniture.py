@@ -27,14 +27,15 @@ def test_the_concept_listing_names_the_game_system_once_and_asks_for_a_hook() ->
     task = overview._system(None, supplied_concept=True)
     assert "Name the game system once as the book names it" in task
     # The operator's standing direction, in the sentence that shows the power: it puts this
-    # person on a faster climb than anyone else's (§262, after §261's draw 1 showed none).
-    assert "by what it lets them do and how it lets them climb past everyone else." in task
+    # person on a faster climb than anyone else's (§262, after §261's draw 1 showed none),
+    # without asking how, which drew the mechanism into the listing (§265).
+    assert "by what it lets them do and that it lets them climb past everyone else." in task
     assert "Its first sentence already holds the change" in task
     assert "End on what they are about to try or what could go wrong." in task
     assert "its skills and the ranks" not in task
     assert "a rank the system counts is not incidental" not in task
     assert "Use ordinary language before special terminology" not in task
-    assert overview.CONCEPT_OVERVIEW_PROFILE == "writer.overview.concept.v4"
+    assert overview.CONCEPT_OVERVIEW_PROFILE == "writer.overview.concept.v5"
 
 
 def test_the_numbers_and_paragraph_sentences_are_the_brief_only_task_s_own() -> None:

@@ -27369,3 +27369,26 @@ direction and a subtraction there would remove it.
 
 **Evidence** (delivery only): `test_the_cost_sentence_names_no_person_turned_against_them`,
 `test_the_world_direction_is_its_three_sentences`.
+
+## 265. The listing promises the faster climb without asking how it works (2026-09-24)
+
+**Located at the lane's first listing gate.** Read-21 draw 3 (marsh, concept passed) produced the
+first listing under the hook-first task that reads as a person's situation: it opens on the
+one-person power ("When the System gives everyone a single skill Slot, Eli Mercer's alone has
+unlimited capacity"), keeps his old life to one plain sentence and ends on what could go wrong.
+It fails L1 on one clause that explains the rule of advancement: "using them together to solve a
+dangerous crossing can earn him separate mastery marks, pushing his rank ahead of everyone else"
+(`runs/chapter-one/read-21/draw-3/GATE-listing.md`).
+
+The clause answers our own words. §262's review edit asked the listing to show the power "by what
+it lets them do and how it lets them climb past everyone else"; "how" asks for the mechanism, and
+the material's advantage line supplies it (the exception field, which §262 moved up top, holds the
+mastery-mark rule).
+
+**What changed.** The sentence now reads "…by what it lets them do and that it lets them climb past
+everyone else": the promise stays, the mechanism is not asked for. `writer.overview.concept`
+v4 → v5 (v4 was sent by draws 1-3 of read-21's listing stage only). The advantage line in the
+material is unchanged; whether it keeps drawing mechanics into the listing is the next listing
+gate's to read.
+
+**Evidence** (delivery only): `test_the_concept_listing_names_the_game_system_once_and_asks_for_a_hook`.

@@ -20,7 +20,7 @@ from litharness.domain.writers import Writer
 
 # Separate profiles retain the identity of legacy and supplied-concept requests.
 OVERVIEW_PROFILE = "writer.overview.v0"
-CONCEPT_OVERVIEW_PROFILE = "writer.overview.concept.v4"
+CONCEPT_OVERVIEW_PROFILE = "writer.overview.concept.v5"
 TITLE_PROFILE = "writer.title.v0"
 
 MAX_OUTPUT_TOKENS = 4000
@@ -138,9 +138,10 @@ _TASK = (
 
 # A supplied concept owns the story; this task introduces it to a new reader. It asks for a
 # hook, not an inventory: the numbers sentence and the paragraph sentence are `_TASK`'s own,
-# word for word (stage-0 §262). The one-person power also says how it lets them climb past
+# word for word (stage-0 §262). The one-person power also says that it lets them climb past
 # everyone else, the operator's standing direction that the protagonist progresses faster than
-# anyone; §261's draw 1 failed L1 on a listing that showed no climb.
+# anyone; §261's draw 1 failed L1 on a listing that showed no climb. "How" asked for the
+# mechanism, and read-21 draw 3's listing explained its mastery marks (§265).
 _CONCEPT_TASK = (
     "Write the public listing for the supplied LitRPG serial: the hundred or so words a reader "
     "meets on a list of serials, and the only thing that decides whether they open chapter one.\n"
@@ -149,7 +150,7 @@ _CONCEPT_TASK = (
     "Then say what they want now and what stands in their way, in the words they would use "
     "themselves.\n"
     "Name the game system once as the book names it, and show the one thing this person can do "
-    "that nobody else can by what it lets them do and how it lets them climb past everyone "
+    "that nobody else can by what it lets them do and that it lets them climb past everyone "
     "else.\n"
     "Exactness spent on floors, ranks, counts and lengths of time is space the hook needed.\n"
     "A paragraph holds together or it is not a paragraph: a sentence that could be lifted out "

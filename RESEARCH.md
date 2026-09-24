@@ -1,6 +1,6 @@
 # LitHarness research overview
 
-<!-- research-overview: ledger through §264; checked 2026-09-24 -->
+<!-- research-overview: ledger through §265; checked 2026-09-24 -->
 
 This page is for someone opening the repository who wants to know what the research has
 established, why each line of work was opened, and what matters now. It is a map of the
