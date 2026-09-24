@@ -845,7 +845,9 @@ def check_draw(system: SystemDef, *, drawn: bool = True) -> tuple[str, ...]:
     # Membership and arithmetic, like everything above: a price in a grant no rung hands out
     # could never be paid, a stock nobody gains has no prerequisite to meet and no fork to be
     # opened by, and a rung hands out nothing or more. Nothing here asks whether a price is
-    # fair or a stock is generous.
+    # fair or a stock is generous. The complaints reach the Architect through `world check`, so
+    # they say what a grant takes rather than what it is paid in (stage-0 §262); the `price`
+    # predicate keeps its name.
     stocks = set(system.stocks)
     gates = system.gates
     for ability in system.abilities:
@@ -879,23 +881,22 @@ def check_draw(system: SystemDef, *, drawn: bool = True) -> tuple[str, ...]:
                 )
             if ability.price:
                 complaints.append(
-                    f"{ability.ability_id} is handed out by the rungs and is priced; a grant "
-                    "nobody gains or deepens is never paid for"
+                    f"{ability.ability_id} is handed out by the rungs and says what gaining it "
+                    "takes; a grant nobody gains or deepens takes nothing"
                 )
         for stock, amount in ability.price:
             if stock not in known_abilities:
                 complaints.append(
-                    f"{ability.ability_id} is paid in {stock}, which this system declares as "
-                    "no grant"
+                    f"{ability.ability_id} takes {stock}, which this system declares as no grant"
                 )
             elif stock not in stocks:
                 complaints.append(
-                    f"{ability.ability_id} is paid in {stock}, which no rung hands out, so it "
-                    "could never be paid"
+                    f"{ability.ability_id} takes {stock}, which no rung hands out, so it could "
+                    "never be gained"
                 )
             if amount < 1:
                 complaints.append(
-                    f"{ability.ability_id} is paid {amount} {stock}; a price is one or more"
+                    f"{ability.ability_id} takes {amount} {stock}; a grant takes one or more"
                 )
 
     # --- the forks

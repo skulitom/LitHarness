@@ -26,6 +26,9 @@ SHARED = (
 def test_the_concept_listing_names_the_game_system_once_and_asks_for_a_hook() -> None:
     task = overview._system(None, supplied_concept=True)
     assert "Name the game system once as the book names it" in task
+    # The operator's standing direction, in the sentence that shows the power: it puts this
+    # person on a faster climb than anyone else's (§262, after §261's draw 1 showed none).
+    assert "by what it lets them do and how it lets them climb past everyone else." in task
     assert "Its first sentence already holds the change" in task
     assert "End on what they are about to try or what could go wrong." in task
     assert "its skills and the ranks" not in task

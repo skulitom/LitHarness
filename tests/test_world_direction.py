@@ -39,9 +39,10 @@ def test_the_world_direction_is_its_three_sentences() -> None:
 
 def test_the_protagonist_is_described_by_who_they_were_never_by_how_to_feel() -> None:
     """The target-readership direction says who the person was the day before, the §112
-    declarative half; it never tells a writer to make them likeable or relatable."""
+    declarative half; it never tells a writer to make them likeable or relatable, and it names
+    no example life (§174.3, §262)."""
     text = discovery.READER_LIFE.lower()
-    assert "twenties" in text and "degree" in text
+    assert "twenties" in text and "a life that reader has lived" in text
     assert not any(word in text for word in ("likeable", "likable", "relatable", "sympathetic"))
 
 

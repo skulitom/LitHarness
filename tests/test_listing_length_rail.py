@@ -59,6 +59,21 @@ def test_a_closing_quote_or_a_paragraph_break_ends_a_sentence() -> None:
     assert overview.sentence_ceiling([DRAW_2]) == 11
 
 
+def test_a_dialogue_attribution_stays_with_its_quote() -> None:
+    """A closing quote after . ! or ? and then a lowercase word is an attribution, not a new
+    sentence: the splitter before §262 kept it with its quote, and a split there would shorten
+    a shelf blurb's longest sentence and lengthen a run of short ones (stage-0 §262)."""
+    assert overview.sentences('"Run!" she said. Then she ran.') == [
+        '"Run!" she said.',
+        "Then she ran.",
+    ]
+    assert overview.sentences("“Question?” he asked.") == ["“Question?” he asked."]
+    assert overview.sentences("'Go.'  he said, and went.") == ["'Go.'  he said, and went."]
+    # A capital after the quote still starts a sentence, as it did.
+    assert overview.sentences("She said 'Go.' He went.") == ["She said 'Go.'", "He went."]
+    assert overview.longest_sentence('"Run!" she yelled at the dark.') == 6
+
+
 def test_the_ceiling_is_the_shelf_s_longest_and_none_without_a_shelf() -> None:
     assert overview.sentence_ceiling(BLURBS) == 14
     assert overview.sentence_ceiling(()) is None

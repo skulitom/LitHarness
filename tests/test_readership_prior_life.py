@@ -138,6 +138,20 @@ def test_the_invention_direction_does_not_carry_the_removed_enumeration_either()
         assert instance not in discovery.WORLD_DIRECTION, instance
 
 
+#: The example lives §262 first kept in `discovery.READER_LIFE` after dropping the rent. Both
+#: concepts drawn from them made the person a delivery rider, and §174.3 had already refused the
+#: positive half anywhere a model reads. Verbatim, like `_ENUMERATED`: our own text, not a list.
+_EXAMPLE_LIVES = ("a degree", "a job", "far too much about")
+
+
+def test_the_invention_direction_names_no_example_life() -> None:
+    """The direction says the person is in their twenties with a life the reader has lived, and
+    stops there: which life is the development call's to choose and the coordinator's to read at
+    the gate, not a menu the invention text hands over (stage-0 §174.3, §262)."""
+    for instance in _EXAMPLE_LIVES:
+        assert instance not in discovery.WORLD_DIRECTION, instance
+
+
 def test_the_listing_still_keeps_the_biography_off_the_page() -> None:
     """The demand this one leans on, and dropping it would turn this one into a licence.
 

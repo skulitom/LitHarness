@@ -54,19 +54,37 @@ def chains_too_hard(listing: str, *, ceiling: float) -> bool:
 
 
 _PARAGRAPH_BREAK = re.compile(r"\n\s*\n")
-_SENTENCE_END = re.compile(r"(?<=[.!?])\s+|(?<=[.!?][\"'\u201d\u2019])\s+")
+_SENTENCE_END = re.compile(r"(?<=[.!?])\s+|(?<=[.!?][\"'\u201d\u2019])\s+(?=\S)")
+_CLOSING_QUOTES = "\"'\u201d\u2019"
+
+
+def _split_paragraph(paragraph: str) -> list[str]:
+    """Split one paragraph at `_SENTENCE_END`, except a closing quote whose next word starts
+    lowercase: that is a dialogue attribution (`"Run!" she said.`) and stays with its quote."""
+    parts: list[str] = []
+    start = 0
+    for boundary in _SENTENCE_END.finditer(paragraph):
+        quoted = paragraph[boundary.start() - 1] in _CLOSING_QUOTES
+        if quoted and paragraph[boundary.end() : boundary.end() + 1].islower():
+            continue
+        parts.append(paragraph[start : boundary.start()])
+        start = boundary.end()
+    parts.append(paragraph[start:])
+    return parts
 
 
 def sentences(listing: str) -> list[str]:
     """Split text into paragraphs, then each paragraph into sentences.
 
     A paragraph break always ends a sentence. Otherwise a boundary is end punctuation,
-    optionally followed by a closing quote, and then whitespace. Not a language parser.
+    optionally followed by a closing quote, and then whitespace; after a closing quote, a
+    lowercase next word (an attribution such as `"Run!" she said.`) keeps the sentence
+    open. Not a language parser.
     """
     return [
         part.strip()
         for paragraph in _PARAGRAPH_BREAK.split(listing.strip())
-        for part in _SENTENCE_END.split(paragraph.strip())
+        for part in _split_paragraph(paragraph.strip())
         if part.strip()
     ]
 
@@ -120,7 +138,9 @@ _TASK = (
 
 # A supplied concept owns the story; this task introduces it to a new reader. It asks for a
 # hook, not an inventory: the numbers sentence and the paragraph sentence are `_TASK`'s own,
-# word for word (stage-0 §262).
+# word for word (stage-0 §262). The one-person power also says how it lets them climb past
+# everyone else, the operator's standing direction that the protagonist progresses faster than
+# anyone; §261's draw 1 failed L1 on a listing that showed no climb.
 _CONCEPT_TASK = (
     "Write the public listing for the supplied LitRPG serial: the hundred or so words a reader "
     "meets on a list of serials, and the only thing that decides whether they open chapter one.\n"
@@ -129,7 +149,8 @@ _CONCEPT_TASK = (
     "Then say what they want now and what stands in their way, in the words they would use "
     "themselves.\n"
     "Name the game system once as the book names it, and show the one thing this person can do "
-    "that nobody else can by what it lets them do.\n"
+    "that nobody else can by what it lets them do and how it lets them climb past everyone "
+    "else.\n"
     "Exactness spent on floors, ranks, counts and lengths of time is space the hook needed.\n"
     "A paragraph holds together or it is not a paragraph: a sentence that could be lifted out "
     "and dropped anywhere in the listing has failed.\n"

@@ -1085,7 +1085,7 @@ def test_check_draw_refuses_a_stock_or_a_price_that_could_not_work() -> None:
     priced_stock = _system(
         abilities=abilities(marks=gs.Ability("marks", "Marks", per_rung=2, price=(("marks", 1),)))
     )
-    assert any("never paid for" in why for why in gs.check_draw(priced_stock))
+    assert any("takes nothing" in why for why in gs.check_draw(priced_stock))
     negative = _system(abilities=abilities(marks=gs.Ability("marks", "Marks", per_rung=-1)))
     assert any("nothing or more" in why for why in gs.check_draw(negative))
     gated = _system(
@@ -1103,6 +1103,11 @@ def test_check_draw_refuses_a_stock_or_a_price_that_could_not_work() -> None:
         ),
     )
     assert any("cannot be opened by a way" in why for why in gs.check_draw(gated))
+    # `world check` replies to the Architect with these, so they say what a grant takes and
+    # never what it is paid in (stage-0 §262). Our own text, not a list a model may not write.
+    for drawn in (unbacked, unknown, free, priced_stock):
+        for why in gs.check_draw(drawn):
+            assert not any(word in why for word in ("paid", "priced", "price")), why
 
 
 # --- §211: a system grows after the seed, and the sheet it minted follows it --------------

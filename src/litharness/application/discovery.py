@@ -119,12 +119,13 @@ PERSONAL_COST = (
 # Operator direction (2026-08-23, restored in §255): the shelf's reader is in their twenties,
 # so the person they wear is too. Declarative only (§112): who the person was, never how a
 # reader should feel about them. Dropped with the rest of the legacy task at §243. §255's
-# "a job that covers rent" put rent into both concepts drawn and onto the page (read 20), so
-# §262 keeps the job and drops what it paid for.
+# "a job that covers rent" put rent into both concepts drawn and onto the page (read 20), and
+# both concepts made the person a delivery rider, so §262 names no example life at all: §174.3
+# keeps the positive half (a degree, a job, an obsession) out of every text a model reads, and
+# the coordinator checks it at the gate.
 READER_LIFE = (
     "By default the protagonist is near the reader's own age, in their twenties, and the day "
-    "before they had a life that reader has lived: a degree, a job, or something they know "
-    "far too much about, not decades at one craft."
+    "before they had a life that reader has lived, not decades at one craft."
 )
 WORLD_DIRECTION = f"{LIVED_WORLD} {READER_LIFE} {PERSONAL_COST}"
 
