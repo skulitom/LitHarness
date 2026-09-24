@@ -29,7 +29,7 @@ rules; the full research archive is not an onboarding checklist.
 | Evaluate an external fact checker | [OpenJev verification screen](jev-verification-20260919/RESULTS.md): a research-only synthetic screen of one pinned checkpoint supports further testing as an optional checker with abstention, not use as a continuity judge, fact extractor, editorial gate or release authority. It tested no chapter-length input or hosted Jev, and changed no production code or routing. |
 | Propose a quality measure | [BRIEF.md](BRIEF.md) owns the failed-proxy ledger; [EPISTEMIC_GOVERNANCE.md](EPISTEMIC_GOVERNANCE.md) owns claim states and evidence requirements. |
 | Work on reader perception or qualification | [Reader architecture programme](../../plan/reader-architecture-program.md). |
-| Run an existing experiment | That arm's `RUNBOOK.md`; use the shared [box-lock procedure](RUNBOOK.md#guard-and-go-how-several-sessions-share-one-box) for sustained work. |
+| Run an existing experiment | That arm's `RUNBOOK.md`; use the shared [box-lock procedure](RUNBOOK.md#guard-and-go-how-several-sessions-share-one-box) for sustained work. An operational failure is retried under [a failure note](EPISTEMIC_GOVERNANCE.md#operational-failures-and-amendments), not an amendment. |
 | Draw a fresh chapter one for the operator's next read | [`tools/chapter_one.py`](../../tools/chapter_one.py), a production lane that makes no research claim: four checkpoints, the coordinator's item gate, and the operator's read recorded as a harvest. Its docstring gives the command sequence. Register a draw only when a claim is wanted. |
 | Change implementation or run repository checks | [CONTRIBUTING.md](../../CONTRIBUTING.md). |
 
@@ -44,6 +44,10 @@ the current question and read the surrounding entry, rather than loading them in
 An experiment's `PREREG.md` states what was fixed before calls; `RESULTS.md` states what
 happened; `DEVIATIONS.md` qualifies delivery; execution/validation files pin artifacts and
 checks. A later scope correction belongs beside the results without rewriting registration.
+`FAILURE-N.md` records an operational retry under the same registration; `AMENDMENT-N.md` or
+`RECOVERY.md` records a change to the design, sample, analysis, reading or anything a model sees.
+[EPISTEMIC_GOVERNANCE.md](EPISTEMIC_GOVERNANCE.md#operational-failures-and-amendments) draws the
+line between them.
 Dated folders from 2026-09-08 (and three undated 09-08 discovery folders) mostly register in
 `RUNBOOK.md` and `registration.json`, report in `RESULTS.md` or `REPORT.md`, and keep the claim
 state in `claim.json`. Most of their generation arms name the Codex provider (`gpt-6-astra`), not the production default

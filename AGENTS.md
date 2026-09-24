@@ -82,7 +82,11 @@ which ordinary checks must never set.
 Before proposing a quality or craft metric, read
 [research/quality-measurement/BRIEF.md](research/quality-measurement/BRIEF.md) and
 [research/quality-measurement/EPISTEMIC_GOVERNANCE.md](research/quality-measurement/EPISTEMIC_GOVERNANCE.md).
-Before running a research arm, read its RUNBOOK.
+Before running a research arm, read its RUNBOOK. An operational failure (an expired login, a
+transport error, a killed process, or a runner defect found before any answer is read) is retried
+under the same registration with a failure note. A change to the design, sample, analysis,
+reading or anything a model sees is a committed amendment. EPISTEMIC_GOVERNANCE.md sets the
+conditions.
 
 - **Agent prose is not evidence.** Plans, summaries, apparent consensus, and repeated agreement
   may cite an artifact but cannot promote a research claim.

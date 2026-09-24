@@ -85,6 +85,55 @@ repo-relative file. It cannot establish semantic validity; reviewers still compa
 the preregistered decision rule. The canonical raw result and refutation remain where their
 experiment and `BRIEF.md` put them. Never copy their counts into a claim record.
 
+## Operational failures and amendments
+
+A registration fixes an arm's design, sample, analysis and reading. A change to any of them after
+registration is an **amendment**: a committed file beside the registration (`AMENDMENT-N.md`, or
+a `RECOVERY.md` that changes anything below), written before the next dispatch and never
+replacing what it amends. An amendment is required for:
+
+- anything a model sees: a request's bytes or order, the model, effort, provider or executable,
+  or the context and isolation of the call, including a fix to how the call is made (the
+  working-directory leak behind `cost-that-bites-milder-20260922/AMENDMENT-1.md` changed what
+  the reader saw);
+- the sample, the items, the stop rules, the ceilings or the spend envelope, the analysis, the
+  decision rule or the reading;
+- a production fix, a new writer, or continuing a stopped run on changed code;
+- any further attempt after an answer from the failed attempt has been read, scored, gated or
+  printed beyond its transport status.
+
+**An operational failure is retried under the same registration with a failure note, not an
+amendment**, when every condition below holds.
+
+1. The registered procedure could not run as written for a cause outside its design: an expired
+   login, a transport error or timeout, a killed process or a machine shutdown, a lock or
+   environment fault, or a runner defect found before any answer was read.
+2. No answer from the failed attempt has been read, scored, gated, cached as an answer or
+   printed beyond its transport status. Whether to retry therefore cannot depend on what a model
+   said. A retry chosen after reading an answer is the rejection sampling `BRIEF.md` §6 prices.
+3. The retry sends exactly the registered requests, from the registered frozen inputs and
+   executable, in the registered order. The ceilings count every attempt together, and a failed
+   call's usage is recorded as unknown, never as zero. A retry the remaining ceilings cannot
+   cover is an amendment, with the operator's sign-off when it exceeds a registered envelope.
+4. A runner fix is operational only when a committed test shows it changes no request byte,
+   argv, stdin, cache key, sample, stop rule or analysis. The note lists each changed file with
+   its SHA-256 before and after, and the commit that changed it.
+5. The failed attempt is kept as it stands. It is never deleted, overwritten, resumed from a
+   partial answer or replayed as an answer.
+6. An arm takes at most two operational retries. After a third failure it stops, and any
+   further attempt is an amendment.
+
+Write the note before the retry dispatches, as `FAILURE-N.md` beside the registration. It states
+what failed and when, the failed receipt's path and SHA-256, the error class, the remedy (for
+example the operator's re-login, or the runner-fix commit), and that no answer was read. The
+runner records the note's SHA-256 before it dispatches, and the committed note must match it.
+The claim record cites the note as a `registration` artifact. The claim state does not move, and
+no new `prepare` is needed.
+
+An arm's own registration governs where it is stricter: a RUNBOOK that says "no retry" keeps it.
+This section applies to registrations committed after it that cite it. It reaches an older arm
+only through an amendment.
+
 ## Multi-agent research
 
 Shared evidence is useful; shared speculation destroys independence. For independent ideation,
@@ -110,6 +159,8 @@ failure evidence; hiding it would force the collective to rediscover old confoun
 - `plan/stage-0-decisions.md` owns durable product decisions and reversals.
 - `plan/reader-architecture-program.md` owns the mechanism programme and qualification boundary.
 - This document owns research claim states and the agent-prose/evidence boundary.
+- This document owns the line between an operational retry and an amendment; each arm's
+  `RUNBOOK.md` owns its retry command.
 
 When these disagree, do not reconcile them by prose consensus. Re-anchor to the registrations,
 artifacts, code, and tests, then correct the canonical owner.
