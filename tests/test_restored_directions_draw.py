@@ -677,15 +677,37 @@ def test_an_unbound_checkpoint_is_never_gated(run, tmp_path):
         run.gate("concept", "pass", gate_read(tmp_path, items, "GATE.md"), "coordinator")
 
 
-def test_a_redraw_needs_the_previous_draw_shown_and_a_committed_amendment(run):
+@pytest.mark.parametrize("filename", ["AMENDMENT-2.md", "amendment-2.json"])
+@pytest.mark.parametrize("amendment_state", ["missing", "uncommitted", "modified"])
+def test_a_redraw_needs_the_previous_draw_shown_and_a_committed_amendment(
+    run, tmp_path, monkeypatch, filename, amendment_state,
+):
+    # Real amendments and available git history must not determine this test's setup.
+    here = tmp_path / "here"
+    here.mkdir()
+    monkeypatch.setattr(run, "ROOT", tmp_path)
+    monkeypatch.setattr(run, "HERE", here)
+    for path in run.amendment_paths(2):
+        path.write_bytes(b"{}\n")
+    git = FakeGit({run.rel(path): path.read_bytes() for path in run.amendment_paths(2)})
+    monkeypatch.setattr(run, "git", git)
+    amendment = here / filename
+    if amendment_state == "missing":
+        amendment.unlink()
+    elif amendment_state == "uncommitted":
+        del git.committed[run.rel(amendment)]
+    else:
+        amendment.write_bytes(b"changed\n")
+
     make_draw(run, 1, status="failed")
     with pytest.raises(run.Refusal, match="shown to the operator"):
         run.validate_redraw(2)
     run.shown("coordinator", "runs/restored-directions-draw-20260922/draw-1")
     with pytest.raises(run.Refusal, match="already recorded as shown"):
         run.shown("coordinator", "again")
-    with pytest.raises(run.Refusal, match="must exist and be committed"):
+    with pytest.raises(run.Refusal, match="must exist and be committed") as refusal:
         run.validate_redraw(2)
+    assert str(refusal.value).startswith(f"{filename} ")
 
 
 def test_an_amendment_names_a_located_cause_and_a_new_fix(run, monkeypatch):
