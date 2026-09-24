@@ -15,6 +15,7 @@ import contextlib
 import io
 import json
 import os
+import re
 import shlex
 import shutil
 import subprocess
@@ -519,6 +520,14 @@ def test_the_items_carry_read_20_s_checkpoint_items() -> None:
         "chapter": ["H1", "H2", "H3", "H4", "H5", "H6", "H7", "H8", "H-open", "H-diction"],
     }
     assert "PARTIAL counts as FAIL" in items["rule"]
+    # L1 is a judgement a person reads: the genre promise, the one-person power and its faster
+    # climb, and no cap on names or rank values. No item gates on a count (stage-0 §262).
+    (listing_one,) = [e["text"] for e in items["checkpoints"]["listing"] if e["id"] == "L1"]
+    assert "promising a faster climb than anyone else's" in listing_one
+    counted = re.compile(r"\bat (?:most|least)\b|\bno more than\b|\bfewer than\b|\bup to\b")
+    for entries in items["checkpoints"].values():
+        for entry in entries:
+            assert not counted.search(entry["text"]), entry["id"]
     assert lane.item_verdicts(["C-money", "C1"], "- C-money: PARTIAL rent\nC1: PASS x\n") == {
         "C-money": "PARTIAL",
         "C1": "PASS",

@@ -230,7 +230,12 @@ _FAMILY_PATTERNS = {family: _compiled(words) for family, words in FAMILIES.items
 
 
 def registration_digest() -> str:
-    """The word lists and the constants every row depends on, addressed by their bytes."""
+    """The report's own word lists, windows, floors and row names, addressed by their bytes.
+
+    It does not cover the code a row is computed with (among it `overview.sentences`,
+    `tells.density`, `register_census`, `authorship_tells`, `chapter_measures` and
+    `exemplars._paragraphed`), so a change there moves rows without moving this digest
+    (stage-0 §262)."""
     material = json.dumps(
         {
             "mechanic_terms": MECHANIC_TERMS,

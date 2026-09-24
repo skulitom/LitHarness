@@ -150,7 +150,9 @@ CONCEPT_SCHEMA: dict[str, Any] = {
 #: **The names a model is shown for four stored keys** (stage-0 §262, read 20). The stored
 #: names keep a bookkeeping frame (a question the book owes, a step up that pays), and a key
 #: name is vocabulary to the model that reads it: draw 2's planner, shown `debts`, `owed` and
-#: `pays`, put commerce words into 13 of its 24 scene briefs (exposure, not a measured cause).
+#: `pays`, put a commerce word (bought, spending, costs, expense, bargain, trade, price) into 7
+#: of its 24 scene briefs, one of which reached a scene prompt and none the page (exposure, not
+#: a measured cause; the genre's "earns a rank" is not counted).
 #: Stored `concept.json` keeps its names, so nothing migrates; every request schema, task
 #: text, precision path and planning projection shows these names, and `from_payload` reads
 #: both. The structured route's questions were already `questions` (`story_material.SCHEMA`).

@@ -26302,10 +26302,12 @@ allowance-printing books moved; the undeclared opening count above moved too.
 
 > **Amended in place 2026-09-24 (§262).** `READER_LIFE`'s "a job that covers rent" put rent into
 > both concepts the restored-directions draw developed and onto its chapter one's first
-> paragraph; it now says "a job", and `PERSONAL_COST` says a choice "costs them" where the text
-> quoted below says "they pay in". The residual on the debt noun reaching development and every
-> concept outline by key name is retired: the keys are shown to a model under neutral names and
-> stored as before. The roster survey the last residual left undone is done. See §262.
+> paragraph; it now ~~says "a job"~~ **names no example life at all (§262's second round: both
+> concepts had also made the person a delivery rider)**, and `PERSONAL_COST` says a choice "costs
+> them" where the text quoted below says "they pay in". The residual on the debt noun reaching
+> development and every concept outline by key name is retired: the keys are shown to a model
+> under neutral names and stored as before. The roster survey the last residual left undone is
+> done. See §262.
 
 **Located motivation.** The coordinator's gate read of the full-book trial's A1 (*The Last
 Anchorage*: 24 chapters, the structured `--planning-material` route, `gpt-6-astra` through Codex
@@ -26916,8 +26918,14 @@ asked for; H2 with the rent line noted as "the opening joke"; and odd diction wa
    the outline's `book_concept` carried all of them; and the material labelled the rank "What a
    step up buys" and the listing's input "The book this listing sells". §255 kept the keys on
    purpose (its residual: renaming inside the projection moves the projection the registered
-   audits compare). Draw 2's planner, shown them, put commerce words into 13 of its 24 scene
-   briefs, two of which reached a scene prompt and none the page: exposure, not a measured cause.
+   audits compare). Draw 2's planner, shown them, put ~~commerce words into 13 of its 24 scene
+   briefs, two of which reached a scene prompt~~ **a commerce word (bought, spending, costs,
+   expense, bargain, trade, price) into 7 of its 24 scene briefs and "obligations" into an
+   eighth; one of them, scene 2's "has bought", reached a scene prompt (`calls/0025`)** and none
+   the page: exposure, not a measured cause. **Recounted 2026-09-24 from the outline the planner
+   returned (`calls/0019`): the 13 mixed in senses that are not commerce ("permits", "account",
+   "Accounting"), and by that list three briefs reached a prompt, not two. The "earn" family, in
+   8 briefs and mostly a rank earned, is the genre's and is not counted.**
 3. **The Architect was told price, spend, buy, paid and currency where it meant a
    requirement**, in the seed and grow text (`world_agent._SYSTEM`, `_GROWTH`) and in the
    `world vocabulary` glosses it reads (costs "paid each time", per_rung "what other grants are
@@ -26955,11 +26963,12 @@ asked for; H2 with the rent line noted as "the opening joke"; and odd diction wa
 **What changed in production.** Causes removed, nothing added to a scene-writer prompt, no word
 list, and no stored key, predicate or `concept.json` renamed, so nothing migrates.
 
-- **Invention** (cbb5e5b). `READER_LIFE` reads "a degree, a job, or something they know far too
-  much about, not decades at one craft"; `PERSONAL_COST` reads "it costs them time, risk, or
-  somebody now against them" for "they pay in". §174's verbatim guard now scans
-  `WORLD_DIRECTION` as well, for its enumeration and the spelling "covers rent": our own prompt
-  text held against one clause that came back, not a list of words a model may not write.
+- **Invention** (cbb5e5b). `READER_LIFE` ~~reads "a degree, a job, or something they know far too
+  much about, not decades at one craft"~~ **names no example life (corrected below)**;
+  `PERSONAL_COST` reads "it costs them time, risk, or somebody now against them" for "they pay
+  in". §174's verbatim guard now scans `WORLD_DIRECTION` as well, for its enumeration and the
+  spelling "covers rent" **and, since the correction, the example lives**: our own prompt text
+  held against one clause that came back, not a list of words a model may not write.
 - **The concept's keys, presentation only** (cbb5e5b). `concept.PRESENTED_NAMES` shows
   debts/owed/due_scene/pays to a model as open_questions/question/answered_by_scene/
   what_rising_gives in the development and structured schemas and task text,
@@ -26988,14 +26997,16 @@ list, and no stored key, predicate or `concept.json` renamed, so nothing migrate
 - **Listing** (b5f8469). `_CONCEPT_TASK` is nine sentences: the first sentence holds the change
   or what this person alone can do, with who they were the day before as one plain clause; then
   what they want and what stands in their way, in their own words; "Name the game system once as
-  the book names it", with the one-person power shown by what it lets them do; `_TASK`'s numbers
+  the book names it", with the one-person power shown by what it lets them do **and how it lets
+  them climb past everyone else (added below)**; `_TASK`'s numbers
   and paragraph sentences, byte-identical; an ending on what they are about to try or what could
   go wrong; nothing invented and nothing given away past the opening chapter. Rendered on draw
   2's concept with rowntree's dossier it is 13 demands against the recorded v3 request's 16,
   under the unchanged ceiling of 18. A discovery concept's listing material now puts "Their
   magical advantage:" on its own line after the person.
 - **The sentence splitter** (b5f8469). `overview.sentences` splits on paragraph breaks first and
-  lets a closing quote end a sentence, and `longest_sentence` uses it: draw 2's quoted
+  lets a closing quote end a sentence **unless a lowercase word follows it, a dialogue
+  attribution (added below)**, and `longest_sentence` uses it: draw 2's quoted
   "Unbounded." no longer joins the next paragraph (its longest sentence is 11 words, was 14).
   The new split only subdivides the old, so a listing's longest sentence can only fall; but
   `sentence_ceiling` counts the shelf with the same splitter, so with `--exemplars` the ceiling
@@ -27004,6 +27015,58 @@ list, and no stored key, predicate or `concept.json` renamed, so nothing migrate
   is the lane's default. The redraw message and the stderr line now report the new count.
 - **Also** (c6565f2). A Codex trace record names its request's `profile`, with the request's
   bytes unchanged; a stale `handlers.py` comment points at `tells_pass.observe`.
+
+> **Corrected in place 2026-09-24, second round, before any request was sent under these
+> profiles.** The reviewers of the text changes found where our own text still did what this
+> entry says it removed, or claimed more than it held. The coordinator decided each; they land
+> together, with no model call.
+>
+> - **No example life.** `discovery.READER_LIFE` is now "By default the protagonist is near the
+>   reader's own age, in their twenties, and the day before they had a life that reader has
+>   lived, not decades at one craft." The list it kept (a degree, a job, or something they know
+>   far too much about) is the positive half §174.3 refused anywhere a model reads, and both
+>   concepts drawn from §255's form of it made the person a delivery rider; draw 2's chapter one
+>   opened on that job's errand, the opening read 20 would stop at. The shape stays the
+>   operator's and is read at the gate (H5), never written into a prompt.
+>   `test_the_invention_direction_names_no_example_life` extends §174's verbatim guard over
+>   `WORLD_DIRECTION` to the three example lives.
+> - **The climb.** The listing task's power sentence ends "by what it lets them do and how it lets
+>   them climb past everyone else": the operator's standing direction that the protagonist
+>   progresses faster than anyone, which v4 had dropped along with §261's inventory, and §261's
+>   draw 1 failed L1 on a listing that showed no climb. One sentence reworded: nine task
+>   sentences, and 13 demands with rowntree's dossier, as before.
+> - **L1 is a judgement.** `tools/chapter_one_items.json` L1 reads "It promises a LitRPG book in
+>   the genre's own words: the game system is named as the book names it, and the one power that
+>   belongs to this person alone is shown doing something and promising a faster climb than
+>   anyone else's. A listing that explains how the system works, its rank values or its rules of
+>   advancement, fails here even when every term is correct." Its first form capped the book's
+>   mechanic names at two and barred any rank value: a gate on a count of words, which the
+>   report's `mechanic_names` row would have decided. No other item counts;
+>   `test_the_items_carry_read_20_s_checkpoint_items` holds both.
+> - **An attribution stays with its quote.** After a closing quote, a lowercase next word does
+>   not start a sentence (`"Run!" she said.` is one, as it was before b5f8469), so the splitter no
+>   longer shortens a shelf blurb's longest sentence, or lengthens the report's run of short
+>   sentences, at every line of dialogue. The split still only subdivides the one before
+>   b5f8469. `test_a_dialogue_attribution_stays_with_its_quote`.
+> - **`world check` says what a grant takes.** Its stock complaints, which the Architect is told
+>   to run and fix, read "takes {stock}, which no rung hands out, so it could never be gained",
+>   "takes {amount} {stock}; a grant takes one or more" and "says what gaining it takes; a grant
+>   nobody gains or deepens takes nothing", in the seed text's manner. The `price` predicate
+>   keeps its name. `test_check_draw_refuses_a_stock_or_a_price_that_could_not_work`.
+> - **No profile moves.** No request was sent under `writer.discovery.v15`,
+>   `writer.concept.discovery.v10`, `writer.concept.material.v3` or `writer.overview.concept.v4`:
+>   nothing under `runs/` or `book-library/` was written after cbb5e5b except the roster's
+>   shared-memory index. Each label keeps its version and from here names this text.
+> - **The report's digest** covers the report's own word lists, windows, floors and row names,
+>   not the code its rows are computed with (among it `overview.sentences`, `tells.density`,
+>   `register_census`, `authorship_tells`, `chapter_measures` and `exemplars._paragraphed`),
+>   and the lane runs the report on live source. The splitter change above moves listing rows
+>   and leaves `40d7f0c7b267dce3` where it was; `registration_digest`'s docstring now says so.
+>   The baseline is still not built, and `--build-baseline` checks the lock's holder and never
+>   takes the lock.
+> - **Located cause 2 is recounted** from the outline the planner returned: 7 of 24 briefs.
+> - **The next draw is marsh**, the operator's choice on 2026-09-24, from the eight accepted
+>   writers whose dossiers carry no commerce word.
 
 **Profiles, each bumped once.**
 
@@ -27016,8 +27079,12 @@ list, and no stored key, predicate or `concept.json` renamed, so nothing migrate
 | `planner.outline`, `planner.outline.structured` | v8 → v9, v4 → v5 | the shown names and the rules; `concept_planning_version` 17 → 18 |
 | `architect.seed`, `architect.grow` | v9 → v10, v5 → v6 | the seed and grow text |
 
-`writer.overview.concept.v4` names two texts: the v3 task with the new label at cbb5e5b, and the
-new task from b5f8469. No request was sent between them. **Digests that move without a label:**
+`writer.overview.concept.v4` names ~~two~~ **three** texts: the v3 task with the new label at
+cbb5e5b, the new task from b5f8469, **and that task with the climb (corrected above)**. No request
+was sent ~~between them~~ **under any of them. `writer.discovery.v15`,
+`writer.concept.discovery.v10` and `writer.concept.material.v3` each name two, before and after
+`READER_LIFE` lost its example lives, and none was sent under either**. **Digests that move
+without a label:**
 the outline `_policy_digest`, `11fb8ee56b976dcf` → `09d3a5f0dbcbf081`, on every outline
 decision, the plain route's `planner.outline.v3` included, through `WORLD_RULES`; the directive
 planner's (`planner.directive.v0`), `aa80be22c1a19c46` → `1a10021eb9ee583c`; scene-draft input
@@ -27054,11 +27121,14 @@ traces every word and two- or three-word sequence of each scene to the first sec
 recorded request that holds it, or to `none`. On draw 2: a run of 7 short sentences, 5 mechanic
 names and 7.14 mechanic terms per 100 words in the listing (draw 1's: 0 names); household money
 at 0.78 per 1k, 2 in the first 150 words, first hit at word 32; "surviving" first in the scene
-brief and "tread" from no section. Its registration digest, over the word lists and every
-constant a row depends on, is `40d7f0c7b267dce3`. The market baseline lives at
+brief and "tread" from no section. Its registration digest, over ~~the word lists and every
+constant a row depends on~~ **the report's own word lists, windows, floors and row names, not the
+code its rows are computed with (corrected above)**, is `40d7f0c7b267dce3`. The market baseline
+lives at
 `research/quality-measurement/results/register-baseline.json` and holds sorted numbers only,
 with the word-keyed frequency table in gitignored `derived/`; `--build-baseline` builds it from
-the backtest's `fictions-v0.json` under the box lock. **It is not built.** Phase 2 was skipped on
+the backtest's `fictions-v0.json` under the box lock **(it checks the holder and never takes
+the lock: corrected below)**. **It is not built.** Phase 2 was skipped on
 2026-09-24 because another session's jobs held the machine for over thirty minutes; the lock was
 never taken, and every market column prints "no reference (baseline not built)". The module is
 research code, so RS1 forbids a package import of it.
@@ -27087,7 +27157,10 @@ subprocess and files its output beside each gate, and a report failure blocks no
 (`tools/chapter_one_items.json`) are the PREREG's C1-C4, L1-L4, W1-W3 and H1-H8 with L1, L3 and H2
 tightened, plus C-money, L5 (the hook), L6 (a word a shelf reader stops on), W-money, H-open and
 H-diction. They are coordinator-facing and never reach an argument, the environment or a step's
-input; each is read by a person, and none counts words.
+input; each is read by a person, and ~~none counts words~~ **as first written L1 counted ("No
+rank value, and at most two of the book's own mechanic names"), a cap the report's
+`mechanic_names` row would have decided; it is now a judgement with no number (corrected
+above)**.
 
 > **Corrected in place 2026-09-24, after review and before the lane ran.** Three reviewers found
 > holes in the lane's stage machine and records; the fix changes no model-facing text. **Draws count
@@ -27135,7 +27208,8 @@ promise-payoff series are untouched. The research README and `AGENTS.md` point a
 ordinary things behave, adds model-facing text, which §156.5 and §187 caution against; it waits
 for a no-model census of stored `world_rule` records. No diction family in the tells pass, no
 reviser re-enabled, no rarity floor, and no gate, redraw or refusal on a count of words.
-`house.ACCUMULATION` and `QUANTITY_DETAIL` are unedited: house floor, no page evidence. Draw 2's
+`house.ACCUMULATION` and `QUANTITY_DETAIL` are unedited: house floor, no page evidence
+**(ACCUMULATION's negation is a residual below)**. Draw 2's
 stores are registered evidence and keep "paying rent".
 
 **Reported to the operator, not done.** §255's residual roster survey, now done on a read-only
@@ -27147,7 +27221,10 @@ anyone meant"; tanaka's "pays out for it" becomes "rewards it"; penhale's "pays 
 trade" becomes "shows slowly: a craft"; draycott retires or is re-minted with an appetite that is
 not about bargains; vance stays frozen as the control. Larkin's "a market town" has no proposal.
 Until then the next draw casts from accepted writers without such words: sandoval, mabry,
-calloway, trevelyan, marsh, barlow, carver or hollis's accepted row.
+calloway, trevelyan, marsh, barlow, carver or hollis's accepted row. **The operator chose
+marsh on 2026-09-24 ("go ahead with marsh for the next chapter"). A read-only survey of a scratch
+copy of draw 2's roster the same day found no commerce or obligation word in any of those eight
+rows.**
 
 **Residuals.**
 
@@ -27156,10 +27233,19 @@ calloway, trevelyan, marsh, barlow, carver or hollis's accepted row.
   sends; `promises_paid` and `payoff_windows`, stored keys where "paid" means a promise
   delivered; the "price" predicate and the cast line "and it costs"; the reader roles' wording,
   which is measurement; the genre's "earned", "Satisfy a cost" and "X costs Y"; and the house
-  floor. Candidates for a later round: `world check`'s complaints in `systems.py` ("is paid in",
-  "a price is one or more"), which reach the Architect only on a wrongly declared stock;
+  floor. Candidates for a later round: ~~`world check`'s complaints in `systems.py` ("is paid
+  in", "a price is one or more"), which reach the Architect only on a wrongly declared stock~~
+  **(done in the second round: they say what a grant takes)**;
   `extraction`'s note on §254 holdings; the editorial controller's "should be paid later"; the
   Director example and the older invention decks.
+- **Deferred after the second review.** `house.ACCUMULATION`, "A power that is spent, used up
+  or traded away costs the reader the thing they came for", is a negation, the form this entry
+  names as the mechanism behind "not currency", and it hands spent, traded and costs to every
+  scene writer and to the Architect's seed and grow: the one trade-verb negation left in the
+  scene-writer system. It is the house floor every role carries, and read 20 traced no page word
+  to it, so it waits. A later round would state only its positive half, that what this genre's
+  reader collects is what the person keeps, with a note against the house budget in
+  `tests/test_prompt_budget.py`.
 - The planner and the writer can still bring money or trade words in unasked; draw 2's planner
   did, with no key to prompt it.
 - The discovery route still sends `discovery.growth` for chapters 2 to 6 to the listing; trimming
@@ -27173,8 +27259,9 @@ calloway, trevelyan, marsh, barlow, carver or hollis's accepted row.
 and a round-trip contract, and delivering an instruction is not evidence that a model follows it.
 Nothing here says the next listing hooks, that the next page is free of money, or that the
 writer's own trade nouns stop; the counts above are post-hoc readings of one draw, and the
-register report has no market reference yet. The next chapter one, drawn through the lane from a
-writer outside the six, gated on the tightened items and read by the operator, is the test.
+register report has no market reference yet. The next chapter one, drawn through the lane from
+~~a writer outside the six~~ **marsh**, gated on the tightened items and read by the operator, is
+the test.
 
 **Evidence** (delivery and round-trip contracts only):
 `test_the_invention_direction_does_not_carry_the_removed_enumeration_either`,
@@ -27197,4 +27284,8 @@ writer outside the six, gated on the tightened items and read by the operator, i
 `test_a_retry_is_refused_after_a_read_a_content_stop_or_two_retries`,
 `test_a_redraw_needs_an_ended_draw_a_located_cause_and_a_change`,
 `test_the_register_report_is_filed_beside_the_gate_and_decides_nothing` and
-`test_the_items_carry_read_20_s_checkpoint_items`.
+`test_the_items_carry_read_20_s_checkpoint_items`; after the second review,
+`test_the_invention_direction_names_no_example_life`,
+`test_the_protagonist_is_described_by_who_they_were_never_by_how_to_feel`,
+`test_a_dialogue_attribution_stays_with_its_quote` and
+`test_check_draw_refuses_a_stock_or_a_price_that_could_not_work`.

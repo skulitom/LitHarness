@@ -15,7 +15,7 @@
       {"id": "C-money", "source": "read 20", "text": "The person's life before, their want and the world carry no household money or obligation: no rent, bills, wages, payments, debts, owing, loans, bargains or duties owed, not even as background (\"paying rent\", \"a rented flat\"). A prize or loot the genre hands out is not this item."}
     ],
     "listing": [
-      {"id": "L1", "source": "read 20", "text": "It promises a LitRPG book in the genre's own words. The game system is named once, as the book names it, and one power that belongs to this person alone is shown doing something. No rank value, and at most two of the book's own mechanic names. A listing that explains how the system works fails here even when every term is correct."},
+      {"id": "L1", "source": "read 20", "text": "It promises a LitRPG book in the genre's own words: the game system is named as the book names it, and the one power that belongs to this person alone is shown doing something and promising a faster climb than anyone else's. A listing that explains how the system works, its rank values or its rules of advancement, fails here even when every term is correct."},
       {"id": "L2", "source": "PREREG.md", "text": "the exception it sells is one person's"},
       {"id": "L3", "source": "read 20", "text": "No institution-issued engine, and no debt, ledger, court, tenancy, licence, rent, payment, owing or obligation frame, including a promise to repay or a gain framed as what it takes from other people."},
       {"id": "L4", "source": "PREREG.md", "text": "no internal schema word in the title or listing (read 11)"},
