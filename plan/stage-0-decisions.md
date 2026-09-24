@@ -27387,7 +27387,7 @@ mastery-mark rule).
 
 **What changed.** The sentence now reads "…by what it lets them do and that it lets them climb past
 everyone else": the promise stays, the mechanism is not asked for. `writer.overview.concept`
-v4 → v5 (v4 was sent by draws 1-3 of read-21's listing stage only). The advantage line in the
+v4 → v5 (v4 was sent once, by read-21 draw 3's listing stage). The advantage line in the
 material is unchanged; whether it keeps drawing mechanics into the listing is the next listing
 gate's to read.
 
