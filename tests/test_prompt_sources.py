@@ -54,14 +54,15 @@ def request_case(shelf=False):
 @pytest.mark.parametrize("shelf", [False, True])
 def test_composed_prompt_preserves_pre_instrumentation_bytes(shelf):
     # Prompt bytes retain the original instrumentation fixture. System hashes include
-    # the reviewed orientation and selective-attention guidance (2026-09-09).
+    # the reviewed orientation and selective-attention guidance (2026-09-09) and the
+    # world-rules sentence that no longer says "delayed payment" (§262, 2026-09-24).
     expected = {
         False: (
-            "71682538e20b31fc5cea4934f9b211d5ac665522e5879b9f937f60858b0aa990",
+            "7f4bdb41dd4b6ca76400fad8045f5a0b498fe1a713c9ef7f426607401404fdb7",
             "37be520580efa008ce4d4d302a46bab6d38ca33eeea8d21034fe27d39e065f10",
         ),
         True: (
-            "480f422659a75d32d83c58862e21fc5441194f0b55a9e392d1789659054b4f06",
+            "a4a97947c9e0824fbb9c7d327b17361f89b680a1eede7e3434901fbcffffac6f",
             "1df0c553b559be3c16e529e6d2fafc221bae23467fbacd71073abb3b91113385",
         ),
     }
