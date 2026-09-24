@@ -1017,6 +1017,59 @@ def test_an_operational_retry_keeps_the_failed_attempt_and_restores_the_bound_st
     assert lane.spend(d)["calls"] == 1, "the failed attempt's call still counts"
 
 
+def fake_npm(tmp_path: Path, *, native: bool = True) -> Path:
+    wrapper = tmp_path / "npm" / "codex.cmd"
+    wrapper.parent.mkdir(parents=True)
+    wrapper.write_text("@echo off\n", encoding="utf-8")
+    if native:
+        exe = wrapper.parent / lane.NPM_NATIVE
+        exe.parent.mkdir(parents=True)
+        exe.write_bytes(b"MZ native")
+    return wrapper
+
+
+def test_a_shell_wrapper_resolves_to_the_native_codex_it_launches(tmp_path: Path) -> None:
+    """Production refuses a wrapper before any call, so a draw never freezes one."""
+    wrapper = fake_npm(tmp_path)
+    assert lane.resolve_binary(str(wrapper)) == (wrapper.parent / lane.NPM_NATIVE).resolve()
+    bare = fake_npm(tmp_path / "bare", native=False)
+    with pytest.raises(lane.Refusal, match="shell wrapper, which production refuses"):
+        lane.resolve_binary(str(bare))
+
+
+def stopped_concept() -> dict[str, Any]:
+    reason = "concept exited 2 (operational fault)"
+    return {
+        "status": "stopped",
+        "stop": reason,
+        "stages": {"concept": {"status": "stopped", "seconds": 1.0, "steps": [], "reason": reason}},
+    }
+
+
+def test_a_retry_replaces_a_frozen_wrapper_and_keeps_any_other_binary(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, live: None
+) -> None:
+    wrapper = fake_npm(tmp_path)
+    d = make_draw(**stopped_concept())
+    settings = lane.read(d / "settings.json")
+    lane.write(d / "settings.json", settings | {"binary": {"path": str(wrapper)}})
+    monkeypatch.setattr(lane, "binary_record", lambda path: {"path": str(path), "version": "v"})
+    monkeypatch.setattr(lane, "run_stage", lambda line, stage: 0)
+    note = tmp_path / "FAILURE-1.md"
+    note.write_text("The draw froze npm's codex.cmd; production refused it; no call.\n", "utf-8")
+    assert lane.retry(LINE, "concept", note, codex_binary=str(wrapper)) == 0
+    native = str((wrapper.parent / lane.NPM_NATIVE).resolve())
+    assert lane.read(d / "settings.json")["binary"]["path"] == native
+    replaced = lane.progress(d)["retries"]["concept"][0]["binary_replaced"]
+    assert replaced["before"]["path"] == str(wrapper) and replaced["after"]["path"] == native
+    # A native binary is never swapped on a retry.
+    state = lane.progress(d)
+    state.update(stopped_concept())
+    lane.save(d, state)
+    with pytest.raises(lane.Refusal, match="keeps the draw's Codex binary"):
+        lane.retry(LINE, "concept", note, codex_binary=str(wrapper))
+
+
 @pytest.mark.parametrize(
     ("state", "reason"),
     [

@@ -492,13 +492,32 @@ def copy_roster(destination: Path) -> Path:
     return destination
 
 
+# Production refuses these before any call (providers/codex_cli.py), and `shutil.which` finds
+# npm's `codex.cmd` first on this host, so the lane resolves the native executable the wrapper
+# launches and never freezes a wrapper into a draw.
+WRAPPER_SUFFIXES = frozenset({".bat", ".cmd", ".ps1"})
+NPM_NATIVE = Path(
+    "node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor"
+    "/x86_64-pc-windows-msvc/bin/codex.exe"
+)
+
+
 def resolve_binary(explicit: str | None) -> Path:
     candidate = (
         explicit or os.environ.get("LITHARNESS_CODEX_BINARY", "").strip() or shutil.which("codex")
     )
     if not candidate or not Path(candidate).is_file():
         raise Refusal("no Codex binary: pass --codex-binary PATH")
-    return Path(candidate).resolve()
+    path = Path(candidate).resolve()
+    if path.suffix.lower() in WRAPPER_SUFFIXES:
+        native = path.parent / NPM_NATIVE
+        if not native.is_file():
+            raise Refusal(
+                f"{path} is a shell wrapper, which production refuses: pass --codex-binary "
+                "with the native codex.exe"
+            )
+        path = native.resolve()
+    return path
 
 
 def binary_record(path: Path) -> dict[str, Any]:
@@ -2114,8 +2133,18 @@ def live_processes(
     return live
 
 
-def retry(line: str, stage: str, failure: Path, verified_dead_pids: Sequence[int] = ()) -> int:
+def retry(
+    line: str,
+    stage: str,
+    failure: Path,
+    verified_dead_pids: Sequence[int] = (),
+    codex_binary: str | None = None,
+) -> int:
     """Run a stage again after an operational stop, keeping the failed attempt.
+
+    The draw's Codex binary is kept, with one exception: a shell wrapper frozen into the draw,
+    which production refuses before any call, is replaced by the native executable (resolved
+    as `start` resolves one, or `codex_binary`), and the retry records both.
 
     Everything that can refuse is checked before anything is recorded or moved: the stop, the
     processes that may still write to the draw, the note, the runtime, and the store itself,
@@ -2173,6 +2202,16 @@ def retry(line: str, stage: str, failure: Path, verified_dead_pids: Sequence[int
             "remedy, and that no answer was read"
         )
     note = {"path": str(failure.resolve()), "sha256": sha(failure)}
+    settings = read(d / "settings.json")
+    binary_replaced: dict[str, Any] | None = None
+    if Path(str(settings["binary"]["path"])).suffix.lower() in WRAPPER_SUFFIXES:
+        native = resolve_binary(codex_binary)
+        binary_replaced = {"before": settings["binary"], "after": binary_record(native)}
+    elif codex_binary is not None:
+        raise Refusal(
+            "a retry keeps the draw's Codex binary; only a shell wrapper, which production "
+            "refuses before any call, is replaced"
+        )
     index = STAGES.index(stage)
     # The store the stage will start from, restored and checked before anything is recorded
     # or moved, so a failed check leaves the failed attempt where it was and no retry counted.
@@ -2223,13 +2262,26 @@ def retry(line: str, stage: str, failure: Path, verified_dead_pids: Sequence[int
             "folder": folder.relative_to(d).as_posix(),
         }
     )
-    state["retries"][stage] = [*earlier, {"attempt": attempt, "failure_note": note, "at": now()}]
+    entry: dict[str, Any] = {"attempt": attempt, "failure_note": note, "at": now()}
+    if binary_replaced is not None:
+        entry["binary_replaced"] = binary_replaced
+    state["retries"][stage] = [*earlier, entry]
     del state["stages"][stage]
     state.pop("active", None)
     state["stop"] = None
     state["status"] = "ready" if index else "prepared"
     save(d, state)
-    ledger(d, "retry", stage=stage, attempt=attempt, stop=reason, failure_note=note)
+    ledger(
+        d,
+        "retry",
+        stage=stage,
+        attempt=attempt,
+        stop=reason,
+        failure_note=note,
+        **({"binary_replaced": binary_replaced} if binary_replaced is not None else {}),
+    )
+    if binary_replaced is not None:
+        write(d / "settings.json", settings | {"binary": binary_replaced["after"]})
     for pattern in (
         f"steps/{stage}-*.json",
         f"transport/{stage}-*",
@@ -2478,6 +2530,9 @@ def build_parser() -> argparse.ArgumentParser:
     retry_parser.add_argument(
         "--verified-dead-pid", type=int, action="append", default=[], help="once per PID"
     )
+    retry_parser.add_argument(
+        "--codex-binary", help="the native executable, when the draw froze a shell wrapper"
+    )
     for name in ("publish", "status"):
         sub.add_parser(name).add_argument("--line", required=True)
     sent_parser = sub.add_parser("sent")
@@ -2530,7 +2585,9 @@ def main(argv: list[str] | None = None) -> int:
         elif args.mode == "gate":
             gate(args.line, args.checkpoint, args.result, args.read, args.by)
         elif args.mode == "retry":
-            return retry(args.line, args.stage, args.failure, args.verified_dead_pid)
+            return retry(
+                args.line, args.stage, args.failure, args.verified_dead_pid, args.codex_binary
+            )
         elif args.mode == "publish":
             publish(args.line)
         elif args.mode == "sent":
