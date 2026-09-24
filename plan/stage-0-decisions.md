@@ -27392,3 +27392,30 @@ material is unchanged; whether it keeps drawing mechanics into the listing is th
 gate's to read.
 
 **Evidence** (delivery only): `test_the_concept_listing_names_the_game_system_once_and_asks_for_a_hook`.
+
+## 266. The chapter-one lane may resample after a gate fail on text the model supplied (2026-09-24)
+
+**Located.** Four concepts drawn for read-21 since §262-§264 removed our money and pressure
+wording each failed or brushed the money item on something no recorded request contains, and in a
+different place each time: "unpaid-for shopping" (draw 1), a cache Eli means to repay (draw 2,
+beside §264's located grudge), an invented people's trade and "obligations" (draw 3, passed as
+world colour), and "rents a room", "paying beginners" and "water rights" (draw 4;
+`runs/chapter-one/read-21/draw-4/GATE-concept.md`). The recorded discovery, development and
+precision requests of draw 4 carry no rent, pay, debt or rights word; the model supplies them.
+Draw 3's concept passed, so the distribution holds clean concepts.
+
+**The rule it changes.** The lane copied the registered runner's redraw rule, a located cause plus
+a new `src/` or `migrations/` commit or a different writer, which keeps a research draw from being
+selected on noise. The lane makes no research claim, and its gate exists to filter: for a failure
+our text cannot reach, the only honest remedies were a speculative prompt edit or a writer the
+operator did not choose. `tools/chapter_one.py redraw --resample "<what the model supplied that no
+request contains>"` now draws again with nothing changed, only after a gate fail (a stop is
+retried), never with `--fix` or `--writer`, and at most three draws in a row; the fourth needs a
+change or goes back to the operator. Every draw stays counted in "draw k of n" and its reason is
+in its settings.
+
+**What it does not establish.** That a resampled concept is typical. The chapter the operator
+reads is selected by the gate, and the draw count beside it says how many were drawn.
+
+**Evidence**: `test_a_gate_fail_on_model_supplied_text_may_be_resampled_a_few_times`,
+`test_a_redraw_needs_an_ended_draw_a_located_cause_and_a_change`.

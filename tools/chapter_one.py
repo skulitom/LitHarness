@@ -186,6 +186,11 @@ STAGE_OUTPUTS: dict[str, tuple[str, ...]] = {
 }
 GATE_RESULTS = ("pass", "fail")
 ENDED = ("failed", "stopped")
+# A production lane may draw again with nothing changed when a gate failed on something the
+# model supplied with no source in the recorded requests (stage-0 §266): the gate is the
+# filter, and every draw is still counted. A run of them is capped, so a failure that keeps
+# returning goes back to a person rather than to more spend.
+MAX_RESAMPLES = 3
 #: One verdict line per item: the id at the start of a line (a list bullet allowed), a colon,
 #: then PASS, FAIL or PARTIAL. Ids are a capital and a number or a capital, a hyphen and a word.
 VERDICT_LINE = re.compile(
@@ -1031,8 +1036,15 @@ def redraw(
     fixes: list[str],
     writer: str | None,
     binary: str | None = None,
+    resample: str | None = None,
 ) -> Path:
-    """The next draw: the previous one ended, each cause is located, and something changed."""
+    """The next draw: the previous one ended, each cause is located, and something changed.
+
+    `resample` is the one exception to "something changed": a gate failed on text the model
+    supplied that no recorded request contains, which a change to our text cannot reach. It says
+    why, needs the previous draw failed at a gate (not stopped), and at most `MAX_RESAMPLES`
+    draws in a row may be resamples.
+    """
     refuse_live_environment()
     lock()
     found = draws(line)
@@ -1051,10 +1063,31 @@ def redraw(
     if problems:
         raise Refusal("; ".join(problems))
     chosen = writer or str(settings["writer"])
-    if not fixes and chosen == settings["writer"]:
+    reason = (resample or "").strip()
+    if resample is not None and (fixes or chosen != settings["writer"]):
+        raise Refusal("a resample changes nothing: drop --fix and --writer, or drop --resample")
+    if resample is not None:
+        if not reason:
+            raise Refusal("a resample says what the model supplied that no request contains")
+        if state["status"] != "failed" or not any(
+            gate.get("result") == "fail" for gate in state["gates"].values()
+        ):
+            raise Refusal("only a gate fail is resampled; a stop is retried or redrawn")
+        run = 0
+        for k in reversed(found):
+            if not read(draw_dir(line, k) / "settings.json").get("resample"):
+                break
+            run += 1
+        if run >= MAX_RESAMPLES:
+            raise Refusal(
+                f"{run} resamples in a row: a failure that keeps returning goes to a person, "
+                "with a change to our text (--fix) or a different writer"
+            )
+    elif not fixes and chosen == settings["writer"]:
         raise Refusal(
             "the same revision and writer draw the same distribution again: a redraw needs a "
-            "new commit touching src/ or migrations/ (--fix) or a different accepted writer"
+            "new commit touching src/ or migrations/ (--fix), a different accepted writer, or "
+            "--resample when the gate failed on model-supplied text no request contains"
         )
     extra = {
         "after": found[-1],
@@ -1062,6 +1095,8 @@ def redraw(
         "fixes": fixes,
         "writer_changed_from": settings["writer"] if chosen != settings["writer"] else None,
     }
+    if reason:
+        extra["resample"] = reason
     return prepare(
         line, found[-1] + 1, writer=chosen, binary=binary or settings["binary"]["path"], extra=extra
     )
@@ -2514,6 +2549,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--fix", action="append", default=[], help="a 40-hex src/ or migrations/ commit"
     )
     again.add_argument("--writer", help="a different accepted writer")
+    again.add_argument(
+        "--resample",
+        help="draw again unchanged: what the model supplied that no recorded request contains",
+    )
     again.add_argument("--codex-binary")
     for stage in STAGES:
         sub.add_parser(stage).add_argument("--line", required=True)
@@ -2581,7 +2620,7 @@ def main(argv: list[str] | None = None) -> int:
                 prior_source=args.prior_source,
             )
         elif args.mode == "redraw":
-            redraw(args.line, args.cause, args.fix, args.writer, args.codex_binary)
+            redraw(args.line, args.cause, args.fix, args.writer, args.codex_binary, args.resample)
         elif args.mode == "gate":
             gate(args.line, args.checkpoint, args.result, args.read, args.by)
         elif args.mode == "retry":

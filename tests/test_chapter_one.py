@@ -1214,6 +1214,48 @@ def test_a_runner_that_died_before_its_child_recorded_a_pid_is_named(
         lane.retry(LINE, "concept", note, verified_dead_pids=[-1])
 
 
+def test_a_gate_fail_on_model_supplied_text_may_be_resampled_a_few_times(
+    monkeypatch: pytest.MonkeyPatch, live: None
+) -> None:
+    """§266: the gate is the filter; a resample changes nothing, says why, follows only a gate
+    fail, and a run of them is capped."""
+    prepared: list[dict[str, Any]] = []
+
+    def prepare(
+        line: str, n: int, *, writer: str, binary: str | None, extra: dict[str, Any]
+    ) -> Path:
+        prepared.append({"n": n, "writer": writer, **extra})
+        d = make_draw(n, status="failed", gates={"concept": {"result": "fail"}})
+        settings = lane.read(d / "settings.json")
+        lane.write(d / "settings.json", settings | {"resample": extra.get("resample")})
+        return d
+
+    monkeypatch.setattr(lane, "prepare", prepare)
+    d = make_draw(status="stopped")
+    (d / "concept").mkdir()
+    (d / "concept" / "concept.txt").write_text("He rents a room.\n", encoding="utf-8")
+    cause = "concept: concept/concept.txt: rents a room, no request carries rent"
+    why = "the discovery answer supplied 'rents a room'; calls 0002-0004 carry no rent word"
+    with pytest.raises(lane.Refusal, match="only a gate fail is resampled"):
+        lane.redraw(LINE, [cause], [], None, resample=why)
+    state = lane.progress(d)
+    state.update(status="failed", gates={"concept": {"result": "fail"}})
+    lane.save(d, state)
+    with pytest.raises(lane.Refusal, match="says what the model supplied"):
+        lane.redraw(LINE, [cause], [], None, resample=" ")
+    with pytest.raises(lane.Refusal, match="a resample changes nothing"):
+        lane.redraw(LINE, [cause], [], "marsh", resample=why)
+    for n in (2, 3, 4):
+        lane.redraw(LINE, [cause], [], None, resample=why)
+        assert prepared[-1]["n"] == n and prepared[-1]["resample"] == why
+        (lane.draw_dir(LINE, n) / "concept").mkdir()
+        (lane.draw_dir(LINE, n) / "concept" / "concept.txt").write_text("x\n", "utf-8")
+    with pytest.raises(lane.Refusal, match="3 resamples in a row"):
+        lane.redraw(LINE, [cause], [], None, resample=why)
+    with pytest.raises(lane.Refusal, match="--resample when the gate failed"):
+        lane.redraw(LINE, [cause], [], None)
+
+
 def test_a_redraw_needs_an_ended_draw_a_located_cause_and_a_change(
     monkeypatch: pytest.MonkeyPatch, live: None
 ) -> None:
