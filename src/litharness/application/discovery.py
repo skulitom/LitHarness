@@ -18,7 +18,7 @@ from litharness.domain.generation import CompletionRequest
 from litharness.domain.invention import InventionSeed
 from litharness.domain.writers import Writer
 
-PROFILE = "writer.discovery.v17"
+PROFILE = "writer.discovery.v18"
 VERSION = "magical-discovery.v7"
 
 # Product direction supplied by the operator, not a claim about all readers or genres.

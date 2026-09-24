@@ -10,7 +10,7 @@ from typing import Any
 from litharness.domain.serials import SerialShape, chapters_for
 
 INVENTION_RULE = (
-    "writing_layout is the actual scene-to-chapter map and approximate prose budget. "
+    "writing_layout is the actual scene-to-chapter map and approximate prose length. "
     "Choose an opening experience that fits its first chapter, including the character's "
     "response to its consequence. Necessary routine action may pass in summary. Leave "
     "later developments for the chapters that can hold them; do not call several mapped "

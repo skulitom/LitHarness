@@ -27419,3 +27419,21 @@ reads is selected by the gate, and the draw count beside it says how many were d
 
 **Evidence**: `test_a_gate_fail_on_model_supplied_text_may_be_resampled_a_few_times`,
 `test_a_redraw_needs_an_ended_draw_a_located_cause_and_a_change`.
+
+## 267. The invention request calls chapter length a length, not a budget (2026-09-24)
+
+**Located at read-21 draw 5's concept gate.** The concept gave Ellis Ward "a budget that barely
+stretches" and "a gym membership he cannot comfortably afford" (C-money FAIL,
+`runs/chapter-one/read-21/draw-5/GATE-concept.md`). Unlike draws 1 and 4, the recorded discovery
+request does carry a money word: `chapter_layout.INVENTION_RULE`, sent with every discovery call
+that has a layout, began *"writing_layout is the actual scene-to-chapter map and approximate prose
+budget."* It is the one money word left in the text that invents the protagonist's life after
+§262-§264, beside marsh's dossier "a dead-end shift" (the writer's own text, a roster matter).
+
+**What changed.** "approximate prose budget" → "approximate prose length"; `writer.discovery`
+v17 → v18 (v17 was sent by read-21 draws 4 and 5). `development_coverage.RULE`'s "within its prose
+budget" rides the outline, which invents no life, and is left for a later pass. A guard now renders
+the discovery request as the lane sends it and finds no money word in our text: it checks what we
+send, never what a model writes.
+
+**Evidence**: `test_the_invention_request_hands_the_model_no_money_word`.

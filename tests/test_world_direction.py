@@ -63,6 +63,22 @@ def test_the_cost_sentence_names_no_person_turned_against_them() -> None:
     assert "against" not in text and "somebody" not in text
 
 
+def test_the_invention_request_hands_the_model_no_money_word() -> None:
+    """§262-§266: every money word a concept carried either came from our own text (rent, a cost
+    paid in a person, a prose "budget") or from nowhere in the request. This checks OUR text: the
+    discovery request as the lane sends it, with a layout, a dossier-free system and no brief."""
+    import re
+
+    layout = chapter_layout.WritingLayout.opening(24, SerialShape(4, 6), 900)
+    request = discovery.render_request("", layout=layout, person="third")
+    money = re.compile(
+        r"\b(rent|rents|rented|pay|pays|paid|payment|debt|debts|owe|owed|owes|budget|afford|"
+        r"wage|wages|bill|bills|loan|bargain|price|currency|trade|repay|obligation)\b",
+        re.IGNORECASE,
+    )
+    assert money.findall(request.system + request.prompt) == []
+
+
 def test_invention_and_seed_share_one_world_direction_verbatim() -> None:
     layout = chapter_layout.WritingLayout.opening(6, SerialShape(1, 6), 1400)
     invention = {

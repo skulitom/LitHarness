@@ -788,7 +788,7 @@ def test_new_invention_restores_the_one_person_exception_and_counted_ranks() -> 
     assert "reveal limitations through use" not in discovery.DIRECTION
     request = discovery.render_request("")
     assert request.system.count(discovery.DIRECTION) == 1
-    assert request.profile == "writer.discovery.v17"
+    assert request.profile == "writer.discovery.v18"
 
 
 def test_development_asks_for_one_person_s_exception_first_working_and_counted_ranks() -> None:
