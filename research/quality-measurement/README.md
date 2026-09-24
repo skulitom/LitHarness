@@ -30,6 +30,7 @@ rules; the full research archive is not an onboarding checklist.
 | Propose a quality measure | [BRIEF.md](BRIEF.md) owns the failed-proxy ledger; [EPISTEMIC_GOVERNANCE.md](EPISTEMIC_GOVERNANCE.md) owns claim states and evidence requirements. |
 | Work on reader perception or qualification | [Reader architecture programme](../../plan/reader-architecture-program.md). |
 | Run an existing experiment | That arm's `RUNBOOK.md`; use the shared [box-lock procedure](RUNBOOK.md#guard-and-go-how-several-sessions-share-one-box) for sustained work. |
+| Draw a fresh chapter one for the operator's next read | [`tools/chapter_one.py`](../../tools/chapter_one.py), a production lane that makes no research claim: four checkpoints, the coordinator's item gate, and the operator's read recorded as a harvest. Its docstring gives the command sequence. Register a draw only when a claim is wanted. |
 | Change implementation or run repository checks | [CONTRIBUTING.md](../../CONTRIBUTING.md). |
 
 ## Reading the archive

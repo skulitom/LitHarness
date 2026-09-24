@@ -88,6 +88,9 @@ Before running a research arm, read its RUNBOOK.
   may cite an artifact but cannot promote a research claim.
 - Quality measurement is LLM-only. The operator's reading may harvest defects but is not a label;
   do not propose human readers, panels, or solicited judgments as the missing signal.
+- Chapter-one iteration for the operator's read runs through `tools/chapter_one.py`. It makes no
+  research claim, so it has no registration, amendment or claim record. Its gate reads and the
+  operator's read are harvest, and neither enters a prompt.
 - No corpus text or digest crosses into generation. Commit derived numbers and identifiers,
   never third-party prose.
 - No quality bar is declared without attainable range, correct direction, an independent unit,

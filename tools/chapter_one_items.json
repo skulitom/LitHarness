@@ -1,0 +1,44 @@
+{
+  "schema": "chapter-one.items.v1",
+  "rule": "A checkpoint passes only when every item is PASS; PARTIAL counts as FAIL. The register report beside each gate decides no item, and the simulated readers' start rate is never a hook signal.",
+  "audience": "The coordinator's gate read. Never model-facing: no item reaches an argument, the environment or a step's inputs.",
+  "sources": {
+    "PREREG.md": "research/quality-measurement/restored-directions-draw-20260922/PREREG.md, the stages table, verbatim",
+    "read 20": "plan/reader-read-20.md, the items the operator's read 20 added or tightened"
+  },
+  "checkpoints": {
+    "concept": [
+      {"id": "C1", "source": "PREREG.md", "text": "the exception belongs to one person and works for them in chapter one"},
+      {"id": "C2", "source": "PREREG.md", "text": "counted ranks with `system.start_rank`"},
+      {"id": "C3", "source": "PREREG.md", "text": "a physical threat"},
+      {"id": "C4", "source": "PREREG.md", "text": "no debt, ledger, court or tenancy frame in the premise, the threat or the System's look"},
+      {"id": "C-money", "source": "read 20", "text": "The person's life before, their want and the world carry no household money or obligation: no rent, bills, wages, payments, debts, owing, loans, bargains or duties owed, not even as background (\"paying rent\", \"a rented flat\"). A prize or loot the genre hands out is not this item."}
+    ],
+    "listing": [
+      {"id": "L1", "source": "read 20", "text": "It promises a LitRPG book in the genre's own words. The game system is named once, as the book names it, and one power that belongs to this person alone is shown doing something. No rank value, and at most two of the book's own mechanic names. A listing that explains how the system works fails here even when every term is correct."},
+      {"id": "L2", "source": "PREREG.md", "text": "the exception it sells is one person's"},
+      {"id": "L3", "source": "read 20", "text": "No institution-issued engine, and no debt, ledger, court, tenancy, licence, rent, payment, owing or obligation frame, including a promise to repay or a gain framed as what it takes from other people."},
+      {"id": "L4", "source": "PREREG.md", "text": "no internal schema word in the title or listing (read 11)"},
+      {"id": "L5", "source": "read 20", "text": "It reads as one person's situation, not a list of facts about the rules. The first sentence carries the change, the one-person power or the danger, not background. Each sentence follows from the one before, with no run of stand-alone fact sentences. It ends on what the person is about to try or what could go wrong, not on a summary or a moral. Read as the operator reads it: would a reader stop at the overview?"},
+      {"id": "L6", "source": "read 20", "text": "No word a shelf reader has to stop on, whether technical, trade or invented, unless its meaning is on the page."}
+    ],
+    "world": [
+      {"id": "W1", "source": "PREREG.md", "text": "no administrative pressure"},
+      {"id": "W2", "source": "PREREG.md", "text": "the protagonist placed on the ladder at the concept's start rank (not placed for an unranked start)"},
+      {"id": "W3", "source": "PREREG.md", "text": "world check reports no snapshot fault and no would-breach"},
+      {"id": "W-money", "source": "read 20", "text": "No record the scene writer will receive (a want, a place's `manifests_as`, a cast line) carries household money or obligation. A costs record states its mechanical requirement without negated money such as \"not currency\"."}
+    ],
+    "chapter": [
+      {"id": "H1", "source": "PREREG.md", "text": "the exception is one person's and works on the page"},
+      {"id": "H2", "source": "read 20", "text": "No debt, ledger, licence or administration register, and no money, rent, bills, payment, wages, owing or obligation anywhere in the chapter, including a passing mention, a joke, or a detail of a flat or an errand. The genre's mechanical costs and a prize are not this item."},
+      {"id": "H3", "source": "PREREG.md", "text": "system numbers present and the sheet renders"},
+      {"id": "H4", "source": "PREREG.md", "text": "progression felt"},
+      {"id": "H5", "source": "PREREG.md", "text": "a man in his twenties with a prior life the reader has lived"},
+      {"id": "H6", "source": "PREREG.md", "text": "attention on the pursuit, not one procedure"},
+      {"id": "H7", "source": "PREREG.md", "text": "tone matches the popcorn shelf"},
+      {"id": "H8", "source": "PREREG.md", "text": "third person throughout"},
+      {"id": "H-open", "source": "read 20", "text": "The first paragraph puts the reader in the change, the danger or a want already moving. A chore, an errand or household admin as the first beat fails."},
+      {"id": "H-diction", "source": "read 20", "text": "No word a shelf reader stops on: a trade, technical or invented noun whose meaning the page does not give at once, or a noun the viewpoint character would not use (for example \"her lowest surviving tread\"). Terms the System itself prints are exempt."}
+    ]
+  }
+}
