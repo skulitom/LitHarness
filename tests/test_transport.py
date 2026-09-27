@@ -1,12 +1,14 @@
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
 
 from litharness import files, transport
+from litharness.transport import FALLBACK
 
 
 def events(text="chapter", usage=None, extra=()):
@@ -102,3 +104,52 @@ class CodexTests(unittest.TestCase):
             wrapper.write_text("@echo off")
             with self.assertRaises(ValueError):
                 transport.native_binary(str(wrapper))
+
+
+def stream(events_list):
+    return "\n".join(json.dumps(e) for e in events_list)
+
+
+class RobustnessTests(unittest.TestCase):
+    def test_leading_reconnect_notices_are_tolerated_within_one_turn(self):
+        start = [{"type": "thread.started"}, {"type": "turn.started"}]
+        again = {"type": "error", "message": "Reconnecting... 2/5 (request timed out)"}
+        fallback = {"type": "item.completed", "item": {"type": "error", "message": FALLBACK}}
+        body = [json.loads(line) for line in events().splitlines()]
+        self.assertEqual(transport.parse_result(stream(start + [again, again, fallback] + body), "chapter")["output_tokens"], 3)
+        for bad in (start + body[:1] + [again] + body[1:], start + [again, start[1]] + body,
+                    start + [{"type": "error", "message": "unavailable"}] + body, [again] + body):
+            with self.subTest(bad=bad), self.assertRaises(transport.Fault):
+                transport.parse_result(stream(bad), "chapter")
+
+    def test_preflight_needs_a_chatgpt_login_and_reads_the_version_once(self):
+        seen = []
+        def run(argv, **kwargs):
+            seen.append(argv[-1])
+            login = b"Logged in using ChatGPT\n" if "chatgpt" in str(kwargs.get("env", {}).get("MARK")) else b"Logged in using an API key\n"
+            return subprocess.CompletedProcess(argv, 0, b"codex-cli 9.9\n" if argv[-1] == "--version" else b"", login)
+        with patch.dict(transport.CLI, clear=True), patch.dict(os.environ, {"MARK": "chatgpt"}), \
+                patch.object(transport, "ENV_KEYS", transport.ENV_KEYS | {"MARK"}):
+            self.assertEqual(transport.preflight(Path("x"), run), "codex-cli 9.9")
+            transport.preflight(Path("x"), run)
+        self.assertEqual(seen, ["status", "--version"])
+        with patch.dict(transport.CLI, clear=True), self.assertRaises(transport.Fault):
+            transport.preflight(Path("x"), run)
+
+    def test_canary_pins_the_version_only_when_nothing_leaks(self):
+        def run(argv, input=None, **kwargs):
+            if input is None:
+                return subprocess.CompletedProcess(argv, 0, b"", b"")
+            control = re.search(r"CONTROL-(\w+)", input.decode())[1]
+            leak = re.search(r"CANARY-\w+", (Path(kwargs["cwd"]) / "AGENTS.md").read_text())[0] if self.leaky else "NONE"
+            return fake(f"CONTROL-{control}\n{leak}")(argv, input=input, **kwargs)
+        with tempfile.TemporaryDirectory() as home, patch.dict(os.environ, {"LITHARNESS_HOME": home}), \
+                patch.dict(transport.CLI, {str(Path(home) / "codex.exe"): "codex-cli 9"}):
+            binary = Path(home) / "codex.exe"
+            binary.write_bytes(b"fake")
+            self.leaky = True
+            self.assertEqual(transport.canary(binary, "m", "medium", run), ["agents"])
+            self.assertFalse((Path(home) / "canary.json").exists())
+            self.leaky = False
+            self.assertEqual(transport.canary(binary, "m", "medium", run), [])
+            self.assertEqual(files.load(Path(home) / "canary.json")["codex"]["version"], "codex-cli 9")

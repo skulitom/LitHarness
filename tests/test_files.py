@@ -78,3 +78,18 @@ class LockTests(unittest.TestCase):
         expected = (root / "main" / "runs" / "box.lock").resolve()
         self.assertEqual(files.box_lock(root / "w" / "pkg" / "files.py"), expected)
         self.assertEqual(files.box_lock(root / "main" / "pkg" / "files.py"), expected)
+
+
+class RevisionTests(unittest.TestCase):
+    def test_head_is_read_from_loose_and_packed_refs_without_git(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            git = Path(tmp) / "main" / ".git"
+            (git / "refs" / "heads").mkdir(parents=True)
+            (git / "HEAD").write_text("ref: refs/heads/main\n")
+            (git / "refs" / "heads" / "main").write_text("a" * 40 + "\n")
+            (git / "packed-refs").write_text("# pack\n" + "b" * 40 + " refs/heads/side\n")
+            start = Path(tmp) / "main" / "pkg" / "files.py"
+            self.assertEqual(files.revision(start), "a" * 40)
+            (git / "HEAD").write_text("ref: refs/heads/side\n")
+            self.assertEqual(files.revision(start), "b" * 40)
+            self.assertEqual(files.revision(Path(tmp) / "elsewhere" / "files.py"), "")

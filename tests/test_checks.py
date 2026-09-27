@@ -158,7 +158,7 @@ class DocumentTests(unittest.TestCase):
     def test_sheet_report(self):
         page = "[Rank: Bronze]\n\n[Grip: 2]\n\n[grip: 3]\n\n[HP: 5]\n\n[Rank: Iron]"
         report = checks.report(page, before={"Rank": "Iron", "Grip": "3"}, ranks=["Iron", "Bronze"])
-        for line in ("fall: Rank Bronze -> Iron", "new label: HP 5", "spelled 2 ways", "generic label: HP"):
+        for line in ("fall Rank: Bronze -> Iron", "new HP: 5", "spelled 2 ways", "generic label: HP"):
             self.assertIn(line, report)
 
     def test_person_skips_speech_italics_and_status_lines(self):

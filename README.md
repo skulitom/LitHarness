@@ -1,45 +1,57 @@
 # LitHarness
 
-LitHarness drafts LitRPG serial chapters from a short brief: two Codex calls per opening chapter,
-plain files for everything, and nothing to install beyond Python and a signed-in Codex CLI.
+LitHarness writes LitRPG serial chapters from a short brief. A **pitch** call writes a bible you glance
+at before any chapter money is spent; each ~1,500-word chapter then costs two Codex calls (plan, then
+draft), plus one located rewrite when the tells counter says so. Code owns the numbers: the hero opens
+his status as `[Label: value]` lines, and code reads them back into the sheet. Everything is plain files;
+nothing to install beyond Python 3.11+ (standard library only) and a Codex CLI signed in with ChatGPT.
 
-This is the lightweight rebuild (2026-09-27). The previous implementation is kept, unchanged, at the
-tag `legacy/incumbent-2026-09-27` and the branch `legacy/main`; the prototype it grew from is at
-`legacy/lite-2026-09-27`. The rebuild plan is frozen in
-[experiments/2026-09-27-rebuild-plan/PLAN.md](experiments/2026-09-27-rebuild-plan/PLAN.md).
+The previous implementation is kept, unchanged, at the tag `legacy/incumbent-2026-09-27` and the branch
+`legacy/main`. The design is frozen in [experiments/2026-09-27-rebuild-plan/PLAN.md](experiments/2026-09-27-rebuild-plan/PLAN.md);
+[LEARNINGS.md](LEARNINGS.md) says why it is this small.
 
-## Requirements
+## Verbs (`python -m litharness VERB`)
 
-- Python 3.11 or later. The package uses the standard library only.
-- The Codex CLI, signed in with a ChatGPT subscription. Calls spend that subscription.
+| Verb | Does | Calls |
+|---|---|---|
+| `new SLUG --brief FILE [--words 1500]` | creates the serial, draws the pitch, stops for your glance | 1 (up to 3) |
+| `next SLUG [-n K]` (K up to 10) | plan, draft, checks, sheet, tells rewrite, report per chapter | 2-3 each |
+| `status [SLUG]` | chapters, words, failing checks with quotes, tokens, hand edits, locks | 0 |
+| `redraw SLUG --from N` | moves chapter N and later to `attempts/<utc>/` (0: the pitch too) | 0 |
+| `check FILE [--stage pitch\|plan\|chapter] [--serial SLUG]` | every deterministic check on any text | 0 |
+| `canary` | live isolation canary; pins the Codex CLI version | 1 small |
 
-## Use
+Resuming means re-running the same command: finished calls are adopted from their receipts and never
+bought twice. Exit codes: 0 done, 1 needs you (a failed stage with its quotes, a held lock, the canary),
+2 fault.
 
 ```powershell
-python -m litharness opening --brief briefs/slot.txt --words 1500
+python -m litharness canary                       # once, and after every Codex CLI upgrade
+python -m litharness new slot --brief briefs/slot.txt
+python -m litharness next slot -n 3               # after you have read ch00/bible.md
+python -m litharness status slot
 ```
 
-`opening` plans and drafts one opening chapter in two calls (Lite's behaviour, unchanged). It writes
-to `$LITHARNESS_HOME/openings/<brief>-<words>/` (default `~/LitHarness-data`). Re-run with
-`--resume` to finish an interrupted run; changed inputs or artifacts are refused.
+A stage that fails a hard check (`money`, `leak`, `person`, `rise`, `fields`, `pitch-shape`,
+`plan-shape`, `length`) is redrawn unchanged, at most 3 draws per input set. A money word that our own
+request carried stops at once with its file and line. Editing the brief, bible, state or plan opens
+draws 4-6; chapter text is never hand-edited, redraw instead.
+
+## Data
+
+Serials live in `$LITHARNESS_HOME/serials/<slug>/` (default `~/LitHarness-data`), outside every git
+tree: `serial.json`, `brief.md`, `manifest.json`, `ch00/` (the pitch) and `chNN/` with `state.md`,
+`plan.md`, `final.md` (the raw draft), `chapter.md`, `sheet.txt` and `report.md`. Every call keeps its
+request, system prompt, events, stderr, answer and receipt under `chNN/calls/`. Nothing is deleted.
+
+Back up the generated books to OneDrive with:
 
 ```powershell
-python -m litharness check chapter.md [--stage pitch|plan|chapter] [--serial SLUG]
+Compress-Archive -Path "$HOME\LitHarness-data\serials" -DestinationPath "$env:OneDrive\LitHarness-backups\serials-$(Get-Date -Format yyyy-MM-dd).zip"
 ```
 
-`check` runs every deterministic check on any text without a call: the hard checks that will
-redraw a stage (`money`, `leak`, `person`, `rise`, `fields`, `pitch-shape`, `plan-shape`, `length`)
-and the inert reports. Without `--serial` the file is treated as chapter 1 with no plan or bible.
-
-Exit codes: 0 done, 1 needs a person (a failing check, a held lock, an existing run), 2 fault.
-
-Every call keeps its request, system prompt, events, stderr, `final.md` and `receipt.json`
-(model, effort, token usage, seconds, sha256 of every input and of the output).
+Chapters posted to Royal Road carry its AI-Generated tag.
 
 ## Tests
 
-```powershell
-python -m unittest -q
-```
-
-Serial, stdlib only, about a second. No test spawns a model CLI.
+`python -m unittest -q`: serial, stdlib only, a few seconds, and no test spawns a model CLI.

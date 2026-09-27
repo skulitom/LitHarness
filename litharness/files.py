@@ -123,16 +123,35 @@ def unlock(directory: Path) -> None:
         directory.rmdir()
 
 
-def box_lock(start: Path | None = None) -> Path:
-    """runs/box.lock in the main checkout, found from the .git entry above the package without git."""
+def checkout(start: Path | None = None) -> tuple[Path, Path] | None:
+    """(gitdir, common dir) of the checkout holding the package, read from .git without spawning git."""
     for parent in Path(start or __file__).resolve().parents:
         entry = parent / ".git"
         if entry.is_dir():
-            return parent / "runs" / "box.lock"
+            return entry, entry
         if entry.is_file():  # a worktree: its gitdir names the common directory inside the main checkout
             gitdir = Path(read(entry).split("gitdir:", 1)[1].strip())
             gitdir = gitdir if gitdir.is_absolute() else (parent / gitdir).resolve()
             common = gitdir / "commondir"
-            common_dir = (gitdir / read(common).strip()).resolve() if common.is_file() else gitdir
-            return common_dir.parent / "runs" / "box.lock"
-    return home() / "box.lock"
+            return gitdir, (gitdir / read(common).strip()).resolve() if common.is_file() else gitdir
+    return None
+
+
+def box_lock(start: Path | None = None) -> Path:
+    """runs/box.lock in the main checkout, which holds the common git directory."""
+    found = checkout(start)
+    return found[1].parent / "runs" / "box.lock" if found else home() / "box.lock"
+
+
+def revision(start: Path | None = None) -> str:
+    """The checkout's HEAD commit for serial.json, or '' outside git."""
+    found = checkout(start)
+    head = read(found[0] / "HEAD").strip() if found else ""
+    if not head.startswith("ref: "):
+        return head
+    for base in found:
+        if (base / head[5:]).is_file():
+            return read(base / head[5:]).strip()
+    packed = found[1] / "packed-refs"
+    return next((line.split()[0] for line in (read(packed).splitlines() if packed.is_file() else [])
+                 if line.endswith(" " + head[5:])), "")
