@@ -12,8 +12,7 @@ MONEY_WORDS = (
     "salary", "salaries", "paychecks?", "payday", "payments?", "debts?", "owe", "owes", "owed", "owing",
     "loans?", "ledgers?", "invoices?", "overdraft", "budgets?", "repay", "creditors?", "licences?",
     "licenses?", "unpaid", "obligations?", "currency")
-INSTITUTIONAL = ("courts?", "clerks?", "council", "probation", "inspect", "inspection", "inspector",
-                 "paperwork", "permits?", "contracts?", "deeds?", "tax", "money")
+INSTITUTIONAL = ("courts?", "clerks?", "council", "probation", "paperwork", "contracts?", "deeds?", "tax", "money")
 ADMIN_WORDS = ("court", "clerk", "council", "inspection", "probation", "paperwork", "permit",
                "contract", "deed", "tax", "paid", "price", "coin", "cash", "bank", "money")
 LABELS = ("Title", "Rise", "Ladder", "Start", "Age", "Listing", "Person", "Exception", "First use",
