@@ -20,8 +20,11 @@ class SheetTests(unittest.TestCase):
         self.assertEqual(sheet.value("12", RANKS), (12, None))
         self.assertEqual(sheet.value("bronze", RANKS), (2, None))
         self.assertEqual(sheet.value("3 / 5", RANKS), (3, 5))
-        for raw in ("twelve", "12 (+1)", "-3", "Copper"):
+        for raw in ("twelve", "-3", "Copper", "1 of 3"):
             self.assertIsNone(sheet.value(raw, RANKS), raw)
+        for raw in ("3, Holdfast, Gill, Joint Lock", "3 — Holdfast", "3 (two active)", "3 - spent"):
+            self.assertEqual(sheet.value(raw, RANKS), (3, None), raw)  # serials/slot ch03: a count with its gloss
+        self.assertEqual(sheet.value("Bronze (since dawn)", RANKS), (2, None))
         self.assertEqual(sheet.order("0/4", RANKS), 4)
 
     def test_start_lines_become_the_first_sheet(self):

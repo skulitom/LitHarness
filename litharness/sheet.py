@@ -24,8 +24,10 @@ def ladder(bible: str) -> list[str]:
 
 
 def value(raw: str, ranks: list[str]) -> tuple[int, int | None] | None:
-    """(number, pool size or None for a plain value), or None when it is not a value."""
+    """(number, pool size or None for a plain value), or None when it is not a value. An annotation after
+    the value ('3, Holdfast, Gill', '3 (two active)') is the System's gloss, not part of the value."""
     raw = re.sub(r"(?<=\d),(?=\d{3}\b)", "", raw.strip().strip("*`"))
+    raw = re.split(r"\s*(?:,\s|[—–(;]|\s-\s)", raw, maxsplit=1)[0].strip()
     pool = POOL.match(raw)
     if pool:
         return int(pool[1]), int(pool[2])
