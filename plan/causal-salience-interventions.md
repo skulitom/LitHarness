@@ -9,6 +9,15 @@ private scoring key separately.
 
 ## Decision
 
+**Admission correction, 2026-09-27:** the state constructor described below does not establish
+the semantic guarantee this note originally assigned it. The
+[executable construction audit](../research/quality-measurement/state-admission-audit-20260927/RESULTS.md)
+demonstrates omitted cross-scene evidence, an unverified persistence assumption and case/length
+shortcuts despite matching the existing fingerprints. The v2 ecological manifest separates
+`construction_ready` from `eligible_for_model_run`, which stays false even for constructed
+items. Earlier manifests and the historical description below are preserved; located records
+are candidate relations, not independently certified damage keys.
+
 LitHarness should treat the **open-ended serial** as the canonical work and a volume as a derived
 release package. The default package is 50 globally numbered chapters, adjustable for a natural
 40-60 chapter break. It does not mint another book, reset state, imply an ending, or reduce the
@@ -181,13 +190,13 @@ preserves those assets. This work prepares the path only; no cover was generated
 one volume and that volumes organise the fiction page and covers without reordering the fiction,
 which is why LitHarness keeps global numbering and does not create volume-local canon.
 
-## Model-independent work is complete
+## Model-independent construction is implemented; semantic admission remains open
 
 Run `litharness reader-evidence-audit --out generated/reader-audit` on any existing book. It makes
 no model call, registers no arm, and does not qualify a mechanism. It emits the aggregate census
 and prose-free manifest in `evidence-audit.json`, blinded prose in `battery.public.json`, and
-labels, source evidence, and scoring keys only in `battery.private.json`. The remaining step is
-empirical: combine whole-book groups into frozen
-development and holdout sets, register attainable bars, run a candidate reader through the public
-packets, and produce the closed qualification artifact. Under the current constraint, that run is
-deliberately not attempted and no local model or Claude CLI is required by the repository.
+labels, source evidence, and proposed scoring keys only in `battery.private.json`. Construction
+does not license a reader run. A replacement transformation must first establish its semantic
+key, required context and matched controls independently. Only then can whole-book groups form
+frozen development and holdout sets for a registered reader experiment. The audit and packet
+construction need no local model or Claude CLI.

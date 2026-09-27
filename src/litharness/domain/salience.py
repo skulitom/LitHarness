@@ -1,10 +1,10 @@
-"""Call-free admission of manuscript evidence into causal-salience experiments.
+"""Call-free location and construction of candidate causal-salience evidence.
 
 The ledger can name a relation without proving where the prose establishes it. This module is
-the refusal boundary between those useful-but-unlocated records and an ecological battery whose
-answer key must be owned by code. It validates current-revision hashes and exact spans, reports
-every family separately, and can build the first narrow state-continuity siblings without a
-model deciding what its own corruption changed.
+the location boundary between those useful-but-unlocated records and inspectable candidate
+packets. It validates current-revision hashes and exact spans and reports every family
+separately. Constructing state substitutions does not establish semantic damage or a harmless
+matched control; the manifest keeps model admission closed.
 """
 
 from __future__ import annotations
@@ -308,7 +308,7 @@ def evidence_census(
     *,
     shape: SerialShape,
 ) -> EvidenceCensus:
-    """Count only relations whose complete answer key survives current-revision validation."""
+    """Count candidate relations with current located evidence, not certified semantic keys."""
     canon = [record for record in records if record.authority in CANON]
     located = {record.record_id: locate_record(revision, record) for record in canon}
     rejected: Counter[str] = Counter()
@@ -455,7 +455,7 @@ def _fingerprint(
 def build_state_continuity_items(
     census: EvidenceCensus, revision: Revision
 ) -> tuple[EcologicalItem, ...]:
-    """Build clean/damaged/sham siblings for the census's admitted continuity pairs."""
+    """Build diagnostic siblings; the proposed damage/sham roles are not semantic labels."""
     ordinals = _scene_ordinals(revision)
     items: list[EcologicalItem] = []
     for candidate in census.candidates:
@@ -519,13 +519,25 @@ def build_state_continuity_items(
 
 
 def ecological_manifest(census: EvidenceCensus, items: Sequence[EcologicalItem]) -> dict[str, Any]:
+    # Located equal states do not certify persistence, and the current transform does not
+    # preserve cross-scene context or control case/length shortcuts. Construction is inspectable
+    # evidence only; semantic admission needs an independently validated, versioned contract.
     return {
-        "version": "ecological-causal-salience.v1",
+        "version": "ecological-causal-salience.v2",
         "census_digest": census.digest,
         "source_group_split": "whole book/world",
         "heldout_transformation_requirement": True,
         "items": [item.manifest_entry() for item in items],
-        "eligible_for_model_run": bool(items),
+        "construction_ready": bool(items),
+        "eligible_for_model_run": False,
+        "admission_status": (
+            "construction_only_semantic_admission_required" if items else "no_constructed_items"
+        ),
+        "admission_gaps": [
+            "state_persistence_and_semantic_relation_unverified",
+            "required_context_not_guaranteed",
+            "damage_and_control_surface_shortcuts_uncontrolled",
+        ],
         "promotion_bar": None,
     }
 
