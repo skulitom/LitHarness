@@ -18,6 +18,14 @@ shortcuts despite matching the existing fingerprints. The v2 ecological manifest
 items. Earlier manifests and the historical description below are preserved; located records
 are candidate relations, not independently certified damage keys.
 
+**2026-09-27 scoped control:** the isolated
+[prerequisite constructor](../research/quality-measurement/scoped-prerequisite-20260927/RESULTS.md)
+now proves a contradiction and a consistent, identically sized edit in a closed synthetic
+language. Its rule constrains an ongoing state at an explicit trial and instant, and its public
+packets contain every proof premise. This supplies a formal control only: natural manuscript
+grounding, ecological admission and reader eligibility remain unresolved. It does not replace
+the production constructor or revalidate its historical semantic claims below.
+
 LitHarness should treat the **open-ended serial** as the canonical work and a volume as a derived
 release package. The default package is 50 globally numbered chapters, adjustable for a natural
 40-60 chapter break. It does not mint another book, reset state, imply an ending, or reduce the
