@@ -23,8 +23,8 @@ def plan_for(prompt):
 
 
 def draft_for(prompt, extra=""):
-    n = int(re.search(r"Write chapter (\d+)", prompt)[1])
-    return "\n\n".join([PROSE] * 3 + [f"[Slots: 1/{n + 1}]"] + [PROSE] * 110 + [extra])
+    n, words = int(re.search(r"Write chapter (\d+)", prompt)[1]), int(re.search(r"Aim for (\d+) words", prompt)[1])
+    return "\n\n".join([PROSE] * 3 + [f"[Slots: 1/{n + 1}]"] + [PROSE] * (words // 14) + [extra])
 
 
 class Fake:
@@ -51,19 +51,19 @@ class SerialTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        for patcher in (patch.dict(os.environ, {"LITHARNESS_HOME": self.tmp.name}),
-                        contextlib.redirect_stdout(io.StringIO())):
+        for patcher in (patch.dict(os.environ, {"LITHARNESS_HOME": self.tmp.name}),  # durability is not under test:
+                        contextlib.redirect_stdout(io.StringIO()), patch.object(files.os, "fsync")):  # 2 ms a write
             patcher.__enter__()
             self.addCleanup(patcher.__exit__, None, None, None)
         self.brief = Path(self.tmp.name) / "slot.txt"
         self.brief.write_bytes(b"System apocalypse. One Slot each; his holds every skill he can take.\n")
         self.root = serial.folder("slot")
 
-    def run_new(self, fake):
-        return serial.new("slot", self.brief, 1500, Path("codex.exe"), "codex-cli 1", partial(transport.codex, runner=fake))
+    def run_new(self, fake, words=1500):
+        return serial.new("slot", self.brief, words, Path("codex.exe"), "codex-cli 1", partial(transport.codex, runner=fake))
 
     def run_next(self, fake, n=1):
-        return serial.next_chapters("slot", n, Path("codex.exe"), partial(transport.codex, runner=fake))
+        return list(serial.next_chapters("slot", n, Path("codex.exe"), partial(transport.codex, runner=fake)))
 
     def test_pitch_then_chapters_with_code_owned_sheets_and_reports(self):
         fake = Fake()
@@ -89,16 +89,44 @@ class SerialTests(unittest.TestCase):
         fake.replies["pitch"] = BIBLE
         self.run_new(fake)
         self.assertTrue((self.root / "ch00" / "calls" / "pitch-d4" / "final.md").is_file())
+        self.assertEqual({k: v for k, v in files.load(self.root / "manifest.json")["stages"]["ch00/pitch"]["draws"][-1].items()
+                          if k in ("k", "of")}, {"k": 4, "of": 6})
         self.assertIn("hand-edited: brief.md", serial.status("slot"))
 
     def test_a_money_word_located_in_our_request_stops_without_a_redraw(self):
-        self.brief.write_bytes(b"He rents a room above the flooded underpass.\n")
-        fake = Fake(pitch=BIBLE.replace("reading water", "reading water and paying rent"))
-        with self.assertRaisesRegex(serial.Stop, r"located in our request: 'rent' in brief.md:1"):
-            self.run_new(fake)
-        with self.assertRaises(serial.Stop):
-            self.run_new(fake)
-        self.assertEqual(fake.asked, ["pitch"])
+        for brief, echo in ((b"He rents a room above the flooded underpass.\n", "paying rent"), (b"He owes Mara.\n", "owed")):
+            with self.subTest(echo=echo):
+                self.brief.write_bytes(brief)
+                fake = Fake(pitch=BIBLE.replace("reading water", f"reading water, {echo}"))
+                with self.assertRaisesRegex(serial.Stop, r"located in our request: '\w+' in brief.md:1"):
+                    self.run_new(fake)
+                with self.assertRaises(serial.Stop):
+                    self.run_new(fake)
+                self.assertEqual(fake.asked, ["pitch"])
+                serial.redraw("slot", 0)
+                (self.root / "serial.json").unlink()
+
+    def test_a_kill_after_any_write_resumes_without_buying_anything_twice(self):
+        told = "Nobody moved. Nobody spoke. Nothing came. He waited the way he always waited."
+        for kill_at in range(1, 12):
+            with self.subTest(kill_at=kill_at), tempfile.TemporaryDirectory() as home, \
+                    patch.dict(os.environ, {"LITHARNESS_HOME": home}):
+                fake, writes, real = Fake(draft=partial(draft_for, extra=told), rewrite="1. Everyone froze.\n"), [0], serial.keep
+                def keep(*args):
+                    writes[0] += 1
+                    real(*args)
+                    if writes[0] == kill_at:
+                        raise KeyboardInterrupt
+                with patch.object(serial, "keep", side_effect=keep):
+                    for _ in range(3):
+                        try:
+                            self.run_new(fake, words=500)
+                            self.run_next(fake)
+                            break
+                        except KeyboardInterrupt:
+                            pass
+                self.assertEqual(fake.asked, ["pitch", "plan", "draft", "rewrite"])
+                self.assertEqual(serial.status("slot").count("hand-edited"), 0)
 
     def test_resume_adopts_a_finished_call_and_spends_nothing_again(self):
         fake = Fake()
@@ -166,6 +194,9 @@ class CliTests(unittest.TestCase):
                 patch.object(cli.files, "box_lock", return_value=Path(home) / "box.lock"), \
                 contextlib.redirect_stderr(io.StringIO()) as err:
             files.save(Path(home) / "canary.json", {"codex": {"version": "codex-cli 1"}})
+            self.assertEqual(cli.main(["next", "nothing-here"]), 1)
+            self.assertFalse((Path(home) / "serials" / "nothing-here").exists())
+            (Path(home) / "serials" / "slot").mkdir(parents=True)
             self.assertEqual(cli.main(["next", "slot"]), 1)
             self.assertFalse((Path(home) / "box.lock").exists())
         self.assertIn("codex-cli 2 has not passed the canary", err.getvalue())

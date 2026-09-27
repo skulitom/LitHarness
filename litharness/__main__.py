@@ -12,31 +12,28 @@ from . import checks, files, serial, sheet, transport
 def check(path: Path, stage: str, slug: str | None) -> tuple[list[str], str]:
     """Every deterministic check on any text; without a serial it is chapter 1 with no plan or bible."""
     raw, root = files.read(path).replace("\r\n", "\n"), serial.folder(slug) if slug else None
-    found = re.fullmatch(r"ch(\d\d)", path.resolve().parent.name)
-    inside = bool(root and found and path.resolve().parent.parent == root.resolve())
-    n = int(found[1]) if inside else 0 if stage == "plan" and not root else 1
+    inside = [p.name for p in path.resolve().parents if root and p.parent == root.resolve()]
+    n = int(inside[0][2:]) if inside and re.fullmatch(r"ch\d\d", inside[0]) else 0 if stage == "plan" and not root else 1
     bible = serial.text(root, "ch00/bible.md") if root else ""
-    ranks = sheet.ladder(checks.section(bible, "System") or "")
+    ranks, before = sheet.ladder(checks.section(bible, "System") or ""), sheet.read(
+        serial.text(root, f"ch{n - 1:02d}/sheet.txt") if root and n else "")
+    if stage == "plan" and "=== PLAN ===" not in raw:  # a stored plan.md: its state is the file beside it
+        state = files.read(path.parent / "state.md") if (path.parent / "state.md").is_file() else ""
+        raw = f"=== STATE ===\n{state}\n=== PLAN ===\n{raw}"
     if stage != "chapter":
-        return checks.hard(stage, raw, n=n, ranks=ranks), ""
+        return checks.hard(stage, raw, n=n, ranks=ranks, before=before), ""
     body, counts = checks.normalize(raw)
     plan = serial.text(root, f"ch{n:02d}/plan.md") if root else ""
     context = {"target": files.load(root / "serial.json")["words"] if root else 1500, "n": n, "ranks": ranks,
-               "before": sheet.read(serial.text(root, f"ch{n - 1:02d}/sheet.txt") if root else "")}
+               "before": before}
     fails = checks.hard("chapter", body, raw=raw, rise_plan=checks.planned(plan), **context)
     return fails, checks.report(body, raw=raw, plan=plan, bible=bible, normalized=counts, **context)
 
 
-def pinned(binary: Path) -> str:
-    """The installed CLI version once it has passed the canary; new and next spend on nothing else."""
-    version, record = transport.preflight(binary), files.home() / "canary.json"
-    if (files.load(record) if record.is_file() else {}).get("codex", {}).get("version") != version:
-        raise serial.Stop(f"{version} has not passed the canary; run: python -m litharness canary")
-    return version
-
-
 def spend(args: argparse.Namespace) -> int:
     """new, next and canary: the box lock, then the canary pin, then the serial lock."""
+    if args.verb == "next" and not serial.folder(args.slug).is_dir():
+        raise serial.Stop(f"there is no serial {args.slug}; run: new {args.slug} --brief FILE")
     binary, box = transport.native_binary(), files.box_lock()
     files.lock(box, f"{args.verb} {getattr(args, 'slug', '-')}")
     try:
@@ -44,7 +41,9 @@ def spend(args: argparse.Namespace) -> int:
             leaked = transport.canary(binary, serial.MODEL, serial.EFFORT)
             print(f"canary: leaked {', '.join(leaked)}" if leaked else f"canary: NONE; {transport.CLI[str(binary)]} pinned")
             return 1 if leaked else 0
-        version, root = pinned(binary), serial.folder(args.slug)
+        version, root, record = transport.preflight(binary), serial.folder(args.slug), files.home() / "canary.json"
+        if (files.load(record) if record.is_file() else {}).get("codex", {}).get("version") != version:
+            raise serial.Stop(f"{version} has not passed the canary; run: python -m litharness canary")
         files.lock(root / "lock", f"{args.verb} {args.slug}")
         try:
             if args.verb == "new":
@@ -89,6 +88,8 @@ def main(argv: list[str] | None = None) -> int:
             print("\n".join(fails or ["hard checks: all pass"]) + ("\n\n" + report if report else ""))
             return 1 if fails else 0
         elif args.verb == "redraw":
+            if not serial.folder(args.slug).is_dir():
+                raise serial.Stop(f"there is no serial {args.slug}")
             lock = serial.folder(args.slug) / "lock"
             files.lock(lock, f"redraw {args.slug}")
             try:

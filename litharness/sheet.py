@@ -16,18 +16,20 @@ def key(label: str) -> str:
 
 
 def ladder(bible: str) -> list[str]:
+    """Rank names, lowest first: the Ladder line up to its first sentence end, parentheticals dropped."""
     found = re.search(r"\bLadder\**[ \t]*:[ \t]*(.+)$", bible, re.M | re.I)
-    names = re.split(r"\s*(?:,|;|->|→|>|\|)\s*", found[1]) if found else []
+    line = re.sub(r"\([^)]*\)", "", found[1]).split(". ")[0] if found else ""
+    names = re.split(r"\s*(?:,|;|->|→|>|\|)\s*(?:(?:and|or|then)\s+)?|\s+(?:and|or|then)\s+", line)
     return [name.strip(" .*`") for name in names if name.strip(" .*`")]
 
 
 def value(raw: str, ranks: list[str]) -> tuple[int, int | None] | None:
     """(number, pool size or None for a plain value), or None when it is not a value."""
-    raw = raw.strip().strip("*`")
+    raw = re.sub(r"(?<=\d),(?=\d{3}\b)", "", raw.strip().strip("*`"))
     pool = POOL.match(raw)
     if pool:
         return int(pool[1]), int(pool[2])
-    if raw.isdigit():
+    if raw.isdecimal():
         return int(raw), None
     names = [key(name) for name in ranks]
     return (names.index(key(raw)) + 1, None) if key(raw) in names else None
@@ -41,12 +43,7 @@ def order(raw: str, ranks: list[str]) -> int | None:
 
 def fields(text: str) -> list[tuple[str, str, int]]:
     """(label, raw value, offset) for every status line shaped Label: value, in page order."""
-    found = []
-    for line in STATUS.finditer(text):
-        field = FIELD.match(line[1])
-        if field:
-            found.append((field[1], field[2], line.start()))
-    return found
+    return [(field[1], field[2], line.start()) for line in STATUS.finditer(text) if (field := FIELD.match(line[1]))]
 
 
 def start(bible: str) -> dict[str, str]:

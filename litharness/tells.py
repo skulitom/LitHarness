@@ -1,11 +1,6 @@
-"""Narration-only AI-tell counter, ported from the incumbent's domain/tells.py.
-
-Six sentence shapes the operator's reads named, each a frozen pattern over one sentence, held
-to the highest rate per 1,000 words any placed shelf opening reaches. It judges nothing and has
-no ear: a page under every ceiling is merely not that, and a rewrite can read worse and carry no
-family ("like a bar of soap goes"). Speech, italic spans and System lines are never counted.
-"""
-
+"""Narration-only AI-tell counter, ported from the incumbent's domain/tells.py: sentence shapes the operator's
+reads named, held to the highest rate per 1,000 words a shelf opening reaches. It has no ear: a rewrite can read
+worse and carry no family ("like a bar of soap goes"). Speech, italics and System lines are never counted."""
 from __future__ import annotations
 
 import re
@@ -13,14 +8,10 @@ from collections import Counter
 from statistics import median
 
 WORD = re.compile(r"\b\w+(?:['’\-]\w+)*\b")
-# The shelf's longest sentence (35, 30, 33 words); short is reported only, as it overlaps the shelf.
-LONG_WORDS, SHORT_WORDS, CHAIN_ANDS = 35, 4, 3
-#: Family -> the shelf's highest located sentences per 1,000 words. Sentences over 35 words are
-#: located as "long" and reported beside the families, never counted as one.
-CEILINGS: dict[str, float] = {"absence": 2.6, "paradox": 0.0, "the_way": 0.6, "echo": 1.0,
-                              "chained_and": 0.5}
-#: Word families, on narration only: a clause built on an absence or opening on a "not"; one word
-#: around without/not/than, or a definition by contrast; the way somebody always does a thing.
+LONG_WORDS, SHORT_WORDS, CHAIN_ANDS = 35, 4, 3  # the shelf's longest sentences ran 35, 30 and 33 words
+# The shelf's ceilings per 1,000 words; sentences over 35 words are located as "long" beside them, never a family.
+CEILINGS: dict[str, float] = {"absence": 2.6, "paradox": 0.0, "the_way": 0.6, "echo": 1.0, "chained_and": 0.5}
+# Narration only: an absence or an opening "not"; a word turned back on itself; the way somebody always does it.
 PATTERNS: dict[str, re.Pattern[str]] = {
     "absence": re.compile(r"\b(?:nobody|no one|no-one|nothing|never)\b|^(?:not|no)\s+\w", re.I),
     "paradox": re.compile(

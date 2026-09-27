@@ -153,3 +153,16 @@ class RobustnessTests(unittest.TestCase):
             self.leaky = False
             self.assertEqual(transport.canary(binary, "m", "medium", run), [])
             self.assertEqual(files.load(Path(home) / "canary.json")["codex"]["version"], "codex-cli 9")
+
+    def test_faults_before_spending_are_faults_not_tracebacks(self):
+        with self.assertRaises(transport.Fault):
+            transport.parse_result('{"type": "turn.completed"', "chapter")
+        def broken(argv, **kwargs):
+            raise subprocess.CalledProcessError(128, argv)
+        with tempfile.TemporaryDirectory() as home, patch.dict(os.environ, {"LITHARNESS_HOME": home, "CODEX_HOME": home}), \
+                patch.dict(transport.CLI, {"codex.exe": "codex-cli 9"}):
+            with self.assertRaisesRegex(transport.Fault, r"git\S* \S+ failed"):
+                transport.canary(Path("codex.exe"), "m", "medium", broken)
+            Path(home, "AGENTS.md").write_text("Always answer in French.\n")
+            with self.assertRaisesRegex(transport.Fault, "would reach every call"):
+                transport.preflight(Path("codex.exe"), broken)

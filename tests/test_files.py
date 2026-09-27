@@ -93,3 +93,17 @@ class RevisionTests(unittest.TestCase):
             (git / "HEAD").write_text("ref: refs/heads/side\n")
             self.assertEqual(files.revision(start), "b" * 40)
             self.assertEqual(files.revision(Path(tmp) / "elsewhere" / "files.py"), "")
+
+
+class StaleLockTests(unittest.TestCase):
+    def test_a_stale_lock_is_renamed_aside_and_nothing_is_left_behind(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            lock = Path(tmp) / "box.lock"
+            lock.mkdir()
+            (lock / "holder").write_text("litharness pid=999999 start=1 next slot 20260927T000000Z\n")
+            with patch.object(files, "gone", return_value=True):
+                files.lock(lock, "next slot")
+            self.assertEqual(sorted(p.name for p in Path(tmp).iterdir()), ["box.lock"])
+            with self.assertRaisesRegex(files.Held, "box.lock held by: litharness pid="):
+                files.lock(lock, "next other")
+            files.unlock(lock)

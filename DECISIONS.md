@@ -10,10 +10,10 @@ incumbent stays at tag `legacy/incumbent-2026-09-27` and branch `legacy/main`, L
 data moves to `C:\DEV\LitHarness-archive` under a manifest, never deleted. (plan 1, 2.17, 6)
 
 ## 2026-09-27 stdlib-line-cap
-`litharness/` imports only the standard library (Python 3.11+, a signed-in Codex CLI): at most 1,300 physical
-lines, any file <=350, tests no longer than the runtime; no database, queue, MCP server, pyproject or
-dependency. 230 lines are reserved for triggered admissions; when a budget runs out, reports are cut first
-(address, cast, digits). Raising a cap is its own one-line commit naming the case. (plan 1.1, 3.2, 5)
+`litharness/` imports only the standard library (Python 3.11+, a signed-in Codex CLI): any file <=350, tests no
+longer than the runtime; no database, queue, MCP server or dependency. The first build plus the review's fixes
+came to 1,314 lines against the plan's 1,070: the address, cast and digits reports were cut and the 1,300 cap
+became 1,350 (bb87c71). No admission reserve is left; each needs its own one-line cap commit. (plan 3.2, 5)
 
 ## 2026-09-27 data-root
 Serials are plain-file folders under `$LITHARNESS_HOME` (default `~/LitHarness-data`), outside every git tree.
@@ -68,12 +68,13 @@ Defaults: Codex `gpt-6-astra` at medium effort, close third person, past tense. 
 `transport.py` from an empty temp directory with no `.git` above it; `canary` pins the CLI version. `claude()`
 exists only if the bench is built, and never generates. (plan 3.7, 3.8)
 
-## 2026-09-27 admission-rule
-A component is admitted only when all hold: the trigger is a named failure on a real chapter from this system,
-committed first as a failing fixture; the fix is the cheapest class that works, never a register clause; the
-commit states net lines and budgets pass; a change to calls or to what the writer sees is judged by the
-operator's read of the redrawn chapter, and a bench report only describes. (plan 4)
+## 2026-09-27 admission-and-deletion
+Admitted only when the trigger is a named failure on a real chapter, committed first as a failing fixture; the
+fix is the cheapest class, never a register clause; net lines stated; a change to calls or to what the writer
+sees is judged by the operator's read. Code off the chapter path and unexercised by a fixture is deleted
+(530f40e); experiments are frozen under `experiments/`, never imported. (plan 4, 11; AGENTS.md)
 
-## 2026-09-27 deletion-rule
-Code off the chapter path and unexercised by a fixture is deleted (530f40e); citations never keep code alive.
-Experiments are frozen in `experiments/<date>-<name>/`, never imported, code deleted when done. (plan 4, 11)
+## 2026-09-27 pitch-lexicon
+inspect, inspection, inspector and permit left the pitch `money` list for `admin`: on the six read-21 concepts,
+inspect* fired in 5, mostly as a System mechanic or a physical check, and "permits" once as a verb. Lite's
+plan.md:7 still fails on council and probation. (plan 3.6 one-false-positive rule; commit 6ef1a46)

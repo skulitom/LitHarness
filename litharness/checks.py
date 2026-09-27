@@ -12,9 +12,10 @@ MONEY_WORDS = (
     "salary", "salaries", "paychecks?", "payday", "payments?", "debts?", "owe", "owes", "owed", "owing",
     "loans?", "ledgers?", "invoices?", "overdraft", "budgets?", "repay", "creditors?", "licences?",
     "licenses?", "unpaid", "obligations?", "currency")
-INSTITUTIONAL = ("courts?", "clerks?", "council", "probation", "paperwork", "contracts?", "deeds?", "tax", "money")
-ADMIN_WORDS = ("court", "clerk", "council", "inspection", "probation", "paperwork", "permit",
-               "contract", "deed", "tax", "paid", "price", "coin", "cash", "bank", "money")
+INSTITUTIONAL = ("courts?", "clerks?", "council", "probation", "inspectors?", "paperwork", "contracts?", "deeds?",
+                 "tax", "money")
+ADMIN_WORDS = ("courts?", "clerks?", "council", "inspect", "inspections?", "inspectors?", "probation", "paperwork",
+               "permits?", "contracts?", "deeds?", "tax", "paid", "prices?", "coins?", "cash", "banks?", "money")
 LABELS = ("Title|Rise|Ladder|Start|Age|Listing|Person|Exception|First use|Threat|Prize|People|Limits|Where"
           "|Held|Open|So far|Opening|Movements|Options|Ending")
 BIBLE = ("Listing", "Person", "Exception", "First use", "Threat", "Prize", "System", "People", "Limits")
@@ -26,15 +27,14 @@ def lexicon(*words: str) -> re.Pattern[str]:
 
 
 MONEY, PITCH_MONEY, ADMIN = lexicon(*MONEY_WORDS), lexicon(*MONEY_WORDS, *INSTITUTIONAL), lexicon(*ADMIN_WORDS)
-LEAK = re.compile(rf"^[ \t]*(?:#.*|={{3,}}.*|(?:{LABELS})[ \t]*:.*)$|\b(?:Chapter|Scene)[ \t]+"
-                  r"(?:\d+|[IVX]+|One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)\b", re.M)
+LEAK = re.compile(rf"^[ \t>*_]*(?:#.*|={{3,}}.*|(?:{LABELS})[*_]*[ \t]*:.*)$|\b(?:Chapter|CHAPTER|Scene|SCENE)"
+                  r"[ \t]+(?:\d+|[IVXL]+\b|(?i:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve"
+                  r"|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty))\b", re.M)
 SCHEMA = re.compile(r"\b(?:Ladder|Rung|Sheet|Standing|Listing|Prize|Exception)\b")
-FIRST = re.compile(r"\b(?:I|[Mm]e|[Mm]y|[Mm]ine|[Mm]yself|[Ww]e|[Uu]s|[Oo]ur|[Oo]urs|[Oo]urselves)\b")
-RISE = re.compile(r"^[ \t*]*Rise\**[ \t]*:[ \t]*(.+?)[ \t]*:[ \t]*(.+?)[ \t]*(?:->|→)[ \t]*(.+?)[ \t]*\|"
+FIRST = re.compile(r"\b(?:I|[Mm]e|[Mm]y|[Mm]yself|[Ww]e|[Uu]s|[Oo]ur|[Oo]urs|[Oo]urselves)\b")
+RISE = re.compile(r"^[ \t>*_-]*Rise\**[ \t]*:\**[ \t]*(.+?)[ \t]*:[ \t]*(.+?)[ \t]*(?:->|→)[ \t]*(.+?)[ \t]*\|"
                   r"[ \t]*movement[ \t]*(\d+)[ \t]*\|[ \t]*(.*?)[ \t]*$", re.M | re.I)
-NUMBERS = lexicon(r"\d[\d,.]*", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-                  "ten", "eleven", "twelve", "twenty", "thirty", "forty", "fifty", "hundred", "thousand")
-YOU, ITALIC, AGE = re.compile(r"\byou\b", re.I), re.compile(r"(?<![*\w])\*[^*\n]+\*"), r"Age\**[ \t]*:[ \t*]*(\d+)"
+AGE = r"Age\**[ \t]*:[ \t*]*(\d+)"
 
 
 def around(text: str, start: int, end: int) -> str:
@@ -53,31 +53,42 @@ def money(text: str, stage: str) -> list[tuple[str, str]]:
 
 
 def section(text: str, name: str) -> str | None:
-    found = re.search(rf"^##[ \t]*{re.escape(name)}[ \t]*:?[ \t]*$(.*?)(?=^#|^===|\Z)", text, re.M | re.S | re.I)
+    found = re.search(rf"^##[ \t]*\**{re.escape(name)}\**[ \t]*:?[ \t]*$(.*?)(?=^#|^===|\Z)", text, re.M | re.S | re.I)
     return found[1].strip() if found else None
 
 
 def items(body: str | None) -> int:
-    marked = re.findall(r"^[ \t]*(?:[-*]|\d+[.)])[ \t]+\S", body or "", re.M)
-    return len(marked) or len([line for line in (body or "").splitlines() if line.strip()])
+    """Entries of a list: markers at the list's outermost indent, or non-empty lines when unmarked."""
+    marks = re.findall(r"^([ \t]*)(?:[-*]|\**\d+[.)])[ \t]+\S", body or "", re.M)
+    return marks.count(min(marks, key=len)) if marks else len([s for s in (body or "").splitlines() if s.strip()])
 
 
 def title(text: str, stage: str) -> str:
-    found = re.search(r"^#[ \t]+(.+)$" if stage == "pitch" else r"^[ \t*]*Title\**[ \t]*:[ \t]*(.+)$", text, re.M)
+    found = re.search(r"^#[ \t]+(.+)$" if stage == "pitch" else r"^[ \t>*_-]*(?:#+[ \t]*)?Title\**[ \t]*:\**[ \t]*(.+)$",
+                      text, re.M)
     return found[1].strip(" *") if found else ""
+
+
+def initial(text: str, start: int) -> bool:
+    """Whether text[start:] opens a sentence or a quoted speech."""
+    before = text[:start].rstrip(" \t*_")
+    opened, before = before[-1:] in {'"', "“", "‘", "'"}, before.rstrip(" \t*_\"“”‘’'")
+    return before[-1:] in {"", ".", "!", "?", "…", "\n"} or (opened and before[-1:] in {",", ":"})
 
 
 def leak(text: str, whole_title: bool = False) -> list[str]:
     found = [m.group().strip() for m in LEAK.finditer(text)]
-    found += [around(text, m.start(), m.end()) for m in SCHEMA.finditer(text)
-              if whole_title or text[:m.start()].rstrip(" \t\"“‘'*_")[-1:] not in {"", ".", "!", "?", "\n"}]
+    found += [around(text, m.start(), m.end()) for m in SCHEMA.finditer(text) if whole_title or not initial(text, m.start())]
     return [f"leak: {quote}" for quote in found]
 
 
 def person(raw: str) -> list[str]:
+    """First-person narration; an I closing a mid-sentence Title Case run (Tier I, Hold Breath I) is a numeral."""
     told = tells.narration(raw)
-    rate = 1000 * len(FIRST.findall(told)) / max(tells.words(raw), 1)
-    quotes = " | ".join([s for s in tells.sentences(told) if FIRST.search(s)][:3])
+    found = [m for m in FIRST.finditer(told)
+             if m.group() != "I" or not re.search(r"[a-z,;] [A-Z]\w* $", told[max(0, m.start() - 60):m.start()])]
+    rate = 1000 * len(found) / max(tells.words(raw), 1)
+    quotes = " | ".join(dict.fromkeys(around(told, m.start(), m.end()) for m in found[:6]))
     return [f"person: {rate:.1f} first-person words per 1k in narration: {quotes}"] if rate > 2 else []
 
 
@@ -91,13 +102,17 @@ def first_rise(events: list[tuple], known: bool) -> int | None:
 
 
 def rise(chapter: str, n: int, before: dict, ranks: list[str], rise_plan=None) -> list[str]:
-    fails, first = [], first_rise(sheet.replay(before, chapter, ranks)[1], bool(before))
-    if rise_plan and not any(sheet.key(label) == sheet.key(rise_plan[0]) and sheet.value(raw, ranks)
-                             == sheet.value(rise_plan[2], ranks) for label, raw, _ in sheet.fields(chapter)):
-        fails.append(f"rise: the planned [{rise_plan[0]}: {rise_plan[2]}] is not printed")
+    """The planned label rises to its planned value on the page (pools by their size); in chapter 1 that
+    rise, or without a plan the first rise, comes before the word midpoint."""
+    events, fails = sheet.replay(before, chapter, ranks)[1], []
+    first = first_rise(events, bool(before))
+    if rise_plan:
+        first = next((e[4] for e in events if e[0] in {"rise", "new"} and sheet.key(e[1]) == sheet.key(rise_plan[0])
+                      and sheet.order(e[3], ranks) == sheet.order(rise_plan[2], ranks)), None)
+        fails += [f"rise: the planned [{rise_plan[0]}: {rise_plan[2]}] is not printed as a rise"] * (first is None)
     if n == 1 and not sheet.STATUS.search(chapter):
         fails.append("rise: chapter 1 has no status line")
-    elif n == 1 and (first is None or tells.words(chapter[:first]) > tells.words(chapter) / 2):
+    elif n == 1 and (first is None or tells.words(chapter[:first]) > tells.words(chapter) / 2) and not fails:
         fails.append("rise: chapter 1's first rise is missing or after the word midpoint")
     return fails
 
@@ -142,11 +157,11 @@ def split(output: str) -> tuple[str, str] | None:
     return (parts[2].strip() + "\n", parts[4].strip() + "\n") if parts[1::2] == ["STATE", "PLAN"] else None
 
 
-def plan_shape(output: str, n: int, ranks: list[str]) -> list[str]:
+def plan_shape(output: str, n: int, ranks: list[str], before: dict | None = None) -> list[str]:
     if not (halves := split(output)):
         return ["plan-shape: needs '=== STATE ===' then '=== PLAN ===', once each"]
-    (state, plan), rise_plan = halves, planned(halves[1])
-    moves = re.findall(r"^[ \t]*\d+[.)][ \t]+\S", section(plan, "Movements") or "", re.M)
+    (state, plan), rise_plan, before = halves, planned(halves[1]), before or {}
+    moves = re.findall(r"^[ \t]*\**\d+[.)]\**[ \t]+\S", section(plan, "Movements") or "", re.M)
     fails = [f"'## {h}' missing" for part, names in ((state, STATE), (plan, PLAN)) for h in names
              if section(part, h) is None]
     fails += ["no 'Title:' line"] * (not title(plan, "plan"))
@@ -160,6 +175,11 @@ def plan_shape(output: str, n: int, ranks: list[str]) -> list[str]:
         fails.append("'Rise: Label: old -> new | movement k | the act' is missing, unparseable or lacks its act")
     elif n == 1 and rise_plan[3] != "1":
         fails.append("chapter 1's Rise is not in movement 1")
+    elif before and sheet.key(rise_plan[0]) not in {sheet.key(label) for label in before} and sheet.order(
+            rise_plan[1], ranks):
+        fails.append(f"the Rise label {rise_plan[0]} is not on the sheet, and {rise_plan[1]} is not a new label's 0")
+    elif (new := sheet.order(rise_plan[2], ranks)) is not None and new <= (sheet.order(rise_plan[1], ranks) or 0):
+        fails.append(f"the Rise {rise_plan[1]} -> {rise_plan[2]} does not rise")
     return [f"plan-shape: {problem}" for problem in fails]
 
 
@@ -175,7 +195,7 @@ def hard(stage: str, text: str, *, raw: str = "", target: int = 1500, n: int = 1
     fails = [f"money: '{word}' in: {quote}" for word, quote in money(text, stage)]
     fails += leak(title(text, stage), whole_title=True) if stage != "chapter" else leak(text)
     if stage != "chapter":
-        return fails + (pitch_shape(text) if stage == "pitch" else plan_shape(text, n, ranks))
+        return fails + (pitch_shape(text) if stage == "pitch" else plan_shape(text, n, ranks, before))
     return (fails + person(raw or text) + rise(text, n, before, ranks, rise_plan)
             + fields(text, before, ranks) + length(text, target))
 
@@ -184,7 +204,7 @@ def normalize(raw: str) -> tuple[str, dict]:
     """chapter.md from the raw draft: dashes to commas, a leading '# ' title lifted, breaks as ***."""
     body, counts = raw.replace("\r\n", "\n").strip(), {}
     body, counts["title"] = re.subn(r"\A#[ \t]+.*(?:\n|\Z)", "", body)
-    body, closing = re.subn(r"[ \t]*[—–]+[ \t]*(?=[\"”’)]|$)", ",", body, flags=re.M)
+    body, closing = re.subn(r"[ \t]*[—–]+[ \t]*(?=[\"”’)*_]|$)", ",", body, flags=re.M)
     body, inner = re.subn(r"[ \t]*[—–]+[ \t]*", ", ", body)
     body, counts["breaks"] = re.subn(r"^[ \t]*(?:[*\-_~=][ \t]*){3,}$", "***", body, flags=re.M)
     body, counts["dashes"] = re.sub(r"\*\*\*(?:\s*\n\s*\*\*\*)+", "***", body).strip(), closing + inner
@@ -198,8 +218,7 @@ def rate(count: int, text: str) -> str:
 def report(chapter: str, *, raw: str = "", target: int = 1500, n: int = 1, plan: str = "", bible: str = "",
            before=None, ranks=(), fixes=(), usage: str = "", normalized: dict | None = None) -> str:
     """report.md: every inert report, located. It never blocks and never reaches a model."""
-    before, ranks, count, told, body = before or {}, list(ranks), tells.words(chapter), tells.narration(
-        raw or chapter), sheet.STATUS.sub("", chapter)
+    before, ranks, count = before or {}, list(ranks), tells.words(chapter)
     low, high = round(0.8 * target), round(4 * target / 3)
     out = [f"- len-band: {count} words" + ("" if low <= count <= high else f", outside {low}-{high}")]
     for name, text in (("plan", plan), ("chapter", chapter)) if plan else (("chapter", chapter),):
@@ -210,15 +229,10 @@ def report(chapter: str, *, raw: str = "", target: int = 1500, n: int = 1, plan:
     out.append("- tells: " + ", ".join(f"{f} {r:.1f}/{tells.CEILINGS[f]}" for f, r in rates.items())
                + f"; median sentence {shape['median']:.0f} words, under 4 words {shape['short_share']:.0%}")
     out += [f"  - {f}: {q}" for f in [*tells.over(chapter), "long"] for q in located[f][:4]]
-    numbers = hits(NUMBERS, body)
-    out += [f"- digits: {rate(len(numbers), body)}"] + [f"  - {q}" for _, q in numbers[:3]]
-    names = Counter(m.group() for m in re.finditer(r"\b[A-Z][a-z]+\b", body)
-                    if body[:m.start()].rstrip(" \t\"“‘'*_")[-1:] not in {"", ".", "!", "?", "\n"})
-    cast = sorted(name for name, k in names.items() if k >= 2)
-    out.append(f"- cast: {len(cast)} named{' (over 5)' if len(cast) > 5 else ''}: {', '.join(cast)}")
     if n == 1 and bible:
         person, used = section(bible, "Person") or "", re.findall(r"(?<=[a-z,;] )[A-Z][a-z]+", section(bible, "First use") or "")
-        name, age = re.search(r"[A-Z][a-z]+", person), re.search(AGE, person)
+        name = re.search(r"[A-Z][a-z]+", re.sub(r"^\W*(?:His\s+)?name\W*", "", person, flags=re.I))
+        age = re.search(AGE, person)
         units = ["", "[- ]one", "[- ]two", "[- ]three", "[- ]four", "[- ]five", "[- ]six", "[- ]seven", "[- ]eight", "[- ]nine"]
         spoken = age and 20 <= int(age[1]) <= 29 and rf"{age[1]}|twenty{units[int(age[1]) - 20]}"
         for what, pattern in (("name", name and name.group()), ("age", spoken or (age and age[1]))):
@@ -231,14 +245,12 @@ def report(chapter: str, *, raw: str = "", target: int = 1500, n: int = 1, plan:
         spellings.setdefault(sheet.key(label), set()).add(label)
     out.append(f"- sheet: {sum(e[0] == 'rise' for e in events)} rises, first at word "
                f"{tells.words(chapter[:first]) if first is not None else 'none'}; {len(after)} labels")
-    out += [f"  - {e[0]} {e[1]}: {e[2] + ' -> ' if e[2] else ''}{e[3]}" for e in events if e[0] in {"fall", "new"}]
+    planned_key = sheet.key((planned(plan) or ("",))[0])
+    out += [f"  - {e[0]} {e[1]}: {e[2] + ' -> ' if e[2] else ''}{e[3]}" for e in events
+            if e[0] == "fall" or (e[0] == "new" and sheet.key(e[1]) != planned_key)]
     out += [f"  - spelled {len(s)} ways: {sorted(s)}" for s in spellings.values() if len(s) > 1]
     out += [f"  - generic label: {label}" for label in after if sheet.key(label) in sheet.GENERIC]
     out += ["  - no status line"] * (not sheet.STATUS.search(chapter))
-    present = len(re.findall(r"\b(?:is|are|am)\b", told)), len(re.findall(r"\b(?:was|were)\b", told))
-    out.append(f"- address: 'you' in narration {rate(len(YOU.findall(told)), chapter)}, italics "
-               f"{rate(len(ITALIC.findall(raw or chapter)), chapter)}, present tense "
-               f"{present[0] / max(sum(present), 1):.0%} of is/are/am/was/were")
     out += [f"- normalized: {normalized}"] * bool(normalized)
     out += [f"- rewrite: {old} => {new}" for old, new in fixes] + [f"- usage: {usage}"] * bool(usage)
     return "\n".join(out) + "\n"

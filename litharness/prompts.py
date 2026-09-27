@@ -26,7 +26,7 @@ What the next rank gets him, in the words he used before the System.
 How it looks and speaks.
 Ladder: at least three rank names, lowest first, separated by commas.
 Start: one to six lines, each [Label: value], where a value is a whole number above zero,
-a rank from the Ladder, or a pool such as 1/3.
+a rank from the Ladder, or a pool n/m.
 ## People
 Up to three: name, want, how they talk.
 ## Limits

@@ -37,10 +37,7 @@ def keep(root: Path, name: str, body: str) -> None:
 
 
 def done(root: Path) -> int:
-    n = 0
-    while (root / f"ch{n + 1:02d}" / "report.md").is_file():
-        n += 1
-    return n
+    return next(n for n in range(100) if not (root / f"ch{n + 1:02d}" / "report.md").is_file())
 
 
 def totals(rows: list[dict]) -> dict:
@@ -54,7 +51,7 @@ def totals(rows: list[dict]) -> dict:
 def usage(root: Path, n: int) -> str:
     total = totals([files.load(p) for p in sorted((root / f"ch{n:02d}").glob("calls/*/receipt.json"))])
     tokens = total["input_tokens"] + total["output_tokens"]
-    draws = ", ".join(f"{name[5:]} {len(entry['draws'])} of {DRAWS}"
+    draws = ", ".join(f"{name[5:]} {entry['draws'][-1]['k']} of {entry['draws'][-1]['of']}"
                       for name, entry in manifest(root)["stages"].items()
                       if name.startswith(f"ch{n:02d}/") and entry["draws"])
     return (f"draws {draws}; {total['calls']} calls; {tokens} tokens (cached {total['cached_input_tokens']},"
@@ -86,10 +83,12 @@ def ask(calls: Path, name: str, prompt: str, call, binary: Path) -> tuple[str, s
 
 def locate(word: str, stage: str, parts: list[tuple[str, str, str]]) -> str | None:
     """Where our own request carries the money word the model returned (any listed form of it,
-    so 'rents' in the brief locates 'rent'), as file:line, or None."""
+    so 'rents' in the brief locates 'rent' and 'owes' locates 'owed'), as file:line, or None."""
+    def root(form: str) -> str:
+        return "owe" if form in {"owe", "owes", "owed", "owing"} else form[:4]
     for _, source, body in parts:
         for number, line in enumerate(body.splitlines(), 1):
-            if any(sent[:4] == word[:4] for sent, _ in checks.money(line, stage)):
+            if any(root(sent) == root(word) for sent, _ in checks.money(line, stage)):
                 return f"{source}:{number}"
     return None
 
@@ -106,19 +105,22 @@ def stage(root: Path, n: int, name: str, template: str, parts: list[tuple[str, s
     key, record = files.sha(repr(sorted(sent.items())).encode()), manifest(root)
     entry = record["stages"].setdefault(f"ch{n:02d}/{name}", {"draws": []})
     same = [draw for draw in entry["draws"] if draw["inputs"] == key]
-    calls = root / f"ch{n:02d}" / "calls"
-    if same and not same[-1]["fails"]:
+    calls, window = root / f"ch{n:02d}" / "calls", len(entry["draws"]) - len(same) + DRAWS
+    if same and not same[-1]["fails"] and (calls / same[-1]["dir"] / "final.md").is_file():
         return files.read(calls / same[-1]["dir"] / "final.md")
     while len(same) < DRAWS and not (same and same[-1]["located"]):
         k = len(entry["draws"]) + 1
-        print(f"ch{n:02d} {name}: draw {len(same) + 1} of {DRAWS}", flush=True)
+        print(f"ch{n:02d} {name}: draw {k} of {window}", flush=True)
         output, directory = ask(calls, f"{name}-d{k}", prompt, call, binary)
-        fails = check(output)
+        try:
+            fails = check(output)
+        except Exception as error:  # a check that breaks on an answer is recorded as a failed draw
+            fails = [f"check: {type(error).__name__}: {error}"]
         words = [fail.split("'")[1] for fail in fails if fail.startswith("money: ")]
         places = [f"'{w}' in {place}" for w in words if (place := locate(
             w, "pitch" if name == "pitch" else "chapter", [("", f"prompts.{name.upper()}", rendered), *parts]))]
-        same.append({"k": k, "dir": directory, "inputs": key, "sent": sent, "fails": fails,
-                     "located": places[0] if places else None})
+        same.append({"k": k, "of": window, "dir": directory, "inputs": key, "sent": sent, "fails": fails,
+                     "output": files.sha(output.encode()), "located": places[0] if places else None})
         entry["draws"].append(same[-1])
         files.save(root / "manifest.json", record)
         if not fails:
@@ -131,8 +133,10 @@ def stage(root: Path, n: int, name: str, template: str, parts: list[tuple[str, s
 def new(slug: str, brief_file: Path, words: int, binary: Path, version: str, call=transport.codex) -> Path:
     """Create the serial and draw its pitch (bible and start sheet) for the operator's glance."""
     root, brief = folder(slug), files.read(brief_file)
-    if not brief.strip() or tells.words(brief) > BRIEF_WORDS or not 500 <= words <= 5000:
-        raise ValueError(f"A brief is 1-{BRIEF_WORDS} words and a chapter 500-5000 words")
+    if not brief.strip() or tells.words(brief) > BRIEF_WORDS or not 500 <= words <= 1700:
+        # A draft request carries the bible, state, plan and a previous chapter of up to 1.8x the target:
+        # above 1,700 words it can pass MAX_REQUEST after chapter 1 is already paid for.
+        raise ValueError(f"A brief is 1-{BRIEF_WORDS} words and a chapter 500-1700 words")
     if not (root / "serial.json").is_file():
         root.mkdir(parents=True, exist_ok=True)
         keep(root, "brief.md", brief)
@@ -159,7 +163,7 @@ def chapter(root: Path, n: int, call, binary: Path) -> Path:
     if not (root / here / "plan.md").is_file():
         state = [("state", f"{last}/state.md", text(root, f"{last}/state.md"))] * (n > 1)
         output = stage(root, n, "plan", prompts.PLAN, base + state + previous,
-                       lambda out: checks.hard("plan", out, n=n, ranks=ranks), call, binary)
+                       lambda out: checks.hard("plan", out, n=n, ranks=ranks, before=before), call, binary)
         keep(root, f"{here}/state.md", checks.split(output)[0])
         keep(root, f"{here}/plan.md", checks.split(output)[1])
     plan = text(root, f"{here}/plan.md")
@@ -183,40 +187,43 @@ def chapter(root: Path, n: int, call, binary: Path) -> Path:
 
 def rewrite(root: Path, n: int, call, binary: Path) -> list[tuple[str, str]]:
     """When 2 or more tell families run over their ceilings, one call says the located sentences
-    again. A rewrite is kept only if it clears the counter and the money, leak and person checks.
-    The kept pairs are recorded before chapter.md changes, so a resumed run re-applies, never re-asks."""
-    record, name, body = manifest(root), f"ch{n:02d}/rewrite", text(root, f"ch{n:02d}/chapter.md")
+    again (only sentences that occur once, so a rewrite lands where it was located). A rewrite is kept,
+    normalized, only if it clears the counter and the money, leak and person checks. The pairs are
+    recorded first and applied to the normalized draft, so a resumed run re-applies, never re-asks."""
+    record, name = manifest(root), f"ch{n:02d}/rewrite"
+    base = checks.normalize(text(root, f"ch{n:02d}/final.md"))[0]
     if name not in record["stages"]:
-        located, over = tells.locate(body), tells.over(body)
-        wanted = list(dict.fromkeys(s for family in over for s in located[family])) if len(over) >= 2 else []
-        told, fixes = tells.sentences(body), []
-        lines = [prompts.REWRITE_LINE.format(i=i, ask=prompts.ASKS[next(f for f in over if s in located[f])],
+        located, over, told, fixes = tells.locate(base), tells.over(base), tells.sentences(base), []
+        wanted = [s for s in dict.fromkeys(s for f in over for s in located[f]) if base.count(s) == 1] * (len(over) > 1)
+        lines = [prompts.REWRITE_LINE.format(i=i, ask=" ".join(prompts.ASKS[f] for f in tells.CEILINGS if s in located[f]),
                                              before=told[told.index(s) - 1] if told.index(s) > 0 else "-", sentence=s)
                  for i, s in enumerate(wanted, 1)]
         request = prompts.REWRITE + "\n".join(lines) + "\n"
-        answer = ask(root / f"ch{n:02d}" / "calls", "rewrite-d1", request, call, binary)[0] if wanted else ""
+        asked = wanted and len(request) <= MAX_REQUEST
+        answer = ask(root / f"ch{n:02d}" / "calls", "rewrite-d1", request, call, binary)[0] if asked else ""
         for number, new in re.findall(r"^[ \t]*(\d+)\.[ \t]+(.+?)[ \t]*$", answer, re.M):
-            old = wanted[int(number) - 1] if 0 < int(number) <= len(wanted) else ""
-            if (old and old in body and not any(tells.locate(new)[f] for f in tells.CEILINGS)
+            old, new = wanted[int(number) - 1] if 0 < int(number) <= len(wanted) else "", checks.normalize(new)[0].strip()
+            if (old and not any(tells.locate(new)[f] for f in tells.CEILINGS)
                     and not (checks.money(new, "chapter") or checks.leak(new) or checks.person(new))):
                 fixes.append((old, new))
-        record["stages"][name] = {"draws": [], "fixes": fixes}
+        record["stages"][name] = {"draws": [], "fixes": fixes, "skipped": bool(wanted) and not asked}
         files.save(root / "manifest.json", record)
-    fixes, changed = [tuple(fix) for fix in record["stages"][name]["fixes"]], body
+    fixes = [tuple(fix) for fix in record["stages"][name]["fixes"]]
     for old, new in fixes:
-        changed = changed.replace(old, new, 1)
-    if changed != body:
-        keep(root, f"ch{n:02d}/chapter.md", changed)
+        base = base.replace(old, new, 1)
+    keep(root, f"ch{n:02d}/chapter.md", base)
     return fixes
 
 
-def next_chapters(slug: str, count: int, binary: Path, call=transport.codex) -> list[Path]:
+def next_chapters(slug: str, count: int, binary: Path, call=transport.codex):
+    """Yields each chapter's report as it is finished, so a later stop never hides earlier chapters."""
     root = folder(slug)
     if not (root / "ch00" / "bible.md").is_file():
         raise Stop(f"{slug} has no pitch yet; run: new {slug} --brief FILE")
     if not 1 <= count <= MAX_CHAPTERS:
         raise ValueError(f"-n is 1 to {MAX_CHAPTERS}")
-    return [chapter(root, done(root) + 1, call, binary) for _ in range(count)]
+    for _ in range(count):
+        yield chapter(root, done(root) + 1, call, binary)
 
 
 def redraw(slug: str, start: int) -> Path:
@@ -225,13 +232,14 @@ def redraw(slug: str, start: int) -> Path:
     moving = [p for p in sorted(root.glob("ch[0-9][0-9]")) if int(p.name[2:]) >= start]
     if not moving:
         raise Stop(f"{slug} has nothing at or after ch{start:02d}")
-    aside, record = root / "attempts" / files.utc(), manifest(root)
+    record, stamp = manifest(root), files.utc()
+    aside = next(p for i in range(1000) if not (p := root / "attempts" / (stamp + f"-{i}" * bool(i))).exists())
     aside.mkdir(parents=True)
     files.save(aside / "manifest.json", record)
-    for path in moving:
+    for path in reversed(moving):  # last first, so a failure part way leaves an unbroken prefix of chapters
         path.rename(aside / path.name)
-    record["stages"] = {k: v for k, v in record["stages"].items() if int(k[2:4]) < start}
-    files.save(root / "manifest.json", record)
+        record["stages"] = {k: v for k, v in record["stages"].items() if not k.startswith(path.name + "/")}
+        files.save(root / "manifest.json", record)
     return aside
 
 

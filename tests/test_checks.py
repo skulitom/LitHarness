@@ -16,20 +16,12 @@ FIXTURES = json.loads((Path(__file__).parent / "fixtures.json").read_bytes())
 LITE = checks.normalize(files.read(OPENING / "lite" / "chapter.md"))[0]
 
 
-def reported(text, pattern):
-    found = re.search(pattern, checks.report(text))
-    return bool(found and found[1] != "0")
-
-
 CATCHES = {
     "money": lambda text, stage: checks.money(text, stage),
     "leak": lambda text, stage: checks.leak(text, whole_title=stage != "chapter"),
     "person": lambda text, stage: checks.person(text),
     "admin": lambda text, stage: checks.hits(checks.ADMIN, text),
     "tells": lambda text, stage: any(tells.locate(text).values()),
-    "digits": lambda text, stage: reported(text, r"- digits: (\d+)"),
-    "cast": lambda text, stage: "(over 5)" in checks.report(text),
-    "address": lambda text, stage: reported(text, r"'you' in narration (\d+)"),
 }
 BIBLE = """# One Slot, Open Water
 ## Listing
@@ -106,7 +98,7 @@ class FixtureTests(unittest.TestCase):
             self.assertTrue(checks.money(f"She never spoke of the {word} again.", "chapter"), word)
         for word in [f for w in checks.INSTITUTIONAL for f in forms(w)]:
             self.assertTrue(checks.money(f"He saw the {word} there.", "pitch"), word)
-        for word in checks.ADMIN_WORDS:
+        for word in [f for w in checks.ADMIN_WORDS for f in forms(w)]:
             self.assertTrue(checks.hits(checks.ADMIN, f"It was the {word}."), word)
         for sentence in ("His wage was late.", "The wages came."):
             self.assertTrue(checks.money(sentence, "chapter"), sentence)
@@ -161,6 +153,33 @@ class DocumentTests(unittest.TestCase):
         for line in ("fall Rank: Bronze -> Iron", "new HP: 5", "spelled 2 ways", "generic label: HP"):
             self.assertIn(line, report)
 
+    def test_review_cases_that_would_burn_draws(self):
+        self.assertEqual(checks.person("The mine was dark. " * 4 + "He took Hold Breath I at Tier I."), [])
+        self.assertEqual(sheet.ladder("Ladder: Iron (lowest), Bronze, Silver, and Gold. Each doubles."),
+                         ["Iron", "Bronze", "Silver", "Gold"])
+        self.assertEqual(sheet.ladder("Ladder: Iron, Bronze and Silver"), ["Iron", "Bronze", "Silver"])
+        self.assertEqual((sheet.value("1,050/1,200", []), sheet.value("10²", [])), ((1050, 1200), None))
+        self.assertEqual(checks.items("- Jamie\n  - wants out\n  - talks fast\n- Mara\n  - wants the gate"), 2)
+        for leaked in ("**Title:** Hold Breath", "CHAPTER THREE: HOLD BREATH", "## Chapter Eleven"):
+            self.assertTrue(checks.leak(leaked), leaked)
+        for clean in ("“Go.” Standing, he reached.", "Mara said, “Standing there won't help.”"):
+            self.assertEqual(checks.leak(clean), [], clean)
+        self.assertEqual(checks.normalize("*Not now—* he thought.")[0], "*Not now,* he thought.\n")
+
+    def test_rise_semantics(self):
+        ranks, before = ["Iron", "Bronze", "Silver"], {"Slots": "1/1", "Mana": "5/5"}
+        plan = PLAN.replace("## Movements\n1.", "## Movements\n**1.**").replace("Rise:", "- Rise:")
+        self.assertEqual(checks.hard("plan", plan, n=1, ranks=ranks, before=before), [])
+        for old, new in (("Slots: 1/1 -> 1/2", "Slot: 1/1 -> 1/2"), ("Slots: 1/1 -> 1/2", "Slots: 1/2 -> 1/1")):
+            self.assertTrue(checks.plan_shape(PLAN.replace(old, new), 1, ranks, before), new)
+        spent = checks.planned(PLAN.replace("Slots: 1/1 -> 1/2", "Mana: 5/5 -> 5/8"))
+        self.assertEqual(checks.rise("[Mana: 3/8]", 2, before, ranks, spent), [])
+        self.assertTrue(checks.rise("[Slots: 1/2]", 2, {"Slots": "1/2"}, ranks, checks.planned(PLAN)))
+        masked = with_status(LITE, "[Slots: 1/1]\n[Level: 1]", "").rstrip() + "\n[Slots: 1/2]\n"
+        self.assertIn("after the word midpoint", checks.rise(masked, 1, before, ranks, checks.planned(PLAN))[0])
+        bible = BIBLE.replace("Elias Venn.", "His name: Elias Venn.")
+        self.assertIn("literals: name MISSING", checks.report("Jamie ran.", bible=bible))
+
     def test_person_skips_speech_italics_and_status_lines(self):
         self.assertEqual(checks.person('"I will," he said. *I have to move.*\n[My Rank: 2]\nHe moved.'), [])
         self.assertTrue(checks.person("I will move. He moved."))
@@ -176,8 +195,7 @@ class CheckVerbTests(unittest.TestCase):
     def test_frozen_chapters_and_a_test_serial(self):
         code, out = self.run_check(OPENING / "lite" / "chapter.md")
         self.assertEqual(code, 1)
-        for line in ("rise: chapter 1 has no status line", "length: 4065 words", "inspection x4, council x3",
-                     "(over 5)"):
+        for line in ("rise: chapter 1 has no status line", "length: 4065 words", "inspection x4, council x3"):
             self.assertIn(line, out)
         self.assertIn("rise: chapter 1 has no status line", self.run_check(OPENING / "baseline" / "chapter-one.md")[1])
         with tempfile.TemporaryDirectory() as home, patch.dict(os.environ, {"LITHARNESS_HOME": home}):

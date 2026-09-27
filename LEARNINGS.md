@@ -107,7 +107,7 @@ gave +0.194 [+0.134, +0.252] on a reader drifted by +0.153 (§259). Research, no
 | C2 stagnant, progress felt late | 2, 4, 7, 10 | Rise in every plan, `rise` |
 | J standalone sense, device legibility | 6, 10, 17, 18 | CHECKLIST |
 | E3 money, debt, institutions | 7, 8, 20; the 08-23 refusal (§116) | `money`, `admin`, prompt lint |
-| C4 too many names | 2, 3, 10 | `cast` report, People caps |
+| C4 too many names | 2, 3, 10 | People caps; the `cast` report was cut for space |
 | B6 not LitRPG | 7, 8, 10 | status lines, `rise` |
 | G2 absence and paradox tells | 11, 15, 19 | `tells` and rewrite |
 

@@ -14,7 +14,7 @@ The previous implementation is kept, unchanged, at the tag `legacy/incumbent-202
 
 | Verb | Does | Calls |
 |---|---|---|
-| `new SLUG --brief FILE [--words 1500]` | creates the serial, draws the pitch, stops for your glance | 1 (up to 3) |
+| `new SLUG --brief FILE [--words 1500]` (500-1700) | creates the serial, draws the pitch, stops for your glance | 1 (up to 3) |
 | `next SLUG [-n K]` (K up to 10) | plan, draft, checks, sheet, tells rewrite, report per chapter | 2-3 each |
 | `status [SLUG]` | chapters, words, failing checks with quotes, tokens, hand edits, locks | 0 |
 | `redraw SLUG --from N` | moves chapter N and later to `attempts/<utc>/` (0: the pitch too) | 0 |

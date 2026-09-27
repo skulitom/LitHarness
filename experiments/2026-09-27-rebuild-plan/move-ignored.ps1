@@ -66,7 +66,14 @@ function Get-Plan {
         $p = $_
         -not (Test-Keep $p) -and -not @($dirs | Where-Object { $_ -ne $p -and $p.StartsWith($_) }).Count
     })
+    # A SQLite -wal or -shm travels in its database's row (Get-Members), so the two never split.
+    $moving = @($moving | Where-Object { -not ($_ -match '\.db-(wal|shm)$' -and $moving -contains ($_ -replace '-(wal|shm)$', '')) })
     return @($moving | Sort-Object @{ Expression = { Get-Rank $_ } }, @{ Expression = { $_ } })
+}
+
+function Get-Members([string] $p) {
+    if ($p -like '*.db') { return @($p, "$p-wal", "$p-shm") }
+    return @($p)
 }
 
 function Measure-Row([string] $p) {
@@ -105,18 +112,19 @@ switch ($Mode) {
             $plan = Get-Plan
             foreach ($p in $plan) { $m = Measure-Row $p; Write-Row 'planned' $p $m[0] $m[1] $m[2] }
         }
-        foreach ($p in $plan) {
-            $src = Join-Path $Repo (Local-Path $p)
-            $dst = Join-Path $Tree (Local-Path $p)
+        foreach ($q in @($plan | ForEach-Object { Get-Members $_ })) {
+            $src = Join-Path $Repo (Local-Path $q)
+            $dst = Join-Path $Tree (Local-Path $q)
             $hasSrc = Test-Path -LiteralPath $src
             $hasDst = Test-Path -LiteralPath $dst
-            if ($hasDst -and -not $hasSrc) { continue }
+            # Done: moved earlier. The junction's parents exist again once it is made, so those rows are done too.
+            if ($hasDst -and (-not $hasSrc -or $Junction.StartsWith((Local-Path $q) + '\'))) { continue }
             if ($hasDst) { throw "exists: $dst" }
-            if (-not $hasSrc) { throw "missing: $src" }
+            if (-not $hasSrc) { if ($q -match '\.db-(wal|shm)$') { continue }; throw "missing: $src" }
             New-Item -ItemType Directory -Force (Split-Path $dst) | Out-Null
             Move-Item -LiteralPath $src -Destination $dst -ErrorAction Stop
-            Write-Row 'moved' $p '' '' ''
-            "moved $p"
+            Write-Row 'moved' $q '' '' ''
+            "moved $q"
         }
         $link = Join-Path $Repo $Junction
         if (-not (Test-Path -LiteralPath $link)) {
@@ -134,17 +142,17 @@ switch ($Mode) {
                 if ((Test-Path -LiteralPath $dir) -and -not @(Get-ChildItem -Force -LiteralPath $dir).Count) { cmd /c rmdir "$dir" }
             }
         }
-        $plan = @(Get-Planned)
+        $plan = @(Get-Planned | ForEach-Object { Get-Members $_ })
         [array]::Reverse($plan)
-        foreach ($p in $plan) {
-            $src = Join-Path $Repo (Local-Path $p)
-            $dst = Join-Path $Tree (Local-Path $p)
+        foreach ($q in $plan) {
+            $src = Join-Path $Repo (Local-Path $q)
+            $dst = Join-Path $Tree (Local-Path $q)
             if (Test-Path -LiteralPath $src) { continue }
-            if (-not (Test-Path -LiteralPath $dst)) { throw "missing in the archive: $dst" }
+            if (-not (Test-Path -LiteralPath $dst)) { if ($q -match '\.db-(wal|shm)$') { continue }; throw "missing in the archive: $dst" }
             New-Item -ItemType Directory -Force (Split-Path $src) | Out-Null
             Move-Item -LiteralPath $dst -Destination $src -ErrorAction Stop
-            Write-Row 'returned' $p '' '' ''
-            "returned $p"
+            Write-Row 'returned' $q '' '' ''
+            "returned $q"
         }
     }
     'Backup' {

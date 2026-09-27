@@ -33,9 +33,10 @@ model.
 
 ## Budgets (enforced by `tests/test_guards.py`)
 
-- `litharness/*.py` at most 1,300 physical lines in total; any `.py` at most 350; tests at most the
-  runtime's lines; no section sign in any `.py`. Raising a cap is its own one-line commit naming the
-  case. When space runs out, reports are cut first (`address`, then `cast`, then `digits`).
+- `litharness/*.py` at most 1,350 physical lines in total (the plan's 1,300, raised once: bb87c71);
+  any `.py` at most 350; tests at most the runtime's lines; no section sign in any `.py`. Raising a cap
+  is its own one-line commit naming the case. The `address`, `cast` and `digits` reports were already
+  cut for space; the next cut is a new decision, not a rule.
 - Imports are stdlib or `litharness`; only `transport.py` imports `subprocess`.
 - Docs are capped by line count: README 80, AGENTS 80, CLAUDE 40, LEARNINGS 150, DECISIONS 80,
   `reads/CHECKLIST.md` 40, each `reads/NN.md` 60. Rewrite a stale doc; never append to it.

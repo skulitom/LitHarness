@@ -35,6 +35,17 @@ def read(path: Path) -> str:
     return Path(path).read_bytes().decode("utf-8")
 
 
+def retry(action, *args):
+    """A file operation, retried briefly on PermissionError: on Windows a reader or scanner can hold it."""
+    for attempt in range(8):
+        try:
+            return action(*args)
+        except PermissionError:
+            if attempt == 7:
+                raise
+            time.sleep(0.05 * (attempt + 1))
+
+
 def write(path: Path, value: str | bytes) -> str:
     """Temp file, fsync, os.replace; returns the sha256 of the bytes stored, which never gain a CR."""
     path, data = Path(path), value.encode("utf-8") if isinstance(value, str) else value
@@ -44,15 +55,8 @@ def write(path: Path, value: str | bytes) -> str:
         handle.write(data)
         handle.flush()
         os.fsync(handle.fileno())
-    for attempt in range(8):
-        try:
-            os.replace(temporary, path)
-            return sha(data)
-        except PermissionError:  # Windows: a reader or scanner holds the target for a moment
-            if attempt == 7:
-                raise
-            time.sleep(0.05 * (attempt + 1))
-    raise AssertionError("unreachable")
+    retry(os.replace, temporary, path)
+    return sha(data)
 
 
 def save(path: Path, value: object) -> str:
@@ -96,9 +100,10 @@ def gone(pid: int, start: str) -> bool:
 
 
 def lock(directory: Path, label: str) -> None:
-    """mkdir is the atomic step. A holder in our own form whose process is gone is cleared once."""
+    """mkdir is the atomic step. A holder in our own form whose process provably ended is cleared by
+    renaming the whole lock aside, which only one contender can win; a fresh lock taken by mistake goes back."""
     directory.parent.mkdir(parents=True, exist_ok=True)
-    for _ in range(2):
+    for _ in range(3):
         try:
             directory.mkdir()
         except FileExistsError:
@@ -106,21 +111,30 @@ def lock(directory: Path, label: str) -> None:
             line = read(holder).strip() if holder.is_file() else ""
             match = HOLDER.match(line)
             if not (match and gone(int(match[1]), match[2])):
-                raise Held(line or f"{directory} (no holder line)") from None
-            holder.unlink(missing_ok=True)
-            directory.rmdir()
+                raise Held(f"{directory} held by: {line or '(no holder line)'}") from None
+            aside = directory.with_name(f"{directory.name}.stale-{os.getpid()}-{time.monotonic_ns()}")
+            try:
+                retry(os.rename, directory, aside)
+            except FileNotFoundError:
+                continue  # another contender cleared it first
+            if not (aside / "holder").is_file() or read(aside / "holder").strip() != line:
+                os.rename(aside, directory)
+                raise Held(f"{directory} was taken while its stale holder was being cleared") from None
+            retry((aside / "holder").unlink)
+            retry(aside.rmdir)
             continue
-        write(directory / "holder", f"litharness pid={os.getpid()} start={probe(os.getpid())[1]} {label} {utc()}\n")
+        with open(directory / "holder", "x", encoding="utf-8", newline="\n") as handle:
+            handle.write(f"litharness pid={os.getpid()} start={probe(os.getpid())[1]} {label} {utc()}\n")
         return
-    raise Held(f"{directory} (could not be taken)")
+    raise Held(f"{directory} could not be taken")
 
 
 def unlock(directory: Path) -> None:
     holder = directory / "holder"
     match = HOLDER.match(read(holder)) if holder.is_file() else None
     if match and int(match[1]) == os.getpid():
-        holder.unlink()
-        directory.rmdir()
+        retry(holder.unlink)
+        retry(directory.rmdir)
 
 
 def checkout(start: Path | None = None) -> tuple[Path, Path] | None:
@@ -149,9 +163,8 @@ def revision(start: Path | None = None) -> str:
     head = read(found[0] / "HEAD").strip() if found else ""
     if not head.startswith("ref: "):
         return head
-    for base in found:
-        if (base / head[5:]).is_file():
-            return read(base / head[5:]).strip()
+    if (found[1] / head[5:]).is_file():  # branch refs live in the common directory
+        return read(found[1] / head[5:]).strip()
     packed = found[1] / "packed-refs"
     return next((line.split()[0] for line in (read(packed).splitlines() if packed.is_file() else [])
                  if line.endswith(" " + head[5:])), "")
