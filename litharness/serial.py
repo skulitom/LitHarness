@@ -263,7 +263,7 @@ def status(slug: str | None = None) -> str:
         out.append(f"{root.name}: {n} chapters, {words} words, {rows['calls']} calls, "
                    f"{rows['input_tokens'] + rows['output_tokens']} tokens")
         for name, entry in record["stages"].items():
-            if entry["draws"] and entry["draws"][-1]["fails"]:
+            if entry["draws"] and all(draw["fails"] for draw in entry["draws"]):
                 out += [f"  {name}: draw {len(entry['draws'])} failed" + (f", located in our request: "
                         f"{entry['draws'][-1]['located']}" if entry["draws"][-1]["located"] else "")]
                 out += [f"    {fail}" for fail in entry["draws"][-1]["fails"]]
