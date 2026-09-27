@@ -128,6 +128,9 @@ class DocumentTests(unittest.TestCase):
         self.assertEqual(checks.fields("[Rank: Bronze]\n[Slots: 1/2]\n[Grip: 3]", {"Rank": "Iron"}, ranks), [])
         for bad in ("[Rank: Copper]", "[Grip: 0]", "[Slots: 3/2]", "[Slots: 0/0]"):
             self.assertTrue(checks.fields(bad, {"Rank": "Iron"}, ranks), bad)
+        acquired = ("Installed skills", "0", "1", "1", "he installs it")
+        self.assertEqual(checks.fields("[Installed skills: 0]\n[Installed skills: 1]", {}, ranks, acquired), [])
+        self.assertTrue(checks.fields("[Installed skills: 0]", {}, ranks))
         many = "\n".join(f"[Skill{i}: 1]" for i in range(13))
         self.assertIn("12-line sheet", checks.fields(many, {}, ranks)[-1])
 

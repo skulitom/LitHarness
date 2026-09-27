@@ -200,3 +200,18 @@ class CliTests(unittest.TestCase):
             self.assertEqual(cli.main(["next", "slot"]), 1)
             self.assertFalse((Path(home) / "box.lock").exists())
         self.assertIn("codex-cli 2 has not passed the canary", err.getvalue())
+
+
+class RecheckTests(unittest.TestCase):
+    setUp, run_new, run_next = SerialTests.setUp, SerialTests.run_new, SerialTests.run_next
+
+    def test_a_check_fixed_after_three_failed_draws_adopts_a_stored_answer_without_a_call(self):
+        fake = Fake()
+        self.run_new(fake)
+        real = serial.checks.hard
+        with patch.object(serial.checks, "hard", side_effect=lambda stage, *a, **k: ["fields: 0"] if stage == "plan"
+                          else real(stage, *a, **k)), self.assertRaisesRegex(serial.Stop, "3 draws failed"):
+            self.run_next(fake)
+        self.run_next(fake)
+        self.assertEqual(fake.asked, ["pitch", "plan", "plan", "plan", "draft"])
+        self.assertIn("rechecked", files.load(self.root / "manifest.json")["stages"]["ch01/plan"]["draws"][0])

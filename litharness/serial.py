@@ -93,6 +93,13 @@ def locate(word: str, stage: str, parts: list[tuple[str, str, str]]) -> str | No
     return None
 
 
+def checked(check, output: str) -> list[str]:
+    try:
+        return check(output)
+    except Exception as error:  # a check that breaks on an answer is recorded as a failed draw
+        return [f"check: {type(error).__name__}: {error}"]
+
+
 def stage(root: Path, n: int, name: str, template: str, parts: list[tuple[str, str, str]], check,
           call, binary: Path) -> str:
     """Draw until the output passes its hard checks: at most DRAWS per input set, numbered on."""
@@ -106,16 +113,19 @@ def stage(root: Path, n: int, name: str, template: str, parts: list[tuple[str, s
     entry = record["stages"].setdefault(f"ch{n:02d}/{name}", {"draws": []})
     same = [draw for draw in entry["draws"] if draw["inputs"] == key]
     calls, window = root / f"ch{n:02d}" / "calls", len(entry["draws"]) - len(same) + DRAWS
-    if same and not same[-1]["fails"] and (calls / same[-1]["dir"] / "final.md").is_file():
-        return files.read(calls / same[-1]["dir"] / "final.md")
+    stored = [d for d in same if (calls / d["dir"] / "final.md").is_file()]
+    for draw in [d for d in stored[::-1] if not d["fails"]] + [d for d in stored if d["fails"]]:
+        # A stored answer that passes the checks as they are now is adopted; a fixed check never buys it again.
+        if not draw["fails"] or not checked(check, files.read(calls / draw["dir"] / "final.md")):
+            if draw["fails"]:
+                draw.update(fails=[], located=None, rechecked=files.utc())
+                files.save(root / "manifest.json", record)
+            return files.read(calls / draw["dir"] / "final.md")
     while len(same) < DRAWS and not (same and same[-1]["located"]):
         k = len(entry["draws"]) + 1
         print(f"ch{n:02d} {name}: draw {k} of {window}", flush=True)
         output, directory = ask(calls, f"{name}-d{k}", prompt, call, binary)
-        try:
-            fails = check(output)
-        except Exception as error:  # a check that breaks on an answer is recorded as a failed draw
-            fails = [f"check: {type(error).__name__}: {error}"]
+        fails = checked(check, output)
         words = [fail.split("'")[1] for fail in fails if fail.startswith("money: ")]
         places = [f"'{w}' in {place}" for w in words if (place := locate(
             w, "pitch" if name == "pitch" else "chapter", [("", f"prompts.{name.upper()}", rendered), *parts]))]

@@ -127,9 +127,12 @@ def bad(label: str, raw: str, ranks: list[str], known: bool) -> str | None:
     return f"[{label}: {raw}] is not a pool n/m with m >= 1 and n <= m" if size < 1 or number > size else None
 
 
-def fields(text: str, before: dict, ranks: list[str]) -> list[str]:
+def fields(text: str, before: dict, ranks: list[str], rise_plan=None) -> list[str]:
+    """Status fields that break the sheet; the planned Rise may show its old value, even a 0 it rises from."""
     known, fails = {sheet.key(label) for label in before}, []
     for label, raw, _ in sheet.fields(text):
+        if rise_plan and sheet.key(label) == sheet.key(rise_plan[0]) and raw.strip() == rise_plan[1].strip():
+            continue
         fails += [f"fields: {problem}"] if (problem := bad(label, raw, ranks, sheet.key(label) in known)) else []
         known |= {sheet.key(label)} if sheet.value(raw, ranks) is not None else set()
     return fails + [f"fields: {len(known)} labels would pass the {sheet.CAP}-line sheet"] * (len(known) > sheet.CAP)
@@ -197,7 +200,7 @@ def hard(stage: str, text: str, *, raw: str = "", target: int = 1500, n: int = 1
     if stage != "chapter":
         return fails + (pitch_shape(text) if stage == "pitch" else plan_shape(text, n, ranks, before))
     return (fails + person(raw or text) + rise(text, n, before, ranks, rise_plan)
-            + fields(text, before, ranks) + length(text, target))
+            + fields(text, before, ranks, rise_plan) + length(text, target))
 
 
 def normalize(raw: str) -> tuple[str, dict]:
