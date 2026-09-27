@@ -516,19 +516,17 @@ _LABELS = st.text(
         max_size=5,
         unique_by=(
             lambda item: item[0],
-            lambda item: item[1],
+            lambda item: item[1].casefold(),
         ),
     ),
     st.data(),
 )
 def test_a_declared_sheet_round_trips(fields, data) -> None:
-    """The property the two literals used to hold by hand.
+    """Every complete rendered line is read back by the extractor's actual sheet reader.
 
-    the line's own template and the line's own pattern were separate strings a human had to keep in
-    agreement, and the failure when they drift is silent: a prompt asking for a form the parser
-    does not accept yields prose that reads correctly and extracts nothing. Deriving both from
-    one field list turns that from a discipline into a property, so this asserts it for *any*
-    sheet rather than for the one that happened to be written down.
+    Printed labels must be distinct under the reader's case-insensitive comparison. The legacy
+    regex capture view reserves `subject` for the owner; the production reader keeps column
+    values separate and can read a field with that name too.
     """
     keys = [name for name, _, _ in fields]
     keys += [f"{name}{MAX_SUFFIX}" for name, _, paired in fields if paired]
@@ -537,11 +535,15 @@ def test_a_declared_sheet_round_trips(fields, data) -> None:
     value = {key: data.draw(st.integers(min_value=0, max_value=9999)) for key in sheet.value_keys}
 
     line = render_status_line("Silas", value, sheet=sheet)
-    match = sheet.pattern.search(line)
+    assert sheet.read(line) == [("Silas", value, (0, len(line)))]
 
-    assert match is not None, f"the extractor cannot read the line it asks for: {line!r}"
-    assert match.group("subject") == "Silas"
-    assert {key: int(match.group(key)) for key in sheet.value_keys} == value
+
+def test_sheet_reader_keeps_column_names_separate_from_parser_capture_names() -> None:
+    sheet = Sheet((SheetField("subject", "Subject", paired=True),
+                   SheetField("pairs", "Pairs"), SheetField("current", "Current")))
+    value = {"subject": 3, "subject_max": 8, "pairs": 2, "current": 1}
+    line = render_status_line("Silas", value, sheet=sheet)
+    assert sheet.read(line) == [("Silas", value, (0, len(line)))]
 
 
 def test_the_default_sheet_reproduces_the_line_this_module_shipped_with() -> None:

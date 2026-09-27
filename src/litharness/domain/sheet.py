@@ -103,7 +103,7 @@ class Sheet:
     columns — are untouched by
     construction rather than by a compatibility branch.
 
-    The template and the pattern are derived from **one** field list, which is what keeps the
+    The renderer and the reader share **one** field list, which is what keeps the
     instruction and the parser the same statement. They used to be two literals that a human
     had to keep in agreement; `test_a_declared_sheet_round_trips` now asserts the agreement for
     any sheet rather than for the one that happened to be written down.
@@ -181,9 +181,11 @@ class Sheet:
 
     @property
     def pattern(self) -> re.Pattern[str]:
-        """The parser for the whole line, every column present. Compiled once per
-        distinct sheet. `read` is the reader the extractor uses; this is the strict form
-        the round-trip test and the renderer's docs speak of."""
+        """Legacy capture view for a whole line, every column present.
+
+        The header capture reserves `subject`, so this view cannot represent a column with
+        that name. `read` is the production reader and keeps owner and column keys separate.
+        """
         return _compile_pattern(self.fields)
 
     def shown(self, value: Mapping[str, object]) -> tuple[SheetField, ...]:
@@ -785,7 +787,7 @@ def render_status_line(
     sheet: Sheet | None = None,
     records: Sequence[lc.StateRecord] = (),
 ) -> str:
-    """A status line for a subject and a snapshot value — the inverse of `sheet.pattern`.
+    """A status line for a subject and a snapshot value — the inverse of `sheet.read`.
 
     **The subject is written display-formed, and this reverses what stood here.** It used to
     read "the subject is written as the book's records hold it", on the argument that
