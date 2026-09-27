@@ -1,0 +1,471 @@
+{
+  "provider": "codex",
+  "profile": "mechanical",
+  "requested_model": "gpt-6-astra",
+  "reasoning_effort": "medium",
+  "auth_method": "chatgpt",
+  "cli_version": "codex-cli 0.155.1",
+  "argv": [
+    "C:\\Users\\artem\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\node_modules\\@openai\\codex-win32-x64\\vendor\\x86_64-pc-windows-msvc\\bin\\codex.exe",
+    "exec",
+    "--ignore-user-config",
+    "--ignore-rules",
+    "--ephemeral",
+    "--skip-git-repo-check",
+    "--sandbox",
+    "read-only",
+    "--cd",
+    "C:\\Users\\artem\\AppData\\Local\\Temp\\litharness-codex-sumrvgr9\\working",
+    "--model",
+    "gpt-6-astra",
+    "--json",
+    "--color",
+    "never",
+    "--output-last-message",
+    "C:\\Users\\artem\\AppData\\Local\\Temp\\litharness-codex-sumrvgr9\\final.txt",
+    "-c",
+    "forced_login_method=\"chatgpt\"",
+    "-c",
+    "model_provider=\"openai\"",
+    "-c",
+    "model_instructions_file=\"C:/Users/artem/AppData/Local/Temp/litharness-codex-sumrvgr9/system.txt\"",
+    "-c",
+    "model_reasoning_effort=\"medium\"",
+    "-c",
+    "project_doc_max_bytes=0",
+    "-c",
+    "web_search=\"disabled\"",
+    "-c",
+    "hide_agent_reasoning=true",
+    "-c",
+    "features.shell_tool=false",
+    "-c",
+    "features.multi_agent=false",
+    "-c",
+    "features.apps=false",
+    "-c",
+    "features.plugins=false",
+    "-c",
+    "features.hooks=false",
+    "-c",
+    "features.memories=false",
+    "-c",
+    "features.code_mode=false",
+    "-c",
+    "features.view_image=false",
+    "-c",
+    "features.browser_use=false",
+    "-c",
+    "features.browser_use_external=false",
+    "-c",
+    "features.browser_use_full_cdp_access=false",
+    "-c",
+    "features.in_app_browser=false",
+    "-c",
+    "features.computer_use=false",
+    "-c",
+    "features.image_generation=false",
+    "-c",
+    "features.sleep_tool=false",
+    "-c",
+    "features.goals=false",
+    "-c",
+    "features.skill_search=false",
+    "-c",
+    "features.tool_suggest=false",
+    "-c",
+    "features.workspace_dependencies=false",
+    "-c",
+    "features.skill_mcp_dependency_install=false",
+    "-c",
+    "features.multi_agent_v2=false",
+    "-c",
+    "tools.update_plan.enabled=false",
+    "-c",
+    "tools.experimental_request_user_input.enabled=false",
+    "-c",
+    "skills.include_instructions=false",
+    "-c",
+    "skills.bundled.enabled=false",
+    "-c",
+    "history.persistence=\"none\"",
+    "--output-schema",
+    "C:\\Users\\artem\\AppData\\Local\\Temp\\litharness-codex-sumrvgr9\\schema.json",
+    "-"
+  ],
+  "prompt": "The scene:\n\nAnchor sounded safer. Hold your position. Stay where you were while everything else went wrong.\n\nBut Dev was on the other side of the break. Staying here would not help him, and Owen could see nothing useful to set on fire.\n\nHe chose Cling before he could talk himself out of it.\n\n[STATUS] Owen Price — Cling 1\n\nThe other choices vanished.\n\nHis palm remained against the painted blocks. Nothing tingled. He could still feel grit beneath his skin and the cool wall beneath that.\n\nThen he tried to slide his hand.\n\nIt stayed.\n\nOwen pulled back sharply. His palm released as soon as he wanted it to, leaving him staring at his fingers.\n\n“What happened?” Dev called.\n\n“I took Cling.”\n\n“Does it work?”\n\nHe pressed his hand flat again and leaned away. The skin across his palm tightened. His wrist took the pull.\n\n“Yes.” He swallowed. “I think so.”\n\nFootsteps stopped behind him. Leanne had returned to the loading doorway, keeping clear of the broken tiles.\n\n“Pavement’s clear outside,” she said. “What are you doing?”\n\n“Going along the wall.”\n\nHer eyes followed the blank paint to Dev’s landing.\n\n“With what?”\n\n“This.”\n\nHe lifted a foot and pressed the sole against the wall. It held when he put weight through it. Not on a ledge, not against a lump in the paint. Just there.\n\nFor an instant he wanted Leanne to see exactly how impossible that was.\n\nThen a tile dropped from the broken floor and he heard it hit something far below.\n\n“Can you do the same?” Owen asked Dev.\n\n“Already picked Anchor. When the floor started moving.”\n\nDev shifted his free hand from the landing, then planted it again.\n\n“It’s keeping me here.”\n\n“Right. Stay there.”\n\nAs instructions went, it was useless. Dev nodded anyway.\n\nOwen put both hands against the wall and brought his other foot up. Now nothing beneath him belonged to the floor.\n\nHis stomach lurched. He kept his eyes on the paint.\n\nAt the climbing wall, starting a traverse was something he did while talking. Here he spent too long checking each contact, until his shoulders began to ache before he had moved beyond the doorway.\n\nFeet first. Stand on them.\n\nHe edged sideways, releasing one shoe and placing it farther along. The adhesion returned when he wanted it. His body seemed to understand that much. It did not understand where to put the rest of him.\n\nHe reached too far with his right hand.\n\nHis hips swung away from the wall. Weight dragged through his outstretched arm, and pain caught at the base of his wrist.\n\n“Owen,” Leanne said.\n\n“I know.”\n\nHe didn’t, for a moment. His left foot was too far behind him, his right knee bent beneath his chest. He tried to pull himself closer and made the pain worse.\n\nStop hauling.\n\nHe brought the trailing foot underneath his hip. Turned the knee out. Pushed through the leg until his body rose and the load eased off his hand.\n\nThere.\n\nHe stayed still long enough to breathe.\n\n“You all right?” Leanne asked.\n\n“Keep talking to Dev.”\n\nShe did. Asked where he was hurt, whether he could feel his foot. Owen listened without trying to answer. A leg injury. Something sharp when the floor broke. Yes, Dev could move his toes.\n\nThe landing came closer in short, careful movements. Owen kept his arms almost straight and his steps small. He wanted to look down each time loose grit fell beneath his shoes. He looked instead at the next place his hand would go.\n\nAt last he could put a foot on concrete.\n\nHe tested it, then stepped onto the landing beside Dev and released the wall.\n\n[STATUS] Owen Price — Slot Rank 2\n\nThe words caught his eye as his weight left his hands.\n\nTwo. He had been one before.\n\nThere was no rush of strength. His wrist still hurt. But when he steadied himself against the wall, the grip felt less precarious, as though he no longer had to hold the intention quite so tightly.\n\n“You actually did it,” Dev said.\n\nOwen crouched beside him.\n\nBlood had soaked the trouser leg below Dev’s knee. His sleeve was wet where he had pressed it against the wound. Owen could see a cut through the torn fabric, but not how deep it went.\n\n“Can you keep pressure on that?”\n\n“Been trying.”\n\n“I know. Sorry.”\n\nA metal maintenance rack stood between the scrubber and the side wall. Owen had to turn sideways to reach it. Beneath bottles and a battered toolbox lay a coil of braided rope, dirty at the loose end but apparently whole.\n\nHe lifted it and worked the nearest length through his hands. No obvious cuts. That was all he knew how to check.\n\n“I’ve got rope,” he called.\n\n“Bring an end back,” Leanne said. “I’ve taken Anchor. There’s an upright by the doorway we can use as well.”\n\nOwen looked across. She stood inside the shop with one hand around the steel upright, away from the fractured edge.\n\nHe pictured Dev trying to follow his route with an injured leg and no grip on the wall.\n\n“Don’t just hold him yourself,” he said.\n\n“I wasn’t planning to.”\n\nHe nodded, embarrassed and grateful at once.\n\nWith the coil over his shoulder, he moved to the edge of the landing. His hands were shaking now. He flexed them, watching the wall he had crossed.\n\nA crack ran through the paint.\n\nOwen stepped back.\n\nThe blocks in the middle of his route bulged inward. Mortar spilled into the gap. Then a whole section broke loose and fell, taking his imagined footholds with it.\n\nDust struck his face.\n\nWhen it cleared, the wall ended short of his reach. Beyond the missing section, Leanne still stood by the upright.\n\nOwen gripped the rope.\n\nHe had brought it as far as Dev. It was still on the wrong side.\n\nThe book's open promises, as it stores them. These are the book's own reported record rather than established fact; each line is the name a promise is filed under, then what it promised:\n- unlimited_capacity: open, not yet established: What Owen's unlimited capacity permits remains unknown. (due by s000024)\n- skill_choice: open, not yet established: Owen has yet to select a skill. (due by s000024)\n- dev's_rescue: open, not yet established: Owen must attempt to reach stranded Dev. (due by s000024)\n- changed_surroundings: open, not yet established: The cliff and roots replacing familiar surroundings remain unexplained. (due by s000024)",
+  "system": "You are compressing one scene of a novel so a writer who cannot re-read it still knows what it contained. Answer in about 60 words across the prose fields. State what is on the page and nothing else: no interpretation, no praise, no guesses about what happens next. Write each field fresh from this scene rather than continuing anything.\nSETTING: where and when.\nCHARACTERS: who was present, by the names the prose uses.\nEVENTS: what changed. Concrete actions and outcomes, not atmosphere.\nOPEN: what the scene left unresolved — promises made, questions raised, goals not yet reached. Say so plainly if it left nothing open.\nDELTA: state the one thing that changed for a character in this scene — who it changed for, what changed, what it was before, what it is now — or say none by answering null. A dramatic shift counts even when no number moves.\nPROMISES_OPENED: new threads this scene opens that the book must later deliver on. For each: a short subject name, what is still to come, which kind of thread it is (plot, character, progression, mystery), and the scene number it is due by when the scene implies one. Also copy one short exact quote from this scene that opens the thread; use an empty evidence_quote when no unique quote supports it.\nPROMISES_PAID: for each listed open promise this scene delivers on, return its subject copied exactly as the list writes it and one short exact quote from this scene that delivers it. Empty if this scene delivers none.\n\nReply with a single JSON object conforming to this schema and nothing else — no prose, no code fence:\n{\"additionalProperties\": false, \"properties\": {\"characters\": {\"type\": \"string\"}, \"delta\": {\"anyOf\": [{\"additionalProperties\": false, \"properties\": {\"from\": {\"type\": \"string\"}, \"to\": {\"type\": \"string\"}, \"what_changed\": {\"type\": \"string\"}, \"who\": {\"type\": \"string\"}}, \"required\": [\"who\", \"what_changed\", \"from\", \"to\"], \"type\": \"object\"}, {\"type\": \"null\"}]}, \"events\": {\"type\": \"string\"}, \"open\": {\"type\": \"string\"}, \"promises_opened\": {\"items\": {\"additionalProperties\": false, \"properties\": {\"description\": {\"type\": \"string\"}, \"due_hint\": {\"anyOf\": [{\"type\": \"integer\"}, {\"type\": \"string\"}, {\"type\": \"null\"}]}, \"evidence_quote\": {\"type\": \"string\"}, \"kind\": {\"anyOf\": [{\"enum\": [\"plot\", \"character\", \"progression\", \"mystery\"], \"type\": \"string\"}, {\"type\": \"null\"}]}, \"subject\": {\"type\": \"string\"}}, \"required\": [\"subject\", \"description\"], \"type\": \"object\"}, \"type\": \"array\"}, \"promises_paid\": {\"items\": {\"anyOf\": [{\"type\": \"string\"}, {\"additionalProperties\": false, \"properties\": {\"evidence_quote\": {\"type\": \"string\"}, \"subject\": {\"type\": \"string\"}}, \"required\": [\"subject\", \"evidence_quote\"], \"type\": \"object\"}]}, \"type\": \"array\"}, \"setting\": {\"type\": \"string\"}}, \"required\": [\"setting\", \"characters\", \"events\", \"open\", \"delta\", \"promises_opened\", \"promises_paid\"], \"type\": \"object\"}",
+  "mode": "completion",
+  "settings": {
+    "forced_login_method": "chatgpt",
+    "model_provider": "openai",
+    "model_instructions_file": "C:/Users/artem/AppData/Local/Temp/litharness-codex-sumrvgr9/system.txt",
+    "model_reasoning_effort": "medium",
+    "project_doc_max_bytes": 0,
+    "web_search": "disabled",
+    "hide_agent_reasoning": true,
+    "features.shell_tool": false,
+    "features.multi_agent": false,
+    "features.apps": false,
+    "features.plugins": false,
+    "features.hooks": false,
+    "features.memories": false,
+    "features.code_mode": false,
+    "features.view_image": false,
+    "features.browser_use": false,
+    "features.browser_use_external": false,
+    "features.browser_use_full_cdp_access": false,
+    "features.in_app_browser": false,
+    "features.computer_use": false,
+    "features.image_generation": false,
+    "features.sleep_tool": false,
+    "features.goals": false,
+    "features.skill_search": false,
+    "features.tool_suggest": false,
+    "features.workspace_dependencies": false,
+    "features.skill_mcp_dependency_install": false,
+    "features.multi_agent_v2": false,
+    "tools.update_plan.enabled": false,
+    "tools.experimental_request_user_input.enabled": false,
+    "skills.include_instructions": false,
+    "skills.bundled.enabled": false,
+    "history.persistence": "none"
+  },
+  "builtin_controls": "unused-builtins-disabled.v1",
+  "schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "setting",
+      "characters",
+      "events",
+      "open",
+      "delta",
+      "promises_opened",
+      "promises_paid"
+    ],
+    "properties": {
+      "setting": {
+        "type": "string"
+      },
+      "characters": {
+        "type": "string"
+      },
+      "events": {
+        "type": "string"
+      },
+      "open": {
+        "type": "string"
+      },
+      "delta": {
+        "anyOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "who",
+              "what_changed",
+              "from",
+              "to"
+            ],
+            "properties": {
+              "who": {
+                "type": "string"
+              },
+              "what_changed": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "promises_opened": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "subject",
+            "description"
+          ],
+          "properties": {
+            "subject": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "kind": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "plot",
+                    "character",
+                    "progression",
+                    "mystery"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "due_hint": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "evidence_quote": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "promises_paid": {
+        "type": "array",
+        "items": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "subject",
+                "evidence_quote"
+              ],
+              "properties": {
+                "subject": {
+                  "type": "string"
+                },
+                "evidence_quote": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "native_schema": {
+    "type": "object",
+    "properties": {
+      "setting": {
+        "type": "string"
+      },
+      "characters": {
+        "type": "string"
+      },
+      "events": {
+        "type": "string"
+      },
+      "open": {
+        "type": "string"
+      },
+      "delta": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "who": {
+                "type": "string"
+              },
+              "what_changed": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "who",
+              "what_changed",
+              "from",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "promises_opened": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "kind": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "plot",
+                    "character",
+                    "progression",
+                    "mystery"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "due_hint": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "evidence_quote": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "subject",
+            "description",
+            "kind",
+            "due_hint",
+            "evidence_quote"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "promises_paid": {
+        "type": "array",
+        "items": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "subject": {
+                  "type": "string"
+                },
+                "evidence_quote": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "subject",
+                "evidence_quote"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      }
+    },
+    "required": [
+      "setting",
+      "characters",
+      "events",
+      "open",
+      "delta",
+      "promises_opened",
+      "promises_paid"
+    ],
+    "additionalProperties": false
+  },
+  "schema_variant": "strict-nullable-optionals.v1",
+  "native_schema_omission_reason": null,
+  "model_attribution": "requested; Codex JSONL does not report a resolved model",
+  "working_directory": "C:\\Users\\artem\\AppData\\Local\\Temp\\litharness-codex-sumrvgr9\\working",
+  "environment_keys": [
+    "APPDATA",
+    "COMSPEC",
+    "HOME",
+    "HOMEDRIVE",
+    "HOMEPATH",
+    "LOCALAPPDATA",
+    "PATH",
+    "PATHEXT",
+    "PROGRAMDATA",
+    "SYSTEMDRIVE",
+    "SYSTEMROOT",
+    "TEMP",
+    "TERM",
+    "TMP",
+    "USERDOMAIN",
+    "USERNAME",
+    "USERPROFILE",
+    "WINDIR"
+  ],
+  "final_text": "{\n  \"setting\": \"A shop’s broken loading area, during the floor collapse.\",\n  \"characters\": \"Owen Price, Dev, Leanne.\",\n  \"events\": \"Owen selects Cling, crosses the wall to injured Dev, reaches Slot Rank 2, and finds rope. Leanne selects Anchor. The wall route collapses.\",\n  \"open\": \"Dev remains stranded; the rope cannot yet reach Leanne.\",\n  \"delta\": {\n    \"who\": \"Owen\",\n    \"what_changed\": \"Slot Rank\",\n    \"from\": \"1\",\n    \"to\": \"2\"\n  },\n  \"promises_opened\": [\n    {\n      \"subject\": \"rope_crossing\",\n      \"description\": \"Get the rope across the gap after the wall route collapses.\",\n      \"kind\": \"plot\",\n      \"due_hint\": null,\n      \"evidence_quote\": \"It was still on the wrong side.\"\n    }\n  ],\n  \"promises_paid\": [\n    {\n      \"subject\": \"skill_choice\",\n      \"evidence_quote\": \"He chose Cling before he could talk himself out of it.\"\n    },\n    {\n      \"subject\": \"dev's_rescue\",\n      \"evidence_quote\": \"He tested it, then stepped onto the landing beside Dev and released the wall.\"\n    }\n  ]\n}",
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0d40d-0356-76c1-b9e7-c941edd10c69\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\n  \\\"setting\\\": \\\"A shop’s broken loading area, during the floor collapse.\\\",\\n  \\\"characters\\\": \\\"Owen Price, Dev, Leanne.\\\",\\n  \\\"events\\\": \\\"Owen selects Cling, crosses the wall to injured Dev, reaches Slot Rank 2, and finds rope. Leanne selects Anchor. The wall route collapses.\\\",\\n  \\\"open\\\": \\\"Dev remains stranded; the rope cannot yet reach Leanne.\\\",\\n  \\\"delta\\\": {\\n    \\\"who\\\": \\\"Owen\\\",\\n    \\\"what_changed\\\": \\\"Slot Rank\\\",\\n    \\\"from\\\": \\\"1\\\",\\n    \\\"to\\\": \\\"2\\\"\\n  },\\n  \\\"promises_opened\\\": [\\n    {\\n      \\\"subject\\\": \\\"rope_crossing\\\",\\n      \\\"description\\\": \\\"Get the rope across the gap after the wall route collapses.\\\",\\n      \\\"kind\\\": \\\"plot\\\",\\n      \\\"due_hint\\\": null,\\n      \\\"evidence_quote\\\": \\\"It was still on the wrong side.\\\"\\n    }\\n  ],\\n  \\\"promises_paid\\\": [\\n    {\\n      \\\"subject\\\": \\\"skill_choice\\\",\\n      \\\"evidence_quote\\\": \\\"He chose Cling before he could talk himself out of it.\\\"\\n    },\\n    {\\n      \\\"subject\\\": \\\"dev's_rescue\\\",\\n      \\\"evidence_quote\\\": \\\"He tested it, then stepped onto the landing beside Dev and released the wall.\\\"\\n    }\\n  ]\\n}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":6001,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":350,\"reasoning_output_tokens\":63}}\n",
+  "stderr": "2026-09-24T15:33:42.749952Z ERROR codex_models_manager::manager: failed to refresh available models: timeout waiting for child process to exit\n",
+  "returncode": 0,
+  "events": [
+    {
+      "type": "thread.started",
+      "thread_id": "01a0d40d-0356-76c1-b9e7-c941edd10c69"
+    },
+    {
+      "type": "turn.started"
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_0",
+        "type": "agent_message",
+        "text": "{\n  \"setting\": \"A shop’s broken loading area, during the floor collapse.\",\n  \"characters\": \"Owen Price, Dev, Leanne.\",\n  \"events\": \"Owen selects Cling, crosses the wall to injured Dev, reaches Slot Rank 2, and finds rope. Leanne selects Anchor. The wall route collapses.\",\n  \"open\": \"Dev remains stranded; the rope cannot yet reach Leanne.\",\n  \"delta\": {\n    \"who\": \"Owen\",\n    \"what_changed\": \"Slot Rank\",\n    \"from\": \"1\",\n    \"to\": \"2\"\n  },\n  \"promises_opened\": [\n    {\n      \"subject\": \"rope_crossing\",\n      \"description\": \"Get the rope across the gap after the wall route collapses.\",\n      \"kind\": \"plot\",\n      \"due_hint\": null,\n      \"evidence_quote\": \"It was still on the wrong side.\"\n    }\n  ],\n  \"promises_paid\": [\n    {\n      \"subject\": \"skill_choice\",\n      \"evidence_quote\": \"He chose Cling before he could talk himself out of it.\"\n    },\n    {\n      \"subject\": \"dev's_rescue\",\n      \"evidence_quote\": \"He tested it, then stepped onto the landing beside Dev and released the wall.\"\n    }\n  ]\n}"
+      }
+    },
+    {
+      "type": "turn.completed",
+      "usage": {
+        "input_tokens": 6001,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 350,
+        "reasoning_output_tokens": 63
+      }
+    }
+  ],
+  "wall_ms": 39000
+}

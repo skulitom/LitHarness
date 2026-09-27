@@ -1,0 +1,58 @@
+{
+  "heavy_full": {
+    "calls": 33,
+    "seconds": 2027.906,
+    "unknown_duration_calls": 0,
+    "unknown_usage_calls": 0,
+    "input_tokens": 383764,
+    "cached_input_tokens": 166656,
+    "output_tokens": 27396,
+    "uncached_input_tokens": 217108,
+    "total_input_and_output_tokens": 411160
+  },
+  "heavy_chapter_stage": {
+    "calls": 16,
+    "seconds": 1104.983,
+    "unknown_duration_calls": 0,
+    "unknown_usage_calls": 0,
+    "input_tokens": 114598,
+    "cached_input_tokens": 9856,
+    "output_tokens": 15063,
+    "uncached_input_tokens": 104742,
+    "total_input_and_output_tokens": 129661
+  },
+  "lite": {
+    "calls": 2,
+    "seconds": 248.546,
+    "unknown_duration_calls": 0,
+    "unknown_usage_calls": 0,
+    "input_tokens": 8729,
+    "cached_input_tokens": 0,
+    "output_tokens": 7175,
+    "uncached_input_tokens": 8729,
+    "total_input_and_output_tokens": 15904
+  },
+  "words": {
+    "heavy": 3962,
+    "lite": 4069
+  },
+  "lite_runtime_source_lines": 264,
+  "notes": [
+    "Times sum recorded model call durations; human checkpoint waits are excluded.",
+    "Historical draw 6 excludes earlier draws' costs.",
+    "Full heavyweight includes concept/listing/world work absent from Lite.",
+    "Evaluation calls are reported separately from generation.",
+    "Input includes cached input. Tokens are not dollars or subscription credits."
+  ],
+  "evaluation": {
+    "calls": 4,
+    "seconds": 162.219,
+    "unknown_duration_calls": 0,
+    "unknown_usage_calls": 0,
+    "input_tokens": 59509,
+    "cached_input_tokens": 2432,
+    "output_tokens": 4791,
+    "uncached_input_tokens": 57077,
+    "total_input_and_output_tokens": 64300
+  }
+}

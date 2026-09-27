@@ -1,0 +1,3 @@
+* text=auto eol=lf
+# Receipts and frozen artifacts must round-trip byte for byte for their recorded hashes.
+experiments/** -text -whitespace

@@ -1,0 +1,10 @@
+{
+  "lite.py": "0ef6eb1d0f5745916448a6af3ee7d7acf3e652f7921017c6e27ff736493d987e",
+  "benchmark.py": "b4f5fe2162f6ddfaf913047404537b78b899e8b2b7211cba3350715ea9f28804",
+  "experiments/2026-09-27-opening/PROTOCOL.md": "89204bdcdeccfe327122f17b0752602ab4b14c3b37c26fa54a3ba3ed2f0def97",
+  "experiments/2026-09-27-opening/baseline/brief.txt": "20fef8c91570140f79f83ec5031e5300fc1515d8745044406127dc984e55a54e",
+  "experiments/2026-09-27-opening/baseline/chapter-one.md": "777ae601d08335c9c19b23a5c692dffe62cf3a3244806c0576312fa8b0fe3598",
+  "experiments/2026-09-27-opening/baseline/progress.json": "edd8158245014443bd7c843007f09b5e918855bcd9022a1ed2fedc6c8d9c1df1",
+  "experiments/2026-09-27-opening/baseline/runtime.json": "471895cf8df840355e929b23a3d25e3d481b5fb2da53001bdbed0adbfed86178",
+  "experiments/2026-09-27-opening/baseline/settings.json": "fbd92346199bc054767a8e16c6a1d25883a620546addbca8991d8af5953cf49d"
+}

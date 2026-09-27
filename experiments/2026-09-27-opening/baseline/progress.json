@@ -1,0 +1,165 @@
+{
+  "attempts": [],
+  "draw": 6,
+  "gates": {
+    "concept": {
+      "binding_sha256": "667c6759aee35270b03a3fd0b7389ce1386d0f5e474a10026be21f5c3f29bc59",
+      "by": "coordinator",
+      "items": {
+        "C-money": "PASS",
+        "C1": "PASS",
+        "C2": "PASS",
+        "C3": "PASS",
+        "C4": "PASS"
+      },
+      "items_sha256": "3c87c0292ae5af1cb4c640803ae608307bf5cff6b50bb5b7dca270135e845721",
+      "read": "C:\\DEV\\LitHarness\\runs\\chapter-one\\read-21\\draw-6\\GATE-concept.md",
+      "read_sha256": "1f0b27296a9cfef86ba1de8681754a1d4c0351c4989d5aee16c89aede57b55b3",
+      "recorded_at": "2026-09-24T14:58:04.439797+00:00",
+      "register_report": "checkpoints/concept.register.txt",
+      "register_sha256": "9f37d218c687de50f3c00527badade0a2c4c24567dc2c396a4688eaf2bc2c2b4",
+      "result": "pass",
+      "transport": {
+        "calls": 4,
+        "failed": [],
+        "isolation_failures": {},
+        "sha256": "4879d4784aca4c443089668fe5d2360c99af5e4bbf8967fdb00eb7128049f9f6",
+        "summary": "checkpoints/concept.gate-transport.json",
+        "unretried": []
+      }
+    },
+    "listing": {
+      "binding_sha256": "2f8f730dac277670ee134606dfbf4f0db6803a5c266961d555d0f7fccba162bb",
+      "by": "coordinator",
+      "items": {
+        "L1": "PASS",
+        "L2": "PASS",
+        "L3": "PASS",
+        "L4": "PASS",
+        "L5": "PASS",
+        "L6": "PASS"
+      },
+      "items_sha256": "3c87c0292ae5af1cb4c640803ae608307bf5cff6b50bb5b7dca270135e845721",
+      "read": "C:\\DEV\\LitHarness\\runs\\chapter-one\\read-21\\draw-6\\GATE-listing.md",
+      "read_sha256": "e39d37d96c25f075643ba604cb60043c58bc1e8cd1d41b94d903c654b630f418",
+      "recorded_at": "2026-09-24T15:04:37.423351+00:00",
+      "register_report": "checkpoints/listing.register.txt",
+      "register_sha256": "b4d91f98d7958a1b25afdae83eda71ea94e43dfddf61e52d82036907c333693a",
+      "result": "pass",
+      "transport": {
+        "calls": 11,
+        "failed": [],
+        "isolation_failures": {},
+        "sha256": "42e04425e5229b20bb81f28fbdf6c07d0985c07d882ed6ad5f414e0822d5a2f5",
+        "summary": "checkpoints/listing.gate-transport.json",
+        "unretried": []
+      }
+    },
+    "world": {
+      "binding_sha256": "206d7171758d5fe949696b1b2a2f0fc8013ef226f9893558d3708ff59884aff3",
+      "by": "coordinator",
+      "items": {
+        "W-money": "PASS",
+        "W1": "PASS",
+        "W2": "PASS",
+        "W3": "PASS"
+      },
+      "items_sha256": "3c87c0292ae5af1cb4c640803ae608307bf5cff6b50bb5b7dca270135e845721",
+      "read": "C:\\DEV\\LitHarness\\runs\\chapter-one\\read-21\\draw-6\\GATE-world.md",
+      "read_sha256": "50acb2051e4ec26f444469669b6390c3e77296f3eb3c65b73ce9f35c24afe784",
+      "recorded_at": "2026-09-24T15:20:33.430737+00:00",
+      "register_report": "checkpoints/world.register.txt",
+      "register_sha256": "b4d91f98d7958a1b25afdae83eda71ea94e43dfddf61e52d82036907c333693a",
+      "result": "pass",
+      "transport": {
+        "calls": 2,
+        "failed": [],
+        "isolation_failures": {},
+        "sha256": "00175bc058961d094e181d3940a662e9734f8a277321c1c937dc281a7fe97ce8",
+        "summary": "checkpoints/world.gate-transport.json",
+        "unretried": []
+      }
+    }
+  },
+  "retries": {},
+  "stages": {
+    "chapter": {
+      "child": {
+        "ended_at": "2026-09-24T15:39:09.813294+00:00",
+        "key": "bind-chapter",
+        "pid": 82952,
+        "started_at": "2026-09-24T15:39:08.779101+00:00"
+      },
+      "finished_at": "2026-09-24T15:39:09.819795+00:00",
+      "runner_pid": 17240,
+      "seconds": 1115.5,
+      "started_at": "2026-09-24T15:20:34.286075+00:00",
+      "status": "done",
+      "steps": [
+        "chapter-world-accept-1",
+        "chapter-tick-1",
+        "chapter-tick-2",
+        "chapter-tick-3",
+        "chapter-tick-4",
+        "chapter-tick-5",
+        "chapter-tick-6",
+        "chapter-tick-7",
+        "chapter-tick-8",
+        "chapter-tick-9",
+        "chapter-tick-10",
+        "chapter-tick-11"
+      ]
+    },
+    "concept": {
+      "child": {
+        "ended_at": "2026-09-24T14:57:02.907254+00:00",
+        "key": "bind-concept",
+        "pid": 96924,
+        "started_at": "2026-09-24T14:57:02.280196+00:00"
+      },
+      "finished_at": "2026-09-24T14:57:02.914325+00:00",
+      "runner_pid": 98672,
+      "seconds": 235.2,
+      "started_at": "2026-09-24T14:53:07.707134+00:00",
+      "status": "done",
+      "steps": [
+        "concept-concept-1"
+      ]
+    },
+    "listing": {
+      "child": {
+        "ended_at": "2026-09-24T15:03:53.815990+00:00",
+        "key": "bind-listing",
+        "pid": 49712,
+        "started_at": "2026-09-24T15:03:53.310436+00:00"
+      },
+      "finished_at": "2026-09-24T15:03:53.823503+00:00",
+      "runner_pid": 71784,
+      "seconds": 348.0,
+      "started_at": "2026-09-24T14:58:05.837478+00:00",
+      "status": "done",
+      "steps": [
+        "listing-listing-1"
+      ]
+    },
+    "seed": {
+      "child": {
+        "ended_at": "2026-09-24T15:10:24.097933+00:00",
+        "key": "bind-world",
+        "pid": 67668,
+        "started_at": "2026-09-24T15:10:23.436369+00:00"
+      },
+      "finished_at": "2026-09-24T15:10:24.104343+00:00",
+      "runner_pid": 50724,
+      "seconds": 345.8,
+      "started_at": "2026-09-24T15:04:38.281628+00:00",
+      "status": "done",
+      "steps": [
+        "seed-architect-seed-1",
+        "seed-world-check-1"
+      ]
+    }
+  },
+  "status": "at_checkpoint",
+  "stop": null
+}

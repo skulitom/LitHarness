@@ -1,0 +1,12 @@
+{
+  "heavy_snapshot": "C:\\DEV\\LitHarness\\runs\\chapter-one\\read-21\\draw-6\\source",
+  "heavy_revision": "07b077f2ce64375d47df2dc2d7f32425432247b3",
+  "heavy_runtime_python_files": 130,
+  "heavy_runtime_python_lines": 65877,
+  "heavy_sql_migrations": 39,
+  "lite_runtime_python_files": 1,
+  "lite_runtime_python_lines": 264,
+  "lite_third_party_python_dependencies": 0,
+  "caveat": "Whole-system size comparison is descriptive; Lite does not implement all incumbent capabilities.",
+  "heavy_source_archive_sha256": "142f60ba4b70c9b50477c7395615353131ef29d3393476a4e39872fa73fa7ca1"
+}

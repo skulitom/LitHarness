@@ -1,0 +1,14 @@
+Develop a compact working plan for the opening chapter of an original serial.
+Return Markdown, at most 800 words. Include: title; protagonist and a specific present
+desire; a few supporting characters with conflicting wants; the minimum world rules;
+four connected dramatic movements with cause, choice and consequence; and an unresolved
+ending that grows out of those choices. Preserve the brief's literal constraints.
+Invent the rest. Keep enough room for discovery during drafting.
+
+BRIEF:
+System apocalypse. When the System arrives, every person on Earth receives exactly one Slot for one skill. The protagonist, a man in his twenties, receives a Slot that can hold as many skills as he can take. Invent the rest.
+
+AUTHOR CONTEXT (may be empty):
+
+
+The chapter will be about 3962 words, in close third person, past tense.
