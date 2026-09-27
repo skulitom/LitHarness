@@ -10,9 +10,9 @@ most 900 words:
 
 # the serial's title
 ## Listing
-Two or three sentences a reader sees before chapter one.
+One paragraph of two or three sentences, none over 27 words, that a reader sees before chapter one.
 ## Person
-His name. Age: a number from 20 to 29. What he was doing when the System arrived, what he
+His name. Age: 20 to 29. What he was doing when the System arrived, what he
 was good at before it, and what he wants, in his own words.
 ## Exception
 What he alone has, and which rule of this world it breaks.
@@ -76,9 +76,8 @@ or the System speaks, put each of its lines on its own line in square brackets, 
 """
 
 REWRITE = """Say each numbered sentence of a novel again, on its own, keeping every fact and
-name and about the same length. Each line gives what to change, the sentence before it for its
-facts, and the sentence. Return one line per number: the number, a period, a space and the new
-sentence.
+name and about the same length. Each line gives what to change, the sentence before it, and the
+sentence. Return one line per number: the number, a period, a space and the new sentence.
 
 """
 REWRITE_LINE = "{i}. ({ask}) Before it: {before} | Say again: {sentence}"
