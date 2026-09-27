@@ -18,6 +18,7 @@ from litharness.application import exemplars
 from litharness.application.handlers import SCENE_DRAFT
 from litharness.application.policy_events import policy_decision_event
 from litharness.application.reviser import REVISION_PROFILE
+from litharness.application.scene_inspection import build_inspection, render_inspection
 from litharness.application.scene_trace import build_scene_trace
 from litharness.domain.events import Event, EventType
 from litharness.domain.jobs import Job, JobStatus, input_digest_for
@@ -808,3 +809,110 @@ def test_invalid_excerpt_boundaries_do_not_trigger_an_unbounded_read(
     _accept(store, base, job)
     with pytest.raises(ValueError):
         _trace(store, **options)
+
+
+def _inspection(store: SqliteStore, **options: Any) -> dict[str, Any]:
+    head = store.head(BOOK, BRANCH)
+    assert head is not None
+    return build_inspection(store, BOOK, BRANCH, head.node(SCENE), head, **options)
+
+
+def test_html_inspection_has_attributed_changes_and_exact_source_excerpt(
+    store: SqliteStore,
+) -> None:
+    base, job = _seed(store, payload_extra={"prompt_sources": _source_map()})
+    history = _accept(store, base, job)
+    report = _inspection(store)
+    rendered = render_inspection(report)
+    assert history.accepted.revision_id in rendered
+    assert history.decision.decision_id in rendered
+    assert 'class="removed"' in rendered and 'class="added"' in rendered
+    assert "raw-only-marker" in rendered and "accepted-only-marker" in rendered
+    assert "frozen-item" in rendered
+    assert f"prompt [0:{len(FROZEN_PROMPT)}]" in rendered
+    assert FROZEN_PROMPT in rendered
+    assert report["excerpts"]["accepted"]["text"] == ACCEPTED
+
+
+def test_html_refused_attempt_never_uses_base_or_later_acceptance_as_its_text(
+    store: SqliteStore,
+) -> None:
+    base, job = _seed(store, base_text="BASE-TEXT-MUST-NOT-BE-A-CANDIDATE")
+    refused = _refuse(store, base, job)
+    _accept(store, base, job)
+    report = _inspection(store, decision_id=refused.decision_id)
+    assert report["excerpts"]["accepted"]["text"] is None
+    rendered = render_inspection(report)
+    assert "BASE-TEXT-MUST-NOT-BE-A-CANDIDATE" not in rendered
+    assert "accepted-only-marker" not in rendered
+    assert "Refused raw-only-marker" in rendered
+    assert "A complete comparison is unavailable" in rendered
+
+
+@pytest.mark.parametrize("cause", ["shelf", "tamper", "long"])
+def test_html_does_not_diff_withheld_corrupt_or_truncated_text(
+    store: SqliteStore, cause: str,
+) -> None:
+    base, job = _seed(store, payload_extra={
+        "prompt_sources": _source_map(),
+        **({"exemplars": {"captured": True}} if cause == "shelf" else {}),
+    })
+    _accept(store, base, job, raw="x" * 20001 if cause == "long" else RAW,
+            raw_hash="0" * 64 if cause == "tamper" else None)
+    report = _inspection(store)
+    rendered = render_inspection(report)
+    assert "A complete comparison is unavailable" in rendered
+    if cause == "long":
+        assert report["excerpts"]["raw_draft"]["truncated"] is True
+        assert "Next offset: 20000" in rendered
+    else:
+        assert "raw-only-marker" not in rendered
+    if cause == "shelf":
+        assert "frozen-item" not in rendered
+        assert FROZEN_PROMPT not in rendered
+        assert "exemplar_shelf_exposure" in rendered
+
+
+def test_html_escapes_manuscript_and_source_labels(store: SqliteStore) -> None:
+    source_map = _source_map()
+    source_map["entries"][0]["section"] = "<script>source()</script>"
+    base, job = _seed(store, payload_extra={"prompt_sources": source_map})
+    _accept(store, base, job, raw="<script>alert(1)</script>", text='<img src="https://evil">')
+    rendered = render_inspection(_inspection(store))
+    assert "<script>" not in rendered and "<img " not in rendered
+    assert "&lt;script&gt;" in rendered and "&lt;img " in rendered
+    assert "Content-Security-Policy" in rendered
+
+
+def test_html_cli_reads_existing_store_without_writes_or_providers(
+    store: SqliteStore, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from litharness import cli
+
+    base, job = _seed(store)
+    _accept(store, base, job)
+
+    def forbidden(*args: Any, **kwargs: Any) -> Any:
+        raise AssertionError("inspection must not create a provider or migrate a store")
+
+    monkeypatch.setattr(cli, "build_default_registry", forbidden)
+    monkeypatch.setattr(cli, "_store", forbidden)
+    database, destination = tmp_path / "scene-trace.db", tmp_path / "scene.html"
+    # SQLite readers update shared-memory read marks; database and WAL content stay unchanged.
+    paths = [p for p in tmp_path.glob("scene-trace.db*") if not p.name.endswith("-shm")]
+    before = {p: p.read_bytes() for p in paths}
+    assert cli.main([
+        "--database", str(database), "why", "--scene", "1", "--html", str(destination),
+    ]) == cli.EXIT_OK
+    assert destination.is_file()
+    assert {p: p.read_bytes() for p in paths} == before
+    assert cli.main([
+        "--database", str(tmp_path / "absent.db"), "why", "--scene", "1",
+        "--html", str(destination),
+    ]) == cli.EXIT_FAULT
+    assert not (tmp_path / "absent.db").exists()
+    before = database.read_bytes()
+    assert cli.main([
+        "--database", str(database), "why", "--scene", "1", "--html", str(database),
+    ]) == cli.EXIT_FAULT
+    assert database.read_bytes() == before

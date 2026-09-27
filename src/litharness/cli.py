@@ -42,7 +42,15 @@ import litharness_contracts as lc
 from litharness.adapters import contracts_fixtures, evaluation_artifact
 from litharness.adapters.continuity_cli import ContinuityCliRunner
 from litharness.adapters.sqlite_store import MigrationsMissing, SqliteStore
-from litharness.application import bookaudit, covers, recruiter, revoice, titles, world_agent
+from litharness.application import (
+    bookaudit,
+    covers,
+    recruiter,
+    revoice,
+    scene_inspection,
+    titles,
+    world_agent,
+)
 from litharness.application import chapter_layout as chapter_layout_mod
 from litharness.application import concept as concept_mod
 from litharness.application import discovery as discovery_mod
@@ -734,6 +742,10 @@ def cmd_tick(args: argparse.Namespace) -> int:
     """One bounded unit of work. This is what the session's loop invokes."""
     store = _store(args)
     loop = _conductor(store, args)
+    if getattr(args, "queued_only", False):
+        from litharness.application.conductor import fifo_selector
+
+        loop.select = fifo_selector
     published: tuple[Path, tuple[library_module.PublishedBook, ...]] | None = None
     try:
         result = loop.tick(_now())
@@ -1219,7 +1231,14 @@ def cmd_why(args: argparse.Namespace) -> int:
     side of the loop, so nothing this prints is a channel back into generation: it answers a
     question and never carries an answer.
     """
-    store = _store(args)
+    if args.decision_id and not args.html:
+        raise ValueError("--decision-id requires --html")
+    if args.html and (
+        args.html.suffix.lower() not in {".html", ".htm"}
+        or args.html.resolve() == args.database.resolve()
+    ):
+        raise ValueError("--html must name an HTML file separate from the database")
+    store = SqliteStore.open_read_only(args.database) if args.html else _store(args)
     try:
         book_id, branch_id = export_module.resolve_branch(store, args.book, args.branch)
         head = store.head(book_id, branch_id)
@@ -1234,6 +1253,13 @@ def cmd_why(args: argparse.Namespace) -> int:
                 file=sys.stderr,
             )
             return EXIT_ATTENTION
+        if args.html:
+            report = scene_inspection.build_inspection(
+                store, book_id, branch_id, node, head, decision_id=args.decision_id,
+            )
+            _write_document(args.html, scene_inspection.render_inspection(report))
+            print(f"scene inspection: {args.html}")
+            return EXIT_OK
         dossier = dossier_mod.scene_dossier(store, book_id, branch_id, node, head)
     finally:
         store.close()
@@ -5922,6 +5948,10 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
 
     tick = sub.add_parser("tick", help="run one bounded unit of work")
+    tick.add_argument(
+        "--queued-only", action="store_true",
+        help="process queued work without planning another scene",
+    )
     tick.set_defaults(func=cmd_tick)
 
     status = sub.add_parser("status", help="queue depth, attention counts, digest and spend")
@@ -6077,7 +6107,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     why.add_argument("--book")
     why.add_argument("--branch")
-    why.add_argument("--json", action="store_true", help="machine-readable output")
+    why_output = why.add_mutually_exclusive_group()
+    why_output.add_argument("--json", action="store_true", help="machine-readable output")
+    why_output.add_argument(
+        "--html", type=Path, help="export a read-only scene inspection with recorded text changes",
+    )
+    why.add_argument("--decision-id", help="select a recorded decision for --html")
     why.set_defaults(func=cmd_why)
 
     events = sub.add_parser(

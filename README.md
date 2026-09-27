@@ -45,35 +45,30 @@ tracing, and usage limits. Tests cannot select a billing provider.
 
 ## Start a serial
 
-Invent a concept, then create its listing and empty book. These commands use the compiled
-`halloran` writer and prepare a 24-scene opening arc:
+Create a serial from a brief and write to a chapter target with one command:
 
 ```bash
-uv run litharness --database book.db --writer halloran concept --scenes 24 --out runs/pilots/my-book
-uv run litharness --database book.db --writer halloran listing --concept runs/pilots/my-book/concept.json --person third --scenes 24 --out runs/pilots/my-book
+uv run python tools/produce.py start runs/serials/my-book --brief "A courier can cross a gate that has sealed his city." --writer halloran --chapters 6
 ```
 
-Add `--brief "..."` to `concept` to supply a premise or constraints. Without a brief,
-new books default to portal fantasy, isekai, or system apocalypse, including combinations.
-Discovery automatically develops an [experience brief](docs/operator-guide.md#automatic-experience-brief)
-covering desire, action, experienced consequence and chapter coverage. Your supplied brief
-takes priority; the generated proposal remains available to planning.
+The runner invents the concept, creates its listing and book, seeds and accepts the world,
+then uses the ordinary production loop. It saves progress in the new directory and exports
+`book.html` after reaching the target and finishing queued work. The default chapter has four
+scenes. Supply `--brief-file` for a longer brief, or omit the brief to invent freely within the
+house's default subgenres.
 
-For an experimental alternative, `concept --planning-material` invents referenced developments
-once and stores optional placement separately. See [structured planning material](docs/operator-guide.md#structured-planning-material-experimental).
-
-Before drafting, have the Architect propose the opening world, check it, and accept it
-into canon:
+Interrupt with Ctrl+C, inspect progress, and resume using the saved settings:
 
 ```bash
-uv run litharness --database book.db --writer halloran architect seed
-uv run litharness --database book.db world check
-uv run litharness --database book.db world accept
+uv run python tools/produce.py status runs/serials/my-book
+uv run python tools/produce.py resume runs/serials/my-book
+uv run python tools/produce.py resume runs/serials/my-book --chapters 12
 ```
 
-For existing premises, imports, writer selection, chapter size, and extending the same
-serial, see [starting a serial](docs/operator-guide.md#start-a-serial). Seed replay and
-other generation controls are in [generation details](docs/operator-guide.md#generation-details).
+Failures stop with the reason and an attempt log; accepted work remains in the book database.
+See [the saved production workflow](docs/operator-guide.md#saved-production-workflow) for
+usage limits and recovery, or [starting a serial](docs/operator-guide.md#start-a-serial) for
+individual commands, existing premises, imports, and experimental generation options.
 
 ## Run the production loop
 

@@ -19,6 +19,7 @@ from litharness.application.conductor import (
 from litharness.domain.events import Event, EventType
 from litharness.domain.exceptions import ExceptionKind
 from litharness.domain.jobs import Job, JobStatus
+from litharness.domain.policy import Outcome, PolicyDecision
 from litharness.domain.revision import Revision
 from litharness.providers.base import ProviderFailureKind, provider_error
 from tests.conftest import PROJECT_ID
@@ -169,6 +170,65 @@ def test_a_job_with_no_handler_fails_rather_than_vanishing(store: SqliteStore) -
     assert job.error is not None and "no handler" in job.error
 
 
+@pytest.mark.parametrize("failure", ["handler", "missing", "retry", "repair", "regenerate"])
+def test_exhausted_work_raises_one_exception_until_resolved(store: SqliteStore, failure) -> None:
+    def fail(job: Job, now: float):
+        if failure == "handler":
+            raise RuntimeError("could not finish")
+        store.record_decision(PolicyDecision(
+            decision_id=f"decision-{job.attempts}", job_id=job.job_id,
+            outcome=Outcome(failure), attempt=job.attempts, reason="try again",
+        ), decided_at=Conductor._timestamp(now))
+        return ()
+
+    store.enqueue(Job(job_id="unfinished", job_kind="work", max_attempts=2))
+    subject = conductor(store, handlers={} if failure == "missing" else {"work": fail})
+    assert subject.tick(START).outcome is TickOutcome.JOB_FAILED
+    assert store.open_exceptions() == []
+    assert subject.tick(START + TICK_SECONDS).outcome is TickOutcome.JOB_FAILED
+    [raised] = store.open_exceptions()
+    assert raised.job_id == "unfinished" and raised.attempts == 2
+    assert "attempt budget spent" in raised.summary
+    if failure not in {"handler", "missing"}:
+        assert raised.decision_id == "decision-2"
+    assert store.load_job("unfinished").status is JobStatus.POISONED
+    subject.tick(START + 2 * TICK_SECONDS)
+    assert store.open_exceptions() == [raised]
+    store.resolve_exception(raised.exception_id, "reviewed", at=Conductor._timestamp(START))
+    subject.tick(START + 3 * TICK_SECONDS)
+    assert store.open_exceptions() == []
+    assert sum(entry.event.event_type is EventType.EXCEPTION_RAISED
+               for entry in store.read_log()) == 1
+
+
+def test_terminal_job_and_exception_roll_back_when_event_write_fails(
+    store: SqliteStore, monkeypatch,
+) -> None:
+    def fail(job: Job, now: float):
+        raise RuntimeError("could not finish")
+
+    insert = store._insert_event
+
+    def interrupted(connection, event):
+        if event.event_type is EventType.EXCEPTION_RAISED:
+            raise OSError("event write interrupted")
+        insert(connection, event)
+
+    store.enqueue(Job(job_id="unfinished", job_kind="work", max_attempts=1))
+    subject = conductor(store, handlers={"work": fail})
+    monkeypatch.setattr(store, "_insert_event", interrupted)
+    with pytest.raises(OSError, match="event write interrupted"):
+        subject.tick(START)
+    assert store.load_job("unfinished").status is JobStatus.RUNNING
+    assert store.open_exceptions() == []
+    assert store.read_log() == []
+    monkeypatch.setattr(store, "_insert_event", insert)
+    subject.tick(START + 2 * subject.job_lease_duration)
+    assert store.load_job("unfinished").status is JobStatus.POISONED
+    [raised] = store.open_exceptions()
+    assert raised.job_id == "unfinished"
+
+
 # --- crash recovery ----------------------------------------------------------------
 
 
@@ -184,14 +244,20 @@ def test_a_job_abandoned_by_a_crashed_holder_is_requeued(store: SqliteStore) -> 
     assert store.load_job("j1").status in {JobStatus.QUEUED, JobStatus.SUCCEEDED}
 
 
-def test_a_job_abandoned_past_its_attempt_budget_poisons(store: SqliteStore) -> None:
+@pytest.mark.parametrize("status", [JobStatus.RUNNING, JobStatus.FAILED])
+def test_a_job_abandoned_past_its_attempt_budget_poisons(store: SqliteStore, status) -> None:
     store.enqueue(Job(job_id="j1", job_kind="noop", max_attempts=1))
     claimed = store.claim_next("dead-worker", now=START, duration=60.0)
     assert claimed is not None
-    store.save_job(claimed.transition_to(JobStatus.RUNNING))
+    abandoned = claimed.transition_to(JobStatus.RUNNING)
+    if status is JobStatus.FAILED:
+        abandoned = abandoned.transition_to(status, error="interrupted failure receipt")
+    store.save_job(abandoned)
 
     conductor(store).tick(START + 600)
     assert store.load_job("j1").status is JobStatus.POISONED
+    [raised] = store.open_exceptions()
+    assert raised.job_id == "j1" and raised.attempts == 1
 
 
 def test_reconciliation_does_not_touch_a_live_lease(store: SqliteStore) -> None:

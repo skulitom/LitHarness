@@ -172,7 +172,9 @@ def test_status_surfaces_units_that_need_attention_and_still_exits_zero(db, caps
     capsys.readouterr()
 
     assert run(db, "status") == EXIT_OK
-    assert "needs attention 1" in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert "needs attention 2" in output  # exhausted job plus its open exception
+    assert "exceptions      1 open" in output
 
 
 # --- direction and controls ----------------------------------------------------------

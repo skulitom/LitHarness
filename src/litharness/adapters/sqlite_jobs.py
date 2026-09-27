@@ -71,18 +71,29 @@ class SqliteJobRepository:
 
     def save_job(self, job: Job) -> None:
         with self._transaction() as connection:
-            connection.execute(
-                "UPDATE jobs SET status = ?, attempts = ?, error = ?, lease_holder = ?, "
-                "lease_expires_at = ? WHERE job_id = ?",
-                (
-                    job.status.value,
-                    job.attempts,
-                    job.error,
-                    job.lease_holder,
-                    job.lease_expires_at,
-                    job.job_id,
-                ),
+            self.save_job_on(connection, job)
+
+    @staticmethod
+    def save_job_on(connection: sqlite3.Connection, job: Job) -> None:
+        connection.execute(
+            "UPDATE jobs SET status = ?, attempts = ?, error = ?, lease_holder = ?, "
+            "lease_expires_at = ? WHERE job_id = ?",
+            (
+                job.status.value, job.attempts, job.error, job.lease_holder,
+                job.lease_expires_at, job.job_id,
+            ),
+        )
+
+    def recoverable_jobs(self, now: float) -> list[Job]:
+        """Read recovery candidates without committing a terminal state before its exception."""
+        return [
+            self.job_from_row(row)
+            for row in self._connection.execute(
+                "SELECT * FROM jobs WHERE status = ? OR (status = ? "
+                "AND lease_expires_at <= ?) ORDER BY CASE WHEN status = ? THEN 0 ELSE 1 END, rowid",
+                (JobStatus.FAILED.value, JobStatus.RUNNING.value, now, JobStatus.RUNNING.value),
             )
+        ]
 
     def load_job(self, job_id: str) -> Job:
         row = self._connection.execute("SELECT * FROM jobs WHERE job_id = ?", (job_id,)).fetchone()
@@ -124,44 +135,6 @@ class SqliteJobRepository:
                 (job.lease_holder, job.lease_expires_at, job.job_id),
             )
             return job
-
-    def reclaim_expired(self, now: float) -> list[Job]:
-        """Requeue work abandoned by a crashed lease holder, within its attempt budget."""
-        rows = self._connection.execute(
-            "SELECT * FROM jobs WHERE status = ? AND lease_expires_at IS NOT NULL "
-            "AND lease_expires_at <= ? ORDER BY rowid",
-            (JobStatus.RUNNING.value, now),
-        ).fetchall()
-        reclaimed: list[Job] = []
-        for row in rows:
-            job = self.job_from_row(row).released()
-            if job.attempts >= job.max_attempts:
-                recovered = job.transition_to(
-                    JobStatus.POISONED, error="lease expired; attempt budget exhausted"
-                )
-            else:
-                recovered = job.transition_to(JobStatus.QUEUED, error="lease expired; requeued")
-            self.save_job(recovered)
-            reclaimed.append(recovered)
-        return reclaimed
-
-    def requeue_failed(self) -> list[Job]:
-        """Requeue failed work with budget left, poisoning exhausted work."""
-        rows = self._connection.execute(
-            "SELECT * FROM jobs WHERE status = ? ORDER BY rowid", (JobStatus.FAILED.value,)
-        ).fetchall()
-        moved: list[Job] = []
-        for row in rows:
-            job = self.job_from_row(row).released()
-            if job.attempts >= job.max_attempts:
-                recovered = job.transition_to(
-                    JobStatus.POISONED, error=job.error or "attempt budget exhausted"
-                )
-            else:
-                recovered = job.transition_to(JobStatus.QUEUED, error=job.error)
-            self.save_job(recovered)
-            moved.append(recovered)
-        return moved
 
     def queued_count(self) -> int:
         row = self._connection.execute(

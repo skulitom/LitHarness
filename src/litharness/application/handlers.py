@@ -543,7 +543,7 @@ def make_scene_draft_handler(
         # **Crash-after-commit must not file a false exception.** This handler commits the
         # revision itself (only `commit_revision` puts a revision and its event in one
         # transaction), while the job's SUCCEEDED write happens later in `_settle`, in a
-        # different one. A crash between them leaves the row RUNNING; `reclaim_expired`
+        # different one. A crash between them leaves the row RUNNING; lease recovery
         # requeues it; the re-run finds the node now has content and `gate_draft` returns
         # TARGET_HAS_NO_CONTENT, which `decide` escalates on the first attempt — parking a
         # unit and filing an exception for work that *succeeded*. Safe because the decision

@@ -1009,6 +1009,20 @@ class SqliteStore:
     def save_job(self, job: Job) -> None:
         self._jobs.save_job(job)
 
+    def commit_job_result(
+        self, job: Job, *, events: Sequence[Event], exception: ExceptionRecord | None = None,
+    ) -> None:
+        """A terminal failure cannot become visible without its escalation and events."""
+        with self.transaction() as connection:
+            self._jobs.save_job_on(connection, job)
+            if exception is not None:
+                self._raise_exception_on(connection, exception)
+            for event in events:
+                self._insert_event(connection, event)
+
+    def recoverable_jobs(self, now: float) -> list[Job]:
+        return self._jobs.recoverable_jobs(now)
+
     def load_job(self, job_id: str) -> Job:
         return self._jobs.load_job(job_id)
 
@@ -1028,30 +1042,6 @@ class SqliteStore:
         get the answer wrong for every book with direction or repairs in flight.
         """
         return self._jobs.claim_next(holder, now, duration)
-
-    def reclaim_expired(self, now: float) -> list[Job]:
-        """Requeue jobs left RUNNING by a crashed holder whose lease has expired.
-
-        This is crash recovery for the in-flight unit (§19): a process that died mid-job
-        leaves the row RUNNING forever, and nothing else will ever pick it up because
-        `claim_next` only looks at QUEUED. Attempts are already counted, so a job that has
-        exhausted its budget poisons here rather than cycling.
-        """
-        return self._jobs.reclaim_expired(now)
-
-    def requeue_failed(self) -> list[Job]:
-        """Bounded retry: requeue FAILED jobs with budget left, poison the rest.
-
-        Without this a FAILED job is inert — `claim_next` only sees QUEUED, so nothing ever
-        retries it and nothing ever poisons it either. It simply sits at FAILED forever,
-        which looks like a parked unit but is really a lost one: no retry, no escalation, no
-        terminal state. §4.2's retry ladder needs this step to exist at all.
-
-        Retries are immediate (next tick) rather than backed off. The attempt budget is what
-        bounds them; a `next_attempt_at` column would add backoff and is deliberately not
-        invented here, since nothing yet needs a specific delay.
-        """
-        return self._jobs.requeue_failed()
 
     def queued_count(self) -> int:
         return self._jobs.queued_count()
@@ -2211,25 +2201,21 @@ class SqliteStore:
         useless.
         """
         with self.transaction() as connection:
-            cursor = connection.execute(
-                "INSERT OR IGNORE INTO exceptions (exception_id, kind, summary, status, "
-                "job_id, logical_id, decision_id, raised_at, resolved_at, resolution, "
-                "attempts) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (
-                    record.exception_id,
-                    record.kind.value,
-                    record.summary,
-                    record.status.value,
-                    record.job_id,
-                    record.logical_id,
-                    record.decision_id,
-                    record.raised_at,
-                    record.resolved_at,
-                    record.resolution,
-                    record.attempts,
-                ),
-            )
-            return cursor.rowcount > 0
+            return self._raise_exception_on(connection, record)
+
+    @staticmethod
+    def _raise_exception_on(connection: sqlite3.Connection, record: ExceptionRecord) -> bool:
+        cursor = connection.execute(
+            "INSERT OR IGNORE INTO exceptions (exception_id, kind, summary, status, "
+            "job_id, logical_id, decision_id, raised_at, resolved_at, resolution, "
+            "attempts) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                record.exception_id, record.kind.value, record.summary, record.status.value,
+                record.job_id, record.logical_id, record.decision_id, record.raised_at,
+                record.resolved_at, record.resolution, record.attempts,
+            ),
+        )
+        return cursor.rowcount > 0
 
     def open_exceptions(self, limit: int = 50) -> list[ExceptionRecord]:
         return [

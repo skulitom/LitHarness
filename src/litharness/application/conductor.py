@@ -133,12 +133,8 @@ class Conductor:
         # influence what this tick picks up, and must never mutate a job already running.
         ingested = self._ingest_directives(now)
 
-        # Reconcile is two distinct recoveries, and both are needed. `reclaim_expired`
-        # rescues a unit whose holder crashed mid-job; `requeue_failed` advances a unit that
-        # failed cleanly. Omitting the second leaves FAILED jobs inert forever — no retry,
-        # no poison, no escalation — which is the bug this loop shipped with until the
-        # non-starvation test caught it.
-        reconciled = len(self.store.reclaim_expired(now)) + len(self.store.requeue_failed())
+        # Recovery must use the same atomic escalation as an exhausted live attempt.
+        reconciled = self._reconcile(now)
 
         job = self.select(self.store, self.holder, now, self.job_lease_duration)
         if job is None:
@@ -173,10 +169,12 @@ class Conductor:
     def _run(self, job: Job, now: float) -> tuple[TickOutcome, Sequence[Event]]:
         handler = self.handlers.get(job.job_kind)
         if handler is None:
-            self.store.save_job(
-                job.transition_to(JobStatus.RUNNING).fail(f"no handler for {job.job_kind}")
-            )
-            return TickOutcome.JOB_FAILED, ()
+            reason = f"no handler for {job.job_kind}"
+            failed = job.transition_to(JobStatus.RUNNING).fail(reason)
+            events = [self._event(
+                EventType.JOB_FAILED, {"job_id": job.job_id, "error": reason}, now,
+            )]
+            return TickOutcome.JOB_FAILED, self._save_failure(failed, now, events)
 
         running = job.transition_to(JobStatus.RUNNING)
         self.store.save_job(running)
@@ -208,7 +206,6 @@ class Conductor:
             # outage, but park instead of requeueing so the cadence cannot spin on it.
             stopped = replace(running, attempts=job.attempts)
             final = stopped.transition_to(JobStatus.PARKED, error=str(error)).released()
-            self.store.save_job(final)
             diagnostic = error.diagnostic()
             failed_event = self._event(
                 EventType.JOB_FAILED,
@@ -220,7 +217,6 @@ class Conductor:
                 },
                 now,
             )
-            self.store.append_events([failed_event])
             self.store.bump_digest(self._day(now), "jobs_parked")
             self.store.bump_digest(self._day(now), "provider_blocked")
             raised = self._raise_exception(
@@ -230,23 +226,20 @@ class Conductor:
                 now,
                 exhausted=False,
                 kind=ExceptionKind.PROVIDER_UNAVAILABLE,
+                events=[failed_event],
             )
             return TickOutcome.JOB_PARKED, [failed_event, *raised]
         except Exception as error:  # a handler failure is data, not a crash
             failed = running.fail(f"{type(error).__name__}: {error}")
-            self.store.save_job(failed)
             diagnostic = error.diagnostic() if isinstance(error, OperationalFailure) else {}
-            self.store.append_events(
-                [
-                    self._event(
-                        EventType.JOB_FAILED,
-                        {"job_id": job.job_id, "error": str(error), **diagnostic},
-                        now,
-                    )
-                ]
+            failed_event = self._event(
+                EventType.JOB_FAILED,
+                {"job_id": job.job_id, "error": str(error), **diagnostic},
+                now,
             )
+            recorded = self._save_failure(failed, now, [failed_event])
             self.store.bump_digest(self._day(now), "jobs_failed")
-            return TickOutcome.JOB_FAILED, ()
+            return TickOutcome.JOB_FAILED, recorded
 
         self.store.append_events(events)
 
@@ -279,12 +272,9 @@ class Conductor:
             return TickOutcome.RAN_JOB, events
 
         if outcome in {Outcome.RETRY, Outcome.REGENERATE, Outcome.REPAIR}:
-            # `fail` already poisons once the attempt budget is spent, so a retry ladder
-            # that never converges still terminates. This is the existing bounded-retry
-            # path; the change is only that policy decides to enter it.
-            self.store.save_job(running.fail(reason))
+            recorded = self._save_failure(running.fail(reason), now, (), decision=decision)
             self.store.bump_digest(self._day(now), "jobs_retried")
-            return TickOutcome.JOB_FAILED, events
+            return TickOutcome.JOB_FAILED, [*events, *recorded]
 
         # **Two vocabularies meet here, and they do not use the same words.** At the
         # decision layer §4.2 says *park* (the unit is stuck, move on) and *escalate* (a
@@ -335,7 +325,6 @@ class Conductor:
         )
         status = JobStatus.POISONED if exhausted else JobStatus.PARKED
         final = stopped.transition_to(status, error=reason).released()
-        self.store.save_job(final)
         self.store.bump_digest(self._day(now), "jobs_poisoned" if exhausted else "jobs_parked")
         # **Attempt exhaustion raises an exception too, and this is the modal case.** Only
         # ESCALATE filed one at first, which meant the *common* way a unit dies — three
@@ -355,9 +344,40 @@ class Conductor:
         # still visible, in `jobs --status parked` where a refusal belongs and where the
         # README says to look for it.
         if parked_by_policy:
+            self.store.save_job(final)
             return TickOutcome.JOB_PARKED, list(events)
         raised = self._raise_exception(final, decision, reason, now, exhausted=exhausted)
         return TickOutcome.JOB_PARKED, [*events, *raised]
+
+    def _reconcile(self, now: float) -> int:
+        jobs = self.store.recoverable_jobs(now)
+        for job in jobs:
+            expired = job.status is JobStatus.RUNNING
+            reason = "lease expired" if expired else (job.error or "attempt budget exhausted")
+            if job.attempts >= job.max_attempts:
+                final = job.transition_to(JobStatus.POISONED, error=reason).released()
+                self._save_failure(
+                    final, now, (), decision=self.store.latest_decision_for(job.job_id),
+                )
+            else:
+                self.store.save_job(job.transition_to(
+                    JobStatus.QUEUED, error="lease expired; requeued" if expired else job.error,
+                ).released())
+        return len(jobs)
+
+    def _save_failure(
+        self, job: Job, now: float, events: Sequence[Event],
+        *, decision: PolicyDecision | None = None,
+    ) -> Sequence[Event]:
+        if job.status is JobStatus.POISONED:
+            raised = self._raise_exception(
+                job, decision, job.error or "attempt budget exhausted", now,
+                exhausted=True, events=events,
+            )
+            self.store.bump_digest(self._day(now), "jobs_poisoned")
+            return [*events, *raised]
+        self.store.commit_job_result(job, events=events)
+        return events
 
     def _raise_exception(
         self,
@@ -368,6 +388,7 @@ class Conductor:
         *,
         exhausted: bool,
         kind: ExceptionKind = ExceptionKind.REPEATED_GATE_FAILURE,
+        events: Sequence[Event] = (),
     ) -> Sequence[Event]:
         """File the escalation in the queue *and* the log.
 
@@ -379,22 +400,17 @@ class Conductor:
             if exhausted
             else reason
         )
-        self.store.bump_digest(self._day(now), "exceptions_raised")
-        self.store.raise_exception(
-            ExceptionRecord(
-                exception_id=exception_id_for(
-                    job.job_id,
-                    kind,
-                    decision.decision_id if decision else None,
-                ),
-                kind=kind,
-                summary=summary,
-                job_id=job.job_id,
-                logical_id=decision.logical_id if decision else None,
-                decision_id=decision.decision_id if decision else None,
-                raised_at=self._timestamp(now),
-                attempts=job.attempts,
-            )
+        record = ExceptionRecord(
+            exception_id=exception_id_for(
+                job.job_id, kind, decision.decision_id if decision else None,
+            ),
+            kind=kind,
+            summary=summary,
+            job_id=job.job_id,
+            logical_id=decision.logical_id if decision else None,
+            decision_id=decision.decision_id if decision else None,
+            raised_at=self._timestamp(now),
+            attempts=job.attempts,
         )
         raised = [
             self._event(
@@ -409,7 +425,8 @@ class Conductor:
                 now,
             )
         ]
-        self.store.append_events(raised)
+        self.store.commit_job_result(job, exception=record, events=[*events, *raised])
+        self.store.bump_digest(self._day(now), "exceptions_raised")
         return raised
 
     def _ingest_directives(self, now: float) -> int:

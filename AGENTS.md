@@ -117,3 +117,5 @@ briefs after their durable conclusions have a canonical home.
 Before assigning a decision number, check the committed ledger and concurrent sessions' work
 for collisions. Keep changing counts at their owning source: link to the suite, refutation
 ledger or result record rather than copying totals into another guide.
+
+## Imported Claude Cowork project instructions

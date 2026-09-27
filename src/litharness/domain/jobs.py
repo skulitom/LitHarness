@@ -79,7 +79,7 @@ TRANSITIONS: dict[JobStatus, frozenset[JobStatus]] = {
     # `RUNNING -> QUEUED` is crash recovery, not a happy-path move: a holder that died
     # mid-job leaves the row RUNNING, and nothing would ever pick it up again because
     # `claim_next` only sees QUEUED. Reclaiming an expired lease is the only caller
-    # (`SqliteStore.reclaim_expired`), and it requeues with attempts already counted so a
+    # (`Conductor._reconcile`), and it requeues with attempts already counted so a
     # crash loop still poisons on budget rather than cycling forever. Omitting this edge is
     # what a first draft of this table did, and the symptom was a permanently stuck job.
     JobStatus.RUNNING: frozenset(

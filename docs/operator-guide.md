@@ -85,6 +85,59 @@ The default applies even with an empty brief; `--brief` can choose another subge
 Stored treatments retain their original direction. All stages use the configured subscription
 CLI and the ordinary quota checks.
 
+### Saved production workflow
+
+`tools/produce.py` runs the existing concept, listing, book creation, Architect, world
+acceptance, tick, extension and export commands in sequence. Each new run owns its directory
+and `book.db`. It refuses an existing directory or a database containing another book/branch.
+
+```bash
+uv run python tools/produce.py start runs/serials/my-book --brief-file my-brief.txt --writer halloran --chapters 6 --max-invocations-per-day 40 --max-tokens-per-day 500000
+uv run python tools/produce.py status runs/serials/my-book
+uv run python tools/produce.py resume runs/serials/my-book
+uv run python tools/produce.py resume runs/serials/my-book --chapters 12
+```
+
+The manifest saves the brief, book identity, global command settings, provider selection,
+model-routing overrides, and setup receipts. Resume reuses them even if those environment
+settings change. Credentials and executable locations still come from the current machine.
+Keep the directory at its original path; changed saved inputs or a missing saved database
+are refused. This does not freeze the installed code or model versions and is not a research
+registration. Ordinary chapter-one iteration for the operator's read continues through
+`tools/chapter_one.py`.
+
+Each attempt has its own `attempts/NNNNN-stage/log.txt`; concept and listing attempts also keep
+their generated artifacts there. Interrupted setup attempts remain available, and only stages
+without a success receipt are retried. Creation checks the stored book before retrying.
+Resume preserves attempt directories left before a receipt was saved and uses a fresh number.
+Accepted manuscript, jobs, decisions and canon retain their normal SQLite history. `status`
+opens an existing store read-only and never creates or migrates it; the manifest's state is the
+last recorded state, not a process liveness check.
+
+Progress counts consecutive scenes with accepted prose, divided by `--chapter-scenes`
+(default 4). `--arc-chapters` defaults to 6; complete arcs are appended when needed. At the
+target, `tick --queued-only` finishes existing jobs without asking the planner for another
+scene. The run exports `book.html` and marks completion once queued work is drained and no
+exceptions remain open. The library is derived under `library/` as ticks run. A higher target
+continues the same serial; it does not start another book or reset the earlier scenes.
+Exhausted jobs raise exceptions, including exhausted attempts recovered after a crash.
+
+The runner stops at the first failed command, blocked planner, stalled queue, or per-invocation
+`--max-ticks` limit (default 1000). Daily usage ceilings apply through the existing commands and
+are saved for resume; the tick limit does not count setup calls. Exit `0` means the target was
+exported (or a status read succeeded), `1` means work stopped for attention, and `2` means a
+command fault/refusal, invalid invocation or run that could not be opened. Failed stages retain
+their command's exit status, including setup-budget refusals. Inspect the printed job error, exception
+and attempt log, apply the existing [recovery commands](#direct-and-recover) to the run's
+`book.db`, then resume. A held job lease must expire before crash recovery can claim it.
+Resolving an exception and reviving a parked job remain separate actions.
+If the last permitted tick completes the work, the runner exports without requiring another tick.
+
+Only one runner can hold a run directory at a time; its lock releases when the process exits.
+Direct `litharness` commands do not acquire that lock, so use them for recovery while the
+runner is stopped. For an existing database or finer control over generation, use the
+individual commands below.
+
 ### Invent the concept
 
 ```bash
@@ -326,6 +379,7 @@ Useful operating views:
 | `jobs [--status parked] [--json]` | queued or blocked work; the JSON form always carries counts |
 | `exceptions [--json]`, `directives [--json]` | what policy could not resolve; captured direction with its author |
 | `why --scene N [--json]` | the prompt, decision, and evidence behind one scene |
+| `why --scene N --html PATH` | a read-only inspection page with returned/accepted text, changes, decisions and input source locations |
 | `events [--since CURSOR] [--json]` | append-only state-change history |
 | `plans [--json]` | immutable plan lineage and its proposals |
 | `state [--json]`, `characters [--json]`, `world summary` | current canon and world state |
@@ -340,6 +394,31 @@ Run `uv run litharness COMMAND --help` for the authoritative option list. `--dat
 before the verb; `LITHARNESS_DATABASE` names the store when a flag cannot. Exit codes are the
 contract on every verb: 0 answered, 1 needs a person (a result, not an error), 2 an operational
 fault.
+
+### Inspect recorded scene changes
+
+Export a self-contained inspection page from an existing book:
+
+```bash
+uv run litharness --database book.db why --scene 6 --html runs/scene-6.html
+uv run litharness --database book.db why --scene 6 --decision-id DECISION_ID --html runs/scene-6-attempt.html
+```
+
+The output directory must exist. The HTML path opens the database read-only and refuses
+missing stores or pending migrations. It calls no model and cannot apply a revision.
+It shows the selected decision's returned draft and accepted text side by side, their
+recorded differences, the decisions on that job, frozen writing inputs and source locations.
+Use an id from the decision table to inspect another attempt. Scope is the scene's current
+attributed or unfinished job, not every historical job; accepted text belongs to the selected
+decision's resulting revision, which can differ from today's head.
+
+Each text preview is bounded to 20,000 characters and the source list to 100 entries. The page
+labels truncation and continuation offsets. `scene_trace` through MCP provides further pages.
+Source locations use zero-based, end-exclusive character offsets in the original input; ranges
+outside a preview are labelled, never reconstructed. A diff requires both complete, unredacted
+texts. Missing capture, hash mismatch and exemplar-related withholding remain visible gaps.
+The page compares recorded text; it does not judge prose, explain model causation, or provide
+authority for an editorial intervention.
 
 ### Query world declarations
 
