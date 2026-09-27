@@ -1,0 +1,14 @@
+{
+  "preferences": [
+    "lite",
+    "lite"
+  ],
+  "controls": {
+    "all_quotes_located": true,
+    "order_consistent": true,
+    "duplicate_tie": true,
+    "damage_detected": true
+  },
+  "diagnostic_interpretable": true,
+  "scope": "Single historical pair; four calls are not four independent samples. Not a validated quality measure."
+}
