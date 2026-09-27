@@ -1,15 +1,17 @@
 """Budgets that keep the rebuild small. No allowlists and no exception dicts."""
 import ast
 from fnmatch import fnmatch
+import json
 from pathlib import Path
 import re
 import subprocess
 import sys
 import unittest
 
-from litharness import files
+from litharness import checks, files, prompts, tells
 
 ROOT = Path(__file__).resolve().parents[1]
+FIXTURES = json.loads((ROOT / "tests" / "fixtures.json").read_bytes())
 RUNTIME = sorted((ROOT / "litharness").glob("*.py"))
 SCRIPTS = RUNTIME + sorted(ROOT.glob("bench.py"))
 DOCS = {"README.md": 80, "AGENTS.md": 80, "CLAUDE.md": 40, "LEARNINGS.md": 150, "DECISIONS.md": 80,
@@ -72,6 +74,19 @@ class Guards(unittest.TestCase):
         for name in tracked:
             if name.endswith((".md", ".txt", ".json")):
                 self.assertFalse(runs((ROOT / name).read_bytes().decode("utf-8", "replace"), 12) & third, name)
+
+    def test_prompts(self):
+        texts = [v for k, v in vars(prompts).items() if k.isupper() and isinstance(v, str)]
+        texts += [s for k, v in vars(prompts).items() if k.isupper() and isinstance(v, dict) for s in v.values()]
+        joined = "\n".join(texts)
+        self.assertLessEqual(tells.words(joined), 700)
+        self.assertEqual(checks.money(joined, "pitch") + checks.hits(checks.ADMIN, joined), [])
+        self.assertFalse(runs(joined, 6) & set().union(*(runs(case["text"], 6) for case in FIXTURES)))
+
+    def test_fixtures(self):
+        self.assertLessEqual(len(FIXTURES), 60)
+        for case in FIXTURES:
+            self.assertLessEqual(len(case["text"].split()), 40, case["text"])
 
     def test_docs(self):
         for name, cap in DOCS.items():

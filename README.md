@@ -23,7 +23,15 @@ python -m litharness opening --brief briefs/slot.txt --words 1500
 to `$LITHARNESS_HOME/openings/<brief>-<words>/` (default `~/LitHarness-data`). Re-run with
 `--resume` to finish an interrupted run; changed inputs or artifacts are refused.
 
-Exit codes: 0 done, 1 needs a person (a held lock, an existing run), 2 fault.
+```powershell
+python -m litharness check chapter.md [--stage pitch|plan|chapter] [--serial SLUG]
+```
+
+`check` runs every deterministic check on any text without a call: the hard checks that will
+redraw a stage (`money`, `leak`, `person`, `rise`, `fields`, `pitch-shape`, `plan-shape`, `length`)
+and the inert reports. Without `--serial` the file is treated as chapter 1 with no plan or bible.
+
+Exit codes: 0 done, 1 needs a person (a failing check, a held lock, an existing run), 2 fault.
 
 Every call keeps its request, system prompt, events, stderr, `final.md` and `receipt.json`
 (model, effort, token usage, seconds, sha256 of every input and of the output).
