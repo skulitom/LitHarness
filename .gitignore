@@ -1,4 +1,24 @@
+# Data lives outside the tree ($LITHARNESS_HOME); these keep stray copies out of git.
+runs/
+serials/
+shelf/
+book-library*/
+research/
+derived/
+corpora/
+exports/
+output/
+dist/
+*.db*
+.venv/
+.agents/
+.claude/worktrees/
 __pycache__/
-.pytest_cache/
-.ruff_cache/
+*.pyc
+*_cache/
+.hypothesis/
+.coverage*
+*.egg-info/
+build/
+htmlcov/
 *.tmp
