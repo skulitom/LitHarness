@@ -58,10 +58,10 @@ continued: it fails v1 checks (no status lines, 4,069 words, an institutional pr
 One chapter is one Royal Road post of 1,500 words. `len-band` reports outside 1,200-2,000; `length` redraws
 only below 900 or above 2,700. Both bands scale with `--words`. (plan 3.6, 10)
 
-## 2026-09-27 wait-for-operator
-Royal Road export, the bench and the exemplar shelf wait for the operator to ask: export when a chapter is
-ready to post (the first real paste is its test), the bench for a comparison, the shelf re-applying §196. The
-first two would be spend or code with no consumer yet. (plan 4, 10)
+## 2026-09-28 wait-for-operator
+Royal Road export and the exemplar shelf wait for the operator to ask. The bench fired on his genre-closeness
+ask (2026-09-28) as a zero-call census, `bench.py`: it describes, never decides. Pairwise judging and a Claude
+judge stay unbuilt; the model beat inventory waits for his go (quota, genre text sent to Codex). (plan 4)
 
 ## 2026-09-27 model-and-voice
 Defaults: Codex `gpt-6-astra` at medium effort, close third person, past tense. Every call goes through

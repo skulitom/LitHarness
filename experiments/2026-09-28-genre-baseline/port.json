@@ -1,0 +1,21 @@
+{
+ "chapters": 13364,
+ "fictions": 584,
+ "events_k_median_p75_p90": [
+  0.0,
+  1.316655694535879,
+  3.664681630783326
+ ],
+ "incumbent_155": [
+  0.0,
+  1.26,
+  3.6
+ ],
+ "share_without_event": 0.5070338222089195,
+ "incumbent_155_without": 0.51,
+ "event_in_first_500": 0.12032325651002694,
+ "incumbent_155_500": 0.225,
+ "earliest3_any_display": 0.3678688524590164,
+ "incumbent_202_any_display": 0.31,
+ "earliest3_chapters": 1525
+}

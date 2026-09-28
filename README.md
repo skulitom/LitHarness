@@ -54,6 +54,13 @@ Compress-Archive -Path "$HOME\LitHarness-data\serials" -DestinationPath "$env:On
 
 Chapters posted to Royal Road carry its AI-Generated tag.
 
+## Genre census
+
+`python bench.py baseline SLUG` places every chapter of a serial among 182 LitRPG titles on RoyalRoad at the
+same chapter number, by code alone: no model call, seconds after the first run. The report lands in
+`serials/SLUG/baseline/` and describes; it never decides. The corpus and its protocol are in
+[experiments/2026-09-28-genre-baseline](experiments/2026-09-28-genre-baseline/PROTOCOL.md).
+
 ## Tests
 
 `python -m unittest -q`: serial, stdlib only, a few seconds, and no test spawns a model CLI.
