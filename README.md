@@ -1,3 +1,5 @@
+<img src="docs/banner.jpg" width="100%" alt="LitHarness: a constellation dragon rising from an open book in a workshop of one-eyed archive creatures">
+
 # LitHarness
 
 LitHarness writes LitRPG serial chapters from a short brief. A **pitch** call writes a bible you glance

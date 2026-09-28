@@ -1,0 +1,239 @@
+<svg viewBox="0 0 960 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LitHarness — a star-atlas dragon rising from an open book, six scenes as stars along its spine, a castle gatehouse and observatory below the title, one refused star set apart, under a measuring arc whose needle rests just past one half">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d1322"/>
+      <stop offset="0.6" stop-color="#111a2f"/>
+      <stop offset="1" stop-color="#17213c"/>
+    </linearGradient>
+    <linearGradient id="gild" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0dfae"/>
+      <stop offset="1" stop-color="#c9a961"/>
+    </linearGradient>
+    <radialGradient id="skyglow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#d6b46f" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#d6b46f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cometTail" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#f0e2b8" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#f0e2b8" stop-opacity="0"/>
+    </linearGradient>
+    <path id="spark" d="M0,-7 L1.4,-1.4 L7,0 L1.4,1.4 L0,7 L-1.4,1.4 L-7,0 L-1.4,-1.4 Z"/>
+    <clipPath id="plate"><rect x="0" y="0" width="960" height="300" rx="14"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#plate)">
+    <rect x="0" y="0" width="960" height="300" fill="url(#bg)"/>
+
+    <!-- scattered stars -->
+    <g fill="#d8d8cf">
+      <circle cx="80" cy="32" r="1" opacity="0.30"/>
+      <circle cx="140" cy="24" r="0.8" opacity="0.25"/>
+      <circle cx="220" cy="30" r="1.1" opacity="0.35"/>
+      <circle cx="300" cy="22" r="0.7" opacity="0.20"/>
+      <circle cx="380" cy="30" r="0.9" opacity="0.25"/>
+      <circle cx="470" cy="20" r="1" opacity="0.30"/>
+      <circle cx="560" cy="28" r="0.8" opacity="0.25"/>
+      <circle cx="640" cy="22" r="1.1" opacity="0.30"/>
+      <circle cx="720" cy="30" r="0.8" opacity="0.25"/>
+      <circle cx="800" cy="24" r="1" opacity="0.30"/>
+      <circle cx="880" cy="34" r="0.9" opacity="0.25"/>
+      <circle cx="100" cy="120" r="0.9" opacity="0.20"/>
+      <circle cx="300" cy="250" r="0.8" opacity="0.15"/>
+      <circle cx="520" cy="80" r="0.9" opacity="0.20"/>
+      <circle cx="560" cy="240" r="0.9" opacity="0.15"/>
+      <circle cx="610" cy="150" r="0.7" opacity="0.20"/>
+      <circle cx="900" cy="180" r="0.9" opacity="0.20"/>
+      <circle cx="850" cy="240" r="1" opacity="0.20"/>
+      <circle cx="795" cy="72" r="0.8" opacity="0.25"/>
+      <circle cx="900" cy="120" r="0.7" opacity="0.20"/>
+      <circle cx="640" cy="272" r="0.7" opacity="0.15"/>
+    </g>
+    <use href="#spark" transform="translate(870,80) scale(0.3)" fill="#e6ddc2" opacity="0.4"/>
+    <use href="#spark" transform="translate(545,120) scale(0.25)" fill="#e6ddc2" opacity="0.3"/>
+
+    <!-- comet -->
+    <line x1="395" y1="88" x2="424" y2="70" stroke="url(#cometTail)" stroke-width="1.2"/>
+    <circle cx="393" cy="89" r="1.6" fill="#f0e2b8" opacity="0.8"/>
+
+    <!-- measuring arc: the pre-registered bar -->
+    <g stroke="#d6b46f" fill="none">
+      <path d="M 60,58 Q 480,12 900,58" stroke-width="1" opacity="0.18"/>
+      <path d="M 60,64 Q 480,18 900,64" stroke-width="1" opacity="0.5"/>
+    </g>
+    <g stroke="#d6b46f" opacity="0.35">
+      <line x1="144" y1="57.7" x2="144" y2="62.7"/>
+      <line x1="186" y1="54.3" x2="186" y2="59.3"/>
+      <line x1="228" y1="51.3" x2="228" y2="56.3"/>
+      <line x1="270" y1="48.8" x2="270" y2="53.8"/>
+      <line x1="354" y1="45.1" x2="354" y2="50.1"/>
+      <line x1="396" y1="43.9" x2="396" y2="48.9"/>
+      <line x1="438" y1="43.2" x2="438" y2="48.2"/>
+      <line x1="522" y1="43.2" x2="522" y2="48.2"/>
+      <line x1="564" y1="43.9" x2="564" y2="48.9"/>
+      <line x1="606" y1="45.1" x2="606" y2="50.1"/>
+      <line x1="690" y1="48.8" x2="690" y2="53.8"/>
+      <line x1="732" y1="51.3" x2="732" y2="56.3"/>
+      <line x1="774" y1="54.3" x2="774" y2="59.3"/>
+      <line x1="816" y1="57.7" x2="816" y2="62.7"/>
+    </g>
+    <g stroke="#d6b46f" opacity="0.6">
+      <line x1="312" y1="45.7" x2="312" y2="54.7"/>
+      <line x1="480" y1="42" x2="480" y2="51"/>
+      <line x1="648" y1="45.7" x2="648" y2="54.7"/>
+    </g>
+    <g font-family="Georgia, 'Palatino Linotype', serif" font-size="9.5" fill="#a8905a" text-anchor="middle" opacity="0.8">
+      <text x="312" y="67">0.40</text>
+      <text x="480" y="64">0.50</text>
+      <text x="648" y="67">0.60</text>
+    </g>
+    <!-- the needle: the lower bound must sit past one half -->
+    <circle cx="530" cy="36" r="7" fill="#d6b46f" opacity="0.14"/>
+    <path d="M 530,29 L 534,36 L 530,43 L 526,36 Z" fill="#f0dfae"/>
+    <line x1="530" y1="43" x2="530" y2="52" stroke="#f0dfae" stroke-width="0.8" opacity="0.6"/>
+
+    <!-- title -->
+    <text x="64" y="150" font-family="Georgia, 'Palatino Linotype', 'Book Antiqua', serif" font-size="54" letter-spacing="0.5" fill="url(#gild)">LitHarness</text>
+    <g stroke="#d6b46f" opacity="0.45">
+      <line x1="74" y1="166" x2="230" y2="166" stroke-width="1"/>
+    </g>
+    <path d="M 64,166 l 4,-3 4,3 -4,3 Z" fill="#d6b46f" opacity="0.55"/>
+    <path d="M 232,166 l 4,-3 4,3 -4,3 Z" fill="#d6b46f" opacity="0.55"/>
+    <g font-family="Georgia, 'Palatino Linotype', serif" fill="#b3a479">
+      <text x="64" y="196" font-size="11" letter-spacing="2.2" opacity="0.9">AN AUTONOMOUS BOOK FACTORY WITH A HUMAN DIRECTOR</text>
+      <text x="64" y="216" font-size="11" letter-spacing="2.2" opacity="0.65">HELD TO A PRE-REGISTERED SUPERHUMAN BAR</text>
+    </g>
+
+    <!-- the castle: a gatehouse for the integrity gate, an observatory for the instrument -->
+    <g stroke="#d4b271" stroke-width="1" fill="none" opacity="0.45" stroke-linecap="round">
+      <!-- hill -->
+      <path d="M 52,284 Q 120,270 180,276 Q 225,281 256,284"/>
+      <!-- tall keep with pennant -->
+      <line x1="80" y1="278" x2="80" y2="244"/>
+      <line x1="92" y1="278" x2="92" y2="244"/>
+      <path d="M 78,244 L 86,230 L 94,244"/>
+      <line x1="86" y1="230" x2="86" y2="222"/>
+      <path d="M 86,222 L 94,225 L 86,228" fill="#d4b271" opacity="0.8"/>
+      <line x1="86" y1="254" x2="86" y2="259" opacity="0.7"/>
+      <!-- gatehouse: two towers and the gate -->
+      <line x1="118" y1="274" x2="118" y2="244"/>
+      <line x1="130" y1="272" x2="130" y2="244"/>
+      <path d="M 116,244 L 116,239 L 121,239 L 121,244 L 127,244 L 127,239 L 132,239 L 132,244"/>
+      <line x1="150" y1="272" x2="150" y2="244"/>
+      <line x1="162" y1="274" x2="162" y2="244"/>
+      <path d="M 148,244 L 148,239 L 153,239 L 153,244 L 159,244 L 159,239 L 164,239 L 164,244"/>
+      <path d="M 132,274 L 132,258 Q 140,249 148,258 L 148,274"/>
+      <!-- portcullis -->
+      <g opacity="0.55" stroke-width="0.7">
+        <line x1="136" y1="255" x2="136" y2="272"/>
+        <line x1="140" y1="253" x2="140" y2="273"/>
+        <line x1="144" y1="255" x2="144" y2="272"/>
+        <line x1="133" y1="262" x2="147" y2="262"/>
+        <line x1="133" y1="268" x2="147" y2="268"/>
+      </g>
+      <!-- curtain wall -->
+      <path d="M 92,262 L 118,262" opacity="0.6"/>
+      <path d="M 92,265.5 L 118,265.5" opacity="0.6"/>
+      <path d="M 162,262 L 200,264" opacity="0.6"/>
+      <path d="M 162,265.5 L 200,267" opacity="0.6"/>
+      <!-- observatory tower: the fantasy castle keeps an instrument -->
+      <line x1="200" y1="280" x2="200" y2="252"/>
+      <line x1="216" y1="280" x2="216" y2="252"/>
+      <path d="M 197,252 Q 208,237 219,252"/>
+      <line x1="210" y1="241" x2="221" y2="230" stroke-width="1.6"/>
+      <line x1="208" y1="262" x2="208" y2="266" opacity="0.7"/>
+      <!-- road from the gate -->
+      <path d="M 140,276 Q 152,282 170,284" stroke-dasharray="2 3" opacity="0.5"/>
+    </g>
+    <!-- birds over the castle -->
+    <g stroke="#d4b271" stroke-width="0.9" fill="none" opacity="0.35">
+      <path d="M 296,240 q 4,-5 8,0 q 4,-5 8,0"/>
+      <path d="M 322,229 q 3,-4 6,0 q 3,-4 6,0"/>
+    </g>
+
+    <!-- observatory glow and orbit -->
+    <circle cx="690" cy="140" r="130" fill="url(#skyglow)"/>
+    <ellipse cx="700" cy="160" rx="150" ry="48" transform="rotate(-18 700 160)" fill="none" stroke="#d6b46f" stroke-width="0.8" opacity="0.12"/>
+    <!-- ringed planet on the orbit -->
+    <g opacity="0.5" stroke="#d6b46f" fill="none">
+      <circle cx="561" cy="188" r="3"/>
+      <ellipse cx="561" cy="188" rx="6.5" ry="2.2" transform="rotate(-24 561 188)" opacity="0.8"/>
+    </g>
+
+    <!-- the atlas figure: a dragon drawn faint over the stars, the way the old plates did -->
+    <g stroke="#d4b271" stroke-width="1" fill="none" opacity="0.38" stroke-linecap="round">
+      <!-- body: one tapering ribbon from tail at the book to the head -->
+      <path fill="#d4b271" fill-opacity="0.05" d="M 700,212
+        C 702,206 702.6,201 702.6,197.5
+        C 719.8,187.5 750.6,188.4 753,168.6
+        C 754.8,153.8 727,138.4 716.3,127.7
+        C 707.8,119.2 688.6,98.7 678.8,91.9
+        C 671,87 644.5,84.9 634.8,82.6
+        L 633.2,89.4
+        C 642.9,91.7 664,95 673.2,100.1
+        C 683,106.9 699.2,127.8 707.7,136.3
+        C 718.4,146.9 744.8,152.6 743,167.4
+        C 740.6,187.2 714.6,184.5 697.4,194.5
+        C 697,201 698,207 700,212 Z"/>
+      <!-- head: open jaw in profile -->
+      <path d="M 634.8,82.6 Q 626,73 614,73.5 Q 603,74.5 596,80 Q 600,83 607,83.5 L 613,84"/>
+      <path d="M 633.2,89.4 Q 624,92 615,90.5 Q 607,89 602,85.5"/>
+      <!-- horns swept back along the neck -->
+      <path d="M 626,74.5 Q 638,68.5 647,72"/>
+      <path d="M 621,75 Q 628,71 633,73"/>
+      <!-- whisker and nostril -->
+      <path d="M 596,80 q -8,1 -10,7"/>
+      <path d="M 599,77.5 l 2.5,1"/>
+      <!-- wing, its tip at the crisis star -->
+      <path d="M 716,124 Q 736,100 762,100"/>
+      <path d="M 762,100 Q 750,114 740,120 Q 730,127 720,130"/>
+      <path d="M 740,104 Q 736,114 730,122"/>
+    </g>
+
+    <!-- constellation: six scenes that know each other -->
+    <g stroke="#d6b46f" stroke-width="1" opacity="0.5" fill="none">
+      <polyline points="700,196 748,168 712,132 762,100"/>
+      <polyline points="712,132 676,96 617,79"/>
+    </g>
+    <circle cx="762" cy="100" r="10" fill="#d6b46f" opacity="0.12"/>
+    <use href="#spark" transform="translate(700,196) scale(0.55)" fill="#e9d9ae" opacity="0.9"/>
+    <use href="#spark" transform="translate(748,168) scale(0.5)" fill="#e9d9ae" opacity="0.85"/>
+    <use href="#spark" transform="translate(712,132) scale(0.62)" fill="#e9d9ae" opacity="0.9"/>
+    <use href="#spark" transform="translate(762,100) scale(0.85)" fill="#f4e7c3"/>
+    <use href="#spark" transform="translate(676,96) scale(0.5)" fill="#e9d9ae" opacity="0.85"/>
+    <use href="#spark" transform="translate(617,79) scale(0.7)" fill="#f4e7c3" opacity="0.95"/>
+
+    <!-- the refused candidate: held at the gate, joined to nothing -->
+    <use href="#spark" transform="translate(848,106) scale(0.4)" fill="#e9d9ae" opacity="0.45"/>
+    <circle cx="848" cy="106" r="9" fill="none" stroke="#d6b46f" stroke-width="0.8" stroke-dasharray="2.5 3" opacity="0.45"/>
+
+    <!-- the manuscript spine holds up the sky -->
+    <line x1="700" y1="230" x2="700" y2="215" stroke="#d6b46f" stroke-width="1" stroke-dasharray="1 3" opacity="0.55"/>
+
+    <!-- the open book -->
+    <ellipse cx="700" cy="264" rx="95" ry="9" fill="#d6b46f" opacity="0.05"/>
+    <g stroke="#d4b271" stroke-width="1.6" fill="none" stroke-linecap="round">
+      <path d="M 620,224 C 648,212 678,214 700,238"/>
+      <path d="M 780,224 C 752,212 722,214 700,238"/>
+      <line x1="620" y1="224" x2="618" y2="250"/>
+      <line x1="780" y1="224" x2="782" y2="250"/>
+      <path d="M 618,250 C 648,238 678,240 700,262"/>
+      <path d="M 782,250 C 752,238 722,240 700,262"/>
+      <line x1="700" y1="238" x2="700" y2="262"/>
+    </g>
+    <g stroke="#d4b271" stroke-width="1" fill="none" opacity="0.45" stroke-linecap="round">
+      <path d="M 628,228 C 652,218 676,220 696,238"/>
+      <path d="M 772,228 C 748,218 724,220 704,238"/>
+    </g>
+
+    <!-- the human director, conducting -->
+    <g opacity="0.85">
+      <circle cx="686" cy="217" r="2.2" fill="#d4b271"/>
+      <path d="M 686,220 C 683,225 682,229 681,233 L 691,233 C 690,228 689,224 686,220 Z" fill="#d4b271"/>
+      <line x1="686" y1="222" x2="693" y2="216" stroke="#d4b271" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="693" y1="216" x2="697" y2="211" stroke="#d4b271" stroke-width="0.8" stroke-linecap="round"/>
+    </g>
+
+    <!-- plate border -->
+    <rect x="8" y="8" width="944" height="284" rx="12" fill="none" stroke="#d4b271" stroke-width="1" opacity="0.22"/>
+  </g>
+</svg>
