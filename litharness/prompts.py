@@ -21,9 +21,9 @@ The first time it works in chapter one, and what it wins him.
 ## Threat
 What can kill him, and where it first reaches him.
 ## Prize
-What the next rank gets him, in the words he used before the System.
+The ability the next rank adds, in words he used before the System.
 ## System
-How it looks and speaks.
+How it looks, what it says.
 Ladder: at least three rank names, lowest first, separated by commas.
 Start: one to six lines, each [Label: value], where a value is a whole number above zero,
 a rank from the Ladder, or a pool n/m.
