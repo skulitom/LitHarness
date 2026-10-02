@@ -31,24 +31,24 @@ def check(path: Path, stage: str, slug: str | None) -> tuple[list[str], str]:
 
 
 def spend(args: argparse.Namespace) -> int:
-    """new, next and canary: the box lock, then the canary pin, then the serial lock."""
+    """new, next and canary, by the project's agent: the box lock, then its canary pin, then the serial lock."""
     if args.verb == "next" and not serial.folder(args.slug).is_dir():
         raise serial.Stop(f"there is no serial {args.slug}; run: new {args.slug} --brief FILE")
-    binary, box = transport.native_binary(), files.box_lock()
+    agent, box = serial.writer(), files.box_lock()
     files.lock(box, f"{args.verb} {getattr(args, 'slug', '-')}")
     try:
         if args.verb == "canary":
-            leaked = transport.canary(binary, serial.MODEL, serial.EFFORT)
-            print(f"canary: leaked {', '.join(leaked)}" if leaked else f"canary: NONE; {transport.CLI[str(binary)]} pinned")
+            leaked = transport.canary(agent)
+            pinned = f"canary: NONE; {agent} on {transport.CLI[transport.resolve(agent)[0]][1]} pinned"
+            print(f"canary: {agent} leaked {', '.join(leaked)}" if leaked else pinned)
             return 1 if leaked else 0
-        version, root, record = transport.preflight(binary), serial.folder(args.slug), files.home() / "canary.json"
-        if (files.load(record) if record.is_file() else {}).get("codex", {}).get("version") != version:
-            raise serial.Stop(f"{version} has not passed the canary; run: python -m litharness canary")
+        serial.pinned(agent)
+        root = serial.folder(args.slug)
         files.lock(root / "lock", f"{args.verb} {args.slug}")
         try:
             if args.verb == "new":
-                print(f"pitch ready for your glance: {serial.new(args.slug, args.brief, args.words, binary, version)}")
-            for report in serial.next_chapters(args.slug, args.n, binary) if args.verb == "next" else []:
+                print(f"pitch ready for your glance: {serial.new(args.slug, args.brief, args.words, agent)}")
+            for report in serial.next_chapters(args.slug, args.n, agent) if args.verb == "next" else []:
                 print(f"chapter ready: {report.parent / 'chapter.md'} (report: {report.name})")
         finally:
             files.unlock(root / "lock")
@@ -67,6 +67,8 @@ def main(argv: list[str] | None = None) -> int:
     after = verbs.add_parser("next", help="plan, draft, check and report the next chapters")
     after.add_argument("slug")
     after.add_argument("-n", type=int, default=1)
+    agent = verbs.add_parser("agent", help="show, or switch, the one agent that writes for the whole project")
+    agent.add_argument("switch", nargs="?", metavar="codex|claude[:MODEL[:EFFORT]]")
     verbs.add_parser("status", help="read-only: chapters, draws, failing checks, tokens").add_argument("slug", nargs="?")
     redraw = verbs.add_parser("redraw", help="move chapter N and later aside (0: the pitch too)")
     redraw.add_argument("slug")
@@ -75,14 +77,17 @@ def main(argv: list[str] | None = None) -> int:
     test.add_argument("file", type=Path)
     test.add_argument("--stage", choices=("pitch", "plan", "chapter"), default="chapter")
     test.add_argument("--serial")
-    verbs.add_parser("canary", help="live isolation canary; pins the Codex CLI version")
+    verbs.add_parser("canary", help="live isolation canary; pins the agent's CLI version")
     args = parser.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(errors="replace")
     try:
-        if args.verb == "status":
+        if args.verb == "agent":
+            print(serial.writer(args.switch))
+        elif args.verb == "status":
             holder = files.box_lock() / "holder"
-            print(serial.status(args.slug) + f"\nbox: {files.read(holder).strip() if holder.is_file() else 'free'}")
+            print(serial.status(args.slug) + f"\nagent: {serial.writer()}"
+                  f"\nbox: {files.read(holder).strip() if holder.is_file() else 'free'}")
         elif args.verb == "check":
             fails, report = check(args.file, args.stage, args.serial)
             print("\n".join(fails or ["hard checks: all pass"]) + ("\n\n" + report if report else ""))

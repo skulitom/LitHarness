@@ -10,10 +10,10 @@ incumbent stays at tag `legacy/incumbent-2026-09-27` and branch `legacy/main`, L
 data moves to `C:\DEV\LitHarness-archive` under a manifest, never deleted. (plan 1, 2.17, 6)
 
 ## 2026-09-27 stdlib-line-cap
-`litharness/` imports only the standard library (Python 3.11+, a signed-in Codex CLI): any file <=350, tests no
-longer than the runtime; no database, queue, MCP server or dependency. The first build plus the review's fixes
-came to 1,314 lines against the plan's 1,070: the address, cast and digits reports were cut and the 1,300 cap
-became 1,350 (bb87c71). No admission reserve is left; each needs its own one-line cap commit. (plan 3.2, 5)
+`litharness/` imports only the standard library (Python 3.11+, a signed-in agent CLI): any file <=350, tests no
+longer than the runtime; no database, queue, MCP server or dependency. The 1,300 cap became 1,350 for the review's
+fixes, after the address, cast and digits reports were cut (bb87c71), and 1,425 for the agent-neutral transport
+(edc478e). No admission reserve is left; each needs its own one-line cap commit. (plan 3.2, 5)
 
 ## 2026-09-27 data-root
 Serials are plain-file folders under `$LITHARNESS_HOME` (default `~/LitHarness-data`), outside every git tree.
@@ -22,7 +22,7 @@ Nothing is deleted: `redraw` moves chapters to `attempts/<utc>/`; every call kee
 
 ## 2026-09-27 pitch-then-two-calls
 One pitch call per serial writes a bible (<=900 words) the operator glances at before any chapter spend. Each
-chapter then costs 2 Codex calls, plan (with state) then draft, plus a located tells rewrite when 2 or more
+chapter then costs 2 calls, plan (with state) then draft, plus a located tells rewrite when 2 or more
 tell families exceed shelf ceilings: ~21-27k tokens. The draft sees brief, bible, sheet, state, plan and the
 previous chapter in full, never a fact packet (§182). (plan 1.2, 3.4, 3.6)
 
@@ -63,10 +63,10 @@ Royal Road export and the exemplar shelf wait for the operator to ask. The bench
 ask (2026-09-28) as a zero-call census, `bench.py`: it describes, never decides. Pairwise judging and a Claude
 judge stay unbuilt; the model beat inventory waits for his go (quota, genre text sent to Codex). (plan 4)
 
-## 2026-09-27 model-and-voice
-Defaults: Codex `gpt-6-astra` at medium effort, close third person, past tense. Every call goes through
-`transport.py` from an empty temp directory with no `.git` above it; `canary` pins the CLI version. `claude()`
-exists only if the bench is built, and never generates. (plan 3.7, 3.8)
+## 2026-10-02 model-and-voice
+One agent writes for the whole project and nothing assumes which (operator, 2026-10-02): `agent codex|claude`,
+optionally `:model:effort`, switches it between any two commands, as a changed input. Close third person, past
+tense. Calls go through `transport.send` from an empty directory outside git; `canary` pins each CLI. (plan 3.7)
 
 ## 2026-09-27 admission-and-deletion
 Admitted only when the trigger is a named failure on a real chapter, committed first as a failing fixture; the

@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 from litharness import __main__ as cli, files, serial, transport
 from tests.test_checks import BIBLE, PLAN
-from tests.test_transport import events
+from tests.test_transport import INSTALLED, events, reply
 
 PROSE = "Elias braced a boot on the seat frame and pulled while the water climbed past his knees."
 
@@ -38,11 +38,13 @@ class Fake:
         stage = next(s for s, head in (("pitch", "Develop"), ("plan", "Plan"), ("draft", "Write"), ("rewrite", "Say"))
                      if prompt.startswith(head))
         self.asked.append(stage)
-        reply = self.replies[stage]
-        reply = reply.pop(0) if isinstance(reply, list) else reply
-        if isinstance(reply, Exception):
+        answer = self.replies[stage]
+        answer = answer.pop(0) if isinstance(answer, list) else answer
+        if isinstance(answer, Exception):
             return subprocess.CompletedProcess(argv, 1, b"", b"boom")
-        text = reply(prompt) if callable(reply) else reply
+        text = answer(prompt) if callable(answer) else answer
+        if "--output-last-message" not in argv:  # Claude Code prints its answer; Codex also writes it to a file
+            return subprocess.CompletedProcess(argv, 0, reply(text, argv[argv.index("--model") + 1]).encode(), b"")
         Path(argv[argv.index("--output-last-message") + 1]).write_bytes(text.encode())
         return subprocess.CompletedProcess(argv, 0, events(text).encode(), b"")
 
@@ -51,8 +53,9 @@ class SerialTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        for patcher in (patch.dict(os.environ, {"LITHARNESS_HOME": self.tmp.name}),  # durability is not under test:
-                        contextlib.redirect_stdout(io.StringIO()), patch.object(files.os, "fsync")):  # 2 ms a write
+        for patcher in (patch.dict(os.environ, {"LITHARNESS_HOME": self.tmp.name}), patch.dict(transport.CLI, INSTALLED),
+                        contextlib.redirect_stdout(io.StringIO()),  # durability is not under test: 2 ms a write
+                        patch.object(files.os, "fsync")):
             patcher.__enter__()
             self.addCleanup(patcher.__exit__, None, None, None)
         self.brief = Path(self.tmp.name) / "slot.txt"
@@ -60,10 +63,10 @@ class SerialTests(unittest.TestCase):
         self.root = serial.folder("slot")
 
     def run_new(self, fake, words=1500):
-        return serial.new("slot", self.brief, words, Path("codex.exe"), "codex-cli 1", partial(transport.codex, runner=fake))
+        return serial.new("slot", self.brief, words, serial.writer(), partial(transport.send, runner=fake))
 
     def run_next(self, fake, n=1):
-        return list(serial.next_chapters("slot", n, Path("codex.exe"), partial(transport.codex, runner=fake)))
+        return list(serial.next_chapters("slot", n, serial.writer(), partial(transport.send, runner=fake)))
 
     def test_pitch_then_chapters_with_code_owned_sheets_and_reports(self):
         fake = Fake()
@@ -77,6 +80,39 @@ class SerialTests(unittest.TestCase):
         self.assertIn("usage: draws plan 1 of 3, draft 1 of 3; 2 calls", files.read(self.root / "ch01" / "report.md"))
         self.assertIn("PREVIOUS CHAPTER", files.read(self.root / "ch02" / "calls" / "plan-d1" / "prompt.txt"))
         self.assertIn("slot: 2 chapters", serial.status("slot"))
+
+    def wrote(self, chapter):
+        receipts = {p.parent.name: files.load(p) for p in (self.root / chapter / "calls").glob("*/receipt.json")}
+        return {name: f"{receipt['agent']}:{receipt['effort']}" for name, receipt in receipts.items()}
+
+    def test_the_project_agent_switches_between_any_two_commands(self):
+        fake = Fake()
+        self.run_new(fake)
+        self.assertEqual(serial.writer("claude"), "claude:claude-opus-5-5:medium")
+        self.run_next(fake)
+        serial.writer("codex:gpt-6-astra:high")
+        self.run_next(fake)
+        self.assertEqual([self.wrote(chapter) for chapter in ("ch00", "ch01", "ch02")], [
+            {"pitch-d1": "codex:medium"}, {"plan-d1": "claude:medium", "draft-d1": "claude:medium"},
+            {"plan-d1": "codex:high", "draft-d1": "codex:high"}])
+        with self.assertRaises(ValueError):
+            serial.writer("gemini")
+        self.assertEqual(serial.writer(), "codex:gpt-6-astra:high")  # a refused switch changes nothing
+
+    def test_a_switched_agent_is_a_changed_input_and_never_adopts_another_agents_call(self):
+        fake = Fake(pitch=BIBLE.replace("Age: 26", "Age: 40"))
+        with self.assertRaises(serial.Stop):
+            self.run_new(fake)
+        fake.replies["pitch"] = BIBLE
+        serial.writer("claude")
+        with patch.object(serial, "checked", side_effect=KeyboardInterrupt), self.assertRaises(KeyboardInterrupt):
+            self.run_new(fake)
+        serial.writer("codex:gpt-6-astra:high")
+        self.run_new(fake)
+        last = files.load(self.root / "manifest.json")["stages"]["ch00/pitch"]["draws"][-1]
+        self.assertEqual((last["k"], last["of"], last["sent"]["agent"]), (4, 6, "codex:gpt-6-astra:high"))
+        self.assertEqual({k: v for k, v in self.wrote("ch00").items() if "d4" in k},
+                         {"pitch-d4": "claude:medium", "pitch-d4r1": "codex:high"})
 
     def test_three_failed_draws_stop_with_quotes_and_a_changed_input_opens_draw_four(self):
         fake = Fake(pitch=BIBLE.replace("Age: 26", "Age: 40"))
@@ -199,7 +235,11 @@ class CliTests(unittest.TestCase):
             (Path(home) / "serials" / "slot").mkdir(parents=True)
             self.assertEqual(cli.main(["next", "slot"]), 1)
             self.assertFalse((Path(home) / "box.lock").exists())
-        self.assertIn("codex-cli 2 has not passed the canary", err.getvalue())
+            files.save(Path(home) / "canary.json", {"codex": {"version": "codex-cli 2"}})  # each agent has its own pin
+            with contextlib.redirect_stdout(io.StringIO()) as out:
+                self.assertEqual((cli.main(["agent", "claude"]), cli.main(["next", "slot"])), (0, 1))
+        self.assertEqual(out.getvalue(), "claude:claude-opus-5-5:medium\n")
+        self.assertEqual(err.getvalue().count("codex-cli 2 has not passed the canary; run: python -m litharness canary"), 2)
 
 
 class RecheckTests(unittest.TestCase):

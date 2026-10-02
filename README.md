@@ -3,10 +3,11 @@
 # LitHarness
 
 LitHarness writes LitRPG serial chapters from a short brief. A **pitch** call writes a bible you glance
-at before any chapter money is spent; each ~1,500-word chapter then costs two Codex calls (plan, then
+at before any chapter money is spent; each ~1,500-word chapter then costs two calls (plan, then
 draft), plus one located rewrite when the tells counter says so. Code owns the numbers: the hero opens
 his status as `[Label: value]` lines, and code reads them back into the sheet. Everything is plain files;
-nothing to install beyond Python 3.11+ (standard library only) and a Codex CLI signed in with ChatGPT.
+nothing to install beyond Python 3.11+ (standard library only) and an agent CLI signed in with its
+subscription: Codex, Claude Code, or both.
 
 The previous implementation is kept, unchanged, at the tag `legacy/incumbent-2026-09-27` and the branch
 `legacy/main`. The design is frozen in [experiments/2026-09-27-rebuild-plan/PLAN.md](experiments/2026-09-27-rebuild-plan/PLAN.md);
@@ -18,21 +19,28 @@ The previous implementation is kept, unchanged, at the tag `legacy/incumbent-202
 |---|---|---|
 | `new SLUG --brief FILE [--words 1500]` (500-1700) | creates the serial, draws the pitch, stops for your glance | 1 (up to 3) |
 | `next SLUG [-n K]` (K up to 10) | plan, draft, checks, sheet, tells rewrite, report per chapter | 2-3 each |
-| `status [SLUG]` | chapters, words, failing checks with quotes, tokens, hand edits, locks | 0 |
+| `agent [codex\|claude]` | shows, or switches, the one agent that writes for the whole project | 0 |
+| `status [SLUG]` | chapters, words, failing checks with quotes, tokens, hand edits, locks, the agent | 0 |
 | `redraw SLUG --from N` | moves chapter N and later to `attempts/<utc>/` (0: the pitch too) | 0 |
 | `check FILE [--stage pitch\|plan\|chapter] [--serial SLUG]` | every deterministic check on any text | 0 |
-| `canary` | live isolation canary; pins the Codex CLI version | 1 small |
+| `canary` | live isolation canary; pins the agent's CLI version | 1 small |
 
 Resuming means re-running the same command: finished calls are adopted from their receipts and never
 bought twice. Exit codes: 0 done, 1 needs you (a failed stage with its quotes, a held lock, the canary),
 2 fault.
 
 ```powershell
-python -m litharness canary                       # once, and after every Codex CLI upgrade
+python -m litharness agent claude                 # or codex; holds until the next switch
+python -m litharness canary                       # once per agent, and after every upgrade of its CLI
 python -m litharness new slot --brief briefs/slot.txt
 python -m litharness next slot -n 3               # after you have read ch00/bible.md
 python -m litharness status slot
 ```
+
+**One agent writes for the whole project**, Codex or Claude Code, and `agent` switches it between any two
+commands; a model and an effort can ride along (`agent claude:claude-opus-5-5:high`). The choice lives in
+`$LITHARNESS_HOME/agent`, every receipt names the agent that made its call, and a switched agent is a
+changed input, so it opens draws 4-6.
 
 A stage that fails a hard check (`money`, `leak`, `person`, `rise`, `fields`, `pitch-shape`,
 `plan-shape`, `length`) is redrawn unchanged, at most 3 draws per input set. A money word that our own

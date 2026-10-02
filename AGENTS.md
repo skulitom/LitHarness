@@ -1,10 +1,14 @@
 # Working in LitHarness
 
 LitHarness writes LitRPG serial chapters from a short brief. The runtime is `litharness/`: stdlib
-Python, one CLI spawned only by `litharness/transport.py`, data in plain files under `$LITHARNESS_HOME`.
+Python, agent CLIs spawned only by `litharness/transport.py`, data in plain files under `$LITHARNESS_HOME`.
 [README.md](README.md) has the verbs. [LEARNINGS.md](LEARNINGS.md) says why the design is this small;
 [DECISIONS.md](DECISIONS.md) records the standing choices. The incumbent lives only at the tag
 `legacy/incumbent-2026-09-27` and the branch `legacy/main`; never bring its files back to main.
+
+One agent, Codex or Claude Code, writes for the whole project, and `python -m litharness agent NAME`
+switches it. Nothing may assume which: a call takes its `agent`, and a new CLI is one row of
+`transport.AGENTS` plus a canary pass.
 
 ## The loop
 
@@ -33,7 +37,7 @@ model.
 
 ## Budgets (enforced by `tests/test_guards.py`)
 
-- `litharness/*.py` at most 1,350 physical lines in total (the plan's 1,300, raised once: bb87c71);
+- `litharness/*.py` at most 1,425 physical lines in total (the plan's 1,300, raised in bb87c71, edc478e);
   any `.py` at most 350; tests at most the runtime's lines; no section sign in any `.py`. Raising a cap
   is its own one-line commit naming the case. The `address`, `cast` and `digits` reports were already
   cut for space; the next cut is a new decision, not a rule.
