@@ -13,7 +13,7 @@ from litharness import checks, files, prompts, tells
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = json.loads((ROOT / "tests" / "fixtures.json").read_bytes())
 RUNTIME = sorted((ROOT / "litharness").glob("*.py"))
-SCRIPTS = RUNTIME + sorted(ROOT.glob("bench.py"))
+SCRIPTS = RUNTIME + sorted(ROOT.glob("*.py"))
 DOCS = {"README.md": 80, "AGENTS.md": 80, "CLAUDE.md": 40, "LEARNINGS.md": 150, "DECISIONS.md": 80,
         "reads/CHECKLIST.md": 40}
 EXEMPLARS = Path(r"C:\DEV\LitHarness-archive\tree\book-library")

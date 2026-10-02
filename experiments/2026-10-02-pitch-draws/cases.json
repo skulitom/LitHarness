@@ -1,0 +1,188 @@
+{
+  "cases": [
+    {
+      "id": "slot",
+      "tags": [
+        "premise"
+      ],
+      "words": 40,
+      "source": "runs/chapter-one/read-21/brief.txt",
+      "copies": 10,
+      "brief": "System apocalypse. When the System arrives, every person on Earth receives exactly one Slot for one skill. The protagonist, a man in his twenties, receives a Slot that can hold as many skills as he can take. Invent the rest."
+    },
+    {
+      "id": "courier",
+      "tags": [
+        "premise"
+      ],
+      "words": 15,
+      "source": "runs/connected-chapters-20260916/books/A2/brief.txt",
+      "copies": 8,
+      "brief": "A disgraced courier enters a mountain racing circuit where competitors build their own movement skills."
+    },
+    {
+      "id": "cook",
+      "tags": [
+        "premise"
+      ],
+      "words": 16,
+      "source": "runs/experience-workflow-20260915/books/A1/brief.txt",
+      "copies": 4,
+      "brief": "An apprentice cook is stranded in an island city where recipes can grant temporary magical abilities."
+    },
+    {
+      "id": "observatory",
+      "tags": [
+        "premise"
+      ],
+      "words": 14,
+      "source": "runs/experience-workflow-20260915/books/A3/brief.txt",
+      "copies": 4,
+      "brief": "A night-school student discovers a sealed underground observatory whose instruments can alter local gravity."
+    },
+    {
+      "id": "moving-islands",
+      "tags": [
+        "premise",
+        "legacy-instruction"
+      ],
+      "words": 114,
+      "source": "runs/full-book-trial-20260919/books/A1/brief.txt",
+      "copies": 1,
+      "brief": "An ordinary person transported to an archipelago of moving islands joins the crew of a stranded town. A progression system lets people change how structures hold together, and the protagonist wants to free the town before its island enters a destructive current. Invent the people, rules, opposition and choices. Write a self-contained first volume of 24 chapters in four six-chapter arcs, approximately 2200 words per chapter. The first request covers only chapters 1-6. Resolve the town's immediate predicament and the protagonist's commitment to its people by the end of chapter 24, allowing consequences and a denouement. The wider world may continue beyond this volume. This is one story with a conclusion, not four restarts."
+    },
+    {
+      "id": "depot-23",
+      "tags": [
+        "life"
+      ],
+      "words": 53,
+      "source": "runs/pilots/pilot19/brief.txt",
+      "copies": 1,
+      "brief": "Twenty-three, a chemistry degree he walked away from a year short, night shifts scanning parcels at a depot, and one old game nobody plays any more that he is genuinely, uselessly good at. On an ordinary Monday every screen on Earth shows the same message, and everybody gets the same sheet except him."
+    },
+    {
+      "id": "owen-arcade",
+      "tags": [
+        "life"
+      ],
+      "words": 113,
+      "source": "runs/pilots/pilot21/brief.txt",
+      "copies": 1,
+      "brief": "Owen is twenty-three, a year short of a chemistry degree he walked out on, working nights scanning parcels at a depot, and the one thing he has ever been good at is an arcade fighting game that died before he left school. On a Monday every screen on Earth prints the same message and hands everybody a sheet. His has a line on it that nobody else's does, and when the first thing comes up through the depot floor it moves exactly like an opponent he has beaten a thousand times. He wants off nights for good, and for once the ladder in front of him is one he is already ahead on."
+    },
+    {
+      "id": "genre-portal",
+      "tags": [
+        "genre-ask",
+        "legacy-instruction"
+      ],
+      "words": 68,
+      "source": "runs/fresh-library-book-20260908/brief.txt",
+      "copies": 3,
+      "brief": "Write Chapter 1 of an original LitRPG adventure serial for Royal Road readers, choosing portal fantasy, isekai, or system apocalypse, or a combination of them. The reading experience should be a magical adventure: exploring an unfamiliar world, discovering usable magic, and becoming more capable. Give the protagonist something they actively want to pursue. Invent the characters, setting, and story. Use third-person past tense. Aim for about 2,000 words."
+    },
+    {
+      "id": "genre-apocalypse",
+      "tags": [
+        "genre-ask",
+        "legacy-instruction"
+      ],
+      "words": 74,
+      "source": "runs/system-apocalypse-book-20260909/brief.txt",
+      "copies": 1,
+      "brief": "Invent a new system-apocalypse LitRPG adventure serial for Royal Road readers. Start on present-day Earth as a magical System transforms the world around the protagonist. The reading experience should be discovery, adventure and the excitement of gaining useful supernatural abilities. Give the protagonist a personal pursuit and an early earned gain that they get to use. Invent the characters, location, magic, opposition and plot. Write Chapter 1 in third-person past tense, about 2,000 words."
+    },
+    {
+      "id": "genre-wilderness",
+      "tags": [
+        "genre-ask",
+        "legacy-instruction"
+      ],
+      "words": 100,
+      "source": "runs/wilderness-apocalypse-book-20260909/brief.txt",
+      "copies": 1,
+      "brief": "Invent a new system-apocalypse LitRPG adventure serial for Royal Road readers. Begin in an inland Earth settlement as the System transforms its surroundings into a magical wilderness of forests, grasslands and ruins. Center progression on combat magic, encounters with dangerous creatures, exploration and loot that opens new tactics. Give the protagonist a personal pursuit, an earned early victory and a useful new capability they get to experiment with and enjoy. Let the unfamiliar world offer discoveries they actively want to pursue. Invent the specific characters, location, powers, opposition and plot. Write Chapter 1 in third-person past tense, about 2,000 words."
+    },
+    {
+      "id": "luke-mage",
+      "tags": [
+        "genre-ask",
+        "legacy-instruction"
+      ],
+      "words": 135,
+      "source": "runs/luke-capability-contracts-20260909/inputs/brief.txt",
+      "copies": 23,
+      "brief": "Invent a new system-apocalypse LitRPG adventure serial for Royal Road readers. The protagonist is a man named Luke. Begin in an inland Earth settlement as the System transforms its surroundings into a magical wilderness of forests, grasslands and ruins. Luke's central progression is becoming a powerful mage: casting spells with his own mana, expanding his spell repertoire, discovering magical interactions, and unlocking increasingly extraordinary abilities. Enchanted loot and magical discoveries expand his spellcasting choices. Center the adventure on encounters with dangerous creatures, exploration and the wonder of wielding real magic. Give Luke a personal pursuit, an earned early victory and a useful new magical capability he gets to experiment with and enjoy. Invent his background, the other characters, the particular location, spells, opposition and plot. Write Chapter 1 in third-person past tense, about 2,000 words."
+    }
+  ],
+  "excluded": [
+    {
+      "id": "genre-adventure",
+      "tags": [
+        "genre-ask",
+        "legacy-instruction"
+      ],
+      "words": 56,
+      "source": "runs/codex-pipeline-comparison-20260908/legacy/brief.txt",
+      "copies": 3,
+      "brief": "Write Chapter 1 of an original LitRPG adventure serial for Royal Road readers. The reading experience should be a magical adventure: exploring an unfamiliar world, discovering usable magic, and becoming more capable. Give the protagonist something they actively want to pursue. Invent the characters, setting, and story. Use third-person past tense. Aim for about 2,000 words.",
+      "reason": "a near-duplicate of genre-portal: they share 0.85 of their words"
+    },
+    {
+      "id": "repair-apprentice",
+      "tags": [
+        "premise"
+      ],
+      "words": 93,
+      "source": "runs/connected-chapters-20260916/books/A1/brief.txt",
+      "copies": 2,
+      "brief": "A repair apprentice stranded in a city of floating rooftops can temporarily copy one function from a broken magical device, but only after understanding why it failed. She wants to turn a condemned flying cart into an entry for an outlaw race whose prize is an abandoned workshop. A rival apprentice wants the same prize and has independent plans. Let growing understanding make previously impossible maneuvers possible. The first useful repair must remain useful later; do not reset her to incompetence. Leave the origin of the copying ability unresolved through the opening arc.",
+      "reason": "the lead is a woman; the pitch template writes 'His name'"
+    },
+    {
+      "id": "lecture-19",
+      "tags": [
+        "life"
+      ],
+      "words": 57,
+      "source": "runs/pilots/pilot20/brief.txt",
+      "copies": 1,
+      "brief": "Nineteen, second year of a degree she picked for the wrong reason, a nine o'clock lecture hall, and then a floor under her that is not the floor she sat down on: a place that grades everything she does and pays out for it, and four strangers from the same room who got pulled in with her.",
+      "reason": "the lead is a woman of nineteen; the pitch check requires Age 20-29"
+    },
+    {
+      "id": "acrobat",
+      "tags": [
+        "premise"
+      ],
+      "words": 30,
+      "source": "runs/planning-material-20260916/books/A1/brief.txt",
+      "copies": 2,
+      "brief": "A retired circus acrobat enters a living bestiary to find her missing performing partner. She can borrow one animal movement at a time, but must first earn that animal's cooperation.",
+      "reason": "the lead is a retired woman; the pitch template writes 'His name', Age 20-29"
+    },
+    {
+      "id": "gardener",
+      "tags": [
+        "premise"
+      ],
+      "words": 41,
+      "source": "runs/planning-material-20260916/books/A3/brief.txt",
+      "copies": 2,
+      "brief": "An impatient apprentice gardener inherits a greenhouse on a wandering glacier. Growing magical fruit can change the small community's winter, but the plants respond to promises she actually keeps. Her absent teacher must remain physically absent throughout the first two chapters.",
+      "reason": "the lead is a woman; the pitch template writes 'His name'"
+    },
+    {
+      "id": "siblings-stall",
+      "tags": [
+        "premise"
+      ],
+      "words": 17,
+      "source": "runs/experience-workflow-20260915/books/A4/brief.txt",
+      "copies": 6,
+      "brief": "Two estranged siblings inherit a roaming market stall in a world where bargains can change personal abilities.",
+      "reason": "two leads and a trade premise (a market stall, bargains), which the project refuses"
+    }
+  ]
+}

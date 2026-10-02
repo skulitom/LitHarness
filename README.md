@@ -69,6 +69,12 @@ same chapter number, by code alone: no model call, seconds after the first run. 
 `serials/SLUG/baseline/` and describes; it never decides. The corpus and its protocol are in
 [experiments/2026-09-28-genre-baseline](experiments/2026-09-28-genre-baseline/PROTOCOL.md).
 
+## Pitch draws
+
+`python draws.py run --agent codex` draws fresh pitches for 11 past briefs and reports how often a draw passes
+its hard checks, which check fails and what a draw costs: one call a row, graded by code, describing and never
+deciding. `python draws.py approve` is yours to run first. Protocol: [experiments/2026-10-02-pitch-draws](experiments/2026-10-02-pitch-draws/PROTOCOL.md).
+
 ## Tests
 
 `python -m unittest -q`: serial, stdlib only, a few seconds, and no test spawns a model CLI.

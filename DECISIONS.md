@@ -58,10 +58,10 @@ continued: it fails v1 checks (no status lines, 4,069 words, an institutional pr
 One chapter is one Royal Road post of 1,500 words. `len-band` reports outside 1,200-2,000; `length` redraws
 only below 900 or above 2,700. Both bands scale with `--words`. (plan 3.6, 10)
 
-## 2026-09-28 wait-for-operator
-Royal Road export and the exemplar shelf wait for the operator to ask. The bench fired on his genre-closeness
-ask (2026-09-28) as a zero-call census, `bench.py`: it describes, never decides. Pairwise judging and a Claude
-judge stay unbuilt; the model beat inventory waits for his go (quota, genre text sent to Codex). (plan 4)
+## 2026-10-02 wait-for-operator
+Royal Road export and the exemplar shelf wait for the operator to ask. Instruments fire on his asks, are graded
+by code and describe, never decide: the genre census (`bench.py`, 2026-09-28) and pitch draws (`draws.py`,
+2026-10-02). Pairwise judging and a model judge stay unbuilt; the model beat inventory waits for his go. (plan 4)
 
 ## 2026-10-02 model-and-voice
 One agent writes for the whole project and nothing assumes which (operator, 2026-10-02): `agent codex|claude`,
