@@ -54,7 +54,7 @@ def pinned(agent: str) -> None:
     name, record = transport.resolve(agent)[0], files.home() / "canary.json"
     version = transport.preflight(name)
     if (files.load(record) if record.is_file() else {}).get(name, {}).get("version") != version:
-        raise Stop(f"{version} has not passed the canary; run: python -m litharness canary")
+        raise Stop(f"{version} has not passed the canary; run: python -m litharness canary {name}")
 
 
 def totals(rows: list[dict]) -> dict:
@@ -121,17 +121,17 @@ def checked(check, output: str) -> list[str]:
 def stage(root: Path, n: int, name: str, template: str, parts: list[tuple[str, str, str]], check,
           call, agent: str) -> str:
     """Draw until the output passes its hard checks: at most DRAWS per input set, numbered on. The agent
-    belongs to the input set, so switching it opens a new window like any other changed input."""
+    belongs to the input set, so switching it opens a new window like any other changed input; a draw
+    stored before agents were recorded was Codex's."""
     rendered = template.format(n=n, words=files.load(root / "serial.json")["words"])
     prompt = rendered + "".join(f"\n{prompts.PARTS[label]}:\n{body.strip()}\n" for label, _, body in parts)
     if len(prompt) > MAX_REQUEST:
         raise ValueError(f"ch{n:02d} {name}: the request is {len(prompt)} characters, over {MAX_REQUEST}")
-    sent = {"agent": agent, f"prompts.{name}": files.sha(rendered.encode()),
-            "prompts.SYSTEM": files.sha(prompts.SYSTEM.encode()),
+    sent = {f"prompts.{name}": files.sha(rendered.encode()), "prompts.SYSTEM": files.sha(prompts.SYSTEM.encode()),
             **{source: files.sha(body.encode()) for _, source, body in parts}}
     key, record = files.sha(repr(sorted(sent.items())).encode()), manifest(root)
     entry = record["stages"].setdefault(f"ch{n:02d}/{name}", {"draws": []})
-    same = [draw for draw in entry["draws"] if draw["inputs"] == key]
+    same = [d for d in entry["draws"] if (d["inputs"], d.get("agent", "codex:gpt-6-astra:medium")) == (key, agent)]
     calls, window = root / f"ch{n:02d}" / "calls", len(entry["draws"]) - len(same) + DRAWS
     stored = [d for d in same if (calls / d["dir"] / "final.md").is_file()]
     for draw in [d for d in stored[::-1] if not d["fails"]] + [d for d in stored if d["fails"]]:
@@ -149,7 +149,7 @@ def stage(root: Path, n: int, name: str, template: str, parts: list[tuple[str, s
         words = [fail.split("'")[1] for fail in fails if fail.startswith("money: ")]
         places = [f"'{w}' in {place}" for w in words if (place := locate(
             w, "pitch" if name == "pitch" else "chapter", [("", f"prompts.{name.upper()}", rendered), *parts]))]
-        same.append({"k": k, "of": window, "dir": directory, "inputs": key, "sent": sent, "fails": fails,
+        same.append({"k": k, "of": window, "dir": directory, "agent": agent, "inputs": key, "sent": sent, "fails": fails,
                      "output": files.sha(output.encode()), "located": places[0] if places else None})
         entry["draws"].append(same[-1])
         files.save(root / "manifest.json", record)

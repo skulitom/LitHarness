@@ -31,10 +31,10 @@ def check(path: Path, stage: str, slug: str | None) -> tuple[list[str], str]:
 
 
 def spend(args: argparse.Namespace) -> int:
-    """new, next and canary, by the project's agent: the box lock, then its canary pin, then the serial lock."""
+    """new and next by the project's agent, canary by it or by the one named: box lock, canary pin, serial lock."""
     if args.verb == "next" and not serial.folder(args.slug).is_dir():
         raise serial.Stop(f"there is no serial {args.slug}; run: new {args.slug} --brief FILE")
-    agent, box = serial.writer(), files.box_lock()
+    agent, box = ":".join(transport.resolve(getattr(args, "agent", None) or serial.writer())), files.box_lock()
     files.lock(box, f"{args.verb} {getattr(args, 'slug', '-')}")
     try:
         if args.verb == "canary":
@@ -77,7 +77,7 @@ def main(argv: list[str] | None = None) -> int:
     test.add_argument("file", type=Path)
     test.add_argument("--stage", choices=("pitch", "plan", "chapter"), default="chapter")
     test.add_argument("--serial")
-    verbs.add_parser("canary", help="live isolation canary; pins the agent's CLI version")
+    verbs.add_parser("canary", help="live isolation canary; pins an agent's CLI version").add_argument("agent", nargs="?")
     args = parser.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(errors="replace")

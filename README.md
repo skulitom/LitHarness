@@ -23,7 +23,7 @@ The previous implementation is kept, unchanged, at the tag `legacy/incumbent-202
 | `status [SLUG]` | chapters, words, failing checks with quotes, tokens, hand edits, locks, the agent | 0 |
 | `redraw SLUG --from N` | moves chapter N and later to `attempts/<utc>/` (0: the pitch too) | 0 |
 | `check FILE [--stage pitch\|plan\|chapter] [--serial SLUG]` | every deterministic check on any text | 0 |
-| `canary` | live isolation canary; pins the agent's CLI version | 1 small |
+| `canary [AGENT]` | live isolation canary; pins that agent's CLI version (default: the project's agent) | 1 small |
 
 Resuming means re-running the same command: finished calls are adopted from their receipts and never
 bought twice. Exit codes: 0 done, 1 needs you (a failed stage with its quotes, a held lock, the canary),
@@ -38,7 +38,7 @@ python -m litharness status slot
 ```
 
 **One agent writes for the whole project**, Codex or Claude Code, and `agent` switches it between any two
-commands; a model and an effort can ride along (`agent claude:claude-opus-5-5:high`). The choice lives in
+commands; a full model id and an effort can ride along (`agent claude:claude-opus-5-5:high`). The choice lives in
 `$LITHARNESS_HOME/agent`, every receipt names the agent that made its call, and a switched agent is a
 changed input, so it opens draws 4-6.
 

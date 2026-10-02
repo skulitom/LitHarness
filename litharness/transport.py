@@ -134,14 +134,15 @@ def claude_read(stdout: str, final: Path, model: str) -> dict:
             or reply.get("permission_denials")):
         raise Fault(f"Provider stopped on {reply.get('stop_reason')} after {reply.get('num_turns')} turns")
     served, used, answer = reply.get("modelUsage") or {}, reply.get("usage") or {}, reply.get("result")
-    if not any(re.fullmatch(rf"{re.escape(model)}(-\d{{8}})?(\[\w+\])?", key) for key in served):
-        raise Fault(f"Served by {sorted(served)}, not {model}")
+    if not any(re.fullmatch(rf"{re.escape(model.split('[')[0])}(-\d{{8}})?(\[\w+\])?", key) for key in served):
+        raise ValueError(f"Served by {sorted(served)}, not {model}; name the full model id")  # no retry can mend it
     counts = [used.get(key, 0 if "cache" in key else None) for key in (
         "input_tokens", "cache_read_input_tokens", "cache_creation_input_tokens", "output_tokens")]
     if any(type(n) is not int or n < 0 for n in counts) or not isinstance(answer, str) or not answer.strip():
         raise Fault("Missing answer or invalid token usage")
+    details = used.get("output_tokens_details")
+    thought = details.get("thinking_tokens", 0) if isinstance(details, dict) else 0
     files.write(final, answer)
-    thought = (used.get("output_tokens_details") or {}).get("thinking_tokens", 0)
     return {"input_tokens": sum(counts[:3]), "cached_input_tokens": counts[1], "cache_write_input_tokens": counts[2],
             "output_tokens": counts[3], "reasoning_output_tokens": thought}
 

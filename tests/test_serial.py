@@ -110,7 +110,7 @@ class SerialTests(unittest.TestCase):
         serial.writer("codex:gpt-6-astra:high")
         self.run_new(fake)
         last = files.load(self.root / "manifest.json")["stages"]["ch00/pitch"]["draws"][-1]
-        self.assertEqual((last["k"], last["of"], last["sent"]["agent"]), (4, 6, "codex:gpt-6-astra:high"))
+        self.assertEqual((last["k"], last["of"], last["agent"]), (4, 6, "codex:gpt-6-astra:high"))
         self.assertEqual({k: v for k, v in self.wrote("ch00").items() if "d4" in k},
                          {"pitch-d4": "claude:medium", "pitch-d4r1": "codex:high"})
 
@@ -128,6 +128,18 @@ class SerialTests(unittest.TestCase):
         self.assertEqual({k: v for k, v in files.load(self.root / "manifest.json")["stages"]["ch00/pitch"]["draws"][-1].items()
                           if k in ("k", "of")}, {"k": 4, "of": 6})
         self.assertIn("hand-edited: brief.md", serial.status("slot"))
+
+    def test_draws_stored_before_agents_were_recorded_still_count_as_codex_draws(self):
+        fake = Fake(pitch=BIBLE.replace("Age: 26", "Age: 40"))
+        with self.assertRaises(serial.Stop):
+            self.run_new(fake)
+        record = files.load(self.root / "manifest.json")
+        for draw in record["stages"]["ch00/pitch"]["draws"]:
+            del draw["agent"]
+        files.save(self.root / "manifest.json", record)
+        with self.assertRaisesRegex(serial.Stop, "3 draws failed"):
+            self.run_new(fake)
+        self.assertEqual(fake.asked, ["pitch"] * 3)  # the same inputs and agent buy no fourth draw
 
     def test_a_money_word_located_in_our_request_stops_without_a_redraw(self):
         for brief, echo in ((b"He rents a room above the flooded underpass.\n", "paying rent"), (b"He owes Mara.\n", "owed")):

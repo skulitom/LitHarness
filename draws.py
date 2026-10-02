@@ -119,10 +119,11 @@ def draw(case: dict, rep: int, agent: str, call, briefs: Path) -> tuple[dict, li
 def failure(error: Exception) -> str:
     """Why an attempt left no checked answer; none of these is a model failing a check."""
     text = str(error)
+    if "Served by" in text:
+        return "serving_substitution"
     if not isinstance(error, transport.Fault):
         return "harness_error"
-    return ("timeout" if "timeout" in text else "refusal" if "stopped on refusal" in text
-            else "serving_substitution" if "Served by" in text else "serving_error")
+    return "timeout" if "timeout" in text else "refusal" if "stopped on refusal" in text else "serving_error"
 
 
 def run(args: argparse.Namespace, flow: Path, runner=None) -> int:
@@ -232,6 +233,9 @@ def report(flow: Path) -> Path:
     for name in names[1:]:
         theirs = rates(found[name], "pass")
         deltas = [theirs[case] - base[case] for case in base if case in theirs]
+        if not deltas:  # the two variants drew different briefs: there is nothing to pair
+            lines.append(f"| {name} | 0 | - | - | no brief in common |")
+            continue
         mean, band, noise = spread(deltas, lambda share: f"{100 * share:+.0f}")
         lines.append(f"| {name} | {len(deltas)} | {100 * mean:+.0f} points | {band} | "
                      f"{'too few briefs' if len(deltas) < BRIEFS else 'within noise' if noise else 'outside noise'} |")

@@ -75,6 +75,13 @@ class DrawsTests(unittest.TestCase):
         self.assertIn("| v2 | 2 | +100 points | too few briefs | too few briefs |", summary)
         self.assertIn("| slot | premise | 0/4 | 0/1 | 1/1 |", summary)
 
+    def test_two_variants_that_drew_different_briefs_are_reported_and_not_paired(self):
+        draws.main(["approve"])
+        codes = [draws.main(["run", "--variant", name, "--reps", "1", "--only", only], Fake())
+                 for name, only in (("baseline", "slot"), ("v1", "cook"))]
+        self.assertEqual(codes, [0, 0])
+        self.assertIn("| v1 | 0 | - | - | no brief in common |", files.read(self.flow / "summary.md"))
+
     def test_an_interval_needs_five_briefs_and_says_whether_a_difference_is_within_noise(self):
         signed = lambda share: f"{100 * share:+.0f}"  # noqa: E731
         self.assertEqual(draws.spread([0.2, 1.0]), (0.6, "too few briefs", True))

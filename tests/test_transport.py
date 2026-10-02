@@ -63,11 +63,18 @@ class ParseTests(unittest.TestCase):
 
     def test_claude_refuses_errors_tools_refusals_another_model_and_bad_usage(self):
         bad = [reply(is_error=True), reply(subtype="error_max_turns"), reply(num_turns=2), reply(stop_reason="refusal"),
-               reply(permission_denials=[{"tool_name": "Bash"}]), reply(modelUsage={"claude-haiku-4-5-20251001": {}}),
-               reply(result=" "), reply(usage={"input_tokens": 1}), "not json"]
+               reply(permission_denials=[{"tool_name": "Bash"}]), reply(result=" "), reply(usage={"input_tokens": 1}), "not json"]
         for stream in bad:
             with self.subTest(stream=stream), tempfile.TemporaryDirectory() as tmp, self.assertRaises(transport.Fault):
                 transport.claude_read(stream, Path(tmp) / "final.md", "m")
+        with tempfile.TemporaryDirectory() as tmp:
+            for asked in ("opus", "claude-haiku"):  # an alias or another model is refused once, never retried as a fault
+                with self.subTest(asked=asked), self.assertRaisesRegex(ValueError, "Served by") as caught:
+                    transport.claude_read(reply(), Path(tmp) / "final.md", asked)
+                self.assertNotIsInstance(caught.exception, transport.Fault)
+            self.assertEqual(transport.claude_read(reply(), Path(tmp) / "final.md", "m[1m]")["output_tokens"], 3)
+            self.assertFalse(transport.claude_read(reply(usage={"input_tokens": 1, "output_tokens": 2, "output_tokens_details": []}),
+                                                   Path(tmp) / "final.md", "m")["reasoning_output_tokens"])
 
     def test_an_agent_is_a_name_then_optionally_a_model_and_an_effort(self):
         self.assertEqual(transport.resolve("claude"), ("claude", "claude-opus-5-5", "medium"))
