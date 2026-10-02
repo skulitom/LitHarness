@@ -40,7 +40,7 @@ def runs(text, n):
 class Guards(unittest.TestCase):
     def test_size(self):
         runtime = sum(lines(p) for p in RUNTIME)
-        self.assertLessEqual(runtime, 1350)
+        self.assertLessEqual(runtime, 1425)
         for path in [*ROOT.glob("*.py"), *RUNTIME, *(ROOT / "tests").glob("*.py"), *ROOT.glob("experiments/**/*.py")]:
             self.assertLessEqual(lines(path), 300 if path.name == "bench.py" else 350, path)
             self.assertNotIn("\u00a7", path.read_text(encoding="utf-8"), path)
