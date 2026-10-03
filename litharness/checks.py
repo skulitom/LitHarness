@@ -34,7 +34,7 @@ SCHEMA = re.compile(r"\b(?:Ladder|Rung|Sheet|Standing|Listing|Prize|Exception)\b
 FIRST = re.compile(r"\b(?:I|[Mm]e|[Mm]y|[Mm]yself|[Ww]e|[Uu]s|[Oo]ur|[Oo]urs|[Oo]urselves)\b")
 RISE = re.compile(r"^[ \t>*_-]*Rise\**[ \t]*:\**[ \t]*(.+?)[ \t]*:[ \t]*(.+?)[ \t]*(?:->|→)[ \t]*(.+?)[ \t]*\|"
                   r"[ \t]*movement[ \t]*(\d+)[ \t]*\|[ \t]*(.*?)[ \t]*$", re.M | re.I)
-AGE = r"Age\**[ \t]*:[ \t*]*(\d+)"
+AGE, ROW = r"Age\**[ \t]*:[ \t*]*(\d+)", re.compile(r"^([ \t]*)((?:[-*]|\**\d+[.)])[ \t]+)?\S", re.M)
 
 
 def around(text: str, start: int, end: int) -> str:
@@ -58,9 +58,9 @@ def section(text: str, name: str) -> str | None:
 
 
 def items(body: str | None) -> int:
-    """Entries of a list: markers at the list's outermost indent, or non-empty lines when unmarked."""
-    marks = re.findall(r"^([ \t]*)(?:[-*]|\**\d+[.)])[ \t]+\S", body or "", re.M)
-    return marks.count(min(marks, key=len)) if marks else len([s for s in (body or "").splitlines() if s.strip()])
+    """Entries of a list: unmarked lines heading their own markers, else markers at the outermost indent, else lines."""
+    rows, marks = "".join("m" if m else "u" for _, m in ROW.findall(body or "")), [i for i, m in ROW.findall(body or "") if m]
+    return rows.count("u") if re.match("u+m+u", rows) else marks.count(min(marks, key=len)) if marks else len(rows)
 
 
 def title(text: str, stage: str) -> str:
