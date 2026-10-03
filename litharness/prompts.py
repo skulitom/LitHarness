@@ -19,7 +19,7 @@ What he alone has, and which rule of this world it breaks.
 ## First use
 The first time it works in chapter one, and what it wins him.
 ## Threat
-What can kill him, and where it first reaches him.
+What kills people, and where it first reaches him.
 ## Prize
 The ability the next rank adds, in words he used before the System.
 ## System
@@ -28,7 +28,7 @@ Ladder: at least three rank names, lowest first, separated by commas.
 Start: one to six lines, each [Label: value], where a value is a whole number above zero,
 a rank from the Ladder, or a pool n/m.
 ## People
-Up to three: name, want, how they talk.
+Up to three allies: name, want, how they talk.
 ## Limits
 What using the exception takes from his body or his time, or the risk it puts him in.
 """
