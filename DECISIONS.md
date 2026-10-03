@@ -77,4 +77,4 @@ sees is judged by the operator's read. Code off the chapter path and unexercised
 ## 2026-09-27 pitch-lexicon
 inspect, inspection and permit left the pitch `money` list for `admin` (6ef1a46: inspect* fired as a System
 mechanic in 5 of 6 read-21 concepts); inspector went back (f0824a6). Where a word mostly hits true, only its
-misfiring sense is excused: council before a name, a ball court, contract as a verb (pitch draws, 2026-10-03).
+misfiring sense is excused: council before a name, a ball court, court and contract as verbs (pitch draws).

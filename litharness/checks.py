@@ -12,8 +12,8 @@ MONEY_WORDS = (
     "salary", "salaries", "paychecks?", "payday", "payments?", "debts?", "owe", "owes", "owed", "owing",
     "loans?", "ledgers?", "invoices?", "overdraft", "budgets?", "repay", "creditors?", "licences?",
     "licenses?", "unpaid", "obligations?", "currency")
-INSTITUTIONAL = (r"(?<!ball )courts?", "clerks?", r"council(?!(?-i: [A-Z]))", "probation", "inspectors?", "paperwork",
-                 r"contracts?(?! (?:around|until)\b)", "deeds?", "tax", "money")
+INSTITUTIONAL = (r"(?<!ball )courts?(?! (?:it|him|her|them|danger|disaster)\b)", "clerks?", r"council(?!(?-i: [A-Z]))",
+                 "probation", "inspectors?", "paperwork", r"contracts?(?! (?:around|until)\b)", "deeds?", "tax", "money")
 ADMIN_WORDS = ("courts?", "clerks?", "council", "inspect", "inspections?", "inspectors?", "probation", "paperwork",
                "permits?", "contracts?", "deeds?", "tax", "paid", "prices?", "coins?", "cash", "banks?", "money")
 LABELS = ("Title|Rise|Ladder|Start|Age|Listing|Person|Exception|First use|Threat|Prize|People|Limits|Where"
