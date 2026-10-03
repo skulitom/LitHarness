@@ -6,7 +6,7 @@ artifact. You have no tools and must not claim to have used any."""
 
 PITCH = """Develop the bible of an original LitRPG serial from the brief below. Preserve the
 brief's literal constraints and invent the rest. Return Markdown in exactly this shape, at
-most 900 words:
+most 800 words:
 
 # the serial's title
 ## Listing

@@ -21,10 +21,10 @@ Nothing is deleted: `redraw` moves chapters to `attempts/<utc>/`; every call kee
 `final.md` and a sha256 receipt. Third-party prose never enters the repo. (plan 1.2, 3.3)
 
 ## 2026-09-27 pitch-then-two-calls
-One pitch call per serial writes a bible (<=900 words) the operator glances at before any chapter spend. Each
-chapter then costs 2 calls, plan (with state) then draft, plus a located tells rewrite when 2 or more
-tell families exceed shelf ceilings: ~21-27k tokens. The draft sees brief, bible, sheet, state, plan and the
-previous chapter in full, never a fact packet (§182). (plan 1.2, 3.4, 3.6)
+One pitch call per serial writes a bible the operator glances at before any chapter spend, asked for at most 800
+words and refused over 900. Each chapter then costs 2 calls, plan (with state) then draft, plus a located tells
+rewrite when 2 or more tell families exceed shelf ceilings: ~21-27k tokens. The draft sees brief, bible, sheet,
+state, plan and the previous chapter in full, never a fact packet (§182). (plan 1.2, 3.4, 3.6)
 
 ## 2026-09-27 code-owned-sheet
 Code owns numbers go up: he opens his status on the page as `[Label: value]` lines, which code reads into
