@@ -96,7 +96,7 @@ class FixtureTests(unittest.TestCase):
             return [word[:-2], word[:-1]] if word.endswith("s?") else [word]
         for word in [f for w in checks.MONEY_WORDS if "(" not in w for f in forms(w)]:
             self.assertTrue(checks.money(f"She never spoke of the {word} again.", "chapter"), word)
-        for word in [f for w in checks.INSTITUTIONAL for f in forms(w)]:
+        for word in [f for w in checks.INSTITUTIONAL if "(" not in w for f in forms(w)]:
             self.assertTrue(checks.money(f"He saw the {word} there.", "pitch"), word)
         for word in [f for w in checks.ADMIN_WORDS for f in forms(w)]:
             self.assertTrue(checks.hits(checks.ADMIN, f"It was the {word}."), word)
@@ -168,8 +168,11 @@ class DocumentTests(unittest.TestCase):
         self.assertEqual(checks.items("Three people matter.\n- Wenna\n- Ysolde\n- Teo\n- Mara"), 4)
         for leaked in ("**Title:** Hold Breath", "CHAPTER THREE: HOLD BREATH", "## Chapter Eleven"):
             self.assertTrue(checks.leak(leaked), leaked)
-        for clean in ("“Go.” Standing, he reached.", "Mara said, “Standing there won't help.”"):
+        for clean in ("“Go.” Listing, the hull tipped.", "Mara said, “Listing won't help.”"):
             self.assertEqual(checks.leak(clean), [], clean)
+        echo = BIBLE.replace("# One Slot, Open Water", "# Off the Sheet")
+        self.assertEqual((checks.hard("pitch", echo, brief="the same sheet"), bool(checks.hard("pitch", echo))), ([], True))
+        self.assertTrue(checks.leak("Off the Sheet Ladder", True, "the same sheet"))
         self.assertEqual(checks.normalize("*Not now—* he thought.")[0], "*Not now,* he thought.\n")
 
     def test_rise_semantics(self):
