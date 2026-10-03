@@ -163,6 +163,9 @@ class DocumentTests(unittest.TestCase):
         self.assertEqual(sheet.ladder("Ladder: Iron, Bronze and Silver"), ["Iron", "Bronze", "Silver"])
         self.assertEqual((sheet.value("1,050/1,200", []), sheet.value("10²", [])), ((1050, 1200), None))
         self.assertEqual(checks.items("- Jamie\n  - wants out\n  - talks fast\n- Mara\n  - wants the gate"), 2)
+        named = "**Wenna Keel**, 22\n- Want: out\n- Talk: clipped\n**Ysolde Keel**, 91\n- Want: whole\n- Talk: formal\n"
+        self.assertEqual((checks.items(named), checks.items(named + "**Teo Marr**\n- Want: rights")), (2, 3))
+        self.assertEqual(checks.items("Three people matter.\n- Wenna\n- Ysolde\n- Teo\n- Mara"), 4)
         for leaked in ("**Title:** Hold Breath", "CHAPTER THREE: HOLD BREATH", "## Chapter Eleven"):
             self.assertTrue(checks.leak(leaked), leaked)
         for clean in ("“Go.” Standing, he reached.", "Mara said, “Standing there won't help.”"):
