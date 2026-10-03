@@ -46,9 +46,9 @@ against `reads/CHECKLIST.md` records residuals only, never a pass. (plan 1.4, 3.
 
 ## 2026-09-27 prompt-policy
 All model-facing text is in `prompts.py`, <=700 words: no register or craft clauses, examples, example lives,
-operator quotes, content lists or permission-form quantity rules, no banned word even negated. The one story
-rule is positive: a Limit takes from his body or time, or puts him at risk. A new defect gets the cheapest fix
-(delete text, field, check, transform); a clause comes last, with a fixture. (plan 3.5)
+operator quotes, content lists or permission-form quantity rules, no banned word even negated. Story rules are
+positive fields: a Limit takes from his body or time, a rank adds an ability, the Threat kills people, People are
+allies (pitch draws, 2026-10-03). Cheapest fix first (delete, field, check, transform), a clause last. (plan 3.5)
 
 ## 2026-09-27 slot-brief-first
 The first serial is a fresh draw on Lite's Slot brief, verbatim (`briefs/slot.txt`). Lite's chapter is not
@@ -75,6 +75,6 @@ sees is judged by the operator's read. Code off the chapter path and unexercised
 (530f40e); experiments are frozen under `experiments/`, never imported. (plan 4, 11; AGENTS.md)
 
 ## 2026-09-27 pitch-lexicon
-inspect, inspection, inspector and permit left the pitch `money` list for `admin`: on the six read-21 concepts,
-inspect* fired in 5, mostly as a System mechanic or a physical check, and "permits" once as a verb. Lite's
-plan.md:7 still fails on council and probation. (plan 3.6 one-false-positive rule; commit 6ef1a46)
+inspect, inspection and permit left the pitch `money` list for `admin` (6ef1a46): on the six read-21 concepts,
+inspect* fired in 5, mostly as a System mechanic or a physical check, and "permits" once as a verb. inspector
+went back on the pitch list for plan fidelity (f0824a6). (plan 3.6 one-false-positive rule)
