@@ -52,7 +52,8 @@ model.
 `python -m unittest -q`, serial, stdlib only, target 3 s (15 s fails). No test spawns a model CLI,
 pins prompt bytes or reads what a `.md` file says. Every check has one positive and one negative
 fixture; `tests/fixtures.json` holds only located sentences from reads and chapters (at most 60,
-each at most 40 words). A single observed false positive moves a word from `money` to `admin`.
+each at most 40 words). A single observed false positive moves a word from `money` to `admin`, or,
+when the word mostly hits true, excuses only the misfiring sense (a ball court, a town's name).
 
 ## Experiments
 

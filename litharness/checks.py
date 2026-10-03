@@ -12,8 +12,8 @@ MONEY_WORDS = (
     "salary", "salaries", "paychecks?", "payday", "payments?", "debts?", "owe", "owes", "owed", "owing",
     "loans?", "ledgers?", "invoices?", "overdraft", "budgets?", "repay", "creditors?", "licences?",
     "licenses?", "unpaid", "obligations?", "currency")
-INSTITUTIONAL = ("courts?", "clerks?", "council", "probation", "inspectors?", "paperwork", "contracts?", "deeds?",
-                 "tax", "money")
+INSTITUTIONAL = (r"(?<!ball )courts?", "clerks?", r"council(?!(?-i: [A-Z]))", "probation", "inspectors?", "paperwork",
+                 r"contracts?(?! (?:around|until)\b)", "deeds?", "tax", "money")
 ADMIN_WORDS = ("courts?", "clerks?", "council", "inspect", "inspections?", "inspectors?", "probation", "paperwork",
                "permits?", "contracts?", "deeds?", "tax", "paid", "prices?", "coins?", "cash", "banks?", "money")
 LABELS = ("Title|Rise|Ladder|Start|Age|Listing|Person|Exception|First use|Threat|Prize|People|Limits|Where"
@@ -30,7 +30,7 @@ MONEY, PITCH_MONEY, ADMIN = lexicon(*MONEY_WORDS), lexicon(*MONEY_WORDS, *INSTIT
 LEAK = re.compile(rf"^[ \t>*_]*(?:#.*|={{3,}}.*|(?:{LABELS})[*_]*[ \t]*:.*)$|\b(?:Chapter|CHAPTER|Scene|SCENE)"
                   r"[ \t]+(?:\d+|[IVXL]+\b|(?i:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve"
                   r"|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty))\b", re.M)
-SCHEMA = re.compile(r"\b(?:Ladder|Rung|Sheet|Standing|Listing|Prize|Exception)\b")
+SCHEMA = re.compile(r"\b(?:Ladder|Rung|Sheet|Listing|Prize|Exception)\b")
 FIRST = re.compile(r"\b(?:I|[Mm]e|[Mm]y|[Mm]yself|[Ww]e|[Uu]s|[Oo]ur|[Oo]urs|[Oo]urselves)\b")
 RISE = re.compile(r"^[ \t>*_-]*Rise\**[ \t]*:\**[ \t]*(.+?)[ \t]*:[ \t]*(.+?)[ \t]*(?:->|→)[ \t]*(.+?)[ \t]*\|"
                   r"[ \t]*movement[ \t]*(\d+)[ \t]*\|[ \t]*(.*?)[ \t]*$", re.M | re.I)
@@ -76,9 +76,9 @@ def initial(text: str, start: int) -> bool:
     return before[-1:] in {"", ".", "!", "?", "…", "\n"} or (opened and before[-1:] in {",", ":"})
 
 
-def leak(text: str, whole_title: bool = False) -> list[str]:
-    found = [m.group().strip() for m in LEAK.finditer(text)]
-    found += [around(text, m.start(), m.end()) for m in SCHEMA.finditer(text) if whole_title or not initial(text, m.start())]
+def leak(text: str, whole_title: bool = False, brief: str = "") -> list[str]:
+    found = [m.group().strip() for m in LEAK.finditer(text)] + [around(text, m.start(), m.end()) for m in SCHEMA.finditer(text)
+             if (whole_title or not initial(text, m.start())) and m.group().lower() not in brief.lower()]
     return [f"leak: {quote}" for quote in found]
 
 
@@ -192,11 +192,11 @@ def length(chapter: str, target: int) -> list[str]:
 
 
 def hard(stage: str, text: str, *, raw: str = "", target: int = 1500, n: int = 1, before=None,
-         ranks=(), rise_plan=None) -> list[str]:
-    """Every hard failure for one stage's output, each with its located quote."""
+         ranks=(), rise_plan=None, brief: str = "") -> list[str]:
+    """Every hard failure for one stage's output, each with its located quote; a title may echo the brief's words."""
     before, ranks = before or {}, list(ranks)
     fails = [f"money: '{word}' in: {quote}" for word, quote in money(text, stage)]
-    fails += leak(title(text, stage), whole_title=True) if stage != "chapter" else leak(text)
+    fails += leak(title(text, stage), whole_title=True, brief=brief) if stage != "chapter" else leak(text)
     if stage != "chapter":
         return fails + (pitch_shape(text) if stage == "pitch" else plan_shape(text, n, ranks, before))
     return (fails + person(raw or text) + rise(text, n, before, ranks, rise_plan)

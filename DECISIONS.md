@@ -75,6 +75,6 @@ sees is judged by the operator's read. Code off the chapter path and unexercised
 (530f40e); experiments are frozen under `experiments/`, never imported. (plan 4, 11; AGENTS.md)
 
 ## 2026-09-27 pitch-lexicon
-inspect, inspection and permit left the pitch `money` list for `admin` (6ef1a46): on the six read-21 concepts,
-inspect* fired in 5, mostly as a System mechanic or a physical check, and "permits" once as a verb. inspector
-went back on the pitch list for plan fidelity (f0824a6). (plan 3.6 one-false-positive rule)
+inspect, inspection and permit left the pitch `money` list for `admin` (6ef1a46: inspect* fired as a System
+mechanic in 5 of 6 read-21 concepts); inspector went back (f0824a6). Where a word mostly hits true, only its
+misfiring sense is excused: council before a name, a ball court, contract as a verb (pitch draws, 2026-10-03).

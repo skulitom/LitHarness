@@ -175,7 +175,7 @@ def new(slug: str, brief_file: Path, words: int, agent: str, call=transport.send
         raise Stop(f"{slug} exists with a different brief; edit its brief.md, or choose another slug")
     if not (root / "ch00" / "bible.md").is_file():
         bible = stage(root, 0, "pitch", prompts.PITCH, [("brief", "brief.md", text(root, "brief.md"))],
-                      lambda out: checks.hard("pitch", out), call, agent)
+                      lambda out: checks.hard("pitch", out, brief=brief), call, agent)
         keep(root, "ch00/sheet.txt", sheet.render(sheet.start(checks.section(bible, "System") or "")))
         keep(root, "ch00/bible.md", bible)
     return root / "ch00" / "bible.md"
