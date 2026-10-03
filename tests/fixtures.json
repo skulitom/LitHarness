@@ -57,5 +57,6 @@
 {"check": "money", "stage": "pitch", "expect": "hit", "text": "She offers evacuation in exchange for lifelong labor contracts, prioritizing skilled adults over dependents.", "source": "evals/pitch-draws/v3/traces/moving-islands_rep6.json"},
 {"check": "money", "stage": "pitch", "expect": "clean", "text": "Lifts swallow passengers; staircases shed steps; corridors contract around anyone still inside.", "source": "evals/pitch-draws/v4/traces/slot_rep6.json"},
 {"check": "money", "stage": "pitch", "expect": "clean", "text": "Ring boundaries contract until someone wins.", "source": "evals/pitch-draws/v4/traces/owen-arcade_rep6.json"},
-{"check": "leak", "stage": "pitch", "expect": "clean", "text": "The Last Spell Left Standing", "source": "evals/pitch-draws/baseline/traces/genre-wilderness_rep4.json"}
+{"check": "leak", "stage": "pitch", "expect": "clean", "text": "The Last Spell Left Standing", "source": "evals/pitch-draws/baseline/traces/genre-wilderness_rep4.json"},
+{"check": "money", "stage": "pitch", "expect": "clean", "text": "She talks in short commands and food insults: *\"Stir it, don't court it.\"*", "source": "evals/pitch-draws/v5/traces/cook_rep3.json"}
 ]
