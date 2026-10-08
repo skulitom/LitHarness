@@ -8,7 +8,10 @@ Python, agent CLIs spawned only by `litharness/transport.py`, data in plain file
 
 One agent, Codex or Claude Code, writes for the whole project, and `python -m litharness agent NAME`
 switches it. Nothing may assume which: a call takes its `agent`, and a new CLI is one row of
-`transport.AGENTS` plus a canary pass.
+`transport.AGENTS` plus a canary pass. `--DANGER-API-USE` lends one `new`, `next` or `draws.py run` to the
+`api` row instead (the Messages API, `claude-haiku-5-5`, billed to `$LITHARNESS_HOME/anthropic-api-key`, which
+never enters the tree or a receipt); `agent` refuses it. From chapter 3 the plan also gets passages recalled by
+`litharness/recall.py`, which asks EmbeddingGemma 2 on the local Ollama (`ollama pull embeddinggemma-2:270m`).
 
 ## The loop
 
@@ -37,7 +40,8 @@ model.
 
 ## Budgets (enforced by `tests/test_guards.py`)
 
-- `litharness/*.py` at most 1,425 physical lines in total (the plan's 1,300, raised in bb87c71, edc478e);
+- `litharness/*.py` at most 1,564 physical lines in total (the plan's 1,300, raised in bb87c71, edc478e,
+  c2d8fdf for the api agent, 8dd1e51 for recall); prompts at most 701 words (6b9a03c, the EARLIER label);
   any `.py` at most 350; tests at most the runtime's lines; no section sign in any `.py`. Raising a cap
   is its own one-line commit naming the case. The `address`, `cast` and `digits` reports were already
   cut for space; the next cut is a new decision, not a rule.

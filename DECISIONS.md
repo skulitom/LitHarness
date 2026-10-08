@@ -10,10 +10,9 @@ incumbent stays at tag `legacy/incumbent-2026-09-27` and branch `legacy/main`, L
 data moves to `C:\DEV\LitHarness-archive` under a manifest, never deleted. (plan 1, 2.17, 6)
 
 ## 2026-09-27 stdlib-line-cap
-`litharness/` imports only the standard library (Python 3.11+, a signed-in agent CLI): any file <=350, tests no
-longer than the runtime; no database, queue, MCP server or dependency. The 1,300 cap became 1,350 for the review's
-fixes, after the address, cast and digits reports were cut (bb87c71), and 1,425 for the agent-neutral transport
-(edc478e). No admission reserve is left; each needs its own one-line cap commit. (plan 3.2, 5)
+`litharness/` imports only the standard library (Python 3.11+, a signed-in agent CLI; Ollama and the Messages API
+over urllib): any file <=350, tests no longer than the runtime; no database, queue, MCP server or dependency. The
+line cap (1,564) has no reserve: each raise is its own one-line commit naming the case, listed in AGENTS.md. (plan 3.2, 5)
 
 ## 2026-09-27 data-root
 Serials are plain-file folders under `$LITHARNESS_HOME` (default `~/LitHarness-data`), outside every git tree.
@@ -23,8 +22,9 @@ Nothing is deleted: `redraw` moves chapters to `attempts/<utc>/`; every call kee
 ## 2026-09-27 pitch-then-two-calls
 One pitch call per serial writes a bible the operator glances at before any chapter spend, asked for at most 800
 words and refused over 900. Each chapter then costs 2 calls, plan (with state) then draft, plus a located tells
-rewrite when 2 or more tell families exceed shelf ceilings: ~21-27k tokens. The draft sees brief, bible, sheet,
-state, plan and the previous chapter in full, never a fact packet (§182). (plan 1.2, 3.4, 3.6)
+rewrite when 2+ tell families exceed shelf ceilings: ~21-27k tokens. The draft sees brief, bible, sheet, state, plan
+and the previous chapter in full, never a fact packet (§182); from chapter 3 the plan also sees EARLIER, passages of
+chapters 1 to n-2 that EmbeddingGemma 2 ranks closest to the last state, <=6,000 characters (2026-10-08). (plan 1.2, 3.4, 3.6)
 
 ## 2026-09-27 code-owned-sheet
 Code owns numbers go up: he opens his status on the page as `[Label: value]` lines, which code reads into
@@ -40,12 +40,11 @@ opens 4-6. Transport retries (<=2) are not draws, and a draft never re-plans by 
 
 ## 2026-09-27 operator-read-gate
 The operator's read, with household reads the operator relays (§148), is the only quality gate; no model
-judges or selects. Simulated readers no longer measure the objective (§126): they continued 4/4 on shuffled
-copies and preferred a shuffled opening of ours over The Primal Hunter 20/20. The coordinator's hand read
-against `reads/CHECKLIST.md` records residuals only, never a pass. (plan 1.4, 3.6, 10)
+judges or selects. Simulated readers no longer measure the objective (§126; the shuffled copies in LEARNINGS).
+The coordinator's hand read against `reads/CHECKLIST.md` records residuals only, never a pass. (plan 1.4, 3.6, 10)
 
 ## 2026-09-27 prompt-policy
-All model-facing text is in `prompts.py`, <=700 words: no register or craft clauses, examples, example lives,
+All model-facing text is in `prompts.py`, <=701 words: no register or craft clauses, examples, example lives,
 operator quotes, content lists or permission-form quantity rules, no banned word even negated. Story rules are
 positive fields: a Limit takes from his body or time, a rank adds an ability, the Threat kills people, People are
 allies (pitch draws, 2026-10-03). Cheapest fix first (delete, field, check, transform), a clause last. (plan 3.5)
@@ -66,7 +65,8 @@ by code and describe, never decide: the genre census (`bench.py`, 2026-09-28) an
 ## 2026-10-02 model-and-voice
 One agent writes for the whole project and nothing assumes which (operator, 2026-10-02): `agent codex|claude`,
 optionally `:model:effort`, switches it between any two commands, as a changed input. Close third person, past
-tense. Calls go through `transport.send` from an empty directory outside git; `canary` pins each CLI. (plan 3.7)
+tense. Calls go through `transport.send`, from an empty directory outside git (`canary` pins each CLI) or, for one
+command under `--DANGER-API-USE`, to the Messages API by `api` (Haiku 5.5, billed; operator, 2026-10-08). (plan 3.7)
 
 ## 2026-09-27 admission-and-deletion
 Admitted only when the trigger is a named failure on a real chapter, committed first as a failing fixture; the

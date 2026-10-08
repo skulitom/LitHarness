@@ -2,11 +2,15 @@
 
 Read [AGENTS.md](AGENTS.md) first. This file adds only what a Claude session on this box needs.
 
-- Every model call goes through `litharness.transport`, by the project's one agent: Codex or Claude
+- Every agent call goes through `litharness.transport`, by the project's one agent: Codex or Claude
   Code, switched with `python -m litharness agent NAME`. Its CLI runs from an empty temporary
   directory outside any git tree, with user config, project docs, tools and API keys cut off.
   After any agent CLI upgrade, run `python -m litharness canary`; `new` and `next` refuse to spend
-  until the installed version has passed it.
+  until the installed version has passed it. `--DANGER-API-USE` is the one exception: that command's
+  calls go to the Messages API as `api` (Haiku 5.5) and bill the operator's key, so run it only when
+  the operator asks. The key file `$LITHARNESS_HOME/anthropic-api-key` is never printed, copied or committed.
+- Recall's embeddings (chapter 3 on) come from EmbeddingGemma 2 on the local Ollama through
+  `litharness/recall.py`; nothing leaves the box, and `next` faults before spending when Ollama is down.
 - Share the box: one sustained job at a time across sessions (model calls, heavy tests, GPU work).
   Check the process list and `runs/box.lock` in the main checkout, take the lock with an atomic
   `mkdir` plus a `holder` line, announce start and end. `new`, `next` and `canary` take it
