@@ -138,8 +138,10 @@ class DocumentTests(unittest.TestCase):
         self.assertEqual(checks.hard("pitch", BIBLE), [])
         lite_plan = files.read(OPENING / "lite" / "plan.md")
         self.assertIn("pitch-shape: '## Listing' is missing or empty", checks.pitch_shape(lite_plan))
-        for old, new in (("Age: 26", "Age: 34"), ("Iron, Bronze, Silver", "Iron, Bronze"), ("[Slots: 1/1]", "[Slots: 2/1]")):
+        for old, new in (("Age: 26", "Age: 34"), ("Iron, Bronze, Silver", "Iron, Bronze"), ("[Slots: 1/1]", "[Slots: 2/1]"),
+                         ("Elias Venn. Age: 26.", "Elias Venn, 34."), ("Elias Venn. Age: 26.", "Elias Venn, 24-hour man.")):
             self.assertTrue(checks.pitch_shape(BIBLE.replace(old, new, 1)), new)
+        self.assertEqual(checks.pitch_shape(BIBLE.replace("Elias Venn. Age: 26.", "Elias Venn, 26.")), [])  # Haiku, v10
 
     def test_plan_shape(self):
         ranks = ["Iron", "Bronze", "Silver"]
