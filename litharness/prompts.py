@@ -30,7 +30,7 @@ above 0, a Ladder rank, or a pool n/m.
 ## People
 Up to three allies: name, how they fight, how they talk.
 ## Limits
-What using the exception takes from his body or time, or the risk it puts him in.
+What using the exception takes from his body or time.
 """
 
 PLAN = """Plan chapter {n} of this serial, about {words} words in close third person, past
