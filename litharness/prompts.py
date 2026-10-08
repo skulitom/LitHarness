@@ -11,6 +11,8 @@ most 800 words:
 # the title
 ## Listing
 One paragraph of two or three sentences, none over 27 words, that a reader sees before chapter one.
+## Threat
+What kills people, and where it first reaches him.
 ## Person
 His name. Age: 20 to 29. What he was doing when the System arrived, what he
 was good at before it, and what he wants, in his words.
@@ -18,8 +20,6 @@ was good at before it, and what he wants, in his words.
 What he alone has, and what it does that everyone else's cannot.
 ## First use
 The first time it works in chapter one, and what it lets him do next.
-## Threat
-What kills people, and where it first reaches him.
 ## Prize
 The ability the next rank adds, in words he used before the System.
 ## System
