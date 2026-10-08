@@ -17,7 +17,7 @@ was good at before it, and what he wants, in his words.
 ## Exception
 What he alone has, and what it does that everyone else's cannot.
 ## First use
-The first time it works in chapter one, and what it wins him.
+The first time it works in chapter one, and what it lets him do next.
 ## Threat
 What kills people, and where it first reaches him.
 ## Prize
