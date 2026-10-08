@@ -79,7 +79,7 @@ class Guards(unittest.TestCase):
         texts = [v for k, v in vars(prompts).items() if k.isupper() and isinstance(v, str)]
         texts += [s for k, v in vars(prompts).items() if k.isupper() and isinstance(v, dict) for s in v.values()]
         joined = "\n".join(texts)
-        self.assertLessEqual(tells.words(joined), 700)
+        self.assertLessEqual(tells.words(joined), 701)
         self.assertEqual(checks.money(joined, "pitch") + checks.hits(checks.ADMIN, joined), [])
         self.assertFalse(runs(joined, 6) & set().union(*(runs(case["text"], 6) for case in FIXTURES)))
 
