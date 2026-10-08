@@ -15,7 +15,7 @@ One paragraph of two or three sentences, none over 27 words, that a reader sees 
 His name. Age: 20 to 29. What he was doing when the System arrived, what he
 was good at before it, and what he wants, in his own words.
 ## Exception
-What he alone has, and which rule of this world it breaks.
+What he alone has, and what it does that everyone else's cannot.
 ## First use
 The first time it works in chapter one, and what it wins him.
 ## Threat
