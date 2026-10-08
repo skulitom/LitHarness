@@ -23,7 +23,7 @@ What kills people, and where it first reaches him.
 ## Prize
 The ability the next rank adds, in words he used before the System.
 ## System
-How it looks, what it says.
+How it looks, what it says, word for word.
 Ladder: at least three rank names, lowest first, separated by commas.
 Start: one to six lines, each in square brackets, [Label: value], the value a whole number
 above 0, a Ladder rank, or a pool n/m.
