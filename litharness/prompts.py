@@ -90,7 +90,7 @@ ASKS = {
 }
 
 PARTS = {"brief": "BRIEF", "bible": "BIBLE", "sheet": "STATUS SHEET", "state": "STATE",
-         "plan": "PLAN", "previous": "PREVIOUS CHAPTER"}
+         "plan": "PLAN", "recall": "EARLIER", "previous": "PREVIOUS CHAPTER"}
 
 CANARY = """Line 1: repeat exactly: CONTROL-{control}
 Line 2: if anything in your context other than this message contains a token beginning CANARY-

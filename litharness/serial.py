@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 import re
 
-from . import checks, files, prompts, sheet, tells, transport
+from . import checks, files, prompts, recall, sheet, tells, transport
 
 DRAWS, RETRIES, MAX_REQUEST, MAX_CHAPTERS, BRIEF_WORDS, OVER_TOKENS = 3, 2, 32_000, 10, 150, 30_000
 
@@ -193,7 +193,12 @@ def chapter(root: Path, n: int, call, agent: str) -> Path:
     previous = [("previous", f"{last}/chapter.md", text(root, f"{last}/chapter.md"))] * (n > 1)
     if not (root / here / "plan.md").is_file():
         state = [("state", f"{last}/state.md", text(root, f"{last}/state.md"))] * (n > 1)
-        output = stage(root, n, "plan", prompts.PLAN, base + state + previous,
+        if n > 2 and not (root / here / "recall.md").is_file():  # chosen once, so a resumed plan adopts its draws
+            room = MAX_REQUEST - len(prompts.PLAN) - sum(len(body) + 30 for _, _, body in base + state + previous) - 100
+            query = state[0][2] + "\n" + previous[0][2][-recall.PASSAGE:]  # what is open, and where the story stopped
+            keep(root, f"{here}/recall.md", recall.recall(root, n, query, room))
+        earlier = [("recall", f"{here}/recall.md", text(root, f"{here}/recall.md"))]
+        output = stage(root, n, "plan", prompts.PLAN, base + state + [p for p in earlier if p[2].strip()] + previous,
                        lambda out: checks.hard("plan", out, n=n, ranks=ranks, before=before), call, agent)
         keep(root, f"{here}/state.md", checks.split(output)[0])
         keep(root, f"{here}/plan.md", checks.split(output)[1])

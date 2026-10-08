@@ -11,7 +11,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from litharness import __main__ as cli, files, serial, transport
+from litharness import __main__ as cli, files, recall, serial, transport
 from tests.test_checks import BIBLE, PLAN
 from tests.test_transport import INSTALLED, events, message, reply
 
@@ -58,7 +58,8 @@ class SerialTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         for patcher in (patch.dict(os.environ, {"LITHARNESS_HOME": self.tmp.name}), patch.dict(transport.CLI, INSTALLED),
                         contextlib.redirect_stdout(io.StringIO()),  # durability is not under test: 2 ms a write
-                        patch.object(files.os, "fsync")):
+                        patch.object(files.os, "fsync"),  # recall's embedder: one vector of letter counts a text
+                        patch.object(recall, "embed", lambda texts: [[t.count(c) + 0.1 for c in "aeiou"] for t in texts])):
             patcher.__enter__()
             self.addCleanup(patcher.__exit__, None, None, None)
         self.brief = Path(self.tmp.name) / "slot.txt"
@@ -83,6 +84,24 @@ class SerialTests(unittest.TestCase):
         self.assertIn("usage: draws plan 1 of 3, draft 1 of 3; 2 calls", files.read(self.root / "ch01" / "report.md"))
         self.assertIn("PREVIOUS CHAPTER", files.read(self.root / "ch02" / "calls" / "plan-d1" / "prompt.txt"))
         self.assertIn("slot: 2 chapters", serial.status("slot"))
+
+    def test_recall_reaches_the_plan_from_chapter_three_and_a_resumed_plan_keeps_its_draws(self):
+        fake, real = Fake(), serial.checks.hard
+        self.run_new(fake)
+        failing = patch.object(serial.checks, "hard", side_effect=lambda stage, *a, **k: ["fields: 0"]
+                               if stage == "plan" and k["n"] == 3 else real(stage, *a, **k))
+        with failing, self.assertRaisesRegex(serial.Stop, "3 draws failed"):
+            self.run_next(fake, 3)
+        recalled, asked = files.read(self.root / "ch03" / "recall.md"), list(fake.asked)
+        self.assertIn(recalled.split("\n\n***\n\n")[0], files.read(self.root / "ch01" / "chapter.md"))
+        self.assertNotIn("EARLIER:", files.read(self.root / "ch02" / "calls" / "plan-d1" / "prompt.txt"))
+        prompt = files.read(self.root / "ch03" / "calls" / "plan-d1" / "prompt.txt")
+        self.assertLess(prompt.index("\nEARLIER:\n"), prompt.index("\nPREVIOUS CHAPTER:\n"))
+        self.assertLessEqual(len(prompt), serial.MAX_REQUEST)
+        with patch.object(recall, "embed", side_effect=AssertionError("recall is chosen once")), failing, \
+                self.assertRaisesRegex(serial.Stop, "3 draws failed"):
+            self.run_next(fake)  # the same input set: its three failed draws still count, and nothing is bought
+        self.assertEqual((fake.asked, files.read(self.root / "ch03" / "recall.md")), (asked, recalled))
 
     def wrote(self, chapter):
         receipts = {p.parent.name: files.load(p) for p in (self.root / chapter / "calls").glob("*/receipt.json")}
