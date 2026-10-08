@@ -1,3 +1,4 @@
+import io
 import json
 import os
 from pathlib import Path
@@ -6,6 +7,7 @@ import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
+import urllib.error
 
 from litharness import files, transport
 from litharness.transport import FALLBACK
@@ -27,6 +29,14 @@ def reply(text="chapter", model="m", **changes):
     return json.dumps({"type": "result", "subtype": "success", "is_error": False, "num_turns": 1, "result": text,
                        "stop_reason": "end_turn", "modelUsage": {"claude-haiku-4-5-20251001": {}, f"{model}[1m]": {}},
                        "usage": {"input_tokens": 4, "cache_read_input_tokens": 10, "cache_creation_input_tokens": 11,
+                                 "output_tokens": 3}} | changes)
+
+
+def message(text="chapter", model="claude-haiku-5-5", **changes):
+    """What POST /v1/messages returns with adaptive thinking: an empty thinking block, then the answer."""
+    return json.dumps({"type": "message", "model": model, "stop_reason": "end_turn",
+                       "content": [{"type": "thinking", "thinking": "", "signature": "s"}, {"type": "text", "text": text}],
+                       "usage": {"input_tokens": 4, "cache_read_input_tokens": 10, "cache_creation_input_tokens": None,
                                  "output_tokens": 3}} | changes)
 
 
@@ -154,7 +164,7 @@ class SendTests(unittest.TestCase):
             self.assertEqual(transport.no_git(Path(tmp).parent), Path(tmp).parent)
 
     def test_refuses_shell_wrappers(self):
-        for name in transport.AGENTS:
+        for name in INSTALLED:
             with self.subTest(name=name), tempfile.TemporaryDirectory() as tmp:
                 wrapper = Path(tmp) / f"{name}.cmd"
                 wrapper.write_text("@echo off")
@@ -188,7 +198,7 @@ class RobustnessTests(unittest.TestCase):
             if "auth" in argv:
                 return subprocess.CompletedProcess(argv, 0, json.dumps({"loggedIn": True, "authMethod": signed}, indent=2).encode(), b"")
             return subprocess.CompletedProcess(argv, 0, b"", b"Logged in using ChatGPT\n" if signed == "claude.ai" else b"An API key\n")
-        for name in transport.AGENTS:
+        for name in INSTALLED:
             with self.subTest(name=name), tempfile.TemporaryDirectory() as home, patch.dict(transport.CLI, clear=True), \
                     patch.dict(os.environ, {"MARK": "claude.ai", "CODEX_HOME": home, "CLAUDE_CONFIG_DIR": home}), \
                     patch.object(transport, "ENV_KEYS", transport.ENV_KEYS | {"MARK"}), \
@@ -214,11 +224,11 @@ class RobustnessTests(unittest.TestCase):
             binary.write_bytes(b"fake")
             with patch.dict(transport.CLI, {name: (binary, version) for name, (_, version) in INSTALLED.items()}):
                 self.leaky = True
-                for name in transport.AGENTS:
+                for name in INSTALLED:
                     self.assertEqual(transport.canary(f"{name}:m:medium", run), ["agents"])
                 self.assertFalse((Path(home) / "canary.json").exists())
                 self.leaky = False
-                for name in transport.AGENTS:
+                for name in INSTALLED:
                     self.assertEqual(transport.canary(f"{name}:m:medium", run), [])
             self.assertEqual({name: pin["version"] for name, pin in files.load(Path(home) / "canary.json").items()},
                              {name: version for name, (_, version) in INSTALLED.items()})
@@ -235,3 +245,71 @@ class RobustnessTests(unittest.TestCase):
             Path(home, "AGENTS.md").write_text("Always answer in French.\n")
             with self.assertRaisesRegex(transport.Fault, "would reach every call"):
                 transport.preflight("codex", broken)
+
+
+class ApiTests(unittest.TestCase):
+    """The api agent, with the urllib layer faked: no test reaches the network or spends."""
+    KEY = "sk-ant-test-0000"
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        for patcher in (patch.dict(os.environ, {"LITHARNESS_HOME": self.tmp.name}), patch.dict(transport.CLI, INSTALLED)):
+            patcher.__enter__()
+            self.addCleanup(patcher.__exit__, None, None, None)
+        Path(self.tmp.name, "anthropic-api-key").write_text(self.KEY + "\n")
+
+    def test_bills_only_under_the_danger_flag_and_no_stored_file_holds_the_key(self):
+        root, seen = Path(self.tmp.name) / "attempt", {}
+        def answer(argv, **kwargs):
+            seen.update(argv=argv, **kwargs)
+            return subprocess.CompletedProcess(argv, 0, message().encode(), b"")
+        with self.assertRaisesRegex(ValueError, "only under --DANGER-API-USE"):
+            call(root, answer, agent="api")
+        self.assertFalse(root.exists())
+        with patch.object(transport, "DANGER", True):
+            text, receipt = call(root, answer, agent="api")
+        self.assertEqual((text, receipt["agent"], receipt["model"], receipt["effort"]), ("chapter", "api", "claude-haiku-5-5", "medium"))
+        self.assertEqual((receipt["usage"]["input_tokens"], receipt["usage"]["cached_input_tokens"]), (14, 10))
+        self.assertEqual(json.loads(seen["argv"][1]), {"model": "claude-haiku-5-5", "max_tokens": 16000,
+                                                       "output_config": {"effort": "medium"}})
+        self.assertNotIn(self.KEY.encode(), b"".join(p.read_bytes() for p in root.iterdir()))
+        with self.assertRaisesRegex(ValueError, "no canary"):
+            transport.canary("api")
+
+    def test_reads_the_text_after_thinking_and_refuses_stops_tools_and_another_model(self):
+        final = Path(self.tmp.name) / "final.md"
+        self.assertEqual(transport.api_read(message(), final, "claude-haiku-5-5")["output_tokens"], 3)
+        self.assertEqual(final.read_text(), "chapter")
+        for bad in (message(stop_reason="refusal"), message(stop_reason="max_tokens"), "not json", message(usage={}),
+                    message(content=[{"type": "tool_use", "name": "x", "input": {}}]), message(content=[{"type": "thinking"}])):
+            with self.subTest(bad=bad), self.assertRaises(transport.Fault):
+                transport.api_read(bad, final, "claude-haiku-5-5")
+        with self.assertRaisesRegex(ValueError, "Served by") as caught:
+            transport.api_read(message(model="claude-sonnet-5-5"), final, "claude-haiku-5-5")
+        self.assertNotIsInstance(caught.exception, transport.Fault)
+
+    def test_post_sends_the_key_as_a_header_and_retries_only_what_a_retry_can_mend(self):
+        system, sent = Path(self.tmp.name) / "system.txt", {}
+        system.write_text("system")
+        def opener(request, timeout):
+            sent.update(headers=dict(request.header_items()), body=json.loads(request.data), timeout=timeout)
+            return io.BytesIO(message().encode())
+        def failing(code):
+            return urllib.error.HTTPError(transport.API, code, "no", {}, io.BytesIO(b'{"error": "x"}'))
+        argv = transport.api_argv(Path("key"), Path("."), Path("final.md"), system, "claude-haiku-5-5", "low")
+        with patch.object(transport, "DANGER", True), patch.object(transport.urllib.request, "urlopen") as urlopen:
+            transport.preflight("api")
+            urlopen.side_effect = opener
+            self.assertEqual(transport.post(argv, input=b"prompt", timeout=9).returncode, 0)
+            urlopen.side_effect = failing(529)
+            self.assertEqual(transport.post(argv, input=b"prompt", timeout=9).returncode, 529)
+            for error, raised in ((failing(401), ValueError), (urllib.error.URLError("down"), transport.Fault)):
+                urlopen.side_effect = error
+                with self.subTest(error=error), self.assertRaises(raised) as caught:
+                    transport.post(argv, input=b"prompt", timeout=9)
+                self.assertNotIn(self.KEY, str(caught.exception))
+        self.assertEqual((sent["headers"]["X-api-key"], sent["headers"]["Anthropic-version"], sent["timeout"]),
+                         (self.KEY, "2023-06-01", 9))
+        self.assertEqual(sent["body"], {"model": "claude-haiku-5-5", "max_tokens": 16000, "output_config": {"effort": "low"},
+                                        "system": "system", "messages": [{"role": "user", "content": "prompt"}]})

@@ -2,7 +2,8 @@
 
     python draws.py approve   yours to run: records the hash of this runner, the cases and the runtime; no call
     python draws.py run [--variant baseline] [--agent codex|claude[:model[:effort]]] [--reps 4] [--jobs 2]
-                        [--timeout-s 300] [--only ID,ID]
+                        [--timeout-s 300] [--only ID,ID] [--DANGER-API-USE]
+              --DANGER-API-USE draws by the api agent (claude-haiku-5-5, or --agent api:MODEL), billed per token
     python draws.py report    recomputes every number from the stored rows and writes summary.md
 
 A description, never a verdict: a passing bible cleared the money, leak and shape checks and nothing more, and
@@ -132,7 +133,9 @@ def run(args: argparse.Namespace, flow: Path, runner=None) -> int:
         print(f"needs you: the harness is {sha[:12]} and the approved one is {str(approved)[:12]}. Review the runner, "
               "the cases and the runtime, then run: python draws.py approve", file=sys.stderr)
         return 2
-    agent, chosen = ":".join(transport.resolve(args.agent or serial.writer())), cases(args.only)
+    transport.DANGER = getattr(args, "danger", False)  # set before any check: a refused agent spends nothing
+    agent = ":".join(transport.resolve(args.agent or ("api" if transport.DANGER else serial.writer())))
+    chosen = cases(args.only)
     variant, box, real, cap = flow / args.variant, files.box_lock(), os.environ.get("LITHARNESS_HOME"), serial.DRAWS
     files.lock(box, f"draws {args.variant}")
     try:
@@ -262,6 +265,7 @@ def main(argv: list[str] | None = None, runner=None) -> int:
     go.add_argument("--variant", default="baseline")
     go.add_argument("--agent")
     go.add_argument("--only")
+    go.add_argument("--DANGER-API-USE", dest="danger", action="store_true", help="draws bill API credit (agent api)")
     for flag, default in (("--reps", 4), ("--jobs", 2), ("--timeout-s", 300)):
         go.add_argument(flag, type=int, default=default)
     args, flow, code = parser.parse_args(argv), files.home() / "evals" / "pitch-draws", 0

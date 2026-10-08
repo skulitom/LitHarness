@@ -1,4 +1,4 @@
-"""The only module that spawns a CLI: an isolated, receipted agent call from an empty directory."""
+"""The only module that spawns a CLI: an isolated, receipted agent call from an empty directory, or the API."""
 from __future__ import annotations
 
 import json
@@ -11,6 +11,8 @@ import subprocess
 import tempfile
 import time
 from typing import Callable, NamedTuple
+import urllib.error
+import urllib.request
 
 from . import files, prompts
 
@@ -26,7 +28,8 @@ BUNDLED = ("node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vend
 RECONNECT = re.compile(r"Reconnecting\.\.\. [1-9][0-9]*/[1-9][0-9]* \(.+\)", re.S)
 FALLBACK = "Falling back from WebSockets to HTTPS transport."
 SETTINGS = '{"claudeMdExcludes":["**/CLAUDE.md","**/CLAUDE.local.md"],"autoMemoryEnabled":false}'
-CLI: dict[str, tuple[Path, str]] = {}  # agent -> (native binary, version), read once per process by preflight()
+CLI: dict[str, tuple[Path, str]] = {}  # agent -> (native binary, or the api's key file; version), set by preflight()
+API, DANGER = "https://api.anthropic.com/v1/messages", False  # only --DANGER-API-USE sets DANGER: the api bills
 
 
 class Fault(ValueError):
@@ -133,10 +136,30 @@ def claude_read(stdout: str, final: Path, model: str) -> dict:
     if (reply.get("stop_reason") not in {None, "end_turn"} or reply.get("num_turns") not in {None, 1}
             or reply.get("permission_denials")):
         raise Fault(f"Provider stopped on {reply.get('stop_reason')} after {reply.get('num_turns')} turns")
-    served, used, answer = reply.get("modelUsage") or {}, reply.get("usage") or {}, reply.get("result")
+    served = reply.get("modelUsage") or {}
     if not any(re.fullmatch(rf"{re.escape(model.split('[')[0])}(-\d{{8}})?(\[\w+\])?", key) for key in served):
         raise ValueError(f"Served by {sorted(served)}, not {model}; name the full model id")  # no retry can mend it
-    counts = [used.get(key, 0 if "cache" in key else None) for key in (
+    return tally(reply.get("usage") or {}, reply.get("result"), final)
+
+
+def api_read(stdout: str, final: Path, model: str) -> dict:
+    """One finished Messages API turn by the model asked for: its text blocks, after any thinking, and no tools."""
+    try:
+        reply = json.loads(stdout)
+    except ValueError as error:
+        raise Fault("Provider returned a malformed result") from error
+    blocks = reply.get("content") if isinstance(reply, dict) else None
+    if not isinstance(blocks, list) or reply.get("stop_reason") != "end_turn" or any(
+            not isinstance(b, dict) or b.get("type") not in {"text", "thinking", "redacted_thinking"} for b in blocks):
+        raise Fault(f"Provider stopped on {reply.get('stop_reason') if isinstance(reply, dict) else None}")
+    if not re.fullmatch(rf"{re.escape(model)}(-\d{{8}})?", str(reply.get("model"))):
+        raise ValueError(f"Served by {reply.get('model')}, not {model}; name the full model id")
+    return tally(reply.get("usage") or {}, "".join(b.get("text", "") for b in blocks if b["type"] == "text"), final)
+
+
+def tally(used: dict, answer: object, final: Path) -> dict:
+    """Stores Claude's answer and returns its usage in Codex's terms: cache reads and writes count as input."""
+    counts = [used.get(key) or 0 if "cache" in key else used.get(key) for key in (
         "input_tokens", "cache_read_input_tokens", "cache_creation_input_tokens", "output_tokens")]
     if any(type(n) is not int or n < 0 for n in counts) or not isinstance(answer, str) or not answer.strip():
         raise Fault("Missing answer or invalid token usage")
@@ -174,7 +197,9 @@ def preflight(name: str, runner=subprocess.run) -> str:
     for file in agent.home[2]:
         if (home / file).is_file() and files.read(home / file).strip():
             raise Fault(f"{home / file} would reach every call; empty or move it; nothing was spent")
-    if name not in CLI:
+    if name == "api":  # the key's path is fixed here, before draws.py points $LITHARNESS_HOME at a variant
+        key(CLI.setdefault(name, (files.home() / "anthropic-api-key", "messages-api 2023-06-01"))[0])
+    elif name not in CLI:
         binary = native_binary(name)
         with tempfile.TemporaryDirectory(prefix="litharness-empty-") as empty:
             login = run_quietly(runner, [str(binary), *agent.login], cwd=empty, timeout=30)
@@ -213,12 +238,41 @@ def claude_argv(binary: Path, work: Path, final: Path, system: Path, model: str,
             "--settings", SETTINGS, "--system-prompt", files.read(system)]
 
 
+def api_argv(binary: Path, work: Path, final: Path, system: Path, model: str, effort: str) -> list[str]:
+    """No CLI: post() sends these settings, the system file and the prompt. Thinking stays adaptive; effort rules it."""
+    return [API, json.dumps({"model": model, "max_tokens": 16000, "output_config": {"effort": effort}}), str(system)]
+
+
+def key(path: Path) -> str:
+    """The project's Messages API key, outside every tree: read per request, never in an argv, receipt or child."""
+    if not DANGER or not path.is_file():
+        raise ValueError(f"The api agent bills API credit: it runs only under --DANGER-API-USE, keyed by {path}")
+    return files.read(path).strip()
+
+
+def post(argv: list[str], *, input: bytes, timeout: int, **_) -> subprocess.CompletedProcess:
+    """The api agent's runner, shaped like subprocess.run: a 4xx but 408, 409 or 429 ends the command, unretried."""
+    body = json.loads(argv[1]) | {"system": files.read(Path(argv[2])), "messages": [{"role": "user", "content": input.decode()}]}
+    request = urllib.request.Request(argv[0], json.dumps(body).encode("utf-8"), {
+        "content-type": "application/json", "anthropic-version": "2023-06-01", "x-api-key": key(CLI["api"][0])})
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            return subprocess.CompletedProcess(argv, 0, response.read(), b"")
+    except urllib.error.HTTPError as error:  # overload, rate limits and server errors exit nonzero and are retried
+        if 400 <= error.code < 500 and error.code not in {408, 409, 429}:
+            raise ValueError(f"The Messages API refused the request ({error.code}): {error.read()[:400]!r}") from None
+        return subprocess.CompletedProcess(argv, error.code, b"", error.read())
+    except OSError as error:  # unreachable, reset or timed out: usage unknown, like a CLI timeout
+        raise Fault(f"The Messages API could not be reached: {error}") from error
+
+
 AGENTS = {
     "codex": Agent("gpt-6-astra", "medium", ("CODEX_HOME", ".codex", ("AGENTS.md", "AGENTS.override.md")),
                    ["-c", 'forced_login_method="chatgpt"', "-c", 'model_provider="openai"', "login", "status"],
                    rb"Logged in using ChatGPT", codex_argv, codex_read),
     "claude": Agent("claude-opus-5-5", "medium", ("CLAUDE_CONFIG_DIR", ".claude", ("CLAUDE.md",)), ["auth", "status"],
                     rb'"loggedIn":\s*true[\s\S]*"authMethod":\s*"claude\.ai"', claude_argv, claude_read),
+    "api": Agent("claude-haiku-5-5", "medium", ("LITHARNESS_HOME", "LitHarness-data", ()), [], b"", api_argv, api_read),
 }
 
 
@@ -227,6 +281,8 @@ def send(prompt: str, directory: Path, *, system: str, agent: str, runner=subpro
     """One call by the agent named, into a new directory. Only the canary passes cwd; everyone else
     runs outside git."""
     name, model, effort = resolve(agent)
+    if name == "api":  # preflight refuses it without --DANGER-API-USE, whoever calls
+        runner = post if preflight(name) and runner is subprocess.run else runner
     binary, version = CLI.get(name) or (native_binary(name), None)
     directory = Path(directory).resolve()
     directory.mkdir(parents=True, exist_ok=False)
@@ -269,6 +325,8 @@ def canary(agent: str, runner=subprocess.run) -> list[str]:
     """One call from a temporary git repo seeded with a nonce per channel. Returns what leaked, or
     'format' if the control line is wrong; a clean pass pins this agent's CLI version in canary.json."""
     name, record = resolve(agent)[0], files.home() / "canary.json"
+    if name == "api":
+        raise ValueError("The api agent reads no directory and has no CLI to pin; it needs no canary")
     version, nonce = preflight(name, runner), {channel: secrets.token_hex(6).upper() for channel in (
         "agents", "override", "claude", "commit", "untracked", "control")}
     directory = files.home() / "canary" / f"{files.utc()}-{secrets.token_hex(3)}"

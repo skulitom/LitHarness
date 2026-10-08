@@ -43,6 +43,8 @@ def writer(switch: str | None = None) -> str:
     """The one agent that writes for the whole project, as agent:model:effort, kept in $LITHARNESS_HOME/agent.
     A switch ('claude', 'codex:gpt-6-astra:high') holds from the next command on, for every serial."""
     record = files.home() / "agent"
+    if switch and transport.resolve(switch)[0] == "api":
+        raise ValueError("The api agent is never the project's: --DANGER-API-USE names it for one command")
     if switch:
         files.write(record, ":".join(transport.resolve(switch)) + "\n")
     return ":".join(transport.resolve(files.read(record).strip() if record.is_file() else "codex"))
@@ -50,10 +52,10 @@ def writer(switch: str | None = None) -> str:
 
 def pinned(agent: str) -> None:
     """Refuses, before anything is spent, an agent that is not signed in or whose installed CLI version
-    has not passed the canary."""
+    has not passed the canary; the api agent has no CLI and needs only --DANGER-API-USE and its key."""
     name, record = transport.resolve(agent)[0], files.home() / "canary.json"
     version = transport.preflight(name)
-    if (files.load(record) if record.is_file() else {}).get(name, {}).get("version") != version:
+    if name != "api" and (files.load(record) if record.is_file() else {}).get(name, {}).get("version") != version:
         raise Stop(f"{version} has not passed the canary; run: python -m litharness canary {name}")
 
 

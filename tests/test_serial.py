@@ -2,6 +2,7 @@
 import contextlib
 from functools import partial
 import io
+import json
 import os
 from pathlib import Path
 import re
@@ -12,7 +13,7 @@ from unittest.mock import patch
 
 from litharness import __main__ as cli, files, serial, transport
 from tests.test_checks import BIBLE, PLAN
-from tests.test_transport import INSTALLED, events, reply
+from tests.test_transport import INSTALLED, events, message, reply
 
 PROSE = "Elias braced a boot on the seat frame and pulled while the water climbed past his knees."
 
@@ -43,6 +44,8 @@ class Fake:
         if isinstance(answer, Exception):
             return subprocess.CompletedProcess(argv, 1, b"", b"boom")
         text = answer(prompt) if callable(answer) else answer
+        if argv[0] == transport.API:  # the api agent's runner answers with the Messages API's JSON
+            return subprocess.CompletedProcess(argv, 0, message(text, json.loads(argv[1])["model"]).encode(), b"")
         if "--output-last-message" not in argv:  # Claude Code prints its answer; Codex also writes it to a file
             return subprocess.CompletedProcess(argv, 0, reply(text, argv[argv.index("--model") + 1]).encode(), b"")
         Path(argv[argv.index("--output-last-message") + 1]).write_bytes(text.encode())
@@ -252,6 +255,23 @@ class CliTests(unittest.TestCase):
                 self.assertEqual((cli.main(["agent", "claude"]), cli.main(["next", "slot"])), (0, 1))
         self.assertEqual(out.getvalue(), "claude:claude-opus-5-5:medium\n")
         self.assertEqual(err.getvalue().count("codex-cli 2 has not passed the canary; run: python -m litharness canary"), 2)
+
+    def test_the_danger_flag_sends_one_command_to_the_api_and_never_becomes_the_project_agent(self):
+        with tempfile.TemporaryDirectory() as home, patch.dict(os.environ, {"LITHARNESS_HOME": home}), \
+                patch.dict(transport.CLI), patch.object(transport, "DANGER", False), \
+                patch.object(transport, "post", Fake()) as fake, patch.object(files.os, "fsync"), \
+                patch.object(cli.files, "box_lock", return_value=Path(home) / "box.lock"), \
+                contextlib.redirect_stderr(io.StringIO()) as err, contextlib.redirect_stdout(io.StringIO()):
+            brief = Path(home, "slot.txt")
+            brief.write_bytes(b"System apocalypse. One Slot each; his holds every skill he can take.\n")
+            spend = ["new", "slot", "--brief", str(brief), "--DANGER-API-USE"]
+            self.assertEqual(cli.main(spend), 2)  # no key yet, and no canary is asked for
+            Path(home, "anthropic-api-key").write_text("sk-ant-test-0000\n")
+            self.assertEqual((cli.main(spend), cli.main(["agent", "api"]), cli.main(["agent"])), (0, 2, 0))
+            receipt = files.load(Path(home) / "serials" / "slot" / "ch00" / "calls" / "pitch-d1" / "receipt.json")
+        self.assertEqual((fake.asked, receipt["agent"], receipt["model"]), (["pitch"], "api", "claude-haiku-5-5"))
+        self.assertIn("DANGER: every call of this new bills API credit, by api:claude-haiku-5-5:medium", err.getvalue())
+        self.assertIn("never the project's", err.getvalue())
 
 
 class RecheckTests(unittest.TestCase):

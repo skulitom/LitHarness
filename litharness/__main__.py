@@ -34,7 +34,11 @@ def spend(args: argparse.Namespace) -> int:
     """new and next by the project's agent, canary by it or by the one named: box lock, canary pin, serial lock."""
     if args.verb == "next" and not serial.folder(args.slug).is_dir():
         raise serial.Stop(f"there is no serial {args.slug}; run: new {args.slug} --brief FILE")
-    agent, box = ":".join(transport.resolve(getattr(args, "agent", None) or serial.writer())), files.box_lock()
+    transport.DANGER = getattr(args, "danger", False)
+    agent = ":".join(transport.resolve("api" if transport.DANGER else getattr(args, "agent", None) or serial.writer()))
+    if transport.DANGER:
+        print(f"DANGER: every call of this {args.verb} bills API credit, by {agent}", file=sys.stderr, flush=True)
+    box = files.box_lock()
     files.lock(box, f"{args.verb} {getattr(args, 'slug', '-')}")
     try:
         if args.verb == "canary":
@@ -67,6 +71,9 @@ def main(argv: list[str] | None = None) -> int:
     after = verbs.add_parser("next", help="plan, draft, check and report the next chapters")
     after.add_argument("slug")
     after.add_argument("-n", type=int, default=1)
+    for verb in (new, after):
+        verb.add_argument("--DANGER-API-USE", dest="danger", action="store_true",
+                          help="this command's calls go to the Messages API by the api agent and bill its key")
     agent = verbs.add_parser("agent", help="show, or switch, the one agent that writes for the whole project")
     agent.add_argument("switch", nargs="?", metavar="codex|claude[:MODEL[:EFFORT]]")
     verbs.add_parser("status", help="read-only: chapters, draws, failing checks, tokens").add_argument("slug", nargs="?")
