@@ -32,6 +32,8 @@ class SheetTests(unittest.TestCase):
         self.assertEqual(sheet.start("Start: [Rank: Iron] [Slots: 1/1]\nPeople: two"),
                          {"Rank": "Iron", "Slots": "1/1"})
         self.assertEqual(sheet.read(sheet.render(sheet.start(SYSTEM))), sheet.start(SYSTEM))
+        unlabelled = '"Route accepted." [Note: x] Ladder: Iron, Bronze, Silver\n[Rank: Iron]\n\n[Grip: 3]'  # Haiku, v20
+        self.assertEqual(sheet.start(unlabelled), {"Rank": "Iron", "Grip": "3"})
 
     def test_only_whole_bracket_lines_are_status_lines(self):
         page = "[STATUS] Owen, rank 2\nHe said [Grip: 4] quietly.\n  [Grip: 4]  \n[The System hums]\n"
