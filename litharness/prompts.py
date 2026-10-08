@@ -28,7 +28,7 @@ Ladder: at least three rank names, lowest first, separated by commas.
 Start: one to six lines, each in square brackets, [Label: value], the value a whole number
 above 0, a Ladder rank, or a pool n/m.
 ## People
-Up to three allies: name, what they want to do, how they talk.
+Up to three allies: name, how they fight, how they talk.
 ## Limits
 What using the exception takes from his body or time, or the risk it puts him in.
 """
