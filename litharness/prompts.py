@@ -8,12 +8,12 @@ PITCH = """Develop the bible of an original LitRPG serial from the brief below. 
 brief's literal constraints and invent the rest. Return Markdown in exactly this shape, at
 most 800 words:
 
-# the serial's title
+# the title
 ## Listing
 One paragraph of two or three sentences, none over 27 words, that a reader sees before chapter one.
 ## Person
 His name. Age: 20 to 29. What he was doing when the System arrived, what he
-was good at before it, and what he wants, in his own words.
+was good at before it, and what he wants, in his words.
 ## Exception
 What he alone has, and what it does that everyone else's cannot.
 ## First use
@@ -28,7 +28,7 @@ Ladder: at least three rank names, lowest first, separated by commas.
 Start: one to six lines, each in square brackets, [Label: value], the value a whole number
 above 0, a Ladder rank, or a pool n/m.
 ## People
-Up to three allies: name, want, how they talk.
+Up to three allies: name, what they want to do, how they talk.
 ## Limits
 What using the exception takes from his body or time, or the risk it puts him in.
 """
