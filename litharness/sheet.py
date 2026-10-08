@@ -49,10 +49,10 @@ def fields(text: str) -> list[tuple[str, str, int]]:
 
 
 def start(bible: str) -> dict[str, str]:
-    """The bible's `Start:` fields, which become the chapter-0 sheet."""
+    """The bible's `Start:` fields, or with no Start label its bracketed fields after the Ladder: the chapter-0 sheet."""
     block = re.search(r"^[\s>*-]*\**Start\**\s*:(.*?)(?=^\s*#|^[ \t>*-]*[A-Za-z][\w ]*:|\Z)",
                       bible, re.M | re.S | re.I)
-    pairs = [FIELD.match(inner) for inner in re.findall(r"\[([^\[\]\n]+)\]", block[1] if block else "")]
+    pairs = [FIELD.match(inner) for inner in re.findall(r"\[([^\[\]\n]+)\]", block[1] if block else bible.partition("Ladder")[2])]
     return {pair[1]: pair[2] for pair in pairs if pair}
 
 
