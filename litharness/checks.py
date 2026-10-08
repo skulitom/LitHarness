@@ -34,7 +34,7 @@ SCHEMA = re.compile(r"\b(?:Ladder|Rung|Sheet|Listing|Prize|Exception)\b")
 FIRST = re.compile(r"\b(?:I|[Mm]e|[Mm]y|[Mm]yself|[Ww]e|[Uu]s|[Oo]ur|[Oo]urs|[Oo]urselves)\b")
 RISE = re.compile(r"^[ \t>*_-]*Rise\**[ \t]*:\**[ \t]*(.+?)[ \t]*:[ \t]*(.+?)[ \t]*(?:->|→)[ \t]*(.+?)[ \t]*\|"
                   r"[ \t]*movement[ \t]*(\d+)[ \t]*\|[ \t]*(.*?)[ \t]*$", re.M | re.I)
-AGE, ROW = r"Age\**[ \t]*:[ \t*]*(\d+)", re.compile(r"^([ \t]*)((?:[-*]|\**\d+[.)])[ \t]+)?\S", re.M)
+AGE, ROW = r"(?:Age\**[ \t]*:[ \t*]*|^[^\n,.:]{2,40},[ \t]*)(\d+)(?![\d-])", re.compile(r"^([ \t]*)((?:[-*]|\**\d+[.)])[ \t]+)?\S", re.M)
 
 
 def around(text: str, start: int, end: int) -> str:
