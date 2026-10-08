@@ -25,8 +25,8 @@ The ability the next rank adds, in words he used before the System.
 ## System
 How it looks, what it says.
 Ladder: at least three rank names, lowest first, separated by commas.
-Start: one to six lines, each [Label: value], where a value is a whole number above zero,
-a rank from the Ladder, or a pool n/m.
+Start: one to six lines, each in square brackets, [Label: value], where a value is a positive
+whole number, a Ladder rank, or a pool n/m.
 ## People
 Up to three allies: name, want, how they talk.
 ## Limits
