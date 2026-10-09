@@ -33,8 +33,8 @@ Up to three allies: name, how they fight, how they talk.
 What using the exception takes from his body or time.
 """
 
-PLAN = """Plan chapter {n} of this serial, about {words} words in close third person, past
-tense. Return exactly these two parts and nothing else:
+PLAN = """Plan chapter {n} of this serial, about {words} words. Return exactly these two parts
+and nothing else:
 
 === STATE ===
 ## Where
@@ -42,7 +42,7 @@ Each named person: place, condition, want.
 ## Held
 The objects he carries, counted.
 ## Open
-At most eight plain lines of what is unresolved.
+At most eight lines of what is unresolved.
 ## So far
 The story so far in at most 130 words.
 
@@ -66,10 +66,10 @@ and chapter; in chapter 1 it follows the bible, and the Rise lands in movement 1
 
 DRAFT = """Write chapter {n} of this serial from the brief, bible, sheet, state and plan below.
 Aim for {words} words (within 15%). Use close third person, past tense. Give the
-protagonist concrete choices and let consequences unfold on the page. Print the
-Rise's status line in the movement that earns it. The plan is a guide, not text
-to recite; give its three movements equal length. End with a consequential
-opening into the next chapter. Return only the chapter: no title or headings; *** for a
+protagonist concrete choices and let consequences unfold on the page. State his
+age early in chapter 1. Print the Rise's status line in the movement that earns
+it. The plan is a guide, not text to recite; give its three movements equal
+length. End with a consequential opening into the next chapter. Return only the chapter: no title or headings; *** for a
 scene break. No outline, analysis, afterword or word-count claim. When he opens his status
 or the System speaks, put each of its lines on its own line in square brackets, fields as
 [Label: value] with the labels on the sheet.
