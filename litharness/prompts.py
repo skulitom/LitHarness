@@ -67,8 +67,8 @@ and chapter; in chapter 1 it follows the bible, and the Rise lands in movement 1
 DRAFT = """Write chapter {n} of this serial from the brief, bible, sheet, state and plan below.
 Aim for {words} words (within 15%). Use close third person, past tense. Give the
 protagonist concrete choices and let consequences unfold on the page. Print the
-Rise's status line in the movement that earns it. Let discoveries happen
-through action. The plan is a guide, not text to recite. End with a consequential
+Rise's status line in the movement that earns it. The plan is a guide, not text
+to recite; give its three movements equal length. End with a consequential
 opening into the next chapter. Return only the chapter: no title or headings; *** for a
 scene break. No outline, analysis, afterword or word-count claim. When he opens his status
 or the System speaks, put each of its lines on its own line in square brackets, fields as
