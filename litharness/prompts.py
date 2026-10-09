@@ -61,7 +61,7 @@ What he holds at the end that he did not hold at the start, and what comes for i
 
 A status value rises in this chapter, earned on the page. The state follows the last state
 and chapter; in chapter 1 it follows the bible, and the Rise lands in movement 1. State under
-600 words, plan under 400.
+600 words, plan under 350.
 """
 
 DRAFT = """Write chapter {n} of this serial from the brief, bible, sheet, state and plan below.
