@@ -40,11 +40,11 @@ tense. Return exactly these two parts and nothing else:
 ## Where
 Each named person: place, condition, want.
 ## Held
-The counted things he carries.
+The objects he carries, counted.
 ## Open
 At most eight plain lines of what is unresolved.
 ## So far
-The story so far in at most 150 words.
+The story so far in at most 130 words.
 
 === PLAN ===
 Title: the chapter's title
@@ -55,7 +55,7 @@ Rise: Label: old -> new | movement k | the act on the page that earns it
 ## Options
 The choices on offer and what each would give him, or none.
 ## People
-At most four named on the page.
+Names only, at most four on the page.
 ## Ending
 What he holds at the end that he did not hold at the start, and what comes for it next.
 
