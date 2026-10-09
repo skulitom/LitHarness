@@ -25,6 +25,8 @@ class SheetTests(unittest.TestCase):
         for raw in ("3, Holdfast, Gill, Joint Lock", "3 — Holdfast", "3 (two active)", "3 - spent"):
             self.assertEqual(sheet.value(raw, RANKS), (3, None), raw)  # serials/slot ch03: a count with its gloss
         self.assertEqual(sheet.value("Bronze (since dawn)", RANKS), (2, None))
+        for raw, read in (("1 -> 2", (2, None)), ("Iron → Bronze", (2, None)), ("15.", (15, None)), ("41/60.", (41, 60))):
+            self.assertEqual(sheet.value(raw, RANKS), read, raw)  # Haiku chapter draws c0, c1: a rise shown, a full stop
         self.assertEqual(sheet.order("0/4", RANKS), 4)
 
     def test_start_lines_become_the_first_sheet(self):
