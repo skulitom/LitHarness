@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LitHarness: findings</title>
+<meta name="description" content="What a solo project in which coding agents write LitRPG serials found about measuring fiction: model judges, a reader that pays to keep reading, prompt words that become story, code growth, a climb that measured reliability, and agent CLI leakage.">
+<meta name="author" content="Artem Skulimovskiy">
+<link rel="canonical" href="https://skulitom.github.io/LitHarness/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LitHarness: findings">
+<meta property="og:description" content="Model judges and simulated readers did not predict the human reader; prompt words became story; a 1% to 52% climb measured reliability, not quality.">
+<meta property="og:url" content="https://skulitom.github.io/LitHarness/">
+<meta property="og:image" content="https://skulitom.github.io/LitHarness/banner.jpg">
+<meta property="og:image:alt" content="LitHarness artwork: a constellation dragon rising from an open book in a workshop of one-eyed archive creatures">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<style>
+:root {
+  --bg: #fbfaf7; --text: #1c1d21; --muted: #5b5e69; --rule: #e3e1da; --code-bg: #f0eee8;
+  --accent: #2f6bd8; --accent-soft: rgba(47, 107, 216, 0.12); --grey: #b3b0a6; --grey-faint: #d4d1c8;
+  --grid: #ebe9e2; --band: rgba(120, 116, 104, 0.14); --row: #f5f3ee;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1015; --text: #e6e7eb; --muted: #a3a7b3; --rule: #2a2e39; --code-bg: #1b1f29;
+    --accent: #7aa7ff; --accent-soft: rgba(122, 167, 255, 0.16); --grey: #6d717c; --grey-faint: #464a55;
+    --grid: #22262f; --band: rgba(200, 204, 214, 0.10); --row: #141821;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 17px/1.62 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+main { max-width: 46rem; margin: 0 auto; padding: 32px 16px 64px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+.banner { display: block; width: 100%; height: auto; border-radius: 10px; }
+h1 { font-size: 2.3rem; line-height: 1.15; letter-spacing: -0.02em; margin: 28px 0 8px; }
+.dek { font-size: 1.15rem; color: var(--muted); margin: 0 0 12px; }
+.byline { font-size: 0.9rem; color: var(--muted); margin: 0 0 32px; padding-bottom: 20px; border-bottom: 1px solid var(--rule); }
+.byline span + span::before { content: "·"; margin: 0 8px; }
+h2 { font-size: 1.45rem; line-height: 1.25; letter-spacing: -0.01em; margin: 52px 0 12px; scroll-margin-top: 16px; }
+h2 .num { color: var(--muted); font-weight: 600; }
+p, ul, ol { margin: 0 0 16px; }
+li { margin: 0 0 8px; }
+li::marker { color: var(--muted); }
+.summary { padding-left: 1.2rem; }
+.summary strong a { color: inherit; text-decoration-color: var(--rule); }
+.summary strong a:hover { color: var(--accent); }
+code { font: 0.86em/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+.table-wrap { overflow-x: auto; margin: 4px 0 20px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; line-height: 1.5; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--rule); }
+th { font-weight: 600; color: var(--muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; border-bottom-width: 2px; }
+td.num, th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+tbody tr:nth-child(even) td { background: var(--row); }
+figure { margin: 28px 0 24px; }
+.fig-title { font-weight: 650; font-size: 1.02rem; line-height: 1.35; margin: 0 0 2px; }
+.fig-sub { color: var(--muted); font-size: 0.9rem; margin: 0 0 8px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.85rem; color: var(--muted); margin: 0 0 6px; padding: 0; list-style: none; }
+.legend li { margin: 0; display: flex; align-items: center; gap: 6px; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+.sw.muted { background: var(--grey); }
+.sw.line { width: 22px; height: 3px; border-radius: 2px; }
+.sw.line.muted { background: var(--grey); }
+.sw.line.faint { background: var(--grey-faint); }
+.scroll { overflow-x: auto; }
+.chart { display: block; width: 100%; min-width: 620px; height: auto; font-family: inherit; }
+figcaption { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+.chart .grid { stroke: var(--grid); stroke-width: 1; }
+.chart .tick { fill: var(--muted); font-size: 12px; }
+.chart .note { fill: var(--muted); font-size: 12px; }
+.chart .value { fill: var(--text); font-size: 12.5px; font-weight: 650; }
+.chart .value.accent { fill: var(--accent); }
+.chart .band { fill: var(--band); }
+.chart .ref { stroke: var(--grey); stroke-dasharray: 4 4; }
+.chart .ref-solid { stroke: var(--grey); }
+.chart .line-accent { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+.chart .line-muted { fill: none; stroke: var(--grey); stroke-width: 1.75; }
+.chart .line-faint { fill: none; stroke: var(--grey-faint); stroke-width: 1.75; }
+.chart .dot-accent { fill: var(--accent); }
+.chart .dot-muted { fill: var(--grey); }
+.chart .hit { fill: transparent; }
+.diagram .connectors path { fill: none; stroke: var(--grey); stroke-width: 1.25; }
+.diagram .arrowhead { fill: var(--grey); }
+.diagram .box { fill: none; stroke: var(--grey); stroke-width: 1.25; }
+.diagram .box-accent { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+.diagram .box-name { fill: var(--text); font-size: 13px; font-weight: 650; }
+.diagram .box-line { fill: var(--muted); font-size: 11.5px; }
+.diagram .box-line-strong { fill: var(--text); font-size: 11.5px; }
+.diagram .note { font-size: 11.5px; }
+footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 0.85rem; color: var(--muted); }
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  h1 { font-size: 1.85rem; }
+  h2 { font-size: 1.28rem; margin-top: 44px; }
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+<img class="banner" src="banner.jpg" width="1412" height="788" alt="LitHarness artwork: a constellation dragon rising from an open book in a workshop of one-eyed archive creatures">
+<h1>LitHarness: findings</h1>
+<p class="dek">What two months of coding agents writing LitRPG serials, judged by one human reader, found about measuring fiction.</p>
+<p class="byline"><span>Artem Skulimovskiy</span><span>As of 14 October 2026</span><span><a href="https://github.com/skulitom/LitHarness">Code on GitHub</a></span><span><a href="https://skulitom.github.io/litharness.html">Project page</a></span></p>
+</header>
+
+<p>LitHarness is a solo project (12 August to 14 October 2026) in which coding agents write LitRPG web-serial chapters from a short brief, and one human reader, the operator, is the only judge of quality. What it found is mostly about measurement and specification, not prose:</p>
+<ul class="summary">
+<li><strong><a href="#finding-1">Model judges and simulated readers did not predict the human reader.</a></strong> A 4B-parameter judge answered "A" on all 106 passes, and all 4 simulated readers kept reading a sentence-shuffled chapter, as many as read the ordered one.</li>
+<li><strong><a href="#finding-2">One machine reader replicated: a reader that pays to keep reading.</a></strong> It gave shuffled books a smaller share of its reads, +0.164 and then +0.189 in a redrawn replication (90% intervals above zero).</li>
+<li><strong><a href="#finding-3">Prompt words become story.</a></strong> Swapping a permission clause for a prohibition cut the numbers in a listing 6.7x, a list in the prompt was recited back as plot, and the model brought money and debt into stories that never asked for them.</li>
+<li><strong><a href="#finding-4">Cost lived in the call graph and the code size.</a></strong> A 16-call, 129,661-token chapter lost both blinded model reads to a 2-call, 15,904-token one, and the code grew from 6k to 66k lines in 47 days before a rebuild of under 1,600 lines replaced it.</li>
+<li><strong><a href="#finding-5">A 1% to 52% climb measured reliability, not quality.</a></strong> An audit found the pitch climb's gain was mostly format, and in a separate chapter climb, passing chapters looked the same before and after.</li>
+<li><strong><a href="#finding-6">Agent CLIs leak their surroundings.</a></strong> Run inside a repo, <code>claude -p</code> put an untracked filename into its answer in 1 to 2 of 5 calls.</li>
+</ul>
+
+<h2 id="the-project">The project</h2>
+<p>The goal is fiction that a defined audience would choose to keep reading and recommend, with no human in the production loop. The audience is RoyalRoad readers of LitRPG, aged 20 to 30: progression fantasy in which the hero's ranks and abilities are printed as numbers on the page.</p>
+<p>The rebuild runs under two rules these findings produced. The operator (the project's author) is the only quality gate, and no model judges or selects text. No human data is collected beyond household reads the operator relays: no paid readers, panels or labels.</p>
+<p>Terms used below:</p>
+<ul>
+<li><strong>Brief</strong>: a few lines of premise from the operator.</li>
+<li><strong>Pitch</strong> and <strong>bible</strong>: one model call per serial writes the bible (premise, hero, the System that grants ranks, threat, allies and limits) in at most 900 words.</li>
+<li><strong>Draw</strong>: one model call for one stage. A stage that fails a code check is drawn again, up to 3 times.</li>
+<li><strong>Hard checks</strong>: code checks that force a redraw, such as money words, leaked schema words, a missing printed rank-up, shape and length.</li>
+<li><strong>Tells</strong>: counted patterns of machine prose, such as chained "and", compared with published chapters.</li>
+<li><strong>Sheet</strong>: the hero's stats, which code reads from <code>[Label: value]</code> lines the hero prints on the page.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead><tr><th>Phase</th><th>Dates</th><th>Design</th><th>Size</th></tr></thead>
+<tbody>
+<tr><td>Rebuild</td><td>27 Sep to now</td><td>One pitch call per serial, then 2 calls a chapter (plan, draft) and a rewrite only when a counter says so</td><td>1,564 lines of stdlib Python</td></tr>
+<tr><td>Incumbent</td><td>12 Aug to 27 Sep</td><td>A multi-stage pipeline: world forging, a writer roster, scene packets, a stat-sheet engine, model gates</td><td>65,891 runtime lines, plus 96k of tests and 101k of research code</td></tr>
+</tbody>
+</table></div>
+<p>The evidence base is 20 operator reads (18 Aug to 23 Sep), each naming defects in a chapter, and a 267-entry decision ledger kept at the tag <code>legacy/incumbent-2026-09-27</code>. Writers were Codex (gpt-6-astra, then gpt-6.1-sol), Claude Code (Opus 5.5) and Haiku 5.5 through the API.</p>
+<p>The rebuild's first serial has 3 chapters (4,831 words) awaiting the operator's 21st read; with its pitch it took 15 calls and 118,679 tokens. The code is public at <a href="https://github.com/skulitom/LitHarness">github.com/skulitom/LitHarness</a>.</p>
+
+<h2 id="how-a-chapter-is-made">How a chapter is made</h2>
+<figure>
+<p class="fig-title">Two calls a chapter; code redraws failures, one human read judges</p>
+<div class="scroll">
+<svg viewBox="0 52 760 508" role="img" aria-label="The rebuild's chapter path: brief, pitch, glance, then plan, draft and code checks per chapter, with redraw loops and the operator's read as the only quality gate" class="chart diagram">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="arrowhead" d="M0 0L10 5L0 10z"/></marker></defs>
+<g class="connectors"><path d="M240.0 100H272.0" marker-end="url(#arrow)"/><path d="M488.0 100H520.0" marker-end="url(#arrow)"/><path d="M628 136.0V164H132V192.0" marker-end="url(#arrow)"/><path d="M240.0 228H272.0" marker-end="url(#arrow)"/><path d="M488.0 228H520.0" marker-end="url(#arrow)"/><path d="M590 264.0V292H380V264.0" marker-end="url(#arrow)"/><path d="M668 264.0V336.0" marker-end="url(#arrow)"/><path d="M520.0 372H160V264.0" marker-end="url(#arrow)"/><path d="M628 408.0V464.0" marker-end="url(#arrow)"/><path d="M520.0 500H104V264.0" marker-end="url(#arrow)"/></g>
+<rect class="box" x="24.0" y="64.0" width="216" height="72" rx="8"/><text class="box-name" x="132" y="88.0" text-anchor="middle">Brief</text><text class="box-line" x="132" y="106.0" text-anchor="middle">a few lines from the operator</text>
+<rect class="box" x="272.0" y="64.0" width="216" height="72" rx="8"/><text class="box-name" x="380" y="88.0" text-anchor="middle">Pitch, 1 call</text><text class="box-line" x="380" y="106.0" text-anchor="middle">writes the serial&#x27;s bible,</text><text class="box-line" x="380" y="122.0" text-anchor="middle">at most 900 words</text>
+<rect class="box" x="520.0" y="64.0" width="216" height="72" rx="8"/><text class="box-name" x="628" y="88.0" text-anchor="middle">Operator&#x27;s glance</text><text class="box-line" x="628" y="106.0" text-anchor="middle">reads the bible before any</text><text class="box-line" x="628" y="122.0" text-anchor="middle">chapter is paid for</text>
+<rect class="box" x="24.0" y="192.0" width="216" height="72" rx="8"/><text class="box-name" x="132" y="216.0" text-anchor="middle">Plan, 1 call</text><text class="box-line" x="132" y="234.0" text-anchor="middle">sees brief, bible, sheet, state</text><text class="box-line" x="132" y="250.0" text-anchor="middle">and earlier passages (ch. 3 on)</text>
+<rect class="box" x="272.0" y="192.0" width="216" height="72" rx="8"/><text class="box-name" x="380" y="216.0" text-anchor="middle">Draft, 1 call</text><text class="box-line" x="380" y="234.0" text-anchor="middle">about 1,500 words from the plan</text><text class="box-line" x="380" y="250.0" text-anchor="middle">and the previous chapter</text>
+<rect class="box" x="520.0" y="192.0" width="216" height="72" rx="8"/><text class="box-name" x="628" y="216.0" text-anchor="middle">Code checks</text><text class="box-line" x="628" y="234.0" text-anchor="middle">8 hard checks: money, rise, ...</text><text class="box-line" x="628" y="250.0" text-anchor="middle">a tells count may add 1 rewrite</text>
+<rect class="box" x="520.0" y="336.0" width="216" height="72" rx="8"/><text class="box-name" x="628" y="360.0" text-anchor="middle">Chapter and sheet</text><text class="box-line" x="628" y="378.0" text-anchor="middle">code reads [Label: value] lines</text><text class="box-line" x="628" y="394.0" text-anchor="middle">into the sheet, not from prose</text>
+<rect class="box box-accent" x="520.0" y="464.0" width="216" height="72" rx="8"/><text class="box-name" x="628" y="488.0" text-anchor="middle">Operator&#x27;s read</text><text class="box-line-strong" x="628" y="506.0" text-anchor="middle">the only quality gate; each</text><text class="box-line-strong" x="628" y="522.0" text-anchor="middle">named defect is located</text>
+<text class="note" x="140" y="184">each chapter</text>
+<text class="note" x="485" y="310" text-anchor="middle">fail: redraw unchanged, at most 3 draws</text>
+<text class="note" x="676" y="306">pass</text>
+<text class="note" x="172" y="364">sheet and state feed the next plan</text>
+<text class="note" x="116" y="476">cheapest fix first: delete our text, then a field or a check</text>
+<text class="note" x="116" y="492">and redraw from that chapter</text>
+</svg>
+</div>
+<figcaption>The rebuild's chapter path, from README.md and DECISIONS.md · designed for 1 pitch call a serial and 2 or 3 calls a chapter; failed checks add draws</figcaption>
+</figure>
+<p>Models write and code checks. Only the operator judges, and each defect they name is located, in our text or the model's, and fixed with the cheapest change before a redraw.</p>
+
+<h2 id="finding-1"><span class="num">Finding 1:</span> model judges and simulated readers did not predict the human reader</h2>
+<p>The model judges and simulated readers the incumbent built tracked position, saturated, or preferred surface to story. The one gate scored against the operator's verdicts passed chapters the operator then failed.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Failure</th><th>What was measured</th></tr></thead>
+<tbody>
+<tr><td>Position over text</td><td><code>gemma-3-4b-it</code> answered "A" on 106 of 106 passes (positional weight 0.9998, text 0.000214). Haiku's keep-reading pick chose A 64% of 142 times. A persona panel took the first-shown copy 17 of 20 times.</td></tr>
+<tr><td>Saturation</td><td>A keep-reading prompt said yes 195 of 196 times. 6 of 8 sibling drafts kept all 4 simulated readers reading. All 4 kept reading a sentence-shuffled chapter, as many as read the ordered copy.</td></tr>
+<tr><td>Surface over story</td><td>A paragraph-shuffled opening of ours beat the opening of <em>The Primal Hunter</em> 20 of 20 times, the same rate as our ordered copy. Five judges from four vendors preferred a told-not-shown repair at 0.92 to 1.00.</td></tr>
+<tr><td>Dead signals</td><td>A log-probability damage detector scored AUC 0.519; a rename-only sham edit moved it 2.0x as much as the strongest damaging edit.</td></tr>
+<tr><td>Gate misses</td><td>The coordinating agent's prose gate passed chapters that operator reads 9 to 13 and 20 then failed. At read 17 it had praised 3 of the 9 items the operator named as defects.</td></tr>
+</tbody>
+</table></div>
+<p>One format did carry signal. Asked to name the single most salient difference between two texts, the same Haiku found it 40 of 40, 30 of 32 and 18 of 36 times against nulls of 0.21, 0.36 and 0.26, and called the placebo pair identical. A report carried signal where a verdict did not.</p>
+<p>So the rebuild has no model judge. Its instruments are code-graded and describe; only the operator's read decides.</p>
+
+<h2 id="finding-2"><span class="num">Finding 2:</span> the one machine reader that replicated pays to keep reading</h2>
+<p>A simulated reader that spends from an attention budget to continue gave a book a smaller share of its reads when the book's paragraphs were shuffled. Free readers never separated these (Finding 1); this one did, in a registered run and a rerun.</p>
+<p>Setup: 20 of our drafted books, four books offered per session, <code>claude-haiku-4-5</code> through <code>claude -p</code>, 180 sessions per run, 180 of 180 scorable.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Run</th><th class="num">Intact minus shuffled, share of reads</th><th class="num">90% interval</th><th>Cost or caveat</th></tr></thead>
+<tbody>
+<tr><td>First run</td><td class="num">+0.164</td><td class="num">+0.088 to +0.239</td><td>$49.78, 2 h 04</td></tr>
+<tr><td>Replication, permutation redrawn</td><td class="num">+0.189</td><td class="num">+0.075 to +0.296</td><td>$50.35, 2 h 04</td></tr>
+<tr><td>65% shuffle, after the isolation fix</td><td class="num">+0.194</td><td class="num">+0.134 to +0.252</td><td>the reader's baseline had drifted by +0.153</td></tr>
+</tbody>
+</table></div>
+<p>Our reading is that the reader had to give something up to keep going, so it could not say yes for free. The limits are real: a whole-book shuffle is the loudest damage there is, a lean toward the first slot ate three quarters of an earlier version's signal, 20 books cap its power, and it needs about 3,900 words a book. The rerun reused the same 20 books and model with only the shuffle redrawn, and the claim holds only for the slot the reader attends to. Both runs predate the transport fix in Finding 6. It stays a research result, not a gate.</p>
+
+<h2 id="finding-3"><span class="num">Finding 3:</span> prompt words become story</h2>
+<p>When a failure was traced to its cause, the cause was often words we sent, not the model's taste. The rest came from a lean the model brings on its own, and that lean moved around rather than going away.</p>
+<ul>
+<li><strong>Clause form sets the output.</strong> Number tokens per 1,000 words of a listing: 47.2 with a permission clause, 29.4 with none, 7.0 with a prohibition. Ten market listings carry 7.2.</li>
+<li><strong>Lists are recited.</strong> A six-item list of pressures was recited back: across three concepts "water" drew 66, 16 and 8 mentions, and "fight" none. A checklist in the listing task produced a list-shaped listing.</li>
+<li><strong>Fact packets become minutiae.</strong> Facts were 65% of a scene prompt, and 23 of 37 facts shared a content-word pair with the drafted page.</li>
+<li><strong>Our words, then the model's.</strong> 18 of 30 generated worlds put a register, debt, court, deed or clerk in the premise, traced to four lines of our rules. After those were deleted, an institutional lean remained. Later, 4 of 5 failed draws had a located cause in our text, yet 3 of the 5 held money words no request contained.</li>
+<li><strong>Naming a banned word supplies it.</strong> Prohibiting a behaviour cut numbers (above), but a "not currency" gloss put the word into every cost record that fed the page.</li>
+</ul>
+<p>In the rebuild's pitch climb, each field we re-asked moved the money and office frame into the next field:</p>
+<div class="table-wrap"><table>
+<thead><tr><th class="num">Round</th><th>Field asked</th><th>Frame</th><th class="num">Before</th><th class="num">After</th></tr></thead>
+<tbody>
+<tr><td class="num">1</td><td>Prize: "the ability the next rank adds"</td><td>Rank grants a civil standing</td><td class="num">69% of bibles</td><td class="num">10%</td></tr>
+<tr><td class="num">1</td><td>System: "how it looks, what it says"</td><td>System speaks like an office</td><td class="num">89%</td><td class="num">18%</td></tr>
+<tr><td class="num">2</td><td>Threat: "what kills people"</td><td>Threat polices his exception</td><td class="num">46 draws</td><td class="num">16</td></tr>
+<tr><td class="num">2</td><td>People: "up to three allies"</td><td>An official among his people</td><td class="num">59 draws</td><td class="num">17</td></tr>
+</tbody>
+</table></div>
+<p>On Haiku the same words behaved like a partly conserved budget: blocking one section moved them to another, while blocking two sections together reduced them. The working rule became: delete prompt text first, then ask a positive field, then add a code check that redraws. A prose clause comes last, and never one about register or craft.</p>
+
+<h2 id="finding-4"><span class="num">Finding 4:</span> cost lived in the call graph and the code size</h2>
+<p>The incumbent's slowness came from its call graph, not from Python, and its code regrew after cuts.</p>
+<ul>
+<li><strong>Calls.</strong> One chapter took 16 calls and 129,661 tokens. 8 of them were "OK" probes that used 27% of the wall time, one outline planned 24 scenes to draft 4, and Python itself took about 11 s.</li>
+<li><strong>A 2-call prototype.</strong> A 264-line rewrite made 2 calls (15,904 tokens) and won both orders of a blinded read by a same-family model judge, on one pair. By Finding 1 that read decides little, and the heavy pipeline also did continuity work the prototype skipped.</li>
+<li><strong>Machinery.</strong> A stat-sheet engine of over 6,000 lines in nine modules mostly fixed its own defects. One 24-scene arc (2 h 20 min, $38) spent the hero's only currency twice and brought back a man who had been culled.</li>
+<li><strong>Growth.</strong> Runtime code went from 5,964 to 65,891 lines in 47 days. A 34% cut on 24 August regrew in 5.2 days, and CI took 10 to 14 minutes a push.</li>
+</ul>
+<figure>
+<p class="fig-title">Incumbent runtime code grew 11x in 47 days; the rebuild holds at 1,564 lines</p>
+<p class="fig-sub">Lines of Python at each day's last commit, 12 Aug to 14 Oct 2026</p>
+<ul class="legend">
+<li><span class="sw line"></span>runtime</li>
+<li><span class="sw line muted"></span>incumbent tests</li>
+<li><span class="sw line faint"></span>incumbent research code</li>
+</ul>
+<div class="scroll">
+<svg viewBox="0 0 760 330" role="img" aria-label="Lines of Python by day: incumbent runtime, tests and research code, and the rebuild runtime" class="chart">
+<line class="grid" x1="52" x2="712" y1="290" y2="290"/><text class="tick" x="44" y="294" text-anchor="end">0</text>
+<line class="grid" x1="52" x2="712" y1="247.3" y2="247.3"/><text class="tick" x="44" y="251.3" text-anchor="end">20k</text>
+<line class="grid" x1="52" x2="712" y1="204.7" y2="204.7"/><text class="tick" x="44" y="208.7" text-anchor="end">40k</text>
+<line class="grid" x1="52" x2="712" y1="162" y2="162"/><text class="tick" x="44" y="166" text-anchor="end">60k</text>
+<line class="grid" x1="52" x2="712" y1="119.3" y2="119.3"/><text class="tick" x="44" y="123.3" text-anchor="end">80k</text>
+<line class="grid" x1="52" x2="712" y1="76.7" y2="76.7"/><text class="tick" x="44" y="80.7" text-anchor="end">100k</text>
+<line class="grid" x1="52" x2="712" y1="34" y2="34"/><text class="tick" x="44" y="38" text-anchor="end">120k</text>
+<text class="tick" x="52" y="310" text-anchor="middle">12 Aug</text>
+<text class="tick" x="261.5" y="310" text-anchor="middle">1 Sep</text>
+<text class="tick" x="533.9" y="310" text-anchor="middle">27 Sep</text>
+<text class="tick" x="712" y="310" text-anchor="middle">14 Oct</text>
+<line class="ref" x1="533.9" x2="533.9" y1="20" y2="290"/><text class="note" x="539.9" y="28">rebuild replaces main</text>
+<path class="line-faint" d="M52,290L62.5,290L73,286.9L83.4,286.9L93.9,286.9L104.4,276.8L114.9,262.8L125.3,240.2L135.8,223.4L146.3,219.3L156.8,197.7L167.2,190.7L177.7,204L188.2,204L198.7,200.6L209.1,198.1L219.6,196.3L230.1,189L240.6,187.4L251,186.5L261.5,177.1L272,176.3L282.5,169.3L293,167.5L303.4,163.4L313.9,157.9L324.4,150.7L334.9,150.7L345.3,150.7L355.8,145.8L366.3,139.2L376.8,131.9L387.2,119L397.7,117.4L408.2,111.7L418.7,107L429.1,107L439.6,107L450.1,103.3L460.6,103.3L471,103.3L481.5,92.2L492,79.9L502.5,76.8L513,76.8L523.4,76.8L533.9,75.3"/>
+<circle class="hit" cx="52" cy="290" r="4"><title>incumbent research code, 12 Aug: 0 lines</title></circle>
+<circle class="hit" cx="62.5" cy="290" r="4"><title>incumbent research code, 13 Aug: 0 lines</title></circle>
+<circle class="hit" cx="73" cy="286.9" r="4"><title>incumbent research code, 14 Aug: 1,449 lines</title></circle>
+<circle class="hit" cx="83.4" cy="286.9" r="4"><title>incumbent research code, 15 Aug: 1,449 lines</title></circle>
+<circle class="hit" cx="93.9" cy="286.9" r="4"><title>incumbent research code, 16 Aug: 1,449 lines</title></circle>
+<circle class="hit" cx="104.4" cy="276.8" r="4"><title>incumbent research code, 17 Aug: 6,208 lines</title></circle>
+<circle class="hit" cx="114.9" cy="262.8" r="4"><title>incumbent research code, 18 Aug: 12,767 lines</title></circle>
+<circle class="hit" cx="125.3" cy="240.2" r="4"><title>incumbent research code, 19 Aug: 23,329 lines</title></circle>
+<circle class="hit" cx="135.8" cy="223.4" r="4"><title>incumbent research code, 20 Aug: 31,241 lines</title></circle>
+<circle class="hit" cx="146.3" cy="219.3" r="4"><title>incumbent research code, 21 Aug: 33,159 lines</title></circle>
+<circle class="hit" cx="156.8" cy="197.7" r="4"><title>incumbent research code, 22 Aug: 43,283 lines</title></circle>
+<circle class="hit" cx="167.2" cy="190.7" r="4"><title>incumbent research code, 23 Aug: 46,553 lines</title></circle>
+<circle class="hit" cx="177.7" cy="204" r="4"><title>incumbent research code, 24 Aug: 40,327 lines</title></circle>
+<circle class="hit" cx="188.2" cy="204" r="4"><title>incumbent research code, 25 Aug: 40,327 lines</title></circle>
+<circle class="hit" cx="198.7" cy="200.6" r="4"><title>incumbent research code, 26 Aug: 41,917 lines</title></circle>
+<circle class="hit" cx="209.1" cy="198.1" r="4"><title>incumbent research code, 27 Aug: 43,098 lines</title></circle>
+<circle class="hit" cx="219.6" cy="196.3" r="4"><title>incumbent research code, 28 Aug: 43,917 lines</title></circle>
+<circle class="hit" cx="230.1" cy="189" r="4"><title>incumbent research code, 29 Aug: 47,337 lines</title></circle>
+<circle class="hit" cx="240.6" cy="187.4" r="4"><title>incumbent research code, 30 Aug: 48,088 lines</title></circle>
+<circle class="hit" cx="251" cy="186.5" r="4"><title>incumbent research code, 31 Aug: 48,501 lines</title></circle>
+<circle class="hit" cx="261.5" cy="177.1" r="4"><title>incumbent research code, 1 Sep: 52,922 lines</title></circle>
+<circle class="hit" cx="272" cy="176.3" r="4"><title>incumbent research code, 2 Sep: 53,294 lines</title></circle>
+<circle class="hit" cx="282.5" cy="169.3" r="4"><title>incumbent research code, 3 Sep: 56,579 lines</title></circle>
+<circle class="hit" cx="293" cy="167.5" r="4"><title>incumbent research code, 4 Sep: 57,436 lines</title></circle>
+<circle class="hit" cx="303.4" cy="163.4" r="4"><title>incumbent research code, 5 Sep: 59,345 lines</title></circle>
+<circle class="hit" cx="313.9" cy="157.9" r="4"><title>incumbent research code, 6 Sep: 61,912 lines</title></circle>
+<circle class="hit" cx="324.4" cy="150.7" r="4"><title>incumbent research code, 7 Sep: 65,313 lines</title></circle>
+<circle class="hit" cx="334.9" cy="150.7" r="4"><title>incumbent research code, 8 Sep: 65,319 lines</title></circle>
+<circle class="hit" cx="345.3" cy="150.7" r="4"><title>incumbent research code, 9 Sep: 65,319 lines</title></circle>
+<circle class="hit" cx="355.8" cy="145.8" r="4"><title>incumbent research code, 10 Sep: 67,596 lines</title></circle>
+<circle class="hit" cx="366.3" cy="139.2" r="4"><title>incumbent research code, 11 Sep: 70,707 lines</title></circle>
+<circle class="hit" cx="376.8" cy="131.9" r="4"><title>incumbent research code, 12 Sep: 74,090 lines</title></circle>
+<circle class="hit" cx="387.2" cy="119" r="4"><title>incumbent research code, 13 Sep: 80,135 lines</title></circle>
+<circle class="hit" cx="397.7" cy="117.4" r="4"><title>incumbent research code, 14 Sep: 80,901 lines</title></circle>
+<circle class="hit" cx="408.2" cy="111.7" r="4"><title>incumbent research code, 15 Sep: 83,597 lines</title></circle>
+<circle class="hit" cx="418.7" cy="107" r="4"><title>incumbent research code, 16 Sep: 85,768 lines</title></circle>
+<circle class="hit" cx="429.1" cy="107" r="4"><title>incumbent research code, 17 Sep: 85,768 lines</title></circle>
+<circle class="hit" cx="439.6" cy="107" r="4"><title>incumbent research code, 18 Sep: 85,768 lines</title></circle>
+<circle class="hit" cx="450.1" cy="103.3" r="4"><title>incumbent research code, 19 Sep: 87,509 lines</title></circle>
+<circle class="hit" cx="460.6" cy="103.3" r="4"><title>incumbent research code, 20 Sep: 87,509 lines</title></circle>
+<circle class="hit" cx="471" cy="103.3" r="4"><title>incumbent research code, 21 Sep: 87,509 lines</title></circle>
+<circle class="hit" cx="481.5" cy="92.2" r="4"><title>incumbent research code, 22 Sep: 92,740 lines</title></circle>
+<circle class="hit" cx="492" cy="79.9" r="4"><title>incumbent research code, 23 Sep: 98,484 lines</title></circle>
+<circle class="hit" cx="502.5" cy="76.8" r="4"><title>incumbent research code, 24 Sep: 99,951 lines</title></circle>
+<circle class="hit" cx="513" cy="76.8" r="4"><title>incumbent research code, 25 Sep: 99,951 lines</title></circle>
+<circle class="hit" cx="523.4" cy="76.8" r="4"><title>incumbent research code, 26 Sep: 99,951 lines</title></circle>
+<circle class="hit" cx="533.9" cy="75.3" r="4"><title>incumbent research code, 27 Sep: 100,618 lines</title></circle>
+<path class="line-muted" d="M52,281.9L62.5,272.1L73,264.1L83.4,259.8L93.9,257.5L104.4,252.1L114.9,251.6L125.3,243.6L135.8,240.9L146.3,235.9L156.8,214.3L167.2,199.8L177.7,207.5L188.2,205.2L198.7,209.6L209.1,204.5L219.6,196L230.1,184.3L240.6,170.9L251,169.4L261.5,162.8L272,159L282.5,151.7L293,150.6L303.4,146.2L313.9,144.1L324.4,129L334.9,124.1L345.3,121.3L355.8,120.1L366.3,119L376.8,117.1L387.2,114.4L397.7,113.8L408.2,110.9L418.7,107.8L429.1,107.8L439.6,107.8L450.1,106.3L460.6,106.3L471,106.3L481.5,95.8L492,90L502.5,85.4L513,85.4L523.4,85.4L533.9,84.6"/>
+<circle class="hit" cx="52" cy="281.9" r="4"><title>incumbent tests, 12 Aug: 3,815 lines</title></circle>
+<circle class="hit" cx="62.5" cy="272.1" r="4"><title>incumbent tests, 13 Aug: 8,374 lines</title></circle>
+<circle class="hit" cx="73" cy="264.1" r="4"><title>incumbent tests, 14 Aug: 12,147 lines</title></circle>
+<circle class="hit" cx="83.4" cy="259.8" r="4"><title>incumbent tests, 15 Aug: 14,140 lines</title></circle>
+<circle class="hit" cx="93.9" cy="257.5" r="4"><title>incumbent tests, 16 Aug: 15,257 lines</title></circle>
+<circle class="hit" cx="104.4" cy="252.1" r="4"><title>incumbent tests, 17 Aug: 17,767 lines</title></circle>
+<circle class="hit" cx="114.9" cy="251.6" r="4"><title>incumbent tests, 18 Aug: 17,983 lines</title></circle>
+<circle class="hit" cx="125.3" cy="243.6" r="4"><title>incumbent tests, 19 Aug: 21,739 lines</title></circle>
+<circle class="hit" cx="135.8" cy="240.9" r="4"><title>incumbent tests, 20 Aug: 23,027 lines</title></circle>
+<circle class="hit" cx="146.3" cy="235.9" r="4"><title>incumbent tests, 21 Aug: 25,375 lines</title></circle>
+<circle class="hit" cx="156.8" cy="214.3" r="4"><title>incumbent tests, 22 Aug: 35,492 lines</title></circle>
+<circle class="hit" cx="167.2" cy="199.8" r="4"><title>incumbent tests, 23 Aug: 42,301 lines</title></circle>
+<circle class="hit" cx="177.7" cy="207.5" r="4"><title>incumbent tests, 24 Aug: 38,660 lines</title></circle>
+<circle class="hit" cx="188.2" cy="205.2" r="4"><title>incumbent tests, 25 Aug: 39,771 lines</title></circle>
+<circle class="hit" cx="198.7" cy="209.6" r="4"><title>incumbent tests, 26 Aug: 37,672 lines</title></circle>
+<circle class="hit" cx="209.1" cy="204.5" r="4"><title>incumbent tests, 27 Aug: 40,060 lines</title></circle>
+<circle class="hit" cx="219.6" cy="196" r="4"><title>incumbent tests, 28 Aug: 44,068 lines</title></circle>
+<circle class="hit" cx="230.1" cy="184.3" r="4"><title>incumbent tests, 29 Aug: 49,537 lines</title></circle>
+<circle class="hit" cx="240.6" cy="170.9" r="4"><title>incumbent tests, 30 Aug: 55,833 lines</title></circle>
+<circle class="hit" cx="251" cy="169.4" r="4"><title>incumbent tests, 31 Aug: 56,548 lines</title></circle>
+<circle class="hit" cx="261.5" cy="162.8" r="4"><title>incumbent tests, 1 Sep: 59,631 lines</title></circle>
+<circle class="hit" cx="272" cy="159" r="4"><title>incumbent tests, 2 Sep: 61,407 lines</title></circle>
+<circle class="hit" cx="282.5" cy="151.7" r="4"><title>incumbent tests, 3 Sep: 64,830 lines</title></circle>
+<circle class="hit" cx="293" cy="150.6" r="4"><title>incumbent tests, 4 Sep: 65,344 lines</title></circle>
+<circle class="hit" cx="303.4" cy="146.2" r="4"><title>incumbent tests, 5 Sep: 67,412 lines</title></circle>
+<circle class="hit" cx="313.9" cy="144.1" r="4"><title>incumbent tests, 6 Sep: 68,406 lines</title></circle>
+<circle class="hit" cx="324.4" cy="129" r="4"><title>incumbent tests, 7 Sep: 75,490 lines</title></circle>
+<circle class="hit" cx="334.9" cy="124.1" r="4"><title>incumbent tests, 8 Sep: 77,783 lines</title></circle>
+<circle class="hit" cx="345.3" cy="121.3" r="4"><title>incumbent tests, 9 Sep: 79,093 lines</title></circle>
+<circle class="hit" cx="355.8" cy="120.1" r="4"><title>incumbent tests, 10 Sep: 79,663 lines</title></circle>
+<circle class="hit" cx="366.3" cy="119" r="4"><title>incumbent tests, 11 Sep: 80,170 lines</title></circle>
+<circle class="hit" cx="376.8" cy="117.1" r="4"><title>incumbent tests, 12 Sep: 81,067 lines</title></circle>
+<circle class="hit" cx="387.2" cy="114.4" r="4"><title>incumbent tests, 13 Sep: 82,328 lines</title></circle>
+<circle class="hit" cx="397.7" cy="113.8" r="4"><title>incumbent tests, 14 Sep: 82,600 lines</title></circle>
+<circle class="hit" cx="408.2" cy="110.9" r="4"><title>incumbent tests, 15 Sep: 83,971 lines</title></circle>
+<circle class="hit" cx="418.7" cy="107.8" r="4"><title>incumbent tests, 16 Sep: 85,396 lines</title></circle>
+<circle class="hit" cx="429.1" cy="107.8" r="4"><title>incumbent tests, 17 Sep: 85,396 lines</title></circle>
+<circle class="hit" cx="439.6" cy="107.8" r="4"><title>incumbent tests, 18 Sep: 85,396 lines</title></circle>
+<circle class="hit" cx="450.1" cy="106.3" r="4"><title>incumbent tests, 19 Sep: 86,121 lines</title></circle>
+<circle class="hit" cx="460.6" cy="106.3" r="4"><title>incumbent tests, 20 Sep: 86,121 lines</title></circle>
+<circle class="hit" cx="471" cy="106.3" r="4"><title>incumbent tests, 21 Sep: 86,121 lines</title></circle>
+<circle class="hit" cx="481.5" cy="95.8" r="4"><title>incumbent tests, 22 Sep: 91,021 lines</title></circle>
+<circle class="hit" cx="492" cy="90" r="4"><title>incumbent tests, 23 Sep: 93,773 lines</title></circle>
+<circle class="hit" cx="502.5" cy="85.4" r="4"><title>incumbent tests, 24 Sep: 95,900 lines</title></circle>
+<circle class="hit" cx="513" cy="85.4" r="4"><title>incumbent tests, 25 Sep: 95,900 lines</title></circle>
+<circle class="hit" cx="523.4" cy="85.4" r="4"><title>incumbent tests, 26 Sep: 95,900 lines</title></circle>
+<circle class="hit" cx="533.9" cy="84.6" r="4"><title>incumbent tests, 27 Sep: 96,265 lines</title></circle>
+<path class="line-accent" d="M52,277.3L62.5,264.4L73,252.5L83.4,247L93.9,244.4L104.4,234.8L114.9,234.8L125.3,222L135.8,221.2L146.3,212.5L156.8,202.3L167.2,197.2L177.7,224.3L188.2,217.9L198.7,222.7L209.1,212.2L219.6,204.1L230.1,195.7L240.6,186.4L251,186.4L261.5,185.8L272,181.2L282.5,173.1L293,173.1L303.4,171.5L313.9,171.5L324.4,158.8L334.9,157.5L345.3,156.5L355.8,156L366.3,155.6L376.8,155.5L387.2,154.8L397.7,154.8L408.2,154.1L418.7,152.6L429.1,152.6L439.6,152.6L450.1,152.5L460.6,152.5L471,152.5L481.5,149.7L492,149.5L502.5,149.5L513,149.5L523.4,149.5L533.9,149.4"/>
+<circle class="hit" cx="52" cy="277.3" r="4"><title>incumbent runtime, 12 Aug: 5,964 lines</title></circle>
+<circle class="hit" cx="62.5" cy="264.4" r="4"><title>incumbent runtime, 13 Aug: 12,014 lines</title></circle>
+<circle class="hit" cx="73" cy="252.5" r="4"><title>incumbent runtime, 14 Aug: 17,596 lines</title></circle>
+<circle class="hit" cx="83.4" cy="247" r="4"><title>incumbent runtime, 15 Aug: 20,163 lines</title></circle>
+<circle class="hit" cx="93.9" cy="244.4" r="4"><title>incumbent runtime, 16 Aug: 21,367 lines</title></circle>
+<circle class="hit" cx="104.4" cy="234.8" r="4"><title>incumbent runtime, 17 Aug: 25,862 lines</title></circle>
+<circle class="hit" cx="114.9" cy="234.8" r="4"><title>incumbent runtime, 18 Aug: 25,862 lines</title></circle>
+<circle class="hit" cx="125.3" cy="222" r="4"><title>incumbent runtime, 19 Aug: 31,868 lines</title></circle>
+<circle class="hit" cx="135.8" cy="221.2" r="4"><title>incumbent runtime, 20 Aug: 32,242 lines</title></circle>
+<circle class="hit" cx="146.3" cy="212.5" r="4"><title>incumbent runtime, 21 Aug: 36,324 lines</title></circle>
+<circle class="hit" cx="156.8" cy="202.3" r="4"><title>incumbent runtime, 22 Aug: 41,097 lines</title></circle>
+<circle class="hit" cx="167.2" cy="197.2" r="4"><title>incumbent runtime, 23 Aug: 43,515 lines</title></circle>
+<circle class="hit" cx="177.7" cy="224.3" r="4"><title>incumbent runtime, 24 Aug: 30,810 lines</title></circle>
+<circle class="hit" cx="188.2" cy="217.9" r="4"><title>incumbent runtime, 25 Aug: 33,816 lines</title></circle>
+<circle class="hit" cx="198.7" cy="222.7" r="4"><title>incumbent runtime, 26 Aug: 31,532 lines</title></circle>
+<circle class="hit" cx="209.1" cy="212.2" r="4"><title>incumbent runtime, 27 Aug: 36,481 lines</title></circle>
+<circle class="hit" cx="219.6" cy="204.1" r="4"><title>incumbent runtime, 28 Aug: 40,262 lines</title></circle>
+<circle class="hit" cx="230.1" cy="195.7" r="4"><title>incumbent runtime, 29 Aug: 44,218 lines</title></circle>
+<circle class="hit" cx="240.6" cy="186.4" r="4"><title>incumbent runtime, 30 Aug: 48,575 lines</title></circle>
+<circle class="hit" cx="251" cy="186.4" r="4"><title>incumbent runtime, 31 Aug: 48,575 lines</title></circle>
+<circle class="hit" cx="261.5" cy="185.8" r="4"><title>incumbent runtime, 1 Sep: 48,856 lines</title></circle>
+<circle class="hit" cx="272" cy="181.2" r="4"><title>incumbent runtime, 2 Sep: 51,020 lines</title></circle>
+<circle class="hit" cx="282.5" cy="173.1" r="4"><title>incumbent runtime, 3 Sep: 54,775 lines</title></circle>
+<circle class="hit" cx="293" cy="173.1" r="4"><title>incumbent runtime, 4 Sep: 54,808 lines</title></circle>
+<circle class="hit" cx="303.4" cy="171.5" r="4"><title>incumbent runtime, 5 Sep: 55,524 lines</title></circle>
+<circle class="hit" cx="313.9" cy="171.5" r="4"><title>incumbent runtime, 6 Sep: 55,524 lines</title></circle>
+<circle class="hit" cx="324.4" cy="158.8" r="4"><title>incumbent runtime, 7 Sep: 61,508 lines</title></circle>
+<circle class="hit" cx="334.9" cy="157.5" r="4"><title>incumbent runtime, 8 Sep: 62,109 lines</title></circle>
+<circle class="hit" cx="345.3" cy="156.5" r="4"><title>incumbent runtime, 9 Sep: 62,569 lines</title></circle>
+<circle class="hit" cx="355.8" cy="156" r="4"><title>incumbent runtime, 10 Sep: 62,830 lines</title></circle>
+<circle class="hit" cx="366.3" cy="155.6" r="4"><title>incumbent runtime, 11 Sep: 62,998 lines</title></circle>
+<circle class="hit" cx="376.8" cy="155.5" r="4"><title>incumbent runtime, 12 Sep: 63,024 lines</title></circle>
+<circle class="hit" cx="387.2" cy="154.8" r="4"><title>incumbent runtime, 13 Sep: 63,369 lines</title></circle>
+<circle class="hit" cx="397.7" cy="154.8" r="4"><title>incumbent runtime, 14 Sep: 63,369 lines</title></circle>
+<circle class="hit" cx="408.2" cy="154.1" r="4"><title>incumbent runtime, 15 Sep: 63,724 lines</title></circle>
+<circle class="hit" cx="418.7" cy="152.6" r="4"><title>incumbent runtime, 16 Sep: 64,417 lines</title></circle>
+<circle class="hit" cx="429.1" cy="152.6" r="4"><title>incumbent runtime, 17 Sep: 64,417 lines</title></circle>
+<circle class="hit" cx="439.6" cy="152.6" r="4"><title>incumbent runtime, 18 Sep: 64,417 lines</title></circle>
+<circle class="hit" cx="450.1" cy="152.5" r="4"><title>incumbent runtime, 19 Sep: 64,459 lines</title></circle>
+<circle class="hit" cx="460.6" cy="152.5" r="4"><title>incumbent runtime, 20 Sep: 64,459 lines</title></circle>
+<circle class="hit" cx="471" cy="152.5" r="4"><title>incumbent runtime, 21 Sep: 64,459 lines</title></circle>
+<circle class="hit" cx="481.5" cy="149.7" r="4"><title>incumbent runtime, 22 Sep: 65,753 lines</title></circle>
+<circle class="hit" cx="492" cy="149.5" r="4"><title>incumbent runtime, 23 Sep: 65,852 lines</title></circle>
+<circle class="hit" cx="502.5" cy="149.5" r="4"><title>incumbent runtime, 24 Sep: 65,877 lines</title></circle>
+<circle class="hit" cx="513" cy="149.5" r="4"><title>incumbent runtime, 25 Sep: 65,877 lines</title></circle>
+<circle class="hit" cx="523.4" cy="149.5" r="4"><title>incumbent runtime, 26 Sep: 65,877 lines</title></circle>
+<circle class="hit" cx="533.9" cy="149.4" r="4"><title>incumbent runtime, 27 Sep: 65,891 lines</title></circle>
+<path class="line-accent" d="M533.9,287.3L544.4,287.2L554.9,287.2L565.3,287.2L575.8,287.2L586.3,287L596.8,287L607.2,287L617.7,287L628.2,287L638.7,287L649.1,286.7L659.6,286.7L670.1,286.7L680.6,286.7L691,286.7L701.5,286.7L712,286.7"/>
+<circle class="hit" cx="533.9" cy="287.3" r="4"><title>rebuild runtime, 27 Sep: 1,286 lines</title></circle>
+<circle class="hit" cx="544.4" cy="287.2" r="4"><title>rebuild runtime, 28 Sep: 1,328 lines</title></circle>
+<circle class="hit" cx="554.9" cy="287.2" r="4"><title>rebuild runtime, 29 Sep: 1,328 lines</title></circle>
+<circle class="hit" cx="565.3" cy="287.2" r="4"><title>rebuild runtime, 30 Sep: 1,328 lines</title></circle>
+<circle class="hit" cx="575.8" cy="287.2" r="4"><title>rebuild runtime, 1 Oct: 1,328 lines</title></circle>
+<circle class="hit" cx="586.3" cy="287" r="4"><title>rebuild runtime, 2 Oct: 1,425 lines</title></circle>
+<circle class="hit" cx="596.8" cy="287" r="4"><title>rebuild runtime, 3 Oct: 1,425 lines</title></circle>
+<circle class="hit" cx="607.2" cy="287" r="4"><title>rebuild runtime, 4 Oct: 1,425 lines</title></circle>
+<circle class="hit" cx="617.7" cy="287" r="4"><title>rebuild runtime, 5 Oct: 1,425 lines</title></circle>
+<circle class="hit" cx="628.2" cy="287" r="4"><title>rebuild runtime, 6 Oct: 1,425 lines</title></circle>
+<circle class="hit" cx="638.7" cy="287" r="4"><title>rebuild runtime, 7 Oct: 1,425 lines</title></circle>
+<circle class="hit" cx="649.1" cy="286.7" r="4"><title>rebuild runtime, 8 Oct: 1,564 lines</title></circle>
+<circle class="hit" cx="659.6" cy="286.7" r="4"><title>rebuild runtime, 9 Oct: 1,564 lines</title></circle>
+<circle class="hit" cx="670.1" cy="286.7" r="4"><title>rebuild runtime, 10 Oct: 1,564 lines</title></circle>
+<circle class="hit" cx="680.6" cy="286.7" r="4"><title>rebuild runtime, 11 Oct: 1,564 lines</title></circle>
+<circle class="hit" cx="691" cy="286.7" r="4"><title>rebuild runtime, 12 Oct: 1,564 lines</title></circle>
+<circle class="hit" cx="701.5" cy="286.7" r="4"><title>rebuild runtime, 13 Oct: 1,564 lines</title></circle>
+<circle class="hit" cx="712" cy="286.7" r="4"><title>rebuild runtime, 14 Oct: 1,564 lines</title></circle>
+<text class="tick" x="541.9" y="69.3" text-anchor="start">incumbent research code: 100,618</text>
+<text class="tick" x="541.9" y="98.6" text-anchor="start">incumbent tests: 96,265</text>
+<text class="value accent" x="541.9" y="153.4" text-anchor="start">incumbent runtime: 65,891</text>
+<text class="value accent" x="712" y="278.7" text-anchor="end">rebuild runtime: 1,564</text>
+<line class="ref-solid" x1="177.7" x2="177.7" y1="230.3" y2="256"/><text class="note" x="181.7" y="268">one commit cut 34% on 24 Aug; regrown by 30 Aug</text>
+</svg>
+</div>
+<figcaption>Git history of this repo · <code>src/</code>, <code>tests/</code> and <code>research/</code> at tag <code>legacy/incumbent-2026-09-27</code>; <code>litharness/</code> on main</figcaption>
+</figure>
+<p>Tests and research code grew alongside the runtime: on 27 September the incumbent's three trees held about 263,000 lines.</p>
+<p>The rebuild enforces budgets in its own test suite: runtime at most 1,564 lines, any file at most 350, prompts at most 701 words, each doc capped by lines. Raising a cap is its own commit naming the case. A chapter is designed for 2 or 3 calls and 21,000 to 27,000 tokens; the first serial's took 2 to 4 calls and 20,000 to 41,000 tokens, since failed checks add draws.</p>
+
+<h2 id="finding-5"><span class="num">Finding 5:</span> a 1% to 52% climb measured reliability, not quality</h2>
+<p>Thirteen rounds of prompt edits lifted Haiku 5.5's first-draw pass rate on the pitch checks from 1% to 52%, and four more found nothing better. Most rounds changed prompt text, round 6 raised the model's effort setting, and every variant was re-graded after three parser fixes. A later audit found the number tracked format and retries, not whether the stories got better.</p>
+<p>The pitch is a bible of at most 900 words that code checks for money words, schema leaks and shape. Between rounds, an Opus analyzer read failing transcripts and proposed edits; each round tried one to three, under a keep rule declared before drawing: pass up on the current best with its 95% interval above zero, and no guardrail worse. Draws ran on 11 past briefs, up to 128 a brief, for $65 of a $150 budget.</p>
+<figure>
+<p class="fig-title">Pitch pass rate on Haiku 5.5: 1% to 52% in 13 rounds, then a plateau</p>
+<p class="fig-sub">First-draw pass on the pitch's hard checks, 11 briefs, one dot per prompt variant</p>
+<ul class="legend">
+<li><span class="sw"></span>kept</li>
+<li><span class="sw muted"></span>not kept (no clear gain, a loss, or a missed indicator)</li>
+<li><span class="sw line"></span>best kept so far</li>
+</ul>
+<div class="scroll">
+<svg viewBox="0 0 760 330" role="img" aria-label="Pitch pass rate on Haiku 5.5 by round: 1% to 52% in 13 rounds, then a plateau" class="chart">
+<line class="grid" x1="52" x2="700" y1="278" y2="278"/><text class="tick" x="44" y="282" text-anchor="end">0%</text>
+<line class="grid" x1="52" x2="700" y1="234.7" y2="234.7"/><text class="tick" x="44" y="238.7" text-anchor="end">10%</text>
+<line class="grid" x1="52" x2="700" y1="191.3" y2="191.3"/><text class="tick" x="44" y="195.3" text-anchor="end">20%</text>
+<line class="grid" x1="52" x2="700" y1="148" y2="148"/><text class="tick" x="44" y="152" text-anchor="end">30%</text>
+<line class="grid" x1="52" x2="700" y1="104.7" y2="104.7"/><text class="tick" x="44" y="108.7" text-anchor="end">40%</text>
+<line class="grid" x1="52" x2="700" y1="61.3" y2="61.3"/><text class="tick" x="44" y="65.3" text-anchor="end">50%</text>
+<line class="grid" x1="52" x2="700" y1="18" y2="18"/><text class="tick" x="44" y="22" text-anchor="end">60%</text>
+<rect class="band" x="52" width="648" y="26.7" height="13"/><text class="note" x="58" y="20.7">analyzer's ceiling estimate, 55-58%</text>
+<text class="tick" x="52" y="298" text-anchor="middle">0</text>
+<text class="tick" x="90.1" y="298" text-anchor="middle">1</text>
+<text class="tick" x="128.2" y="298" text-anchor="middle">2</text>
+<text class="tick" x="166.4" y="298" text-anchor="middle">3</text>
+<text class="tick" x="204.5" y="298" text-anchor="middle">4</text>
+<text class="tick" x="242.6" y="298" text-anchor="middle">5</text>
+<text class="tick" x="280.7" y="298" text-anchor="middle">6</text>
+<text class="tick" x="318.8" y="298" text-anchor="middle">7</text>
+<text class="tick" x="356.9" y="298" text-anchor="middle">8</text>
+<text class="tick" x="395.1" y="298" text-anchor="middle">9</text>
+<text class="tick" x="433.2" y="298" text-anchor="middle">10</text>
+<text class="tick" x="471.3" y="298" text-anchor="middle">11</text>
+<text class="tick" x="509.4" y="298" text-anchor="middle">12</text>
+<text class="tick" x="547.5" y="298" text-anchor="middle">13</text>
+<text class="tick" x="585.6" y="298" text-anchor="middle">14</text>
+<text class="tick" x="623.8" y="298" text-anchor="middle">15</text>
+<text class="tick" x="661.9" y="298" text-anchor="middle">16</text>
+<text class="tick" x="700" y="298" text-anchor="middle">17</text>
+<text class="note" x="376.0" y="320" text-anchor="middle">round (0 = the shipped prompt)</text>
+<circle class="dot-muted" cx="128.2" cy="191.8" r="5"><title>v12, round 2: 19.9%, not kept</title></circle>
+<circle class="dot-muted" cx="166.4" cy="201.7" r="5"><title>v13, round 3: 17.6%, not kept</title></circle>
+<circle class="dot-muted" cx="196.5" cy="217.8" r="5"><title>v14, round 4: 13.9%, not kept</title></circle>
+<circle class="dot-muted" cx="204.5" cy="185.7" r="5"><title>v15, round 4: 21.3%, not kept</title></circle>
+<circle class="dot-muted" cx="238.6" cy="174.4" r="5"><title>v17, round 5: 23.9%, not kept</title></circle>
+<circle class="dot-muted" cx="276.7" cy="160.6" r="5"><title>v19, round 6: 27.1%, not kept</title></circle>
+<circle class="dot-muted" cx="314.8" cy="126.8" r="5"><title>v21, round 7: 34.9%, not kept</title></circle>
+<circle class="dot-muted" cx="322.8" cy="156.7" r="5"><title>v22, round 7: 28%, not kept</title></circle>
+<circle class="dot-muted" cx="391.1" cy="102.5" r="5"><title>v24, round 9: 40.5%, not kept</title></circle>
+<circle class="dot-muted" cx="399.1" cy="93" r="5"><title>v25, round 9: 42.7%, not kept</title></circle>
+<circle class="dot-muted" cx="429.2" cy="108.1" r="5"><title>v26, round 10: 39.2%, not kept</title></circle>
+<circle class="dot-muted" cx="437.2" cy="89.1" r="5"><title>v27, round 10: 43.6%, not kept</title></circle>
+<circle class="dot-muted" cx="467.3" cy="86" r="5"><title>v28, round 11: 44.3%, not kept</title></circle>
+<circle class="dot-muted" cx="475.3" cy="86.5" r="5"><title>v29, round 11: 44.2%, not kept</title></circle>
+<circle class="dot-muted" cx="581.6" cy="83" r="5"><title>v35, round 14: 45%, not kept</title></circle>
+<circle class="dot-muted" cx="589.6" cy="74.3" r="5"><title>v36, round 14: 47%, not kept</title></circle>
+<circle class="dot-muted" cx="619.8" cy="44" r="5"><title>v37, round 15: 54%, not kept</title></circle>
+<circle class="dot-muted" cx="627.8" cy="44" r="5"><title>v38, round 15: 54%, not kept</title></circle>
+<circle class="dot-muted" cx="661.9" cy="57" r="5"><title>v39, round 16: 51%, not kept</title></circle>
+<circle class="dot-muted" cx="700" cy="61.3" r="5"><title>v40, round 17: 50%, not kept</title></circle>
+<path class="line-accent" d="M52,273.2H90.1V201.7H128.2V201.7H166.4V201.7H204.5V180.9H242.6V158H280.7V133.3H318.8V133.3H356.9V107.3H395.1V107.3H433.2V107.3H471.3V107.3H509.4V70H547.5V52.7H585.6V52.7H623.8V52.7H661.9V52.7H700V52.7H704"/>
+<circle class="dot-accent" cx="52" cy="273.2" r="5.5"><title>v10, round 0: 1.1%, kept</title></circle>
+<circle class="dot-accent" cx="90.1" cy="201.7" r="5.5"><title>v11, round 1: 17.6%, kept</title></circle>
+<circle class="dot-accent" cx="212.5" cy="180.9" r="5.5"><title>v16, round 4: 22.4%, kept</title></circle>
+<circle class="dot-accent" cx="246.6" cy="158" r="5.5"><title>v18, round 5: 27.7%, kept</title></circle>
+<circle class="dot-accent" cx="284.7" cy="133.3" r="5.5"><title>v20, round 6: 33.4%, kept</title></circle>
+<circle class="dot-accent" cx="356.9" cy="107.3" r="5.5"><title>v23, round 8: 39.4%, kept</title></circle>
+<circle class="dot-accent" cx="505.4" cy="70" r="5.5"><title>v30, round 12: 48%, kept</title></circle>
+<circle class="dot-accent" cx="513.4" cy="71.3" r="5.5"><title>v31, round 12: 47.7%, kept</title></circle>
+<circle class="dot-accent" cx="547.5" cy="52.7" r="5.5"><title>v32, round 13: 52%, kept</title></circle>
+<text class="value" x="62" y="265.2">1%</text><text class="value accent" x="710" y="56.7">52%</text>
+</svg>
+</div>
+<figcaption>Pitch-draws run records (outside the repo) · 29 Haiku 5.5 variants, 8 to 9 Oct 2026, as reported in the climb log at 16 to 128 draws a brief</figcaption>
+</figure>
+<p>Two grey dots sit above the line at 54%: each gained 2 points with an interval that included zero, so neither was kept, and stacking them gave 51%.</p>
+<p>The best prompt also passed 66% on Codex against 47% for the shipped prompt, +19 points (95% interval +7 to +31). The audit, run on stored rows with no new calls, then found:</p>
+<ul>
+<li><strong>Retries hide the metric.</strong> The harness draws a failing stage up to 3 times, so everything the operator reads has passed. Pass within 3 draws went from 73% to 91% on the Codex pitch; first-draw pass mostly measures cost.</li>
+<li><strong>Most of Haiku's gain was its own format quirks.</strong> Shape failures fell from 94% to 4%; Haiku had been reading <code>[Label: value]</code> as a placeholder and dropping the brackets.</li>
+<li><strong>Passing chapters looked the same.</strong> In the follow-on chapter climb (28% to 52%), passing chapters before and after had 1,421 and 1,368 words and 10% and 9% dialogue. Scene breaks went from 0.6 to 2.1 a chapter.</li>
+<li><strong>The money gains were real.</strong> Unlisted commerce words fell with the listed ones (4.0 to 2.6 per 1,000), so the model was not swapping in euphemisms.</li>
+<li><strong>The sample was thin.</strong> About 40 variants ran on the same 11 briefs, which count as about 7 independent ones, with no holdout.</li>
+</ul>
+<p>The audit proposes keeping first-draw pass as a guardrail, not a target, and judging content edits by the operator's blind read of stored same-input pairs. A 36-pair packet was built on 11 October and has not been unblinded.</p>
+
+<h2 id="finding-6"><span class="num">Finding 6:</span> agent CLIs leak their surroundings into answers</h2>
+<p>A coding-agent CLI used as a plain text model still sees where it runs. Run from inside a repo, <code>claude -p</code> put an untracked filename into its answer in 1 to 2 of 5 calls, and the path in about 2 of 5. Without the right flags a project's CLAUDE.md reached the model, and the <code>--bare</code> mode answered "Not logged in". The incumbent's hardening drifted across 23 files.</p>
+<p>For a writer this contaminates the story. For a judge or a simulated reader it means the instrument can read the experiment around it.</p>
+<p>The rebuild sends every call through one module, the only file allowed to import <code>subprocess</code>. Each call runs from a fresh empty directory outside any git tree, with tools, MCP servers and project instruction files switched off. A canary checks this against each CLI version:</p>
+<ol>
+<li>Build a temporary git repo with a random nonce in AGENTS.md, AGENTS.override.md, CLAUDE.md, a commit message and an untracked filename.</li>
+<li>Run the agent from inside that repo on purpose, and ask it to echo only a control nonce.</li>
+<li>Fail if any planted nonce appears in the answer, the event stream or stderr, or if the control line is wrong.</li>
+<li>On a clean pass, record the CLI's version and binary hash. Paid commands refuse to run on a version that has not passed.</li>
+</ol>
+
+<h2 id="limits">Limits</h2>
+<p>These findings come from one project, one reader and small samples. They point to what is worth testing at scale; they do not establish it.</p>
+<ul>
+<li><strong>One reader.</strong> The quality gate is one person. No audience retention or recommendation data is reported here.</li>
+<li><strong>The rebuild is unproven on its own goal.</strong> Its first chapters await the operator's 21st read, so there is no evidence yet that it writes better chapters than the incumbent.</li>
+<li><strong>Small samples.</strong> The climbs used 11 briefs (about 7 independent) with no holdout. The 2-call prototype won on one pair.</li>
+<li><strong>Draft variance is large.</strong> Five drafts of one prompt kept 3, 4, 1, 4 and 4 of 4 simulated readers reading, so single-draft comparisons are noise.</li>
+<li><strong>Checks find named defects, not quality.</strong> A passing bible or chapter is free of what the checks look for, nothing more.</li>
+<li><strong>Versions move.</strong> Results are tied to the models and CLI versions of their day; the incumbent, the first serial and the Haiku climb each ran on different ones.</li>
+</ul>
+
+<h2 id="sources">Sources</h2>
+<p>All in this repo unless marked. Incumbent-era numbers cite entries of its decision ledger, kept at the tag.</p>
+<ul>
+<li><a href="https://github.com/skulitom/LitHarness/blob/main/LEARNINGS.md">LEARNINGS.md</a>: Findings 1 to 4 and 6, with ledger references</li>
+<li><a href="https://github.com/skulitom/LitHarness/blob/legacy/incumbent-2026-09-27/plan/stage-0-decisions.md">Decision ledger at the incumbent tag</a> (267 entries, 2 MB; search by entry number)</li>
+<li><a href="https://github.com/skulitom/LitHarness/blob/legacy/incumbent-2026-09-27/research/quality-measurement/cost-that-bites/FINDINGS-v3.md">Costed reader findings</a>: Finding 2</li>
+<li><a href="https://github.com/skulitom/LitHarness/blob/main/experiments/2026-10-02-pitch-draws/REPORT.md">Pitch draws report</a>: the Codex rounds in Finding 3</li>
+<li><a href="https://github.com/skulitom/LitHarness/blob/main/experiments/2026-09-27-opening/REPORT.md">Opening comparison report</a>: the 2-call prototype in Finding 4</li>
+<li><a href="https://github.com/skulitom/LitHarness/blob/main/litharness/transport.py">transport.py</a>: the isolation and canary in Finding 6</li>
+<li>Code-growth chart: line counts from git history, at each day's last commit on the incumbent tag and on main</li>
+<li>Haiku climb, chapter climb and metric audit: run records kept outside the repo with the generated text (not public)</li>
+</ul>
+
+<footer>
+<p>LitHarness: findings, as of 14 October 2026. This page is <a href="https://github.com/skulitom/LitHarness/blob/main/docs/index.html">docs/index.html</a> in the repo; chapters the system writes stay outside it.</p>
+</footer>
+</main>
+</body>
+</html>
