@@ -55,6 +55,32 @@ Style counts that differ most, real against rewritten (means over the 59 pairs):
 - Style counts alone separate A at 0.964, so most of the gap is visible in shape before any wording is considered.
   Common-word rates alone separate A at 1.000.
 
+## Steering stage (arm E)
+
+Declared in the protocol and committed before any E draft was scored. Three sweeps on all 59 titles, no faults.
+
+| Arm | Best-view AUC | Interval | d' | Style view | Word view | Character view (never steered) |
+| --- | --- | --- | --- | --- | --- | --- |
+| A: start point | 1.000 | 1.000 to 1.000 | 4.38 | 0.964 | 1.000 | 1.000 |
+| E: A steered for three sweeps | 0.999 | 0.997 to 1.000 | 3.91 | 0.807 | 0.964 | 0.998 |
+
+E fails every bar, including its own: d' is 3.91 against the 3.20 it had to beat. By the declared rule, steering
+by these counts is closed.
+
+- **The steering itself worked.** The steering classifier's mean score fell each sweep (0.36, 0.07, -0.13,
+  -0.14); 58 of 59 titles kept a steered draft over arm A's. Every style count is now within half a standard
+  deviation of the genre: median sentence 7.3 words in A, about 11 in E and in the genre; the largest remaining
+  gaps are paragraph length (mean 34 words against 45) and exclamation marks.
+- **It did not carry.** On the counts that were fed back, a fresh classifier drops from 0.964 to 0.807. On
+  character n-grams, which were never fed back, it still separates at 0.998. The chat model moves any count it
+  is shown and stays just as recognisable in everything it is not shown.
+- Guards: no copying from examples; at most 6.8% shared with the twin; 84% of outline names; length 1.10.
+- Length-matched (`diagnose.py`): 0.999, style view 0.790, character view 0.997.
+
+So what separates the chat model's prose from the genre's is not sentence and paragraph shape or common-word
+rates. Those can be matched and the text is still told apart almost every time; the difference sits in wording
+below the level these counts describe.
+
 ## Limits
 
 - One chat model at one effort, one local model that is chat-tuned and not a true base model, 59 pairs.
@@ -64,5 +90,5 @@ Style counts that differ most, real against rewritten (means over the 59 pairs):
 ## What it does and does not close
 
 Closed: prompting a chat model with an outline, with or without real openings in context, and a chat-tuned local
-model continuing real openings. Not closed: a true base model (none is installed), and any writer that is steered by
-this score instead of only measured by it. The second stage (invented outlines) is not run, since no arm passed.
+model continuing real openings, and steering the chat model by named counts (arm E). Not closed: a true base model
+(none is installed). The second stage (invented outlines) is not run, since no arm passed.

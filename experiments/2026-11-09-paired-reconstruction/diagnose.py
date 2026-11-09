@@ -21,8 +21,8 @@ NAMES = ["sent_mean", "sent_median", "sent_p90", "sent_sd", "sent_le4_share", "p
 def main() -> dict:
     plan = json.loads((score.DATA / "pairs.json").read_text(encoding="utf-8"))
     vocab, out = score.vocabulary(plan["background"]), {}
-    for arm in "ABCD":
-        done = [t for t in plan["targets"] if (score.DATA / "arms" / arm / f"{t}.txt").is_file()]
+    for arm in "ABCDE":
+        done =[t for t in plan["targets"] if (score.DATA / "arms" / arm / f"{t}.txt").is_file()]
         written = [score.norm((score.DATA / "arms" / arm / f"{t}.txt").read_text(encoding="utf-8")) for t in done]
         # length-matched: the real opening is cut to its rewrite's word count, then the rewrite to the real's
         originals = [score.opening((score.CORPUS / t / "ch01.txt").read_text(encoding="utf-8", errors="replace"),
