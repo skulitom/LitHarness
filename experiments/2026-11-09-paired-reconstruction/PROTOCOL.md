@@ -54,6 +54,29 @@ Taking the best of four views lifts chance above 0.5; the null is computed the s
 Passing means an opening is not recognisably outside the genre on these views. It does not show a reader would
 enjoy it, and a classifier of this size can miss differences a reader would feel.
 
+## Steering stage (arm E), declared after the pilot and before any E draft was scored
+
+The pilot only measured writers. Arm E is steered by measurement.
+
+- **Start.** Arm A's draft for the title.
+- **Measure.** Three sweeps. In each, the scorer's ridge classifier learns the real openings of the 81 background
+  titles (never targets or examples) against every draft so far of the *other* titles (5 folds), on style counts
+  and on common-word rates. Person and tense counts are left out, since the outline fixes them.
+- **Rewrite.** The chat model gets the outline, its latest draft, and what that classifier holds against the
+  draft: up to 8 style counts as plain measurements with the published middle-half range, and up to 12 common
+  words each that it over- and under-uses. After the third sweep one more cross-fitted classifier picks each
+  title's least rewritten-looking draft of the four.
+- **What steering never sees.** Any target's real opening, the title's own drafts when its classifier is
+  trained, and the character n-gram view.
+- **A first signal was dropped before any call.** Plain distance from the background's averages (mean absolute
+  z-score) does not separate: arm A's drafts already sit nearer the average (median 0.72) than real titles do
+  (0.75), because each real title is far from the average in its own way.
+- **Test.** The same scoring as every arm: a fresh classifier trained on real against E's drafts, titles held
+  out, all four views, same bars. Because the classifier is retrained on E's own drafts, matching the steered
+  counts without reading like the genre does not pass. The character view, never steered, is reported on its own.
+- **Bars.** Unchanged. In addition, E is *moving toward the genre* when its d' is below every pilot arm's (3.20)
+  and its character-view AUC is below A's (1.000); otherwise steering by these counts is closed.
+
 ## Second stage, only if an arm passes
 
 The passing writer invents outlines; invented outlines are scored against real ones the same way.
